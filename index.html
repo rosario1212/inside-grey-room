@@ -8,19 +8,44 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Inside Grey Room">
   <title>Inside Grey Room</title>
-  <link rel="manifest" href="manifest-v10-6.json?v=v10.6-atmosphere">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v10.6-atmosphere">
-  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v10.6-atmosphere">
+  <link rel="manifest" href="manifest-v10-7.json?v=v10.7-cinematic-intro">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v10.7-cinematic-intro">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v10.7-cinematic-intro">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v10-6.css?v=v10.6-atmosphere">
+  <link rel="stylesheet" href="styles-v10-7.css?v=v10.7-cinematic-intro">
 </head>
 <body>
   <div class="bg-noise"></div>
   <div class="bg-vignette"></div>
+
+  <div id="introGate" class="intro-gate" aria-hidden="false">
+    <div class="intro-film"></div>
+    <div class="intro-stage">
+      <div class="intro-mark">
+        <img src="assets/logo-door.svg?v=v10.7-cinematic-intro" alt="Inside Grey Room">
+      </div>
+      <div class="intro-door-wrap">
+        <div class="intro-door-frame">
+          <div class="intro-door-panel left"></div>
+          <div class="intro-door-panel right"></div>
+          <div class="intro-door-seam"></div>
+          <div class="intro-door-light"></div>
+        </div>
+      </div>
+      <div class="intro-copy">
+        <div class="intro-kicker">Inside Grey Room</div>
+        <h1>Entrer dans la cellule</h1>
+        <p>Touche pour ouvrir la porte.</p>
+      </div>
+      <button id="introEnterBtn" class="intro-enter" type="button">Entrer</button>
+    </div>
+    <div class="intro-white"></div>
+  </div>
+
   <main id="app"></main>
   <div id="toast" class="toast"></div>
-  <script src="app-v10-6.js?v=v10.6-atmosphere"></script>
+  <script src="app-v10-7.js?v=v10.7-cinematic-intro"></script>
 </body>
 </html>
