@@ -1,18 +1,21 @@
-# Inside Grey Room — V10.9 Perfect
+# Inside Grey Room — V10.11 Mobile Facade
 
-Version GitHub / Vercel prête à publier.
+Correctif façade mobile :
+- nouvelle illustration verticale dédiée au téléphone ;
+- suppression du faux statut iPhone et du bouton incrusté dans l'image ;
+- respect des safe areas iOS en haut et en bas ;
+- porte et titre restent centrés sans crop horizontal agressif ;
+- bouton ENTRER HTML réellement responsive ;
+- plus de doublon visuel du bouton ;
+- tous les correctifs audio/reconnexion de la V10.9 sont conservés.
 
-## V10.9
-- nouvelle porte réaliste, sombre et métallique, fidèle à l’ADN Inside Grey Room ;
-- la lumière blanche reste confinée à l’ouverture de la porte ;
-- véritable séquence sonore de verrou / grincement / ouverture / impact ;
-- correction du silence au redémarrage de la PWA iPhone ;
-- au lancement, la porte constitue volontairement le geste iOS qui autorise l’audio ;
-- si iOS suspend l’audio au retour dans l’app, la porte revient une fois pour le réactiver ;
-- aucun watchdog ne peut désormais réafficher la porte en boucle ;
-- reconstruction automatique du moteur WebAudio si le contexte Safari/iOS est devenu inutilisable ;
-- musique V10.6/V10.8 conservée (mix, timing, Bluetooth, trames, lobby live).
+À ajouter dans assets :
+- intro-v10-10-mobile.jpg
 
-## À envoyer sur GitHub
-À la racine : index.html, app-v10-9.js, styles-v10-9.css, manifest-v10-9.json, vercel.json, README.md.
-Dans le dossier assets existant : ajouter intro-v10-9.png.
+À remplacer à la racine :
+- index.html
+- app-v10-10.js
+- styles-v10-10.css
+- manifest-v10-10.json
+- vercel.json
+- README.md
