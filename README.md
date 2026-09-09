@@ -1,22 +1,19 @@
-# Inside Grey Room — V10.13 Same Images
+# Inside Grey Room — V10.14 Perfect Mobile
 
 Version prête pour GitHub / Vercel.
 
-## Inclus
-- façade d’introduction sobre avec la porte mobile
-- image d’accueil mobile intégrée
-- image de couverture pour la liste des scénarios
-- images dédiées pour les scénarios 001 à 007
-- fallback visuel cohérent pour les autres scénarios
-- structure complète prête à déployer sur Vercel
+Corrections principales :
+- accueil figé sur téléphone : aucun scroll vertical sur l'écran d'accueil ;
+- Paramètres n'apparaît plus deux fois : uniquement en bas de l'accueil ;
+- les autres écrans restent scrollables normalement ;
+- chaque dossier 001 à 020 possède désormais sa propre vignette visuelle ;
+- les dossiers 009 à 020 n'utilisent plus la même image de remplacement ;
+- l'interface, le multijoueur Supabase et tous les correctifs audio précédents sont conservés.
 
-## Fichiers principaux
-- `index.html`
-- `app-v10-13.js`
-- `styles-v10-13.css`
-- `manifest-v10-13.json`
-- `vercel.json`
-- `assets/`
-
-## Déploiement GitHub/Vercel
-Le plus simple est d’uploader le contenu complet du dossier `inside-grey-room-v10-13-mockup-home` sur GitHub, puis d’importer le repo dans Vercel.
+Fichiers principaux :
+- index.html
+- app-v10-14.js
+- styles-v10-14.css
+- manifest-v10-14.json
+- vercel.json
+- assets/
