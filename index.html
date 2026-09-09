@@ -8,44 +8,31 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Inside Grey Room">
   <title>Inside Grey Room</title>
-  <link rel="manifest" href="manifest-v10-8.json?v=v10.8-doorwake">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v10.8-doorwake">
-  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v10.8-doorwake">
+  <link rel="manifest" href="manifest-v10-9.json?v=v10.9-perfect">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v10.9-perfect">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v10.9-perfect">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v10-8.css?v=v10.8-doorwake">
+  <link rel="stylesheet" href="styles-v10-9.css?v=v10.9-perfect">
 </head>
 <body>
   <div class="bg-noise"></div>
   <div class="bg-vignette"></div>
 
   <div id="introGate" class="intro-gate" aria-hidden="false">
-    <div class="intro-film"></div>
-    <div class="intro-stage">
-      <div class="intro-mark">
-        <img src="assets/logo-door.svg?v=v10.8-doorwake" alt="Inside Grey Room">
-      </div>
-      <div class="intro-door-wrap">
-        <div class="intro-door-frame">
-          <div class="intro-door-reveal"></div>
-          <div class="intro-door-panel left"></div>
-          <div class="intro-door-panel right"></div>
-          <div class="intro-door-seam"></div>
-          <div class="intro-door-light"></div>
-        </div>
-      </div>
-      <div class="intro-copy">
-        <div class="intro-kicker">Inside Grey Room</div>
-        <h1>Entrer dans la cellule</h1>
-        <p id="introHint">Touchez pour ouvrir la porte.</p>
-      </div>
-      <button id="introEnterBtn" class="intro-enter" type="button">Entrer</button>
-    </div>
+    <img class="intro-art" src="assets/intro-v10-9.png?v=v10.9-perfect" alt="Porte d’entrée Inside Grey Room">
+    <div class="intro-cinema-shade"></div>
+    <div class="intro-light-slit" aria-hidden="true"></div>
+    <div class="intro-pulse" aria-hidden="true"></div>
+    <button id="introEnterBtn" class="intro-enter" type="button" aria-label="Entrer dans Inside Grey Room">
+      <span>ENTRER</span>
+      <small id="introHint">TOUCHEZ POUR OUVRIR LA PORTE</small>
+    </button>
   </div>
 
   <main id="app"></main>
   <div id="toast" class="toast"></div>
-  <script src="app-v10-8.js?v=v10.8-doorwake"></script>
+  <script src="app-v10-9.js?v=v10.9-perfect"></script>
 </body>
 </html>
