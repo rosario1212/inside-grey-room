@@ -1,4 +1,4 @@
-const VERSION = 'v11-12-playtest';
+const VERSION = 'v11-13-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -505,17 +505,50 @@ function renderJoin(){
  const remembered=loadProfile().pseudo||localStorage.getItem('igr_v9_last_pseudo')||'';
  byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">Rejoindre</div><h1>La cellule vous attend</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel"><div class="confirm"><div class="field"><label>Ton pseudo</label><input id="joinPseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(remembered)}" placeholder="Votre pseudo"></div><div class="field"><label>Code</label><input id="joinCode" maxlength="5" placeholder="ABCDE" autocapitalize="characters"></div><button class="btn primary block" onclick="joinRoom()">Rejoindre</button></div></section></main>`)
 }
+
+const PROFILE_TITLES=[
+ {id:'recrue',label:'Recrue de la Cellule',desc:'Titre de départ.',ok:p=>true},
+ {id:'enqueteur_gris',label:'Enquêteur Gris',desc:'Terminer un premier dossier.',ok:p=>(p.completed||0)>=1},
+ {id:'lecteur_mensonges',label:'Lecteur de Mensonges',desc:'Terminer 3 dossiers.',ok:p=>(p.completed||0)>=3},
+ {id:'veteran',label:'Vétéran de la Grey Room',desc:'Terminer 7 dossiers.',ok:p=>(p.completed||0)>=7},
+ {id:'archiviste',label:'Archiviste des Ombres',desc:'Terminer 15 dossiers.',ok:p=>(p.completed||0)>=15},
+ {id:'apotheose',label:'Survivant de l’Apothéose',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')},
+ {id:'chef_enquete',label:'Chef d’Enquête',desc:'Terminer 3 dossiers comme Enquêteur.',ok:p=>(p.history||[]).filter(x=>x.role==='enqueteur').length>=3},
+ {id:'profiler',label:'Profiler',desc:'Terminer 3 dossiers comme Analyste.',ok:p=>(p.history||[]).filter(x=>x.role==='analyste').length>=3}
+];
+const PROFILE_BADGES=[
+ {id:'empreinte',glyph:'◉',label:'Empreinte Grise',desc:'Badge de départ.',ok:p=>true},
+ {id:'dossier_scelle',glyph:'◆',label:'Dossier Scellé',desc:'Terminer 1 dossier.',ok:p=>(p.completed||0)>=1},
+ {id:'oeil_doute',glyph:'◈',label:'Œil du Doute',desc:'Terminer 3 dossiers.',ok:p=>(p.completed||0)>=3},
+ {id:'cellule_noire',glyph:'✦',label:'Cellule Noire',desc:'Terminer 7 dossiers.',ok:p=>(p.completed||0)>=7},
+ {id:'apotheose_327',glyph:'⬢',label:'327',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')},
+ {id:'veteran_15',glyph:'✧',label:'Dossier XV',desc:'Terminer 15 dossiers.',ok:p=>(p.completed||0)>=15}
+];
+function unlockedTitles(p=loadProfile()){return PROFILE_TITLES.filter(x=>x.ok(p))}
+function unlockedBadges(p=loadProfile()){return PROFILE_BADGES.filter(x=>x.ok(p))}
+function profileTitle(id,p=loadProfile()){return unlockedTitles(p).find(x=>x.id===id)||PROFILE_TITLES[0]}
+function profileBadge(id,p=loadProfile()){return unlockedBadges(p).find(x=>x.id===id)||PROFILE_BADGES[0]}
+function playerCosmeticLine(player){
+ if(!player)return'';
+ const badge=PROFILE_BADGES.find(x=>x.id===player.equipped_badge)||PROFILE_BADGES[0];
+ const title=PROFILE_TITLES.find(x=>x.id===player.equipped_title)||PROFILE_TITLES[0];
+ return `<span class="player-cosmetic"><b>${h(badge.glyph)}</b>${h(title.label)}</span>`;
+}
+
 function loadProfile(){
- try{return Object.assign({pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[]},JSON.parse(localStorage.getItem('igr_v11_profile')||'{}'))}catch{return{pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[]}}
+ try{return Object.assign({pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[],equippedTitle:'recrue',equippedBadge:'empreinte'},JSON.parse(localStorage.getItem('igr_v11_profile')||'{}'))}catch{return{pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[],equippedTitle:'recrue',equippedBadge:'empreinte'}}
 }
 function saveProfileData(p){localStorage.setItem('igr_v11_profile',JSON.stringify(Object.assign(loadProfile(),p||{})))}
 function initials(name='?'){return String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?'}
 function avatarSource(id){return AVATARS.map.get(id)||(id===STATE.playerId?loadProfile().avatar:'')||''}
 function avatarHtml(id,pseudo,cls=''){const src=avatarSource(id);return src?`<span class="avatar ${cls}"><img src="${src}" alt="Photo de ${h(pseudo)}"></span>`:`<span class="avatar avatar-fallback ${cls}" aria-label="${h(pseudo)}">${h(initials(pseudo))}</span>`}
 function renderProfile(){
- const p=loadProfile();
- byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><p>Ta photo est visible avec ton pseudo dans le lobby et pendant la partie. Elle ne révèle jamais ton rôle secret.</p></div></div><div class="field"><label>Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div><div><b>${h(p.lastScenario||'—')}</b><span>dernier dossier</span></div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
+ const p=loadProfile(),titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
+ byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line"><span class="equipped-badge">${h(equippedBadge.glyph)}</span><span>${h(equippedTitle.label)}</span></div><p>Ta photo, ton badge et ton titre peuvent apparaître avec ton pseudo pendant les parties. Ils ne révèlent jamais ton rôle secret.</p></div></div><div class="field"><label>Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div><div><b>${h(p.lastScenario||'—')}</b><span>dernier dossier</span></div></div><div class="reward-section"><div class="section-title"><h2>Titre affiché</h2><span>${titles.length}/${PROFILE_TITLES.length} débloqués</span></div><div class="reward-grid">${PROFILE_TITLES.map(x=>{const unlocked=x.ok(p),active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''} ${unlocked?'':'locked'}" ${unlocked?`onclick="equipProfileTitle('${x.id}')"`:'disabled'}><span class="reward-state">${active?'ÉQUIPÉ':unlocked?'DISPONIBLE':'VERROUILLÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join('')}</div></div><div class="reward-section"><div class="section-title"><h2>Badge affiché</h2><span>${badges.length}/${PROFILE_BADGES.length} débloqués</span></div><div class="badge-grid">${PROFILE_BADGES.map(x=>{const unlocked=x.ok(p),active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''} ${unlocked?'':'locked'}" ${unlocked?`onclick="equipProfileBadge('${x.id}')"`:'disabled'}><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join('')}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
 }
+function equipProfileTitle(id){const p=loadProfile();if(!unlockedTitles(p).some(x=>x.id===id))return;saveProfileData({equippedTitle:id});renderProfile();toast('Titre équipé.');pushProfileCosmetics()}
+function equipProfileBadge(id){const p=loadProfile();if(!unlockedBadges(p).some(x=>x.id===id))return;saveProfileData({equippedBadge:id});renderProfile();toast('Badge équipé.');pushProfileCosmetics()}
+
 function readImageFile(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
 async function compressAvatar(file){
  if(!file||!file.type?.startsWith('image/'))throw new Error('invalid image');
@@ -527,14 +560,20 @@ async function compressAvatar(file){
 }
 async function profilePhotoChanged(file){try{const avatar=await compressAvatar(file);saveProfileData({avatar});renderProfile();toast('Photo prête.')}catch(e){console.error(e);toast('Photo impossible à préparer.')}}
 function removeProfilePhoto(){saveProfileData({avatar:''});renderProfile()}
-function saveProfileForm(){const pseudo=(byId('profilePseudo')?.value||'').trim();if(!pseudo)return toast('Choisis un pseudo.');saveProfileData({pseudo});localStorage.setItem('igr_v9_last_pseudo',pseudo);renderProfile();toast('Profil enregistré.')}
+function saveProfileForm(){const pseudo=(byId('profilePseudo')?.value||'').trim();if(!pseudo)return toast('Choisis un pseudo.');saveProfileData({pseudo});localStorage.setItem('igr_v9_last_pseudo',pseudo);renderProfile();pushProfileCosmetics();toast('Profil enregistré.')}
 async function pushProfileAvatar(){try{await rpc('igr_v4_set_avatar',{p_code:STATE.room,p_player_token:STATE.token,p_avatar:loadProfile().avatar||''});AVATARS.sig='';}catch(e){console.warn('avatar upload',e)}}
+async function pushProfileCosmetics(){
+ if(!STATE.room||!STATE.token)return;
+ const p=loadProfile(),title=profileTitle(p.equippedTitle,p),badge=profileBadge(p.equippedBadge,p);
+ try{await rpc('igr_v4_set_profile_cosmetics',{p_code:STATE.room,p_player_token:STATE.token,p_title:title.id,p_badge:badge.id})}catch(e){console.warn('profile cosmetics',e)}
+}
+
 async function refreshAvatars(d,force=false){
  if(!STATE.room||!STATE.token||!d)return;const sig=(d.players||[]).map(p=>`${p.id}:${p.avatar_rev||0}`).join('|');if(!force&&sig===AVATARS.sig)return;
  try{const arr=await rpc('igr_v4_get_avatars',{p_code:STATE.room,p_player_token:STATE.token});AVATARS.map=new Map((arr||[]).filter(x=>x.avatar).map(x=>[x.id,x.avatar]));AVATARS.sig=sig}catch(e){console.warn('avatars',e)}
 }
 function markGameStarted(d){if(!d?.room?.code||d.room.status!=='playing')return;const key=`igr_v11_started_${d.room.code}`;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');const p=loadProfile();saveProfileData({games:(p.games||0)+1,lastScenario:d.room.scenario_id})}
-function markGameCompleted(d){if(!d?.room?.code||d.room.status!=='finished')return;const key=`igr_v11_completed_${d.room.code}`;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');const p=loadProfile(),sc=scenario(d.room.scenario_id),history=[{scenario:sc.id,title:sc.title,date:new Intl.DateTimeFormat('fr-CH',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date())},...(p.history||[])].slice(0,20);saveProfileData({completed:(p.completed||0)+1,lastScenario:d.room.scenario_id,history})}
+function markGameCompleted(d){if(!d?.room?.code||d.room.status!=='finished')return;const key=`igr_v11_completed_${d.room.code}`;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');const p=loadProfile(),sc=scenario(d.room.scenario_id),history=[{scenario:sc.id,title:sc.title,role:d.player?.public_role||'',date:new Intl.DateTimeFormat('fr-CH',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date())},...(p.history||[])].slice(0,20);const before=new Set([...unlockedTitles(p).map(x=>'t:'+x.id),...unlockedBadges(p).map(x=>'b:'+x.id)]);saveProfileData({completed:(p.completed||0)+1,lastScenario:d.room.scenario_id,history});const np=loadProfile(),newReward=[...unlockedTitles(np).map(x=>({k:'t:'+x.id,n:x.label})),...unlockedBadges(np).map(x=>({k:'b:'+x.id,n:x.label}))].find(x=>!before.has(x.k));if(newReward)setTimeout(()=>toast(`Récompense débloquée : ${newReward.n}`),700)}
 
 function renderRules(){
  byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">Règles</div><h1>Cadre de jeu</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel"><div class="rule-list">${RULES.map(r=>`<div class="rule"><h3>${h(r.title)}</h3><p>${r.items.map(i=>`• ${h(i)}`).join('<br>')}</p></div>`).join('')}</div></section></main>`)
@@ -645,7 +684,7 @@ async function createRoom(){
  localStorage.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
  Object.assign(STATE,{view:'lobby',scenarioId:sc.id,room:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
  saveSession();
- await pushProfileAvatar();await syncNow(true);startRoomWatcher();renderLobby();
+ await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
 }
 async function joinRoom(){
  primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
@@ -655,7 +694,7 @@ async function joinRoom(){
   const out=await rpc('igr_v4_join_room',{p_code:code,p_pseudo:pseudo});
   localStorage.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
   Object.assign(STATE,{view:'lobby',room:out.room_code||code,token:out.player_token,hostToken:null,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
-  saveSession();await pushProfileAvatar();await syncNow(true);startRoomWatcher();renderLobby();
+  saveSession();await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
  }catch(e){console.error(e);toast('Cellule introuvable, pleine ou déjà lancée.');}
 }
 function syncSignature(d){
@@ -705,7 +744,7 @@ function myState(){return syncNow(true)}
 function renderLobby(prefetched=null){
  const d=prefetched||STATE.sync;if(!d)return;
  const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count),canStart=!!STATE.hostToken&&count>=min;
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<b>${i+1}. ${h(p.pseudo)}</b></span><small>${p.is_host?'HÔTE':'PRÊT À ENTRER'}</small></div>`).join('')}</div><div class="lobby-note">Les rôles et cartes privées ne sont distribués qu’au lancement. Aucun joueur ne peut consulter les informations des autres.</div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${canStart?'Lancer le dossier':`Encore ${remaining} joueur${remaining>1?'s':''}`}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${playerCosmeticLine(p)}</span></span><small>${p.is_host?'HÔTE':'PRÊT À ENTRER'}</small></div>`).join('')}</div><div class="lobby-note">Les rôles et cartes privées ne sont distribués qu’au lancement. Aucun joueur ne peut consulter les informations des autres.</div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${canStart?'Lancer le dossier':`Encore ${remaining} joueur${remaining>1?'s':''}`}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient('menu');
 }
 async function startGame(){
@@ -892,7 +931,7 @@ function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;retur
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div>${playerCosmeticLine(d.player)}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
