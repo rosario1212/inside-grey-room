@@ -1,0 +1,23 @@
+Inside Grey Room — pack d’assets post-v11.5
+
+Contenu : uniquement les nouvelles images / images corrigées à ajouter ou remplacer dans l’application.
+
+Fichiers inclus :
+009_le_sujet_17.png
+010_le_bruit_des_murs.png
+011_36_heures.png
+012_fideles.png
+013_ligne_de_mire.png
+014_sous_secret.png
+015_avant_la_mort.png
+016_le_dernier_etage.png
+017_le_prix_du_silence.png
+018_les_assiettes_vides.png
+019_le_grand_bal.png
+020_l_apotheose.png
+
+Usage recommandé :
+- ajouter/remplacer uniquement ces fichiers dans la nouvelle version de l’application
+- ne pas réimporter les anciens scénarios 001 à 008
+- le scénario 013 correspond à la version plus réaliste finale
+- le scénario 018 correspond à la version finale avec 9 assiettes
