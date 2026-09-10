@@ -1,4 +1,4 @@
-const VERSION = 'v11-10-playtest';
+const VERSION = 'v11-11-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -185,10 +185,12 @@ function frenchNarrationVoice(){
  const fr=voices.filter(x=>/^fr(?:-|_)/i.test(x.lang)||/^fr$/i.test(x.lang));
  const score=v=>{
   const n=(v.name||'').toLowerCase(),l=(v.lang||'').toLowerCase();let s=0;
-  if(/premium|enhanced|amélie|amelie|audrey|thomas|jacques|nicolas|henri/.test(n))s+=9;
-  if(v.localService)s+=3;
-  if(l==='fr-fr')s+=4;else if(l==='fr-ch')s+=3;else if(l.startsWith('fr'))s+=2;
-  if(/compact|eloquence/.test(n))s-=2;
+  // Prefer Apple's higher quality installed voices first. A natural voice matters more than a deliberately low pitch.
+  if(/premium|enhanced|amélie|amelie|audrey|thomas|nicolas|jacques|henri/.test(n))s+=14;
+  if(/siri/.test(n))s+=10;
+  if(v.localService)s+=4;
+  if(l==='fr-fr')s+=5;else if(l==='fr-ch')s+=4;else if(l.startsWith('fr'))s+=2;
+  if(/compact|eloquence/.test(n))s-=6;
   return s;
  };
  return fr.sort((a,b)=>score(b)-score(a))[0]||null;
@@ -196,8 +198,9 @@ function frenchNarrationVoice(){
 function policeBriefingChunks(text){
  const cleaned=String(text||'').replace(/\s+/g,' ').trim();
  if(!cleaned)return[];
+ // Keep sentences intact so the system voice can preserve its own prosody. Only tiny tempo variations remain.
  const chunks=cleaned.match(/[^.!?]+[.!?]?/g)?.map(x=>x.trim()).filter(Boolean)||[cleaned];
- return chunks.map((t,i)=>({text:t,rate:i===0?.84:(i%3===1?.91:i%3===2?.87:.89),pitch:i===0?.78:(i%2?.84:.81)}));
+ return chunks.map((t,i)=>({text:t,rate:i===0?.93:(i%3===1?.96:i%3===2?.94:.95),pitch:.98,pause:i===0?210:150}));
 }
 function speakCanonicalBriefing(text,onDone){
  if(!NARRATION.enabled||!SOUND.enabled||!('speechSynthesis'in window)){onDone?.();return}
@@ -214,7 +217,7 @@ function speakCanonicalBriefing(text,onDone){
     const c=chunks[index++],u=new SpeechSynthesisUtterance(c.text);
     u.lang=voice?.lang||'fr-FR';u.rate=c.rate;u.pitch=c.pitch;u.volume=Math.max(.42,Math.min(1,SOUND.master));if(voice)u.voice=voice;
     u.onstart=()=>{started=true;NARRATION.speaking=true;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}};
-    u.onend=()=>setTimeout(next,index===1?150:95);
+    u.onend=()=>setTimeout(next,c.pause||150);
     u.onerror=()=>{if(attempt<2){runId+=1;setTimeout(speak,140)}else finish()};
     synth.speak(u);
     setTimeout(()=>{try{synth.resume?.()}catch{}},65);
@@ -769,19 +772,34 @@ function phaseCanAdvance(){
 }
 function hostPhaseControls(){
  if(!phaseCanAdvance())return'';
- return `<button class="phase-next-btn" onclick="advancePhaseNow()">Terminer l’étape →</button>`;
+ return `<button class="phase-next-btn" id="phaseNextBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`;
 }
 function liveSessionControls(){
  if(!STATE.room)return'';
- return `<div class="live-session-controls"><button class="live-exit-btn" onclick="confirmLeaveGame()">✕ Quitter</button>${phaseCanAdvance()?`<button class="live-advance-btn" onclick="advancePhaseNow()">Terminer l’étape →</button>`:''}</div>`;
+ return `<div class="live-session-controls"><button class="live-exit-btn" onclick="confirmLeaveGame(event)">✕ Quitter</button>${phaseCanAdvance()?`<button class="live-advance-btn" id="liveAdvanceBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`:''}</div>`;
 }
-async function advancePhaseNow(){
- if(!phaseCanAdvance())return;
+let ADVANCE_BUSY=false;
+async function advancePhaseNow(ev){
+ try{ev?.preventDefault?.();ev?.stopPropagation?.()}catch{}
+ if(!phaseCanAdvance()||ADVANCE_BUSY)return;
  const ph=phaseLabel(STATE.sync?.room?.phase);
- if(!confirm(`Terminer « ${ph} » et passer immédiatement à l’étape suivante ?`))return;
- try{if(STATE.sync?.room?.phase==='briefing')cancelBriefingVoice();await rpc('igr_v4_advance_phase',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true)}catch(e){console.error(e);toast('Impossible de terminer cette étape.')}
+ if(!confirm(`Passer maintenant à l’étape suivante depuis « ${ph} » ?`))return;
+ ADVANCE_BUSY=true;
+ const buttons=[byId('phaseNextBtn'),byId('liveAdvanceBtn')].filter(Boolean);
+ buttons.forEach(b=>{b.disabled=true;b.setAttribute('aria-busy','true');b.textContent='Passage…'});
+ try{
+  if(STATE.sync?.room?.phase==='briefing')cancelBriefingVoice();
+  const before=STATE.sync?.room?.phase;
+  const out=await rpc('igr_v4_advance_phase',{p_code:STATE.room,p_host_token:STATE.hostToken});
+  await syncNow(true);
+  const after=STATE.sync?.room?.phase;
+  if(before===after&&after!=='reveal')toast('Le serveur n’a pas encore changé d’étape. Réessaie dans un instant.');
+  else if(out?.phase||after)toast(`Étape suivante : ${phaseLabel(out?.phase||after)}.`);
+ }catch(e){console.error(e);toast('Impossible de passer à l’étape suivante.')}
+ finally{ADVANCE_BUSY=false}
 }
-function confirmLeaveGame(){
+function confirmLeaveGame(ev){
+ try{ev?.preventDefault?.();ev?.stopPropagation?.()}catch{}
  if(confirm('Quitter cette partie et retourner à l’accueil ?'))leaveRoom();
 }
 function canInvestigationChannel(role){return['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(role)}
@@ -840,7 +858,7 @@ function phaseInstruction(role,ph,target){
  }
  if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(role)?`<p>Réponds aux trois questions courtes. Le serveur choisira ensuite seul une trame canonique adaptée.</p>`:`<p>Le débrief est privé à l’enquête. Aucune action de ta part n’est requise.</p>`;
  if(activeAnnex)return roleActive?`<p>Fenêtre active pour ${h(phaseLabel(ph).toLowerCase())}. Respecte le temps commun affiché.</p>`:`<p>Cette fenêtre ne concerne pas directement ton rôle. Prépare la suite sans accéder aux informations réservées.</p>`;
- if(ph==='trame'){const e=latestEvent('trame');return`<p>Le MJ vient de publier automatiquement une trame canonique.</p>${e?`<div class="trame-focus"><b>${h(e.payload?.title||'TRAME')}</b><span>${h(e.payload?.text||'')}</span></div>`:''}`}
+ if(ph==='trame'){if(!canInvestigationChannel(role))return`<p>Le MJ transmet un nouvel élément canonique au camp d’enquête. Prépare la suite sans consulter son contenu.</p>`;const e=latestEvent('trame');return`<p>Le MJ vient de transmettre automatiquement une trame canonique au camp d’enquête.</p>${e?`<div class="trame-focus"><b>${h(e.payload?.title||'TRAME')}</b><span>${h(e.payload?.text||'')}</span></div>`:''}`}
  if(ph==='closed')return`<p><b>Plus aucune trame, expertise, Breaking News ou action de terrain.</b> L’enquête est définitivement close.</p>`;
  if(ph==='provisional_orals')return renderOralStatus();
  if(ph==='provisional_lock')return role==='enqueteur'?`<p>Attribue à chaque suspect un degré provisoire. Ces accusations déterminent qui dispose d’une dernière défense.</p>`:`<p>L’Enquêteur verrouille les accusations provisoires. Elles seront suivies des défenses.</p>`;
@@ -921,7 +939,7 @@ function renderChannelTab(){
 }
 function renderMessages(channel){return (STATE.sync.events||[]).filter(e=>e.event_type==='message'&&e.payload?.channel===channel).slice(-12).map(e=>`<div class="msg"><b>${h(e.payload?.author||'')}</b>${e.payload?.to?` → ${h(e.payload.to)}`:''}<span>${h(e.payload?.text||'')}</span></div>`).join('')||'<div class="empty-state">Aucun message.</div>'}
 async function sendMessage(channel){const input=byId(channel==='investigation'?'invMsg':'privateMsg'),text=(input?.value||'').trim();if(!text)return;const target=channel==='private'?byId('privateTarget')?.value:null;try{await rpc('igr_v4_send_message',{p_code:STATE.room,p_player_token:STATE.token,p_channel:channel,p_target:target||null,p_text:text});if(input)input.value='';await syncNow(true)}catch(e){console.error(e);toast('Message non autorisé dans cette phase ou pour ce rôle.')}}
-function renderTimelineTab(){const events=STATE.sync.events||[];return `<div class="timeline timeline-v11">${events.slice().reverse().map(e=>`<div class="event ${e.event_type==='trame'?'trame':e.event_type==='breaking_news'?'news':e.event_type==='reveal'?'urgent':''}"><div class="event-head">${h(e.payload?.title||e.event_type)} · ${clock(e.created_at)}</div><div class="event-body">${h(e.payload?.text||e.payload?.summary||'')}</div></div>`).join('')||'<div class="empty-state">Le fil se remplira pendant la partie.</div>'}</div>`}
+function renderTimelineTab(){const role=STATE.sync?.player?.public_role||STATE.role;const events=(STATE.sync.events||[]).filter(e=>e.event_type!=='trame'||canInvestigationChannel(role));return `<div class="timeline timeline-v11">${events.slice().reverse().map(e=>`<div class="event ${e.event_type==='trame'?'trame':e.event_type==='breaking_news'?'news':e.event_type==='reveal'?'urgent':''}"><div class="event-head">${h(e.payload?.title||e.event_type)} · ${clock(e.created_at)}</div><div class="event-body">${h(e.payload?.text||e.payload?.summary||'')}</div></div>`).join('')||'<div class="empty-state">Le fil se remplira pendant la partie.</div>'}</div>`}
 function clock(iso){try{return new Date(iso).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}catch{return'--:--'}}
 
 /* --- WebRTC: direct live stream, no recording, no replay --- */
