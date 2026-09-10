@@ -174,18 +174,26 @@ button:focus-visible,.tab:focus-visible,.pill-btn:focus-visible,.home-action:foc
 .intro-enter:active{transform:translateX(-50%) scale(.985);border-color:#fff}
 .intro-enter:disabled{opacity:.55;cursor:default}
 .intro-gate.opening .intro-art{
-  transform:scale(1.055);
-  filter:brightness(.98) contrast(1.03) saturate(.64);
+  transform:scale(1.235) translate(-1.6%,-1.2%);
+  filter:brightness(1.06) contrast(1.02) saturate(.58);
+  transition:transform 1.06s cubic-bezier(.12,.86,.18,1),filter .72s ease,opacity .26s ease;
 }
+
 .intro-gate.opening .intro-light-slit{
   opacity:1;
-  transform:translateX(-50%) scaleX(2.5);
-  filter:blur(10px);
+  transform:translateX(-50%) scaleX(5.8);
+  filter:blur(12px);
 }
+
 .intro-gate.opening .intro-pulse{
   opacity:1;
   transform:translate(-50%,-50%) scale(1.42);
 }
+
+.intro-whiteout{position:absolute;inset:0;z-index:4;background:#fff;opacity:0;pointer-events:none;mix-blend-mode:screen}
+.intro-gate.opening .intro-whiteout{animation:igrDoorFlash 1.02s cubic-bezier(.18,.75,.18,1) forwards}
+@keyframes igrDoorFlash{0%,33%{opacity:0}51%{opacity:.96}65%{opacity:.42}82%{opacity:.08}100%{opacity:0}}
+
 .intro-gate.opening .intro-enter{
   opacity:0;pointer-events:none;
   transform:translateX(-50%) translateY(12px);
@@ -440,3 +448,24 @@ body.home-locked{
 .channel-v11{display:grid;gap:14px}.channel-box{padding:15px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:rgba(255,255,255,.02)}.message-list{max-height:340px;overflow:auto;display:grid;gap:8px;margin:10px 0}.msg{display:grid;grid-template-columns:auto 1fr;gap:5px 8px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.035);font-size:12px}.msg b{color:#dce0e3}.msg span{grid-column:1/-1;color:#9ba5af;line-height:1.45}.message-compose{display:grid;grid-template-columns:1fr auto;gap:7px}.message-compose input{min-width:0}.message-compose button{border:0;border-radius:13px;padding:0 13px;background:#edf0f2;color:#101419;font-weight:700}.empty-state{text-align:center;padding:28px 12px;color:#75808a}.timeline-v11{max-height:65svh;overflow:auto}
 .video-panel{display:grid;gap:13px}.video-policy{display:grid;gap:4px;padding:13px;border:1px solid rgba(255,255,255,.07);border-radius:15px}.video-policy span{color:#87929c;font-size:12px;line-height:1.45}.video-panel video{width:100%;max-height:60svh;aspect-ratio:9/16;object-fit:cover;background:#000;border-radius:20px;border:1px solid rgba(255,255,255,.1)}
 @media(max-width:600px){.phase-strip{grid-template-columns:1fr auto}.server-authority{display:none}.phase-clock{grid-column:2;grid-row:1}.phase-strip strong{font-size:12px}.level-row{grid-template-columns:1fr}.responsibility{display:grid}.game-panel-v11{padding:14px}.private-card-v11 h2{font-size:34px}.choice-row{padding:13px}.lobby-status{display:grid}.speaker-card strong{font-size:24px}}
+
+
+/* --- V11.5 Playtest polish --- */
+:root{--keyboard-height:0px}
+body.keyboard-open .app{padding-bottom:calc(var(--keyboard-height) + env(safe-area-inset-bottom,0px) + 28px)}
+body.field-focused .field:focus-within{position:relative;z-index:8}
+.field input,.field textarea,.field select{scroll-margin-top:22vh;scroll-margin-bottom:calc(var(--keyboard-height) + 24px)}
+@media(max-width:700px){
+  body.keyboard-open .page{padding-bottom:calc(var(--keyboard-height) + 24px)}
+  body.keyboard-open .confirm-panel-v10-13{margin-bottom:calc(var(--keyboard-height) + 16px)}
+}
+.lobby-head>div{min-width:0;max-width:650px}
+.lobby-scenario-summary{margin:8px 0 0;color:#aeb7c0;line-height:1.55;font-size:13px;max-width:58ch}
+.player-ident{display:flex;align-items:center;gap:10px;min-width:0}.player-ident b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.avatar{display:inline-grid;place-items:center;flex:0 0 auto;overflow:hidden;border-radius:50%;background:#11171e;border:1px solid rgba(255,255,255,.13);color:#cfd5da;font:800 10px 'IBM Plex Mono',monospace;letter-spacing:.04em}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}.avatar-small{width:34px;height:34px}.avatar-game{width:42px;height:42px}.avatar-profile{width:104px;height:104px;font-size:24px;border-color:rgba(255,255,255,.22)}
+.game-player-ident{display:flex;align-items:center;gap:10px;margin-top:9px}.game-player-ident .role-chip{margin-top:0}
+.profile-panel{max-width:680px;margin:0 auto;display:grid;gap:16px}.profile-avatar-wrap{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.07)}.profile-avatar-wrap h2{margin:0 0 5px;font-size:28px}.profile-avatar-wrap p{margin:0;color:#8d98a2;font-size:13px;line-height:1.55}.profile-photo-actions{display:flex;gap:9px;flex-wrap:wrap}.profile-photo-actions label{display:inline-flex;align-items:center;justify-content:center}.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.profile-stats>div{padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);display:grid;gap:4px}.profile-stats b{font-size:22px}.profile-stats span{font:600 8px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75808a}
+.briefing-page{min-height:70dvh;display:grid;place-items:center}.briefing-card{width:min(100%,720px);padding:clamp(24px,5vw,46px);border:1px solid rgba(255,255,255,.1);border-radius:28px;background:radial-gradient(circle at 50% 0,rgba(255,255,255,.045),transparent 45%),linear-gradient(180deg,rgba(12,16,21,.98),rgba(4,7,10,.99));box-shadow:0 30px 100px rgba(0,0,0,.55)}.briefing-eyebrow{font:700 9px 'IBM Plex Mono',monospace;letter-spacing:.18em;color:#7f8993}.briefing-card h1{margin:10px 0 0;font-size:clamp(38px,9vw,72px);line-height:.92;letter-spacing:-.065em}.briefing-line{height:1px;background:linear-gradient(90deg,rgba(255,255,255,.5),transparent);margin:24px 0}.briefing-card p{font-size:clamp(15px,2.6vw,19px);line-height:1.72;color:#d8dde1;margin:0}.briefing-meta{display:flex;justify-content:space-between;align-items:center;margin:28px 0 8px;padding-top:15px;border-top:1px solid rgba(255,255,255,.07);font:700 9px 'IBM Plex Mono',monospace;letter-spacing:.13em;color:#7e8993}.briefing-meta b{font-size:20px;color:#f2f4f6;letter-spacing:.04em}.briefing-card>small{display:block;color:#68737d;font-size:11px;line-height:1.5}
+.speaker-card .avatar{margin-right:7px;vertical-align:middle}
+@media(max-width:600px){.profile-avatar-wrap{grid-template-columns:1fr;text-align:center;justify-items:center}.profile-stats{grid-template-columns:1fr}.lobby-head{display:grid}.lobby-head .btn{justify-self:start}.briefing-page{min-height:64dvh}.briefing-card{border-radius:22px}.intro-gate.opening .intro-art{transform:scale(1.29) translate(-2.2%,-1.5%)}}
