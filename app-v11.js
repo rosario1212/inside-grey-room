@@ -166,7 +166,57 @@ const VIDEO={pcs:new Map(),localStream:null,remoteStream:null,lastSignalId:0,pol
 const INTRO={active:true,playing:false,done:false,lastActivation:0};
 const AVATARS={map:new Map(),sig:''};
 const BRIEFING={spokenKey:null,timer:null,scoreStarted:false};
-const NARRATION={enabled:pref('igr_v11_narration',true)};
+const NARRATION={enabled:pref('igr_v11_narration',true),primed:false,speaking:false,retryTimer:null};
+
+function primeNarrationFromGesture(){
+ if(!NARRATION.enabled||NARRATION.primed||STATE.view==='briefing'||!('speechSynthesis'in window))return;
+ try{
+  const synth=window.speechSynthesis;
+  synth.resume?.();
+  const u=new SpeechSynthesisUtterance('\u00a0');
+  u.lang='fr-FR';u.volume=0;u.rate=10;u.pitch=1;
+  u.onend=u.onerror=()=>{NARRATION.primed=true};
+  synth.speak(u);NARRATION.primed=true;
+ }catch(e){console.warn('narration prime',e)}
+}
+function frenchNarrationVoice(){
+ if(!('speechSynthesis'in window))return null;
+ const voices=window.speechSynthesis.getVoices?.()||[];
+ return voices.find(x=>/^fr/i.test(x.lang)&&/premium|enhanced|thomas|audrey|daniel|amelie|aurelie/i.test(x.name))||voices.find(x=>/^fr/i.test(x.lang))||null;
+}
+function speakCanonicalBriefing(text,onDone){
+ if(!NARRATION.enabled||!SOUND.enabled||!('speechSynthesis'in window)){onDone?.();return}
+ const synth=window.speechSynthesis;let completed=false,attempt=0;
+ const finish=()=>{if(completed)return;completed=true;NARRATION.speaking=false;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}onDone?.()};
+ const speak=()=>{
+  if(completed)return;attempt+=1;
+  try{
+   synth.cancel();synth.resume?.();
+   const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.9;u.pitch=.82;u.volume=Math.max(.35,Math.min(1,SOUND.master));
+   const v=frenchNarrationVoice();if(v)u.voice=v;
+   let started=false;
+   u.onstart=()=>{started=true;NARRATION.speaking=true;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}};
+   u.onend=finish;
+   u.onerror=()=>{if(attempt<2){setTimeout(speak,120)}else finish()};
+   synth.speak(u);
+   // WebKit/iOS can leave the synthesis queue suspended after a PWA/audio transition.
+   setTimeout(()=>{try{synth.resume?.()}catch{}},70);
+   NARRATION.retryTimer=setTimeout(()=>{
+    NARRATION.retryTimer=null;
+    if(completed||started||synth.speaking)return;
+    if(attempt<2)speak();else finish();
+   },900);
+  }catch(e){console.warn('briefing voice',e);if(attempt<2)setTimeout(speak,120);else finish()}
+ };
+ const voices=synth.getVoices?.()||[];
+ if(voices.length)speak();
+ else{
+  let launched=false;
+  const launch=()=>{if(launched||completed)return;launched=true;try{synth.removeEventListener?.('voiceschanged',launch)}catch{}speak()};
+  try{synth.addEventListener?.('voiceschanged',launch,{once:true})}catch{}
+  setTimeout(launch,260);
+ }
+}
 
 function setIntroHint(text){
  const hint=byId('introHint');
@@ -616,7 +666,8 @@ async function startGame(){
 }
 function cancelBriefingVoice(){
  try{if(BRIEFING.timer)clearTimeout(BRIEFING.timer)}catch{}
- BRIEFING.timer=null;BRIEFING.scoreStarted=false;
+ try{if(NARRATION.retryTimer)clearTimeout(NARRATION.retryTimer)}catch{}
+ BRIEFING.timer=null;BRIEFING.scoreStarted=false;NARRATION.retryTimer=null;NARRATION.speaking=false;
  try{speechSynthesis?.cancel?.()}catch{}BRIEFING.spokenKey=null
 }
 function startBriefingScenarioScore(){
@@ -632,7 +683,7 @@ function runCanonicalBriefing(){
  BRIEFING.timer=setTimeout(()=>{
    BRIEFING.timer=null;if(STATE.sync?.room?.phase!=='briefing')return;
    if(NARRATION.enabled&&SOUND.enabled&&('speechSynthesis'in window)){
-     try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${sc.title}. ${brief}`);u.lang='fr-FR';u.rate=.9;u.pitch=.82;u.volume=Math.min(1,SOUND.master);const voices=speechSynthesis.getVoices?.()||[];const v=voices.find(x=>/^fr/i.test(x.lang)&&/premium|enhanced|thomas|audrey|daniel/i.test(x.name))||voices.find(x=>/^fr/i.test(x.lang));if(v)u.voice=v;u.onend=()=>startBriefingScenarioScore();u.onerror=()=>startBriefingScenarioScore();speechSynthesis.speak(u);return}catch(e){console.warn('briefing voice',e)}
+     speakCanonicalBriefing(`${sc.title}. ${brief}`,()=>startBriefingScenarioScore());return;
    }
    startBriefingScenarioScore();
  },620);
@@ -669,16 +720,37 @@ async function ackRole(){
 }
 function setTab(t){STATE.tab=t;saveSession();renderGame()}
 function phaseLabel(ph){return({briefing:'BRIEFING DU DOSSIER',role_reading:'LECTURE DES CARTES',initial_debrief:'DÉBRIEF INITIAL',interrogation_select:'CHOIX DE L’INTERROGATOIRE',interrogation:'INTERROGATOIRE',cycle_debrief:'DÉBRIEF DU CYCLE',annex_inspecteur:'ENTRETIEN INSPECTEUR',annex_procureur:'ENTRETIEN PROCUREUR',annex_juge:'ENTRETIEN JUGE',annex_temoin:'FENÊTRE TÉMOINS',annex_journaliste:'ENTRETIEN JOURNALISTE',annex_expert:'ENTRETIEN EXPERT',trame:'TRAME DU MJ',closed:'ENQUÊTE CLOSE',provisional_orals:'CONCLUSIONS PROVISOIRES',provisional_lock:'ACCUSATIONS PROVISOIRES',defense:'DERNIÈRES DÉFENSES',final_debrief:'DERNIER DÉBRIEF',locking:'VERROUILLAGE FINAL',reveal:'RÉVÉLATION'})[ph]||ph?.toUpperCase()||'PARTIE'}
-function phaseSeconds(){const end=STATE.sync?.room?.phase_ends_at;if(!end)return null;return Math.max(0,Math.ceil((new Date(end).getTime()-Date.now())/1000))}
+function timerIsPaused(){
+ const room=STATE.sync?.room,st=room?.state;if(!room||!st?.timer_paused)return false;
+ if(st.timer_paused_phase&&st.timer_paused_phase!==room.phase)return false;
+ if(st.timer_paused_started_at&&room.phase_started_at){
+  const a=new Date(st.timer_paused_started_at).getTime(),b=new Date(room.phase_started_at).getTime();if(Number.isFinite(a)&&Number.isFinite(b)&&a!==b)return false;
+ }
+ return true;
+}
+function phaseSeconds(){
+ const room=STATE.sync?.room;if(!room)return null;
+ if(timerIsPaused())return Math.max(0,+room.state?.timer_remaining_seconds||0);
+ const end=room.phase_ends_at;if(!end)return null;return Math.max(0,Math.ceil((new Date(end).getTime()-Date.now())/1000));
+}
 function fmtSeconds(s){if(s==null)return'—';return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
 function updatePhaseClock(){const el=byId('phaseClock');if(el)el.textContent=fmtSeconds(phaseSeconds())}
+function phaseTimerControl(){
+ const room=STATE.sync?.room,paused=timerIsPaused();
+ if(!STATE.hostToken||!room||(!room.phase_ends_at&&!paused))return'';
+ return `<button class="phase-timer-toggle ${paused?'paused':''}" onclick="togglePhaseTimer(${paused?'false':'true'})">${paused?'▶ Reprendre':'Ⅱ Pause'}</button>`;
+}
+async function togglePhaseTimer(pause){
+ if(!STATE.hostToken)return;
+ try{await rpc('igr_v4_timer_toggle',{p_code:STATE.room,p_host_token:STATE.hostToken,p_pause:!!pause});await syncNow(true)}catch(e){console.error(e);toast('Impossible de modifier ce chrono.')}
+}
 function canInvestigationChannel(role){return['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(role)}
 function canVideo(role){return['enqueteur','analyste','procureur','juge','inspecteur'].includes(role)}
 function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;return [{id:'card',label:'Ma carte'},{id:'investigation',label:'Enquête'},...(canInvestigationChannel(role)||role==='journaliste'||role==='enqueteur'||role==='suspect'||role==='temoin'||role==='maitre'?[{id:'channel',label:role==='journaliste'?'Messages':'Canal'}]:[]),...(canVideo(role)?[{id:'video',label:'Flux'}]:[]),{id:'timeline',label:'Fil'},{id:'rules',label:'Règles'}]}
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div>${phaseTimerControl()}</div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section></main>`);
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
@@ -816,7 +888,17 @@ function clock(iso){try{return new Date(iso).toLocaleTimeString('fr-FR',{hour:'2
 function videoState(){return STATE.sync?.room?.state||{}}
 async function ensureLocalVideo(){
  if(VIDEO.localStream)return VIDEO.localStream;
- VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:1280}},audio:true});
+ const base={width:{ideal:720},height:{ideal:1280}};
+ try{
+  VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:{...base,facingMode:{exact:'environment'}},audio:true});
+ }catch(primaryError){
+  try{
+   VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:{...base,facingMode:{ideal:'environment'}},audio:true});
+  }catch(fallbackError){
+   console.warn('Rear camera unavailable, using default camera.',primaryError,fallbackError);
+   VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:base,audio:true});
+  }
+ }
  return VIDEO.localStream;
 }
 function closePeer(id){const pc=VIDEO.pcs.get(id);if(pc){try{pc.close()}catch{}VIDEO.pcs.delete(id)}}
@@ -1328,6 +1410,7 @@ setupKeyboardGuard();restore().then(ok=>{if(ok)routeFromServer();else renderHome
 setInterval(()=>{if(STATE.view==='game'||STATE.view==='briefing')updatePhaseClock()},1000);
 let LAST_AUDIO_GESTURE=0;
 function unlockAudioFromGesture(){
+ primeNarrationFromGesture();
  if(!SOUND.enabled)return;
  const now=performance.now();if(now-LAST_AUDIO_GESTURE<90)return;LAST_AUDIO_GESTURE=now;
  initAudio();if(!SOUND.ctx)return;
