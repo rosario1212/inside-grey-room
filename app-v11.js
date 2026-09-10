@@ -1,4 +1,4 @@
-const VERSION = 'v11-7-playtest';
+const VERSION = 'v11-9-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -182,31 +182,50 @@ function primeNarrationFromGesture(){
 function frenchNarrationVoice(){
  if(!('speechSynthesis'in window))return null;
  const voices=window.speechSynthesis.getVoices?.()||[];
- return voices.find(x=>/^fr/i.test(x.lang)&&/premium|enhanced|thomas|audrey|daniel|amelie|aurelie/i.test(x.name))||voices.find(x=>/^fr/i.test(x.lang))||null;
+ const fr=voices.filter(x=>/^fr(?:-|_)/i.test(x.lang)||/^fr$/i.test(x.lang));
+ const score=v=>{
+  const n=(v.name||'').toLowerCase(),l=(v.lang||'').toLowerCase();let s=0;
+  if(/premium|enhanced|amélie|amelie|audrey|thomas|jacques|nicolas|henri/.test(n))s+=9;
+  if(v.localService)s+=3;
+  if(l==='fr-fr')s+=4;else if(l==='fr-ch')s+=3;else if(l.startsWith('fr'))s+=2;
+  if(/compact|eloquence/.test(n))s-=2;
+  return s;
+ };
+ return fr.sort((a,b)=>score(b)-score(a))[0]||null;
+}
+function policeBriefingChunks(text){
+ const cleaned=String(text||'').replace(/\s+/g,' ').trim();
+ if(!cleaned)return[];
+ const chunks=cleaned.match(/[^.!?]+[.!?]?/g)?.map(x=>x.trim()).filter(Boolean)||[cleaned];
+ return chunks.map((t,i)=>({text:t,rate:i===0?.84:(i%3===1?.91:i%3===2?.87:.89),pitch:i===0?.78:(i%2?.84:.81)}));
 }
 function speakCanonicalBriefing(text,onDone){
  if(!NARRATION.enabled||!SOUND.enabled||!('speechSynthesis'in window)){onDone?.();return}
- const synth=window.speechSynthesis;let completed=false,attempt=0;
+ const synth=window.speechSynthesis;let completed=false,attempt=0,runId=0;
  const finish=()=>{if(completed)return;completed=true;NARRATION.speaking=false;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}onDone?.()};
  const speak=()=>{
-  if(completed)return;attempt+=1;
+  if(completed)return;attempt+=1;runId+=1;const myRun=runId;
   try{
    synth.cancel();synth.resume?.();
-   const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.9;u.pitch=.82;u.volume=Math.max(.35,Math.min(1,SOUND.master));
-   const v=frenchNarrationVoice();if(v)u.voice=v;
-   let started=false;
-   u.onstart=()=>{started=true;NARRATION.speaking=true;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}};
-   u.onend=finish;
-   u.onerror=()=>{if(attempt<2){setTimeout(speak,120)}else finish()};
-   synth.speak(u);
-   // WebKit/iOS can leave the synthesis queue suspended after a PWA/audio transition.
-   setTimeout(()=>{try{synth.resume?.()}catch{}},70);
+   const voice=frenchNarrationVoice(),chunks=policeBriefingChunks(text);let index=0,started=false;
+   const next=()=>{
+    if(completed||myRun!==runId)return;
+    if(index>=chunks.length){finish();return}
+    const c=chunks[index++],u=new SpeechSynthesisUtterance(c.text);
+    u.lang=voice?.lang||'fr-FR';u.rate=c.rate;u.pitch=c.pitch;u.volume=Math.max(.42,Math.min(1,SOUND.master));if(voice)u.voice=voice;
+    u.onstart=()=>{started=true;NARRATION.speaking=true;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}};
+    u.onend=()=>setTimeout(next,index===1?150:95);
+    u.onerror=()=>{if(attempt<2){runId+=1;setTimeout(speak,140)}else finish()};
+    synth.speak(u);
+    setTimeout(()=>{try{synth.resume?.()}catch{}},65);
+   };
+   next();
    NARRATION.retryTimer=setTimeout(()=>{
     NARRATION.retryTimer=null;
     if(completed||started||synth.speaking)return;
-    if(attempt<2)speak();else finish();
-   },900);
-  }catch(e){console.warn('briefing voice',e);if(attempt<2)setTimeout(speak,120);else finish()}
+    if(attempt<2){runId+=1;speak()}else finish();
+   },950);
+  }catch(e){console.warn('briefing voice',e);if(attempt<2)setTimeout(speak,140);else finish()}
  };
  const voices=synth.getVoices?.()||[];
  if(voices.length)speak();
@@ -214,7 +233,7 @@ function speakCanonicalBriefing(text,onDone){
   let launched=false;
   const launch=()=>{if(launched||completed)return;launched=true;try{synth.removeEventListener?.('voiceschanged',launch)}catch{}speak()};
   try{synth.addEventListener?.('voiceschanged',launch,{once:true})}catch{}
-  setTimeout(launch,260);
+  setTimeout(launch,280);
  }
 }
 
@@ -683,7 +702,7 @@ function runCanonicalBriefing(){
  BRIEFING.timer=setTimeout(()=>{
    BRIEFING.timer=null;if(STATE.sync?.room?.phase!=='briefing')return;
    if(NARRATION.enabled&&SOUND.enabled&&('speechSynthesis'in window)){
-     speakCanonicalBriefing(`${sc.title}. ${brief}`,()=>startBriefingScenarioScore());return;
+     speakCanonicalBriefing(`Dossier ${sc.id}. ${sc.title}. ${brief}`,()=>startBriefingScenarioScore());return;
    }
    startBriefingScenarioScore();
  },620);
@@ -691,7 +710,7 @@ function runCanonicalBriefing(){
 function renderBriefing(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),briefKey=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey!==briefKey)stopAmbient();
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier entre après la lecture, puis les cartes privées s’ouvrent.</small></div></section></main>`);
+ byId('app').innerHTML=shell(`<main class="page briefing-page"><button class="btn ghost small floating-leave-btn" onclick="confirmLeaveGame()">Quitter</button><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier entre après la lecture, puis les cartes privées s’ouvrent.</small></div></section></main>`);
  runCanonicalBriefing();updatePhaseClock();
 }
 
@@ -712,7 +731,7 @@ function privateCardHtml(){
 function renderRole(){
  const d=STATE.sync;if(!d)return;
  const me=(d.players||[]).find(x=>x.id===d.player.id),ready=!!me?.ready;
- byId('app').innerHTML=shell(`<main class="page"><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><div class="role-page-actions"><button class="btn ghost small" onclick="confirmLeaveGame()">Quitter</button>${STATE.hostToken&&phaseCanAdvance()?`<button class="btn ghost small" onclick="advancePhaseNow()">Étape suivante →</button>`:''}</div><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient(currentScenario().sound);
 }
 async function ackRole(){
@@ -744,13 +763,29 @@ async function togglePhaseTimer(pause){
  if(!STATE.hostToken)return;
  try{await rpc('igr_v4_timer_toggle',{p_code:STATE.room,p_host_token:STATE.hostToken,p_pause:!!pause});await syncNow(true)}catch(e){console.error(e);toast('Impossible de modifier ce chrono.')}
 }
+function phaseCanAdvance(){
+ const ph=STATE.sync?.room?.phase;
+ return ['briefing','role_reading','initial_debrief','interrogation','cycle_debrief','annex_inspecteur','annex_procureur','annex_juge','annex_temoin','annex_journaliste','annex_expert','trame','closed','provisional_orals','defense','final_debrief'].includes(ph);
+}
+function hostPhaseControls(){
+ if(!STATE.hostToken||!phaseCanAdvance())return'';
+ return `<button class="phase-next-btn" onclick="advancePhaseNow()">Étape suivante →</button>`;
+}
+async function advancePhaseNow(){
+ if(!STATE.hostToken||!phaseCanAdvance())return;
+ if(!confirm('Passer immédiatement à l’étape suivante ?'))return;
+ try{if(STATE.sync?.room?.phase==='briefing')cancelBriefingVoice();await rpc('igr_v4_advance_phase',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true)}catch(e){console.error(e);toast('Cette étape doit être terminée par une action de joueur.')}
+}
+function confirmLeaveGame(){
+ if(confirm('Quitter cette partie et retourner à l’accueil ?'))leaveRoom();
+}
 function canInvestigationChannel(role){return['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(role)}
 function canVideo(role){return['enqueteur','analyste','procureur','juge','inspecteur'].includes(role)}
 function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;return [{id:'card',label:'Ma carte'},{id:'investigation',label:'Enquête'},...(canInvestigationChannel(role)||role==='journaliste'||role==='enqueteur'||role==='suspect'||role==='temoin'||role==='maitre'?[{id:'channel',label:role==='journaliste'?'Messages':'Canal'}]:[]),...(canVideo(role)?[{id:'video',label:'Flux'}]:[]),{id:'timeline',label:'Fil'},{id:'rules',label:'Règles'}]}
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div>${phaseTimerControl()}</div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div><button class="btn ghost small game-leave-btn" onclick="confirmLeaveGame()">Quitter</button></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}${hostPhaseControls()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section></main>`);
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
