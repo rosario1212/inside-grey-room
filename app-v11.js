@@ -1,4 +1,4 @@
-const VERSION = 'v11-9-playtest';
+const VERSION = 'v11-10-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -710,7 +710,7 @@ function runCanonicalBriefing(){
 function renderBriefing(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),briefKey=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey!==briefKey)stopAmbient();
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page briefing-page"><button class="btn ghost small floating-leave-btn" onclick="confirmLeaveGame()">Quitter</button><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier entre après la lecture, puis les cartes privées s’ouvrent.</small></div></section></main>`);
+ byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier entre après la lecture, puis les cartes privées s’ouvrent.</small></div></section>${liveSessionControls()}</main>`);
  runCanonicalBriefing();updatePhaseClock();
 }
 
@@ -731,7 +731,7 @@ function privateCardHtml(){
 function renderRole(){
  const d=STATE.sync;if(!d)return;
  const me=(d.players||[]).find(x=>x.id===d.player.id),ready=!!me?.ready;
- byId('app').innerHTML=shell(`<main class="page"><div class="role-page-actions"><button class="btn ghost small" onclick="confirmLeaveGame()">Quitter</button>${STATE.hostToken&&phaseCanAdvance()?`<button class="btn ghost small" onclick="advancePhaseNow()">Étape suivante →</button>`:''}</div><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section>${liveSessionControls()}</main>`);
  if(SOUND.enabled)ensureAmbient(currentScenario().sound);
 }
 async function ackRole(){
@@ -764,17 +764,22 @@ async function togglePhaseTimer(pause){
  try{await rpc('igr_v4_timer_toggle',{p_code:STATE.room,p_host_token:STATE.hostToken,p_pause:!!pause});await syncNow(true)}catch(e){console.error(e);toast('Impossible de modifier ce chrono.')}
 }
 function phaseCanAdvance(){
- const ph=STATE.sync?.room?.phase;
- return ['briefing','role_reading','initial_debrief','interrogation','cycle_debrief','annex_inspecteur','annex_procureur','annex_juge','annex_temoin','annex_journaliste','annex_expert','trame','closed','provisional_orals','defense','final_debrief'].includes(ph);
+ const room=STATE.sync?.room;
+ return !!(STATE.hostToken&&room&&room.status==='playing'&&room.phase&&room.phase!=='reveal');
 }
 function hostPhaseControls(){
- if(!STATE.hostToken||!phaseCanAdvance())return'';
- return `<button class="phase-next-btn" onclick="advancePhaseNow()">Étape suivante →</button>`;
+ if(!phaseCanAdvance())return'';
+ return `<button class="phase-next-btn" onclick="advancePhaseNow()">Terminer l’étape →</button>`;
+}
+function liveSessionControls(){
+ if(!STATE.room)return'';
+ return `<div class="live-session-controls"><button class="live-exit-btn" onclick="confirmLeaveGame()">✕ Quitter</button>${phaseCanAdvance()?`<button class="live-advance-btn" onclick="advancePhaseNow()">Terminer l’étape →</button>`:''}</div>`;
 }
 async function advancePhaseNow(){
- if(!STATE.hostToken||!phaseCanAdvance())return;
- if(!confirm('Passer immédiatement à l’étape suivante ?'))return;
- try{if(STATE.sync?.room?.phase==='briefing')cancelBriefingVoice();await rpc('igr_v4_advance_phase',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true)}catch(e){console.error(e);toast('Cette étape doit être terminée par une action de joueur.')}
+ if(!phaseCanAdvance())return;
+ const ph=phaseLabel(STATE.sync?.room?.phase);
+ if(!confirm(`Terminer « ${ph} » et passer immédiatement à l’étape suivante ?`))return;
+ try{if(STATE.sync?.room?.phase==='briefing')cancelBriefingVoice();await rpc('igr_v4_advance_phase',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true)}catch(e){console.error(e);toast('Impossible de terminer cette étape.')}
 }
 function confirmLeaveGame(){
  if(confirm('Quitter cette partie et retourner à l’accueil ?'))leaveRoom();
@@ -785,7 +790,7 @@ function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;retur
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div><button class="btn ghost small game-leave-btn" onclick="confirmLeaveGame()">Quitter</button></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}${hostPhaseControls()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
