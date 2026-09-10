@@ -1,4 +1,4 @@
-const VERSION = 'v11-11-playtest';
+const VERSION = 'v11-12-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -161,7 +161,7 @@ const CANONICAL_BRIEFINGS = Object.freeze({...PUBLIC_LOBBY_SUMMARIES});
 function publicScenarioSummary(id){return PUBLIC_LOBBY_SUMMARIES[id]||scenario(id).short}
 function canonicalBriefingText(id){return CANONICAL_BRIEFINGS[id]||publicScenarioSummary(id)}
 
-const STATE={view:'home',selectedScenario:'001',scenarioId:'001',room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],cycle:0,tab:'card',createListScrollY:0,sync:null,syncSig:'',syncBusy:false,watcher:null,lastEventId:0};
+const STATE={view:'home',selectedScenario:'001',scenarioId:'001',room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],cycle:0,tab:'card',createListScrollY:0,sync:null,syncSig:'',syncBusy:false,watcher:null,lastEventId:0,lastRoleNoticeKey:''};
 const VIDEO={pcs:new Map(),localStream:null,remoteStream:null,lastSignalId:0,poller:null,starting:false,lastViewerReadyAt:0};
 const INTRO={active:true,playing:false,done:false,lastActivation:0};
 const AVATARS={map:new Map(),sig:''};
@@ -195,40 +195,43 @@ function frenchNarrationVoice(){
  };
  return fr.sort((a,b)=>score(b)-score(a))[0]||null;
 }
-function policeBriefingChunks(text){
- const cleaned=String(text||'').replace(/\s+/g,' ').trim();
- if(!cleaned)return[];
- // Keep sentences intact so the system voice can preserve its own prosody. Only tiny tempo variations remain.
- const chunks=cleaned.match(/[^.!?]+[.!?]?/g)?.map(x=>x.trim()).filter(Boolean)||[cleaned];
- return chunks.map((t,i)=>({text:t,rate:i===0?.93:(i%3===1?.96:i%3===2?.94:.95),pitch:.98,pause:i===0?210:150}));
+function naturalBriefingText(text){
+ return String(text||'')
+  .replace(/\s+/g,' ')
+  .replace(/\s*—\s*/g,' — ')
+  .replace(/\.\s+/g,'.  ')
+  .trim();
 }
 function speakCanonicalBriefing(text,onDone){
  if(!NARRATION.enabled||!SOUND.enabled||!('speechSynthesis'in window)){onDone?.();return}
- const synth=window.speechSynthesis;let completed=false,attempt=0,runId=0;
+ const synth=window.speechSynthesis;let completed=false,attempt=0,started=false;
  const finish=()=>{if(completed)return;completed=true;NARRATION.speaking=false;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}onDone?.()};
+ const blocked=()=>{
+  if(completed||started)return;
+  NARRATION.speaking=false;
+  showAudioWakePrompt('Touchez pour écouter le briefing');
+  onDone?.();completed=true;
+ };
  const speak=()=>{
-  if(completed)return;attempt+=1;runId+=1;const myRun=runId;
+  if(completed)return;attempt+=1;started=false;
   try{
    synth.cancel();synth.resume?.();
-   const voice=frenchNarrationVoice(),chunks=policeBriefingChunks(text);let index=0,started=false;
-   const next=()=>{
-    if(completed||myRun!==runId)return;
-    if(index>=chunks.length){finish();return}
-    const c=chunks[index++],u=new SpeechSynthesisUtterance(c.text);
-    u.lang=voice?.lang||'fr-FR';u.rate=c.rate;u.pitch=c.pitch;u.volume=Math.max(.42,Math.min(1,SOUND.master));if(voice)u.voice=voice;
-    u.onstart=()=>{started=true;NARRATION.speaking=true;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}};
-    u.onend=()=>setTimeout(next,c.pause||150);
-    u.onerror=()=>{if(attempt<2){runId+=1;setTimeout(speak,140)}else finish()};
-    synth.speak(u);
-    setTimeout(()=>{try{synth.resume?.()}catch{}},65);
-   };
-   next();
+   const voice=frenchNarrationVoice();
+   const u=new SpeechSynthesisUtterance(naturalBriefingText(text));
+   u.lang=voice?.lang||'fr-FR';
+   u.rate=.91;u.pitch=1;u.volume=Math.max(.55,Math.min(1,SOUND.master));
+   if(voice)u.voice=voice;
+   u.onstart=()=>{started=true;NARRATION.speaking=true;hideAudioWakePrompt();if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}};
+   u.onend=finish;
+   u.onerror=()=>{if(attempt<2)setTimeout(speak,180);else blocked()};
+   synth.speak(u);
+   setTimeout(()=>{try{synth.resume?.()}catch{}},80);
    NARRATION.retryTimer=setTimeout(()=>{
     NARRATION.retryTimer=null;
     if(completed||started||synth.speaking)return;
-    if(attempt<2){runId+=1;speak()}else finish();
-   },950);
-  }catch(e){console.warn('briefing voice',e);if(attempt<2)setTimeout(speak,140);else finish()}
+    if(attempt<2)speak();else blocked();
+   },1100);
+  }catch(e){console.warn('briefing voice',e);if(attempt<2)setTimeout(speak,180);else blocked()}
  };
  const voices=synth.getVoices?.()||[];
  if(voices.length)speak();
@@ -236,8 +239,29 @@ function speakCanonicalBriefing(text,onDone){
   let launched=false;
   const launch=()=>{if(launched||completed)return;launched=true;try{synth.removeEventListener?.('voiceschanged',launch)}catch{}speak()};
   try{synth.addEventListener?.('voiceschanged',launch,{once:true})}catch{}
-  setTimeout(launch,280);
+  setTimeout(launch,350);
  }
+}
+
+function showAudioWakePrompt(label='Touchez pour réactiver le son'){
+ let el=byId('audioWakePrompt');
+ if(!el){
+  el=document.createElement('button');el.id='audioWakePrompt';el.type='button';el.className='audio-wake-prompt';
+  el.addEventListener('click',activateInGameAudio);
+  document.body.appendChild(el);
+ }
+ el.textContent=label;el.classList.add('show');
+}
+function hideAudioWakePrompt(){byId('audioWakePrompt')?.classList.remove('show')}
+async function activateInGameAudio(){
+ primeNarrationFromGesture();
+ const ok=await wakeAudioFromGesture();
+ if(!ok)return toast('Touchez à nouveau pour activer le son.');
+ hideAudioWakePrompt();
+ if(STATE.sync?.room?.phase==='briefing'){
+  BRIEFING.spokenKey=null;BRIEFING.scoreStarted=false;
+  runCanonicalBriefing(true);
+ }else ensureAmbient(activeSoundPreset());
 }
 
 function setIntroHint(text){
@@ -609,6 +633,7 @@ function previewSound(){
 
 
 async function createRoom(){
+ primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
  const pseudo=(byId('createPseudo')?.value||'').trim();
  if(!pseudo)return toast('Entre ton pseudo.');
  const sc=scenario(STATE.selectedScenario);
@@ -623,6 +648,7 @@ async function createRoom(){
  await pushProfileAvatar();await syncNow(true);startRoomWatcher();renderLobby();
 }
 async function joinRoom(){
+ primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
  const pseudo=(byId('joinPseudo')?.value||'').trim(),code=(byId('joinCode')?.value||'').trim().toUpperCase();
  if(!pseudo||code.length!==5)return toast('Pseudo et code requis.');
  try{
@@ -650,6 +676,7 @@ async function syncNow(force=false){
   if(changed){
    const last=(d.events||[]).at(-1);if(last&&last.id>STATE.lastEventId){if(STATE.lastEventId&&['trame','breaking_news','reveal'].includes(last.event_type))playCue(last.event_type==='breaking_news'?'news':last.event_type==='reveal'?'finale':'trame');STATE.lastEventId=last.id}
    routeFromServer();
+   setTimeout(()=>maybeShowRoleNotice(d),60);
   }
   manageVideoState();
   return d;
@@ -698,9 +725,9 @@ function startBriefingScenarioScore(){
  initAudio();if(!SOUND.ctx)return;startAmbient(sc.sound);
  try{const now=SOUND.ctx.currentTime,target=Math.min(1.42,SOUND.master*1.28);SOUND.masterGain.gain.cancelScheduledValues(now);SOUND.masterGain.gain.setValueAtTime(.0001,now);SOUND.masterGain.gain.linearRampToValueAtTime(target,now+1.8)}catch{}
 }
-function runCanonicalBriefing(){
+function runCanonicalBriefing(force=false){
  const d=STATE.sync;if(!d||d.room.phase!=='briefing')return;
- const key=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey===key)return;BRIEFING.spokenKey=key;BRIEFING.scoreStarted=false;
+ const key=`${d.room.code}:${d.room.phase_started_at||''}`;if(!force&&BRIEFING.spokenKey===key)return;BRIEFING.spokenKey=key;BRIEFING.scoreStarted=false;
  const sc=scenario(d.room.scenario_id),brief=canonicalBriefingText(sc.id);
  BRIEFING.timer=setTimeout(()=>{
    BRIEFING.timer=null;if(STATE.sync?.room?.phase!=='briefing')return;
@@ -741,6 +768,61 @@ async function ackRole(){
  try{await rpc('igr_v4_ack_role',{p_code:STATE.room,p_player_token:STATE.token});STATE.view='game';STATE.tab='investigation';await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de valider la carte.')}
 }
 function setTab(t){STATE.tab=t;saveSession();renderGame()}
+function appConfirm({title='Confirmer',text='',confirmLabel='Continuer',danger=false}={}){
+ return new Promise(resolve=>{
+  byId('actionConfirmModal')?.remove();
+  const modal=document.createElement('div');modal.id='actionConfirmModal';modal.className='modal action-confirm-modal';
+  modal.innerHTML=`<div class="modal-box action-confirm-box"><div class="kicker">ACTION DE PARTIE</div><h2>${h(title)}</h2><p>${h(text)}</p><div class="modal-actions"><button class="btn ghost" data-choice="cancel">Annuler</button><button class="btn ${danger?'danger':'primary'}" data-choice="ok">${h(confirmLabel)}</button></div></div>`;
+  const finish=v=>{modal.remove();resolve(v)};
+  modal.addEventListener('click',e=>{if(e.target===modal)finish(false);const c=e.target?.dataset?.choice;if(c==='cancel')finish(false);if(c==='ok')finish(true)});
+  document.body.appendChild(modal);
+  setTimeout(()=>modal.querySelector('[data-choice="ok"]')?.focus({preventScroll:true}),20);
+ });
+}
+function rolePhaseNotice(d){
+ const ph=d?.room?.phase,role=d?.player?.public_role,st=d?.room?.state||{};
+ if(!ph||!role)return null;
+ const active=(title,text)=>({title,text});
+ if(ph==='briefing')return active('Briefing du dossier','Le briefing public commence sur tous les téléphones.');
+ if(ph==='role_reading'&&!d.player.ready)return active('Carte privée disponible','Lis ta carte puis verrouille-la quand tu es prêt.');
+ if(ph==='initial_debrief')return ['enqueteur','analyste'].includes(role)?active('À toi d’agir','Débrief initial : Enquêteur et Analyste.') : active('Enquête en cours','Le camp d’enquête prépare le premier cycle.');
+ if(ph==='interrogation_select')return role==='enqueteur'?active('Choisis un interrogatoire','Sélectionne le prochain suspect à entendre.'):active('En attente','L’Enquêteur choisit le prochain interrogatoire.');
+ if(ph==='interrogation'){
+  const target=st.current_target;
+  if(target===d.player.id)return active('Tu es appelé','Ton interrogatoire commence maintenant.');
+  if(role==='enqueteur')return active('Interrogatoire en cours','Conduis l’entretien et termine-le quand tu le souhaites.');
+  if(role==='analyste')return active('Observation active','Observe les contradictions et stratégies de défense.');
+  return active('Interrogatoire en cours','Un suspect est actuellement entendu.');
+ }
+ if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(role)?active('Débrief du cycle','Réponds aux questions courtes pour calibrer la prochaine trame.'):active('Débrief privé','Aucune action requise pendant le débrief du camp d’enquête.');
+ if(ph?.startsWith('annex_')){
+  const annex=ph.replace('annex_','');
+  if(role===annex||['enqueteur','analyste'].includes(role))return active('Fenêtre dédiée',`${phaseLabel(ph)} : ton rôle est concerné.`);
+  return active('Fenêtre spécialisée',`${phaseLabel(ph)} est en cours.`);
+ }
+ if(ph==='trame')return canInvestigationChannel(role)?active('Nouvelle trame','Un nouvel élément canonique est disponible dans le canal d’enquête.'):active('Nouvel élément transmis','Le camp d’enquête vient de recevoir une nouvelle trame.');
+ if(ph==='provisional_orals')return active('Conclusions provisoires','Écoute le rôle actuellement appelé à prendre la parole.');
+ if(ph==='provisional_lock')return role==='enqueteur'?active('Accusations provisoires','Verrouille le degré de responsabilité provisoire de chaque suspect.'):active('Accusations en cours','L’Enquêteur établit ses accusations provisoires.');
+ if(ph==='defense')return active('Dernières défenses','La phase de défense est en cours.');
+ if(ph==='final_debrief')return ['enqueteur','analyste','procureur'].includes(role)?active('Dernier débrief','Dernière concertation avant les verrouillages finaux.'):active('Dernier débrief','Aucune nouvelle preuve ne peut désormais entrer dans le dossier.');
+ if(ph==='locking')return ['enqueteur','analyste','procureur','juge','journaliste'].includes(role)?active('Action requise','Verrouille maintenant ton choix final.'):active('Verdicts en cours','Les rôles concernés verrouillent leurs choix finaux.');
+ if(ph==='reveal')return active('Révélation','La vérité canonique du dossier est maintenant accessible.');
+ return null;
+}
+function showRoleNotice(title,text){
+ let el=byId('roleNotice');if(!el){el=document.createElement('div');el.id='roleNotice';el.className='role-notice';document.body.appendChild(el)}
+ el.innerHTML=`<small>NOTIFICATION</small><b>${h(title)}</b><span>${h(text)}</span>`;el.classList.add('show');
+ clearTimeout(showRoleNotice.t);showRoleNotice.t=setTimeout(()=>el.classList.remove('show'),4300);
+}
+function maybeShowRoleNotice(d){
+ if(!d||!['playing','finished'].includes(d.room?.status))return;
+ const pending=(d.pending_requests||[]).length;
+ const key=[d.room.phase,d.room.phase_started_at,d.player.public_role,pending,d.room?.state?.current_target||''].join(':');
+ if(key===STATE.lastRoleNoticeKey)return;STATE.lastRoleNoticeKey=key;
+ if(pending>0){showRoleNotice('Demande reçue','Le Procureur demande un entretien ciblé. Réponds depuis ton écran.');return}
+ const n=rolePhaseNotice(d);if(n)showRoleNotice(n.title,n.text);
+}
+
 function phaseLabel(ph){return({briefing:'BRIEFING DU DOSSIER',role_reading:'LECTURE DES CARTES',initial_debrief:'DÉBRIEF INITIAL',interrogation_select:'CHOIX DE L’INTERROGATOIRE',interrogation:'INTERROGATOIRE',cycle_debrief:'DÉBRIEF DU CYCLE',annex_inspecteur:'ENTRETIEN INSPECTEUR',annex_procureur:'ENTRETIEN PROCUREUR',annex_juge:'ENTRETIEN JUGE',annex_temoin:'FENÊTRE TÉMOINS',annex_journaliste:'ENTRETIEN JOURNALISTE',annex_expert:'ENTRETIEN EXPERT',trame:'TRAME DU MJ',closed:'ENQUÊTE CLOSE',provisional_orals:'CONCLUSIONS PROVISOIRES',provisional_lock:'ACCUSATIONS PROVISOIRES',defense:'DERNIÈRES DÉFENSES',final_debrief:'DERNIER DÉBRIEF',locking:'VERROUILLAGE FINAL',reveal:'RÉVÉLATION'})[ph]||ph?.toUpperCase()||'PARTIE'}
 function timerIsPaused(){
  const room=STATE.sync?.room,st=room?.state;if(!room||!st?.timer_paused)return false;
@@ -782,8 +864,9 @@ let ADVANCE_BUSY=false;
 async function advancePhaseNow(ev){
  try{ev?.preventDefault?.();ev?.stopPropagation?.()}catch{}
  if(!phaseCanAdvance()||ADVANCE_BUSY)return;
- const ph=phaseLabel(STATE.sync?.room?.phase);
- if(!confirm(`Passer maintenant à l’étape suivante depuis « ${ph} » ?`))return;
+ const ph=phaseLabel(STATE.sync?.room?.phase||'cette étape');
+ const ok=await appConfirm({title:'Passer à l’étape suivante ?',text:`L’étape « ${ph} » sera terminée immédiatement pour tous les joueurs.`,confirmLabel:'Passer à la suite'});
+ if(!ok)return;
  ADVANCE_BUSY=true;
  const buttons=[byId('phaseNextBtn'),byId('liveAdvanceBtn')].filter(Boolean);
  buttons.forEach(b=>{b.disabled=true;b.setAttribute('aria-busy','true');b.textContent='Passage…'});
@@ -793,14 +876,15 @@ async function advancePhaseNow(ev){
   const out=await rpc('igr_v4_advance_phase',{p_code:STATE.room,p_host_token:STATE.hostToken});
   await syncNow(true);
   const after=STATE.sync?.room?.phase;
-  if(before===after&&after!=='reveal')toast('Le serveur n’a pas encore changé d’étape. Réessaie dans un instant.');
+  if(before===after&&after!=='reveal')toast('Transition en cours…');
   else if(out?.phase||after)toast(`Étape suivante : ${phaseLabel(out?.phase||after)}.`);
- }catch(e){console.error(e);toast('Impossible de passer à l’étape suivante.')}
+ }catch(e){console.error(e);toast('Impossible de passer cette étape.')}
  finally{ADVANCE_BUSY=false}
 }
-function confirmLeaveGame(ev){
+async function confirmLeaveGame(ev){
  try{ev?.preventDefault?.();ev?.stopPropagation?.()}catch{}
- if(confirm('Quitter cette partie et retourner à l’accueil ?'))leaveRoom();
+ const ok=await appConfirm({title:'Quitter la partie ?',text:'Tu retourneras à l’accueil. La partie continuera pour les autres joueurs.',confirmLabel:'Quitter',danger:true});
+ if(ok)leaveRoom();
 }
 function canInvestigationChannel(role){return['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(role)}
 function canVideo(role){return['enqueteur','analyste','procureur','juge','inspecteur'].includes(role)}
@@ -1499,11 +1583,15 @@ function handleVisibleApp(){
  if(INTRO.active||INTRO.playing)return;
  initAudio();
  if(SOUND.ctx?.state==='running'){
-   ensureAmbient(activeSoundPreset());
+   hideAudioWakePrompt();ensureAmbient(activeSoundPreset());
    return;
  }
- // iOS requires a fresh gesture when an installed PWA returns with a suspended
- // or interrupted AudioContext. Show the same door instead of leaving a silent lobby.
+ // Never send an active player back to the entrance just because iOS suspended audio.
+ // Active sessions get an in-game audio recovery control instead.
+ if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view)){
+   showAudioWakePrompt(STATE.sync?.room?.phase==='briefing'?'Touchez pour écouter le briefing':'Touchez pour réactiver le son');
+   return;
+ }
  showIntroGate('TOUCHEZ POUR RÉACTIVER L’AMBIANCE');
 }
 document.addEventListener('visibilitychange',()=>{
