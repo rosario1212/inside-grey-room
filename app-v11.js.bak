@@ -1,4 +1,4 @@
-const VERSION = 'v11-7-playtest';
+const VERSION = 'v11-6-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -275,19 +275,20 @@ function playDoorOpenFx(){
  });
  SOUND.scheduleAnchor=prev;
 }
-function startIntroSequence(){
+async function startIntroSequence(){
  if(INTRO.playing)return;
  const gate=byId('introGate'),btn=byId('introEnterBtn');if(!gate)return;
  INTRO.playing=true;if(btn){btn.disabled=true;btn.setAttribute('aria-busy','true')}
- setIntroHint('ENTRÉE…');
- // V11.7: the visual motion starts on the exact tap frame. Audio wake happens in
- // parallel so iOS never creates the old two-step feeling (tap -> pause -> door).
- gate.classList.remove('audio-error');
- gate.classList.add('opening');
- gate.setAttribute('aria-hidden','true');
- Promise.resolve(wakeAudioFromGesture()).then(awake=>{
-   if(awake)playDoorOpenFx();
- }).catch(()=>{});
+ setIntroHint('OUVERTURE…');
+ const awake=await wakeAudioFromGesture();
+ if(SOUND.enabled&&!awake){
+   INTRO.playing=false;if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
+   gate.classList.add('audio-error');
+   setIntroHint('TOUCHEZ À NOUVEAU POUR LE SON');
+   return;
+ }
+ playDoorOpenFx();
+ gate.classList.add('opening');gate.setAttribute('aria-hidden','true');
  const finishDoorEntry=()=>{
    if(!INTRO.playing)return;
    gate.classList.add('done');gate.classList.remove('opening');
@@ -295,8 +296,8 @@ function startIntroSequence(){
    if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
    if(SOUND.enabled)ensureAmbient(activeSoundPreset());
  };
- setTimeout(finishDoorEntry,860);
- setTimeout(finishDoorEntry,1150);
+ setTimeout(finishDoorEntry,940);
+ setTimeout(finishDoorEntry,1450);
 }
 
 
@@ -1185,29 +1186,16 @@ function playSlasherPhrase(preset,step=0,anchorTime=null){
  return loopDuration;
 }
 
-function repairAmbientScheduler(){
- if(!SOUND.ctx||!SOUND.enabled||!SOUND.started)return;
- // Repair only the future scheduler. Do not clear currently playing/scheduled
- // sources: this keeps the score continuous across phase/cycle changes.
- if(SOUND.schedulerTimer){try{clearInterval(SOUND.schedulerTimer)}catch{}}
- SOUND.schedulerTimer=null;
- SOUND.nextPhraseTime=Math.max(SOUND.nextPhraseTime||0,SOUND.ctx.currentTime+.035);
- SOUND.lastPhraseAt=performance.now();
- scheduleAmbientAhead();
- SOUND.schedulerTimer=setInterval(scheduleAmbientAhead,90);
- SOUND.timers=SOUND.timers.filter(t=>t!==SOUND.schedulerTimer);
- SOUND.timers.push(SOUND.schedulerTimer);
-}
 function ensureAmbient(preset='menu'){
  if(preset==='silent'){stopAmbient();return;}
  initAudio();
  if(!SOUND.ctx||!SOUND.enabled)return;
- if(SOUND.started && SOUND.preset===preset){
+ if(SOUND.started && SOUND.preset===preset && !audioIsStale()){
    updateGains();
-   if(audioIsStale())repairAmbientScheduler();
    return;
  }
- // Only a real preset change or a stopped engine starts a new score.
+ // Schedule immediately. On iOS the AudioContext may remain suspended until
+ // the first real touch; the notes are already armed and begin as soon as it resumes.
  startAmbient(preset);
 }
 function scheduleAmbientAhead(){
