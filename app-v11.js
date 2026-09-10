@@ -1,4 +1,4 @@
-const VERSION = 'v11-5-playtest';
+const VERSION = 'v11-5-post-images';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -96,7 +96,19 @@ const SCENARIO_POSTERS = {
  '005': `assets/scenario-005-v10-13.png?v=${VERSION}`,
  '006': `assets/scenario-006-v10-13.png?v=${VERSION}`,
  '007': `assets/scenario-007-v10-13.png?v=${VERSION}`,
- '008': `assets/scenario-008-v10-13.png?v=${VERSION}`
+ '008': `assets/scenario-008-v10-13.png?v=${VERSION}`,
+ '009': `assets/scenario-009-v11-5-post.png?v=${VERSION}`,
+ '010': `assets/scenario-010-v11-5-post.png?v=${VERSION}`,
+ '011': `assets/scenario-011-v11-5-post.png?v=${VERSION}`,
+ '012': `assets/scenario-012-v11-5-post.png?v=${VERSION}`,
+ '013': `assets/scenario-013-v11-5-post.png?v=${VERSION}`,
+ '014': `assets/scenario-014-v11-5-post.png?v=${VERSION}`,
+ '015': `assets/scenario-015-v11-5-post.png?v=${VERSION}`,
+ '016': `assets/scenario-016-v11-5-post.png?v=${VERSION}`,
+ '017': `assets/scenario-017-v11-5-post.png?v=${VERSION}`,
+ '018': `assets/scenario-018-v11-5-post.png?v=${VERSION}`,
+ '019': `assets/scenario-019-v11-5-post.png?v=${VERSION}`,
+ '020': `assets/scenario-020-v11-5-post.png?v=${VERSION}`
 };
 const SCENARIO_THUMBS = {
  '001': `assets/scenario-thumb-001.jpg?v=${VERSION}`,
