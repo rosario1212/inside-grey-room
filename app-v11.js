@@ -1,4 +1,4 @@
-const VERSION = 'v11-13-playtest';
+const VERSION = 'v11-14-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -700,7 +700,7 @@ async function joinRoom(){
 function syncSignature(d){
  if(!d)return'';
  const r=d.room||{},p=d.player||{},ev=d.events||[],acts=d.my_actions||[];
- return JSON.stringify([r.status,r.cycle,r.phase,r.phase_ends_at,r.state,p.public_role,p.secret_role,p.ready,p.private_state,(d.players||[]).map(x=>[x.id,x.pseudo,x.public_role,x.ready,x.avatar_rev]),ev.length,(ev.length?ev[ev.length-1].id:0),acts.length,(d.pending_requests||[]).length]);
+ return JSON.stringify([r.status,r.cycle,r.phase,r.phase_ends_at,r.state,p.public_role,p.secret_role,p.ready,p.audio_ready,p.private_state,(d.players||[]).map(x=>[x.id,x.pseudo,x.public_role,x.ready,x.avatar_rev,x.audio_ready]),ev.length,(ev.length?ev[ev.length-1].id:0),acts.length,(d.pending_requests||[]).length]);
 }
 async function syncNow(force=false){
  if(!STATE.room||!STATE.token||STATE.syncBusy)return STATE.sync;
@@ -743,14 +743,28 @@ function lobbyData(){return syncNow(true)}
 function myState(){return syncNow(true)}
 function renderLobby(prefetched=null){
  const d=prefetched||STATE.sync;if(!d)return;
- const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count),canStart=!!STATE.hostToken&&count>=min;
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${playerCosmeticLine(p)}</span></span><small>${p.is_host?'HÔTE':'PRÊT À ENTRER'}</small></div>`).join('')}</div><div class="lobby-note">Les rôles et cartes privées ne sont distribués qu’au lancement. Aucun joueur ne peut consulter les informations des autres.</div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${canStart?'Lancer le dossier':`Encore ${remaining} joueur${remaining>1?'s':''}`}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count);
+ const me=d.player||{},audioMissing=d.players.filter(p=>!p.audio_ready).length,allAudioReady=audioMissing===0,canStart=!!STATE.hostToken&&count>=min&&allAudioReady;
+ const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:!allAudioReady?`Son à préparer · ${audioMissing}`:'Lancer le dossier';
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${playerCosmeticLine(p)}</span></span><small class="${p.audio_ready?'audio-ready':'audio-pending'}">${p.audio_ready?(p.is_host?'HÔTE · SON PRÊT':'SON PRÊT'):(p.is_host?'HÔTE · SON À ACTIVER':'SON À ACTIVER')}</small></div>`).join('')}</div><div class="lobby-audio-check ${me.audio_ready?'ready':''}"><div><b>${me.audio_ready?'Audio préparé':'Préparer le briefing audio'}</b><span>${me.audio_ready?'Cet appareil est prêt à lire le briefing.':'Chaque joueur doit toucher ce bouton sur son propre appareil avant le lancement.'}</span></div><button class="btn ${me.audio_ready?'ghost':'primary'} small" onclick="prepareLobbyAudio()">${me.audio_ready?'Tester le son':'Activer le son'}</button></div><div class="lobby-note">Les rôles et cartes privées ne sont distribués qu’au lancement. La répartition des rôles et des suspects est aléatoire et indépendante de l’ordre d’arrivée.</div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient('menu');
+}
+async function prepareLobbyAudio(){
+ SOUND.enabled=true;NARRATION.enabled=true;setPref('igr_v9_sound_enabled',true);setPref('igr_v11_narration',true);
+ primeNarrationFromGesture();
+ const ok=await wakeAudioFromGesture();
+ if(!ok)return toast('Touchez à nouveau : iOS n’a pas encore autorisé le son.');
+ try{
+  playLevelTick(.65);
+  await rpc('igr_v4_set_audio_ready',{p_code:STATE.room,p_player_token:STATE.token,p_ready:true});
+  await syncNow(true);toast('Audio prêt pour le briefing.');
+ }catch(e){console.error(e);toast('Impossible de confirmer l’audio.');}
 }
 async function startGame(){
  if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
+ const d=STATE.sync;if((d?.players||[]).some(p=>!p.audio_ready))return toast('Chaque joueur doit d’abord activer le son sur son téléphone.');
  cancelBriefingVoice();stopAmbient();
- try{await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs.')}
+ try{await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs et la préparation audio.')}
 }
 function cancelBriefingVoice(){
  try{if(BRIEFING.timer)clearTimeout(BRIEFING.timer)}catch{}
@@ -994,7 +1008,7 @@ function phaseInstruction(role,ph,target){
 function meIsTarget(target){return target?.id===STATE.playerId}
 function renderInterrogationSelect(){
  const d=STATE.sync,heard=d.room.state?.heard||[];const remaining=d.suspects.filter(s=>!heard.includes(s.id));
- return `<div class="action-section"><h3>Suspects restant à entendre</h3>${remaining.length?remaining.map(s=>`<button class="choice-row" onclick="startInterrogation('${s.id}')"><span>${h(s.pseudo)}</span><b>Interroger · 8 min</b></button>`).join(''):`<p>Tous les suspects ont été entendus. Le débrief va s’ouvrir automatiquement.</p>`}</div>`;
+ return `<div class="action-section"><h3>Suspects restant à entendre</h3><p class="choice-helper">L’ordre affiché est tiré au sort à chaque cycle. Il ne reflète ni la culpabilité ni le degré réel de responsabilité.</p>${remaining.length?remaining.map(s=>`<button class="choice-row" onclick="startInterrogation('${s.id}')"><span>${h(s.pseudo)}</span><b>Interroger · 8 min</b></button>`).join(''):`<p>Tous les suspects ont été entendus. Le débrief va s’ouvrir automatiquement.</p>`}</div>`;
 }
 async function startInterrogation(id){try{await rpc('igr_v4_start_interrogation',{p_code:STATE.room,p_player_token:STATE.token,p_target:id});await syncNow(true)}catch(e){console.error(e);toast('Interrogatoire impossible.') }}
 async function endInterrogation(){try{await rpc('igr_v4_end_interrogation',{p_code:STATE.room,p_player_token:STATE.token});await syncNow(true)}catch(e){console.error(e);toast('Impossible de terminer cet interrogatoire.')}}
@@ -1051,9 +1065,21 @@ function renderFinalLockForm(){
 async function lockFinal(){
  const role=STATE.sync.player.public_role;let payload={note:(byId('finalText')?.value||'').trim()};if(role!=='journaliste')payload.levels=collectLevels('final');if(role==='juge')payload.consequence=byId('finalConsequence')?.value||'';
  try{await rpc('igr_v4_lock_final',{p_code:STATE.room,p_player_token:STATE.token,p_payload:payload});await syncNow(true)}catch(e){console.error(e);toast('Choix déjà verrouillé ou phase terminée.')}}
+function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Secondaire / indirecte',2:'Importante',3:'Centrale'})[+level]||'Non renseignée'}
+function revealSummaryWithNames(summary,responsibilities=[]){
+ let out=String(summary||'');
+ responsibilities.slice(0,26).forEach((x,i)=>{const letter=String.fromCharCode(65+i);out=out.replace(new RegExp(`\\b${letter}\\b`,'g'),x.pseudo||letter)});
+ return out;
+}
+function responsibilityDelta(truth,guess){
+ if(+guess<0)return 'Non évaluée';
+ const d=+guess-(+truth);if(d===0)return 'Évaluation exacte';
+ return d>0?`Surestimée de ${d} niveau${d>1?'x':''}`:`Sous-estimée de ${Math.abs(d)} niveau${Math.abs(d)>1?'x':''}`;
+}
 function renderReveal(){
  const e=latestEvent('reveal'),p=e?.payload||{};if(!p.summary&&STATE.sync.scenario.truth)p.summary=STATE.sync.scenario.truth.summary;
- return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(p.summary||'Révélation en cours…')}</p>${(p.responsibilities||[]).map(x=>`<div class="responsibility"><span>${h(x.pseudo)}</span><b>Réel ${x.truth_level} · Enquête ${x.enqueteur_level}</b></div>`).join('')}${p.accuracy?`<div class="accuracy">Exactitude de l’Enquêteur : <b>${p.accuracy.exact}/${p.accuracy.total}</b></div>`:''}${(p.results||[]).map(x=>`<div class="result-line"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><span>${h(x.text)}</span></div>`).join('')}<button class="btn primary block" onclick="leaveRoom()">Retour à l’accueil</button></div>`;
+ const responsibilities=p.responsibilities||[],summary=revealSummaryWithNames(p.summary||'Révélation en cours…',responsibilities);
+ return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/3 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/3 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–3 correspond exactement au niveau canonique.</small></div>`:''}${(p.results||[]).map(x=>`<div class="result-line"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><span>${h(x.text)}</span></div>`).join('')}<button class="btn primary block" onclick="leaveRoom()">Retour à l’accueil</button></div>`;
 }
 function publicRoleLabel(r){return r==='maitre'?'Avocat / Maître':roleInfo(r).label||r}
 function renderChannelTab(){
