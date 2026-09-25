@@ -1,4 +1,4 @@
-const VERSION = 'v11-14-playtest';
+const VERSION = 'v11-5-playtest';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -96,19 +96,7 @@ const SCENARIO_POSTERS = {
  '005': `assets/scenario-005-v10-13.png?v=${VERSION}`,
  '006': `assets/scenario-006-v10-13.png?v=${VERSION}`,
  '007': `assets/scenario-007-v10-13.png?v=${VERSION}`,
- '008': `assets/scenario-008-v10-13.png?v=${VERSION}`,
- '009': `assets/scenario-009-v11-6.png?v=${VERSION}`,
- '010': `assets/scenario-010-v11-6.png?v=${VERSION}`,
- '011': `assets/scenario-011-v11-6.png?v=${VERSION}`,
- '012': `assets/scenario-012-v11-6.png?v=${VERSION}`,
- '013': `assets/scenario-013-v11-6.png?v=${VERSION}`,
- '014': `assets/scenario-014-v11-6.png?v=${VERSION}`,
- '015': `assets/scenario-015-v11-6.png?v=${VERSION}`,
- '016': `assets/scenario-016-v11-6.png?v=${VERSION}`,
- '017': `assets/scenario-017-v11-6.png?v=${VERSION}`,
- '018': `assets/scenario-018-v11-6.png?v=${VERSION}`,
- '019': `assets/scenario-019-v11-6.png?v=${VERSION}`,
- '020': `assets/scenario-020-v11-6.png?v=${VERSION}`
+ '008': `assets/scenario-008-v10-13.png?v=${VERSION}`
 };
 const SCENARIO_THUMBS = {
  '001': `assets/scenario-thumb-001.jpg?v=${VERSION}`,
@@ -119,150 +107,28 @@ const SCENARIO_THUMBS = {
  '006': `assets/scenario-thumb-006.jpg?v=${VERSION}`,
  '007': `assets/scenario-thumb-007.jpg?v=${VERSION}`,
  '008': `assets/scenario-thumb-008.jpg?v=${VERSION}`,
- '009': `assets/scenario-thumb-009-v11-6.jpg?v=${VERSION}`,
- '010': `assets/scenario-thumb-010-v11-6.jpg?v=${VERSION}`,
- '011': `assets/scenario-thumb-011-v11-6.jpg?v=${VERSION}`,
- '012': `assets/scenario-thumb-012-v11-6.jpg?v=${VERSION}`,
- '013': `assets/scenario-thumb-013-v11-6.jpg?v=${VERSION}`,
- '014': `assets/scenario-thumb-014-v11-6.jpg?v=${VERSION}`,
- '015': `assets/scenario-thumb-015-v11-6.jpg?v=${VERSION}`,
- '016': `assets/scenario-thumb-016-v11-6.jpg?v=${VERSION}`,
- '017': `assets/scenario-thumb-017-v11-6.jpg?v=${VERSION}`,
- '018': `assets/scenario-thumb-018-v11-6.jpg?v=${VERSION}`,
- '019': `assets/scenario-thumb-019-v11-6.jpg?v=${VERSION}`,
- '020': `assets/scenario-thumb-020-v11-6.jpg?v=${VERSION}`
+ '009': `assets/scenario-thumb-009.jpg?v=${VERSION}`,
+ '010': `assets/scenario-thumb-010.jpg?v=${VERSION}`,
+ '011': `assets/scenario-thumb-011.jpg?v=${VERSION}`,
+ '012': `assets/scenario-thumb-012.jpg?v=${VERSION}`,
+ '013': `assets/scenario-thumb-013.jpg?v=${VERSION}`,
+ '014': `assets/scenario-thumb-014.jpg?v=${VERSION}`,
+ '015': `assets/scenario-thumb-015.jpg?v=${VERSION}`,
+ '016': `assets/scenario-thumb-016.jpg?v=${VERSION}`,
+ '017': `assets/scenario-thumb-017.jpg?v=${VERSION}`,
+ '018': `assets/scenario-thumb-018.jpg?v=${VERSION}`,
+ '019': `assets/scenario-thumb-019.jpg?v=${VERSION}`,
+ '020': `assets/scenario-thumb-020.jpg?v=${VERSION}`
 };
 function scenarioArt(id){ return SCENARIO_POSTERS[id] || SCENARIO_THUMBS[id] || SCENARIO_COVER_ART; }
 function scenarioThumbArt(id){ return SCENARIO_THUMBS[id] || scenarioArt(id); }
 
-const PUBLIC_LOBBY_SUMMARIES = {
- '001':'Un homme est retrouvé mort dans une chambre d’hôtel. Trois personnes liées à cette nuit donnent des versions qui ne s’accordent pas.',
- '002':'Après la mort de Léon, l’enquête porte moins sur un geste unique que sur les responsabilités de ceux qui l’entouraient.',
- '003':'Une attaque biologique frappe une gare et renvoie à un programme expérimental. Il faut reconstruire une chaîne de décisions avant qu’elle ne soit enterrée.',
- '004':'Sofia a appelé à l’aide. Trois personnes ont reçu son appel, mais aucune n’est venue. L’enquête doit comprendre pourquoi.',
- '005':'Une victime est découverte dans une mise en scène au masque blanc. Le décor paraît cohérent, mais les intentions derrière lui ne le sont peut-être pas.',
- '006':'Cinq ans après un drame dans un chalet isolé, d’anciens amis sont réunis autour d’un souvenir que personne ne raconte de la même façon.',
- '007':'Un héritage tendu rassemble une famille autour de secrets anciens. Puis un décès change brutalement le sens de l’affaire.',
- '008':'Plusieurs personnes ont juré de dire vrai, pourtant leurs déclarations sont incompatibles. Il faut distinguer mensonge, peur et responsabilité.',
- '009':'Le programme expérimental ORPHÉE est au cœur d’un incident impliquant le Sujet 17. Consentement, mémoire et responsabilité scientifique vont devoir être séparés.',
- '010':'Nora a été retrouvée après avoir été enfermée dans une pièce dissimulée. L’enquête doit reconstruire qui a perçu sa présence, qui savait quoi et à quel moment.',
- '011':'Une opération militaire fictive s’achève sur une catastrophe. Ordres, exécution, omissions et rapports se croisent sans désigner un responsable unique.',
- '012':'Sacha voulait quitter une communauté fermée. Ce qui s’est passé ensuite oblige chacun à répondre de sa loyauté, de son silence et de ses actes.',
- '013':'Un assassinat politique bouleverse une opération de renseignement. Le tireur n’est qu’une partie d’un réseau où commandement, manipulation et opportunisme se confondent.',
- '014':'Une fuite expose onze informateurs et leurs familles. Dans un service fondé sur le secret, chacun doit expliquer ce qu’il a protégé — ou laissé échapper.',
- '015':'Un médecin est retrouvé mort dans un hôpital où le programme ÉLIGIBLES soulève déjà des questions. Médecine, institution et pression publique s’entremêlent.',
- '016':'Une humiliation filmée précède un meurtre. Entre diffusion, représailles et abandon, l’enquête doit établir où commence la responsabilité de chacun.',
- '017':'Un enlèvement se termine par une mort et un survivant. La liberté obtenue sous menace laisse derrière elle un secret et une dette morale.',
- '018':'L’ancien directeur d’un foyer abusif est retrouvé mort devant neuf assiettes vides. La scène semble raconter une histoire, mais tout n’y est pas authentique.',
- '019':'Lors d’un grand gala, un lanceur d’alerte meurt avant de remettre un dossier compromettant. Sous les lustres, influence, justice, presse et argent se surveillent.',
- '020':'Un incendie fait 327 morts dans une grande salle. Plusieurs portes, systèmes et décisions deviennent les pièces d’un dossier où aucune preuve ne suffit seule.'
-};
-const CANONICAL_BRIEFINGS = Object.freeze({...PUBLIC_LOBBY_SUMMARIES});
-function publicScenarioSummary(id){return PUBLIC_LOBBY_SUMMARIES[id]||scenario(id).short}
-function canonicalBriefingText(id){return CANONICAL_BRIEFINGS[id]||publicScenarioSummary(id)}
-
-const STATE={view:'home',selectedScenario:'001',scenarioId:'001',room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],cycle:0,tab:'card',createListScrollY:0,sync:null,syncSig:'',syncBusy:false,watcher:null,lastEventId:0,lastRoleNoticeKey:''};
+const STATE={view:'home',selectedScenario:'001',scenarioId:'001',room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],cycle:0,tab:'card',createListScrollY:0,sync:null,syncSig:'',syncBusy:false,watcher:null,lastEventId:0};
 const VIDEO={pcs:new Map(),localStream:null,remoteStream:null,lastSignalId:0,poller:null,starting:false,lastViewerReadyAt:0};
 const INTRO={active:true,playing:false,done:false,lastActivation:0};
 const AVATARS={map:new Map(),sig:''};
-const BRIEFING={spokenKey:null,timer:null,scoreStarted:false};
-const NARRATION={enabled:pref('igr_v11_narration',true),primed:false,speaking:false,retryTimer:null};
-
-function primeNarrationFromGesture(){
- if(!NARRATION.enabled||NARRATION.primed||STATE.view==='briefing'||!('speechSynthesis'in window))return;
- try{
-  const synth=window.speechSynthesis;
-  synth.resume?.();
-  const u=new SpeechSynthesisUtterance('\u00a0');
-  u.lang='fr-FR';u.volume=0;u.rate=10;u.pitch=1;
-  u.onend=u.onerror=()=>{NARRATION.primed=true};
-  synth.speak(u);NARRATION.primed=true;
- }catch(e){console.warn('narration prime',e)}
-}
-function frenchNarrationVoice(){
- if(!('speechSynthesis'in window))return null;
- const voices=window.speechSynthesis.getVoices?.()||[];
- const fr=voices.filter(x=>/^fr(?:-|_)/i.test(x.lang)||/^fr$/i.test(x.lang));
- const score=v=>{
-  const n=(v.name||'').toLowerCase(),l=(v.lang||'').toLowerCase();let s=0;
-  // Prefer Apple's higher quality installed voices first. A natural voice matters more than a deliberately low pitch.
-  if(/premium|enhanced|amélie|amelie|audrey|thomas|nicolas|jacques|henri/.test(n))s+=14;
-  if(/siri/.test(n))s+=10;
-  if(v.localService)s+=4;
-  if(l==='fr-fr')s+=5;else if(l==='fr-ch')s+=4;else if(l.startsWith('fr'))s+=2;
-  if(/compact|eloquence/.test(n))s-=6;
-  return s;
- };
- return fr.sort((a,b)=>score(b)-score(a))[0]||null;
-}
-function naturalBriefingText(text){
- return String(text||'')
-  .replace(/\s+/g,' ')
-  .replace(/\s*—\s*/g,' — ')
-  .replace(/\.\s+/g,'.  ')
-  .trim();
-}
-function speakCanonicalBriefing(text,onDone){
- if(!NARRATION.enabled||!SOUND.enabled||!('speechSynthesis'in window)){onDone?.();return}
- const synth=window.speechSynthesis;let completed=false,attempt=0,started=false;
- const finish=()=>{if(completed)return;completed=true;NARRATION.speaking=false;if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}onDone?.()};
- const blocked=()=>{
-  if(completed||started)return;
-  NARRATION.speaking=false;
-  showAudioWakePrompt('Touchez pour écouter le briefing');
-  onDone?.();completed=true;
- };
- const speak=()=>{
-  if(completed)return;attempt+=1;started=false;
-  try{
-   synth.cancel();synth.resume?.();
-   const voice=frenchNarrationVoice();
-   const u=new SpeechSynthesisUtterance(naturalBriefingText(text));
-   u.lang=voice?.lang||'fr-FR';
-   u.rate=.91;u.pitch=1;u.volume=Math.max(.55,Math.min(1,SOUND.master));
-   if(voice)u.voice=voice;
-   u.onstart=()=>{started=true;NARRATION.speaking=true;hideAudioWakePrompt();if(NARRATION.retryTimer){clearTimeout(NARRATION.retryTimer);NARRATION.retryTimer=null}};
-   u.onend=finish;
-   u.onerror=()=>{if(attempt<2)setTimeout(speak,180);else blocked()};
-   synth.speak(u);
-   setTimeout(()=>{try{synth.resume?.()}catch{}},80);
-   NARRATION.retryTimer=setTimeout(()=>{
-    NARRATION.retryTimer=null;
-    if(completed||started||synth.speaking)return;
-    if(attempt<2)speak();else blocked();
-   },1100);
-  }catch(e){console.warn('briefing voice',e);if(attempt<2)setTimeout(speak,180);else blocked()}
- };
- const voices=synth.getVoices?.()||[];
- if(voices.length)speak();
- else{
-  let launched=false;
-  const launch=()=>{if(launched||completed)return;launched=true;try{synth.removeEventListener?.('voiceschanged',launch)}catch{}speak()};
-  try{synth.addEventListener?.('voiceschanged',launch,{once:true})}catch{}
-  setTimeout(launch,350);
- }
-}
-
-function showAudioWakePrompt(label='Touchez pour réactiver le son'){
- let el=byId('audioWakePrompt');
- if(!el){
-  el=document.createElement('button');el.id='audioWakePrompt';el.type='button';el.className='audio-wake-prompt';
-  el.addEventListener('click',activateInGameAudio);
-  document.body.appendChild(el);
- }
- el.textContent=label;el.classList.add('show');
-}
-function hideAudioWakePrompt(){byId('audioWakePrompt')?.classList.remove('show')}
-async function activateInGameAudio(){
- primeNarrationFromGesture();
- const ok=await wakeAudioFromGesture();
- if(!ok)return toast('Touchez à nouveau pour activer le son.');
- hideAudioWakePrompt();
- if(STATE.sync?.room?.phase==='briefing'){
-  BRIEFING.spokenKey=null;BRIEFING.scoreStarted=false;
-  runCanonicalBriefing(true);
- }else ensureAmbient(activeSoundPreset());
-}
+const BRIEFING={spokenKey:null};
+const NARRATION={enabled:pref('igr_v11_narration',true)};
 
 function setIntroHint(text){
  const hint=byId('introHint');
@@ -371,28 +237,28 @@ function playDoorOpenFx(){
  });
  SOUND.scheduleAnchor=prev;
 }
-function startIntroSequence(){
+async function startIntroSequence(){
  if(INTRO.playing)return;
  const gate=byId('introGate'),btn=byId('introEnterBtn');if(!gate)return;
  INTRO.playing=true;if(btn){btn.disabled=true;btn.setAttribute('aria-busy','true')}
- setIntroHint('ENTRÉE…');
- // V11.7: the visual motion starts on the exact tap frame. Audio wake happens in
- // parallel so iOS never creates the old two-step feeling (tap -> pause -> door).
- gate.classList.remove('audio-error');
- gate.classList.add('opening');
- gate.setAttribute('aria-hidden','true');
- Promise.resolve(wakeAudioFromGesture()).then(awake=>{
-   if(awake)playDoorOpenFx();
- }).catch(()=>{});
- const finishDoorEntry=()=>{
-   if(!INTRO.playing)return;
-   gate.classList.add('done');gate.classList.remove('opening');
+ setIntroHint('OUVERTURE…');
+ const awake=await wakeAudioFromGesture();
+ if(SOUND.enabled&&!awake){
+   INTRO.playing=false;if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
+   gate.classList.add('audio-error');
+   setIntroHint('TOUCHEZ À NOUVEAU POUR LE SON');
+   return;
+ }
+ playDoorOpenFx();
+ gate.classList.add('opening');gate.setAttribute('aria-hidden','true');
+ setTimeout(()=>{
+   gate.classList.add('done');
    INTRO.active=false;INTRO.done=true;INTRO.playing=false;
    if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
+   // Re-assert the score after the cinematic so a route change during the animation
+   // cannot leave the app silent.
    if(SOUND.enabled)ensureAmbient(activeSoundPreset());
- };
- setTimeout(finishDoorEntry,860);
- setTimeout(finishDoorEntry,1150);
+ },1080);
 }
 
 
@@ -505,50 +371,17 @@ function renderJoin(){
  const remembered=loadProfile().pseudo||localStorage.getItem('igr_v9_last_pseudo')||'';
  byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">Rejoindre</div><h1>La cellule vous attend</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel"><div class="confirm"><div class="field"><label>Ton pseudo</label><input id="joinPseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(remembered)}" placeholder="Votre pseudo"></div><div class="field"><label>Code</label><input id="joinCode" maxlength="5" placeholder="ABCDE" autocapitalize="characters"></div><button class="btn primary block" onclick="joinRoom()">Rejoindre</button></div></section></main>`)
 }
-
-const PROFILE_TITLES=[
- {id:'recrue',label:'Recrue de la Cellule',desc:'Titre de départ.',ok:p=>true},
- {id:'enqueteur_gris',label:'Enquêteur Gris',desc:'Terminer un premier dossier.',ok:p=>(p.completed||0)>=1},
- {id:'lecteur_mensonges',label:'Lecteur de Mensonges',desc:'Terminer 3 dossiers.',ok:p=>(p.completed||0)>=3},
- {id:'veteran',label:'Vétéran de la Grey Room',desc:'Terminer 7 dossiers.',ok:p=>(p.completed||0)>=7},
- {id:'archiviste',label:'Archiviste des Ombres',desc:'Terminer 15 dossiers.',ok:p=>(p.completed||0)>=15},
- {id:'apotheose',label:'Survivant de l’Apothéose',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')},
- {id:'chef_enquete',label:'Chef d’Enquête',desc:'Terminer 3 dossiers comme Enquêteur.',ok:p=>(p.history||[]).filter(x=>x.role==='enqueteur').length>=3},
- {id:'profiler',label:'Profiler',desc:'Terminer 3 dossiers comme Analyste.',ok:p=>(p.history||[]).filter(x=>x.role==='analyste').length>=3}
-];
-const PROFILE_BADGES=[
- {id:'empreinte',glyph:'◉',label:'Empreinte Grise',desc:'Badge de départ.',ok:p=>true},
- {id:'dossier_scelle',glyph:'◆',label:'Dossier Scellé',desc:'Terminer 1 dossier.',ok:p=>(p.completed||0)>=1},
- {id:'oeil_doute',glyph:'◈',label:'Œil du Doute',desc:'Terminer 3 dossiers.',ok:p=>(p.completed||0)>=3},
- {id:'cellule_noire',glyph:'✦',label:'Cellule Noire',desc:'Terminer 7 dossiers.',ok:p=>(p.completed||0)>=7},
- {id:'apotheose_327',glyph:'⬢',label:'327',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')},
- {id:'veteran_15',glyph:'✧',label:'Dossier XV',desc:'Terminer 15 dossiers.',ok:p=>(p.completed||0)>=15}
-];
-function unlockedTitles(p=loadProfile()){return PROFILE_TITLES.filter(x=>x.ok(p))}
-function unlockedBadges(p=loadProfile()){return PROFILE_BADGES.filter(x=>x.ok(p))}
-function profileTitle(id,p=loadProfile()){return unlockedTitles(p).find(x=>x.id===id)||PROFILE_TITLES[0]}
-function profileBadge(id,p=loadProfile()){return unlockedBadges(p).find(x=>x.id===id)||PROFILE_BADGES[0]}
-function playerCosmeticLine(player){
- if(!player)return'';
- const badge=PROFILE_BADGES.find(x=>x.id===player.equipped_badge)||PROFILE_BADGES[0];
- const title=PROFILE_TITLES.find(x=>x.id===player.equipped_title)||PROFILE_TITLES[0];
- return `<span class="player-cosmetic"><b>${h(badge.glyph)}</b>${h(title.label)}</span>`;
-}
-
 function loadProfile(){
- try{return Object.assign({pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[],equippedTitle:'recrue',equippedBadge:'empreinte'},JSON.parse(localStorage.getItem('igr_v11_profile')||'{}'))}catch{return{pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[],equippedTitle:'recrue',equippedBadge:'empreinte'}}
+ try{return Object.assign({pseudo:'',avatar:'',games:0,completed:0,lastScenario:''},JSON.parse(localStorage.getItem('igr_v11_profile')||'{}'))}catch{return{pseudo:'',avatar:'',games:0,completed:0,lastScenario:''}}
 }
 function saveProfileData(p){localStorage.setItem('igr_v11_profile',JSON.stringify(Object.assign(loadProfile(),p||{})))}
 function initials(name='?'){return String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?'}
 function avatarSource(id){return AVATARS.map.get(id)||(id===STATE.playerId?loadProfile().avatar:'')||''}
 function avatarHtml(id,pseudo,cls=''){const src=avatarSource(id);return src?`<span class="avatar ${cls}"><img src="${src}" alt="Photo de ${h(pseudo)}"></span>`:`<span class="avatar avatar-fallback ${cls}" aria-label="${h(pseudo)}">${h(initials(pseudo))}</span>`}
 function renderProfile(){
- const p=loadProfile(),titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
- byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line"><span class="equipped-badge">${h(equippedBadge.glyph)}</span><span>${h(equippedTitle.label)}</span></div><p>Ta photo, ton badge et ton titre peuvent apparaître avec ton pseudo pendant les parties. Ils ne révèlent jamais ton rôle secret.</p></div></div><div class="field"><label>Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div><div><b>${h(p.lastScenario||'—')}</b><span>dernier dossier</span></div></div><div class="reward-section"><div class="section-title"><h2>Titre affiché</h2><span>${titles.length}/${PROFILE_TITLES.length} débloqués</span></div><div class="reward-grid">${PROFILE_TITLES.map(x=>{const unlocked=x.ok(p),active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''} ${unlocked?'':'locked'}" ${unlocked?`onclick="equipProfileTitle('${x.id}')"`:'disabled'}><span class="reward-state">${active?'ÉQUIPÉ':unlocked?'DISPONIBLE':'VERROUILLÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join('')}</div></div><div class="reward-section"><div class="section-title"><h2>Badge affiché</h2><span>${badges.length}/${PROFILE_BADGES.length} débloqués</span></div><div class="badge-grid">${PROFILE_BADGES.map(x=>{const unlocked=x.ok(p),active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''} ${unlocked?'':'locked'}" ${unlocked?`onclick="equipProfileBadge('${x.id}')"`:'disabled'}><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join('')}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
+ const p=loadProfile();
+ byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><p>Ta photo est visible avec ton pseudo dans le lobby et pendant la partie. Elle ne révèle jamais ton rôle secret.</p></div></div><div class="field"><label>Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div><div><b>${h(p.lastScenario||'—')}</b><span>dernier dossier</span></div></div><button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
 }
-function equipProfileTitle(id){const p=loadProfile();if(!unlockedTitles(p).some(x=>x.id===id))return;saveProfileData({equippedTitle:id});renderProfile();toast('Titre équipé.');pushProfileCosmetics()}
-function equipProfileBadge(id){const p=loadProfile();if(!unlockedBadges(p).some(x=>x.id===id))return;saveProfileData({equippedBadge:id});renderProfile();toast('Badge équipé.');pushProfileCosmetics()}
-
 function readImageFile(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
 async function compressAvatar(file){
  if(!file||!file.type?.startsWith('image/'))throw new Error('invalid image');
@@ -560,20 +393,14 @@ async function compressAvatar(file){
 }
 async function profilePhotoChanged(file){try{const avatar=await compressAvatar(file);saveProfileData({avatar});renderProfile();toast('Photo prête.')}catch(e){console.error(e);toast('Photo impossible à préparer.')}}
 function removeProfilePhoto(){saveProfileData({avatar:''});renderProfile()}
-function saveProfileForm(){const pseudo=(byId('profilePseudo')?.value||'').trim();if(!pseudo)return toast('Choisis un pseudo.');saveProfileData({pseudo});localStorage.setItem('igr_v9_last_pseudo',pseudo);renderProfile();pushProfileCosmetics();toast('Profil enregistré.')}
+function saveProfileForm(){const pseudo=(byId('profilePseudo')?.value||'').trim();if(!pseudo)return toast('Choisis un pseudo.');saveProfileData({pseudo});localStorage.setItem('igr_v9_last_pseudo',pseudo);renderProfile();toast('Profil enregistré.')}
 async function pushProfileAvatar(){try{await rpc('igr_v4_set_avatar',{p_code:STATE.room,p_player_token:STATE.token,p_avatar:loadProfile().avatar||''});AVATARS.sig='';}catch(e){console.warn('avatar upload',e)}}
-async function pushProfileCosmetics(){
- if(!STATE.room||!STATE.token)return;
- const p=loadProfile(),title=profileTitle(p.equippedTitle,p),badge=profileBadge(p.equippedBadge,p);
- try{await rpc('igr_v4_set_profile_cosmetics',{p_code:STATE.room,p_player_token:STATE.token,p_title:title.id,p_badge:badge.id})}catch(e){console.warn('profile cosmetics',e)}
-}
-
 async function refreshAvatars(d,force=false){
  if(!STATE.room||!STATE.token||!d)return;const sig=(d.players||[]).map(p=>`${p.id}:${p.avatar_rev||0}`).join('|');if(!force&&sig===AVATARS.sig)return;
  try{const arr=await rpc('igr_v4_get_avatars',{p_code:STATE.room,p_player_token:STATE.token});AVATARS.map=new Map((arr||[]).filter(x=>x.avatar).map(x=>[x.id,x.avatar]));AVATARS.sig=sig}catch(e){console.warn('avatars',e)}
 }
 function markGameStarted(d){if(!d?.room?.code||d.room.status!=='playing')return;const key=`igr_v11_started_${d.room.code}`;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');const p=loadProfile();saveProfileData({games:(p.games||0)+1,lastScenario:d.room.scenario_id})}
-function markGameCompleted(d){if(!d?.room?.code||d.room.status!=='finished')return;const key=`igr_v11_completed_${d.room.code}`;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');const p=loadProfile(),sc=scenario(d.room.scenario_id),history=[{scenario:sc.id,title:sc.title,role:d.player?.public_role||'',date:new Intl.DateTimeFormat('fr-CH',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date())},...(p.history||[])].slice(0,20);const before=new Set([...unlockedTitles(p).map(x=>'t:'+x.id),...unlockedBadges(p).map(x=>'b:'+x.id)]);saveProfileData({completed:(p.completed||0)+1,lastScenario:d.room.scenario_id,history});const np=loadProfile(),newReward=[...unlockedTitles(np).map(x=>({k:'t:'+x.id,n:x.label})),...unlockedBadges(np).map(x=>({k:'b:'+x.id,n:x.label}))].find(x=>!before.has(x.k));if(newReward)setTimeout(()=>toast(`Récompense débloquée : ${newReward.n}`),700)}
+function markGameCompleted(d){if(!d?.room?.code||d.room.status!=='finished')return;const key=`igr_v11_completed_${d.room.code}`;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');const p=loadProfile();saveProfileData({completed:(p.completed||0)+1,lastScenario:d.room.scenario_id})}
 
 function renderRules(){
  byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">Règles</div><h1>Cadre de jeu</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel"><div class="rule-list">${RULES.map(r=>`<div class="rule"><h3>${h(r.title)}</h3><p>${r.items.map(i=>`• ${h(i)}`).join('<br>')}</p></div>`).join('')}</div></section></main>`)
@@ -672,7 +499,6 @@ function previewSound(){
 
 
 async function createRoom(){
- primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
  const pseudo=(byId('createPseudo')?.value||'').trim();
  if(!pseudo)return toast('Entre ton pseudo.');
  const sc=scenario(STATE.selectedScenario);
@@ -684,23 +510,22 @@ async function createRoom(){
  localStorage.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
  Object.assign(STATE,{view:'lobby',scenarioId:sc.id,room:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
  saveSession();
- await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+ await pushProfileAvatar();await syncNow(true);startRoomWatcher();renderLobby();
 }
 async function joinRoom(){
- primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
  const pseudo=(byId('joinPseudo')?.value||'').trim(),code=(byId('joinCode')?.value||'').trim().toUpperCase();
  if(!pseudo||code.length!==5)return toast('Pseudo et code requis.');
  try{
   const out=await rpc('igr_v4_join_room',{p_code:code,p_pseudo:pseudo});
   localStorage.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
   Object.assign(STATE,{view:'lobby',room:out.room_code||code,token:out.player_token,hostToken:null,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
-  saveSession();await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+  saveSession();await pushProfileAvatar();await syncNow(true);startRoomWatcher();renderLobby();
  }catch(e){console.error(e);toast('Cellule introuvable, pleine ou déjà lancée.');}
 }
 function syncSignature(d){
  if(!d)return'';
  const r=d.room||{},p=d.player||{},ev=d.events||[],acts=d.my_actions||[];
- return JSON.stringify([r.status,r.cycle,r.phase,r.phase_ends_at,r.state,p.public_role,p.secret_role,p.ready,p.audio_ready,p.private_state,(d.players||[]).map(x=>[x.id,x.pseudo,x.public_role,x.ready,x.avatar_rev,x.audio_ready]),ev.length,(ev.length?ev[ev.length-1].id:0),acts.length,(d.pending_requests||[]).length]);
+ return JSON.stringify([r.status,r.cycle,r.phase,r.phase_ends_at,r.state,p.public_role,p.secret_role,p.ready,p.private_state,(d.players||[]).map(x=>[x.id,x.pseudo,x.public_role,x.ready,x.avatar_rev]),ev.length,(ev.length?ev[ev.length-1].id:0),acts.length,(d.pending_requests||[]).length]);
 }
 async function syncNow(force=false){
  if(!STATE.room||!STATE.token||STATE.syncBusy)return STATE.sync;
@@ -715,7 +540,6 @@ async function syncNow(force=false){
   if(changed){
    const last=(d.events||[]).at(-1);if(last&&last.id>STATE.lastEventId){if(STATE.lastEventId&&['trame','breaking_news','reveal'].includes(last.event_type))playCue(last.event_type==='breaking_news'?'news':last.event_type==='reveal'?'finale':'trame');STATE.lastEventId=last.id}
    routeFromServer();
-   setTimeout(()=>maybeShowRoleNotice(d),60);
   }
   manageVideoState();
   return d;
@@ -743,57 +567,25 @@ function lobbyData(){return syncNow(true)}
 function myState(){return syncNow(true)}
 function renderLobby(prefetched=null){
  const d=prefetched||STATE.sync;if(!d)return;
- const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count);
- const me=d.player||{},audioMissing=d.players.filter(p=>!p.audio_ready).length,allAudioReady=audioMissing===0,canStart=!!STATE.hostToken&&count>=min&&allAudioReady;
- const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:!allAudioReady?`Son à préparer · ${audioMissing}`:'Lancer le dossier';
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${playerCosmeticLine(p)}</span></span><small class="${p.audio_ready?'audio-ready':'audio-pending'}">${p.audio_ready?(p.is_host?'HÔTE · SON PRÊT':'SON PRÊT'):(p.is_host?'HÔTE · SON À ACTIVER':'SON À ACTIVER')}</small></div>`).join('')}</div><div class="lobby-audio-check ${me.audio_ready?'ready':''}"><div><b>${me.audio_ready?'Audio préparé':'Préparer le briefing audio'}</b><span>${me.audio_ready?'Cet appareil est prêt à lire le briefing.':'Chaque joueur doit toucher ce bouton sur son propre appareil avant le lancement.'}</span></div><button class="btn ${me.audio_ready?'ghost':'primary'} small" onclick="prepareLobbyAudio()">${me.audio_ready?'Tester le son':'Activer le son'}</button></div><div class="lobby-note">Les rôles et cartes privées ne sont distribués qu’au lancement. La répartition des rôles et des suspects est aléatoire et indépendante de l’ordre d’arrivée.</div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count),canStart=!!STATE.hostToken&&count>=min;
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><p class="lobby-scenario-summary">${h(sc.context)}</p></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<b>${i+1}. ${h(p.pseudo)}</b></span><small>${p.is_host?'HÔTE':'PRÊT À ENTRER'}</small></div>`).join('')}</div><div class="lobby-note">Les rôles et cartes privées ne sont distribués qu’au lancement. Aucun joueur ne peut consulter les informations des autres.</div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${canStart?'Lancer le dossier':`Encore ${remaining} joueur${remaining>1?'s':''}`}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient('menu');
-}
-async function prepareLobbyAudio(){
- SOUND.enabled=true;NARRATION.enabled=true;setPref('igr_v9_sound_enabled',true);setPref('igr_v11_narration',true);
- primeNarrationFromGesture();
- const ok=await wakeAudioFromGesture();
- if(!ok)return toast('Touchez à nouveau : iOS n’a pas encore autorisé le son.');
- try{
-  playLevelTick(.65);
-  await rpc('igr_v4_set_audio_ready',{p_code:STATE.room,p_player_token:STATE.token,p_ready:true});
-  await syncNow(true);toast('Audio prêt pour le briefing.');
- }catch(e){console.error(e);toast('Impossible de confirmer l’audio.');}
 }
 async function startGame(){
  if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
- const d=STATE.sync;if((d?.players||[]).some(p=>!p.audio_ready))return toast('Chaque joueur doit d’abord activer le son sur son téléphone.');
  cancelBriefingVoice();stopAmbient();
- try{await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs et la préparation audio.')}
+ try{await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs.')}
 }
-function cancelBriefingVoice(){
- try{if(BRIEFING.timer)clearTimeout(BRIEFING.timer)}catch{}
- try{if(NARRATION.retryTimer)clearTimeout(NARRATION.retryTimer)}catch{}
- BRIEFING.timer=null;BRIEFING.scoreStarted=false;NARRATION.retryTimer=null;NARRATION.speaking=false;
- try{speechSynthesis?.cancel?.()}catch{}BRIEFING.spokenKey=null
-}
-function startBriefingScenarioScore(){
- const d=STATE.sync;if(!d||d.room.phase!=='briefing'||BRIEFING.scoreStarted||!SOUND.enabled)return;
- BRIEFING.scoreStarted=true;const sc=scenario(d.room.scenario_id);
- initAudio();if(!SOUND.ctx)return;startAmbient(sc.sound);
- try{const now=SOUND.ctx.currentTime,target=Math.min(1.42,SOUND.master*1.28);SOUND.masterGain.gain.cancelScheduledValues(now);SOUND.masterGain.gain.setValueAtTime(.0001,now);SOUND.masterGain.gain.linearRampToValueAtTime(target,now+1.8)}catch{}
-}
-function runCanonicalBriefing(force=false){
- const d=STATE.sync;if(!d||d.room.phase!=='briefing')return;
- const key=`${d.room.code}:${d.room.phase_started_at||''}`;if(!force&&BRIEFING.spokenKey===key)return;BRIEFING.spokenKey=key;BRIEFING.scoreStarted=false;
- const sc=scenario(d.room.scenario_id),brief=canonicalBriefingText(sc.id);
- BRIEFING.timer=setTimeout(()=>{
-   BRIEFING.timer=null;if(STATE.sync?.room?.phase!=='briefing')return;
-   if(NARRATION.enabled&&SOUND.enabled&&('speechSynthesis'in window)){
-     speakCanonicalBriefing(`Dossier ${sc.id}. ${sc.title}. ${brief}`,()=>startBriefingScenarioScore());return;
-   }
-   startBriefingScenarioScore();
- },620);
+function cancelBriefingVoice(){try{speechSynthesis?.cancel?.()}catch{}BRIEFING.spokenKey=null}
+function runCanonicalBriefing(){
+ const d=STATE.sync;if(!d||d.room.phase!=='briefing'||!NARRATION.enabled||!SOUND.enabled||!('speechSynthesis'in window))return;
+ const key=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey===key)return;BRIEFING.spokenKey=key;
+ try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${scenario(d.room.scenario_id).title}. ${d.scenario.context||scenario(d.room.scenario_id).context}`);u.lang='fr-FR';u.rate=.9;u.pitch=.82;u.volume=Math.min(1,SOUND.master);const voices=speechSynthesis.getVoices?.()||[];const v=voices.find(x=>/^fr/i.test(x.lang)&&/premium|enhanced|thomas|audrey|daniel/i.test(x.name))||voices.find(x=>/^fr/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){console.warn('briefing voice',e)}
 }
 function renderBriefing(){
- const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),briefKey=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey!==briefKey)stopAmbient();
+ const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id);stopAmbient();
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier entre après la lecture, puis les cartes privées s’ouvrent.</small></div></section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · DOSSIER ${h(sc.id)}</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(d.scenario.context||sc.context)}</p><div class="briefing-meta"><span>BRIEFING PUBLIC</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. Les cartes privées s’ouvrent après ce briefing.</small></section></main>`);
  runCanonicalBriefing();updatePhaseClock();
 }
 
@@ -814,138 +606,24 @@ function privateCardHtml(){
 function renderRole(){
  const d=STATE.sync;if(!d)return;
  const me=(d.players||[]).find(x=>x.id===d.player.id),ready=!!me?.ready;
- byId('app').innerHTML=shell(`<main class="page"><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page"><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient(currentScenario().sound);
 }
 async function ackRole(){
  try{await rpc('igr_v4_ack_role',{p_code:STATE.room,p_player_token:STATE.token});STATE.view='game';STATE.tab='investigation';await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de valider la carte.')}
 }
 function setTab(t){STATE.tab=t;saveSession();renderGame()}
-function appConfirm({title='Confirmer',text='',confirmLabel='Continuer',danger=false}={}){
- return new Promise(resolve=>{
-  byId('actionConfirmModal')?.remove();
-  const modal=document.createElement('div');modal.id='actionConfirmModal';modal.className='modal action-confirm-modal';
-  modal.innerHTML=`<div class="modal-box action-confirm-box"><div class="kicker">ACTION DE PARTIE</div><h2>${h(title)}</h2><p>${h(text)}</p><div class="modal-actions"><button class="btn ghost" data-choice="cancel">Annuler</button><button class="btn ${danger?'danger':'primary'}" data-choice="ok">${h(confirmLabel)}</button></div></div>`;
-  const finish=v=>{modal.remove();resolve(v)};
-  modal.addEventListener('click',e=>{if(e.target===modal)finish(false);const c=e.target?.dataset?.choice;if(c==='cancel')finish(false);if(c==='ok')finish(true)});
-  document.body.appendChild(modal);
-  setTimeout(()=>modal.querySelector('[data-choice="ok"]')?.focus({preventScroll:true}),20);
- });
-}
-function rolePhaseNotice(d){
- const ph=d?.room?.phase,role=d?.player?.public_role,st=d?.room?.state||{};
- if(!ph||!role)return null;
- const active=(title,text)=>({title,text});
- if(ph==='briefing')return active('Briefing du dossier','Le briefing public commence sur tous les téléphones.');
- if(ph==='role_reading'&&!d.player.ready)return active('Carte privée disponible','Lis ta carte puis verrouille-la quand tu es prêt.');
- if(ph==='initial_debrief')return ['enqueteur','analyste'].includes(role)?active('À toi d’agir','Débrief initial : Enquêteur et Analyste.') : active('Enquête en cours','Le camp d’enquête prépare le premier cycle.');
- if(ph==='interrogation_select')return role==='enqueteur'?active('Choisis un interrogatoire','Sélectionne le prochain suspect à entendre.'):active('En attente','L’Enquêteur choisit le prochain interrogatoire.');
- if(ph==='interrogation'){
-  const target=st.current_target;
-  if(target===d.player.id)return active('Tu es appelé','Ton interrogatoire commence maintenant.');
-  if(role==='enqueteur')return active('Interrogatoire en cours','Conduis l’entretien et termine-le quand tu le souhaites.');
-  if(role==='analyste')return active('Observation active','Observe les contradictions et stratégies de défense.');
-  return active('Interrogatoire en cours','Un suspect est actuellement entendu.');
- }
- if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(role)?active('Débrief du cycle','Réponds aux questions courtes pour calibrer la prochaine trame.'):active('Débrief privé','Aucune action requise pendant le débrief du camp d’enquête.');
- if(ph?.startsWith('annex_')){
-  const annex=ph.replace('annex_','');
-  if(role===annex||['enqueteur','analyste'].includes(role))return active('Fenêtre dédiée',`${phaseLabel(ph)} : ton rôle est concerné.`);
-  return active('Fenêtre spécialisée',`${phaseLabel(ph)} est en cours.`);
- }
- if(ph==='trame')return canInvestigationChannel(role)?active('Nouvelle trame','Un nouvel élément canonique est disponible dans le canal d’enquête.'):active('Nouvel élément transmis','Le camp d’enquête vient de recevoir une nouvelle trame.');
- if(ph==='provisional_orals')return active('Conclusions provisoires','Écoute le rôle actuellement appelé à prendre la parole.');
- if(ph==='provisional_lock')return role==='enqueteur'?active('Accusations provisoires','Verrouille le degré de responsabilité provisoire de chaque suspect.'):active('Accusations en cours','L’Enquêteur établit ses accusations provisoires.');
- if(ph==='defense')return active('Dernières défenses','La phase de défense est en cours.');
- if(ph==='final_debrief')return ['enqueteur','analyste','procureur'].includes(role)?active('Dernier débrief','Dernière concertation avant les verrouillages finaux.'):active('Dernier débrief','Aucune nouvelle preuve ne peut désormais entrer dans le dossier.');
- if(ph==='locking')return ['enqueteur','analyste','procureur','juge','journaliste'].includes(role)?active('Action requise','Verrouille maintenant ton choix final.'):active('Verdicts en cours','Les rôles concernés verrouillent leurs choix finaux.');
- if(ph==='reveal')return active('Révélation','La vérité canonique du dossier est maintenant accessible.');
- return null;
-}
-function showRoleNotice(title,text){
- let el=byId('roleNotice');if(!el){el=document.createElement('div');el.id='roleNotice';el.className='role-notice';document.body.appendChild(el)}
- el.innerHTML=`<small>NOTIFICATION</small><b>${h(title)}</b><span>${h(text)}</span>`;el.classList.add('show');
- clearTimeout(showRoleNotice.t);showRoleNotice.t=setTimeout(()=>el.classList.remove('show'),4300);
-}
-function maybeShowRoleNotice(d){
- if(!d||!['playing','finished'].includes(d.room?.status))return;
- const pending=(d.pending_requests||[]).length;
- const key=[d.room.phase,d.room.phase_started_at,d.player.public_role,pending,d.room?.state?.current_target||''].join(':');
- if(key===STATE.lastRoleNoticeKey)return;STATE.lastRoleNoticeKey=key;
- if(pending>0){showRoleNotice('Demande reçue','Le Procureur demande un entretien ciblé. Réponds depuis ton écran.');return}
- const n=rolePhaseNotice(d);if(n)showRoleNotice(n.title,n.text);
-}
-
 function phaseLabel(ph){return({briefing:'BRIEFING DU DOSSIER',role_reading:'LECTURE DES CARTES',initial_debrief:'DÉBRIEF INITIAL',interrogation_select:'CHOIX DE L’INTERROGATOIRE',interrogation:'INTERROGATOIRE',cycle_debrief:'DÉBRIEF DU CYCLE',annex_inspecteur:'ENTRETIEN INSPECTEUR',annex_procureur:'ENTRETIEN PROCUREUR',annex_juge:'ENTRETIEN JUGE',annex_temoin:'FENÊTRE TÉMOINS',annex_journaliste:'ENTRETIEN JOURNALISTE',annex_expert:'ENTRETIEN EXPERT',trame:'TRAME DU MJ',closed:'ENQUÊTE CLOSE',provisional_orals:'CONCLUSIONS PROVISOIRES',provisional_lock:'ACCUSATIONS PROVISOIRES',defense:'DERNIÈRES DÉFENSES',final_debrief:'DERNIER DÉBRIEF',locking:'VERROUILLAGE FINAL',reveal:'RÉVÉLATION'})[ph]||ph?.toUpperCase()||'PARTIE'}
-function timerIsPaused(){
- const room=STATE.sync?.room,st=room?.state;if(!room||!st?.timer_paused)return false;
- if(st.timer_paused_phase&&st.timer_paused_phase!==room.phase)return false;
- if(st.timer_paused_started_at&&room.phase_started_at){
-  const a=new Date(st.timer_paused_started_at).getTime(),b=new Date(room.phase_started_at).getTime();if(Number.isFinite(a)&&Number.isFinite(b)&&a!==b)return false;
- }
- return true;
-}
-function phaseSeconds(){
- const room=STATE.sync?.room;if(!room)return null;
- if(timerIsPaused())return Math.max(0,+room.state?.timer_remaining_seconds||0);
- const end=room.phase_ends_at;if(!end)return null;return Math.max(0,Math.ceil((new Date(end).getTime()-Date.now())/1000));
-}
+function phaseSeconds(){const end=STATE.sync?.room?.phase_ends_at;if(!end)return null;return Math.max(0,Math.ceil((new Date(end).getTime()-Date.now())/1000))}
 function fmtSeconds(s){if(s==null)return'—';return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
 function updatePhaseClock(){const el=byId('phaseClock');if(el)el.textContent=fmtSeconds(phaseSeconds())}
-function phaseTimerControl(){
- const room=STATE.sync?.room,paused=timerIsPaused();
- if(!STATE.hostToken||!room||(!room.phase_ends_at&&!paused))return'';
- return `<button class="phase-timer-toggle ${paused?'paused':''}" onclick="togglePhaseTimer(${paused?'false':'true'})">${paused?'▶ Reprendre':'Ⅱ Pause'}</button>`;
-}
-async function togglePhaseTimer(pause){
- if(!STATE.hostToken)return;
- try{await rpc('igr_v4_timer_toggle',{p_code:STATE.room,p_host_token:STATE.hostToken,p_pause:!!pause});await syncNow(true)}catch(e){console.error(e);toast('Impossible de modifier ce chrono.')}
-}
-function phaseCanAdvance(){
- const room=STATE.sync?.room;
- return !!(STATE.hostToken&&room&&room.status==='playing'&&room.phase&&room.phase!=='reveal');
-}
-function hostPhaseControls(){
- if(!phaseCanAdvance())return'';
- return `<button class="phase-next-btn" id="phaseNextBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`;
-}
-function liveSessionControls(){
- if(!STATE.room)return'';
- return `<div class="live-session-controls"><button class="live-exit-btn" onclick="confirmLeaveGame(event)">✕ Quitter</button>${phaseCanAdvance()?`<button class="live-advance-btn" id="liveAdvanceBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`:''}</div>`;
-}
-let ADVANCE_BUSY=false;
-async function advancePhaseNow(ev){
- try{ev?.preventDefault?.();ev?.stopPropagation?.()}catch{}
- if(!phaseCanAdvance()||ADVANCE_BUSY)return;
- const ph=phaseLabel(STATE.sync?.room?.phase||'cette étape');
- const ok=await appConfirm({title:'Passer à l’étape suivante ?',text:`L’étape « ${ph} » sera terminée immédiatement pour tous les joueurs.`,confirmLabel:'Passer à la suite'});
- if(!ok)return;
- ADVANCE_BUSY=true;
- const buttons=[byId('phaseNextBtn'),byId('liveAdvanceBtn')].filter(Boolean);
- buttons.forEach(b=>{b.disabled=true;b.setAttribute('aria-busy','true');b.textContent='Passage…'});
- try{
-  if(STATE.sync?.room?.phase==='briefing')cancelBriefingVoice();
-  const before=STATE.sync?.room?.phase;
-  const out=await rpc('igr_v4_advance_phase',{p_code:STATE.room,p_host_token:STATE.hostToken});
-  await syncNow(true);
-  const after=STATE.sync?.room?.phase;
-  if(before===after&&after!=='reveal')toast('Transition en cours…');
-  else if(out?.phase||after)toast(`Étape suivante : ${phaseLabel(out?.phase||after)}.`);
- }catch(e){console.error(e);toast('Impossible de passer cette étape.')}
- finally{ADVANCE_BUSY=false}
-}
-async function confirmLeaveGame(ev){
- try{ev?.preventDefault?.();ev?.stopPropagation?.()}catch{}
- const ok=await appConfirm({title:'Quitter la partie ?',text:'Tu retourneras à l’accueil. La partie continuera pour les autres joueurs.',confirmLabel:'Quitter',danger:true});
- if(ok)leaveRoom();
-}
 function canInvestigationChannel(role){return['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(role)}
 function canVideo(role){return['enqueteur','analyste','procureur','juge','inspecteur'].includes(role)}
 function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;return [{id:'card',label:'Ma carte'},{id:'investigation',label:'Enquête'},...(canInvestigationChannel(role)||role==='journaliste'||role==='enqueteur'||role==='suspect'||role==='temoin'||role==='maitre'?[{id:'channel',label:role==='journaliste'?'Messages':'Canal'}]:[]),...(canVideo(role)?[{id:'video',label:'Flux'}]:[]),{id:'timeline',label:'Fil'},{id:'rules',label:'Règles'}]}
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div>${playerCosmeticLine(d.player)}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section></main>`);
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
@@ -995,7 +673,7 @@ function phaseInstruction(role,ph,target){
  }
  if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(role)?`<p>Réponds aux trois questions courtes. Le serveur choisira ensuite seul une trame canonique adaptée.</p>`:`<p>Le débrief est privé à l’enquête. Aucune action de ta part n’est requise.</p>`;
  if(activeAnnex)return roleActive?`<p>Fenêtre active pour ${h(phaseLabel(ph).toLowerCase())}. Respecte le temps commun affiché.</p>`:`<p>Cette fenêtre ne concerne pas directement ton rôle. Prépare la suite sans accéder aux informations réservées.</p>`;
- if(ph==='trame'){if(!canInvestigationChannel(role))return`<p>Le MJ transmet un nouvel élément canonique au camp d’enquête. Prépare la suite sans consulter son contenu.</p>`;const e=latestEvent('trame');return`<p>Le MJ vient de transmettre automatiquement une trame canonique au camp d’enquête.</p>${e?`<div class="trame-focus"><b>${h(e.payload?.title||'TRAME')}</b><span>${h(e.payload?.text||'')}</span></div>`:''}`}
+ if(ph==='trame'){const e=latestEvent('trame');return`<p>Le MJ vient de publier automatiquement une trame canonique.</p>${e?`<div class="trame-focus"><b>${h(e.payload?.title||'TRAME')}</b><span>${h(e.payload?.text||'')}</span></div>`:''}`}
  if(ph==='closed')return`<p><b>Plus aucune trame, expertise, Breaking News ou action de terrain.</b> L’enquête est définitivement close.</p>`;
  if(ph==='provisional_orals')return renderOralStatus();
  if(ph==='provisional_lock')return role==='enqueteur'?`<p>Attribue à chaque suspect un degré provisoire. Ces accusations déterminent qui dispose d’une dernière défense.</p>`:`<p>L’Enquêteur verrouille les accusations provisoires. Elles seront suivies des défenses.</p>`;
@@ -1008,7 +686,7 @@ function phaseInstruction(role,ph,target){
 function meIsTarget(target){return target?.id===STATE.playerId}
 function renderInterrogationSelect(){
  const d=STATE.sync,heard=d.room.state?.heard||[];const remaining=d.suspects.filter(s=>!heard.includes(s.id));
- return `<div class="action-section"><h3>Suspects restant à entendre</h3><p class="choice-helper">L’ordre affiché est tiré au sort à chaque cycle. Il ne reflète ni la culpabilité ni le degré réel de responsabilité.</p>${remaining.length?remaining.map(s=>`<button class="choice-row" onclick="startInterrogation('${s.id}')"><span>${h(s.pseudo)}</span><b>Interroger · 8 min</b></button>`).join(''):`<p>Tous les suspects ont été entendus. Le débrief va s’ouvrir automatiquement.</p>`}</div>`;
+ return `<div class="action-section"><h3>Suspects restant à entendre</h3>${remaining.length?remaining.map(s=>`<button class="choice-row" onclick="startInterrogation('${s.id}')"><span>${h(s.pseudo)}</span><b>Interroger · 8 min</b></button>`).join(''):`<p>Tous les suspects ont été entendus. Le débrief va s’ouvrir automatiquement.</p>`}</div>`;
 }
 async function startInterrogation(id){try{await rpc('igr_v4_start_interrogation',{p_code:STATE.room,p_player_token:STATE.token,p_target:id});await syncNow(true)}catch(e){console.error(e);toast('Interrogatoire impossible.') }}
 async function endInterrogation(){try{await rpc('igr_v4_end_interrogation',{p_code:STATE.room,p_player_token:STATE.token});await syncNow(true)}catch(e){console.error(e);toast('Impossible de terminer cet interrogatoire.')}}
@@ -1065,21 +743,9 @@ function renderFinalLockForm(){
 async function lockFinal(){
  const role=STATE.sync.player.public_role;let payload={note:(byId('finalText')?.value||'').trim()};if(role!=='journaliste')payload.levels=collectLevels('final');if(role==='juge')payload.consequence=byId('finalConsequence')?.value||'';
  try{await rpc('igr_v4_lock_final',{p_code:STATE.room,p_player_token:STATE.token,p_payload:payload});await syncNow(true)}catch(e){console.error(e);toast('Choix déjà verrouillé ou phase terminée.')}}
-function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Secondaire / indirecte',2:'Importante',3:'Centrale'})[+level]||'Non renseignée'}
-function revealSummaryWithNames(summary,responsibilities=[]){
- let out=String(summary||'');
- responsibilities.slice(0,26).forEach((x,i)=>{const letter=String.fromCharCode(65+i);out=out.replace(new RegExp(`\\b${letter}\\b`,'g'),x.pseudo||letter)});
- return out;
-}
-function responsibilityDelta(truth,guess){
- if(+guess<0)return 'Non évaluée';
- const d=+guess-(+truth);if(d===0)return 'Évaluation exacte';
- return d>0?`Surestimée de ${d} niveau${d>1?'x':''}`:`Sous-estimée de ${Math.abs(d)} niveau${Math.abs(d)>1?'x':''}`;
-}
 function renderReveal(){
  const e=latestEvent('reveal'),p=e?.payload||{};if(!p.summary&&STATE.sync.scenario.truth)p.summary=STATE.sync.scenario.truth.summary;
- const responsibilities=p.responsibilities||[],summary=revealSummaryWithNames(p.summary||'Révélation en cours…',responsibilities);
- return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/3 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/3 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–3 correspond exactement au niveau canonique.</small></div>`:''}${(p.results||[]).map(x=>`<div class="result-line"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><span>${h(x.text)}</span></div>`).join('')}<button class="btn primary block" onclick="leaveRoom()">Retour à l’accueil</button></div>`;
+ return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(p.summary||'Révélation en cours…')}</p>${(p.responsibilities||[]).map(x=>`<div class="responsibility"><span>${h(x.pseudo)}</span><b>Réel ${x.truth_level} · Enquête ${x.enqueteur_level}</b></div>`).join('')}${p.accuracy?`<div class="accuracy">Exactitude de l’Enquêteur : <b>${p.accuracy.exact}/${p.accuracy.total}</b></div>`:''}${(p.results||[]).map(x=>`<div class="result-line"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><span>${h(x.text)}</span></div>`).join('')}<button class="btn primary block" onclick="leaveRoom()">Retour à l’accueil</button></div>`;
 }
 function publicRoleLabel(r){return r==='maitre'?'Avocat / Maître':roleInfo(r).label||r}
 function renderChannelTab(){
@@ -1088,24 +754,14 @@ function renderChannelTab(){
 }
 function renderMessages(channel){return (STATE.sync.events||[]).filter(e=>e.event_type==='message'&&e.payload?.channel===channel).slice(-12).map(e=>`<div class="msg"><b>${h(e.payload?.author||'')}</b>${e.payload?.to?` → ${h(e.payload.to)}`:''}<span>${h(e.payload?.text||'')}</span></div>`).join('')||'<div class="empty-state">Aucun message.</div>'}
 async function sendMessage(channel){const input=byId(channel==='investigation'?'invMsg':'privateMsg'),text=(input?.value||'').trim();if(!text)return;const target=channel==='private'?byId('privateTarget')?.value:null;try{await rpc('igr_v4_send_message',{p_code:STATE.room,p_player_token:STATE.token,p_channel:channel,p_target:target||null,p_text:text});if(input)input.value='';await syncNow(true)}catch(e){console.error(e);toast('Message non autorisé dans cette phase ou pour ce rôle.')}}
-function renderTimelineTab(){const role=STATE.sync?.player?.public_role||STATE.role;const events=(STATE.sync.events||[]).filter(e=>e.event_type!=='trame'||canInvestigationChannel(role));return `<div class="timeline timeline-v11">${events.slice().reverse().map(e=>`<div class="event ${e.event_type==='trame'?'trame':e.event_type==='breaking_news'?'news':e.event_type==='reveal'?'urgent':''}"><div class="event-head">${h(e.payload?.title||e.event_type)} · ${clock(e.created_at)}</div><div class="event-body">${h(e.payload?.text||e.payload?.summary||'')}</div></div>`).join('')||'<div class="empty-state">Le fil se remplira pendant la partie.</div>'}</div>`}
+function renderTimelineTab(){const events=STATE.sync.events||[];return `<div class="timeline timeline-v11">${events.slice().reverse().map(e=>`<div class="event ${e.event_type==='trame'?'trame':e.event_type==='breaking_news'?'news':e.event_type==='reveal'?'urgent':''}"><div class="event-head">${h(e.payload?.title||e.event_type)} · ${clock(e.created_at)}</div><div class="event-body">${h(e.payload?.text||e.payload?.summary||'')}</div></div>`).join('')||'<div class="empty-state">Le fil se remplira pendant la partie.</div>'}</div>`}
 function clock(iso){try{return new Date(iso).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}catch{return'--:--'}}
 
 /* --- WebRTC: direct live stream, no recording, no replay --- */
 function videoState(){return STATE.sync?.room?.state||{}}
 async function ensureLocalVideo(){
  if(VIDEO.localStream)return VIDEO.localStream;
- const base={width:{ideal:720},height:{ideal:1280}};
- try{
-  VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:{...base,facingMode:{exact:'environment'}},audio:true});
- }catch(primaryError){
-  try{
-   VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:{...base,facingMode:{ideal:'environment'}},audio:true});
-  }catch(fallbackError){
-   console.warn('Rear camera unavailable, using default camera.',primaryError,fallbackError);
-   VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:base,audio:true});
-  }
- }
+ VIDEO.localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:1280}},audio:true});
  return VIDEO.localStream;
 }
 function closePeer(id){const pc=VIDEO.pcs.get(id);if(pc){try{pc.close()}catch{}VIDEO.pcs.delete(id)}}
@@ -1474,29 +1130,16 @@ function playSlasherPhrase(preset,step=0,anchorTime=null){
  return loopDuration;
 }
 
-function repairAmbientScheduler(){
- if(!SOUND.ctx||!SOUND.enabled||!SOUND.started)return;
- // Repair only the future scheduler. Do not clear currently playing/scheduled
- // sources: this keeps the score continuous across phase/cycle changes.
- if(SOUND.schedulerTimer){try{clearInterval(SOUND.schedulerTimer)}catch{}}
- SOUND.schedulerTimer=null;
- SOUND.nextPhraseTime=Math.max(SOUND.nextPhraseTime||0,SOUND.ctx.currentTime+.035);
- SOUND.lastPhraseAt=performance.now();
- scheduleAmbientAhead();
- SOUND.schedulerTimer=setInterval(scheduleAmbientAhead,90);
- SOUND.timers=SOUND.timers.filter(t=>t!==SOUND.schedulerTimer);
- SOUND.timers.push(SOUND.schedulerTimer);
-}
 function ensureAmbient(preset='menu'){
  if(preset==='silent'){stopAmbient();return;}
  initAudio();
  if(!SOUND.ctx||!SOUND.enabled)return;
- if(SOUND.started && SOUND.preset===preset){
+ if(SOUND.started && SOUND.preset===preset && !audioIsStale()){
    updateGains();
-   if(audioIsStale())repairAmbientScheduler();
    return;
  }
- // Only a real preset change or a stopped engine starts a new score.
+ // Schedule immediately. On iOS the AudioContext may remain suspended until
+ // the first real touch; the notes are already armed and begin as soon as it resumes.
  startAmbient(preset);
 }
 function scheduleAmbientAhead(){
@@ -1596,14 +1239,11 @@ function playCue(type){
  SOUND.scheduleAnchor=previousAnchor;
 }
 
-function revealFocusedField(el,behavior='smooth'){
- if(!el?.getBoundingClientRect)return;const vv=window.visualViewport,rect=el.getBoundingClientRect();const top=(vv?.offsetTop||0)+18,bottom=(vv?.offsetTop||0)+(vv?.height||window.innerHeight)-24;let delta=0;if(rect.bottom>bottom)delta=rect.bottom-bottom+32;else if(rect.top<top)delta=rect.top-top-24;if(Math.abs(delta)>2)window.scrollBy({top:delta,behavior});
-}
 function setupKeyboardGuard(){
  const vv=window.visualViewport;
- const update=()=>{const kb=vv?Math.max(0,window.innerHeight-vv.height-vv.offsetTop):0;document.documentElement.style.setProperty('--keyboard-height',`${Math.round(kb)}px`);document.body.classList.toggle('keyboard-open',kb>80);const active=document.activeElement;if(active?.matches?.('input,textarea,select'))revealFocusedField(active,'auto')};
+ const update=()=>{const kb=vv?Math.max(0,window.innerHeight-vv.height-vv.offsetTop):0;document.documentElement.style.setProperty('--keyboard-height',`${Math.round(kb)}px`);document.body.classList.toggle('keyboard-open',kb>80)};
  vv?.addEventListener('resize',update);vv?.addEventListener('scroll',update);window.addEventListener('orientationchange',()=>setTimeout(update,120));
- document.addEventListener('focusin',e=>{if(!e.target.matches?.('input,textarea,select'))return;document.body.classList.add('field-focused');setTimeout(()=>{revealFocusedField(e.target);update()},90);setTimeout(()=>{revealFocusedField(e.target);update()},340)});
+ document.addEventListener('focusin',e=>{if(!e.target.matches?.('input,textarea,select'))return;document.body.classList.add('field-focused');setTimeout(()=>{try{e.target.scrollIntoView({block:'center',behavior:'smooth'})}catch{}update()},180)});
  document.addEventListener('focusout',()=>setTimeout(()=>{document.body.classList.remove('field-focused');update()},180));update();
 }
 
@@ -1617,7 +1257,6 @@ setupKeyboardGuard();restore().then(ok=>{if(ok)routeFromServer();else renderHome
 setInterval(()=>{if(STATE.view==='game'||STATE.view==='briefing')updatePhaseClock()},1000);
 let LAST_AUDIO_GESTURE=0;
 function unlockAudioFromGesture(){
- primeNarrationFromGesture();
  if(!SOUND.enabled)return;
  const now=performance.now();if(now-LAST_AUDIO_GESTURE<90)return;LAST_AUDIO_GESTURE=now;
  initAudio();if(!SOUND.ctx)return;
@@ -1648,15 +1287,11 @@ function handleVisibleApp(){
  if(INTRO.active||INTRO.playing)return;
  initAudio();
  if(SOUND.ctx?.state==='running'){
-   hideAudioWakePrompt();ensureAmbient(activeSoundPreset());
+   ensureAmbient(activeSoundPreset());
    return;
  }
- // Never send an active player back to the entrance just because iOS suspended audio.
- // Active sessions get an in-game audio recovery control instead.
- if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view)){
-   showAudioWakePrompt(STATE.sync?.room?.phase==='briefing'?'Touchez pour écouter le briefing':'Touchez pour réactiver le son');
-   return;
- }
+ // iOS requires a fresh gesture when an installed PWA returns with a suspended
+ // or interrupted AudioContext. Show the same door instead of leaving a silent lobby.
  showIntroGate('TOUCHEZ POUR RÉACTIVER L’AMBIANCE');
 }
 document.addEventListener('visibilitychange',()=>{
