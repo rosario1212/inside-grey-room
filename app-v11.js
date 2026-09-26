@@ -4,7 +4,7 @@ const STORAGE = {
  setItem(k,v){v=String(v);this.memory.set(k,v);try{window.localStorage.setItem(k,v)}catch{if(!this.warned){this.warned=true;setTimeout(()=>toast('Stockage indisponible : garde cette page ouverte pour conserver ta session.'),800)}}},
  removeItem(k){this.memory.set(k,null);try{window.localStorage.removeItem(k)}catch{}}
 };
-const VERSION = 'v11-20-store-candidate';
+const VERSION = 'v11-21-iphone-pwa-polish';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -313,7 +313,11 @@ function setupIntro(){
    INTRO.lastActivation=now;
    startIntroSequence();
  };
- btn.addEventListener('click',activate);
+ // iOS Home Screen: launch on press, not release, so the door feels immediate
+ // and the same gesture unlocks WebAudio + speech synthesis.
+ if(window.PointerEvent)btn.addEventListener('pointerdown',activate,{passive:false});
+ else btn.addEventListener('touchstart',activate,{passive:false});
+ btn.addEventListener('click',e=>{if(e.detail===0)activate(e)});
  setIntroHint('TOUCHEZ POUR ENTRER');
 }
 function showIntroGate(message='TOUCHEZ POUR OUVRIR LA PORTE'){
@@ -409,7 +413,13 @@ function startIntroSequence(){
  setIntroHint('ENTRÉE…');
  gate.classList.remove('audio-error');
  requestAnimationFrame(()=>gate.classList.add('opening'));
- void wakeAudioFromGesture().then(awake=>{if(awake&&INTRO.playing)playDoorOpenFx()}).catch(()=>{});
+ void wakeAudioFromGesture().then(awake=>{
+   if(!awake)return;
+   if(INTRO.playing)playDoorOpenFx();
+   // iOS can finish resuming AudioContext just after the visual transition.
+   // Re-assert the correct ambience without restarting an already healthy score.
+   setTimeout(()=>{if(!INTRO.active&&SOUND.enabled)ensureAmbient(activeSoundPreset())},720);
+ }).catch(()=>{});
  const finishDoorEntry=()=>{
    if(!INTRO.playing)return;
    gate.classList.add('done');gate.classList.remove('opening');gate.setAttribute('aria-hidden','true');
@@ -617,7 +627,7 @@ function renderRules(){
 
 function openSettings(){
  if(document.querySelector('.modal'))return;
- document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeSettings()"><div class="modal-box" role="dialog" aria-modal="true" aria-label="Paramètres audio" tabindex="-1"><div class="kicker">Paramètres</div><h2 style="margin:7px 0 16px;font-size:30px">Audio</h2><div class="settings-grid"><div class="setting"><div><h4>Activer le son</h4><p>Les réglages sont audibles immédiatement.</p></div><label class="sound-check"><input id="soundOn" aria-label="Activer le son" type="checkbox" ${SOUND.enabled?'checked':''} onchange="liveSoundToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Voix du briefing</h4><p>Lit uniquement le résumé canonique du dossier, sans IA générative.</p></div><label class="sound-check"><input id="narrationOn" aria-label="Voix du briefing" type="checkbox" ${NARRATION.enabled?'checked':''} onchange="liveNarrationToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Volume général</h4><p id="masterValue">${Math.round(SOUND.master*100)} %</p></div><input id="master" aria-label="Volume général" type="range" min="0" max="1" step=".01" value="${SOUND.master}" oninput="liveSoundRange('master',this.value)"></div><div class="setting"><div><h4>Ambiance</h4><p id="ambienceValue">${Math.round(SOUND.ambience*100)} %</p></div><input id="ambience" aria-label="Ambiance" type="range" min="0" max="1" step=".01" value="${SOUND.ambience}" oninput="liveSoundRange('ambience',this.value)"></div><div class="setting"><div><h4>Effets / alertes</h4><p id="effectsValue">${Math.round(SOUND.effects*100)} %</p></div><input id="effects" aria-label="Effets et alertes" type="range" min="0" max="1" step=".01" value="${SOUND.effects}" oninput="liveSoundRange('effects',this.value)"></div></div><div class="modal-actions"><button class="btn primary small" onclick="saveSettings()">Terminé</button></div></div></div>`)
+ document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeSettings()"><div class="modal-box" role="dialog" aria-modal="true" aria-label="Paramètres audio" tabindex="-1"><div class="kicker">Paramètres</div><h2 style="margin:7px 0 16px;font-size:30px">Audio</h2><div class="settings-grid"><div class="setting"><div><h4>Activer le son</h4><p>Les réglages sont audibles immédiatement.</p></div><label class="sound-check"><input id="soundOn" aria-label="Activer le son" type="checkbox" ${SOUND.enabled?'checked':''} onchange="liveSoundToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Voix du briefing</h4><p>Voix système de l’appareil : elle lit le résumé canonique, sans IA générative.</p></div><label class="sound-check"><input id="narrationOn" aria-label="Voix du briefing" type="checkbox" ${NARRATION.enabled?'checked':''} onchange="liveNarrationToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Volume général</h4><p id="masterValue">${Math.round(SOUND.master*100)} %</p></div><input id="master" aria-label="Volume général" type="range" min="0" max="1" step=".01" value="${SOUND.master}" oninput="liveSoundRange('master',this.value)"></div><div class="setting"><div><h4>Ambiance</h4><p id="ambienceValue">${Math.round(SOUND.ambience*100)} %</p></div><input id="ambience" aria-label="Ambiance" type="range" min="0" max="1" step=".01" value="${SOUND.ambience}" oninput="liveSoundRange('ambience',this.value)"></div><div class="setting"><div><h4>Effets / alertes</h4><p id="effectsValue">${Math.round(SOUND.effects*100)} %</p></div><input id="effects" aria-label="Effets et alertes" type="range" min="0" max="1" step=".01" value="${SOUND.effects}" oninput="liveSoundRange('effects',this.value)"></div></div><div class="modal-actions"><button class="btn primary small" onclick="saveSettings()">Terminé</button></div></div></div>`)
 }
 function closeSettings(){saveAudioPreferences();document.querySelector('.modal')?.remove();releaseDialogFocus()}
 function saveAudioPreferences(){for(const k of ['master','ambience','effects'])setPref(`igr_v9_${k}`,SOUND[k]);setPref('igr_v9_sound_enabled',SOUND.enabled)}
@@ -808,12 +818,11 @@ function myState(){return syncNow(true)}
 function renderLobby(prefetched=null){
  const d=prefetched||STATE.sync;if(!d)return;
  const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count);
- const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player},audioMissing=d.players.filter(p=>!p.audio_ready).length,allAudioReady=audioMissing===0,roleMissing=d.players.filter(p=>!p.preferred_role).length,allRolesReady=roleMissing===0;
- const choices=roleChoiceSummary(sc,count,d.players),canStart=!!STATE.hostToken&&count>=min&&allAudioReady&&allRolesReady;
- const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:!allRolesReady?`Rôles à choisir · ${roleMissing}`:!allAudioReady?`Son à préparer · ${audioMissing}`:'Lancer le dossier';
+ const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player},roleMissing=d.players.filter(p=>!p.preferred_role).length,allRolesReady=roleMissing===0;
+ const choices=roleChoiceSummary(sc,count,d.players),canStart=!!STATE.hostToken&&count>=min&&allRolesReady;
+ const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:!allRolesReady?`Rôles à choisir · ${roleMissing}`:'Lancer le dossier';
  const roleButtons=choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<button class="role-choice-card ${mine?'selected':''} ${full?'full':''}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.body)}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button>`}).join('');
- const roleRecap=choices.map(x=>`<div class="role-recap-row"><div><b>${h(x.info.label)}</b><span>${h(x.info.body)}</span></div><small>${h(x.info.win)}</small></div>`).join('');
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${playerCosmeticLine(p)}${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Rôle à choisir</span>'}</span></span><small class="${p.audio_ready?'audio-ready':'audio-pending'}">${p.audio_ready?'SON PRÊT':'SON À ACTIVER'}</small></div>`).join('')}</div><div class="role-choice-zone"><div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Chaque joueur choisit lui-même son rôle public avant le lancement. Un rôle complet devient indisponible. Les identités secrètes et l’Espion restent cachés et attribués par le serveur.</p><div class="role-choice-grid">${roleButtons}</div><details class="role-recap"><summary>Récapitulatif des rôles de ce dossier</summary><div>${roleRecap}</div></details></div><div class="lobby-audio-check ${me.audio_ready?'ready':''}"><div><b>${me.audio_ready?'Audio préparé':'Préparer le briefing audio'}</b><span>${me.audio_ready?'Cet appareil est prêt à lire le briefing.':'Chaque joueur doit toucher ce bouton sur son propre appareil avant le lancement.'}</span></div><button class="btn ${me.audio_ready?'ghost':'primary'} small" onclick="prepareLobbyAudio()">${me.audio_ready?'Tester le son':'Activer le son'}</button></div><div class="lobby-note">Le dossier ne peut démarrer que lorsque chaque joueur a choisi un rôle disponible et préparé son audio.</div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Rôle à choisir</span>'}</span></span></div>`).join('')}</div><div class="role-choice-zone"><div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Chaque joueur choisit lui-même son rôle public avant le lancement. Un rôle complet devient indisponible. Les identités secrètes et l’Espion restent cachés et attribués par le serveur.</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient('menu');
 }
 async function chooseLobbyRole(role){
@@ -833,7 +842,7 @@ async function prepareLobbyAudio(){
 }
 async function startGame(){
  if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
- const d=STATE.sync;if((d?.players||[]).some(p=>!p.preferred_role))return toast('Chaque joueur doit d’abord choisir son rôle.');if((d?.players||[]).some(p=>!p.audio_ready))return toast('Chaque joueur doit d’abord activer le son sur son téléphone.');
+ const d=STATE.sync;if((d?.players||[]).some(p=>!p.preferred_role))return toast('Chaque joueur doit d’abord choisir son rôle.');
  cancelBriefingVoice();stopAmbient();
  try{await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs et la préparation audio.')}
 }
@@ -1017,7 +1026,7 @@ function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;retur
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div>${playerCosmeticLine(d.player)}</div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
@@ -1697,7 +1706,13 @@ async function restore(){
  }catch(e){console.error(e);clearSession();return false}
 }
 function renderCurrent(){if(STATE.view==='home')renderHome();else if(STATE.view==='create-list')renderCreateList();else if(STATE.view==='create-confirm')renderCreateConfirm();else if(STATE.view==='join')renderJoin();else if(STATE.view==='rules')renderRules();else if(STATE.view==='profile')renderProfile();else if(STATE.view==='lobby')renderLobby();else if(STATE.view==='briefing')renderBriefing();else if(STATE.view==='role')renderRole();else if(STATE.view==='game')renderGame()}
-setupKeyboardGuard();restore().then(ok=>{if(ok)routeFromServer();else renderHome();setupIntro();if(ok)hideIntroImmediately();else showIntroGate('TOUCHEZ POUR OUVRIR LA PORTE');});
+setupKeyboardGuard();restore().then(ok=>{
+ if(ok)routeFromServer();else renderHome();
+ setupIntro();
+ // The entrance is part of the identity of the app, not only the first visit.
+ // A restored lobby/game stays rendered behind it and reappears after the cinematic.
+ showIntroGate('TOUCHEZ POUR OUVRIR LA PORTE');
+});
 setInterval(()=>{if(STATE.view==='game'||STATE.view==='briefing')updatePhaseClock()},1000);
 let LAST_AUDIO_GESTURE=0;
 function unlockAudioFromGesture(){
@@ -1743,11 +1758,22 @@ function handleVisibleApp(){
  }
  showAudioWakePrompt('Touchez pour réactiver le son');
 }
+const RUNNING_STANDALONE=window.matchMedia?.('(display-mode: standalone)')?.matches||navigator.standalone===true;
+let APP_WAS_HIDDEN=false;
 document.addEventListener('visibilitychange',()=>{
+ if(document.visibilityState==='hidden'){
+   APP_WAS_HIDDEN=true;
+   return;
+ }
+ if(document.visibilityState==='visible'&&RUNNING_STANDALONE&&APP_WAS_HIDDEN){
+   APP_WAS_HIDDEN=false;
+   showIntroGate('TOUCHEZ POUR ENTRER');
+   return;
+ }
  if(document.visibilityState==='visible')setTimeout(handleVisibleApp,100);
 });
-window.addEventListener('pageshow',()=>setTimeout(handleVisibleApp,120));
-window.addEventListener('focus',()=>setTimeout(handleVisibleApp,120));
+window.addEventListener('pageshow',()=>setTimeout(()=>{if(!INTRO.active)handleVisibleApp()},120));
+window.addEventListener('focus',()=>setTimeout(()=>{if(!INTRO.active)handleVisibleApp()},120));
 // Audio watchdog: catches rare iPhone/PWA cases where WebAudio stays alive but the scheduler stops.
 setInterval(()=>{
  if(!SOUND.enabled||document.visibilityState!=='visible'||INTRO.active||INTRO.playing)return;
@@ -1792,9 +1818,9 @@ window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
 
 
-/* v11-20-store-candidate — PWA cache bootstrap */
+/* v11-21-iphone-pwa-polish — PWA cache bootstrap */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v11-20-store-candidate').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v11-21-iphone-pwa-polish').catch(() => {});
   }, {once:true});
 }
