@@ -2,10 +2,10 @@
   "name": "Inside Grey Room",
   "short_name": "Grey Room",
   "description": "Enquête psychologique multijoueur à informations cachées.",
-  "start_url": "/?igr=v11-5-playtest",
+  "start_url": "/?igr=v11-17-hardened",
   "display": "standalone",
-  "background_color": "#05070a",
-  "theme_color": "#05070a",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "assets/icon-192-v9.png",

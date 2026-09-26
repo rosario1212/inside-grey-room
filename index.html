@@ -3,25 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-  <meta name="theme-color" content="#05070a">
+  <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Inside Grey Room">
+  <meta name="description" content="Inside Grey Room : enquêtes psychologiques multijoueurs, rôles secrets et vérités à reconstruire.">
   <title>Inside Grey Room</title>
-  <link rel="manifest" href="manifest-v11.json?v=v11-6-playtest">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v11-6-playtest">
-  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v11-6-playtest">
+  <link rel="manifest" href="manifest-v11.json?v=v11-17-hardened">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v11-17-hardened">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v11-17-hardened">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v11.css?v=v11-9-playtest">
+  <link rel="stylesheet" href="styles-v11.css?v=v11-17-hardened">
 </head>
 <body>
   <div class="bg-noise"></div>
   <div class="bg-vignette"></div>
 
   <div id="introGate" class="intro-gate" aria-hidden="false">
-    <img class="intro-art" src="assets/intro-v10-14.png?v=v11-6-playtest" alt="Porte d’entrée Inside Grey Room">
+    <img class="intro-art" src="assets/intro-v10-14.png?v=v11-17-hardened" alt="Porte d’entrée Inside Grey Room">
     <div class="intro-cinema-shade"></div>
     <div class="intro-light-slit" aria-hidden="true"></div>
     <div class="intro-pulse" aria-hidden="true"></div>
@@ -32,8 +33,9 @@
     </button>
   </div>
 
-  <main id="app"></main>
-  <div id="toast" class="toast"></div>
-  <script src="app-v11.js?v=v11-9-playtest"></script>
+  <div id="app"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <noscript>Active JavaScript pour jouer à Inside Grey Room.</noscript>
+  <script src="app-v11.js?v=v11-17-hardened"></script>
 </body>
 </html>
