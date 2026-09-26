@@ -13,7 +13,7 @@
 }
 *{box-sizing:border-box}
 html{margin:0;min-height:100%;background:#05070a;overscroll-behavior-y:none}
-body{margin:0;min-height:100dvh;background:radial-gradient(circle at top,#0a0f14 0%,#05070a 54%,#030507 100%);background-color:#05070a;color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;overflow-x:hidden;overscroll-behavior:none;-webkit-overflow-scrolling:touch}
+body{margin:0;min-height:100dvh;background:radial-gradient(circle at top,#0a0f14 0%,#05070a 54%,#030507 100%);background-color:#05070a;color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;overflow-x:hidden;overscroll-behavior:none;-webkit-overflow-scrolling:touch}
 
 button,input,textarea,select{font:inherit}
 #app{position:relative;z-index:2;min-height:100dvh;background-color:transparent}
@@ -288,7 +288,7 @@ button:focus-visible,.tab:focus-visible,.pill-btn:focus-visible,.home-action:foc
   position:relative;overflow:hidden;
   background:
    linear-gradient(180deg,rgba(5,7,10,.16),rgba(5,7,10,.92) 26%,rgba(5,7,10,.98) 100%),
-   url('assets/home-v10-14.png?v=v10.14-perfect-mobile') center 22%/cover no-repeat,
+   url('assets/home-v10-14.webp?v=v10.14-perfect-mobile') center 22%/cover no-repeat,
    linear-gradient(180deg,rgba(12,16,20,.98),rgba(6,8,11,.98));
   padding:32px 20px 20px;
   min-height:min(70svh,760px);
@@ -307,7 +307,7 @@ button:focus-visible,.tab:focus-visible,.pill-btn:focus-visible,.home-action:foc
 }
 .home-logo-frame img{width:38px;height:38px;display:block;filter:drop-shadow(0 2px 6px rgba(255,255,255,.08))}
 .home-title-spaced{
-  text-align:center;font-family:'Inter',sans-serif;font-weight:700;
+  text-align:center;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-weight:700;
   letter-spacing:-.035em;line-height:.96;font-size:clamp(48px,10vw,72px);
   color:#f2f3f5;text-shadow:0 10px 32px rgba(0,0,0,.42);
 }
@@ -575,3 +575,96 @@ body.field-focused .field:focus-within{position:relative;z-index:8}
 /* V11.9 — host progression + safe exit */
 .game-head-v11{display:flex;justify-content:space-between;gap:14px}.game-leave-btn{flex:0 0 auto}.phase-host-actions{display:flex;align-items:center;gap:6px}.phase-next-btn{appearance:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.075);color:#eef1f3;border-radius:999px;padding:6px 9px;font:700 8px 'IBM Plex Mono',monospace;letter-spacing:.06em;cursor:pointer;white-space:nowrap;touch-action:manipulation}.phase-next-btn:active{transform:scale(.98)}.floating-leave-btn{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:30;background:rgba(3,5,8,.72);backdrop-filter:blur(10px)}.role-page-actions{max-width:880px;margin:0 auto 10px;display:flex;justify-content:flex-end;gap:8px}
 @media(max-width:600px){.game-head-v11{align-items:flex-start}.phase-host-actions{display:grid;justify-items:end;gap:4px}.phase-next-btn{padding:5px 7px;font-size:7px}.game-leave-btn{padding:8px 10px}.role-page-actions{padding:0 2px}}
+
+
+/* V11.10 — persistent in-game exit + host force-advance controls */
+.live-session-controls{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:80;display:flex;justify-content:space-between;align-items:center;gap:10px;pointer-events:none}.live-session-controls button{pointer-events:auto;appearance:none;min-height:42px;border-radius:999px;padding:10px 14px;font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.06em;cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 28px rgba(0,0,0,.34);touch-action:manipulation}.live-exit-btn{border:1px solid rgba(255,255,255,.17);background:rgba(4,6,9,.88);color:#d8dde1}.live-advance-btn{margin-left:auto;border:1px solid rgba(255,255,255,.28);background:rgba(235,238,240,.94);color:#090b0d}.live-session-controls button:active{transform:scale(.98)}.game-v11,.briefing-page{padding-bottom:84px!important}.role-card-v11{margin-bottom:78px!important}
+@media(max-width:600px){.live-session-controls{bottom:max(9px,env(safe-area-inset-bottom));left:max(9px,env(safe-area-inset-left));right:max(9px,env(safe-area-inset-right));gap:7px}.live-session-controls button{min-height:40px;padding:9px 11px;font-size:8px}.live-advance-btn{max-width:58vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+
+/* v11.12 — in-game confirmations, role notifications, audio recovery */
+.action-confirm-modal{z-index:180}.action-confirm-box{max-width:440px}.action-confirm-box h2{margin:8px 0 9px;font-size:20px}.action-confirm-box p{margin:0;color:var(--muted);line-height:1.55}.action-confirm-box .modal-actions{margin-top:20px}
+.role-notice{position:fixed;z-index:170;top:max(14px,env(safe-area-inset-top));left:50%;width:min(calc(100vw - 28px),430px);transform:translate(-50%,-18px);opacity:0;pointer-events:none;padding:12px 14px;border-radius:15px;background:rgba(8,12,16,.94);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 42px rgba(0,0,0,.38);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:opacity .2s ease,transform .2s ease;display:grid;gap:3px}.role-notice.show{opacity:1;transform:translate(-50%,0)}.role-notice small{font:700 8px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#8f9aa4}.role-notice b{font-size:13px;color:#f5f7f8}.role-notice span{font-size:11px;line-height:1.4;color:#c6ccd1}
+.audio-wake-prompt{position:fixed;z-index:175;left:50%;bottom:max(72px,calc(env(safe-area-inset-bottom) + 62px));transform:translate(-50%,14px);opacity:0;pointer-events:none;appearance:none;border:1px solid rgba(255,255,255,.24);background:rgba(238,241,243,.96);color:#090b0d;border-radius:999px;padding:11px 15px;font:700 9px 'IBM Plex Mono',monospace;letter-spacing:.05em;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:.2s;white-space:nowrap}.audio-wake-prompt.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+
+/* V11.13 — profil, badges et titres */
+.profile-equipped-line{display:flex;align-items:center;gap:8px;margin:0 0 7px;color:#d8e0e6;font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.07em;text-transform:uppercase}
+.equipped-badge{display:grid;place-items:center;width:25px;height:25px;border:1px solid rgba(255,255,255,.14);border-radius:50%;background:rgba(255,255,255,.04);font-size:14px}
+.reward-section{padding-top:15px;border-top:1px solid rgba(255,255,255,.07);display:grid;gap:10px}
+.reward-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.reward-card,.badge-card{appearance:none;text-align:left;color:inherit;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);border-radius:15px;padding:13px;display:grid;gap:6px;min-width:0;transition:.18s ease}
+.reward-card:not(.locked):active,.badge-card:not(.locked):active{transform:scale(.985)}
+.reward-card.active,.badge-card.active{border-color:rgba(205,220,232,.42);background:rgba(180,205,224,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+.reward-card.locked,.badge-card.locked{opacity:.38;filter:saturate(.55)}
+.reward-card b,.badge-card b{font-size:13px}.reward-card small,.badge-card small{color:#7f8a94;font-size:11px;line-height:1.45}
+.reward-state{font:700 8px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#7e8d99}
+.badge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.badge-card{grid-template-columns:36px 1fr;align-items:center}.badge-card>span:last-child{display:grid;gap:4px}
+.badge-glyph{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.11);background:#090c0f;font-size:18px}
+.player-cosmetic{display:inline-flex;align-items:center;gap:5px;color:#84909a;font:700 7px 'IBM Plex Mono',monospace;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.player-cosmetic>b{color:#c9d2d9;font-size:10px}.lobby-player-name{display:grid;gap:2px}.game-ident-text{display:grid;gap:4px}
+@media(max-width:600px){.reward-grid,.badge-grid{grid-template-columns:1fr}.player-cosmetic{font-size:6.5px}}
+
+/* V11.14 — audio readiness + clearer reveal */
+.lobby-audio-check{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:14px 0;padding:14px 15px;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(255,255,255,.025)}
+.lobby-audio-check>div{display:flex;flex-direction:column;gap:4px}.lobby-audio-check b{font-size:13px;letter-spacing:.04em}.lobby-audio-check span{font-size:12px;line-height:1.35;color:var(--muted)}
+.lobby-audio-check.ready{border-color:rgba(133,224,176,.22);background:rgba(133,224,176,.045)}
+.audio-ready{color:#a9d9bd!important}.audio-pending{color:#d7aa86!important}.choice-helper{margin:-4px 0 12px;color:var(--muted);font-size:12px;line-height:1.45}
+.reveal-legend{display:flex;flex-direction:column;gap:5px;margin:16px 0 12px;padding:13px 14px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025)}
+.reveal-legend b{font-size:13px}.reveal-legend span{font-size:12px;color:var(--muted);line-height:1.45}
+.responsibility-clear{display:block!important;padding:16px 0!important}.responsibility-name{font-size:18px;font-weight:700;margin-bottom:10px}.responsibility-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.responsibility-grid span{display:flex;flex-direction:column;gap:4px;padding:11px 12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.02)}.responsibility-grid small{font-size:9px;letter-spacing:.12em;color:var(--muted)}.responsibility-grid b{font-size:13px;line-height:1.35}.responsibility-delta{margin-top:8px;font-size:11px;color:#d9a98d}.responsibility-delta.exact{color:#a9d9bd}.accuracy-clear{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:3px}.accuracy-clear>b{font-size:24px}.accuracy-clear small{font-size:11px;color:var(--muted);line-height:1.4}
+@media(max-width:560px){.lobby-audio-check{align-items:flex-start;flex-direction:column}.lobby-audio-check .btn{width:100%}.responsibility-grid{grid-template-columns:1fr}}
+
+/* v11.15 — choix volontaire des rôles au lobby */
+.role-choice-zone{margin:18px 0;padding:18px;border:1px solid rgba(255,255,255,.11);border-radius:22px;background:rgba(255,255,255,.025)}
+.role-choice-help{margin:4px 0 14px;color:rgba(238,242,247,.62);font-size:.9rem;line-height:1.5}
+.role-choice-grid{display:grid;gap:9px}
+.role-choice-card{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left;padding:14px 15px;border:1px solid rgba(255,255,255,.11);border-radius:16px;background:#0b0e12;color:#f4f5f7}
+.role-choice-card span{display:grid;gap:4px}.role-choice-card b{font-size:.98rem}.role-choice-card small{color:rgba(238,242,247,.58);line-height:1.35}.role-choice-card em{font-style:normal;font-size:.67rem;letter-spacing:.13em;white-space:nowrap;color:rgba(238,242,247,.55)}
+.role-choice-card.selected{border-color:rgba(255,255,255,.65);background:rgba(255,255,255,.09)}.role-choice-card.selected em{color:#fff}.role-choice-card.full{opacity:.42}
+.lobby-role-picked,.lobby-role-pending{display:block;margin-top:3px;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}.lobby-role-picked{color:rgba(255,255,255,.78)}.lobby-role-pending{color:rgba(255,255,255,.38)}
+.role-recap{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}.role-recap summary{cursor:pointer;font-weight:700;color:rgba(255,255,255,.78)}.role-recap-row{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07)}.role-recap-row div{display:grid;gap:4px}.role-recap-row span,.role-recap-row small{color:rgba(238,242,247,.58);line-height:1.4}.role-recap-row small{display:block;margin-top:6px;font-size:.76rem}
+
+
+/* V11.16 — one gesture, one continuous entrance */
+.intro-gate{background:#000 !important;will-change:opacity}
+.intro-gate.opening .intro-art{animation:igrDoorDiveV116 .64s cubic-bezier(.12,.82,.14,1) forwards !important;transition:none !important;will-change:transform,filter}
+.intro-gate.opening .intro-light-slit{animation:igrLightV116 .64s cubic-bezier(.12,.82,.14,1) forwards !important;transition:none !important}
+.intro-gate.opening .intro-pulse{animation:igrPulseV116 .64s ease-out forwards !important;transition:none !important}
+.intro-gate.opening .intro-whiteout{animation:igrWhiteV116 .64s cubic-bezier(.16,.78,.16,1) forwards !important;mix-blend-mode:normal !important}
+.intro-gate.done{opacity:0 !important;visibility:hidden !important;pointer-events:none !important;transition:opacity .10s linear,visibility 0s linear .10s !important}
+@keyframes igrDoorDiveV116{0%{transform:scale(1) translate(0,0);filter:brightness(.88) contrast(1.06) saturate(.70)}100%{transform:scale(1.52) translate(-4.8%,-2.2%);filter:brightness(1.48) contrast(.94) saturate(.48)}}
+@keyframes igrLightV116{0%{opacity:0;transform:translateX(-50%) scaleX(.2);filter:blur(7px)}20%{opacity:.9}100%{opacity:1;transform:translateX(-50%) scaleX(15);filter:blur(20px)}}
+@keyframes igrPulseV116{0%{opacity:0;transform:translate(-50%,-50%) scale(.55)}25%{opacity:.65}100%{opacity:1;transform:translate(-50%,-50%) scale(4.2)}}
+@keyframes igrWhiteV116{0%,22%{opacity:0}72%{opacity:.78}100%{opacity:1}}
+.home-logo-frame{display:none !important}
+
+/* V11.17 — usable touch targets, pure black safe areas, keyboard and motion support. */
+html,body,body.home-locked{background-color:#000;background-image:none}
+.intro-gate{background:#000}
+:focus-visible{outline:2px solid #eef1f3;outline-offset:4px}
+[role="button"]{cursor:pointer;touch-action:manipulation}
+.btn,.tab,.phase-timer-toggle,.live-session-controls button{min-height:44px}
+.live-session-controls button{font-size:12px}
+.connection-status{position:fixed;z-index:180;top:env(safe-area-inset-top,0px);left:0;right:0;padding:10px 14px;text-align:center;background:#382614;color:#fff;font-size:14px}
+.modal{overflow-y:auto;padding:24px 16px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom))}
+.modal-box{max-height:calc(100dvh - 48px);overflow-y:auto}
+input,select,textarea{font-size:16px}
+.confirm-panel-v10-13 .confirm-art img{object-fit:contain;object-position:center;background:#000;max-height:60svh;width:100%}
+.page-head h1,.game-head-v11 h1,.player-ident,.role-choice-card span{overflow-wrap:anywhere;min-width:0}
+.role-notice span{font-size:14px}.role-notice small{font-size:12px}
+.audio-wake-prompt{font-size:12px;white-space:normal;max-width:calc(100vw - 28px)}
+.home-action p,.app-home-locked .home-actions-v10-13 .home-action p{font-size:14px}
+html.home-locked,body.home-locked{height:auto;min-height:100dvh;overflow-y:auto}
+.app-home-locked{height:auto;min-height:100dvh}
+@media(max-height:740px){.app-home-locked .home-card-v10-13{padding-top:12px}.app-home-locked .home-title-spaced{font-size:36px}.app-home-locked .home-actions-v10-13{gap:8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.intro-gate.opening{opacity:0}.intro-whiteout{display:none!important}}
+html.home-locked,body.home-locked{overflow-y:auto!important;overflow-x:hidden!important}
+body.home-locked{position:relative;inset:auto}
+.app-home-locked,.app-home-locked .home-card-v10-13{overflow:visible;height:auto;max-height:none}
+
+
+/* v11.20 — mobile/store performance hardening */
+button,[role="button"],.btn,.tab,.scenario{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.scenario{content-visibility:auto;contain-intrinsic-size:240px}
+img{content-visibility:auto}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
