@@ -4,7 +4,7 @@
   "short_name": "Grey Room",
   "description": "Enquête psychologique multijoueur à informations cachées.",
   "lang": "fr",
-  "start_url": "/?igr=v11-20-store-candidate",
+  "start_url": "/?igr=v11-21-iphone-pwa-polish",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
