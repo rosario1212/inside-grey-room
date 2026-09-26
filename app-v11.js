@@ -4,7 +4,7 @@ const STORAGE = {
  setItem(k,v){v=String(v);this.memory.set(k,v);try{window.localStorage.setItem(k,v)}catch{if(!this.warned){this.warned=true;setTimeout(()=>toast('Stockage indisponible : garde cette page ouverte pour conserver ta session.'),800)}}},
  removeItem(k){this.memory.set(k,null);try{window.localStorage.removeItem(k)}catch{}}
 };
-const VERSION = 'v11-21-iphone-pwa-polish';
+const VERSION = 'v11-22-rewards-polish';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -552,27 +552,28 @@ function renderJoin(){
 }
 
 const PROFILE_TITLES=[
- {id:'recrue',label:'Recrue de la Cellule',desc:'Titre de départ.',ok:p=>true},
- {id:'enqueteur_gris',label:'Enquêteur Gris',desc:'Terminer un premier dossier.',ok:p=>(p.completed||0)>=1},
- {id:'lecteur_mensonges',label:'Lecteur de Mensonges',desc:'Terminer 3 dossiers.',ok:p=>(p.completed||0)>=3},
- {id:'veteran',label:'Vétéran de la Grey Room',desc:'Terminer 7 dossiers.',ok:p=>(p.completed||0)>=7},
- {id:'archiviste',label:'Archiviste des Ombres',desc:'Terminer 15 dossiers.',ok:p=>(p.completed||0)>=15},
- {id:'apotheose',label:'Survivant de l’Apothéose',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')},
- {id:'chef_enquete',label:'Chef d’Enquête',desc:'Terminer 3 dossiers comme Enquêteur.',ok:p=>(p.history||[]).filter(x=>x.role==='enqueteur').length>=3},
- {id:'profiler',label:'Profiler',desc:'Terminer 3 dossiers comme Analyste.',ok:p=>(p.history||[]).filter(x=>x.role==='analyste').length>=3}
+ {id:'operateur',label:'Opérateur de Cellule',desc:'Titre de départ.',ok:p=>true},
+ {id:'premier_verdict',label:'Premier Verdict',desc:'Terminer 1 dossier comme Enquêteur.',ok:p=>(p.history||[]).filter(x=>x.role==='enqueteur').length>=1},
+ {id:'lecture_froide',label:'Lecture Froide',desc:'Terminer 2 dossiers comme Analyste.',ok:p=>(p.history||[]).filter(x=>x.role==='analyste').length>=2},
+ {id:'masque_froid',label:'Masque Froid',desc:'Terminer 2 dossiers comme Suspect.',ok:p=>(p.history||[]).filter(x=>x.role==='suspect').length>=2},
+ {id:'voix_du_dossier',label:'Voix du Dossier',desc:'Terminer 2 dossiers comme Procureur, Journaliste ou Juge.',ok:p=>(p.history||[]).filter(x=>['procureur','journaliste','juge'].includes(x.role)).length>=2},
+ {id:'terrain',label:'Main de Terrain',desc:'Terminer 2 dossiers comme Inspecteur ou Expert.',ok:p=>(p.history||[]).filter(x=>['inspecteur','expert'].includes(x.role)).length>=2},
+ {id:'polyvalent',label:'Polyvalent',desc:'Terminer des dossiers avec 4 rôles publics différents.',ok:p=>new Set((p.history||[]).map(x=>x.role).filter(Boolean)).size>=4},
+ {id:'apotheose',label:'Survivant de l’Apothéose',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')}
 ];
 const PROFILE_BADGES=[
- {id:'empreinte',glyph:'◉',label:'Empreinte Grise',desc:'Badge de départ.',ok:p=>true},
- {id:'dossier_scelle',glyph:'◆',label:'Dossier Scellé',desc:'Terminer 1 dossier.',ok:p=>(p.completed||0)>=1},
- {id:'oeil_doute',glyph:'◈',label:'Œil du Doute',desc:'Terminer 3 dossiers.',ok:p=>(p.completed||0)>=3},
- {id:'cellule_noire',glyph:'✦',label:'Cellule Noire',desc:'Terminer 7 dossiers.',ok:p=>(p.completed||0)>=7},
- {id:'apotheose_327',glyph:'⬢',label:'327',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')},
- {id:'veteran_15',glyph:'✧',label:'Dossier XV',desc:'Terminer 15 dossiers.',ok:p=>(p.completed||0)>=15}
+ {id:'signal',glyph:'◉',label:'Signal d’Ouverture',desc:'Terminer un premier dossier.',ok:p=>(p.completed||0)>=1},
+ {id:'triple_version',glyph:'◈',label:'Triple Version',desc:'Terminer 3 dossiers comme Suspect.',ok:p=>(p.history||[]).filter(x=>x.role==='suspect').length>=3},
+ {id:'cible',glyph:'◎',label:'Cible Centrale',desc:'Terminer 2 dossiers comme Enquêteur.',ok:p=>(p.history||[]).filter(x=>x.role==='enqueteur').length>=2},
+ {id:'ligne_grise',glyph:'▣',label:'Ligne Grise',desc:'Terminer 2 dossiers comme Analyste.',ok:p=>(p.history||[]).filter(x=>x.role==='analyste').length>=2},
+ {id:'triangle_pouvoir',glyph:'▲',label:'Triangle de Pouvoir',desc:'Terminer un dossier comme Procureur, un comme Juge et un comme Journaliste.',ok:p=>['procureur','juge','journaliste'].every(r=>(p.history||[]).some(x=>x.role===r))},
+ {id:'clef_du_terrain',glyph:'✦',label:'Clef du Terrain',desc:'Terminer un dossier comme Inspecteur et un comme Expert.',ok:p=>['inspecteur','expert'].every(r=>(p.history||[]).some(x=>x.role===r))},
+ {id:'dossier_020',glyph:'⬢',label:'Dossier 020',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')}
 ];
 function unlockedTitles(p=loadProfile()){return PROFILE_TITLES.filter(x=>x.ok(p))}
 function unlockedBadges(p=loadProfile()){return PROFILE_BADGES.filter(x=>x.ok(p))}
-function profileTitle(id,p=loadProfile()){return unlockedTitles(p).find(x=>x.id===id)||PROFILE_TITLES[0]}
-function profileBadge(id,p=loadProfile()){return unlockedBadges(p).find(x=>x.id===id)||PROFILE_BADGES[0]}
+function profileTitle(id,p=loadProfile()){return unlockedTitles(p).find(x=>x.id===id)||unlockedTitles(p)[0]||PROFILE_TITLES[0]}
+function profileBadge(id,p=loadProfile()){return unlockedBadges(p).find(x=>x.id===id)||unlockedBadges(p)[0]||PROFILE_BADGES[0]}
 function playerCosmeticLine(player){
  if(!player)return'';
  const badge=PROFILE_BADGES.find(x=>x.id===player.equipped_badge)||PROFILE_BADGES[0];
@@ -590,19 +591,9 @@ function avatarSource(id){return safeAvatar(AVATARS.map.get(id)||(id===STATE.pla
 function avatarHtml(id,pseudo,cls=''){const src=avatarSource(id);return src?`<span class="avatar ${cls}"><img src="${src}" alt="Photo de ${h(pseudo)}"></span>`:`<span class="avatar avatar-fallback ${cls}" aria-label="${h(pseudo)}">${h(initials(pseudo))}</span>`}
 function renderProfile(){
  const p=loadProfile();p.avatar=safeAvatar(p.avatar);const titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
- byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line"><span class="equipped-badge">${h(equippedBadge.glyph)}</span><span>${h(equippedTitle.label)}</span></div><p>Ta photo, ton badge et ton titre peuvent apparaître avec ton pseudo pendant les parties. Ils ne révèlent jamais ton rôle secret.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div><div><b>${h(p.lastScenario||'—')}</b><span>dernier dossier</span></div></div><div class="reward-section"><div class="section-title"><h2>Titre affiché</h2><span>${titles.length}/${PROFILE_TITLES.length} débloqués</span></div><div class="reward-grid">${PROFILE_TITLES.map(x=>{const unlocked=x.ok(p),active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''} ${unlocked?'':'locked'}" ${unlocked?`onclick="equipProfileTitle('${x.id}')"`:'disabled'}><span class="reward-state">${active?'ÉQUIPÉ':unlocked?'DISPONIBLE':'VERROUILLÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join('')}</div></div><div class="reward-section"><div class="section-title"><h2>Badge affiché</h2><span>${badges.length}/${PROFILE_BADGES.length} débloqués</span></div><div class="badge-grid">${PROFILE_BADGES.map(x=>{const unlocked=x.ok(p),active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''} ${unlocked?'':'locked'}" ${unlocked?`onclick="equipProfileBadge('${x.id}')"`:'disabled'}><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join('')}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
-}
-function equipProfileTitle(id){const p=loadProfile();if(!unlockedTitles(p).some(x=>x.id===id))return;saveProfileData({equippedTitle:id});renderProfile();toast('Titre équipé.');pushProfileCosmetics()}
-function equipProfileBadge(id){const p=loadProfile();if(!unlockedBadges(p).some(x=>x.id===id))return;saveProfileData({equippedBadge:id});renderProfile();toast('Badge équipé.');pushProfileCosmetics()}
-
-function readImageFile(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
-async function compressAvatar(file){
- if(!file||!file.type?.startsWith('image/'))throw new Error('invalid image');
- const data=await readImageFile(file),img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=data});
- const size=192,canvas=document.createElement('canvas');canvas.width=size;canvas.height=size;const ctx=canvas.getContext('2d');
- const scale=Math.max(size/img.width,size/img.height),w=img.width*scale,hg=img.height*scale;ctx.drawImage(img,(size-w)/2,(size-hg)/2,w,hg);
- let q=.76,out=canvas.toDataURL('image/jpeg',q);while(out.length>105000&&q>.38){q-=.08;out=canvas.toDataURL('image/jpeg',q)}
- if(out.length>120000)throw new Error('image too large');return out;
+ const titleCards=titles.length?titles.map(x=>{const active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''}" onclick="equipProfileTitle('${x.id}')"><span class="reward-state">${active?'ÉQUIPÉ':'DÉBLOQUÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join(''):`<div class="empty-rewards">Aucun titre débloqué pour le moment.</div>`;
+ const badgeCards=badges.length?badges.map(x=>{const active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''}" onclick="equipProfileBadge('${x.id}')"><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join(''):`<div class="empty-rewards">Aucun badge débloqué pour le moment.</div>`;
+ byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line"><span class="equipped-badge">${h(equippedBadge.glyph)}</span><span>${h(equippedTitle.label)}</span></div><p>Ta photo, ton badge et ton titre peuvent apparaître avec ton pseudo pendant les parties. Ils ne révèlent jamais ton rôle secret.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div><div><b>${h(p.lastScenario||'—')}</b><span>dernier dossier</span></div></div><div class="reward-section"><div class="section-title"><h2>Titres débloqués</h2><span>${titles.length} disponibles</span></div><div class="reward-grid">${titleCards}</div></div><div class="reward-section"><div class="section-title"><h2>Badges débloqués</h2><span>${badges.length} disponibles</span></div><div class="badge-grid">${badgeCards}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
 }
 async function profilePhotoChanged(file){try{const avatar=await compressAvatar(file);saveProfileData({avatar});renderProfile();toast('Photo prête.')}catch(e){console.error(e);toast('Photo impossible à préparer.')}}
 function removeProfilePhoto(){saveProfileData({avatar:''});renderProfile()}
@@ -1818,9 +1809,9 @@ window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
 
 
-/* v11-21-iphone-pwa-polish — PWA cache bootstrap */
+/* v11-22-rewards-polish — PWA cache bootstrap */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v11-21-iphone-pwa-polish').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v11-22-rewards-polish').catch(() => {});
   }, {once:true});
 }

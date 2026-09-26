@@ -668,3 +668,25 @@ button,[role="button"],.btn,.tab,.scenario{-webkit-tap-highlight-color:transpare
 .scenario{content-visibility:auto;contain-intrinsic-size:240px}
 img{content-visibility:auto}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
+
+
+/* v11.22 — hide visual scrollbars on iPhone/PWA while preserving scroll */
+html,body,.page,.intro-gate{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.page::-webkit-scrollbar,
+.intro-gate::-webkit-scrollbar{
+  width:0 !important;
+  height:0 !important;
+  display:none !important;
+}
+.empty-rewards{
+  padding:18px 20px;
+  border:1px dashed rgba(255,255,255,.12);
+  border-radius:18px;
+  color:var(--muted);
+  background:rgba(255,255,255,.02);
+}
