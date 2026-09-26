@@ -1,5 +1,5 @@
-const CACHE='igr-v11-22-rewards-polish';
-const SHELL=["/", "/index.html", "/styles-v11.css?v=v11-22-rewards-polish", "/app-v11.js?v=v11-22-rewards-polish", "/manifest.webmanifest?v=v11-22-rewards-polish", "/assets/intro-v10-14.webp?v=v11-22-rewards-polish", "/assets/home-v10-14.webp?v=v11-22-rewards-polish", "/assets/icon-192-v9.png", "/assets/icon-512-v9.png", "/assets/apple-touch-icon-v9.png", "/assets/favicon-v9.png"];
+const CACHE='igr-v11-25-winner-camp';
+const SHELL=["/", "/index.html", "/styles-v11.css?v=v11-25-winner-camp", "/app-v11.js?v=v11-25-winner-camp", "/manifest.webmanifest?v=v11-25-winner-camp", "/assets/intro-v10-14.webp?v=v11-25-winner-camp", "/assets/home-v10-14.webp?v=v11-25-winner-camp", "/assets/icon-192-v9.png", "/assets/icon-512-v9.png", "/assets/apple-touch-icon-v9.png", "/assets/favicon-v9.png"];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).catch(()=>null));self.skipWaiting();});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
 self.addEventListener('fetch',event=>{
