@@ -4,7 +4,7 @@ const STORAGE = {
  setItem(k,v){v=String(v);this.memory.set(k,v);try{window.localStorage.setItem(k,v)}catch{if(!this.warned){this.warned=true;setTimeout(()=>toast('Stockage indisponible : garde cette page ouverte pour conserver ta session.'),800)}}},
  removeItem(k){this.memory.set(k,null);try{window.localStorage.removeItem(k)}catch{}}
 };
-const VERSION = 'v11-22-rewards-polish';
+const VERSION = 'v11-25-winner-camp';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -199,19 +199,9 @@ const VIDEO={pcs:new Map(),localStream:null,remoteStream:null,lastSignalId:0,pol
 const INTRO={active:true,playing:false,done:false,lastActivation:0};
 const AVATARS={map:new Map(),sig:''};
 const BRIEFING={spokenKey:null,timer:null,scoreStarted:false};
-const NARRATION={generation:0,enabled:pref('igr_v11_narration',true),primed:false,speaking:false,retryTimer:null};
+const NARRATION={generation:0,enabled:false,primed:true,speaking:false,retryTimer:null};
 
-function primeNarrationFromGesture(){
- if(!NARRATION.enabled||NARRATION.primed||STATE.view==='briefing'||!('speechSynthesis'in window))return;
- try{
-  const synth=window.speechSynthesis;
-  synth.resume?.();
-  const u=new SpeechSynthesisUtterance('\u00a0');
-  u.lang='fr-FR';u.volume=0;u.rate=10;u.pitch=1;
-  u.onend=u.onerror=()=>{NARRATION.primed=true};
-  synth.speak(u);NARRATION.primed=true;
- }catch(e){console.warn('narration prime',e)}
-}
+function primeNarrationFromGesture(){return}
 function frenchNarrationVoice(){
  if(!('speechSynthesis'in window))return null;
  const voices=window.speechSynthesis.getVoices?.()||[];
@@ -311,6 +301,9 @@ function setupIntro(){
    const now=performance.now();
    if(now-INTRO.lastActivation<350)return;
    INTRO.lastActivation=now;
+   primeNarrationFromGesture();
+   unlockAudioFromGesture();
+   void wakeAudioFromGesture();
    startIntroSequence();
  };
  // iOS Home Screen: launch on press, not release, so the door feels immediate
@@ -426,7 +419,10 @@ function startIntroSequence(){
    INTRO.active=false;INTRO.done=true;INTRO.playing=false;byId('app').inert=false;
    if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
    byId('app').querySelector('button,[tabindex]')?.focus({preventScroll:true});
-   if(SOUND.enabled)ensureAmbient(activeSoundPreset());
+   if(SOUND.enabled){
+     ensureLiveAudio();
+     setTimeout(()=>{if(SOUND.ctx?.state==='running')ensureAmbient(activeSoundPreset())},220);
+   }
  };
  setTimeout(finishDoorEntry,650);
 }
@@ -552,28 +548,40 @@ function renderJoin(){
 }
 
 const PROFILE_TITLES=[
- {id:'operateur',label:'Opérateur de Cellule',desc:'Titre de départ.',ok:p=>true},
- {id:'premier_verdict',label:'Premier Verdict',desc:'Terminer 1 dossier comme Enquêteur.',ok:p=>(p.history||[]).filter(x=>x.role==='enqueteur').length>=1},
- {id:'lecture_froide',label:'Lecture Froide',desc:'Terminer 2 dossiers comme Analyste.',ok:p=>(p.history||[]).filter(x=>x.role==='analyste').length>=2},
- {id:'masque_froid',label:'Masque Froid',desc:'Terminer 2 dossiers comme Suspect.',ok:p=>(p.history||[]).filter(x=>x.role==='suspect').length>=2},
- {id:'voix_du_dossier',label:'Voix du Dossier',desc:'Terminer 2 dossiers comme Procureur, Journaliste ou Juge.',ok:p=>(p.history||[]).filter(x=>['procureur','journaliste','juge'].includes(x.role)).length>=2},
- {id:'terrain',label:'Main de Terrain',desc:'Terminer 2 dossiers comme Inspecteur ou Expert.',ok:p=>(p.history||[]).filter(x=>['inspecteur','expert'].includes(x.role)).length>=2},
- {id:'polyvalent',label:'Polyvalent',desc:'Terminer des dossiers avec 4 rôles publics différents.',ok:p=>new Set((p.history||[]).map(x=>x.role).filter(Boolean)).size>=4},
- {id:'apotheose',label:'Survivant de l’Apothéose',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')}
+ {id:'none',label:'Aucun titre',desc:'',hidden:true,ok:p=>true},
+ {id:'vic_enqueteur',label:'Architecte du Verdict',desc:'Gagner une partie comme Enquêteur.',ok:p=>winsByRole(p,'enqueteur')>=1},
+ {id:'vic_analyste',label:'Lecteur de Failles',desc:'Gagner une partie comme Analyste.',ok:p=>winsByRole(p,'analyste')>=1},
+ {id:'vic_suspect',label:'Frontière Tenue',desc:'Gagner une partie comme Suspect.',ok:p=>winsByRole(p,'suspect')>=1},
+ {id:'vic_avocat',label:'Maître de la Défense',desc:'Gagner une partie comme Avocat.',ok:p=>winsByRole(p,'maitre')>=1},
+ {id:'vic_procureur',label:'Accusation Maîtrisée',desc:'Gagner une partie comme Procureur.',ok:p=>winsByRole(p,'procureur')>=1},
+ {id:'vic_juge',label:'Balance Grise',desc:'Gagner une partie comme Juge.',ok:p=>winsByRole(p,'juge')>=1},
+ {id:'vic_journaliste',label:'Voix sous Pression',desc:'Gagner une partie comme Journaliste.',ok:p=>winsByRole(p,'journaliste')>=1},
+ {id:'vic_inspecteur',label:'Pisteur de Terrain',desc:'Gagner une partie comme Inspecteur.',ok:p=>winsByRole(p,'inspecteur')>=1},
+ {id:'vic_expert',label:'Expert du Dossier',desc:'Gagner une partie comme Expert.',ok:p=>winsByRole(p,'expert')>=1},
+ {id:'vic_temoin',label:'Témoin Inébranlable',desc:'Gagner une partie comme Témoin.',ok:p=>winsByRole(p,'temoin')>=1},
+ {id:'vic_espion',label:'Ombre dans la Cellule',desc:'Gagner une partie comme Espion.',ok:p=>winsByRole(p,'espion')>=1}
 ];
 const PROFILE_BADGES=[
- {id:'signal',glyph:'◉',label:'Signal d’Ouverture',desc:'Terminer un premier dossier.',ok:p=>(p.completed||0)>=1},
- {id:'triple_version',glyph:'◈',label:'Triple Version',desc:'Terminer 3 dossiers comme Suspect.',ok:p=>(p.history||[]).filter(x=>x.role==='suspect').length>=3},
- {id:'cible',glyph:'◎',label:'Cible Centrale',desc:'Terminer 2 dossiers comme Enquêteur.',ok:p=>(p.history||[]).filter(x=>x.role==='enqueteur').length>=2},
- {id:'ligne_grise',glyph:'▣',label:'Ligne Grise',desc:'Terminer 2 dossiers comme Analyste.',ok:p=>(p.history||[]).filter(x=>x.role==='analyste').length>=2},
- {id:'triangle_pouvoir',glyph:'▲',label:'Triangle de Pouvoir',desc:'Terminer un dossier comme Procureur, un comme Juge et un comme Journaliste.',ok:p=>['procureur','juge','journaliste'].every(r=>(p.history||[]).some(x=>x.role===r))},
- {id:'clef_du_terrain',glyph:'✦',label:'Clef du Terrain',desc:'Terminer un dossier comme Inspecteur et un comme Expert.',ok:p=>['inspecteur','expert'].every(r=>(p.history||[]).some(x=>x.role===r))},
- {id:'dossier_020',glyph:'⬢',label:'Dossier 020',desc:'Terminer le dossier 020.',ok:p=>(p.history||[]).some(x=>x.scenario==='020')}
+ {id:'none',glyph:'',label:'Aucun badge',desc:'',hidden:true,ok:p=>true},
+ {id:'enq_sans_correction',glyph:'◎',label:'Sans Correction',desc:'Enquêteur : verdict provisoire et verdict final entièrement exacts.',ok:p=>hasAchievement(p,'enq_sans_correction')},
+ {id:'analyste_parfait',glyph:'◈',label:'Lecture Parfaite',desc:'Analyste : verrouillage final entièrement exact.',ok:p=>hasAchievement(p,'analyste_parfait')},
+ {id:'suspect_sous_pression',glyph:'◆',label:'Sous Pression',desc:'Suspect : faire reconnaître exactement une responsabilité réelle importante ou centrale.',ok:p=>hasAchievement(p,'suspect_sous_pression')},
+ {id:'avocat_double_defense',glyph:'⚖',label:'Défense Multiple',desc:'Avocat : protéger exactement au moins deux clients dans la même partie.',ok:p=>hasAchievement(p,'avocat_double_defense')},
+ {id:'procureur_double_entretien',glyph:'▲',label:'Double Entretien',desc:'Procureur : gagner après deux entretiens acceptés dans un même cycle.',ok:p=>hasAchievement(p,'procureur_double_entretien')},
+ {id:'juge_confidentiel',glyph:'◇',label:'Secret Maîtrisé',desc:'Juge : gagner en utilisant au maximum 2/5 de confidentialité.',ok:p=>hasAchievement(p,'juge_confidentiel')},
+ {id:'journaliste_trois_unes',glyph:'✦',label:'Trois Unes',desc:'Journaliste : gagner après avoir publié trois Breaking News.',ok:p=>hasAchievement(p,'journaliste_trois_unes')},
+ {id:'inspecteur_trois_pistes',glyph:'▣',label:'Terrain Quadrillé',desc:'Inspecteur : gagner après au moins trois actions de terrain.',ok:p=>hasAchievement(p,'inspecteur_trois_pistes')},
+ {id:'expert_trois_analyses',glyph:'⬡',label:'Analyse Croisée',desc:'Expert : gagner après au moins trois analyses techniques.',ok:p=>hasAchievement(p,'expert_trois_analyses')},
+ {id:'temoin_intouchable',glyph:'○',label:'Hors de Cause',desc:'Témoin : gagner sans même devenir personne d’intérêt.',ok:p=>hasAchievement(p,'temoin_intouchable')},
+ {id:'espion_ombre',glyph:'⬢',label:'Ombre Totale',desc:'Espion : gagner alors que l’enquête ne reconstruit pas plus de la moitié des responsabilités.',ok:p=>hasAchievement(p,'espion_ombre')}
 ];
-function unlockedTitles(p=loadProfile()){return PROFILE_TITLES.filter(x=>x.ok(p))}
-function unlockedBadges(p=loadProfile()){return PROFILE_BADGES.filter(x=>x.ok(p))}
-function profileTitle(id,p=loadProfile()){return unlockedTitles(p).find(x=>x.id===id)||unlockedTitles(p)[0]||PROFILE_TITLES[0]}
-function profileBadge(id,p=loadProfile()){return unlockedBadges(p).find(x=>x.id===id)||unlockedBadges(p)[0]||PROFILE_BADGES[0]}
+function winsByRole(p,role){return (p.history||[]).filter(x=>x.won&&x.role===role).length}
+function hasAchievement(p,id){return (p.history||[]).some(x=>(x.achievements||[]).includes(id))}
+function unlockedTitles(p=loadProfile()){return PROFILE_TITLES.filter(x=>!x.hidden&&x.ok(p))}
+function unlockedBadges(p=loadProfile()){return PROFILE_BADGES.filter(x=>!x.hidden&&x.ok(p))}
+function profileTitle(id,p=loadProfile()){return unlockedTitles(p).find(x=>x.id===id)||PROFILE_TITLES[0]}
+function profileBadge(id,p=loadProfile()){return unlockedBadges(p).find(x=>x.id===id)||PROFILE_BADGES[0]}
+
 function playerCosmeticLine(player){
  if(!player)return'';
  const badge=PROFILE_BADGES.find(x=>x.id===player.equipped_badge)||PROFILE_BADGES[0];
@@ -582,7 +590,7 @@ function playerCosmeticLine(player){
 }
 
 function loadProfile(){
- try{return Object.assign({pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[],equippedTitle:'recrue',equippedBadge:'empreinte'},JSON.parse(STORAGE.getItem('igr_v11_profile')||'{}'))}catch{return{pseudo:'',avatar:'',games:0,completed:0,lastScenario:'',history:[],equippedTitle:'recrue',equippedBadge:'empreinte'}}
+ try{return Object.assign({pseudo:'',avatar:'',games:0,completed:0,wins:0,lastScenario:'',history:[],equippedTitle:'none',equippedBadge:'none'},JSON.parse(STORAGE.getItem('igr_v11_profile')||'{}'))}catch{return{pseudo:'',avatar:'',games:0,completed:0,wins:0,lastScenario:'',history:[],equippedTitle:'none',equippedBadge:'none'}}
 }
 function saveProfileData(p){STORAGE.setItem('igr_v11_profile',JSON.stringify(Object.assign(loadProfile(),p||{})))}
 function initials(name='?'){return String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'?'}
@@ -593,7 +601,7 @@ function renderProfile(){
  const p=loadProfile();p.avatar=safeAvatar(p.avatar);const titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
  const titleCards=titles.length?titles.map(x=>{const active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''}" onclick="equipProfileTitle('${x.id}')"><span class="reward-state">${active?'ÉQUIPÉ':'DÉBLOQUÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join(''):`<div class="empty-rewards">Aucun titre débloqué pour le moment.</div>`;
  const badgeCards=badges.length?badges.map(x=>{const active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''}" onclick="equipProfileBadge('${x.id}')"><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join(''):`<div class="empty-rewards">Aucun badge débloqué pour le moment.</div>`;
- byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line"><span class="equipped-badge">${h(equippedBadge.glyph)}</span><span>${h(equippedTitle.label)}</span></div><p>Ta photo, ton badge et ton titre peuvent apparaître avec ton pseudo pendant les parties. Ils ne révèlent jamais ton rôle secret.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div><div><b>${h(p.lastScenario||'—')}</b><span>dernier dossier</span></div></div><div class="reward-section"><div class="section-title"><h2>Titres débloqués</h2><span>${titles.length} disponibles</span></div><div class="reward-grid">${titleCards}</div></div><div class="reward-section"><div class="section-title"><h2>Badges débloqués</h2><span>${badges.length} disponibles</span></div><div class="badge-grid">${badgeCards}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line">${equippedBadge.id!=='none'?`<span class="equipped-badge">${h(equippedBadge.glyph)}</span>`:''}<span>${equippedTitle.id!=='none'?h(equippedTitle.label):'Aucun titre équipé'}</span></div><p>Tes titres et badges sont des trophées de victoire visibles dans ton profil. Ils restent hors de l’interface de partie.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.wins||0}</b><span>victoires</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div></div><div class="reward-section"><div class="section-title"><h2>Titres débloqués</h2><span>${titles.length} disponibles</span></div><div class="reward-grid">${titleCards}</div></div><div class="reward-section"><div class="section-title"><h2>Badges débloqués</h2><span>${badges.length} disponibles</span></div><div class="badge-grid">${badgeCards}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
 }
 async function profilePhotoChanged(file){try{const avatar=await compressAvatar(file);saveProfileData({avatar});renderProfile();toast('Photo prête.')}catch(e){console.error(e);toast('Photo impossible à préparer.')}}
 function removeProfilePhoto(){saveProfileData({avatar:''});renderProfile()}
@@ -609,8 +617,29 @@ async function refreshAvatars(d,force=false){
  if(!STATE.room||!STATE.token||!d)return;const sig=(d.players||[]).map(p=>`${p.id}:${p.avatar_rev||0}`).join('|');if(!force&&sig===AVATARS.sig)return;
  try{const arr=await rpc('igr_v4_get_avatars',{p_code:STATE.room,p_player_token:STATE.token});AVATARS.map=new Map((arr||[]).filter(x=>x.avatar).map(x=>[x.id,x.avatar]));AVATARS.sig=sig}catch(e){console.warn('avatars',e)}
 }
-function markGameStarted(d){if(!d?.room?.code||d.room.status!=='playing')return;const key=`igr_v11_started_${d.room.code}`;if(STORAGE.getItem(key))return;STORAGE.setItem(key,'1');const p=loadProfile();saveProfileData({games:(p.games||0)+1,lastScenario:d.room.scenario_id})}
-function markGameCompleted(d){if(!d?.room?.code||d.room.status!=='finished')return;const key=`igr_v11_completed_${d.room.code}`;if(STORAGE.getItem(key))return;STORAGE.setItem(key,'1');const p=loadProfile(),sc=scenario(d.room.scenario_id),history=[{scenario:sc.id,title:sc.title,role:d.player?.public_role||'',date:new Intl.DateTimeFormat('fr-CH',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date())},...(p.history||[])].slice(0,20);const before=new Set([...unlockedTitles(p).map(x=>'t:'+x.id),...unlockedBadges(p).map(x=>'b:'+x.id)]);saveProfileData({completed:(p.completed||0)+1,lastScenario:d.room.scenario_id,history});const np=loadProfile(),newReward=[...unlockedTitles(np).map(x=>({k:'t:'+x.id,n:x.label})),...unlockedBadges(np).map(x=>({k:'b:'+x.id,n:x.label}))].find(x=>!before.has(x.k));if(newReward)setTimeout(()=>toast(`Récompense débloquée : ${newReward.n}`),700)}
+function matchNumber(d){return Math.max(1,Number(d?.room?.state?.match_no||1))}
+function markGameStarted(d){
+ if(!d?.room?.code||d.room.status!=='playing')return;
+ const key=`igr_v11_started_${d.room.code}_${matchNumber(d)}`;if(STORAGE.getItem(key))return;
+ STORAGE.setItem(key,'1');const p=loadProfile();saveProfileData({games:(p.games||0)+1,lastScenario:d.room.scenario_id});
+}
+function markGameCompleted(d){
+ if(!d?.room?.code||d.room.status!=='finished')return;
+ const reveal=(d.events||[]).filter(e=>e.event_type==='reveal').slice(-1)[0]?.payload;
+ const result=(reveal?.results||[]).find(x=>String(x.player_id)===String(d.player?.id))
+   ||(reveal?.results||[]).find(x=>x.pseudo===d.player?.pseudo);
+ if(!result)return;
+ const key=`igr_v11_completed_${d.room.code}_${matchNumber(d)}`;if(STORAGE.getItem(key))return;
+ STORAGE.setItem(key,'1');
+ const p=loadProfile(),sc=scenario(d.room.scenario_id),won=!!result.success,achievements=Array.isArray(result.achievements)?result.achievements:[];
+ const strength=(d.room.state?.continuation?.winners||[]).find(x=>String(x.id)===String(d.player?.id))?.score||null;
+ const history=[{scenario:sc.id,title:sc.title,role:result.role||d.player?.public_role||'',publicRole:d.player?.public_role||'',won,strength,achievements,date:new Intl.DateTimeFormat('fr-CH',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date())},...(p.history||[])].slice(0,40);
+ const before=new Set([...unlockedTitles(p).map(x=>'t:'+x.id),...unlockedBadges(p).map(x=>'b:'+x.id)]);
+ saveProfileData({completed:(p.completed||0)+1,wins:(p.wins||0)+(won?1:0),lastScenario:d.room.scenario_id,history});
+ const np=loadProfile(),newReward=[...unlockedTitles(np).map(x=>({k:'t:'+x.id,n:x.label})),...unlockedBadges(np).map(x=>({k:'b:'+x.id,n:x.label}))].find(x=>!before.has(x.k));
+ if(newReward)setTimeout(()=>toast(`Récompense débloquée : ${newReward.n}`),700);
+}
+
 
 function renderRules(){
  byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">Règles</div><h1>Cadre de jeu</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel"><div class="rule-list">${RULES.map(r=>`<div class="rule"><h3>${h(r.title)}</h3><p>${r.items.map(i=>`• ${h(i)}`).join('<br>')}</p></div>`).join('')}</div></section></main>`)
@@ -618,11 +647,11 @@ function renderRules(){
 
 function openSettings(){
  if(document.querySelector('.modal'))return;
- document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeSettings()"><div class="modal-box" role="dialog" aria-modal="true" aria-label="Paramètres audio" tabindex="-1"><div class="kicker">Paramètres</div><h2 style="margin:7px 0 16px;font-size:30px">Audio</h2><div class="settings-grid"><div class="setting"><div><h4>Activer le son</h4><p>Les réglages sont audibles immédiatement.</p></div><label class="sound-check"><input id="soundOn" aria-label="Activer le son" type="checkbox" ${SOUND.enabled?'checked':''} onchange="liveSoundToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Voix du briefing</h4><p>Voix système de l’appareil : elle lit le résumé canonique, sans IA générative.</p></div><label class="sound-check"><input id="narrationOn" aria-label="Voix du briefing" type="checkbox" ${NARRATION.enabled?'checked':''} onchange="liveNarrationToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Volume général</h4><p id="masterValue">${Math.round(SOUND.master*100)} %</p></div><input id="master" aria-label="Volume général" type="range" min="0" max="1" step=".01" value="${SOUND.master}" oninput="liveSoundRange('master',this.value)"></div><div class="setting"><div><h4>Ambiance</h4><p id="ambienceValue">${Math.round(SOUND.ambience*100)} %</p></div><input id="ambience" aria-label="Ambiance" type="range" min="0" max="1" step=".01" value="${SOUND.ambience}" oninput="liveSoundRange('ambience',this.value)"></div><div class="setting"><div><h4>Effets / alertes</h4><p id="effectsValue">${Math.round(SOUND.effects*100)} %</p></div><input id="effects" aria-label="Effets et alertes" type="range" min="0" max="1" step=".01" value="${SOUND.effects}" oninput="liveSoundRange('effects',this.value)"></div></div><div class="modal-actions"><button class="btn primary small" onclick="saveSettings()">Terminé</button></div></div></div>`)
+ document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeSettings()"><div class="modal-box" role="dialog" aria-modal="true" aria-label="Paramètres audio" tabindex="-1"><div class="kicker">Paramètres</div><h2 style="margin:7px 0 16px;font-size:30px">Audio</h2><div class="settings-grid"><div class="setting"><div><h4>Activer le son</h4><p>Les réglages sont audibles immédiatement.</p></div><label class="sound-check"><input id="soundOn" aria-label="Activer le son" type="checkbox" ${SOUND.enabled?'checked':''} onchange="liveSoundToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Volume général</h4><p id="masterValue">${Math.round(SOUND.master*100)} %</p></div><input id="master" aria-label="Volume général" type="range" min="0" max="1" step=".01" value="${SOUND.master}" oninput="liveSoundRange('master',this.value)"></div><div class="setting"><div><h4>Ambiance</h4><p id="ambienceValue">${Math.round(SOUND.ambience*100)} %</p></div><input id="ambience" aria-label="Ambiance" type="range" min="0" max="1" step=".01" value="${SOUND.ambience}" oninput="liveSoundRange('ambience',this.value)"></div><div class="setting"><div><h4>Effets / alertes</h4><p id="effectsValue">${Math.round(SOUND.effects*100)} %</p></div><input id="effects" aria-label="Effets et alertes" type="range" min="0" max="1" step=".01" value="${SOUND.effects}" oninput="liveSoundRange('effects',this.value)"></div></div><div class="modal-actions"><button class="btn primary small" onclick="saveSettings()">Terminé</button></div></div></div>`)
 }
 function closeSettings(){saveAudioPreferences();document.querySelector('.modal')?.remove();releaseDialogFocus()}
 function saveAudioPreferences(){for(const k of ['master','ambience','effects'])setPref(`igr_v9_${k}`,SOUND[k]);setPref('igr_v9_sound_enabled',SOUND.enabled)}
-function liveNarrationToggle(on){NARRATION.enabled=!!on;setPref('igr_v11_narration',NARRATION.enabled);if(!on)cancelBriefingVoice()}
+function liveNarrationToggle(){NARRATION.enabled=false;cancelBriefingVoice()}
 function activeSoundPreset(){
  if(STATE.sync?.room?.phase==='briefing'||STATE.view==='briefing')return 'silent';
  return (STATE.view==='game'||STATE.view==='role') ? currentScenario().sound : 'menu';
@@ -812,16 +841,42 @@ function renderLobby(prefetched=null){
  const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player},roleMissing=d.players.filter(p=>!p.preferred_role).length,allRolesReady=roleMissing===0;
  const choices=roleChoiceSummary(sc,count,d.players),canStart=!!STATE.hostToken&&count>=min&&allRolesReady;
  const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:!allRolesReady?`Rôles à choisir · ${roleMissing}`:'Lancer le dossier';
- const roleButtons=choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<button class="role-choice-card ${mine?'selected':''} ${full?'full':''}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.body)}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button>`}).join('');
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Rôle à choisir</span>'}</span></span></div>`).join('')}</div><div class="role-choice-zone"><div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Chaque joueur choisit lui-même son rôle public avant le lancement. Un rôle complet devient indisponible. Les identités secrètes et l’Espion restent cachés et attribués par le serveur.</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ const randomRoleButton=`<button class="role-choice-card random-role-card" onclick="chooseRandomLobbyRole()"><span><b>Choix aléatoire</b><small>Tirage uniforme parmi les rôles publics encore disponibles. Chaque type de rôle a exactement une chance dans le tirage. L’Espion reste secret.</small></span><em>AU HASARD</em></button>`;
+ const roleButtons=randomRoleButton+choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<button class="role-choice-card ${mine?'selected':''} ${full?'full':''}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.body)}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button>`}).join('');
+ const reservations=d.room.state?.victory_reservations||[];
+ const myReservation=reservations.find(x=>String(x.player_id)===String(me.id));
+ const victoryRoleNotice=myReservation
+   ?`<div class="victory-privilege compact ${myReservation.awarded?'awarded':'lost'}"><b>${myReservation.awarded?'RÔLE RÉSERVÉ PAR VICTOIRE':'CONFLIT DE RÔLE'}</b><span>${myReservation.awarded?`${h(publicRoleLabel(myReservation.claimed_role))} t’est réservé · force de victoire ${h(myReservation.score)}/100.`:`Ta demande ${h(publicRoleLabel(myReservation.claimed_role))} n’a pas obtenu la priorité. Une victoire plus forte a gagné le conflit ; choisis un autre rôle disponible.`}</span></div>`:'';
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Rôle à choisir</span>'}</span></span></div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Chaque joueur choisit lui-même son rôle public avant le lancement. Un rôle complet devient indisponible. Les identités secrètes et l’Espion restent cachés et attribués par le serveur.</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient('menu');
 }
 async function chooseLobbyRole(role){
  try{await rpc('igr_v4_choose_role',{p_code:STATE.room,p_player_token:STATE.token,p_role:role});await syncNow(true);toast(`Rôle choisi : ${publicRoleLabel(role)}`)}catch(e){console.error(e);toast('Ce rôle vient d’être pris ou n’est pas disponible.')}
 }
 
+function secureRandomIndex(length){
+ if(!Number.isInteger(length)||length<1)return 0;
+ try{
+   const range=0x100000000,limit=range-(range%length),buf=new Uint32Array(1);
+   do{crypto.getRandomValues(buf)}while(buf[0]>=limit);
+   return buf[0]%length;
+ }catch{
+   return Math.floor(Math.random()*length);
+ }
+}
+async function chooseRandomLobbyRole(){
+ const d=STATE.sync;if(!d)return;
+ const sc=scenario(d.room.scenario_id),count=d.players.length;
+ const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player};
+ const choices=roleChoiceSummary(sc,count,d.players);
+ const available=choices.filter(x=>x.taken<x.cap||me.preferred_role===x.id).map(x=>x.id);
+ if(!available.length)return toast('Aucun rôle disponible.');
+ const role=available[secureRandomIndex(available.length)];
+ await chooseLobbyRole(role);
+}
+
 async function prepareLobbyAudio(){
- SOUND.enabled=true;NARRATION.enabled=true;setPref('igr_v9_sound_enabled',true);setPref('igr_v11_narration',true);
+ SOUND.enabled=true;NARRATION.enabled=false;setPref('igr_v9_sound_enabled',true);setPref('igr_v11_narration',false);
  primeNarrationFromGesture();
  const ok=await wakeAudioFromGesture();
  if(!ok)return toast('Touchez à nouveau : iOS n’a pas encore autorisé le son.');
@@ -835,7 +890,7 @@ async function startGame(){
  if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
  const d=STATE.sync;if((d?.players||[]).some(p=>!p.preferred_role))return toast('Chaque joueur doit d’abord choisir son rôle.');
  cancelBriefingVoice();stopAmbient();
- try{await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs et la préparation audio.')}
+ try{await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs et les rôles choisis.')}
 }
 function cancelBriefingVoice(){
  NARRATION.generation++;hideAudioWakePrompt();
@@ -852,20 +907,20 @@ function startBriefingScenarioScore(){
 }
 function runCanonicalBriefing(force=false){
  const d=STATE.sync;if(!d||d.room.phase!=='briefing')return;
- const key=`${d.room.code}:${d.room.phase_started_at||''}`;if(!force&&BRIEFING.spokenKey===key)return;BRIEFING.spokenKey=key;BRIEFING.scoreStarted=false;
- const sc=scenario(d.room.scenario_id),brief=canonicalBriefingText(sc.id);
+ const key=`${d.room.code}:${d.room.phase_started_at||''}`;
+ if(!force&&BRIEFING.spokenKey===key)return;
+ BRIEFING.spokenKey=key;BRIEFING.scoreStarted=false;
  BRIEFING.timer=setTimeout(()=>{
-   BRIEFING.timer=null;if(STATE.sync?.room?.phase!=='briefing')return;
-   if(NARRATION.enabled&&SOUND.enabled&&('speechSynthesis'in window)){
-     speakCanonicalBriefing(`Dossier ${sc.id}. ${sc.title}. ${brief}`,()=>startBriefingScenarioScore());return;
-   }
+   BRIEFING.timer=null;
+   if(STATE.sync?.room?.phase!=='briefing')return;
    startBriefingScenarioScore();
- },620);
+ },260);
 }
+
 function renderBriefing(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),briefKey=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey!==briefKey)stopAmbient();
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier entre après la lecture, puis les cartes privées s’ouvrent.</small></div></section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier accompagne l’ouverture, puis les cartes privées s’ouvrent.</small></div></section>${liveSessionControls()}</main>`);
  runCanonicalBriefing();updatePhaseClock();
 }
 
@@ -1148,11 +1203,59 @@ function responsibilityDelta(truth,guess){
  const d=+guess-(+truth);if(d===0)return 'Évaluation exacte';
  return d>0?`Surestimée de ${d} niveau${d>1?'x':''}`:`Sous-estimée de ${Math.abs(d)} niveau${Math.abs(d)>1?'x':''}`;
 }
+
+function continuationWinner(cont,id){return (cont?.winners||[]).find(x=>String(x.id)===String(id))}
+function myContinuationAction(type){
+ return [...(STATE.sync?.my_actions||[])].reverse().find(x=>x.action_type===type)?.payload||null;
+}
+function compatibleNextScenarios(d){
+ const count=(d.players||[]).length;
+ const all=SCENARIOS.filter(s=>count>=s.min&&count<=s.max);
+ const alternatives=all.filter(s=>s.id!==d.room.scenario_id);
+ return alternatives.length?alternatives:all;
+}
+function renderContinuationPanel(){
+ const d=STATE.sync,cont=d?.room?.state?.continuation;
+ if(!cont||d.room.status!=='finished')return'';
+ const winners=cont.winners||[],winner=continuationWinner(cont,d.player.id),isWinner=!!winner,wc=Number(cont.winner_count||winners.length||0);
+ if(!wc)return `<div class="continuation-panel"><div class="kicker">SUITE DE LA CELLULE</div><h3>Aucun camp vainqueur</h3><p>Aucun privilège de continuité n’est attribué pour cette partie.</p></div>`;
+ const winnerRows=winners.slice().sort((a,b)=>(b.score||0)-(a.score||0)).map(w=>`<div class="winner-score-row ${String(w.id)===String(d.player.id)?'me':''}"><span>${h(w.pseudo)} · ${h(publicRoleLabel(w.role))}</span><b>${h(w.score)}/100</b></div>`).join('');
+ if(cont.stage==='scenario_vote'){
+   const myVote=myContinuationAction('next_scenario_vote')?.scenario_id||'';
+   const choices=compatibleNextScenarios(d);
+   const voteBox=isWinner?`<div class="continuation-action"><label for="nextScenarioVote">Ton vote pour le prochain dossier</label><select id="nextScenarioVote">${choices.map(s=>`<option value="${s.id}" ${myVote===s.id?'selected':''}>${h(s.id)} · ${h(s.title)} · ${h(playerCountLabel(s))}</option>`).join('')}</select><button class="btn primary block" onclick="voteNextScenario()">${myVote?'Modifier mon vote':'Voter'}</button></div>`:`<p class="continuation-wait">Le camp vainqueur vote actuellement pour le prochain scénario.</p>`;
+   const host=STATE.hostToken?`<button class="btn block" ${Number(cont.votes_received||0)<wc?'disabled':''} onclick="finalizeNextScenario()">Valider le vote · ${Number(cont.votes_received||0)}/${wc}</button>`:'';
+   return `<div class="continuation-panel"><div class="kicker">CAMP VAINQUEUR</div><h3>Vote du prochain scénario</h3><p>Chaque vainqueur possède exactement une voix. En cas d’égalité entre scénarios, le serveur effectue un tirage aléatoire.</p><div class="winner-score-list">${winnerRows}</div>${voteBox}${host}</div>`;
+ }
+ if(cont.stage==='role_claims'){
+   const selected=scenario(cont.selected_scenario),myClaim=myContinuationAction('next_role_claim')?.role||'';
+   const count=(d.players||[]).length,roles=roleChoiceSummary(selected,count,[]);
+   const claimBox=isWinner?`<div class="continuation-action"><div class="next-scenario-picked"><span>Scénario choisi</span><b>${h(selected.id)} · ${h(selected.title)}</b></div><p>Choisis maintenant le rôle que tu veux réserver pour la prochaine partie.</p><div class="role-choice-grid compact">${roles.map(x=>`<button class="role-choice-card ${myClaim===x.id?'selected':''}" onclick="claimNextRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.body)}</small></span><em>${myClaim===x.id?'TON CHOIX':x.cap>1?`${x.cap} PLACES`:'1 PLACE'}</em></button>`).join('')}</div></div>`:`<div class="next-scenario-picked"><span>Scénario choisi</span><b>${h(selected.id)} · ${h(selected.title)}</b></div><p class="continuation-wait">Les vainqueurs choisissent leurs rôles prioritaires.</p>`;
+   const host=STATE.hostToken?`<button class="btn block" ${Number(cont.claims_received||0)<wc?'disabled':''} onclick="finalizeNextRoles()">Attribuer les priorités · ${Number(cont.claims_received||0)}/${wc}</button>`:'';
+   return `<div class="continuation-panel"><div class="kicker">PRIORITÉ DES VAINQUEURS</div><h3>Choix du prochain rôle</h3><p>Si plusieurs vainqueurs demandent le même rôle et qu’il n’y a pas assez de places, la plus grande <b>force de victoire</b> obtient la priorité. À score parfaitement égal, le serveur tire au sort.</p><div class="winner-score-list">${winnerRows}</div>${claimBox}${host}</div>`;
+ }
+ return'';
+}
+async function voteNextScenario(){
+ const id=byId('nextScenarioVote')?.value;if(!id)return;
+ try{await rpc('igr_v4_vote_next_scenario',{p_code:STATE.room,p_player_token:STATE.token,p_scenario_id:id});await syncNow(true);toast('Vote enregistré.')}catch(e){console.error(e);toast('Vote impossible pour ce scénario.')}
+}
+async function finalizeNextScenario(){
+ try{await rpc('igr_v4_finalize_next_scenario',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true)}catch(e){console.error(e);toast('Tous les vainqueurs doivent voter avant la validation.')}
+}
+async function claimNextRole(role){
+ try{await rpc('igr_v4_claim_next_role',{p_code:STATE.room,p_player_token:STATE.token,p_role:role});await syncNow(true);toast(`Rôle demandé : ${publicRoleLabel(role)}`)}catch(e){console.error(e);toast('Ce rôle n’existe pas dans le prochain scénario.')}
+}
+async function finalizeNextRoles(){
+ try{await rpc('igr_v4_finalize_next_roles',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true)}catch(e){console.error(e);toast('Tous les vainqueurs doivent choisir leur rôle avant l’attribution.')}
+}
 function renderReveal(){
  const e=latestEvent('reveal'),p=e?.payload||{};if(!p.summary&&STATE.sync.scenario.truth)p.summary=STATE.sync.scenario.truth.summary;
- const responsibilities=p.responsibilities||[],summary=revealSummaryWithNames(p.summary||'Révélation en cours…',responsibilities);
- return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/3 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/3 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–3 correspond exactement au niveau canonique.</small></div>`:''}${(p.results||[]).map(x=>`<div class="result-line"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><span>${h(x.text)}</span></div>`).join('')}<button class="btn primary block" onclick="leaveRoom()">Retour à l’accueil</button></div>`;
+ const responsibilities=p.responsibilities||[],summary=revealSummaryWithNames(p.summary||'Révélation en cours…',responsibilities),cont=STATE.sync?.room?.state?.continuation;
+ const strength=id=>(cont?.winners||[]).find(w=>String(w.id)===String(id))?.score;
+ return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/3 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/3 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–3 correspond exactement au niveau canonique.</small></div>`:''}<div class="result-list">${(p.results||[]).map(x=>{const s=strength(x.player_id);return `<div class="result-line ${x.success?'winner':'loser'}"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><strong>${x.success?'VICTOIRE':'DÉFAITE'}</strong><span>${h(x.text)}</span>${x.success&&s!=null?`<small class="victory-strength">Force de victoire · ${h(s)}/100</small>`:''}</div>`}).join('')}</div>${renderContinuationPanel()}<button class="btn block" onclick="leaveRoom()">Quitter la cellule</button></div>`;
 }
+
 function publicRoleLabel(r){return r==='maitre'?'Avocat / Maître':roleInfo(r).label||r}
 function renderChannelTab(){
  const d=STATE.sync,role=d.player.public_role,canInv=canInvestigationChannel(role),enq=d.players.find(p=>p.public_role==='enqueteur'),targets=role==='journaliste'?d.players.filter(p=>p.id!==d.player.id):role==='enqueteur'?d.players.filter(p=>p.id!==d.player.id):(enq?[enq]:[]);
@@ -1780,7 +1883,7 @@ document.addEventListener('keydown',e=>{
 
 // Prevent duplicate mutations from rapid taps without changing the game rules.
 const BUSY_ACTIONS=new Set();
-for(const name of ['createRoom','joinRoom','startGame','chooseLobbyRole','prepareLobbyAudio','ackRole','advancePhaseNow','togglePhaseTimer','startInterrogation','endInterrogation','submitDebrief','specialAction','prosecutorRequest','respondProsecutor','witnessStatus','publishBreaking','setProvisional','lockFinal','sendMessage','activateVideo','stopVideo','confidentialCut']){
+for(const name of ['createRoom','joinRoom','startGame','chooseLobbyRole','prepareLobbyAudio','ackRole','advancePhaseNow','togglePhaseTimer','startInterrogation','endInterrogation','submitDebrief','specialAction','prosecutorRequest','respondProsecutor','witnessStatus','publishBreaking','setProvisional','lockFinal','voteNextScenario','finalizeNextScenario','claimNextRole','finalizeNextRoles','sendMessage','activateVideo','stopVideo','confidentialCut']){
  const original=window[name];window[name]=async function(...args){
   if(BUSY_ACTIONS.has(name))return;BUSY_ACTIONS.add(name);
   const button=document.activeElement?.closest?.('button'),wasDisabled=button?.disabled;
@@ -1809,9 +1912,9 @@ window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
 
 
-/* v11-22-rewards-polish — PWA cache bootstrap */
+/* v11-25-winner-camp — PWA cache bootstrap */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v11-22-rewards-polish').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v11-25-winner-camp').catch(() => {});
   }, {once:true});
 }
