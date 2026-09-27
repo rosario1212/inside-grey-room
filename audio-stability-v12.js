@@ -1,11 +1,15 @@
 /* Inside Grey Room V12.1 — menu audio stability patch
-   Goal: keep the ORIGINAL menu music and its original loudness/mix,
-   while preventing tails from one loop from piling onto the next loop.
-   Scenario-specific scores remain unchanged.
+   Goal: keep the original menu composition and loudness/mix,
+   while slowing the menu tempo and preventing tails from one loop
+   from piling onto the next loop. Scenario-specific scores remain unchanged.
 */
 (() => {
   const baseInitAudio = initAudio;
   const basePlaySlasherPhrase = playSlasherPhrase;
+
+  // The menu composition was running at 132 BPM, which feels too hurried on mobile.
+  // Slow only the menu; scenario scores keep their own original tempos.
+  if (PROFILES?.menu) PROFILES.menu.bpm = 104;
 
   function installPeakLimiter() {
     if (!SOUND.ctx || !SOUND.masterGain || SOUND.outputLimiter) return;
@@ -37,16 +41,12 @@
     if (preset !== 'menu') return basePlaySlasherPhrase(preset, step, anchorTime);
     if (!SOUND.enabled || !SOUND.ctx) return;
 
-    // Use the ORIGINAL menu composition, notes, rhythm, instrumentation and
-    // step-dependent details exactly as defined in app-v11.js.
+    // Use the original menu composition, notes and instrumentation.
+    // Only its tempo is intentionally slower via PROFILES.menu.bpm above.
     const before = new Set(SOUND.sources);
     const result = basePlaySlasherPhrase(preset, step, anchorTime);
 
-    // The original menu loop is about 3.6 s, while a few string/bell tails can
-    // continue past the loop boundary. On Android those tails stack with the
-    // next loop and the score becomes progressively muddy/chaotic.
-    // We only trim sources that are still alive after the boundary; sources
-    // that naturally ended earlier are untouched.
+    // Trim only tails that would survive beyond the current menu loop.
     try {
       const p = PROFILES.menu;
       const loopDuration = p.pattern.length * ((60 / p.bpm) / 2);
