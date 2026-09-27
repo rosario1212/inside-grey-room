@@ -758,3 +758,162 @@ body::-webkit-scrollbar,
   opacity:0 !important;
   pointer-events:none !important;
 }
+
+
+/* v11.27 — definitive door cinematic
+   One gesture -> camera enters through the real light opening -> white room -> app.
+   The static art remains unchanged; only motion/compositing are refined. */
+.intro-gate{
+  isolation:isolate;
+  contain:paint;
+  background:#000 !important;
+}
+.intro-art{
+  transform-origin:39.8% 60.5% !important;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  transform:translate3d(0,0,0) scale(1);
+}
+.intro-gate::after{
+  content:"";
+  position:absolute;
+  z-index:3;
+  left:39.6%;
+  top:58%;
+  width:10vmin;
+  height:40vmin;
+  transform:translate(-50%,-50%) scale(.42);
+  transform-origin:center;
+  opacity:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center,
+    rgba(255,255,255,.72) 0%,
+    rgba(255,255,255,.24) 38%,
+    rgba(255,255,255,.055) 62%,
+    transparent 76%);
+  filter:blur(12px);
+}
+.intro-gate.opening .intro-art{
+  animation:igrDoorPassV127 .78s cubic-bezier(.16,.86,.14,1) forwards !important;
+  transition:none !important;
+  will-change:transform,filter,opacity;
+}
+.intro-gate.opening .intro-cinema-shade{
+  animation:igrShadeReleaseV127 .78s ease-out forwards !important;
+}
+.intro-gate.opening .intro-light-slit{
+  animation:igrLightPassV127 .78s cubic-bezier(.14,.82,.16,1) forwards !important;
+  transition:none !important;
+  will-change:transform,filter,opacity;
+}
+.intro-gate.opening .intro-pulse{
+  animation:igrPulsePassV127 .78s ease-out forwards !important;
+  transition:none !important;
+}
+.intro-gate.opening::after{
+  animation:igrThresholdGlowV127 .78s cubic-bezier(.14,.84,.16,1) forwards !important;
+}
+.intro-gate.opening .intro-whiteout{
+  animation:igrWhitePassV127 .78s cubic-bezier(.18,.74,.14,1) forwards !important;
+  mix-blend-mode:normal !important;
+}
+.intro-gate.opening .intro-enter{
+  animation:igrEnterLeaveV127 .16s ease-out forwards !important;
+  pointer-events:none !important;
+}
+/* Critical: once the white threshold is reached, never flash back to the door while
+   the overlay itself fades away. */
+.intro-gate.done .intro-whiteout,
+.intro-gate.boot-waiting .intro-whiteout{
+  display:block !important;
+  opacity:1 !important;
+  animation:none !important;
+  background:#fff !important;
+}
+.intro-gate.done{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+  transition:opacity .12s ease-out,visibility 0s linear .12s !important;
+}
+.intro-gate.boot-waiting{
+  background:#fff !important;
+}
+.intro-gate.boot-waiting .intro-art,
+.intro-gate.boot-waiting .intro-cinema-shade,
+.intro-gate.boot-waiting .intro-light-slit,
+.intro-gate.boot-waiting .intro-pulse{
+  opacity:0 !important;
+}
+@keyframes igrDoorPassV127{
+  0%{
+    transform:translate3d(0,0,0) scale(1);
+    filter:brightness(.88) contrast(1.06) saturate(.70) blur(0);
+    opacity:1;
+  }
+  14%{
+    transform:translate3d(0,0,0) scale(1.035);
+    filter:brightness(.93) contrast(1.055) saturate(.68) blur(0);
+  }
+  48%{
+    transform:translate3d(0,0,0) scale(1.42);
+    filter:brightness(1.04) contrast(1.03) saturate(.59) blur(0);
+  }
+  76%{
+    transform:translate3d(0,0,0) scale(2.08);
+    filter:brightness(1.28) contrast(.99) saturate(.42) blur(.15px);
+  }
+  100%{
+    transform:translate3d(0,0,0) scale(3.18);
+    filter:brightness(1.78) contrast(.92) saturate(.20) blur(.45px);
+    opacity:.985;
+  }
+}
+@keyframes igrShadeReleaseV127{
+  0%{opacity:1}
+  46%{opacity:.82}
+  78%{opacity:.28}
+  100%{opacity:0}
+}
+@keyframes igrLightPassV127{
+  0%{opacity:0;transform:translateX(-50%) scaleX(.18);filter:blur(7px)}
+  13%{opacity:.54;transform:translateX(-50%) scaleX(.34);filter:blur(7px)}
+  43%{opacity:.98;transform:translateX(-50%) scaleX(1.45);filter:blur(9px)}
+  72%{opacity:1;transform:translateX(-50%) scaleX(8.5);filter:blur(16px)}
+  100%{opacity:1;transform:translateX(-50%) scaleX(34);filter:blur(27px)}
+}
+@keyframes igrPulsePassV127{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.50)}
+  27%{opacity:.28;transform:translate(-50%,-50%) scale(.88)}
+  65%{opacity:.82;transform:translate(-50%,-50%) scale(2.35)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(6.1)}
+}
+@keyframes igrThresholdGlowV127{
+  0%,18%{opacity:0;transform:translate(-50%,-50%) scale(.42)}
+  46%{opacity:.30;transform:translate(-50%,-50%) scale(1.1)}
+  73%{opacity:.72;transform:translate(-50%,-50%) scale(4.1)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(10)}
+}
+@keyframes igrWhitePassV127{
+  0%,43%{opacity:0}
+  60%{opacity:.10}
+  75%{opacity:.48}
+  91%{opacity:.94}
+  100%{opacity:1}
+}
+@keyframes igrEnterLeaveV127{
+  0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) translateY(8px) scale(.985)}
+}
+
+/* Motion-sensitive users still get a coherent threshold instead of an empty/half-restored page. */
+@media (prefers-reduced-motion:reduce){
+  .intro-gate.opening{opacity:1 !important}
+  .intro-gate.opening .intro-art,
+  .intro-gate.opening .intro-light-slit,
+  .intro-gate.opening .intro-pulse,
+  .intro-gate.opening::after{animation:none !important;opacity:0 !important}
+  .intro-gate.opening .intro-cinema-shade{animation:none !important;opacity:0 !important}
+  .intro-gate.opening .intro-whiteout{display:block !important;opacity:1 !important;background:#fff !important}
+  .intro-gate.opening .intro-enter{opacity:0 !important}
+}

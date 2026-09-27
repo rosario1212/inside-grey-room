@@ -4,7 +4,7 @@ const STORAGE = {
  setItem(k,v){v=String(v);this.memory.set(k,v);try{window.localStorage.setItem(k,v)}catch{if(!this.warned){this.warned=true;setTimeout(()=>toast('Stockage indisponible : garde cette page ouverte pour conserver ta session.'),800)}}},
  removeItem(k){this.memory.set(k,null);try{window.localStorage.removeItem(k)}catch{}}
 };
-const VERSION = 'v11-26-astra-audit-fixes';
+const VERSION = 'v11-27-door-cinematic-polish';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -302,10 +302,8 @@ function setupIntro(){
    const now=performance.now();
    if(now-INTRO.lastActivation<350)return;
    INTRO.lastActivation=now;
-   primeNarrationFromGesture();
-   unlockAudioFromGesture();
-   void wakeAudioFromGesture();
-   startIntroSequence();
+   const audioWake=wakeAudioFromGesture();
+   startIntroSequence(audioWake);
  };
  // iOS Home Screen: launch on press, not release, so the door feels immediate
  // and the same gesture unlocks WebAudio + speech synthesis.
@@ -412,34 +410,34 @@ function playDoorOpenFx(){
  });
  SOUND.scheduleAnchor=prev;
 }
-function startIntroSequence(){
+function startIntroSequence(audioWake=null){
  if(INTRO.playing||INTRO.done)return;
  const gate=byId('introGate'),btn=byId('introEnterBtn');if(!gate)return;
+ const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
+ const duration=reduced?150:780;
  INTRO.playing=true;
  if(btn){btn.disabled=true;btn.setAttribute('aria-busy','true')}
  setIntroHint('ENTRÉE…');
- gate.classList.remove('audio-error');
+ gate.classList.remove('audio-error','boot-waiting');
+ // The whole entrance is one continuous state: camera push, light expansion,
+ // white crossing and then reveal of the already-restored destination.
  requestAnimationFrame(()=>gate.classList.add('opening'));
- void wakeAudioFromGesture().then(awake=>{
+ Promise.resolve(audioWake||wakeAudioFromGesture()).then(awake=>{
    if(!awake)return;
-   if(INTRO.playing)playDoorOpenFx();
-   // iOS can finish resuming AudioContext just after the visual transition.
-   // Re-assert the correct ambience without restarting an already healthy score.
-   setTimeout(()=>{if(!INTRO.active&&SOUND.enabled)ensureAmbient(activeSoundPreset())},720);
+   if(INTRO.active)playDoorOpenFx();
  }).catch(()=>{});
  const finishDoorEntry=()=>{
    if(!INTRO.playing)return;
-   gate.classList.remove('opening');
    if(!BOOT.ready){
-     // The cinematic was allowed to start immediately while Supabase restores in parallel.
-     // Keep the white transition covering the app until the destination is actually ready.
+     // Never reveal a half-restored application. Stay on the final white frame
+     // until the local destination is ready, with no reverse flash to the door.
      INTRO.playing=false;INTRO.waitingForBoot=true;
      gate.classList.add('boot-waiting');gate.setAttribute('aria-busy','true');
      return;
    }
    completeIntroEntry();
  };
- setTimeout(finishDoorEntry,650);
+ setTimeout(finishDoorEntry,duration);
 }
 
 
@@ -1950,9 +1948,9 @@ window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
 
 
-/* v11-26-astra-audit-fixes — PWA cache bootstrap */
+/* v11-27-door-cinematic-polish — PWA cache bootstrap */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v11-26-astra-audit-fixes').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v11-27-door-cinematic-polish').catch(() => {});
   }, {once:true});
 }
