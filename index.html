@@ -39,25 +39,5 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <noscript>Active JavaScript pour jouer à Inside Grey Room.</noscript>
   <script src="app-v11.js?v=v12.1-security-store-candidate"></script>
-  <script>
-    // Native/store candidate guard: the ambience must remain silent behind the entrance gate.
-    // The ENTER gesture remains the only action that starts the cinematic/audio sequence.
-    (() => {
-      const silenceBehindEntrance = () => {
-        try {
-          if (typeof INTRO !== 'undefined' && INTRO.active && typeof stopAmbient === 'function') stopAmbient();
-        } catch (_) {}
-      };
-      silenceBehindEntrance();
-      try {
-        const originalRenderHome = renderHome;
-        renderHome = function(...args) {
-          const result = originalRenderHome.apply(this, args);
-          silenceBehindEntrance();
-          return result;
-        };
-      } catch (_) {}
-    })();
-  </script>
 </body>
 </html>
