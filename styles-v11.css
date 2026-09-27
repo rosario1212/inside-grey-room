@@ -748,3 +748,13 @@ body::-webkit-scrollbar,
 .victory-strength{grid-column:1/-1;color:var(--muted);font-size:12px;letter-spacing:.08em}
 .victory-privilege.awarded{border-color:rgba(255,255,255,.32)}
 .victory-privilege.lost{opacity:.86}
+
+/* v11.26 — local-first entrance while session restore runs in parallel */
+.intro-gate.boot-waiting .intro-whiteout{
+  opacity:1 !important;
+  animation:none !important;
+}
+.intro-gate.boot-waiting .intro-enter{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
