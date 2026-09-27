@@ -4,7 +4,7 @@ const STORAGE = {
  setItem(k,v){v=String(v);this.memory.set(k,v);try{window.localStorage.setItem(k,v)}catch{if(!this.warned){this.warned=true;setTimeout(()=>toast('Stockage indisponible : garde cette page ouverte pour conserver ta session.'),800)}}},
  removeItem(k){this.memory.set(k,null);try{window.localStorage.removeItem(k)}catch{}}
 };
-const VERSION = 'v11-25-winner-camp';
+const VERSION = 'v11-26-astra-audit-fixes';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -196,7 +196,8 @@ function canonicalBriefingText(id){return CANONICAL_BRIEFINGS[id]||publicScenari
 
 const STATE={view:'home',selectedScenario:'001',scenarioId:'001',room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],cycle:0,tab:'card',createListScrollY:0,sync:null,syncSig:'',syncBusy:false,watcher:null,lastEventId:0,lastRoleNoticeKey:'',syncPromise:null,serverOffset:0};
 const VIDEO={pcs:new Map(),localStream:null,remoteStream:null,lastSignalId:0,poller:null,starting:false,lastViewerReadyAt:0};
-const INTRO={active:true,playing:false,done:false,lastActivation:0};
+const INTRO={active:true,playing:false,done:false,lastActivation:0,waitingForBoot:false};
+const BOOT={ready:false};
 const AVATARS={map:new Map(),sig:''};
 const BRIEFING={spokenKey:null,timer:null,scoreStarted:false};
 const NARRATION={generation:0,enabled:false,primed:true,speaking:false,retryTimer:null};
@@ -319,17 +320,30 @@ function showIntroGate(message='TOUCHEZ POUR OUVRIR LA PORTE'){
  // Kill any stale scheduler before the next user gesture. This is important on iOS
  // after the PWA has been backgrounded or reopened from the Home Screen.
  if(SOUND.started)stopAmbient();
- INTRO.active=true;INTRO.playing=false;INTRO.done=false;
- gate.classList.remove('done','opening','audio-error');
+ INTRO.active=true;INTRO.playing=false;INTRO.done=false;INTRO.waitingForBoot=false;
+ gate.classList.remove('done','opening','audio-error','boot-waiting');
  gate.setAttribute('aria-hidden','false');
  if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
  byId('app').inert=true;
  setIntroHint(message);
 }
+function completeIntroEntry(){
+ const gate=byId('introGate'),btn=byId('introEnterBtn');if(!gate)return;
+ gate.classList.remove('opening','boot-waiting');
+ gate.classList.add('done');gate.setAttribute('aria-hidden','true');gate.removeAttribute('aria-busy');
+ INTRO.active=false;INTRO.done=true;INTRO.playing=false;INTRO.waitingForBoot=false;
+ byId('app').inert=false;
+ if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
+ byId('app').querySelector('button,[tabindex]')?.focus({preventScroll:true});
+ if(SOUND.enabled){
+   ensureLiveAudio();
+   setTimeout(()=>{if(SOUND.ctx?.state==='running')ensureAmbient(activeSoundPreset())},220);
+ }
+}
 function hideIntroImmediately(){
  const gate=byId('introGate');if(!gate)return;
  gate.classList.add('done');gate.setAttribute('aria-hidden','true');
- INTRO.active=false;INTRO.done=true;INTRO.playing=false;byId('app').inert=false;
+ INTRO.active=false;INTRO.done=true;INTRO.playing=false;INTRO.waitingForBoot=false;byId('app').inert=false;
 }
 function needsManualAudioWake(){
  if(!SOUND.enabled)return false;
@@ -415,14 +429,15 @@ function startIntroSequence(){
  }).catch(()=>{});
  const finishDoorEntry=()=>{
    if(!INTRO.playing)return;
-   gate.classList.add('done');gate.classList.remove('opening');gate.setAttribute('aria-hidden','true');
-   INTRO.active=false;INTRO.done=true;INTRO.playing=false;byId('app').inert=false;
-   if(btn){btn.disabled=false;btn.removeAttribute('aria-busy')}
-   byId('app').querySelector('button,[tabindex]')?.focus({preventScroll:true});
-   if(SOUND.enabled){
-     ensureLiveAudio();
-     setTimeout(()=>{if(SOUND.ctx?.state==='running')ensureAmbient(activeSoundPreset())},220);
+   gate.classList.remove('opening');
+   if(!BOOT.ready){
+     // The cinematic was allowed to start immediately while Supabase restores in parallel.
+     // Keep the white transition covering the app until the destination is actually ready.
+     INTRO.playing=false;INTRO.waitingForBoot=true;
+     gate.classList.add('boot-waiting');gate.setAttribute('aria-busy','true');
+     return;
    }
+   completeIntroEntry();
  };
  setTimeout(finishDoorEntry,650);
 }
@@ -597,6 +612,22 @@ function initials(name='?'){return String(name||'?').trim().split(/\s+/).slice(0
 function safeAvatar(src){return /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(src||'')?src:''}
 function avatarSource(id){return safeAvatar(AVATARS.map.get(id)||(id===STATE.playerId?loadProfile().avatar:''))}
 function avatarHtml(id,pseudo,cls=''){const src=avatarSource(id);return src?`<span class="avatar ${cls}"><img src="${src}" alt="Photo de ${h(pseudo)}"></span>`:`<span class="avatar avatar-fallback ${cls}" aria-label="${h(pseudo)}">${h(initials(pseudo))}</span>`}
+function equipProfileTitle(id){
+ const p=loadProfile(),item=unlockedTitles(p).find(x=>x.id===id);
+ if(!item)return toast('Ce titre n’est pas débloqué.');
+ saveProfileData({equippedTitle:id});
+ renderProfile();
+ void pushProfileCosmetics();
+ toast(`Titre équipé : ${item.label}`);
+}
+function equipProfileBadge(id){
+ const p=loadProfile(),item=unlockedBadges(p).find(x=>x.id===id);
+ if(!item)return toast('Ce badge n’est pas débloqué.');
+ saveProfileData({equippedBadge:id});
+ renderProfile();
+ void pushProfileCosmetics();
+ toast(`Badge équipé : ${item.label}`);
+}
 function renderProfile(){
  const p=loadProfile();p.avatar=safeAvatar(p.avatar);const titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
  const titleCards=titles.length?titles.map(x=>{const active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''}" onclick="equipProfileTitle('${x.id}')"><span class="reward-state">${active?'ÉQUIPÉ':'DÉBLOQUÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join(''):`<div class="empty-rewards">Aucun titre débloqué pour le moment.</div>`;
@@ -1800,12 +1831,19 @@ async function restore(){
  }catch(e){console.error(e);clearSession();return false}
 }
 function renderCurrent(){if(STATE.view==='home')renderHome();else if(STATE.view==='create-list')renderCreateList();else if(STATE.view==='create-confirm')renderCreateConfirm();else if(STATE.view==='join')renderJoin();else if(STATE.view==='rules')renderRules();else if(STATE.view==='profile')renderProfile();else if(STATE.view==='lobby')renderLobby();else if(STATE.view==='briefing')renderBriefing();else if(STATE.view==='role')renderRole();else if(STATE.view==='game')renderGame()}
-setupKeyboardGuard();restore().then(ok=>{
+setupKeyboardGuard();
+// The identity screen is local and must never wait for Supabase.
+setupIntro();
+showIntroGate('TOUCHEZ POUR OUVRIR LA PORTE');
+// Restore the real destination in parallel behind the cinematic.
+restore().then(ok=>{
  if(ok)routeFromServer();else renderHome();
- setupIntro();
- // The entrance is part of the identity of the app, not only the first visit.
- // A restored lobby/game stays rendered behind it and reappears after the cinematic.
- showIntroGate('TOUCHEZ POUR OUVRIR LA PORTE');
+ BOOT.ready=true;
+ if(INTRO.waitingForBoot)completeIntroEntry();
+}).catch(err=>{
+ console.error(err);
+ renderHome();BOOT.ready=true;
+ if(INTRO.waitingForBoot)completeIntroEntry();
 });
 setInterval(()=>{if(STATE.view==='game'||STATE.view==='briefing')updatePhaseClock()},1000);
 let LAST_AUDIO_GESTURE=0;
@@ -1912,9 +1950,9 @@ window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
 
 
-/* v11-25-winner-camp — PWA cache bootstrap */
+/* v11-26-astra-audit-fixes — PWA cache bootstrap */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v11-25-winner-camp').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v11-26-astra-audit-fixes').catch(() => {});
   }, {once:true});
 }
