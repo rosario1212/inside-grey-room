@@ -4,7 +4,7 @@ const STORAGE = {
  setItem(k,v){v=String(v);this.memory.set(k,v);try{window.localStorage.setItem(k,v)}catch{if(!this.warned){this.warned=true;setTimeout(()=>toast('Stockage indisponible : garde cette page ouverte pour conserver ta session.'),800)}}},
  removeItem(k){this.memory.set(k,null);try{window.localStorage.removeItem(k)}catch{}}
 };
-const VERSION = 'v11-28-scenario-copy-polish';
+const VERSION = 'v11-29-v1125-door-restore';
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -410,34 +410,30 @@ function playDoorOpenFx(){
  });
  SOUND.scheduleAnchor=prev;
 }
-function startIntroSequence(audioWake=null){
+function startIntroSequence(){
  if(INTRO.playing||INTRO.done)return;
  const gate=byId('introGate'),btn=byId('introEnterBtn');if(!gate)return;
- const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
- const duration=reduced?150:780;
  INTRO.playing=true;
  if(btn){btn.disabled=true;btn.setAttribute('aria-busy','true')}
  setIntroHint('ENTRÉE…');
  gate.classList.remove('audio-error','boot-waiting');
- // The whole entrance is one continuous state: camera push, light expansion,
- // white crossing and then reveal of the already-restored destination.
  requestAnimationFrame(()=>gate.classList.add('opening'));
- Promise.resolve(audioWake||wakeAudioFromGesture()).then(awake=>{
+ void wakeAudioFromGesture().then(awake=>{
    if(!awake)return;
-   if(INTRO.active)playDoorOpenFx();
+   if(INTRO.playing)playDoorOpenFx();
+   setTimeout(()=>{if(!INTRO.active&&SOUND.enabled)ensureAmbient(activeSoundPreset())},720);
  }).catch(()=>{});
  const finishDoorEntry=()=>{
    if(!INTRO.playing)return;
    if(!BOOT.ready){
-     // Never reveal a half-restored application. Stay on the final white frame
-     // until the local destination is ready, with no reverse flash to the door.
      INTRO.playing=false;INTRO.waitingForBoot=true;
+     gate.classList.remove('opening');
      gate.classList.add('boot-waiting');gate.setAttribute('aria-busy','true');
      return;
    }
    completeIntroEntry();
  };
- setTimeout(finishDoorEntry,duration);
+ setTimeout(finishDoorEntry,650);
 }
 
 
@@ -1948,9 +1944,9 @@ window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
 
 
-/* v11-28-scenario-copy-polish — PWA cache bootstrap */
+/* v11-29-v1125-door-restore — PWA cache bootstrap */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v11-28-scenario-copy-polish').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v11-29-v1125-door-restore').catch(() => {});
   }, {once:true});
 }
