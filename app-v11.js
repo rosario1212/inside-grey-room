@@ -4,7 +4,8 @@ const STORAGE = {
  setItem(k,v){v=String(v);this.memory.set(k,v);try{window.localStorage.setItem(k,v)}catch{if(!this.warned){this.warned=true;setTimeout(()=>toast('Stockage indisponible : garde cette page ouverte pour conserver ta session.'),800)}}},
  removeItem(k){this.memory.set(k,null);try{window.localStorage.removeItem(k)}catch{}}
 };
-const VERSION = 'v11-30-scenario-text-rewrite';
+const VERSION = 'v12.1-security-store-candidate';
+const NATIVE_SHELL = location.protocol === 'file:' || location.hostname === 'insidegreyroom.local' || /[?&]native=(android|ios)\b/.test(location.search);
 const SUPABASE_URL = 'https://jtasbdiguhiswoyvobkn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__I1lNSf1dyQRHz1jY8As1Q_zAwh8j13';
 const API = `${SUPABASE_URL}/rest/v1`;
@@ -199,6 +200,7 @@ const VIDEO={pcs:new Map(),localStream:null,remoteStream:null,lastSignalId:0,pol
 const INTRO={active:true,playing:false,done:false,lastActivation:0,waitingForBoot:false};
 const BOOT={ready:false};
 const AVATARS={map:new Map(),sig:''};
+const SAFETY={blocked:new Set(),loaded:false};
 const BRIEFING={spokenKey:null,timer:null,scoreStarted:false};
 const NARRATION={generation:0,enabled:false,primed:true,speaking:false,retryTimer:null};
 
@@ -515,7 +517,7 @@ function renderHome(){
         <div class="home-action" role="button" tabindex="0" onclick="goRules()"><div class="icon">≣</div><div><h3>Règles du jeu</h3><p>Flux, rôles et fin de partie.</p></div></div>
         <div class="home-action" role="button" tabindex="0" onclick="goProfile()"><div class="icon">◉</div><div><h3>Profil</h3><p>Photo, pseudo et progression.</p></div></div>
       </div>
-      <button class="home-settings-link" onclick="openSettings()">⚙ Paramètres</button>
+      <div class="home-utility-links"><button class="home-settings-link" onclick="openSettings()">⚙ Paramètres</button><button class="home-settings-link" onclick="openPrivacy()">Confidentialité · Sécurité</button></div>
     </section>
   </div>`,true);
  if(SOUND.enabled)ensureAmbient('menu');
@@ -626,8 +628,26 @@ function renderProfile(){
  const p=loadProfile();p.avatar=safeAvatar(p.avatar);const titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
  const titleCards=titles.length?titles.map(x=>{const active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''}" onclick="equipProfileTitle('${x.id}')"><span class="reward-state">${active?'ÉQUIPÉ':'DÉBLOQUÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join(''):`<div class="empty-rewards">Aucun titre débloqué pour le moment.</div>`;
  const badgeCards=badges.length?badges.map(x=>{const active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''}" onclick="equipProfileBadge('${x.id}')"><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join(''):`<div class="empty-rewards">Aucun badge débloqué pour le moment.</div>`;
- byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line">${equippedBadge.id!=='none'?`<span class="equipped-badge">${h(equippedBadge.glyph)}</span>`:''}<span>${equippedTitle.id!=='none'?h(equippedTitle.label):'Aucun titre équipé'}</span></div><p>Tes titres et badges sont des trophées de victoire visibles dans ton profil. Ils restent hors de l’interface de partie.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.wins||0}</b><span>victoires</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div></div><div class="reward-section"><div class="section-title"><h2>Titres débloqués</h2><span>${titles.length} disponibles</span></div><div class="reward-grid">${titleCards}</div></div><div class="reward-section"><div class="section-title"><h2>Badges débloqués</h2><span>${badges.length} disponibles</span></div><div class="badge-grid">${badgeCards}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line">${equippedBadge.id!=='none'?`<span class="equipped-badge">${h(equippedBadge.glyph)}</span>`:''}<span>${equippedTitle.id!=='none'?h(equippedTitle.label):'Aucun titre équipé'}</span></div><p>Tes titres et badges sont des trophées de victoire visibles dans ton profil. Ils restent hors de l’interface de partie.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.wins||0}</b><span>victoires</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div></div><div class="reward-section"><div class="section-title"><h2>Titres débloqués</h2><span>${titles.length} disponibles</span></div><div class="reward-grid">${titleCards}</div></div><div class="reward-section"><div class="section-title"><h2>Badges débloqués</h2><span>${badges.length} disponibles</span></div><div class="badge-grid">${badgeCards}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button><div class="profile-privacy-actions"><button class="btn ghost block" onclick="openPrivacy()">Confidentialité et données</button><button class="btn ghost block" onclick="openSupport()">Support</button>${STATE.room&&STATE.token?`<button class="btn ghost block" onclick="openSafety()">Signaler ou bloquer un joueur</button>`:''}</div></section></main>`)
 }
+
+async function compressAvatar(file){
+ if(!file||!/^image\/(jpeg|png|webp)$/i.test(file.type||''))throw new Error('invalid image');
+ if(file.size>12*1024*1024)throw new Error('image too large');
+ const url=URL.createObjectURL(file);
+ try{
+  const image=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=url});
+  const side=Math.min(image.naturalWidth||image.width,image.naturalHeight||image.height);if(!side)throw new Error('empty image');
+  const sx=((image.naturalWidth||image.width)-side)/2,sy=((image.naturalHeight||image.height)-side)/2;
+  for(const size of [256,224,192]){
+   const c=document.createElement('canvas');c.width=c.height=size;const ctx=c.getContext('2d',{alpha:false});
+   ctx.fillStyle='#101216';ctx.fillRect(0,0,size,size);ctx.drawImage(image,sx,sy,side,side,0,0,size,size);
+   for(const q of [.82,.72,.62,.52]){const data=c.toDataURL('image/jpeg',q);if(data.length<=95000)return data}
+  }
+  throw new Error('compressed image too large');
+ }finally{URL.revokeObjectURL(url)}
+}
+
 async function profilePhotoChanged(file){try{const avatar=await compressAvatar(file);saveProfileData({avatar});renderProfile();toast('Photo prête.')}catch(e){console.error(e);toast('Photo impossible à préparer.')}}
 function removeProfilePhoto(){saveProfileData({avatar:''});renderProfile()}
 function saveProfileForm(){const pseudo=(byId('profilePseudo')?.value||'').trim();if(!pseudo)return toast('Choisis un pseudo.');saveProfileData({pseudo});STORAGE.setItem('igr_v9_last_pseudo',pseudo);renderProfile();pushProfileCosmetics();toast('Profil enregistré.')}
@@ -672,10 +692,74 @@ function renderRules(){
 
 function openSettings(){
  if(document.querySelector('.modal'))return;
- document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeSettings()"><div class="modal-box" role="dialog" aria-modal="true" aria-label="Paramètres audio" tabindex="-1"><div class="kicker">Paramètres</div><h2 style="margin:7px 0 16px;font-size:30px">Audio</h2><div class="settings-grid"><div class="setting"><div><h4>Activer le son</h4><p>Les réglages sont audibles immédiatement.</p></div><label class="sound-check"><input id="soundOn" aria-label="Activer le son" type="checkbox" ${SOUND.enabled?'checked':''} onchange="liveSoundToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Volume général</h4><p id="masterValue">${Math.round(SOUND.master*100)} %</p></div><input id="master" aria-label="Volume général" type="range" min="0" max="1" step=".01" value="${SOUND.master}" oninput="liveSoundRange('master',this.value)"></div><div class="setting"><div><h4>Ambiance</h4><p id="ambienceValue">${Math.round(SOUND.ambience*100)} %</p></div><input id="ambience" aria-label="Ambiance" type="range" min="0" max="1" step=".01" value="${SOUND.ambience}" oninput="liveSoundRange('ambience',this.value)"></div><div class="setting"><div><h4>Effets / alertes</h4><p id="effectsValue">${Math.round(SOUND.effects*100)} %</p></div><input id="effects" aria-label="Effets et alertes" type="range" min="0" max="1" step=".01" value="${SOUND.effects}" oninput="liveSoundRange('effects',this.value)"></div></div><div class="modal-actions"><button class="btn primary small" onclick="saveSettings()">Terminé</button></div></div></div>`)
+ document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeSettings()"><div class="modal-box" role="dialog" aria-modal="true" aria-label="Paramètres" tabindex="-1"><div class="kicker">Paramètres</div><h2 style="margin:7px 0 16px;font-size:30px">Audio</h2><div class="settings-grid"><div class="setting"><div><h4>Activer le son</h4><p>Les réglages sont audibles immédiatement.</p></div><label class="sound-check"><input id="soundOn" aria-label="Activer le son" type="checkbox" ${SOUND.enabled?'checked':''} onchange="liveSoundToggle(this.checked)"><span aria-hidden="true"></span></label></div><div class="setting"><div><h4>Volume général</h4><p id="masterValue">${Math.round(SOUND.master*100)} %</p></div><input id="master" aria-label="Volume général" type="range" min="0" max="1" step=".01" value="${SOUND.master}" oninput="liveSoundRange('master',this.value)"></div><div class="setting"><div><h4>Ambiance</h4><p id="ambienceValue">${Math.round(SOUND.ambience*100)} %</p></div><input id="ambience" aria-label="Ambiance" type="range" min="0" max="1" step=".01" value="${SOUND.ambience}" oninput="liveSoundRange('ambience',this.value)"></div><div class="setting"><div><h4>Effets / alertes</h4><p id="effectsValue">${Math.round(SOUND.effects*100)} %</p></div><input id="effects" aria-label="Effets et alertes" type="range" min="0" max="1" step=".01" value="${SOUND.effects}" oninput="liveSoundRange('effects',this.value)"></div></div><div class="security-settings-actions"><button class="btn ghost block" onclick="closeSettings();openPrivacy()">Confidentialité et données</button><button class="btn ghost block" onclick="closeSettings();openSupport()">Support</button>${STATE.room&&STATE.token?`<button class="btn ghost block" onclick="closeSettings();openSafety()">Sécurité de la cellule · signaler / bloquer</button>`:''}</div><div class="modal-actions"><button class="btn primary small" onclick="saveSettings()">Terminé</button></div></div></div>`)
 }
 function closeSettings(){saveAudioPreferences();document.querySelector('.modal')?.remove();releaseDialogFocus()}
 function saveAudioPreferences(){for(const k of ['master','ambience','effects'])setPref(`igr_v9_${k}`,SOUND[k]);setPref('igr_v9_sound_enabled',SOUND.enabled)}
+
+function closeUtilityModal(){document.querySelector('.modal')?.remove();releaseDialogFocus()}
+function privacyBody(){return `<div class="privacy-copy"><p><b>Inside Grey Room</b> utilise un pseudonyme, une photo de profil facultative, les données nécessaires à la partie et les messages envoyés dans une cellule. Les cellules de jeu sont supprimées automatiquement du backend après environ 12 heures d’inactivité.</p><p>La caméra et le microphone ne sont utilisés qu’après une action volontaire pour le flux WebRTC. Le jeu ne contient pas de fonction d’enregistrement du flux.</p><p>Les données multijoueurs transitent par Supabase. Les signalements de sécurité et demandes de support peuvent être conservés jusqu’à 180 jours afin de traiter les abus et incidents. Aucun SDK publicitaire ni vente de données n’est intégré.</p><p>Les statistiques, récompenses, notes privées et informations de reprise peuvent rester sur cet appareil. Tu peux les effacer ci-dessous.</p><h3>Règles de communauté</h3><p>Harcèlement, menaces, haine, contenu sexuel inapproprié, spam et atteintes à la vie privée sont interdits. Utilise les fonctions <b>Bloquer</b> et <b>Signaler</b> en cas d’abus. Un signalement n’altère jamais le résultat de la partie.</p></div>`}
+function openPrivacy(){
+ if(document.querySelector('.modal'))return;
+ document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeUtilityModal()"><div class="modal-box utility-modal" role="dialog" aria-modal="true" aria-label="Confidentialité et sécurité"><div class="kicker">Confidentialité</div><h2>Vos données</h2>${privacyBody()}<div class="safety-note">Pour un comportement abusif pendant une partie, ouvre <b>Sécurité de la cellule</b> afin de bloquer le joueur et d’envoyer un signalement au développeur.</div><div class="modal-actions utility-actions">${STATE.room&&STATE.token?`<button class="btn" onclick="closeUtilityModal();openSafety()">Sécurité de la cellule</button>`:''}<button class="btn ghost" onclick="closeUtilityModal();openSupport()">Contacter le support</button><button class="btn danger" onclick="clearLocalPlayerData()">Effacer mes données locales</button><button class="btn primary" onclick="closeUtilityModal()">Fermer</button></div></div></div>`)
+}
+function clearLocalPlayerData(){
+ if(!confirm('Effacer le profil, les récompenses, l’historique, les notes privées et la session enregistrée sur cet appareil ?'))return;
+ const keys=[];try{for(let i=0;i<localStorage.length;i++)keys.push(localStorage.key(i))}catch{}
+ keys.filter(k=>k&&/^igr_/.test(k)).forEach(k=>STORAGE.removeItem(k));
+ STORAGE.memory.clear();AVATARS.map.clear();AVATARS.sig='';SAFETY.blocked.clear();SAFETY.loaded=false;
+ stopRoomWatcher();Object.assign(STATE,{view:'home',room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',sync:null,syncSig:''});
+ closeUtilityModal();renderHome();toast('Données locales effacées.');
+}
+async function loadSafetyState(){
+ if(!STATE.room||!STATE.token)return SAFETY;
+ try{const d=await rpc('igr_v4_get_safety_state',{p_code:STATE.room,p_player_token:STATE.token});SAFETY.blocked=new Set((d?.blocked_player_ids||[]).map(String));SAFETY.loaded=true}catch(e){console.warn('safety state',e)}
+ return SAFETY;
+}
+async function openSafety(){
+ if(!STATE.room||!STATE.token)return openPrivacy();
+ document.querySelector('.modal')?.remove();await loadSafetyState();renderSafetyModal();
+}
+function renderSafetyModal(){
+ const players=(STATE.sync?.players||[]).filter(p=>String(p.id)!==String(STATE.playerId));
+ const rows=players.length?players.map(p=>{const blocked=SAFETY.blocked.has(String(p.id));return `<div class="safety-player"><span>${avatarHtml(p.id,p.pseudo,'avatar-small')}<span><b>${h(p.pseudo)}</b><small>${h(publicRoleLabel(p.public_role||p.preferred_role||'suspect'))}</small></span></span><span class="safety-buttons"><button class="btn small ${blocked?'primary':'ghost'}" onclick="togglePlayerBlock('${p.id}',${blocked?'false':'true'})">${blocked?'Débloquer':'Bloquer'}</button><button class="btn small danger" onclick="openReportForm('${p.id}')">Signaler</button></span></div>`}).join(''):'<div class="empty-state">Aucun autre joueur dans la cellule.</div>';
+ document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeUtilityModal()"><div class="modal-box utility-modal" role="dialog" aria-modal="true" aria-label="Sécurité de la cellule"><div class="kicker">Sécurité</div><h2>Cellule ${h(STATE.room)}</h2><p class="safety-note">Bloquer masque ses nouveaux messages pour toi, empêche les messages privés et coupe les nouvelles connexions vidéo entre vous. Le blocage ne modifie jamais son rôle ni le résultat de la partie.</p><div class="safety-list">${rows}</div><div class="modal-actions utility-actions"><button class="btn ghost" onclick="closeUtilityModal();openPrivacy()">Confidentialité</button><button class="btn primary" onclick="closeUtilityModal()">Fermer</button></div></div></div>`)
+}
+async function togglePlayerBlock(id,block){
+ try{await rpc('igr_v4_block_player',{p_code:STATE.room,p_player_token:STATE.token,p_target:id,p_block:!!block});if(block){SAFETY.blocked.add(String(id));closePeer?.(id)}else SAFETY.blocked.delete(String(id));AVATARS.sig='';await refreshAvatars(STATE.sync,true);closeUtilityModal();renderSafetyModal();toast(block?'Joueur bloqué.':'Joueur débloqué.')}catch(e){console.error(e);toast('Action de sécurité impossible.')}
+}
+function openReportForm(id){
+ const p=(STATE.sync?.players||[]).find(x=>String(x.id)===String(id));if(!p)return;
+ closeUtilityModal();
+ document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeUtilityModal()"><div class="modal-box utility-modal" role="dialog" aria-modal="true" aria-label="Signaler un joueur"><div class="kicker">Signalement</div><h2>${h(p.pseudo)}</h2><div class="field"><label for="reportReason">Motif</label><select id="reportReason"><option value="harassment">Harcèlement</option><option value="hate">Discours haineux</option><option value="sexual">Contenu sexuel inapproprié</option><option value="threat">Menace</option><option value="spam">Spam</option><option value="privacy">Atteinte à la vie privée</option><option value="other">Autre</option></select></div><div class="field"><label for="reportDetails">Détails facultatifs</label><textarea id="reportDetails" maxlength="600" placeholder="Décris brièvement ce qui s’est passé."></textarea></div><label class="safety-check"><input id="reportBlock" type="checkbox" checked> Bloquer aussi ce joueur</label><div class="modal-actions utility-actions"><button class="btn ghost" onclick="closeUtilityModal();renderSafetyModal()">Annuler</button><button class="btn danger" onclick="submitPlayerReport('${p.id}')">Envoyer le signalement</button></div></div></div>`)
+}
+async function submitPlayerReport(id){
+ const reason=byId('reportReason')?.value||'other',details=(byId('reportDetails')?.value||'').trim(),block=!!byId('reportBlock')?.checked;
+ try{await rpc('igr_v4_report_player',{p_code:STATE.room,p_player_token:STATE.token,p_target:id,p_reason:reason,p_details:details});if(block){await rpc('igr_v4_block_player',{p_code:STATE.room,p_player_token:STATE.token,p_target:id,p_block:true});SAFETY.blocked.add(String(id));closePeer?.(id)}closeUtilityModal();toast('Signalement envoyé.')}catch(e){console.error(e);toast('Signalement impossible ou déjà envoyé récemment.')}
+}
+
+
+function deviceId(){
+ let id=STORAGE.getItem('igr_v12_device_id');
+ if(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id||''))return id;
+ try{id=crypto.randomUUID()}catch{id='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0,v=c==='x'?r:(r&3|8);return v.toString(16)})}
+ STORAGE.setItem('igr_v12_device_id',id);return id;
+}
+function openSupport(){
+ if(document.querySelector('.modal'))return;
+ const p=loadProfile();
+ document.body.insertAdjacentHTML('beforeend',`<div class="modal" onclick="if(event.target===this)closeUtilityModal()"><div class="modal-box utility-modal" role="dialog" aria-modal="true" aria-label="Support Inside Grey Room"><div class="kicker">Support</div><h2>Nous contacter</h2><p class="safety-note">Utilise ce formulaire pour un problème technique, une question de confidentialité ou un incident de sécurité. N’envoie jamais de mot de passe, numéro de carte ou document d’identité.</p><div class="field"><label for="supportCategory">Catégorie</label><select id="supportCategory"><option value="technical">Problème technique</option><option value="account">Profil / progression</option><option value="privacy">Confidentialité</option><option value="safety">Sécurité / abus</option><option value="other">Autre</option></select></div><div class="field"><label for="supportMessage">Message</label><textarea id="supportMessage" maxlength="1200" placeholder="Décris le problème et les étapes pour le reproduire si possible."></textarea></div><div class="modal-actions utility-actions"><button class="btn ghost" onclick="closeUtilityModal();openPrivacy()">Retour</button><button class="btn primary" onclick="submitSupportRequest()">Envoyer</button></div></div></div>`)
+}
+async function submitSupportRequest(){
+ const category=byId('supportCategory')?.value||'other',message=(byId('supportMessage')?.value||'').trim();
+ if(message.length<3)return toast('Décris brièvement ta demande.');
+ const p=loadProfile();
+ try{
+  const out=await rpc('igr_v4_contact_support',{p_device_id:deviceId(),p_category:category,p_message:message,p_room_code:STATE.room||null,p_pseudo:STATE.playerPseudo||p.pseudo||null});
+  closeUtilityModal();toast(`Demande envoyée${out?.request_id?` · #${out.request_id}`:''}.`);
+ }catch(e){console.error(e);toast('Envoi impossible pour le moment. Réessaie plus tard.')}
+}
+
 function liveNarrationToggle(){NARRATION.enabled=false;cancelBriefingVoice()}
 function activeSoundPreset(){
  if(STATE.sync?.room?.phase==='briefing'||STATE.view==='briefing')return 'silent';
@@ -1287,7 +1371,7 @@ function renderChannelTab(){
  return `<div class="channel-v11">${canInv?`<div class="channel-box"><div class="section-title"><h2>Canal Enquête 🔒</h2><span>200 caractères</span></div><div class="message-list">${renderMessages('investigation')}</div><div class="message-compose"><input id="invMsg" maxlength="200" placeholder="Observation courte"><button onclick="sendMessage('investigation')">Envoyer</button></div></div>`:''}<div class="channel-box"><div class="section-title"><h2>Messages privés</h2><span>${role==='journaliste'?'libres':'centrés sur l’Enquêteur'}</span></div>${targets.length?`<div class="field"><label for="privateTarget">Destinataire</label><select id="privateTarget">${targets.map(p=>`<option value="${p.id}">${h(p.pseudo)} · ${h(publicRoleLabel(p.public_role))}</option>`).join('')}</select></div><div class="message-list">${renderMessages('private')}</div><div class="message-compose"><input id="privateMsg" maxlength="200" placeholder="Message privé"><button onclick="sendMessage('private')">Envoyer</button></div>`:`<p>Aucun destinataire disponible.</p>`}</div></div>`;
 }
 function renderMessages(channel){return (STATE.sync.events||[]).filter(e=>e.event_type==='message'&&e.payload?.channel===channel).slice(-12).map(e=>`<div class="msg"><b>${h(e.payload?.author||'')}</b>${e.payload?.to?` → ${h(e.payload.to)}`:''}<span>${h(e.payload?.text||'')}</span></div>`).join('')||'<div class="empty-state">Aucun message.</div>'}
-async function sendMessage(channel){const input=byId(channel==='investigation'?'invMsg':'privateMsg'),text=(input?.value||'').trim();if(!text)return;const target=channel==='private'?byId('privateTarget')?.value:null;try{await rpc('igr_v4_send_message',{p_code:STATE.room,p_player_token:STATE.token,p_channel:channel,p_target:target||null,p_text:text});if(input)input.value='';await syncNow(true)}catch(e){console.error(e);toast('Message non autorisé dans cette phase ou pour ce rôle.')}}
+async function sendMessage(channel){const input=byId(channel==='investigation'?'invMsg':'privateMsg'),text=(input?.value||'').trim();if(!text)return;const target=channel==='private'?byId('privateTarget')?.value:null;try{await rpc('igr_v4_send_message',{p_code:STATE.room,p_player_token:STATE.token,p_channel:channel,p_target:target||null,p_text:text});if(input)input.value='';await syncNow(true)}catch(e){console.error(e);const m=String(e?.message||'');toast(m.includes('blocked')?'Message bloqué par un réglage de sécurité.':m.includes('content')||m.includes('links')||m.includes('spam')?'Message refusé par le filtre de sécurité.':'Message non autorisé dans cette phase ou pour ce rôle.')}}
 function renderTimelineTab(){const role=STATE.sync?.player?.public_role||STATE.role;const events=(STATE.sync.events||[]).filter(e=>e.event_type!=='trame'||canInvestigationChannel(role));return `<div class="timeline timeline-v11">${events.slice().reverse().map(e=>`<div class="event ${e.event_type==='trame'?'trame':e.event_type==='breaking_news'?'news':e.event_type==='reveal'?'urgent':''}"><div class="event-head">${h(e.payload?.title||e.event_type)} · ${clock(e.created_at)}</div><div class="event-body">${h(e.payload?.text||e.payload?.summary||'')}</div></div>`).join('')||'<div class="empty-state">Le fil se remplira pendant la partie.</div>'}</div>`}
 function clock(iso){try{return new Date(iso).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}catch{return'--:--'}}
 
@@ -1945,8 +2029,8 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 
 
 /* v11-30-scenario-text-rewrite — PWA cache bootstrap */
-if ('serviceWorker' in navigator) {
+if (!NATIVE_SHELL && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v11-30-scenario-text-rewrite').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v12-store-candidate').catch(() => {});
   }, {once:true});
 }
