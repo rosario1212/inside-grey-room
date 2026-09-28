@@ -9,7 +9,8 @@
     "android:init": "npm run mobile:build && npx cap add android && npx cap sync android && node scripts/prepare-android.mjs",
     "android:sync": "npm run mobile:build && npx cap sync android && node scripts/prepare-android.mjs",
     "android:open": "npm run android:sync && npx cap open android",
-    "android:bundle": "npm run android:sync && cd android && ./gradlew bundleRelease"
+    "android:debug": "npm run android:sync && node scripts/android-gradle.mjs assembleDebug",
+    "android:bundle": "npm run android:sync && node scripts/android-gradle.mjs bundleRelease"
   },
   "dependencies": {
     "@capacitor/core": "8.5.2"
