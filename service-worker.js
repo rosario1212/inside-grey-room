@@ -1,4 +1,4 @@
-const CACHE='igr-v12-10-investigation-sheet';
+const CACHE='igr-v12-12-gameplay-simple';
 const SHELL=[
   '/',
   '/index.html',
@@ -8,12 +8,14 @@ const SHELL=[
   '/qa-fixes-v12.js?v=v12.10-investigation-sheet',
   '/investigation-sheet-v12.js?v=v12.10-investigation-sheet',
   '/video-v12-3.js?v=v12.10-investigation-sheet',
+  '/turn-v12-4.js?v=v12.4-turn-fallback-20260928-1',
   '/profile-dossier-v12.js?v=v12.10-investigation-sheet',
   '/playstore-ready-v12.js?v=v12.10-investigation-sheet',
   '/social-v12.js?v=v12.10-investigation-sheet',
   '/notifications-v12.js?v=v12.10-investigation-sheet',
   '/native-lifecycle-v12.js?v=v12.10-investigation-sheet',
   '/runtime-optimization-v12.js?v=v12.10-investigation-sheet',
+  '/gameplay-simple-v12.js?v=v12.12-gameplay-simple-20260928-1',
   '/manifest.webmanifest?v=v12.10-investigation-sheet',
   '/privacy.html',
   '/terms.html',
@@ -27,8 +29,6 @@ const SHELL=[
   '/assets/favicon-v9.png'
 ];
 self.addEventListener('install',event=>{
-  // Never activate a partially cached shell: keeping the previous worker is safer
-  // than replacing a working offline build with an incomplete one.
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));
   self.skipWaiting();
 });
