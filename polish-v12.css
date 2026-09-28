@@ -1,0 +1,31 @@
+/* Inside Grey Room — final interaction polish v12.9
+   Accessibility and mobile touch refinements without changing gameplay or visual identity.
+*/
+
+html{color-scheme:dark;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%}
+
+@media (hover:none) and (pointer:coarse){
+  .btn,.pill-btn,.tab,.home-action,.scenario,.choice-row,.role-choice-card,.phase-timer-toggle,.phase-next-btn,.live-exit-btn,.live-advance-btn{
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .btn,.pill-btn,.tab{min-height:42px}
+}
+
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .modal{background:rgba(3,5,8,.96)!important}
+  .modal-box,.igr-event-alert,.igr-notify-bell{background:#080b0e!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{
+    scroll-behavior:auto!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    transition-delay:0ms!important;
+  }
+  .bg-noise,.intro-pulse,.intro-light-slit{animation:none!important}
+  .home-action:active,.scenario:active,.btn:active{transform:none!important}
+}
