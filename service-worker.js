@@ -1,4 +1,4 @@
-const CACHE='igr-v12-3-video-vp8-health-20260928-1';
+const CACHE='igr-v12-5-social-profiles-20260928-1';
 const SHELL=[
   '/',
   '/index.html',
@@ -6,6 +6,8 @@ const SHELL=[
   '/app-v11.js?v=v12.1-security-store-candidate',
   '/qa-fixes-v12.js?v=v12.2-media-phase-20260928-1',
   '/video-v12-3.js?v=v12.3-video-vp8-health-20260928-1',
+  '/profile-dossier-v12.js?v=v12.4-profile-dossier-20260928-1',
+  '/social-v12.js?v=v12.5-social-profiles-20260928-1',
   '/manifest.webmanifest?v=v12.1-security-store-candidate',
   '/assets/intro-v10-14.webp?v=v12.1-security-store-candidate',
   '/assets/home-v10-14.webp?v=v12.1-security-store-candidate',
