@@ -1,5 +1,5 @@
 {
-  "name": "inside-grey-room",
+  "name": "inside-grey-room-last",
   "compatibility_date": "2026-09-28",
   "build": {
     "command": "node scripts/build-web.mjs"
