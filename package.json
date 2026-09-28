@@ -1,6 +1,6 @@
 {
   "name": "inside-grey-room",
-  "version": "12.7.0",
+  "version": "12.8.0",
   "private": true,
   "type": "module",
   "engines": { "node": ">=22" },
@@ -10,14 +10,21 @@
     "android:sync": "npm run mobile:build && npx cap sync android && node scripts/prepare-android.mjs",
     "android:open": "npm run android:sync && npx cap open android",
     "android:debug": "npm run android:sync && node scripts/android-gradle.mjs assembleDebug",
-    "android:bundle": "npm run android:sync && node scripts/android-gradle.mjs bundleRelease"
+    "android:bundle": "npm run android:sync && node scripts/android-gradle.mjs bundleRelease",
+    "ios:init": "npm run mobile:build && npx cap add ios && npx cap sync ios && node scripts/prepare-ios.mjs",
+    "ios:sync": "npm run mobile:build && npx cap sync ios && node scripts/prepare-ios.mjs",
+    "ios:open": "npm run ios:sync && npx cap open ios",
+    "ios:sim": "npm run ios:sync && node scripts/ios-xcodebuild.mjs simulator",
+    "ios:archive": "npm run ios:sync && node scripts/ios-xcodebuild.mjs archive"
   },
   "dependencies": {
+    "@capacitor/app": "8.1.1",
     "@capacitor/core": "8.5.2",
     "@capacitor/local-notifications": "8.3.1"
   },
   "devDependencies": {
     "@capacitor/android": "8.5.2",
-    "@capacitor/cli": "8.5.2"
+    "@capacitor/cli": "8.5.2",
+    "@capacitor/ios": "8.5.2"
   }
 }
