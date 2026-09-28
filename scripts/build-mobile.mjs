@@ -12,6 +12,7 @@ const files = [
   'profile-dossier-v12.js',
   'playstore-ready-v12.js',
   'social-v12.js',
+  'notifications-v12.js',
   'manifest.webmanifest',
   'privacy.html',
   'terms.html',
