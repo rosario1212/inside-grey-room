@@ -6,6 +6,7 @@ const out = path.join(root, 'www');
 const files = [
   'index.html',
   'styles-v11.css',
+  'polish-v12.css',
   'app-v11.js',
   'qa-fixes-v12.js',
   'video-v12-3.js',
