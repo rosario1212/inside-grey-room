@@ -41,6 +41,7 @@ def syncWebAssets = tasks.register('syncWebAssets', Copy) {
         include 'app-v11.js'
         include 'audio-stability-v12.js'
         include 'qa-fixes-v12.js'
+        include 'video-v12-3.js'
         include 'styles-v11.css'
         include 'manifest.webmanifest'
         include 'service-worker.js'
