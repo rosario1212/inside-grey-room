@@ -11,6 +11,7 @@ on:
       - 'scripts/**'
       - 'index.html'
       - 'service-worker.js'
+      - 'manifest.webmanifest'
       - 'styles-v11.css'
       - 'polish-v12.css'
       - 'app-v11.js'
