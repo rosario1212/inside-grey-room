@@ -1,8 +1,11 @@
 {
   "name": "inside-grey-room",
   "compatibility_date": "2026-09-28",
+  "build": {
+    "command": "node scripts/build-web.mjs"
+  },
   "assets": {
-    "directory": "./",
+    "directory": "./dist",
     "not_found_handling": "single-page-application"
   }
 }
