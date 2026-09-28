@@ -3,7 +3,7 @@ name: iOS Build Check
 on:
   push:
     branches: [main]
-    paths:
+    paths: &runtime_paths
       - 'package.json'
       - 'package-lock.json'
       - 'capacitor.config.json'
@@ -18,18 +18,25 @@ on:
       - 'qa-fixes-v12.js'
       - 'investigation-sheet-v12.js'
       - 'video-v12-3.js'
+      - 'turn-v12-4.js'
       - 'profile-dossier-v12.js'
       - 'playstore-ready-v12.js'
       - 'social-v12.js'
       - 'notifications-v12.js'
       - 'native-lifecycle-v12.js'
       - 'runtime-optimization-v12.js'
+      - 'gameplay-simple-v12.js'
+      - 'apple-ui-stability-v12.js'
+      - 'gameplay-clean-v12.js'
       - 'privacy.html'
       - 'terms.html'
       - 'delete-account.html'
       - 'support.html'
       - 'assets/**'
       - '.github/workflows/ios-build-check.yml'
+  pull_request:
+    branches: [main]
+    paths: *runtime_paths
   workflow_dispatch:
 
 permissions:
@@ -51,11 +58,20 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Validate JavaScript runtime
         run: |
-          node --check native-lifecycle-v12.js
-          node --check notifications-v12.js
-          node --check playstore-ready-v12.js
-          node --check runtime-optimization-v12.js
+          node --check app-v11.js
+          node --check qa-fixes-v12.js
           node --check investigation-sheet-v12.js
+          node --check video-v12-3.js
+          node --check turn-v12-4.js
+          node --check profile-dossier-v12.js
+          node --check playstore-ready-v12.js
+          node --check social-v12.js
+          node --check notifications-v12.js
+          node --check native-lifecycle-v12.js
+          node --check runtime-optimization-v12.js
+          node --check gameplay-simple-v12.js
+          node --check apple-ui-stability-v12.js
+          node --check gameplay-clean-v12.js
       - name: Build production web bundle
         run: npm run mobile:build
       - name: Create iOS shell
