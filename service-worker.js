@@ -1,15 +1,16 @@
-const CACHE='igr-v12-14-instant-flow';
+const CACHE='igr-v12-14-apple-hotfix';
 const SHELL=[
   '/', '/index.html',
-  '/styles-v11.css?v=v12.14-instant-flow', '/polish-v12.css?v=v12.14-instant-flow',
-  '/app-v11.js?v=v12.14-instant-flow', '/qa-fixes-v12.js?v=v12.14-instant-flow',
-  '/investigation-sheet-v12.js?v=v12.14-instant-flow', '/video-v12-3.js?v=v12.14-instant-flow',
-  '/turn-v12-4.js?v=v12.14-instant-flow', '/profile-dossier-v12.js?v=v12.14-instant-flow',
-  '/playstore-ready-v12.js?v=v12.14-instant-flow', '/social-v12.js?v=v12.14-instant-flow',
-  '/native-lifecycle-v12.js?v=v12.14-instant-flow', '/runtime-optimization-v12.js?v=v12.14-instant-flow',
-  '/gameplay-simple-v12.js?v=v12.14-instant-flow', '/gameplay-clean-v12.js?v=v12.14-instant-flow-20260928-1',
-  '/manifest.webmanifest?v=v12.14-instant-flow', '/privacy.html', '/terms.html', '/delete-account.html', '/support.html',
-  '/assets/intro-v10-14.webp?v=v12.14-instant-flow', '/assets/home-v10-14.webp?v=v12.14-instant-flow',
+  '/styles-v11.css?v=v12.14-apple-hotfix', '/polish-v12.css?v=v12.14-apple-hotfix',
+  '/app-v11.js?v=v12.14-apple-hotfix', '/qa-fixes-v12.js?v=v12.14-apple-hotfix',
+  '/investigation-sheet-v12.js?v=v12.14-apple-hotfix', '/video-v12-3.js?v=v12.14-apple-hotfix',
+  '/turn-v12-4.js?v=v12.14-apple-hotfix', '/profile-dossier-v12.js?v=v12.14-apple-hotfix',
+  '/playstore-ready-v12.js?v=v12.14-apple-hotfix', '/social-v12.js?v=v12.14-apple-hotfix',
+  '/native-lifecycle-v12.js?v=v12.14-apple-hotfix', '/runtime-optimization-v12.js?v=v12.14-apple-hotfix',
+  '/gameplay-simple-v12.js?v=v12.14-apple-hotfix', '/apple-ui-stability-v12.js?v=v12.14-apple-hotfix',
+  '/gameplay-clean-v12.js?v=v12.14-apple-hotfix',
+  '/manifest.webmanifest?v=v12.14-apple-hotfix', '/privacy.html', '/terms.html', '/delete-account.html', '/support.html',
+  '/assets/intro-v10-14.webp?v=v12.14-apple-hotfix', '/assets/home-v10-14.webp?v=v12.14-apple-hotfix',
   '/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));self.skipWaiting();});
