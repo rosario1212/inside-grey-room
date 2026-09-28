@@ -13,6 +13,7 @@ const files = [
   'playstore-ready-v12.js',
   'social-v12.js',
   'notifications-v12.js',
+  'native-lifecycle-v12.js',
   'manifest.webmanifest',
   'privacy.html',
   'terms.html',
