@@ -1,149 +1,109 @@
 /* Inside Grey Room v12.13 — clean live gameplay
-   Goals:
-   - no manual refresh during a live room
-   - role choice can be cancelled before launch
-   - evidence-only Fil; operational room history moved to Partie
-   - investigation-only notifications, one compact banner at a time
-   - robust audio recovery button
-   - immediate viewer teardown when the Investigator stops/cuts video
-   - no shared investigation-focus UI
+   The app manages timing, roles, transport and canonical facts; players manage the room.
 */
 (() => {
-  const REV = 'v12.13-clean-live-20260928-1';
-  const EVIDENCE_TYPES = new Set(['trame','breaking_news','field','expert','judge']);
-  const OPERATION_TYPES = new Set(['room_created','player_joined','roles_distributed','context','phase','cycle','interrogation','video','reveal']);
-  let cleanSyncBusy = false;
-  let lastEvidenceId = null;
-  let notifyTimer = null;
-  let audioWakeBusy = false;
+  const REV='v12.13-clean-live-20260928-2';
+  const EVIDENCE_TYPES=new Set(['trame','breaking_news','field','expert','judge']);
+  const OPERATION_TYPES=new Set(['room_created','player_joined','roles_distributed','context','phase','cycle','interrogation','video','reveal']);
+  let syncBusy=false,lastEvidenceId=null,noticeTimer=null,audioWakeBusy=false;
+  const esc=v=>typeof h==='function'?h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  const esc = v => (typeof h === 'function' ? h(String(v ?? '')) : String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
-
-  try { stopRoomWatcher?.(); } catch (_) {}
-  try {
-    startRoomWatcher = function(){
-      if (STATE?.watcher) {
-        try { clearInterval(STATE.watcher); clearTimeout(STATE.watcher); } catch (_) {}
-        STATE.watcher = null;
-      }
-    };
-  } catch (_) {}
-
+  /* Reliable live sync, independent of the legacy watcher. */
+  try{stopRoomWatcher?.()}catch(_){}
+  try{startRoomWatcher=function(){if(STATE?.watcher){try{clearInterval(STATE.watcher);clearTimeout(STATE.watcher)}catch(_){}STATE.watcher=null}}}catch(_){}
   async function cleanSync(force=false){
-    if (cleanSyncBusy || !globalThis.STATE?.room || !globalThis.STATE?.token) return;
-    cleanSyncBusy = true;
-    try {
-      await syncNow(!!force);
-      decorateLobbyRole();
-      removeInvestigationFocus();
-      scanEvidenceNotifications();
-    } catch (_) {
-    } finally {
-      cleanSyncBusy = false;
-    }
+    if(syncBusy||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
+    syncBusy=true;
+    try{await syncNow(!!force);decorateLobbyRole();removeInvestigationFocus();scanEvidenceNotifications()}catch(_){}finally{syncBusy=false}
   }
-
-  setInterval(() => {
-    if (!globalThis.STATE?.room || !globalThis.STATE?.token || document.hidden) return;
-    void cleanSync(false);
-  }, 650);
+  setInterval(()=>{if(!document.hidden)void cleanSync(false)},650);
   window.addEventListener('pageshow',()=>void cleanSync(true),{passive:true});
   window.addEventListener('focus',()=>void cleanSync(true),{passive:true});
   window.addEventListener('online',()=>void cleanSync(true),{passive:true});
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) void cleanSync(true); },{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void cleanSync(true)},{passive:true});
 
-  if (typeof chooseLobbyRole === 'function') {
-    chooseLobbyRole = async function(role){
-      const me = (STATE?.sync?.players||[]).find(p=>String(p.id)===String(STATE?.sync?.player?.id));
-      const current = me?.preferred_role || STATE?.sync?.player?.preferred_role || null;
-      const clearing = String(current||'') === String(role||'');
-      try {
+  /* A selected lobby role can be tapped again to clear it. */
+  if(typeof chooseLobbyRole==='function'){
+    chooseLobbyRole=async function(role){
+      const me=(STATE?.sync?.players||[]).find(p=>String(p.id)===String(STATE?.sync?.player?.id));
+      const current=me?.preferred_role||STATE?.sync?.player?.preferred_role||null;
+      const clearing=String(current||'')===String(role||'');
+      try{
         await rpc('igr_v4_choose_role',{p_code:STATE.room,p_player_token:STATE.token,p_role:clearing?'':role});
-        await syncNow(true);
-        decorateLobbyRole();
-        toast(clearing ? 'Choix de rôle annulé.' : `Rôle choisi : ${publicRoleLabel(role)}`);
-      } catch (e) {
-        console.error(e);
-        toast(clearing ? 'Impossible d’annuler ce choix.' : 'Ce rôle vient d’être pris ou n’est pas disponible.');
-      }
+        await syncNow(true);decorateLobbyRole();
+        toast(clearing?'Choix de rôle annulé.':`Rôle choisi : ${publicRoleLabel(role)}`);
+      }catch(e){console.error(e);toast(clearing?'Impossible d’annuler ce choix.':'Ce rôle vient d’être pris ou n’est pas disponible.')}
     };
   }
-
   function decorateLobbyRole(){
-    try {
-      document.querySelectorAll('.role-choice-card.selected em').forEach(el=>{ el.textContent='SE DÉSISTER'; });
-      document.querySelectorAll('.role-choice-card.selected').forEach(el=>{el.setAttribute('aria-label','Rôle sélectionné. Appuyer pour se désister.');el.title='Appuyer pour se désister';});
-    } catch (_) {}
+    try{
+      document.querySelectorAll('.role-choice-card.selected em').forEach(el=>{if(el.textContent!=='SE DÉSISTER')el.textContent='SE DÉSISTER'});
+      document.querySelectorAll('.role-choice-card.selected').forEach(el=>{
+        if(el.getAttribute('aria-label')!=='Rôle sélectionné. Appuyer pour se désister.')el.setAttribute('aria-label','Rôle sélectionné. Appuyer pour se désister.');
+        if(el.title!=='Appuyer pour se désister')el.title='Appuyer pour se désister';
+      });
+    }catch(_){}
   }
-  function removeInvestigationFocus(){
-    try { document.querySelectorAll('.investigation-sheet,.investigation-focus-controls,.investigation-focus-current,.investigation-focus-readonly').forEach(el=>el.remove()); } catch (_) {}
-  }
-  const focusObserver = new MutationObserver(()=>{ decorateLobbyRole(); removeInvestigationFocus(); });
+
+  /* The v12.11 shared discussion-focus experiment is removed from the live UI. */
+  function removeInvestigationFocus(){try{document.querySelectorAll('.investigation-sheet,.investigation-focus-controls,.investigation-focus-current,.investigation-focus-readonly').forEach(el=>el.remove())}catch(_){}}
+  const focusObserver=new MutationObserver(()=>{decorateLobbyRole();removeInvestigationFocus()});
   focusObserver.observe(document.documentElement,{subtree:true,childList:true});
 
+  /* Fil = evidence only. Operational events live under Partie. */
   function evidenceEvents(){
-    const role = STATE?.sync?.player?.public_role || STATE?.role;
-    return (STATE?.sync?.events||[]).filter(e => {
-      if (!EVIDENCE_TYPES.has(String(e.event_type||''))) return false;
-      if (e.event_type==='trame' && typeof canInvestigationChannel==='function' && !canInvestigationChannel(role)) return false;
+    const role=STATE?.sync?.player?.public_role||STATE?.role;
+    return (STATE?.sync?.events||[]).filter(e=>{
+      if(!EVIDENCE_TYPES.has(String(e.event_type||'')))return false;
+      if(e.event_type==='trame'&&typeof canInvestigationChannel==='function'&&!canInvestigationChannel(role))return false;
       return true;
     });
   }
-  function eventText(e){const p=e?.payload||{};return String(p.text||p.summary||'').trim();}
-  function evidenceLabel(e){
-    const p=e?.payload||{};
-    if(e.event_type==='trame') return p.title||'Nouvel élément';
-    if(e.event_type==='breaking_news') return p.title||'Breaking News';
-    if(e.event_type==='field') return p.title||'Retour terrain';
-    if(e.event_type==='expert') return p.title||'Expertise';
-    if(e.event_type==='judge') return p.title||'Information judiciaire';
-    return p.title||'Élément d’enquête';
-  }
-  if (typeof renderTimelineTab === 'function') {
-    renderTimelineTab = function(){
+  function eventText(e){const p=e?.payload||{};return String(p.text||p.summary||'').trim()}
+  function evidenceLabel(e){const p=e?.payload||{};if(e.event_type==='trame')return p.title||'Nouvel élément';if(e.event_type==='breaking_news')return p.title||'Breaking News';if(e.event_type==='field')return p.title||'Retour terrain';if(e.event_type==='expert')return p.title||'Expertise';if(e.event_type==='judge')return p.title||'Information judiciaire';return p.title||'Élément d’enquête'}
+  if(typeof renderTimelineTab==='function'){
+    renderTimelineTab=function(){
       const events=evidenceEvents().slice().reverse();
-      if(!events.length) return '<div class="empty-state">Aucun nouvel élément d’enquête.</div>';
+      if(!events.length)return '<div class="empty-state">Aucun nouvel élément d’enquête.</div>';
       return `<div class="timeline timeline-v11 evidence-only-feed">${events.map(e=>`<div class="event ${e.event_type==='trame'?'trame':e.event_type==='breaking_news'?'news':''}"><div class="event-head">${esc(evidenceLabel(e))} · ${typeof clock==='function'?clock(e.created_at):''}</div><div class="event-body">${esc(eventText(e))}</div></div>`).join('')}</div>`;
     };
   }
-  function operationTitle(e){
-    const p=e?.payload||{},type=String(e?.event_type||'');
-    const defaults={room_created:'Cellule créée',player_joined:'Joueur arrivé',roles_distributed:'Rôles distribués',context:'Dossier ouvert',phase:'Changement de phase',cycle:'Nouveau cycle',interrogation:'Interrogatoire',video:'Flux',reveal:'Révélation finale'};
-    return String(p.title||defaults[type]||'Mise à jour de partie');
-  }
+  function operationTitle(e){const p=e?.payload||{},type=String(e?.event_type||'');const defaults={room_created:'Cellule créée',player_joined:'Joueur arrivé',roles_distributed:'Rôles distribués',context:'Dossier ouvert',phase:'Changement de phase',cycle:'Nouveau cycle',interrogation:'Interrogatoire',video:'Flux',reveal:'Révélation finale'};return String(p.title||defaults[type]||'Mise à jour de partie')}
   function renderPartyTab(){
     const d=STATE?.sync;
     const ops=(d?.events||[]).filter(e=>OPERATION_TYPES.has(String(e.event_type||''))).slice(-18).reverse();
-    const players=(d?.players||[]).length;
-    const currentPhase=typeof phaseLabel==='function'?phaseLabel(d?.room?.phase):String(d?.room?.phase||'');
+    const players=(d?.players||[]).length,currentPhase=typeof phaseLabel==='function'?phaseLabel(d?.room?.phase):String(d?.room?.phase||'');
     const log=ops.length?ops.map(e=>`<div class="party-log-row"><b>${esc(operationTitle(e))}</b><span>${esc(eventText(e))}</span><small>${typeof clock==='function'?clock(e.created_at):''}</small></div>`).join(''):'<div class="empty-state">Aucun événement de partie.</div>';
     const rulesHtml=(typeof RULES!=='undefined'&&Array.isArray(RULES))?RULES.map(r=>`<div class="rule"><h3>${esc(r.title)}</h3><p>${(r.items||[]).map(i=>`• ${esc(i)}`).join('<br>')}</p></div>`).join(''):'';
     return `<div class="party-tab-clean"><div class="party-status-clean"><b>${esc(currentPhase)}</b><span>Cycle ${Number(d?.room?.cycle||0)}/3 · ${players} joueur${players>1?'s':''}</span></div><details class="party-history"><summary>Historique de la partie</summary><div class="party-log">${log}</div></details><details class="party-rules"><summary>Règles</summary><div class="rule-list">${rulesHtml}</div></details></div>`;
   }
-  if (typeof gameTabs === 'function') {const baseGameTabs=gameTabs;gameTabs=function(){return baseGameTabs().map(x=>x.id==='rules'?{...x,label:'Partie'}:x);};}
-  if (typeof renderGameTab === 'function') {const baseRenderGameTab=renderGameTab;renderGameTab=function(){if(STATE?.tab==='rules')return renderPartyTab();return baseRenderGameTab.apply(this,arguments);};}
+  if(typeof gameTabs==='function'){const baseGameTabs=gameTabs;gameTabs=function(){return baseGameTabs().map(x=>x.id==='rules'?{...x,label:'Partie'}:x)}}
+  if(typeof renderGameTab==='function'){const baseRenderGameTab=renderGameTab;renderGameTab=function(){if(STATE?.tab==='rules')return renderPartyTab();return baseRenderGameTab.apply(this,arguments)}}
 
-  function notificationHost(){let el=document.getElementById('igrEvidenceNotice');if(!el){el=document.createElement('button');el.id='igrEvidenceNotice';el.type='button';el.className='igr-evidence-notice';el.hidden=true;el.onclick=()=>{el.hidden=true;try{setTab('timeline')}catch(_){}};document.body.appendChild(el)}return el;}
-  function showEvidenceNotice(e){const el=notificationHost();el.innerHTML=`<small>ENQUÊTE</small><b>${esc(evidenceLabel(e))}</b>${eventText(e)?`<span>${esc(eventText(e).slice(0,140))}</span>`:''}`;el.hidden=false;clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>{el.hidden=true;},4600);}
-  function scanEvidenceNotifications(){const all=evidenceEvents();if(!all.length)return;const maxId=Math.max(...all.map(e=>Number(e.id)||0));if(lastEvidenceId===null){lastEvidenceId=maxId;return}const fresh=all.filter(e=>(Number(e.id)||0)>lastEvidenceId);lastEvidenceId=Math.max(lastEvidenceId,maxId);if(fresh.length)showEvidenceNotice(fresh[fresh.length-1]);}
-  try{document.getElementById('igrNotifyBell')?.remove();document.getElementById('igrAlertStack')?.remove();}catch(_){}
+  /* Quiet notifications: only new evidence, one banner, no bell or phase spam. */
+  function notificationHost(){let el=document.getElementById('igrEvidenceNotice');if(!el){el=document.createElement('button');el.id='igrEvidenceNotice';el.type='button';el.className='igr-evidence-notice';el.hidden=true;el.onclick=()=>{el.hidden=true;try{setTab('timeline')}catch(_){}};document.body.appendChild(el)}return el}
+  function showEvidenceNotice(e){const el=notificationHost();el.innerHTML=`<small>ENQUÊTE</small><b>${esc(evidenceLabel(e))}</b>${eventText(e)?`<span>${esc(eventText(e).slice(0,140))}</span>`:''}`;el.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{el.hidden=true},4600)}
+  function scanEvidenceNotifications(){const all=evidenceEvents();if(!all.length)return;const maxId=Math.max(...all.map(e=>Number(e.id)||0));if(lastEvidenceId===null){lastEvidenceId=maxId;return}const fresh=all.filter(e=>(Number(e.id)||0)>lastEvidenceId);lastEvidenceId=Math.max(lastEvidenceId,maxId);if(fresh.length)showEvidenceNotice(fresh[fresh.length-1])}
+  try{document.getElementById('igrNotifyBell')?.remove();document.getElementById('igrAlertStack')?.remove()}catch(_){}
 
-  if (typeof activateInGameAudio === 'function') {const baseActivateInGameAudio=activateInGameAudio;activateInGameAudio=async function(){if(audioWakeBusy)return;audioWakeBusy=true;try{return await baseActivateInGameAudio.apply(this,arguments)}finally{setTimeout(()=>{audioWakeBusy=false;},180)}};}
-  if (typeof showAudioWakePrompt === 'function') {
+  /* Robust touch target for suspended audio. */
+  if(typeof activateInGameAudio==='function'){const baseActivateInGameAudio=activateInGameAudio;activateInGameAudio=async function(){if(audioWakeBusy)return;audioWakeBusy=true;try{return await baseActivateInGameAudio.apply(this,arguments)}finally{setTimeout(()=>{audioWakeBusy=false},180)}}}
+  if(typeof showAudioWakePrompt==='function'){
     showAudioWakePrompt=function(label='Touchez pour réactiver le son'){
       document.getElementById('audioWakePrompt')?.remove();
       const el=document.createElement('button');el.id='audioWakePrompt';el.type='button';el.className='audio-wake-prompt show igr-audio-wake-clean';el.textContent=label;
-      let fired=false;const fire=ev=>{ev?.preventDefault?.();ev?.stopPropagation?.();if(fired||audioWakeBusy)return;fired=true;Promise.resolve(activateInGameAudio()).finally(()=>setTimeout(()=>{fired=false;},240));};
+      let fired=false;const fire=ev=>{ev?.preventDefault?.();ev?.stopPropagation?.();if(fired||audioWakeBusy)return;fired=true;Promise.resolve(activateInGameAudio()).finally(()=>setTimeout(()=>{fired=false},240))};
       el.addEventListener('pointerup',fire,{passive:false});el.addEventListener('click',fire,{passive:false});document.body.appendChild(el);
     };
   }
 
-  function observerIds(){const me=STATE?.sync?.player?.id;return (STATE?.sync?.players||[]).filter(p=>String(p.id)!==String(me)&&typeof canVideo==='function'&&canVideo(p.public_role)).map(p=>p.id);}
-  async function sendHangups(){await Promise.allSettled(observerIds().map(id=>rpc('igr_v4_signal_send',{p_code:STATE.room,p_player_token:STATE.token,p_to:id,p_type:'hangup',p_payload:{reason:'investigator_stopped',rev:REV}})));}
+  /* Stop/cut video immediately for observers, then confirm server state. */
+  function observerIds(){const me=STATE?.sync?.player?.id;return (STATE?.sync?.players||[]).filter(p=>String(p.id)!==String(me)&&typeof canVideo==='function'&&canVideo(p.public_role)).map(p=>p.id)}
+  async function sendHangups(){await Promise.allSettled(observerIds().map(id=>rpc('igr_v4_signal_send',{p_code:STATE.room,p_player_token:STATE.token,p_to:id,p_type:'hangup',p_payload:{reason:'investigator_stopped',rev:REV}})))}
   function optimisticVideoOff(cut=false){try{const st=STATE?.sync?.room?.state;if(st){st.video_active=false;if(!cut)st.video_cut_until=null}const rv=document.getElementById('remoteVideo');if(rv){try{rv.pause()}catch(_){}rv.srcObject=null}}catch(_){}}
-  if(typeof stopVideo==='function'){stopVideo=async function(){optimisticVideoOff(false);try{stopLocalCapture()}catch(_){}try{if(STATE?.tab==='video')renderGame()}catch(_){}const server=rpc('igr_v4_video_set',{p_code:STATE.room,p_player_token:STATE.token,p_active:false,p_confidential_cut:false});await Promise.allSettled([sendHangups(),server]);await syncNow(true);};}
-  if(typeof confidentialCut==='function'){confidentialCut=async function(){optimisticVideoOff(true);try{stopLocalCapture()}catch(_){}try{if(STATE?.tab==='video')renderGame()}catch(_){}const server=rpc('igr_v4_video_set',{p_code:STATE.room,p_player_token:STATE.token,p_active:false,p_confidential_cut:true});await Promise.allSettled([sendHangups(),server]);await syncNow(true);};}
-  if(typeof handleSignal==='function'){const baseHandleSignal=handleSignal;handleSignal=async function(s){if(String(s?.signal_type||'')==='hangup'){const from=s?.from_player_id;try{closePeer(from)}catch(_){}try{if(VIDEO?.remoteStream){VIDEO.remoteStream.getTracks().forEach(t=>t.stop());VIDEO.remoteStream=null}}catch(_){}optimisticVideoOff(false);try{if(STATE?.tab==='video')renderGame()}catch(_){}return}return baseHandleSignal.apply(this,arguments);};}
+  if(typeof stopVideo==='function'){stopVideo=async function(){optimisticVideoOff(false);try{stopLocalCapture()}catch(_){}try{if(STATE?.tab==='video')renderGame()}catch(_){}const server=rpc('igr_v4_video_set',{p_code:STATE.room,p_player_token:STATE.token,p_active:false,p_confidential_cut:false});await Promise.allSettled([sendHangups(),server]);await syncNow(true)}}
+  if(typeof confidentialCut==='function'){confidentialCut=async function(){optimisticVideoOff(true);try{stopLocalCapture()}catch(_){}try{if(STATE?.tab==='video')renderGame()}catch(_){}const server=rpc('igr_v4_video_set',{p_code:STATE.room,p_player_token:STATE.token,p_active:false,p_confidential_cut:true});await Promise.allSettled([sendHangups(),server]);await syncNow(true)}}
+  if(typeof handleSignal==='function'){const baseHandleSignal=handleSignal;handleSignal=async function(s){if(String(s?.signal_type||'')==='hangup'){const from=s?.from_player_id;try{closePeer(from)}catch(_){}try{if(VIDEO?.remoteStream){VIDEO.remoteStream.getTracks().forEach(t=>t.stop());VIDEO.remoteStream=null}}catch(_){}optimisticVideoOff(false);try{if(STATE?.tab==='video')renderGame()}catch(_){}return}return baseHandleSignal.apply(this,arguments)}}
 
   const style=document.createElement('style');style.id='igr-clean-live-style';style.textContent=`
     .investigation-sheet,.investigation-focus-controls,.investigation-focus-current,.investigation-focus-readonly{display:none!important}
