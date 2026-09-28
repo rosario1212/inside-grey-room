@@ -1,0 +1,29 @@
+# Cloudflare Workers static-assets allowlist.
+# Keep historical source files and release artifacts out of the public deployment.
+*
+!index.html
+!styles-v11.css
+!polish-v12.css
+!app-v11.js
+!qa-fixes-v12.js
+!investigation-sheet-v12.js
+!video-v12-3.js
+!turn-v12-4.js
+!profile-dossier-v12.js
+!playstore-ready-v12.js
+!social-v12.js
+!notifications-v12.js
+!native-lifecycle-v12.js
+!runtime-optimization-v12.js
+!gameplay-simple-v12.js
+!apple-ui-stability-v12.js
+!gameplay-clean-v12.js
+!service-worker.js
+!manifest.webmanifest
+!privacy.html
+!terms.html
+!delete-account.html
+!support.html
+!_headers
+!assets/
+!assets/**
