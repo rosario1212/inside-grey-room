@@ -1,5 +1,5 @@
-const CACHE='igr-v12-store-candidate';
-const SHELL=["/", "/index.html", "/styles-v11.css?v=v12-store-candidate", "/app-v11.js?v=v12-store-candidate", "/manifest.webmanifest?v=v12-store-candidate", "/assets/intro-v10-14.webp?v=v12-store-candidate", "/assets/home-v10-14.webp?v=v12-store-candidate", "/assets/icon-192-v9.png", "/assets/icon-512-v9.png", "/assets/apple-touch-icon-v9.png", "/assets/favicon-v9.png"];
+const CACHE='igr-v12-1-cross-platform-qa';
+const SHELL=["/", "/index.html", "/styles-v11.css?v=v12-store-candidate", "/app-v11.js?v=v12-store-candidate", "/qa-fixes-v12.js?v=v12.1-cross-platform-qa", "/manifest.webmanifest?v=v12-store-candidate", "/assets/intro-v10-14.webp?v=v12-store-candidate", "/assets/home-v10-14.webp?v=v12-store-candidate", "/assets/icon-192-v9.png", "/assets/icon-512-v9.png", "/assets/apple-touch-icon-v9.png", "/assets/favicon-v9.png"];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).catch(()=>null));self.skipWaiting();});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
 self.addEventListener('fetch',event=>{
