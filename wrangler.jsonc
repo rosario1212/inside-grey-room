@@ -1,7 +1,7 @@
 {
   "name": "inside-grey-room-last",
   "main": "cloudflare-worker.mjs",
-  "compatibility_date": "2026-09-29",
+  "compatibility_date": "2026-09-28",
   "build": {
     "command": "node scripts/build-web.mjs"
   },
