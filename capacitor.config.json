@@ -1,0 +1,9 @@
+{
+  "appId": "com.insidegreyroom.game",
+  "appName": "Inside Grey Room",
+  "webDir": "www",
+  "server": {
+    "hostname": "insidegreyroom.local",
+    "androidScheme": "https"
+  }
+}
