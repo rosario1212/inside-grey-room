@@ -1,0 +1,70 @@
+name: Android Build Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'capacitor.config.ts'
+      - 'scripts/**'
+      - 'index.html'
+      - 'styles-v11.css'
+      - 'app-v11.js'
+      - 'qa-fixes-v12.js'
+      - 'video-v12-3.js'
+      - 'profile-dossier-v12.js'
+      - 'playstore-ready-v12.js'
+      - 'social-v12.js'
+      - 'privacy.html'
+      - 'terms.html'
+      - 'delete-account.html'
+      - 'support.html'
+      - 'assets/**'
+      - '.github/workflows/android-build-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build production web bundle
+        run: npm run mobile:build
+      - name: Create Android shell
+        run: npx cap add android
+      - name: Sync and harden
+        run: |
+          npx cap sync android
+          node scripts/prepare-android.mjs
+      - name: Compile debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+      - name: Compile release AAB
+        working-directory: android
+        run: ./gradlew bundleRelease
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: inside-grey-room-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Upload unsigned release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: inside-grey-room-unsigned-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
