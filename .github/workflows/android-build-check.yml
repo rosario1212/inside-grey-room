@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'package.json'
+      - 'package-lock.json'
       - 'capacitor.config.json'
       - 'scripts/**'
       - 'index.html'
@@ -17,6 +18,7 @@ on:
       - 'playstore-ready-v12.js'
       - 'social-v12.js'
       - 'notifications-v12.js'
+      - 'native-lifecycle-v12.js'
       - 'privacy.html'
       - 'terms.html'
       - 'delete-account.html'
@@ -37,12 +39,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
       - name: Build production web bundle
         run: npm run mobile:build
       - name: Create Android shell
