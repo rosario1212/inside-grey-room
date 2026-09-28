@@ -39,9 +39,11 @@ def syncWebAssets = tasks.register('syncWebAssets', Copy) {
     from(repoRoot) {
         include 'index.html'
         include 'app-v11.js'
+        include 'audio-entry-guard-v12.js'
         include 'audio-stability-v12.js'
         include 'qa-fixes-v12.js'
         include 'video-v12-3.js'
+        include 'turn-v12-4.js'
         include 'styles-v11.css'
         include 'manifest.webmanifest'
         include 'service-worker.js'
