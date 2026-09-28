@@ -1,4 +1,5 @@
 import { copyFile, readFile, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 
 const root=process.cwd();
@@ -7,6 +8,9 @@ const infoPath=path.join(appDir,'Info.plist');
 const projectPath=path.join(root,'ios','App','App.xcodeproj','project.pbxproj');
 const privacySource=path.join(root,'PrivacyInfo.xcprivacy');
 const privacyTarget=path.join(appDir,'PrivacyInfo.xcprivacy');
+const launchPath=path.join(appDir,'Base.lproj','LaunchScreen.storyboard');
+const iconSource=path.join(root,'assets','icon-512-v9.png');
+const iconTarget=path.join(appDir,'Assets.xcassets','AppIcon.appiconset','AppIcon-512@2x.png');
 const pkg=JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
 const version=String(pkg.version||'1.0.0');
 const parts=version.split('.').map(v=>Number.parseInt(v,10)||0);
@@ -32,6 +36,17 @@ await writeFile(infoPath,info);
 
 await copyFile(privacySource,privacyTarget);
 
+let launch=await readFile(launchPath,'utf8');
+launch=launch
+  .replace(/ image="Splash"/g,'')
+  .replace('<color key="backgroundColor" systemColor="systemBackgroundColor"/>','<color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>');
+await writeFile(launchPath,launch);
+
+if(process.platform==='darwin'){
+  const icon=spawnSync('sips',['-z','1024','1024',iconSource,'--out',iconTarget],{stdio:'pipe',encoding:'utf8'});
+  if(icon.status!==0)throw new Error(`Unable to prepare 1024px iOS icon: ${icon.stderr||icon.stdout||'sips failed'}`);
+}
+
 let project=await readFile(projectPath,'utf8');
 project=project
   .replace(/IPHONEOS_DEPLOYMENT_TARGET = [^;]+;/g,'IPHONEOS_DEPLOYMENT_TARGET = 15.0;')
@@ -49,4 +64,4 @@ if(!project.includes('PrivacyInfo.xcprivacy')){
   project=project.replace(/(\/\* Resources \*\/ = \{\s*isa = PBXResourcesBuildPhase;[\s\S]*?files = \(\s*)/,`$1\t\t\t\t${buildRef} /* PrivacyInfo.xcprivacy in Resources */,\n`);
 }
 await writeFile(projectPath,project);
-console.log(`iOS hardened for App Store: iOS 15+, bundle ${bundleId}, version ${version} (${build}), camera/mic disclosure, privacy manifest, iPhone target.`);
+console.log(`iOS hardened for App Store: iOS 15+, bundle ${bundleId}, version ${version} (${build}), camera/mic disclosure, privacy manifest, black launch, 1024px icon, iPhone target.`);
