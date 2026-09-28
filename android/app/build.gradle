@@ -46,7 +46,6 @@ def syncWebAssets = tasks.register('syncWebAssets', Copy) {
         include 'turn-v12-4.js'
         include 'gameplay-simple-v12.js'
         include 'gameplay-clean-v12.js'
-        include 'live-sync-fix-v12.js'
         include 'styles-v11.css'
         include 'manifest.webmanifest'
         include 'service-worker.js'
