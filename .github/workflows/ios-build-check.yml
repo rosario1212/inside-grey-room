@@ -1,0 +1,69 @@
+name: iOS Build Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'capacitor.config.json'
+      - 'PrivacyInfo.xcprivacy'
+      - 'scripts/**'
+      - 'index.html'
+      - 'styles-v11.css'
+      - 'app-v11.js'
+      - 'qa-fixes-v12.js'
+      - 'video-v12-3.js'
+      - 'profile-dossier-v12.js'
+      - 'playstore-ready-v12.js'
+      - 'social-v12.js'
+      - 'notifications-v12.js'
+      - 'native-lifecycle-v12.js'
+      - 'privacy.html'
+      - 'terms.html'
+      - 'delete-account.html'
+      - 'support.html'
+      - 'assets/**'
+      - '.github/workflows/ios-build-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Xcode version
+        run: xcodebuild -version
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate JavaScript runtime
+        run: |
+          node --check native-lifecycle-v12.js
+          node --check notifications-v12.js
+          node --check playstore-ready-v12.js
+      - name: Build production web bundle
+        run: npm run mobile:build
+      - name: Create iOS shell
+        run: npx cap add ios
+      - name: Sync and harden iOS
+        run: |
+          npx cap sync ios
+          node scripts/prepare-ios.mjs
+      - name: Validate Apple privacy and permission metadata
+        run: |
+          plutil -lint ios/App/App/Info.plist
+          plutil -lint ios/App/App/PrivacyInfo.xcprivacy
+          grep -q 'NSCameraUsageDescription' ios/App/App/Info.plist
+          grep -q 'NSMicrophoneUsageDescription' ios/App/App/Info.plist
+          grep -q 'PrivacyInfo.xcprivacy in Resources' ios/App/App.xcodeproj/project.pbxproj
+          grep -q 'TARGETED_DEVICE_FAMILY = 1;' ios/App/App.xcodeproj/project.pbxproj
+      - name: Compile release for iOS Simulator
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+      - name: Compile release for iPhone device without signing
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
