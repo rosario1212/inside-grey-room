@@ -17,12 +17,11 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v12.1-security-store-candidate">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v12.1-security-store-candidate">
   <link rel="preload" as="image" href="assets/intro-v10-14.webp?v=v12.1-security-store-candidate" fetchpriority="high">
-<link rel="stylesheet" href="styles-v11.css?v=v12.1-security-store-candidate">
+  <link rel="stylesheet" href="styles-v11.css?v=v12.1-security-store-candidate">
 </head>
 <body>
   <div class="bg-noise"></div>
   <div class="bg-vignette"></div>
-
   <div id="introGate" class="intro-gate" aria-hidden="false">
     <img class="intro-art" src="assets/intro-v10-14.webp?v=v12.1-security-store-candidate" alt="Porte d’entrée Inside Grey Room">
     <div class="intro-cinema-shade"></div>
@@ -34,97 +33,14 @@
       <small id="introHint">TOUCHEZ POUR OUVRIR LA PORTE</small>
     </button>
   </div>
-
   <div id="app"></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <noscript>Active JavaScript pour jouer à Inside Grey Room.</noscript>
   <script src="app-v11.js?v=v12.1-security-store-candidate"></script>
-  <script>
-// V12.1 Android/native audio-entry guard.
-// No ambient score may start before the entrance has actually completed.
-(() => {
-  const entryComplete = () => !!INTRO.done && !INTRO.active && !INTRO.playing;
-
-  if (!entryComplete() && SOUND.started) stopAmbient();
-
-  const baseStartAmbient = startAmbient;
-  startAmbient = function(preset = 'menu') {
-    if (!entryComplete()) return;
-    return baseStartAmbient(preset);
-  };
-
-  const baseEnsureAmbient = ensureAmbient;
-  ensureAmbient = function(preset = 'menu') {
-    if (!entryComplete()) return;
-    return baseEnsureAmbient(preset);
-  };
-
-  const baseEnsureLiveAudio = ensureLiveAudio;
-  ensureLiveAudio = function() {
-    if (!entryComplete()) return;
-    return baseEnsureLiveAudio();
-  };
-
-  const baseWakeAudioFromGesture = wakeAudioFromGesture;
-  wakeAudioFromGesture = async function() {
-    if (entryComplete()) return baseWakeAudioFromGesture();
-    if (!SOUND.enabled) return true;
-    let ctx;
-    const resumeOnly = async () => {
-      initAudio();
-      ctx = SOUND.ctx;
-      if (!ctx) return false;
-      if (ctx.state !== 'running') await ctx.resume();
-      if (ctx.state !== 'running') return false;
-      primeAudioOutput();
-      updateGains();
-      return true;
-    };
-    try {
-      return await resumeOnly();
-    } catch (err) {
-      console.warn('Audio entrance wake retry', err);
-      disposeAudioEngine();
-      try { return await resumeOnly(); }
-      catch (err2) { console.warn('Audio entrance wake failed', err2); return false; }
-    }
-  };
-
-  startIntroSequence = function(audioWake) {
-    if (INTRO.playing || INTRO.done) return;
-    const gate = byId('introGate'), btn = byId('introEnterBtn');
-    if (!gate) return;
-    INTRO.playing = true;
-    if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
-    setIntroHint('ENTRÉE…');
-    gate.classList.remove('audio-error', 'boot-waiting');
-    requestAnimationFrame(() => gate.classList.add('opening'));
-
-    const wake = audioWake && typeof audioWake.then === 'function'
-      ? audioWake
-      : wakeAudioFromGesture();
-    void Promise.resolve(wake).then(awake => {
-      if (awake && INTRO.playing) playDoorOpenFx();
-    }).catch(() => {});
-
-    const finishDoorEntry = () => {
-      if (!INTRO.playing) return;
-      if (!BOOT.ready) {
-        INTRO.playing = false;
-        INTRO.waitingForBoot = true;
-        gate.classList.remove('opening');
-        gate.classList.add('boot-waiting');
-        gate.setAttribute('aria-busy', 'true');
-        return;
-      }
-      completeIntroEntry();
-    };
-    setTimeout(finishDoorEntry, 650);
-  };
-})();
-  </script>
+  <script src="audio-entry-guard-v12.js?v=v12.4-turn-fallback-20260928-1"></script>
   <script src="audio-stability-v12.js?v=v12.1-audio-stability"></script>
   <script src="qa-fixes-v12.js?v=v12.2-media-phase-20260928-1"></script>
   <script src="video-v12-3.js?v=v12.3-video-vp8-health-20260928-1"></script>
+  <script src="turn-v12-4.js?v=v12.4-turn-fallback-20260928-1"></script>
 </body>
 </html>
