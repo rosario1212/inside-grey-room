@@ -1,16 +1,16 @@
-const CACHE='igr-v12-18-playtest';
+const CACHE='igr-v12-19-desktop-lobby';
 const SHELL=[
   '/', '/index.html',
-  '/styles-v11.css?v=v12.18-playtest', '/polish-v12.css?v=v12.18-playtest',
-  '/app-v11.js?v=v12.18-playtest', '/qa-fixes-v12.js?v=v12.18-playtest',
-  '/investigation-sheet-v12.js?v=v12.18-playtest', '/video-v12-3.js?v=v12.18-playtest',
-  '/turn-v12-4.js?v=v12.18-playtest', '/profile-dossier-v12.js?v=v12.18-playtest',
-  '/playstore-ready-v12.js?v=v12.18-playtest', '/social-v12.js?v=v12.18-playtest',
-  '/notifications-v12.js?v=v12.18-playtest', '/native-lifecycle-v12.js?v=v12.18-playtest',
-  '/runtime-optimization-v12.js?v=v12.18-playtest', '/gameplay-simple-v12.js?v=v12.18-playtest',
-  '/apple-ui-stability-v12.js?v=v12.18-playtest', '/gameplay-clean-v12.js?v=v12.18-playtest',
-  '/manifest.webmanifest?v=v12.18-playtest', '/privacy.html', '/terms.html', '/delete-account.html', '/support.html',
-  '/assets/intro-v10-14.webp?v=v12.18-playtest', '/assets/home-v10-14.webp?v=v12.18-playtest', '/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'
+  '/styles-v11.css?v=v12.19-desktop-lobby', '/polish-v12.css?v=v12.19-desktop-lobby',
+  '/app-v11.js?v=v12.19-desktop-lobby', '/qa-fixes-v12.js?v=v12.19-desktop-lobby',
+  '/investigation-sheet-v12.js?v=v12.19-desktop-lobby', '/video-v12-3.js?v=v12.19-desktop-lobby',
+  '/turn-v12-4.js?v=v12.19-desktop-lobby', '/profile-dossier-v12.js?v=v12.19-desktop-lobby',
+  '/playstore-ready-v12.js?v=v12.19-desktop-lobby', '/social-v12.js?v=v12.19-desktop-lobby',
+  '/notifications-v12.js?v=v12.19-desktop-lobby', '/native-lifecycle-v12.js?v=v12.19-desktop-lobby',
+  '/runtime-optimization-v12.js?v=v12.19-desktop-lobby', '/gameplay-simple-v12.js?v=v12.19-desktop-lobby',
+  '/apple-ui-stability-v12.js?v=v12.19-desktop-lobby', '/gameplay-clean-v12.js?v=v12.19-desktop-lobby',
+  '/manifest.webmanifest?v=v12.19-desktop-lobby', '/privacy.html', '/terms.html', '/delete-account.html', '/support.html',
+  '/assets/intro-v10-14.webp?v=v12.19-desktop-lobby', '/assets/home-v10-14.webp?v=v12.19-desktop-lobby', '/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));self.skipWaiting();});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
