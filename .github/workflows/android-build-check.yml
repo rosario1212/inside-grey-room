@@ -5,9 +5,10 @@ on:
     branches: [main]
     paths:
       - 'package.json'
-      - 'capacitor.config.ts'
+      - 'capacitor.config.json'
       - 'scripts/**'
       - 'index.html'
+      - 'service-worker.js'
       - 'styles-v11.css'
       - 'app-v11.js'
       - 'qa-fixes-v12.js'
@@ -15,6 +16,7 @@ on:
       - 'profile-dossier-v12.js'
       - 'playstore-ready-v12.js'
       - 'social-v12.js'
+      - 'notifications-v12.js'
       - 'privacy.html'
       - 'terms.html'
       - 'delete-account.html'
