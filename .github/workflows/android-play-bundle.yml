@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
 
       - name: Java 21
         uses: actions/setup-java@v4
@@ -24,8 +25,8 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Install Capacitor
-        run: npm install
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
 
       - name: Build embedded web app
         run: npm run mobile:build
@@ -60,6 +61,7 @@ jobs:
             -keypass "$KEY_PASS" \
             android/app/build/outputs/bundle/release/app-release.aab "$KEY_ALIAS"
           jarsigner -verify android/app/build/outputs/bundle/release/app-release.aab
+          rm -f upload-keystore.jks
 
       - name: Upload signed AAB
         uses: actions/upload-artifact@v4
