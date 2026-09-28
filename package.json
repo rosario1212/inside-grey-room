@@ -5,7 +5,7 @@
   "type": "module",
   "engines": { "node": ">=22" },
   "scripts": {
-    "postinstall": "node scripts/build-web.mjs",
+    "postinstall": "node scripts/build-web.mjs && node scripts/provision-turn.mjs",
     "build": "node scripts/build-web.mjs",
     "deploy": "npm run build && npx --yes wrangler@4.102.0 deploy",
     "preview": "npm run build && npx --yes wrangler@4.102.0 dev",
