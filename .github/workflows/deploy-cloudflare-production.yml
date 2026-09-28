@@ -70,11 +70,18 @@ jobs:
             exit 0
           fi
 
+          set +e
           RESPONSE="$(curl --fail-with-body --silent --show-error \
             -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/calls/turn_keys" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H 'Content-Type: application/json' \
-            --data '{"name":"inside-grey-room-production"}')"
+            --data '{"name":"inside-grey-room-production"}' 2>&1)"
+          CURL_STATUS=$?
+          set -e
+          if [ "$CURL_STATUS" -ne 0 ]; then
+            echo "::warning::Managed TURN could not be provisioned. Add Cloudflare API token permission Calls Write, then rerun this workflow. Public TURN fallback remains active."
+            exit 0
+          fi
 
           TURN_UID="$(printf '%s' "$RESPONSE" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||!j.result?.uid)process.exit(2);process.stdout.write(j.result.uid)})")"
           TURN_KEY="$(printf '%s' "$RESPONSE" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||!j.result?.key)process.exit(2);process.stdout.write(j.result.key)})")"
