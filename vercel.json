@@ -1,4 +1,9 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "",
+  "buildCommand": "node scripts/build-web.mjs",
+  "outputDirectory": "dist",
+  "ignoreCommand": "node scripts/vercel-ignore.mjs",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
