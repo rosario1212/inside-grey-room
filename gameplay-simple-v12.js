@@ -3,7 +3,7 @@
    Removes the shared "discussion type / investigation focus" chooser and shortens live-game copy.
 */
 (() => {
-  const REV = 'v12.12-gameplay-simple-20260928-1';
+  const REV = 'v12.12-gameplay-simple-20260928-2';
 
   if (typeof renderInvestigationTab === 'function') {
     const baseRenderInvestigationTab = renderInvestigationTab;
@@ -65,6 +65,26 @@
         <div class="field"><label for="qConfusion">Le dossier reste difficile à relier ?</label><select id="qConfusion"><option value="0">Non</option><option value="1">Un peu</option><option value="2">Oui</option></select></div>
         <button class="btn primary block" onclick="submitDebrief()">Envoyer</button>
       </div>`;
+    };
+  }
+
+  if (typeof submitDebrief === 'function') {
+    submitDebrief = async function() {
+      try {
+        const convergence = Number(byId('qConvergence')?.value || 0);
+        const confusion = Number(byId('qConfusion')?.value || 0);
+        await rpc('igr_v4_submit_debrief', {
+          p_code: STATE.room,
+          p_player_token: STATE.token,
+          p_convergence: convergence,
+          p_confusion: confusion,
+          p_axis: ''
+        });
+        await syncNow(true);
+      } catch (e) {
+        console.error(e);
+        toast('Débrief déjà envoyé ou phase terminée.');
+      }
     };
   }
 
