@@ -11,6 +11,7 @@ on:
       - 'index.html'
       - 'service-worker.js'
       - 'styles-v11.css'
+      - 'polish-v12.css'
       - 'app-v11.js'
       - 'qa-fixes-v12.js'
       - 'video-v12-3.js'
@@ -19,6 +20,7 @@ on:
       - 'social-v12.js'
       - 'notifications-v12.js'
       - 'native-lifecycle-v12.js'
+      - 'runtime-optimization-v12.js'
       - 'privacy.html'
       - 'terms.html'
       - 'delete-account.html'
@@ -46,6 +48,12 @@ jobs:
           java-version: '21'
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
+      - name: Validate JavaScript runtime
+        run: |
+          node --check native-lifecycle-v12.js
+          node --check notifications-v12.js
+          node --check playstore-ready-v12.js
+          node --check runtime-optimization-v12.js
       - name: Build production web bundle
         run: npm run mobile:build
       - name: Create Android shell
