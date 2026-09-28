@@ -45,8 +45,6 @@
 (() => {
   const entryComplete = () => !!INTRO.done && !INTRO.active && !INTRO.playing;
 
-  // If any asynchronous render managed to start the menu score while the
-  // entrance is still visible, kill it immediately.
   if (!entryComplete() && SOUND.started) stopAmbient();
 
   const baseStartAmbient = startAmbient;
@@ -69,10 +67,7 @@
 
   const baseWakeAudioFromGesture = wakeAudioFromGesture;
   wakeAudioFromGesture = async function() {
-    // Outside the entrance, keep the normal audio recovery behavior.
     if (entryComplete()) return baseWakeAudioFromGesture();
-    // During the entrance, a gesture may unlock/resume WebAudio for the door
-    // effect, but it must never start the ambient score.
     if (!SOUND.enabled) return true;
     let ctx;
     const resumeOnly = async () => {
@@ -95,8 +90,6 @@
     }
   };
 
-  // setupIntro() already creates one wake promise before calling this function.
-  // Reuse that promise instead of launching a second audio wake/scheduler.
   startIntroSequence = function(audioWake) {
     if (INTRO.playing || INTRO.done) return;
     const gate = byId('introGate'), btn = byId('introEnterBtn');
@@ -131,6 +124,7 @@
 })();
   </script>
   <script src="audio-stability-v12.js?v=v12.1-audio-stability"></script>
-  <script src="qa-fixes-v12.js?v=v12.1-video-negotiation-2"></script>
+  <script src="qa-fixes-v12.js?v=v12.2-media-phase-20260928-1"></script>
+  <script src="video-v12-3.js?v=v12.3-video-vp8-health-20260928-1"></script>
 </body>
 </html>
