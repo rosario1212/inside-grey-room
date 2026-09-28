@@ -41,7 +41,7 @@ jobs:
     name: Deploy inside-grey-room-last
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: 9a82f465d035a633a04d79bf25103120
@@ -53,10 +53,34 @@ jobs:
           cache: 'npm'
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
-      - name: Deploy Worker when credentials are configured
+      - name: Deploy Worker
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "Deployment skipped: configure CLOUDFLARE_API_TOKEN in repository secrets."
-            exit 0
+            echo "Missing CLOUDFLARE_API_TOKEN"
+            exit 1
           fi
           npx --yes wrangler@4.102.0 deploy --config wrangler.jsonc
+      - name: Ensure managed TURN credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT="$(npx --yes wrangler@4.102.0 secret list --config wrangler.jsonc || true)"
+          if printf '%s' "$CURRENT" | grep -q 'CF_TURN_KEY_ID' && printf '%s' "$CURRENT" | grep -q 'CF_TURN_KEY_TOKEN'; then
+            echo "Managed TURN secrets already configured."
+            exit 0
+          fi
+
+          RESPONSE="$(curl --fail-with-body --silent --show-error \
+            -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/calls/turn_keys" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            --data '{"name":"inside-grey-room-production"}')"
+
+          TURN_UID="$(printf '%s' "$RESPONSE" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||!j.result?.uid)process.exit(2);process.stdout.write(j.result.uid)})")"
+          TURN_KEY="$(printf '%s' "$RESPONSE" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||!j.result?.key)process.exit(2);process.stdout.write(j.result.key)})")"
+          echo "::add-mask::$TURN_UID"
+          echo "::add-mask::$TURN_KEY"
+
+          printf '%s' "$TURN_UID" | npx --yes wrangler@4.102.0 secret put CF_TURN_KEY_ID --config wrangler.jsonc
+          printf '%s' "$TURN_KEY" | npx --yes wrangler@4.102.0 secret put CF_TURN_KEY_TOKEN --config wrangler.jsonc
+          echo "Managed Cloudflare TURN configured."
