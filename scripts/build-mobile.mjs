@@ -11,12 +11,16 @@ const files = [
   'qa-fixes-v12.js',
   'investigation-sheet-v12.js',
   'video-v12-3.js',
+  'turn-v12-4.js',
   'profile-dossier-v12.js',
   'playstore-ready-v12.js',
   'social-v12.js',
   'notifications-v12.js',
   'native-lifecycle-v12.js',
   'runtime-optimization-v12.js',
+  'gameplay-simple-v12.js',
+  'apple-ui-stability-v12.js',
+  'gameplay-clean-v12.js',
   'manifest.webmanifest',
   'privacy.html',
   'terms.html',
@@ -25,6 +29,21 @@ const files = [
 ];
 
 async function exists(p){try{await stat(p);return true}catch{return false}}
+
+// Keep the native bundle in lockstep with the current web runtime. If index.html
+// starts referencing a new root-level JS/CSS/manifest file, fail the build instead
+// of silently producing a broken Android/iOS WebView bundle.
+const indexHtml = await readFile(path.join(root, 'index.html'), 'utf8');
+const declared = new Set(files);
+for (const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
+  const raw = match[1];
+  if (!raw || /^(?:https?:|data:|blob:|#)/i.test(raw)) continue;
+  const relative = raw.split(/[?#]/, 1)[0].replace(/^\.\//, '');
+  if (!relative || relative.startsWith('assets/')) continue;
+  if (!declared.has(relative)) {
+    throw new Error(`Mobile runtime list is out of sync with index.html: ${relative}`);
+  }
+}
 
 await rm(out,{recursive:true,force:true});
 await mkdir(out,{recursive:true});
@@ -55,4 +74,4 @@ for(const relative of [...assetRefs].sort()){
 }
 
 console.log(`Inside Grey Room mobile bundle ready: ${out}`);
-console.log(`Runtime assets: ${assetRefs.size} files · ${(assetBytes/1024/1024).toFixed(2)} MiB`);
+console.log(`Runtime files: ${files.length} · assets: ${assetRefs.size} · ${(assetBytes/1024/1024).toFixed(2)} MiB assets`);
