@@ -1,4 +1,4 @@
-const CACHE='igr-v12-12-gameplay-simple';
+const CACHE='igr-v12-12-gameplay-simple-r2';
 const SHELL=[
   '/',
   '/index.html',
@@ -15,7 +15,7 @@ const SHELL=[
   '/notifications-v12.js?v=v12.10-investigation-sheet',
   '/native-lifecycle-v12.js?v=v12.10-investigation-sheet',
   '/runtime-optimization-v12.js?v=v12.10-investigation-sheet',
-  '/gameplay-simple-v12.js?v=v12.12-gameplay-simple-20260928-1',
+  '/gameplay-simple-v12.js?v=v12.12-gameplay-simple-20260928-2',
   '/manifest.webmanifest?v=v12.10-investigation-sheet',
   '/privacy.html',
   '/terms.html',
