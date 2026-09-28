@@ -1,8 +1,14 @@
 node_modules/
 www/
 android/
+ios/
+build/
 *.jks
 *.keystore
 *.aab
 *.apk
+*.xcarchive
+*.ipa
+*.mobileprovision
+*.p12
 .DS_Store
