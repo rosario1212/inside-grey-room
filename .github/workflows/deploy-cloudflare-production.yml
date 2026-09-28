@@ -70,21 +70,52 @@ jobs:
             exit 0
           fi
 
-          set +e
-          RESPONSE="$(curl --fail-with-body --silent --show-error \
+          TMP_BODY="$(mktemp)"
+          HTTP_STATUS="$(curl --silent --show-error \
+            -o "$TMP_BODY" \
+            -w '%{http_code}' \
             -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/calls/turn_keys" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H 'Content-Type: application/json' \
-            --data '{"name":"inside-grey-room-production"}' 2>&1)"
-          CURL_STATUS=$?
-          set -e
-          if [ "$CURL_STATUS" -ne 0 ]; then
-            echo "::warning::Managed TURN could not be provisioned. Add Cloudflare API token permission Calls Write, then rerun this workflow. Public TURN fallback remains active."
-            exit 0
+            --data '{"name":"inside-grey-room-production"}')"
+
+          if [[ ! "$HTTP_STATUS" =~ ^2 ]]; then
+            node - "$TMP_BODY" "$HTTP_STATUS" <<'NODE'
+          const fs = require('fs');
+          const [file, status] = process.argv.slice(2);
+          let message = `Cloudflare TURN request failed with HTTP ${status}`;
+          try {
+            const body = JSON.parse(fs.readFileSync(file, 'utf8'));
+            const errors = Array.isArray(body.errors) ? body.errors.map(e => e && e.message).filter(Boolean) : [];
+            if (errors.length) message += `: ${errors.join('; ')}`;
+          } catch {}
+          console.error(message);
+          NODE
+            rm -f "$TMP_BODY"
+            exit 1
           fi
 
-          TURN_UID="$(printf '%s' "$RESPONSE" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||!j.result?.uid)process.exit(2);process.stdout.write(j.result.uid)})")"
-          TURN_KEY="$(printf '%s' "$RESPONSE" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||!j.result?.key)process.exit(2);process.stdout.write(j.result.key)})")"
+          TURN_VALUES="$(node - "$TMP_BODY" <<'NODE'
+          const fs = require('fs');
+          const file = process.argv[2];
+          let body;
+          try { body = JSON.parse(fs.readFileSync(file, 'utf8')); }
+          catch { console.error('Cloudflare TURN returned invalid JSON.'); process.exit(2); }
+          const result = body && body.result && typeof body.result === 'object' ? body.result : body;
+          const uid = result && result.uid;
+          const key = result && result.key;
+          if (!uid || !key) {
+            const errors = Array.isArray(body && body.errors) ? body.errors.map(e => e && e.message).filter(Boolean) : [];
+            console.error(errors.length ? `Cloudflare TURN API: ${errors.join('; ')}` : 'Cloudflare TURN response did not contain credentials.');
+            process.exit(2);
+          }
+          process.stdout.write(`${uid}\n${key}`);
+          NODE
+          )"
+          rm -f "$TMP_BODY"
+
+          TURN_UID="$(printf '%s' "$TURN_VALUES" | sed -n '1p')"
+          TURN_KEY="$(printf '%s' "$TURN_VALUES" | sed -n '2p')"
           echo "::add-mask::$TURN_UID"
           echo "::add-mask::$TURN_KEY"
 
