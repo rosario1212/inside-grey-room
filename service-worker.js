@@ -3,6 +3,7 @@ const SHELL=[
   '/',
   '/index.html',
   '/styles-v11.css?v=v12.9-release-hardening',
+  '/polish-v12.css?v=v12.9-release-hardening',
   '/app-v11.js?v=v12.9-release-hardening',
   '/qa-fixes-v12.js?v=v12.9-release-hardening',
   '/video-v12-3.js?v=v12.9-release-hardening',
