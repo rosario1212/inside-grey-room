@@ -1,6 +1,6 @@
 {
   "name": "inside-grey-room",
-  "version": "12.6.1",
+  "version": "12.7.0",
   "private": true,
   "type": "module",
   "engines": { "node": ">=22" },
@@ -13,7 +13,8 @@
     "android:bundle": "npm run android:sync && node scripts/android-gradle.mjs bundleRelease"
   },
   "dependencies": {
-    "@capacitor/core": "8.5.2"
+    "@capacitor/core": "8.5.2",
+    "@capacitor/local-notifications": "8.3.1"
   },
   "devDependencies": {
     "@capacitor/android": "8.5.2",
