@@ -73,14 +73,8 @@ jobs:
           node --check gameplay-simple-v12.js
           node --check apple-ui-stability-v12.js
           node --check gameplay-clean-v12.js
-      - name: Build production web bundle
-        run: npm run mobile:build
-      - name: Create Android shell
-        run: npx cap add android
-      - name: Sync and harden
-        run: |
-          npx cap sync android
-          node scripts/prepare-android.mjs
+      - name: Build and synchronize Android project
+        run: npm run android:sync
       - name: Compile debug APK
         working-directory: android
         run: ./gradlew assembleDebug

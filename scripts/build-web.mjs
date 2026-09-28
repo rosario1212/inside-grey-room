@@ -16,6 +16,7 @@ const runtimeFiles = [
   'profile-dossier-v12.js',
   'playstore-ready-v12.js',
   'social-v12.js',
+  'notifications-v12.js',
   'native-lifecycle-v12.js',
   'runtime-optimization-v12.js',
   'gameplay-simple-v12.js',
@@ -31,6 +32,21 @@ const runtimeFiles = [
 
 async function exists(file) {
   try { await stat(file); return true; } catch { return false; }
+}
+
+const indexHtml = await readFile(path.join(root, 'index.html'), 'utf8');
+const declared = new Set(runtimeFiles);
+const referenced = new Set();
+for (const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
+  const raw = match[1];
+  if (!raw || /^(?:https?:|data:|blob:|#)/i.test(raw)) continue;
+  const relative = raw.split(/[?#]/, 1)[0].replace(/^\.\//, '');
+  if (!relative || relative.startsWith('assets/')) continue;
+  if (!declared.has(relative)) throw new Error(`Web runtime list is out of sync with index.html: ${relative}`);
+  referenced.add(relative);
+}
+for (const name of runtimeFiles.filter(name => /\.(?:js|css)$/.test(name) && name !== 'service-worker.js')) {
+  if (!referenced.has(name)) throw new Error(`Web runtime file is shipped but not loaded by index.html: ${name}`);
 }
 
 await rm(out, { recursive: true, force: true });

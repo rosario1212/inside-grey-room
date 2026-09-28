@@ -28,16 +28,8 @@ jobs:
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Build embedded web app
-        run: npm run mobile:build
-
-      - name: Generate Android project
-        run: npx cap add android
-
-      - name: Sync and harden Android
-        run: |
-          npx cap sync android
-          node scripts/prepare-android.mjs
+      - name: Build and synchronize Android project
+        run: npm run android:sync
 
       - name: Build release App Bundle
         working-directory: android
