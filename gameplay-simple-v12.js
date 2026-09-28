@@ -3,12 +3,8 @@
    Removes the shared "discussion type / investigation focus" chooser and shortens live-game copy.
 */
 (() => {
-  const REV = 'v12.12-gameplay-simple-20260928-1';
+  const REV = 'v12.12-gameplay-simple-20260928-2';
 
-  // The shared focus selector added in v12.11 was useful as a prototype, but it
-  // made the Investigator manage the interface instead of the room. Remove it
-  // from every role. The underlying legacy RPC can remain harmlessly available
-  // for old clients; current clients never expose or call it.
   if (typeof renderInvestigationTab === 'function') {
     const baseRenderInvestigationTab = renderInvestigationTab;
     renderInvestigationTab = function(...args) {
@@ -21,8 +17,6 @@
     };
   }
 
-  // Keep instructions short during play. Canonical information itself is never
-  // shortened or removed; only repeated interface guidance is reduced.
   if (typeof phaseInstruction === 'function') {
     const basePhaseInstruction = phaseInstruction;
     phaseInstruction = function(role, ph, target) {
@@ -62,13 +56,9 @@
     };
   }
 
-  // Two fast inputs are enough for the adaptive director. No axis, topic or
-  // "type of discussion" is ever chosen by the players.
   if (typeof renderDebriefForm === 'function') {
     renderDebriefForm = function() {
-      if (typeof myAction === 'function' && myAction('debrief')) {
-        return `<div class="locked-state">Débrief envoyé.</div>`;
-      }
+      if (typeof myAction === 'function' && myAction('debrief')) return `<div class="locked-state">Débrief envoyé.</div>`;
       return `<div class="qcm-v11 narrative-debrief gameplay-simple-debrief">
         <div class="narrative-debrief-intro"><b>DÉBRIEF · 2 QUESTIONS</b><span>Le MJ ajuste le rythme, jamais votre piste.</span></div>
         <div class="field"><label for="qConvergence">Le groupe converge déjà ?</label><select id="qConvergence"><option value="0">Non</option><option value="1">Un peu</option><option value="2">Oui</option></select></div>
@@ -78,7 +68,28 @@
     };
   }
 
-  // Role copy follows the same philosophy: fewer meta-actions, more play.
+  // The legacy client expected a third "axis" field. Current gameplay never asks
+  // players to choose an investigative direction, so submit a neutral empty axis.
+  if (typeof submitDebrief === 'function') {
+    submitDebrief = async function() {
+      try {
+        const convergence = Number(byId('qConvergence')?.value || 0);
+        const confusion = Number(byId('qConfusion')?.value || 0);
+        await rpc('igr_v4_submit_debrief', {
+          p_code: STATE.room,
+          p_player_token: STATE.token,
+          p_convergence: convergence,
+          p_confusion: confusion,
+          p_axis: ''
+        });
+        await syncNow(true);
+      } catch (e) {
+        console.error(e);
+        toast('Débrief déjà envoyé ou phase terminée.');
+      }
+    };
+  }
+
   try {
     if (ROLE_INFO?.enqueteur) ROLE_INFO.enqueteur.body = 'Tu diriges les interrogatoires et portes la reconstruction factuelle finale.';
     if (ROLE_INFO?.analyste) ROLE_INFO.analyste.body = 'Tu observes les interrogatoires, notes les contradictions et aides l’Enquêteur à reconstruire les faits.';
