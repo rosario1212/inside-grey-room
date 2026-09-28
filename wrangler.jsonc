@@ -1,11 +1,14 @@
 {
   "name": "inside-grey-room-last",
-  "compatibility_date": "2026-09-28",
+  "main": "cloudflare-worker.mjs",
+  "compatibility_date": "2026-09-29",
   "build": {
     "command": "node scripts/build-web.mjs"
   },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     "not_found_handling": "single-page-application"
   }
 }
