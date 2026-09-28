@@ -53,9 +53,10 @@ jobs:
           cache: 'npm'
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
-      - name: Skip until Cloudflare secrets are configured
-        if: "${{ env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == '' }}"
-        run: echo "Deployment skipped: configure CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in repository secrets."
-      - name: Deploy Worker
-        if: "${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != '' }}"
-        run: npx --yes wrangler@4.102.0 deploy --config wrangler.jsonc
+      - name: Deploy Worker when credentials are configured
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Deployment skipped: configure CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in repository secrets."
+            exit 0
+          fi
+          npx --yes wrangler@4.102.0 deploy --config wrangler.jsonc
