@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="theme-color" content="#000000">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://jtasbdiguhiswoyvobkn.supabase.co; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; worker-src 'self' blob:">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://jtasbdiguhiswoyvobkn.supabase.co https://inside-grey-room-last.alial-khafaji2002.workers.dev; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; worker-src 'self' blob:">
   <meta name="referrer" content="no-referrer">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -13,36 +13,45 @@
   <meta name="apple-mobile-web-app-title" content="Inside Grey Room">
   <meta name="description" content="Inside Grey Room : enquêtes psychologiques multijoueurs, rôles secrets et vérités à reconstruire.">
   <title>Inside Grey Room</title>
-  <link rel="manifest" href="manifest.webmanifest?v=v12.17-unified">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v12.17-unified">
-  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v12.17-unified">
-  <link rel="preload" as="image" href="assets/intro-v10-14.webp?v=v12.17-unified" fetchpriority="high">
-  <link rel="stylesheet" href="styles-v11.css?v=v12.17-unified">
-  <link rel="stylesheet" href="polish-v12.css?v=v12.17-unified">
+  <link rel="manifest" href="manifest.webmanifest?v=v12.18-playtest">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v12.18-playtest">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v12.18-playtest">
+  <link rel="preload" as="image" href="assets/intro-v10-14.webp?v=v12.18-playtest" fetchpriority="high">
+  <link rel="stylesheet" href="styles-v11.css?v=v12.18-playtest">
+  <link rel="stylesheet" href="polish-v12.css?v=v12.18-playtest">
   <style>.intro-gate{touch-action:none!important}</style>
 </head>
 <body>
   <div class="bg-noise"></div><div class="bg-vignette"></div>
   <div id="introGate" class="intro-gate" aria-hidden="false">
-    <img class="intro-art" src="assets/intro-v10-14.webp?v=v12.17-unified" alt="Porte d’entrée Inside Grey Room">
+    <img class="intro-art" src="assets/intro-v10-14.webp?v=v12.18-playtest" alt="Porte d’entrée Inside Grey Room">
     <div class="intro-cinema-shade"></div><div class="intro-light-slit" aria-hidden="true"></div><div class="intro-pulse" aria-hidden="true"></div><div class="intro-whiteout" aria-hidden="true"></div>
     <button id="introEnterBtn" class="intro-enter" type="button" aria-label="Entrer dans Inside Grey Room"><span>ENTRER</span><small id="introHint">TOUCHEZ POUR OUVRIR LA PORTE</small></button>
   </div>
   <div id="app"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
   <noscript>Active JavaScript pour jouer à Inside Grey Room.</noscript>
-  <script src="app-v11.js?v=v12.17-unified"></script>
-  <script src="qa-fixes-v12.js?v=v12.17-unified"></script>
-  <script src="investigation-sheet-v12.js?v=v12.17-unified"></script>
-  <script src="video-v12-3.js?v=v12.17-unified"></script>
-  <script src="turn-v12-4.js?v=v12.17-unified"></script>
-  <script src="profile-dossier-v12.js?v=v12.17-unified"></script>
-  <script src="playstore-ready-v12.js?v=v12.17-unified"></script>
-  <script src="social-v12.js?v=v12.17-unified"></script>
-  <script src="notifications-v12.js?v=v12.17-unified"></script>
-  <script src="native-lifecycle-v12.js?v=v12.17-unified"></script>
-  <script src="runtime-optimization-v12.js?v=v12.17-unified"></script>
-  <script src="gameplay-simple-v12.js?v=v12.17-unified"></script>
-  <script src="apple-ui-stability-v12.js?v=v12.17-unified"></script>
-  <script src="gameplay-clean-v12.js?v=v12.17-unified"></script>
+  <script>
+  (()=>{try{const k='igr_v11_session',p=Storage.prototype,g=p.getItem,s=p.setItem,r=p.removeItem,native=location.protocol==='file:'||location.hostname==='insidegreyroom.local'||/[?&]native=(android|ios)\b/.test(location.search),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(native||standalone)return;const scoped=x=>x===k||String(x).startsWith('igr_v11_notes_');p.getItem=function(x){if(this===localStorage&&scoped(x))return g.call(sessionStorage,x);return g.call(this,x)};p.setItem=function(x,v){if(this===localStorage&&scoped(x))return s.call(sessionStorage,x,v);return s.call(this,x,v)};p.removeItem=function(x){if(this===localStorage&&scoped(x))return r.call(sessionStorage,x);return r.call(this,x)}}catch(_){}})();
+  </script>
+  <script src="app-v11.js?v=v12.18-playtest"></script>
+  <script src="qa-fixes-v12.js?v=v12.18-playtest"></script>
+  <script src="investigation-sheet-v12.js?v=v12.18-playtest"></script>
+  <script src="video-v12-3.js?v=v12.18-playtest"></script>
+  <script src="turn-v12-4.js?v=v12.18-playtest"></script>
+  <script src="profile-dossier-v12.js?v=v12.18-playtest"></script>
+  <script src="playstore-ready-v12.js?v=v12.18-playtest"></script>
+  <script src="social-v12.js?v=v12.18-playtest"></script>
+  <script src="notifications-v12.js?v=v12.18-playtest"></script>
+  <script src="native-lifecycle-v12.js?v=v12.18-playtest"></script>
+  <script src="runtime-optimization-v12.js?v=v12.18-playtest"></script>
+  <script src="gameplay-simple-v12.js?v=v12.18-playtest"></script>
+  <script src="apple-ui-stability-v12.js?v=v12.18-playtest"></script>
+  <script>
+  (()=>{const native=window.setInterval;window.__igrNativeSetInterval=native;window.setInterval=function(fn,delay,...args){return native.call(window,fn,Number(delay)===300?900:delay,...args)}})();
+  </script>
+  <script src="gameplay-clean-v12.js?v=v12.18-playtest"></script>
+  <script>
+  (()=>{if(window.__igrNativeSetInterval){window.setInterval=window.__igrNativeSetInterval;delete window.__igrNativeSetInterval}try{if(typeof liveSessionControls==='function'){const base=liveSessionControls;liveSessionControls=function(){let html=base.apply(this,arguments);if(STATE?.sync?.room?.phase==='cycle_debrief')html=html.replace('Étape suivante →','Passer le débrief →');return html}}}catch(_){}})();
+  </script>
 </body>
 </html>
