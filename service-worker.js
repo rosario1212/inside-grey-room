@@ -1,15 +1,15 @@
-const CACHE='igr-v12-13-clean-live-r3';
+const CACHE='igr-v12-14-instant-flow';
 const SHELL=[
   '/', '/index.html',
-  '/styles-v11.css?v=v12.13-clean-live-r3', '/polish-v12.css?v=v12.13-clean-live-r3',
-  '/app-v11.js?v=v12.13-clean-live-r3', '/qa-fixes-v12.js?v=v12.13-clean-live-r3',
-  '/investigation-sheet-v12.js?v=v12.13-clean-live-r3', '/video-v12-3.js?v=v12.13-clean-live-r3',
-  '/turn-v12-4.js?v=v12.13-clean-live-r3', '/profile-dossier-v12.js?v=v12.13-clean-live-r3',
-  '/playstore-ready-v12.js?v=v12.13-clean-live-r3', '/social-v12.js?v=v12.13-clean-live-r3',
-  '/native-lifecycle-v12.js?v=v12.13-clean-live-r3', '/runtime-optimization-v12.js?v=v12.13-clean-live-r3',
-  '/gameplay-simple-v12.js?v=v12.13-clean-live-r3', '/gameplay-clean-v12.js?v=v12.13-clean-live-20260928-2',
-  '/manifest.webmanifest?v=v12.13-clean-live-r3', '/privacy.html', '/terms.html', '/delete-account.html', '/support.html',
-  '/assets/intro-v10-14.webp?v=v12.13-clean-live-r3', '/assets/home-v10-14.webp?v=v12.13-clean-live-r3',
+  '/styles-v11.css?v=v12.14-instant-flow', '/polish-v12.css?v=v12.14-instant-flow',
+  '/app-v11.js?v=v12.14-instant-flow', '/qa-fixes-v12.js?v=v12.14-instant-flow',
+  '/investigation-sheet-v12.js?v=v12.14-instant-flow', '/video-v12-3.js?v=v12.14-instant-flow',
+  '/turn-v12-4.js?v=v12.14-instant-flow', '/profile-dossier-v12.js?v=v12.14-instant-flow',
+  '/playstore-ready-v12.js?v=v12.14-instant-flow', '/social-v12.js?v=v12.14-instant-flow',
+  '/native-lifecycle-v12.js?v=v12.14-instant-flow', '/runtime-optimization-v12.js?v=v12.14-instant-flow',
+  '/gameplay-simple-v12.js?v=v12.14-instant-flow', '/gameplay-clean-v12.js?v=v12.14-instant-flow-20260928-1',
+  '/manifest.webmanifest?v=v12.14-instant-flow', '/privacy.html', '/terms.html', '/delete-account.html', '/support.html',
+  '/assets/intro-v10-14.webp?v=v12.14-instant-flow', '/assets/home-v10-14.webp?v=v12.14-instant-flow',
   '/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));self.skipWaiting();});
