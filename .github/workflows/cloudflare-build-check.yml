@@ -1,0 +1,78 @@
+name: Cloudflare Build Check
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'wrangler.jsonc'
+      - '.assetsignore'
+      - '_headers'
+      - 'scripts/build-web.mjs'
+      - 'index.html'
+      - 'service-worker.js'
+      - 'manifest.webmanifest'
+      - 'styles-v11.css'
+      - 'polish-v12.css'
+      - 'app-v11.js'
+      - 'qa-fixes-v12.js'
+      - 'investigation-sheet-v12.js'
+      - 'video-v12-3.js'
+      - 'turn-v12-4.js'
+      - 'profile-dossier-v12.js'
+      - 'playstore-ready-v12.js'
+      - 'social-v12.js'
+      - 'native-lifecycle-v12.js'
+      - 'runtime-optimization-v12.js'
+      - 'gameplay-simple-v12.js'
+      - 'apple-ui-stability-v12.js'
+      - 'gameplay-clean-v12.js'
+      - 'assets/**'
+      - '.github/workflows/cloudflare-build-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'wrangler.jsonc'
+      - '.assetsignore'
+      - '_headers'
+      - 'scripts/build-web.mjs'
+      - 'index.html'
+      - 'service-worker.js'
+      - 'manifest.webmanifest'
+      - 'styles-v11.css'
+      - 'polish-v12.css'
+      - 'app-v11.js'
+      - 'qa-fixes-v12.js'
+      - 'investigation-sheet-v12.js'
+      - 'video-v12-3.js'
+      - 'turn-v12-4.js'
+      - 'profile-dossier-v12.js'
+      - 'playstore-ready-v12.js'
+      - 'social-v12.js'
+      - 'native-lifecycle-v12.js'
+      - 'runtime-optimization-v12.js'
+      - 'gameplay-simple-v12.js'
+      - 'apple-ui-stability-v12.js'
+      - 'gameplay-clean-v12.js'
+      - 'assets/**'
+      - '.github/workflows/cloudflare-build-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cloudflare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build canonical web bundle
+        run: node scripts/build-web.mjs
+      - name: Validate Cloudflare Worker package
+        run: npx --yes wrangler@4.102.0 deploy --dry-run --outdir .wrangler-dry-run
