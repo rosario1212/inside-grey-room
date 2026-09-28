@@ -9,6 +9,7 @@ const files = [
   'polish-v12.css',
   'app-v11.js',
   'qa-fixes-v12.js',
+  'investigation-sheet-v12.js',
   'video-v12-3.js',
   'profile-dossier-v12.js',
   'playstore-ready-v12.js',
