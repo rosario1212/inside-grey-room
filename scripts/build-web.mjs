@@ -22,6 +22,7 @@ const runtimeFiles = [
   'gameplay-simple-v12.js',
   'apple-ui-stability-v12.js',
   'gameplay-clean-v12.js',
+  'language-cold-v12.js',
   'service-worker.js',
   'manifest.webmanifest',
   'privacy.html',
