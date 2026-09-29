@@ -26,6 +26,7 @@ on:
       - 'gameplay-simple-v12.js'
       - 'apple-ui-stability-v12.js'
       - 'gameplay-clean-v12.js'
+      - 'language-cold-v12.js'
       - 'assets/**'
       - '.github/workflows/cloudflare-build-check.yml'
   push:
@@ -53,6 +54,7 @@ on:
       - 'gameplay-simple-v12.js'
       - 'apple-ui-stability-v12.js'
       - 'gameplay-clean-v12.js'
+      - 'language-cold-v12.js'
       - 'assets/**'
       - '.github/workflows/cloudflare-build-check.yml'
   workflow_dispatch:
@@ -72,6 +74,8 @@ jobs:
           cache: 'npm'
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
+      - name: Validate cold language runtime
+        run: node --check language-cold-v12.js
       - name: Build canonical web bundle
         run: node scripts/build-web.mjs
       - name: Validate Cloudflare Worker package
