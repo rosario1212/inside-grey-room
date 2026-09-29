@@ -48,6 +48,7 @@ Android and iOS native build workflows must also remain green before any store u
 7. Set the public privacy-policy URL and account-deletion URL to the production-domain versions of `privacy.html` and `delete-account.html`.
 8. Test the Play-delivered build on at least one recent Android device and one older supported device.
 9. Promote Internal -> Closed testing -> Production only after the multiplayer/reconnection checklist passes.
+10. If the Play Console account is a **personal account created after 13 November 2023**, Google currently requires a closed test with **at least 12 opted-in testers for 14 continuous days** before production access can be requested. Treat this as a launch-calendar requirement, not a technical bug.
 
 ### Apple App Store
 
@@ -55,10 +56,11 @@ Android and iOS native build workflows must also remain green before any store u
 2. Create the App Store Connect app with bundle ID `com.insidegreyroom.game`.
 3. On a Mac with Xcode 26+, select the correct Apple Developer Team and create a Release archive.
 4. Validate the archive in Xcode Organizer, then upload it to TestFlight.
-5. Complete App Privacy, age rating, App Review Information and export-compliance answers from the final build.
+5. Complete App Privacy, the current age-rating questionnaire, App Review Information and export-compliance answers from the final build.
 6. Set the production privacy-policy and support URLs.
 7. Test the TestFlight build on at least one recent physical iPhone and one older supported iPhone.
 8. Submit the tested TestFlight build to App Review only after the multiplayer/reconnection checklist passes.
+9. If distributing in the European Union, complete the applicable App Store Connect **DSA trader-status** information before the store submission/update workflow requires it.
 
 ## Mandatory real-device release test
 
@@ -108,6 +110,7 @@ Production submission is GO only when all of the following are true at the same 
 - iOS Build Check: green
 - Cloudflare production deployment: green
 - signed Play AAB accepted by Internal testing
+- required Play closed-test period completed, if the developer account is subject to it
 - TestFlight build accepted and installed
 - complete mixed-device multiplayer release test: pass
 - store privacy/safety declarations match actual behavior
