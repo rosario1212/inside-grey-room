@@ -9,6 +9,7 @@
     "build": "node scripts/build-web.mjs",
     "deploy": "npm run build && npx --yes wrangler@4.102.0 deploy",
     "preview": "npm run build && npx --yes wrangler@4.102.0 dev",
+    "store:check": "node scripts/store-readiness-check.mjs",
     "mobile:build": "node scripts/build-mobile.mjs",
     "android:init": "node scripts/sync-android.mjs --reset",
     "android:sync": "node scripts/sync-android.mjs",
