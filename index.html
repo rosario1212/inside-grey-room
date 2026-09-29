@@ -71,5 +71,15 @@
   })();
   </script>
   <script src="language-cold-v12.js?v=v12.20-cold-copy"></script>
+  <script>
+  (()=>{try{
+    const short='Une attaque biologique frappe une gare. La piste mène au Centre Helios. Plusieurs décisions ont rendu la catastrophe possible.';
+    const context='Une attaque biologique frappe une gare. La piste remonte au Centre Helios. Plusieurs décisions ont rendu la catastrophe possible.';
+    const sc=SCENARIOS.find(x=>x.id==='003');if(sc){sc.short=short;sc.context=context}
+    if(typeof PUBLIC_LOBBY_SUMMARIES!=='undefined')PUBLIC_LOBBY_SUMMARIES['003']=short;
+    const publicBase=publicScenarioSummary;publicScenarioSummary=id=>id==='003'?short:publicBase(id);
+    const briefingBase=canonicalBriefingText;canonicalBriefingText=id=>id==='003'?short:briefingBase(id);
+  }catch(e){console.warn('cold copy factual guard',e)}})();
+  </script>
 </body>
 </html>
