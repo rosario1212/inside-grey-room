@@ -7,7 +7,7 @@
 - iOS deployment target: iOS 15.0+
 - Submission toolchain: Xcode 26+ / iOS 26 SDK+
 - First release target: iPhone (`TARGETED_DEVICE_FAMILY = 1`)
-- App version/build are generated from `package.json` (v12.8.0 -> build 120800 unless `IOS_BUILD_NUMBER` overrides it)
+- App version/build are generated from `package.json` (v12.9.0 -> build 120900 unless `IOS_BUILD_NUMBER` overrides it)
 - Camera and microphone usage strings are injected in `Info.plist`
 - `PrivacyInfo.xcprivacy` is included in the app resources
 - Standard Apple/WebKit encryption only; `ITSAppUsesNonExemptEncryption=false`
