@@ -70,5 +70,6 @@
     try{if(typeof liveSessionControls==='function'){const base=liveSessionControls;liveSessionControls=function(){let html=base.apply(this,arguments);if(STATE?.sync?.room?.phase==='cycle_debrief')html=html.replace('Étape suivante →','Passer le débrief →');return html}}}catch(_){}
   })();
   </script>
+  <script src="language-cold-v12.js?v=v12.20-cold-copy"></script>
 </body>
 </html>
