@@ -76,11 +76,7 @@
     const d=STATE?.sync, sid=String(d?.room?.scenario_id||''); if(!isTerror(sid))return null;
     const fromServer=Number(d?.room?.state?.terror?.perimeter);
     const cycle=Math.max(0,Number(d?.room?.cycle||0));
-    const fallback={
-      '026':[82,66,43,21],
-      '027':[88,74,56,38],
-      '028':[64,44,25,12]
-    }[sid]?.[Math.min(3,cycle)] ?? 100;
+    const fallback={'026':[82,66,43,21],'027':[88,74,56,38],'028':[64,44,25,12]}[sid]?.[Math.min(3,cycle)] ?? 100;
     const value=Number.isFinite(fromServer)?fromServer:fallback;
     const band=d?.room?.state?.terror?.band || (value<=20?'CRITIQUE':value<=45?'FRAGILE':value<=70?'CONTESTÉ':'SOUS CONTRÔLE');
     return {sid,value,band,cycle,state:d?.room?.state?.terror||{},role:d?.player?.public_role,status:d?.room?.status,phase:d?.room?.phase};
@@ -103,7 +99,9 @@
     let hud=app.querySelector('.terror-perimeter-hud');
     if(!hud){hud=document.createElement('aside');hud.className='terror-perimeter-hud';app.prepend(hud);}
     const width=Math.max(4,Math.min(100,data.value));
-    hud.innerHTML=`<div class="terror-perimeter-top"><span>TERREUR · PÉRIMÈTRE</span><b>${data.value}%</b></div><div class="terror-perimeter-track"><i style="width:${width}%"></i></div><div class="terror-perimeter-meta"><span>${h(data.band)}</span><span>Cycle ${data.cycle||0}/3</span></div>${militaryDecisionBlock(data)}`;
+    const html=`<div class="terror-perimeter-top"><span>TERREUR · PÉRIMÈTRE</span><b>${data.value}%</b></div><div class="terror-perimeter-track"><i style="width:${width}%"></i></div><div class="terror-perimeter-meta"><span>${h(data.band)}</span><span>Cycle ${data.cycle||0}/3</span></div>${militaryDecisionBlock(data)}`;
+    const sig=[data.sid,data.value,data.band,data.cycle,data.status,data.phase,data.role,data.state?.military_decision||'',data.state?.military_outcome||''].join('|');
+    if(hud.dataset.sig!==sig){hud.dataset.sig=sig;hud.innerHTML=html;}
   }
 
   window.igrTerrorMilitaryDecision=async decision=>{
@@ -114,15 +112,11 @@
       const out=await rpc('igr_terror_military_decision',{p_code:STATE.room,p_player_token:STATE.token,p_decision:decision});
       toast('Décision militaire enregistrée.');
       await syncNow(true);ensureHud();
-      if(out?.outcome) setTimeout(()=>toast('Conséquences confirmées.'),350);
+      if(out?.outcome)setTimeout(()=>toast('Conséquences confirmées.'),350);
     }catch(e){console.error(e);toast('Cette décision n’est pas disponible ou a déjà été verrouillée.');}
   };
 
   const observer=new MutationObserver(()=>ensureHud());
   observer.observe(document.getElementById('app')||document.body,{childList:true,subtree:true});
-  const nativeSync=typeof syncNow==='function'?syncNow:null;
-  if(nativeSync){
-    syncNow=async function(){const out=await nativeSync.apply(this,arguments);ensureHud();return out;};
-  }
   setTimeout(()=>{if(STATE?.view==='create')decorateCreateList();ensureHud();},0);
 })();
