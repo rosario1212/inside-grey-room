@@ -14,8 +14,12 @@ mustContain('index.html', [
   'locale-runtime-v12-23.js?v=v12.23-locale-home',
   'omerta-v12.css?v=v12.24-omerta',
   'omerta-v12.js?v=v12.24-omerta',
-  'omerta-polish-v12.css?v=v12.27-omerta',
-  'omerta-polish-v12.js?v=v12.27-omerta'
+  'omerta-polish-v12.css?v=v12.28-omerta',
+  'omerta-polish-v12.js?v=v12.28-omerta',
+  'role-tree-polish-v12-29.css?v=v12.29-role-tree',
+  'role-tree-polish-v12-29.js?v=v12.29-role-tree',
+  'omerta-v12-30.css?v=v12.30-omerta-identity',
+  'omerta-v12-30.js?v=v12.30-omerta-identity'
 ]);
 mustContain('ui-polish-v12.js', [
   "enqueteur:{label:'Enquêteur'",
@@ -58,16 +62,33 @@ mustContain('omerta-polish-v12.css', [
   '.omerta-org-tree',
   '.omerta-family-node'
 ]);
-mustContain('scripts/build-mobile.mjs', ['omerta-v12.css','omerta-v12.js','omerta-polish-v12.css','omerta-polish-v12.js']);
-mustContain('scripts/build-web.mjs', ['omerta-v12.css','omerta-v12.js','omerta-polish-v12.css','omerta-polish-v12.js']);
-mustContain('service-worker.js', [
-  "igr-v12-27-omerta",
-  '/locale-runtime-v12-23.js?v=v12.23-locale-home',
-  '/omerta-v12.js?v=v12.24-omerta',
-  '/omerta-polish-v12.js?v=v12.27-omerta',
-  '/assets/omerta-025-il-don.webp?v=12.27'
+mustContain('role-tree-polish-v12-29.js', [
+  'chooseRandomLobbyRole',
+  'crypto.getRandomValues',
+  'omerta-tree-responsive'
 ]);
-for (const file of ['locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js']) {
+mustContain('omerta-v12-30.js', [
+  'igr_v4_choose_random_role',
+  'character',
+  'identityPairs',
+  'omerta-021-l-enveloppe-hd.svg',
+  'orientationchange'
+]);
+mustContain('omerta-v12-30.css', [
+  '.igr-random-role-cta.is-base',
+  '.igr-random-role-cta.is-omerta',
+  '.omerta-tree-v1230 .omerta-org-scroll',
+  'orientation:landscape'
+]);
+mustContain('scripts/build-mobile.mjs', ['omerta-v12-30.css','omerta-v12-30.js']);
+mustContain('scripts/build-web.mjs', ['omerta-v12-30.css','omerta-v12-30.js']);
+mustContain('service-worker.js', [
+  "igr-v12-30-omerta-identity",
+  '/locale-runtime-v12-23.js?v=v12.23-locale-home',
+  '/omerta-v12-30.js?v=v12.30-omerta-identity',
+  '/assets/omerta-025-il-don-hd.svg?v=12.30'
+]);
+for (const file of ['locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js']) {
   execFileSync(process.execPath,['--check',file],{stdio:'inherit'});
 }
-console.log('v12.27 locale/Home/OMERTA regression markers OK');
+console.log('v12.30 locale/Home/OMERTA regression markers OK');
