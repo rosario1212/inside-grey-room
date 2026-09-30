@@ -51,7 +51,12 @@ mustContain('omerta-v12-30.js', [
   'omerta-tree-v1232',
   'overflowX'
 ]);
-mustContain('omerta-v12-30.css', ['.igr-random-role-cta.is-base','.igr-random-role-cta.is-omerta','.omerta-tree-v1230 .omerta-org-scroll','orientation:landscape']);
+mustContain('omerta-v12-30.css', [
+  '.igr-random-role-cta.is-base',
+  '.igr-random-role-cta.is-omerta',
+  '.omerta-tree-v1232 .omerta-org-scroll',
+  'orientation:landscape'
+]);
 
 mustContain('terror-v12.js', [
   "'026'","'027'","'028'",
