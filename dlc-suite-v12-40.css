@@ -1,0 +1,96 @@
+/* Scenario filters + non-red DLC identities + sticky access. */
+.igr-scenario-filters{position:sticky;top:calc(env(safe-area-inset-top) + 8px);z-index:36;margin:0 0 14px;display:grid;gap:8px;max-width:100%;overflow:hidden;padding:8px 0 6px;background:linear-gradient(180deg,rgba(7,8,10,.96),rgba(7,8,10,.82),rgba(7,8,10,0))}
+.igr-filter-row{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 1px 5px}.igr-filter-row::-webkit-scrollbar{display:none}.igr-filter-row.is-hidden{display:none}.igr-filter-chip{flex:0 0 auto;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);color:#aaaeb5;font:inherit;font-size:.72rem;font-weight:780;letter-spacing:.06em;white-space:nowrap;touch-action:manipulation}.igr-filter-chip.active{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.11);color:#fff}.igr-filter-chip:focus-visible{outline:2px solid rgba(255,255,255,.58);outline-offset:2px}
+.dlc-access-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}.dlc-access-manage{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.035);color:#f2f4f7;font:inherit;font-size:.82rem;font-weight:760;letter-spacing:.05em;white-space:nowrap}.dlc-access-note{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#bcc1c9;font-size:.74rem;font-weight:720;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.dlc-suite-head{display:flex;justify-content:space-between;gap:14px;margin-bottom:16px}.dlc-suite-head h2{margin:.18rem 0 .3rem;font-size:clamp(1.55rem,7vw,2.15rem);letter-spacing:.06em}.dlc-suite-head p{margin:0;max-width:40rem;color:var(--muted,#aaa);line-height:1.45}.dlc-suite-eyebrow{font-size:.67rem;font-weight:850;letter-spacing:.17em}
+.cartel-dlc-section{border-color:rgba(177,151,74,.2);background:linear-gradient(180deg,rgba(25,24,18,.98),rgba(11,12,10,.99))}.cartel-dlc-section .dlc-suite-eyebrow,.cartel-scenario .scenario-id{color:#b7a060}.cartel-scenario{border-color:rgba(177,151,74,.18)!important;background:linear-gradient(145deg,rgba(25,24,18,.98),rgba(10,11,9,.98))!important}.cartel-tag{border-color:rgba(177,151,74,.38)!important;color:#d0bc80!important;background:rgba(177,151,74,.08)!important}
+.regime-dlc-section{border-color:rgba(104,132,157,.22);background:linear-gradient(180deg,rgba(18,23,28,.98),rgba(9,11,14,.99))}.regime-dlc-section .dlc-suite-eyebrow,.regime-scenario .scenario-id{color:#7896af}.regime-scenario{border-color:rgba(104,132,157,.2)!important;background:linear-gradient(145deg,rgba(18,24,30,.98),rgba(9,11,14,.98))!important}.regime-tag{border-color:rgba(104,132,157,.4)!important;color:#9db4c6!important;background:rgba(104,132,157,.09)!important}
+.cartel-scenario:focus-visible{border-color:rgba(208,188,128,.62)!important}.regime-scenario:focus-visible{border-color:rgba(157,180,198,.62)!important}
+body.igr-theme-cartel{background:radial-gradient(circle at top,rgba(177,151,74,.12),transparent 30%),linear-gradient(180deg,#0d0c09 0%,#060605 62%,#030303 100%)!important}
+body.igr-theme-regime{background:radial-gradient(circle at top,rgba(104,132,157,.12),transparent 30%),linear-gradient(180deg,#0b1014 0%,#06080a 64%,#030304 100%)!important}
+body.igr-theme-cartel .panel,body.igr-theme-cartel .scenario-hero,body.igr-theme-cartel .scenario-hero-art,body.igr-theme-cartel .section-cover,body.igr-theme-cartel .confirm-art{border-color:rgba(177,151,74,.26)!important;background:linear-gradient(180deg,rgba(26,24,17,.98),rgba(10,10,8,.99))!important;box-shadow:0 18px 44px rgba(0,0,0,.32),0 0 0 1px rgba(177,151,74,.06)!important}
+body.igr-theme-regime .panel,body.igr-theme-regime .scenario-hero,body.igr-theme-regime .scenario-hero-art,body.igr-theme-regime .section-cover,body.igr-theme-regime .confirm-art{border-color:rgba(104,132,157,.28)!important;background:linear-gradient(180deg,rgba(18,24,30,.98),rgba(9,11,14,.99))!important;box-shadow:0 18px 44px rgba(0,0,0,.32),0 0 0 1px rgba(104,132,157,.06)!important}
+@media(max-width:620px){.igr-scenario-filters{margin-inline:-2px}.igr-filter-chip{min-height:46px;padding-inline:15px}.dlc-suite-head{display:block}.dlc-access-row{flex-wrap:wrap}}
+
+/* Owner-only DLC gate */
+.dlc-owner-lock{display:grid;gap:8px;padding:20px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));text-align:left}.dlc-owner-lock strong{font-size:.9rem;letter-spacing:.12em}.dlc-owner-lock p{margin:0;color:#9ea4ad;line-height:1.45}.dlc-access-note.owner{border-color:rgba(164,194,151,.28);color:#c7dabf;background:rgba(91,122,78,.08)}.dlc-access-note.locked{border-color:rgba(255,255,255,.12);color:#858b94;background:rgba(255,255,255,.025)}
+
+/* Full themed lobbies / cells for CARTEL and LE RÉGIME. */
+body.igr-theme-cartel .role-choice-card,
+body.igr-theme-cartel .igr-random-role-cta,
+body.igr-theme-cartel .igr-remove-role-cta,
+body.igr-theme-cartel .role-choice-zone,
+body.igr-theme-cartel .player,
+body.igr-theme-cartel .mini,
+body.igr-theme-cartel .event,
+body.igr-theme-cartel .roles-row{
+  background:linear-gradient(135deg,rgba(74,60,22,.34),rgba(16,14,9,.97))!important;
+  border-color:rgba(177,151,74,.34)!important;
+  box-shadow:inset 3px 0 0 rgba(177,151,74,.24)!important;
+}
+body.igr-theme-regime .role-choice-card,
+body.igr-theme-regime .igr-random-role-cta,
+body.igr-theme-regime .igr-remove-role-cta,
+body.igr-theme-regime .role-choice-zone,
+body.igr-theme-regime .player,
+body.igr-theme-regime .mini,
+body.igr-theme-regime .event,
+body.igr-theme-regime .roles-row{
+  background:linear-gradient(135deg,rgba(31,49,65,.42),rgba(10,13,16,.97))!important;
+  border-color:rgba(104,132,157,.36)!important;
+  box-shadow:inset 3px 0 0 rgba(104,132,157,.27)!important;
+}
+body.igr-theme-cartel .role-choice-card.selected{border-color:rgba(208,188,128,.72)!important;background:linear-gradient(135deg,rgba(98,76,23,.52),rgba(18,15,9,.98))!important}
+body.igr-theme-regime .role-choice-card.selected{border-color:rgba(157,180,198,.72)!important;background:linear-gradient(135deg,rgba(45,67,86,.56),rgba(10,14,18,.98))!important}
+
+/* Exact portrait framing for the generated DLC posters. */
+.cartel-scenario .scenario-thumb,.regime-scenario .scenario-thumb{aspect-ratio:3/4!important;min-height:0!important;background:#030303!important}
+.cartel-scenario .scenario-thumb img,.regime-scenario .scenario-thumb img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;image-rendering:auto!important;filter:none!important}
+
+
+/* v12.40 CARTEL / LE RÉGIME scenario-detail deep tint */
+body.igr-theme-cartel .page-scenario-detail,
+body.igr-theme-cartel .page-scenario-detail .panel,
+body.igr-theme-cartel .page-scenario-detail .detail-card,
+body.igr-theme-cartel .page-scenario-detail .scenario-detail,
+body.igr-theme-cartel .page-scenario-detail .card,
+body.igr-theme-cartel .page-scenario-detail .roles-row,
+body.igr-theme-cartel .page-scenario-detail .mini,
+body.igr-theme-cartel .page-scenario-detail .event,
+body.igr-theme-cartel .page-scenario-detail .tag,
+body.igr-theme-cartel .page-scenario-detail .chip,
+body.igr-theme-cartel .page-scenario-detail .badge,
+body.igr-theme-cartel .page-scenario-detail button.tag,
+body.igr-theme-cartel .page-scenario-detail a.tag{
+  background:linear-gradient(135deg,rgba(74,60,22,.34),rgba(16,14,9,.985))!important;
+  border-color:rgba(177,151,74,.34)!important;
+  box-shadow:inset 3px 0 0 rgba(177,151,74,.24),0 12px 32px rgba(0,0,0,.18)!important;
+}
+body.igr-theme-cartel .page-scenario-detail .tag,
+body.igr-theme-cartel .page-scenario-detail .chip,
+body.igr-theme-cartel .page-scenario-detail .badge,
+body.igr-theme-cartel .page-scenario-detail button.tag,
+body.igr-theme-cartel .page-scenario-detail a.tag{color:#d0bc80!important}
+
+body.igr-theme-regime .page-scenario-detail,
+body.igr-theme-regime .page-scenario-detail .panel,
+body.igr-theme-regime .page-scenario-detail .detail-card,
+body.igr-theme-regime .page-scenario-detail .scenario-detail,
+body.igr-theme-regime .page-scenario-detail .card,
+body.igr-theme-regime .page-scenario-detail .roles-row,
+body.igr-theme-regime .page-scenario-detail .mini,
+body.igr-theme-regime .page-scenario-detail .event,
+body.igr-theme-regime .page-scenario-detail .tag,
+body.igr-theme-regime .page-scenario-detail .chip,
+body.igr-theme-regime .page-scenario-detail .badge,
+body.igr-theme-regime .page-scenario-detail button.tag,
+body.igr-theme-regime .page-scenario-detail a.tag{
+  background:linear-gradient(135deg,rgba(31,49,65,.42),rgba(10,13,16,.985))!important;
+  border-color:rgba(104,132,157,.36)!important;
+  box-shadow:inset 3px 0 0 rgba(104,132,157,.27),0 12px 32px rgba(0,0,0,.18)!important;
+}
+body.igr-theme-regime .page-scenario-detail .tag,
+body.igr-theme-regime .page-scenario-detail .chip,
+body.igr-theme-regime .page-scenario-detail .badge,
+body.igr-theme-regime .page-scenario-detail button.tag,
+body.igr-theme-regime .page-scenario-detail a.tag{color:#9db4c6!important}
