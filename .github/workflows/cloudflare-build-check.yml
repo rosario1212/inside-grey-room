@@ -17,6 +17,8 @@ on:
       - 'ui-polish-v12.css'
       - 'omerta-v12.css'
       - 'omerta-polish-v12.css'
+      - 'role-tree-polish-v12-29.css'
+      - 'omerta-v12-30.css'
       - 'app-v11.js'
       - 'qa-fixes-v12.js'
       - 'investigation-sheet-v12.js'
@@ -39,6 +41,9 @@ on:
       - 'locale-runtime-v12-23.js'
       - 'omerta-v12.js'
       - 'omerta-polish-v12.js'
+      - 'omerta-hotfix-v12.js'
+      - 'role-tree-polish-v12-29.js'
+      - 'omerta-v12-30.js'
       - 'assets/**'
       - '.github/workflows/cloudflare-build-check.yml'
   push:
@@ -68,6 +73,8 @@ jobs:
           node --check ui-polish-v12.js
           node --check omerta-v12.js
           node --check omerta-polish-v12.js
+          node --check role-tree-polish-v12-29.js
+          node --check omerta-v12-30.js
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: node scripts/build-web.mjs
