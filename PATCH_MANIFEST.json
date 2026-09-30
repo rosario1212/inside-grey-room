@@ -1,0 +1,106 @@
+{
+  "version": "v12.35-dlc-suite",
+  "base_main_sha": "6e1a849b4f1f3c3293f21e29bdbb637a37b2d2c3",
+  "files": [
+    {
+      "path": "README_INSTALL.md",
+      "size": 2281,
+      "sha256": "cd59a7a1a8805d6cb8a913cdcb7e51155c2814ceb84cf970454041c9bfadf124"
+    },
+    {
+      "path": "REPORT.md",
+      "size": 5537,
+      "sha256": "f606a2617ebe49f50313bf531ec3c781bb43934761ae9fbef6af1214f49b86cc"
+    },
+    {
+      "path": "assets/omerta-021-l-enveloppe.webp",
+      "size": 256378,
+      "sha256": "8db85da45720140ece3876e5f37d74cc125c73dac46d240c1ac7ac190ff47d0a"
+    },
+    {
+      "path": "assets/omerta-022-omerta.webp",
+      "size": 280264,
+      "sha256": "891be701ce861205ba1e822b611557165dbc4f1886d61c8804943351badbc2db"
+    },
+    {
+      "path": "assets/omerta-023-la-table.webp",
+      "size": 282126,
+      "sha256": "8d9905184dc6557c6b1e3e7fe84ff279f7022d12dfeb1c110ebf7c1a30b5d882"
+    },
+    {
+      "path": "assets/omerta-024-il-pentito.webp",
+      "size": 243236,
+      "sha256": "8606e283e919bcb9d30622e397da85b373b47d99a35b6160b9df30a51a1b95b1"
+    },
+    {
+      "path": "assets/omerta-025-il-don.webp",
+      "size": 279020,
+      "sha256": "a00827aed4f0f47b3a8f919a1e5741307a2fca198024b860f37ebf3b7ff71a1c"
+    },
+    {
+      "path": "dlc-suite-v12-35.css",
+      "size": 2511,
+      "sha256": "3428d53ab05f1cbe66369f59e091b0db5b587166b13d40556fcfa070c14e7371"
+    },
+    {
+      "path": "dlc-suite-v12-35.js",
+      "size": 12123,
+      "sha256": "d555ec2bc7f6b2f7b1f52f9ef328da46d7d6ebd9d412dbcd59952a6584005f72"
+    },
+    {
+      "path": "index.html",
+      "size": 7661,
+      "sha256": "b6fc9231e97efdc45fe81228eb8976e43d646179bc542a14423c59c124eda0b7"
+    },
+    {
+      "path": "omerta-v12-35.css",
+      "size": 4879,
+      "sha256": "aaf2e17fb31cb166502eb67992520453932f6337811c175594ca00f585ff5a37"
+    },
+    {
+      "path": "omerta-v12-35.js",
+      "size": 12131,
+      "sha256": "3d2843c9b53728cf590f15dda844daee18f075b784c6659871e4e9ad2911645c"
+    },
+    {
+      "path": "scripts/build-mobile.mjs",
+      "size": 2650,
+      "sha256": "37d8c93d4c8c440243e586df60c5112f173c4b20856abd8acad99eb5fa6d0d8e"
+    },
+    {
+      "path": "scripts/build-web.mjs",
+      "size": 3139,
+      "sha256": "94cb26ffca590cfb8d3765278bdbed03425aa014c387d2eed2e05e4ae1b2db31"
+    },
+    {
+      "path": "scripts/ui-regression-check.mjs",
+      "size": 2932,
+      "sha256": "6077f63bcc19b3bf4a0a72c8577ef960519a1c4fcd920b19066676d355c1db1c"
+    },
+    {
+      "path": "scripts/validate-dlc-assets.mjs",
+      "size": 1590,
+      "sha256": "f35e5a7abf997dadbacd86da566d40c58e680c4bcd6674c18be6bf88065f480b"
+    },
+    {
+      "path": "service-worker.js",
+      "size": 3195,
+      "sha256": "cbd2ff3fdd03a5ef7bac5d43fb8858716c61fcc64ac3bcc280ef680eb7a9a11b"
+    },
+    {
+      "path": "supabase/migrations/20260930_dlc_suite_026_034.sql",
+      "size": 26595,
+      "sha256": "c3497838cf6f7a72a8cb72815edf57bf07bf114ae30018d8b3745d2c2403e0c9"
+    },
+    {
+      "path": "terror-v12.css",
+      "size": 1343,
+      "sha256": "5371ad62b74a84d02017894dbee727ed1dd946402acb22c5f6dc06c4490abdcd"
+    },
+    {
+      "path": "terror-v12.js",
+      "size": 6002,
+      "sha256": "77e165ac90d7f779ed025e2799f0405a1688ae75a171d1ec32346aa7f418802e"
+    }
+  ]
+}
