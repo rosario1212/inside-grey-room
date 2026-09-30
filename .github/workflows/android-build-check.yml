@@ -14,6 +14,7 @@ on:
       - 'manifest.webmanifest'
       - 'styles-v11.css'
       - 'polish-v12.css'
+      - 'ui-polish-v12.css'
       - 'app-v11.js'
       - 'qa-fixes-v12.js'
       - 'investigation-sheet-v12.js'
@@ -30,6 +31,9 @@ on:
       - 'gameplay-clean-v12.js'
       - 'i18n-en-v12.js'
       - 'language-v12.js'
+      - 'rules-v12.js'
+      - 'locale-settings-v12.js'
+      - 'ui-polish-v12.js'
       - 'privacy.html'
       - 'terms.html'
       - 'delete-account.html'
@@ -78,6 +82,10 @@ jobs:
           node --check gameplay-clean-v12.js
           node --check i18n-en-v12.js
           node --check language-v12.js
+          node --check rules-v12.js
+          node --check locale-settings-v12.js
+          node --check ui-polish-v12.js
+          node scripts/ui-regression-check.mjs
       - name: Build production web bundle
         run: npm run mobile:build
       - name: Create Android shell
