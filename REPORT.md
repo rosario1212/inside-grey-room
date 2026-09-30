@@ -1,67 +1,28 @@
-# Rapport v12.37 — Inside Grey Room
+# Rapport — v12.38 OMERTÀ state-reset
 
-## 1. Corrections reprises
+## Cause du bug
 
-- carte « Retirer mon choix » ajoutée au-dessus du tirage aléatoire ;
-- ancien « Retirer mon choix » inférieur conservé ;
-- correction d’un risque de boucle : la nouvelle carte n’essaie jamais de cliquer sur elle-même ;
-- tirage sécurisé OMERTÀ/base conservé (`crypto.getRandomValues`, anti-double-tap, resync, capacités) ;
-- affiches OMERTÀ 021–025 HQ conservées ;
-- rouge OMERTÀ étendu au fond et aux grands panneaux du détail/lobby ;
-- filtres de scénarios sticky ;
-- nettoyage des classes de thème DLC quand on revient à la liste ou à un scénario de base ;
-- détection du scénario visible renforcée pour empêcher 021 de remplacer l’image d’un dossier 001–020.
+Après une cellule OMERTÀ, `STATE.sync.room.scenario_id` conservait le dossier de l'ancienne salle (ex. 025). La couche visuelle v12.37 pouvait considérer ce vieux `sync` comme plus prioritaire que `STATE.selectedScenario` pendant l'écran de confirmation d'un nouveau scénario (ex. 002).
 
-## 2. Images finales intégrées
+En plus, la réparation des affiches OMERTÀ utilisait parfois l'URL `src` déjà présente comme preuve que l'image appartenait à OMERTÀ. Une affiche 025 injectée par erreur pouvait donc s'auto-maintenir même après le passage à un scénario de base.
 
-### OMERTÀ
-- 021 `omerta-021-l-enveloppe.webp`
-- 022 `omerta-022-omerta.webp`
-- 023 `omerta-023-la-table.webp`
-- 024 `omerta-024-il-pentito.webp`
-- 025 `omerta-025-il-don.webp`
+## Correction
 
-### TERREUR
-- 026 `terror-026-la-ville-tombe.webp`
-- 027 `terror-027-la-zone-rouge.webp`
-- 028 `terror-028-dernier-perimetre.webp`
+- `create-confirm` utilise maintenant **toujours `STATE.selectedScenario`** comme source de vérité.
+- `lobby / briefing / game` continuent d'utiliser le scénario du serveur.
+- les nœuds DOM masqués ne sont plus utilisés pour déterminer le scénario visible.
+- le `src` d'une image OMERTÀ n'est plus une source de vérité pour une hero/confirmation.
+- si un scénario base est affiché avec une ancienne image OMERTÀ, l'image est restaurée avec `scenarioArt(scenarioId)`.
+- avant chaque nouvelle sélection, les classes de thème DLC précédentes sont supprimées immédiatement.
+- les classes `igr-omerta-active` et `igr-omerta-cell` sont nettoyées lors du passage hors OMERTÀ.
+- cache-busting JS + Service Worker v12.38 pour iPhone/PWA.
 
-### CARTEL
-- 029 `cartel-029-le-cycle-mort.webp`
-- 030 `cartel-030-la-cour-achetee.webp`
-- 031 `cartel-031-la-dette.webp`
+## Fichiers modifiés
 
-### LE RÉGIME
-- 032 `regime-032-les-archives-du-palais.webp`
-- 033 `regime-033-la-dynastie.webp`
-- 034 `regime-034-les-noms-quils-portaient.webp`
+- `omerta-v12-37.js`
+- `dlc-suite-v12-37.js`
+- `index.html`
+- `service-worker.js`
+- `scripts/ui-regression-check.mjs`
 
-Les 14 affiches sont validées en **1086×1448**, WebP, ratio portrait 3:4.
-
-## 3. Identités visuelles
-
-- OMERTÀ : rouge/bordeaux sombre ;
-- TERREUR : noir anthracite oppressant ;
-- CARTEL : brun/noir + accents dorés sales ;
-- LE RÉGIME : bleu gris froid / archives.
-
-Les thèmes s’appliquent à la page, aux panels et aux cellules de lobby/rôles du DLC actif.
-
-## 4. Accès privé TERREUR / CARTEL / LE RÉGIME
-
-Le runtime interroge `igr_omerta_access_status` à partir de l’identité sociale existante. Pour 026–034, seul `level === 'owner'` est considéré comme autorisé. Les testeurs OMERTÀ restent donc verrouillés sur ces trois DLC. La sélection des scénarios 026–034 est également interceptée et refusée si le profil n’est pas propriétaire.
-
-## 5. Tests exécutés
-
-- `node --check omerta-v12-37.js`
-- `node --check terror-v12-37.js`
-- `node --check dlc-suite-v12-37.js`
-- `node --check service-worker.js`
-- `node scripts/validate-dlc-assets.mjs`
-- `node scripts/ui-regression-check.mjs`
-
-Tous passent dans l’overlay.
-
-## 6. Limite restante
-
-L’archive n’ajoute pas une nouvelle RPC Supabase de création de cellule spécifiquement sécurisée pour 026–034. Le verrou propriétaire est appliqué dans l’application en réutilisant le statut serveur OMERTÀ existant. Pour une commercialisation, une deuxième étape peut durcir aussi la création serveur de ces cellules.
+Aucune donnée de scénario, image, migration Supabase ou mécanique serveur n'est modifiée.

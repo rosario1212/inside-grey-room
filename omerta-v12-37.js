@@ -33,27 +33,50 @@
   });
 
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
-  const readStateScenarioId = () => String(STATE?.sync?.room?.scenario_id || STATE?.scenarioId || STATE?.selectedScenario || '');
+  const readSelectedScenarioId = () => String(STATE?.selectedScenario || STATE?.scenarioId || '');
+  const readRoomScenarioId = () => String(STATE?.sync?.room?.scenario_id || '');
   const readTextScenarioId = text => {
-    const match = String(text || '').match(/\b(?:dossier|DOSSIER)\s*(\d{3})\b/);
+    const match = String(text || '').match(/\bdossier\s*(\d{3})\b/i);
     return match ? match[1] : '';
   };
+  function isRenderedNode(node){
+    if(!node || !node.isConnected) return false;
+    if(node.closest?.('[hidden],[aria-hidden="true"]')) return false;
+    try{
+      const style = getComputedStyle(node);
+      if(style.display === 'none' || style.visibility === 'hidden') return false;
+    }catch{}
+    return node.getClientRects?.().length > 0;
+  }
   function visibleScenarioId(){
-    if(document.querySelector('.page-create-v10-13')) return '';
-    const attrCandidate = document.querySelector('[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id].selected,[data-igr-scenario-id][aria-current="true"]');
-    const attrId = attrCandidate?.dataset?.activeScenarioId || attrCandidate?.dataset?.selectedScenarioId || attrCandidate?.dataset?.scenarioId || attrCandidate?.dataset?.igrScenarioId || '';
-    if(attrId) return String(attrId);
-    const textSelectors = [
-      '.scenario-hero','.scenario-hero-art','.section-cover','.confirm-art','.briefing-poster',
-      '.page-scenario-detail','.page-room','.page-lobby','.scenario-detail',
-      'main','#app > div','body > div#app'
-    ];
-    for(const selector of textSelectors){
-      const node = document.querySelector(selector);
-      const id = readTextScenarioId(node?.textContent);
+    const view = String(STATE?.view || '');
+    if(view === 'create-list') return '';
+    // The create confirmation must always follow the freshly selected scenario,
+    // never a room that is still cached in STATE.sync from a previous session.
+    if(view === 'create-confirm') return readSelectedScenarioId();
+    if(view === 'lobby' || view === 'briefing' || view === 'game') return readRoomScenarioId();
+
+    const attrSelector = '[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id].selected,[data-igr-scenario-id][aria-current="true"]';
+    const attrCandidates = [...document.querySelectorAll(attrSelector)].filter(isRenderedNode).reverse();
+    for(const node of attrCandidates){
+      const id = node.dataset?.activeScenarioId || node.dataset?.selectedScenarioId || node.dataset?.scenarioId || node.dataset?.igrScenarioId || '';
+      if(id) return String(id);
+    }
+
+    const textSelector = [
+      '#app .page-confirm-v10-13','#app .page-lobby','#app .page-room','#app .page-scenario-detail',
+      '#app .scenario-detail','#app .scenario-hero','#app .scenario-hero-art','#app .section-cover',
+      '#app .confirm-art','#app .briefing-poster','#app main','#app > div'
+    ].join(',');
+    const textCandidates = [...document.querySelectorAll(textSelector)].filter(isRenderedNode).reverse();
+    for(const node of textCandidates){
+      const id = readTextScenarioId(node.textContent);
       if(id) return id;
     }
-    return readStateScenarioId();
+
+    // Outside a live room, a fresh scenario selection is more authoritative than
+    // a stale sync payload left by the previous room.
+    return readSelectedScenarioId() || readRoomScenarioId();
   }
 
   const previousThumb = scenarioThumbArt;
@@ -61,26 +84,45 @@
   scenarioThumbArt = function(id){ return isOmerta(id) ? ART[String(id)] : previousThumb(id); };
   scenarioArt = function(id){ return isOmerta(id) ? ART[String(id)] : previousArt(id); };
 
+  const HERO_IMAGE_SELECTOR = '.scenario-hero img,.scenario-hero-art img,.confirm-art img,.section-cover img,.briefing-poster img';
   function findOmertaImageId(img){
     const closestCard = img.closest?.('[id^="scenario-"]');
     if(closestCard){
       const id = String(closestCard.id || '').replace('scenario-','');
-      if(isOmerta(id)) return id;
-      return null;
+      return isOmerta(id) ? id : null;
     }
     const explicit = img.closest?.('[data-igr-scenario-id]')?.dataset?.igrScenarioId;
-    if(isOmerta(explicit)) return String(explicit);
-    const src = String(img.getAttribute('src') || '');
-    for(const id of OMERTA_IDS){
-      if(src.includes(`omerta-${id}-`) || src.includes(`omerta-${id}.`)) return id;
+    if(explicit) return isOmerta(explicit) ? String(explicit) : null;
+
+    // For a hero/confirmation image, the currently rendered scenario is the
+    // source of truth. Never infer ownership from a stale image src.
+    if(img.matches?.(HERO_IMAGE_SELECTOR)){
+      const sid = visibleScenarioId();
+      return isOmerta(sid) ? sid : null;
     }
-    const sid = visibleScenarioId();
-    if(isOmerta(sid) && img.closest?.('.scenario-hero,.scenario-hero-art,.confirm-art,.section-cover,.briefing-poster')) return sid;
     return null;
+  }
+
+  function restoreNonOmertaArtwork(root, sid){
+    if(!sid || isOmerta(sid) || !root?.querySelectorAll) return;
+    const expected = previousArt(sid);
+    if(!expected) return;
+    root.querySelectorAll(HERO_IMAGE_SELECTOR).forEach(img => {
+      const src = String(img.getAttribute('src') || '');
+      const staleOmerta = img.dataset.omertaHq === '1' || /assets\/omerta-02[1-5]-/i.test(src);
+      if(!staleOmerta) return;
+      img.setAttribute('src', expected);
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
+      img.removeAttribute('data-omerta-hq');
+      img.style.removeProperty('image-rendering');
+    });
   }
 
   function repairArtwork(root=document){
     if(!root?.querySelectorAll) return;
+    const sid = visibleScenarioId();
+    restoreNonOmertaArtwork(root, sid);
     root.querySelectorAll('img').forEach(img => {
       const id = findOmertaImageId(img);
       if(!id) return;
@@ -272,6 +314,7 @@
     document.body?.classList.toggle('igr-omerta-active', active);
     document.body?.classList.toggle('igr-theme-omerta', active);
     if(!root?.querySelectorAll) return;
+    if(!active) root.querySelectorAll('.igr-omerta-cell').forEach(el => el.classList.remove('igr-omerta-cell'));
     const selectors = [
       '.role-choice-card','.igr-random-role-cta','.omerta-tree-open','.omerta-role-status','.igr-remove-role-cta',
       '.roles-row','.omerta-objective-card','.omerta-private-role','.omerta-decision-dock',

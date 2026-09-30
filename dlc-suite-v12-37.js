@@ -78,15 +78,30 @@
     try{return await OWNER_ACCESS.loading}finally{OWNER_ACCESS.loading=null}
   }
 
-  function readTextScenarioId(text){const match=String(text||'').match(/\b(?:dossier|DOSSIER)\s*(\d{3})\b/);return match?match[1]:''}
+  function readTextScenarioId(text){const match=String(text||'').match(/\bdossier\s*(\d{3})\b/i);return match?match[1]:''}
+  function isRenderedNode(node){
+    if(!node||!node.isConnected)return false;
+    if(node.closest?.('[hidden],[aria-hidden="true"]'))return false;
+    try{const style=getComputedStyle(node);if(style.display==='none'||style.visibility==='hidden')return false}catch{}
+    return node.getClientRects?.().length>0;
+  }
   function visibleScenarioId(){
-    if(document.querySelector('.page-create-v10-13'))return '';
-    const explicit=document.querySelector('[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id][aria-current="true"]');
-    const direct=explicit?.dataset?.activeScenarioId||explicit?.dataset?.selectedScenarioId||explicit?.dataset?.scenarioId||explicit?.dataset?.igrScenarioId||'';
-    if(direct)return String(direct);
-    const selectors=['.scenario-hero','.scenario-hero-art','.section-cover','.confirm-art','.briefing-poster','.page-scenario-detail','.page-room','.page-lobby','main','#app > div'];
-    for(const selector of selectors){const node=document.querySelector(selector);const id=readTextScenarioId(node?.textContent);if(id)return id}
-    return String(STATE?.sync?.room?.scenario_id||STATE?.scenarioId||STATE?.selectedScenario||'');
+    const view=String(STATE?.view||'');
+    if(view==='create-list')return '';
+    if(view==='create-confirm')return String(STATE?.selectedScenario||STATE?.scenarioId||'');
+    if(view==='lobby'||view==='briefing'||view==='game')return String(STATE?.sync?.room?.scenario_id||'');
+
+    const explicitSelector='[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id][aria-current="true"]';
+    const explicit=[...document.querySelectorAll(explicitSelector)].filter(isRenderedNode).reverse();
+    for(const node of explicit){
+      const direct=node.dataset?.activeScenarioId||node.dataset?.selectedScenarioId||node.dataset?.scenarioId||node.dataset?.igrScenarioId||'';
+      if(direct)return String(direct);
+    }
+    const selector=['#app .page-confirm-v10-13','#app .page-lobby','#app .page-room','#app .page-scenario-detail','#app .scenario-detail','#app main','#app > div'].join(',');
+    for(const node of [...document.querySelectorAll(selector)].filter(isRenderedNode).reverse()){
+      const id=readTextScenarioId(node.textContent);if(id)return id;
+    }
+    return String(STATE?.selectedScenario||STATE?.scenarioId||STATE?.sync?.room?.scenario_id||'');
   }
 
   function accessBadge(){
@@ -188,14 +203,29 @@
     markExistingCards(root);ensureFilters(root);applyFilters(root);
   }
 
+  function clearDlcVisualState(nextId=''){
+    const body=document.body;if(!body)return;
+    body.classList.remove('igr-theme-omerta','igr-theme-terror','igr-theme-cartel','igr-theme-regime');
+    if(META[String(nextId||'')]?.collection!=='omerta'){
+      body.classList.remove('igr-omerta-active');
+      document.querySelectorAll('.igr-omerta-cell').forEach(el=>el.classList.remove('igr-omerta-cell'));
+    }
+  }
+
   const baseSelectScenario=selectScenario;
   selectScenario=async function(id){
     const key=String(id||'');
+    // Clear the previous DLC theme before rendering the next scenario, preventing
+    // a one-frame (or persistent) carry-over when leaving an OMERTÀ room.
+    clearDlcVisualState(key);
     if(OWNER_ONLY_IDS.has(key)){
       const status=await ownerAccessStatus();
-      if(!status.owner){if(typeof toast==='function')toast('Ce DLC est réservé au propriétaire.');return}
+      if(!status.owner){if(typeof toast==='function')toast('Ce DLC est réservé au propriétaire.');updateBodyTheme();return}
     }
-    return baseSelectScenario(id);
+    const result=baseSelectScenario(id);
+    queueMicrotask(updateBodyTheme);
+    requestAnimationFrame(()=>updateBodyTheme());
+    return result;
   };
 
   const oldRenderCreateList=renderCreateList;
