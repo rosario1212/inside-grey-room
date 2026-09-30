@@ -7,11 +7,11 @@
   const IDS=['021','022','023','024','025'];
   const OMERTA=new Set(IDS);
   const ART={
-    '021':'assets/omerta-021-l-enveloppe-hd.svg?v=12.32',
-    '022':'assets/omerta-022-omerta-hd.svg?v=12.32',
-    '023':'assets/omerta-023-la-table-hd.svg?v=12.32',
-    '024':'assets/omerta-024-il-pentito-hd.svg?v=12.32',
-    '025':'assets/omerta-025-il-don-hd.svg?v=12.32'
+    '021':'assets/omerta-021-l-enveloppe.webp?v=12.32',
+    '022':'assets/omerta-022-omerta.webp?v=12.32',
+    '023':'assets/omerta-023-la-table.webp?v=12.32',
+    '024':'assets/omerta-024-il-pentito.webp?v=12.32',
+    '025':'assets/omerta-025-il-don.webp?v=12.32'
   };
   const DRAW_MIN_MS=560;
   const DRAW_FINAL_MS=760;
