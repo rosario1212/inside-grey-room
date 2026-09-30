@@ -1,16 +1,31 @@
 {
-  "version": "v12.35-dlc-suite",
-  "base_main_sha": "6e1a849b4f1f3c3293f21e29bdbb637a37b2d2c3",
+  "version": "v12.37-final-dlc",
+  "base_main_sha": "0647924895902a953c9187c19d3a78430d65836b",
   "files": [
     {
       "path": "README_INSTALL.md",
-      "size": 2281,
-      "sha256": "cd59a7a1a8805d6cb8a913cdcb7e51155c2814ceb84cf970454041c9bfadf124"
+      "size": 3214,
+      "sha256": "1403f7a973fa63b32cf82de396236c2b4eac25c7bfba14d854a9950102a6ab3e"
     },
     {
       "path": "REPORT.md",
-      "size": 5537,
-      "sha256": "f606a2617ebe49f50313bf531ec3c781bb43934761ae9fbef6af1214f49b86cc"
+      "size": 2801,
+      "sha256": "b8fde6b27118aa56b2f25851253cd420f3feee32fb58d6a895c645735ea2746b"
+    },
+    {
+      "path": "assets/cartel-029-le-cycle-mort.webp",
+      "size": 535550,
+      "sha256": "59ff2df5e2c33e4d46a9e987a5a4fd97321deb9f2997daa10d74d2e900f45fbf"
+    },
+    {
+      "path": "assets/cartel-030-la-cour-achetee.webp",
+      "size": 476372,
+      "sha256": "efdcc96519455ef52b25929f0d8cf83b40f2ddae1606dbc79efbe0447b4cb172"
+    },
+    {
+      "path": "assets/cartel-031-la-dette.webp",
+      "size": 456058,
+      "sha256": "7c98211e4aaf988d0d5a24e8bcf192170d4b4c6aa33e086f8d8ee8893405fb66"
     },
     {
       "path": "assets/omerta-021-l-enveloppe.webp",
@@ -38,54 +53,84 @@
       "sha256": "a00827aed4f0f47b3a8f919a1e5741307a2fca198024b860f37ebf3b7ff71a1c"
     },
     {
-      "path": "dlc-suite-v12-35.css",
-      "size": 2511,
-      "sha256": "3428d53ab05f1cbe66369f59e091b0db5b587166b13d40556fcfa070c14e7371"
+      "path": "assets/regime-032-les-archives-du-palais.webp",
+      "size": 440018,
+      "sha256": "a5ec03c6f6e06c2e56ede1f266b993a916ef4148f0b18c85f683ad94893979ca"
     },
     {
-      "path": "dlc-suite-v12-35.js",
-      "size": 12123,
-      "sha256": "d555ec2bc7f6b2f7b1f52f9ef328da46d7d6ebd9d412dbcd59952a6584005f72"
+      "path": "assets/regime-033-la-dynastie.webp",
+      "size": 412906,
+      "sha256": "848672b65fe7d35b41673a78daa7c365a91318ccb1f824600e08533ccd59682a"
+    },
+    {
+      "path": "assets/regime-034-les-noms-quils-portaient.webp",
+      "size": 377016,
+      "sha256": "fbac499447d6f85c3260c994fe075bdc7311ea9479440499b724724f24eb5524"
+    },
+    {
+      "path": "assets/terror-026-la-ville-tombe.webp",
+      "size": 344158,
+      "sha256": "e731fef098e56e36cb696c3597d5ba31f08cf1e35e63c4d2d7942bda737ea6d2"
+    },
+    {
+      "path": "assets/terror-027-la-zone-rouge.webp",
+      "size": 385814,
+      "sha256": "370b1b44d13c9aa216263d9e0a70b757d6d038bed8e3e94a9f4498717d4eef65"
+    },
+    {
+      "path": "assets/terror-028-dernier-perimetre.webp",
+      "size": 315242,
+      "sha256": "aae6ea49058398b1fd03c673bac6dcc475c0a4c85e2789d63db9635c84988474"
+    },
+    {
+      "path": "dlc-suite-v12-37.css",
+      "size": 6848,
+      "sha256": "1b219b12e2779b19cb432591812527a7d152a94eced5598aa52ec280b443fa29"
+    },
+    {
+      "path": "dlc-suite-v12-37.js",
+      "size": 16753,
+      "sha256": "938957f08439c1bd1fa1a50ca2bb207202e07dacb4bafed8fe165a072fe5a073"
     },
     {
       "path": "index.html",
-      "size": 7661,
-      "sha256": "b6fc9231e97efdc45fe81228eb8976e43d646179bc542a14423c59c124eda0b7"
+      "size": 7643,
+      "sha256": "dff721866fe10e9b67a57c62b888576cf1ecf8c29c77276b71c28ab09dba7f60"
     },
     {
-      "path": "omerta-v12-35.css",
-      "size": 4879,
-      "sha256": "aaf2e17fb31cb166502eb67992520453932f6337811c175594ca00f585ff5a37"
+      "path": "omerta-v12-37.css",
+      "size": 6710,
+      "sha256": "d083205d1a1e9ec66d8eaab0487d5b162cdc6077fddda320729c8d0c3318d3f8"
     },
     {
-      "path": "omerta-v12-35.js",
-      "size": 12131,
-      "sha256": "3d2843c9b53728cf590f15dda844daee18f075b784c6659871e4e9ad2911645c"
+      "path": "omerta-v12-37.js",
+      "size": 15400,
+      "sha256": "9785b5d6e1ae4b761a50d1260aceeb43caa27717ff75c3863815b528d0d21bbf"
     },
     {
       "path": "scripts/build-mobile.mjs",
-      "size": 2650,
-      "sha256": "37d8c93d4c8c440243e586df60c5112f173c4b20856abd8acad99eb5fa6d0d8e"
+      "size": 2656,
+      "sha256": "7d9f7c24f486c1cd094b9ab2dc57019093fe8aae2cb213ee7bcd9b737ce3b842"
     },
     {
       "path": "scripts/build-web.mjs",
-      "size": 3139,
-      "sha256": "94cb26ffca590cfb8d3765278bdbed03425aa014c387d2eed2e05e4ae1b2db31"
+      "size": 3145,
+      "sha256": "641dedc88be6a28aa6e012575ac6b73e824491adf741e5d3c35a0b7ba2dfd133"
     },
     {
       "path": "scripts/ui-regression-check.mjs",
-      "size": 2932,
-      "sha256": "6077f63bcc19b3bf4a0a72c8577ef960519a1c4fcd920b19066676d355c1db1c"
+      "size": 3563,
+      "sha256": "95eb609d77501f5a9966235625acdfd22aaa6f9125f7af96e732b59f9371d0c8"
     },
     {
       "path": "scripts/validate-dlc-assets.mjs",
-      "size": 1590,
-      "sha256": "f35e5a7abf997dadbacd86da566d40c58e680c4bcd6674c18be6bf88065f480b"
+      "size": 1878,
+      "sha256": "bdc080ddc7974a2d49cfce8c77a9e2ad00a3bf30f08c5f3ab35646f5dfc18602"
     },
     {
       "path": "service-worker.js",
-      "size": 3195,
-      "sha256": "cbd2ff3fdd03a5ef7bac5d43fb8858716c61fcc64ac3bcc280ef680eb7a9a11b"
+      "size": 3703,
+      "sha256": "236a36e1a2117c232b441044e9c7dc55ccf69ce82bd36f04b750c3aa7902dd54"
     },
     {
       "path": "supabase/migrations/20260930_dlc_suite_026_034.sql",
@@ -93,14 +138,14 @@
       "sha256": "c3497838cf6f7a72a8cb72815edf57bf07bf114ae30018d8b3745d2c2403e0c9"
     },
     {
-      "path": "terror-v12.css",
-      "size": 1343,
-      "sha256": "5371ad62b74a84d02017894dbee727ed1dd946402acb22c5f6dc06c4490abdcd"
+      "path": "terror-v12-37.css",
+      "size": 2923,
+      "sha256": "7828bf7333af4173cb315be60acbb1bf9123c74de26647a43b00b3ab2f03fb4b"
     },
     {
-      "path": "terror-v12.js",
-      "size": 6002,
-      "sha256": "77e165ac90d7f779ed025e2799f0405a1688ae75a171d1ec32346aa7f418802e"
+      "path": "terror-v12-37.js",
+      "size": 6154,
+      "sha256": "84fd6b98f04b9098073f4dfc807385da6d17874dabff47e41802d7c1d2cd23cc"
     }
   ]
 }

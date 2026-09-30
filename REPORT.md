@@ -1,89 +1,67 @@
-# Rapport v12.35 — Inside Grey Room
+# Rapport v12.37 — Inside Grey Room
 
-## 1. Fichiers modifiés / ajoutés
+## 1. Corrections reprises
 
-Remplacements de fichiers existants :
-- `index.html`
-- `service-worker.js`
-- `scripts/build-web.mjs`
-- `scripts/build-mobile.mjs`
-- les cinq `assets/omerta-021...025-*.webp`
+- carte « Retirer mon choix » ajoutée au-dessus du tirage aléatoire ;
+- ancien « Retirer mon choix » inférieur conservé ;
+- correction d’un risque de boucle : la nouvelle carte n’essaie jamais de cliquer sur elle-même ;
+- tirage sécurisé OMERTÀ/base conservé (`crypto.getRandomValues`, anti-double-tap, resync, capacités) ;
+- affiches OMERTÀ 021–025 HQ conservées ;
+- rouge OMERTÀ étendu au fond et aux grands panneaux du détail/lobby ;
+- filtres de scénarios sticky ;
+- nettoyage des classes de thème DLC quand on revient à la liste ou à un scénario de base ;
+- détection du scénario visible renforcée pour empêcher 021 de remplacer l’image d’un dossier 001–020.
 
-Nouveaux fichiers :
-- `omerta-v12-35.js`
-- `omerta-v12-35.css`
-- `terror-v12.js`
-- `terror-v12.css`
-- `dlc-suite-v12-35.js`
-- `dlc-suite-v12-35.css`
-- `scripts/validate-dlc-assets.mjs`
-- `scripts/ui-regression-check.mjs`
-- `supabase/migrations/20260930_dlc_suite_026_034.sql`
+## 2. Images finales intégrées
 
-## 2. Correction images OMERTÀ 021–025
+### OMERTÀ
+- 021 `omerta-021-l-enveloppe.webp`
+- 022 `omerta-022-omerta.webp`
+- 023 `omerta-023-la-table.webp`
+- 024 `omerta-024-il-pentito.webp`
+- 025 `omerta-025-il-don.webp`
 
-Les cinq affiches originales ont été reprises comme sources, converties en WebP haute qualité et gardées au ratio portrait 3:4 :
-- 021 : 1086×1448, ~250 KiB
-- 022 : 1086×1448, ~274 KiB
-- 023 : 1086×1448, ~276 KiB
-- 024 : 1086×1448, ~238 KiB
-- 025 : 1086×1448, ~273 KiB
+### TERREUR
+- 026 `terror-026-la-ville-tombe.webp`
+- 027 `terror-027-la-zone-rouge.webp`
+- 028 `terror-028-dernier-perimetre.webp`
 
-Le runtime v12.35 force la même source HQ dans liste, détail, confirmation et hero, supprime `srcset/sizes` hérités, impose `object-fit: cover`, `object-position: center`, `image-rendering: auto`, et ne référence aucun wrapper `*-hd.svg`. Le Service Worker passe à `igr-v12-35-dlc-suite` et précharge les cinq URL avec `?v=12.35-hq`, ce qui invalide proprement l’ancien cache PWA.
+### CARTEL
+- 029 `cartel-029-le-cycle-mort.webp`
+- 030 `cartel-030-la-cour-achetee.webp`
+- 031 `cartel-031-la-dette.webp`
 
-## 3. Rouge interne OMERTÀ
+### LE RÉGIME
+- 032 `regime-032-les-archives-du-palais.webp`
+- 033 `regime-033-la-dynastie.webp`
+- 034 `regime-034-les-noms-quils-portaient.webp`
 
-Tous les styles gameplay rouges sont scoppés sous `body.igr-omerta-active`. Les cartes non sélectionnées ont déjà un fond bordeaux/noir visible, pas seulement une bordure. Le selected, hover/focus et disabled ont des états distincts. Les cibles couvrent : rôle choisi, tirage au hasard, TIRER, cartes de rôle, Arbre de la Famiglia, statuts, objectifs, cartes privées, événements/décisions et cellules auxiliaires. Aucun style rouge de ce fichier ne s’applique aux scénarios 001–020 ni aux autres DLC.
+Les 14 affiches sont validées en **1086×1448**, WebP, ratio portrait 3:4.
 
-## 4. Cause du bug du tirage aléatoire
+## 3. Identités visuelles
 
-La couche OMERTÀ v12.30 lisait l’état via `window.STATE`, alors que l’application principale déclare `STATE` avec un binding lexical global (`const STATE`). La couche pouvait donc se retrouver sans état exploitable après la resynchronisation et abandonner le tirage (`no_sync`). La v12.35 utilise directement le `STATE` partagé chargé par `app-v11.js`.
+- OMERTÀ : rouge/bordeaux sombre ;
+- TERREUR : noir anthracite oppressant ;
+- CARTEL : brun/noir + accents dorés sales ;
+- LE RÉGIME : bleu gris froid / archives.
 
-## 5. Correction du tirage
+Les thèmes s’appliquent à la page, aux panels et aux cellules de lobby/rôles du DLC actif.
 
-Le nouveau tirage :
-- bloque les doubles taps avec `randomBusy` ;
-- désactive le bouton et applique `aria-busy=true` ;
-- resynchronise avant de choisir ;
-- calcule les disponibilités avec `roleChoiceSummary` et les capacités réelles ;
-- utilise `crypto.getRandomValues()` avec rejection sampling, sans `Math.random()` ;
-- utilise `igr_omerta_choose_role` pour OMERTÀ et `igr_v4_choose_role` pour la base ;
-- resynchronise après attribution ;
-- retente jusqu’à 4 fois sur conflit de capacité/concurrence ;
-- sépare l’animation RAF du résultat logique ;
-- conserve une durée visuelle d’environ 620–760 ms.
+## 4. Accès privé TERREUR / CARTEL / LE RÉGIME
 
-La correction est volontairement commune au tirage base/OMERTÀ afin de neutraliser le remplacement global cassé de v12.30 sans réécrire le gameplay des scénarios 001–020.
+Le runtime interroge `igr_omerta_access_status` à partir de l’identité sociale existante. Pour 026–034, seul `level === 'owner'` est considéré comme autorisé. Les testeurs OMERTÀ restent donc verrouillés sur ces trois DLC. La sélection des scénarios 026–034 est également interceptée et refusée si le profil n’est pas propriétaire.
 
-## 6. Descriptions OMERTÀ
+## 5. Tests exécutés
 
-Enquêteur, Analyste, Suspect, Avocat (`maitre`), Procureur, Juge et Informateur disposent du texte concret demandé quand un dossier OMERTÀ est actif. Les rôles Mafia existants (Associato, Uomo d’Onore, Contabile, Pentito, Caporegime, Consigliere, Sottocapo, Don) ont également des descriptions courtes orientées décisions et conséquences.
+- `node --check omerta-v12-37.js`
+- `node --check terror-v12-37.js`
+- `node --check dlc-suite-v12-37.js`
+- `node --check service-worker.js`
+- `node scripts/validate-dlc-assets.mjs`
+- `node scripts/ui-regression-check.mjs`
 
-## 7. Filtres ajoutés
+Tous passent dans l’overlay.
 
-Le filtre ne duplique pas les scénarios existants. Un mapping central `IGR_SCENARIO_META` classe :
-- 001–008 → base/original ;
-- 009–020 → base/second ;
-- 021–025 → dlc/omerta ;
-- 026–028 → dlc/terror ;
-- 029–031 → dlc/cartel ;
-- 032–034 → dlc/regime.
+## 6. Limite restante
 
-Les chips sont horizontales, sans wrap, avec zones tactiles ≥44 px et persistence `sessionStorage`. Le filtrage masque/affiche les cartes existantes sans reconstruire inutilement toute la page.
-
-## 8. Régression effectuée
-
-Exécuté sur le contenu du package :
-- `node --check` sur `omerta-v12-35.js`, `terror-v12.js`, `dlc-suite-v12-35.js`, `service-worker.js` : OK ;
-- validation physique des cinq WebP : signature valide, 1086×1448, taille >200 KiB : OK ;
-- vérification d’absence de `Math.random`, `window.STATE`, `*-hd.svg`, `pixelated`, `crisp-edges` dans la couche corrective : OK ;
-- contrôle des marqueurs 021–034, filtres, cache-busting, build web/mobile et migration : OK ;
-- script `scripts/ui-regression-check.mjs` : OK sur l’overlay.
-
-Le ZIP ne contient volontairement pas `app-v11.js`; après extraction dans le dépôt, le même script vérifie en plus la présence des marqueurs 001 et 020 et de la fonction de tirage du jeu de base.
-
-## 9. Limites restantes
-
-- Un ZIP overlay ne permet pas, à lui seul, d’exécuter une vraie session Supabase multijoueur ou Safari iPhone. Les tests double joueur/conflit/reconnexion et le rendu PWA doivent être faits après extraction dans le dépôt et déploiement d’une preview.
-- CARTEL et LE RÉGIME n’avaient pas d’implémentation présente sur `main`. Ils sont donc introduits ici comme scénarios 029–031 et 032–034 en réutilisant le moteur standard existant, sans ajouter de nouveau moteur serveur risqué. Leurs pressions/corruptions/délations sont portées par les packs et les trames plutôt que par une réécriture du gameplay.
-- TERREUR utilise également le moteur standard dans ce package ; si les packs TERREUR plus détaillés sont déjà installés côté Supabase, la migration les préserve grâce à `ON CONFLICT DO NOTHING`.
+L’archive n’ajoute pas une nouvelle RPC Supabase de création de cellule spécifiquement sécurisée pour 026–034. Le verrou propriétaire est appliqué dans l’application en réutilisant le statut serveur OMERTÀ existant. Pour une commercialisation, une deuxième étape peut durcir aussi la création serveur de ces cellules.

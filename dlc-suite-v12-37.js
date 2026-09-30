@@ -1,0 +1,218 @@
+/* Inside Grey Room — DLC suite v12.37
+   CARTEL 029–031 · LE RÉGIME 032–034 · owner-only DLC gates · sticky filters · scoped DLC themes. */
+(() => {
+  'use strict';
+
+  const FILTER_KEY='igr_scenario_filter_v1237';
+  const DLC_FILTER_KEY='igr_dlc_filter_v1237';
+  const IDENTITY_KEY='igr_social_identity_v1';
+  const CARTEL_IDS=new Set(['029','030','031']);
+  const REGIME_IDS=new Set(['032','033','034']);
+  const OWNER_ONLY_IDS=new Set(['026','027','028','029','030','031','032','033','034']);
+  const DLC_IDS=new Set(['021','022','023','024','025','026','027','028','029','030','031','032','033','034']);
+  const OWNER_ACCESS={loaded:false,owner:false,level:'none',loading:null};
+
+  const CARTEL=[
+    {id:'029',title:'LE CYCLE MORT',short:'L’enquête touche un réseau qui ne se contente plus de cacher ses crimes : il commence à frapper ceux qui posent les questions.',context:'Le dossier s’ouvre sur un premier homicide destiné à neutraliser la dynamique de l’enquête. Les trois suspects ne se valent pas : l’un profite, l’autre couvre, le troisième lance la spirale.',mood:'Pression · réseau · représailles.',min:5,max:8,sound:'threat',mechanics:['Intimidation','Érosion de l’enquête','Violence réseau']},
+    {id:'030',title:'LA COUR ACHETÉE',short:'Les preuves existent. Le problème est de savoir ce qu’elles valent encore quand ceux qui doivent les porter ont eux-mêmes un prix.',context:'L’enquête remonte vers un réseau d’influence qui corrompt ceux censés protéger la procédure. Les joueurs doivent distinguer preuve vraie, preuve compromise et acteur déjà acheté.',mood:'Corruption · procédure · prix du silence.',min:7,max:9,sound:'court',mechanics:['Corruption judiciaire','Protection intéressée','Preuves fragilisées']},
+    {id:'031',title:'LA DETTE',short:'Cette fois, le réseau ne menace plus le dossier. Il entre dans la vie de ceux qui le mènent.',context:'Le réseau passe du dossier aux proches. Les suspects savent comment la pression personnelle a été utilisée et doivent répondre de ce qu’ils ont décidé, accepté ou laissé faire.',mood:'Dette · pression intime · enlèvement moral.',min:6,max:8,sound:'debt',mechanics:['Pression privée','Négociation','Responsabilité indirecte']}
+  ];
+  const REGIME=[
+    {id:'032',title:'LES ARCHIVES DU PALAIS',short:'Un régime est tombé. Les archives restent. Chacun affirme n’avoir été qu’un rouage.',context:'Les archives dévoilent arrestations arbitraires, disparitions et chaînes de signatures. Les suspects peuvent se renvoyer la faute, mais les documents forcent à reconstruire la responsabilité réelle.',mood:'Archives · chute du pouvoir · responsabilité.',min:6,max:8,sound:'archives',mechanics:['Chaîne d’ordre','Documents','Déni hiérarchique']},
+    {id:'033',title:'LA DYNASTIE',short:'Le gouvernement a disparu. La famille qui l’entourait prétend que personne ne décidait vraiment.',context:'Une famille oligarchique a gardé le pouvoir derrière les titres. L’enquête doit séparer lien de sang, influence et décision réelle.',mood:'Famille d’État · pouvoir réel · succession.',min:6,max:8,sound:'estate',mechanics:['Arbre de pouvoir','Oligarchie','Responsabilités distinctes']},
+    {id:'034',title:'LES NOMS QU’ILS PORTAIENT',short:'Dans les dossiers, ils avaient des fonctions. Dans les couloirs, ils avaient des surnoms. Les deux cartes ne coïncident pas.',context:'Les derniers dossiers du régime révèlent des surnoms rares utilisés pour désigner des acteurs dont l’influence variait selon les opérations. Les joueurs doivent reconstruire la place réelle de chacun.',mood:'Surnoms · guerre · hiérarchie opaque.',min:7,max:9,sound:'war',mechanics:['Identités de pouvoir','Délation','Reconstruction de chaîne']}
+  ];
+
+  const ART=Object.freeze({
+    '029':'assets/cartel-029-le-cycle-mort.webp?v=12.37-final',
+    '030':'assets/cartel-030-la-cour-achetee.webp?v=12.37-final',
+    '031':'assets/cartel-031-la-dette.webp?v=12.37-final',
+    '032':'assets/regime-032-les-archives-du-palais.webp?v=12.37-final',
+    '033':'assets/regime-033-la-dynastie.webp?v=12.37-final',
+    '034':'assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
+  });
+
+  for(const sc of [...CARTEL,...REGIME])if(!SCENARIOS.some(x=>x.id===sc.id))SCENARIOS.push(sc);
+  Object.assign(SCENARIO_ROLES,{
+    '029':{required:['Enquêteur','Analyste','3 suspects'],optional:['Avocat','Procureur','Témoin']},
+    '030':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Avocat','Journaliste']},
+    '031':{required:['Enquêteur','Analyste','3 suspects','Avocat'],optional:['Procureur','Témoin']},
+    '032':{required:['Enquêteur','Analyste','Procureur','3 suspects'],optional:['Juge','Témoin']},
+    '033':{required:['Enquêteur','Analyste','Juge','3 suspects'],optional:['Procureur','Témoin']},
+    '034':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Témoin','Journaliste']}
+  });
+  Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries([...CARTEL,...REGIME].map(sc=>[sc.id,sc.short])));
+
+  const META={};
+  for(let i=1;i<=8;i++)META[String(i).padStart(3,'0')]={origin:'base',collection:'original'};
+  for(let i=9;i<=20;i++)META[String(i).padStart(3,'0')]={origin:'base',collection:'second'};
+  for(let i=21;i<=25;i++)META[String(i).padStart(3,'0')]={origin:'dlc',collection:'omerta'};
+  for(let i=26;i<=28;i++)META[String(i).padStart(3,'0')]={origin:'dlc',collection:'terror'};
+  for(let i=29;i<=31;i++)META[String(i).padStart(3,'0')]={origin:'dlc',collection:'cartel'};
+  for(let i=32;i<=34;i++)META[String(i).padStart(3,'0')]={origin:'dlc',collection:'regime'};
+  window.IGR_SCENARIO_META=Object.freeze(META);
+  window.IGR_DLC_OWNER_ACCESS=OWNER_ACCESS;
+  SCENARIOS.forEach(sc=>Object.assign(sc,META[sc.id]||{}));
+
+  const oldThumb=scenarioThumbArt,oldArt=scenarioArt;
+  scenarioThumbArt=function(id){const key=String(id||'');return ART[key]||oldThumb(id)};
+  scenarioArt=function(id){const key=String(id||'');return ART[key]||oldArt(id)};
+
+  function storage(){try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}}
+  function identity(){try{return JSON.parse(storage().getItem(IDENTITY_KEY)||'null')}catch{return null}}
+  async function ownerAccessStatus(force=false){
+    if(OWNER_ACCESS.loading)return OWNER_ACCESS.loading;
+    if(OWNER_ACCESS.loaded&&!force)return OWNER_ACCESS;
+    OWNER_ACCESS.loading=(async()=>{
+      const id=identity();
+      if(!id?.id||!id?.token){Object.assign(OWNER_ACCESS,{loaded:true,owner:false,level:'none'});return OWNER_ACCESS}
+      try{
+        const out=await rpc('igr_omerta_access_status',{p_profile_id:id.id,p_profile_token:id.token});
+        Object.assign(OWNER_ACCESS,{loaded:true,owner:!!out?.active&&out?.level==='owner',level:out?.level||'none'});
+      }catch(error){
+        console.warn('DLC owner access',error);
+        Object.assign(OWNER_ACCESS,{loaded:true,owner:false,level:'none'});
+      }
+      return OWNER_ACCESS;
+    })();
+    try{return await OWNER_ACCESS.loading}finally{OWNER_ACCESS.loading=null}
+  }
+
+  function readTextScenarioId(text){const match=String(text||'').match(/\b(?:dossier|DOSSIER)\s*(\d{3})\b/);return match?match[1]:''}
+  function visibleScenarioId(){
+    if(document.querySelector('.page-create-v10-13'))return '';
+    const explicit=document.querySelector('[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id][aria-current="true"]');
+    const direct=explicit?.dataset?.activeScenarioId||explicit?.dataset?.selectedScenarioId||explicit?.dataset?.scenarioId||explicit?.dataset?.igrScenarioId||'';
+    if(direct)return String(direct);
+    const selectors=['.scenario-hero','.scenario-hero-art','.section-cover','.confirm-art','.briefing-poster','.page-scenario-detail','.page-room','.page-lobby','main','#app > div'];
+    for(const selector of selectors){const node=document.querySelector(selector);const id=readTextScenarioId(node?.textContent);if(id)return id}
+    return String(STATE?.sync?.room?.scenario_id||STATE?.scenarioId||STATE?.selectedScenario||'');
+  }
+
+  function accessBadge(){
+    if(!OWNER_ACCESS.loaded)return '<span class="dlc-access-note">VÉRIFICATION…</span>';
+    return OWNER_ACCESS.owner?'<span class="dlc-access-note owner">ACCÈS PROPRIÉTAIRE</span>':'<span class="dlc-access-note locked">ACCÈS FERMÉ</span>';
+  }
+  function lockedBlock(){return `<div class="dlc-owner-lock"><strong>DLC PRIVÉ</strong><p>Ce contenu est réservé au propriétaire du projet.</p>${accessBadge()}</div>`}
+  function card(sc,collection,label,tag){
+    return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span></div></div></article>`;
+  }
+  function sectionFooter(){return `<div class="dlc-access-row">${accessBadge()}</div>`}
+  function appendCollection(root,{collection,title,eyebrow,copy,ids,label,tag}){
+    root.querySelector(`.${collection}-dlc-section`)?.remove();
+    for(const id of ids)document.getElementById(`scenario-${id}`)?.remove();
+    const section=document.createElement('section');section.className=`panel ${collection}-dlc-section`;section.dataset.collection=collection;
+    const scenarios=[...ids].map(id=>scenario(id));
+    section.innerHTML=`<div class="dlc-suite-head"><div><span class="dlc-suite-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${copy}</p></div></div>${OWNER_ACCESS.owner?`<div class="scenario-list scenario-list-v10-13 ${collection}-list">${scenarios.map(sc=>card(sc,collection,label,tag)).join('')}</div>`:lockedBlock()}${sectionFooter()}`;
+    root.appendChild(section);
+  }
+
+  function renderTerrorAccess(root){
+    const section=root.querySelector('.terror-dlc-section');if(!section)return;
+    section.dataset.collection='terror';
+    const list=section.querySelector('.terror-list,.scenario-list');
+    section.querySelector('.dlc-owner-lock')?.remove();
+    section.querySelector('.dlc-access-row')?.remove();
+    if(OWNER_ACCESS.owner){
+      if(list)list.style.display='';
+    }else{
+      if(list)list.style.display='none';
+      section.insertAdjacentHTML('beforeend',lockedBlock());
+    }
+    section.insertAdjacentHTML('beforeend',sectionFooter());
+  }
+
+  function markExistingCards(root){
+    root.querySelectorAll('[id^="scenario-"]').forEach(el=>{const id=el.id.replace('scenario-','');if(META[id])el.dataset.igrScenarioId=id});
+    root.querySelector('.omerta-dlc-section')?.setAttribute('data-collection','omerta');
+    root.querySelector('.terror-dlc-section')?.setAttribute('data-collection','terror');
+  }
+
+  function readFilter(){try{return sessionStorage.getItem(FILTER_KEY)||'all'}catch{return'all'}}
+  function readDlcFilter(){try{return sessionStorage.getItem(DLC_FILTER_KEY)||'all'}catch{return'all'}}
+  function storeFilter(key,value){try{sessionStorage.setItem(key,value)}catch{}}
+  function filterButton(value,label,current,kind='primary'){return `<button type="button" class="igr-filter-chip ${current===value?'active':''}" data-filter-kind="${kind}" data-filter="${value}" aria-pressed="${current===value?'true':'false'}">${label}</button>`}
+
+  function ensureFilters(root){
+    let nav=root.querySelector('.igr-scenario-filters');
+    if(!nav){nav=document.createElement('nav');nav.className='igr-scenario-filters';nav.setAttribute('aria-label','Filtrer les scénarios');root.insertBefore(nav,root.querySelector('.panel')||root.firstChild)}
+    const primary=readFilter(),secondary=readDlcFilter();
+    nav.innerHTML=`<div class="igr-filter-row" role="group" aria-label="Catégories">${[
+      ['all','TOUS'],['base','BASE 001–020'],['original','001–008'],['second','009–020'],['dlc','DLC']
+    ].map(([v,l])=>filterButton(v,l,primary)).join('')}</div><div class="igr-filter-row igr-filter-row-secondary ${primary==='dlc'?'':'is-hidden'}" role="group" aria-label="DLC">${[
+      ['all','TOUS LES DLC'],['omerta','OMERTÀ'],['terror','TERREUR'],['cartel','CARTEL'],['regime','LE RÉGIME']
+    ].map(([v,l])=>filterButton(v,l,secondary,'dlc')).join('')}</div>`;
+    nav.onclick=e=>{const b=e.target.closest('.igr-filter-chip');if(!b)return;if(b.dataset.filterKind==='dlc')storeFilter(DLC_FILTER_KEY,b.dataset.filter);else storeFilter(FILTER_KEY,b.dataset.filter);ensureFilters(root);applyFilters(root)};
+  }
+
+  function scenarioVisible(id){
+    const meta=META[id];if(!meta)return true;
+    const primary=readFilter(),secondary=readDlcFilter();
+    if(primary==='all')return true;
+    if(primary==='base')return meta.origin==='base';
+    if(primary==='original')return meta.collection==='original';
+    if(primary==='second')return meta.collection==='second';
+    if(primary==='dlc')return meta.origin==='dlc'&&(secondary==='all'||meta.collection===secondary);
+    return true;
+  }
+  function applyFilters(root){
+    markExistingCards(root);
+    root.querySelectorAll('[data-igr-scenario-id]').forEach(card=>{card.style.display=scenarioVisible(card.dataset.igrScenarioId)?'':'none'});
+    const primary=readFilter(),secondary=readDlcFilter();
+    root.querySelectorAll('[data-collection]').forEach(section=>{
+      const collection=section.dataset.collection;
+      if(primary==='base'||primary==='original'||primary==='second'){section.style.display='none';return}
+      if(primary==='dlc'&&secondary!=='all'){section.style.display=collection===secondary?'':'none';return}
+      const cards=[...section.querySelectorAll('[data-igr-scenario-id]')];
+      section.style.display=cards.length?cards.some(x=>x.style.display!=='none')?'':'none':'';
+    });
+  }
+
+  function updateBodyTheme(){
+    const body=document.body;if(!body)return;
+    body.classList.remove('igr-theme-omerta','igr-theme-terror','igr-theme-cartel','igr-theme-regime');
+    if(document.querySelector('.page-create-v10-13'))return;
+    const id=visibleScenarioId();if(!DLC_IDS.has(String(id||'')))return;
+    const collection=META[id]?.collection;
+    if(collection==='omerta')body.classList.add('igr-theme-omerta');
+    if(collection==='terror')body.classList.add('igr-theme-terror');
+    if(collection==='cartel')body.classList.add('igr-theme-cartel');
+    if(collection==='regime')body.classList.add('igr-theme-regime');
+  }
+
+  function decorateCreateList(){
+    const root=document.querySelector('.page-create-v10-13');if(!root)return;
+    appendCollection(root,{collection:'cartel',title:'CARTEL',eyebrow:'DLC · PRESSION',copy:'3 dossiers liés : le réseau attaque d’abord l’enquête, puis le système, puis la vie privée.',ids:CARTEL_IDS,label:'CARTEL',tag:'PRESSION'});
+    appendCollection(root,{collection:'regime',title:'LE RÉGIME',eyebrow:'DLC · APRÈS LA CHUTE',copy:'3 dossiers sur crimes d’État, délation intéressée, oligarchie familiale et reconstruction du pouvoir réel.',ids:REGIME_IDS,label:'LE RÉGIME',tag:'ARCHIVES'});
+    renderTerrorAccess(root);
+    markExistingCards(root);ensureFilters(root);applyFilters(root);
+  }
+
+  const baseSelectScenario=selectScenario;
+  selectScenario=async function(id){
+    const key=String(id||'');
+    if(OWNER_ONLY_IDS.has(key)){
+      const status=await ownerAccessStatus();
+      if(!status.owner){if(typeof toast==='function')toast('Ce DLC est réservé au propriétaire.');return}
+    }
+    return baseSelectScenario(id);
+  };
+
+  const oldRenderCreateList=renderCreateList;
+  renderCreateList=function(){
+    const out=oldRenderCreateList();
+    decorateCreateList();
+    updateBodyTheme();
+    ownerAccessStatus().then(()=>{const root=document.querySelector('.page-create-v10-13');if(root)decorateCreateList()});
+    return out;
+  };
+
+  const observer=new MutationObserver(()=>{
+    const root=document.querySelector('.page-create-v10-13');
+    if(root){markExistingCards(root);applyFilters(root)}
+    updateBodyTheme();
+  });
+  observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','aria-current']});
+  setTimeout(()=>{ownerAccessStatus().then(()=>{if(STATE?.view==='create-list')decorateCreateList()});updateBodyTheme()},0);
+  window.addEventListener('pageshow',()=>{ownerAccessStatus(true).then(()=>{if(STATE?.view==='create-list')decorateCreateList()});updateBodyTheme()},{passive:true});
+})();

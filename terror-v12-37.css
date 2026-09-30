@@ -1,0 +1,32 @@
+/* TERREUR — v12.37 oppressive dark identity. No OMERTÀ red. */
+body.igr-theme-terror{
+  background:radial-gradient(circle at top,rgba(145,104,46,.08),transparent 30%),linear-gradient(180deg,#0a0b0d 0%,#040506 64%,#020203 100%)!important;
+}
+body.igr-theme-terror .panel,
+body.igr-theme-terror .scenario-hero,
+body.igr-theme-terror .scenario-hero-art,
+body.igr-theme-terror .section-cover,
+body.igr-theme-terror .confirm-art{
+  border-color:rgba(115,116,120,.26)!important;
+  background:linear-gradient(180deg,rgba(16,17,20,.98),rgba(6,7,8,.99))!important;
+  box-shadow:0 18px 44px rgba(0,0,0,.32),0 0 0 1px rgba(255,255,255,.04)!important;
+}
+.terror-dlc-section{position:relative;overflow:hidden;border-color:rgba(115,116,120,.22);background:linear-gradient(180deg,rgba(16,17,20,.98),rgba(6,7,8,.99))}
+.terror-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}.terror-head h2{margin:.18rem 0 .25rem;letter-spacing:.075em;font-size:clamp(1.55rem,7vw,2.15rem)}.terror-head p{margin:0;max-width:38rem;color:var(--muted,#a9a9a9);line-height:1.45}.terror-eyebrow{display:block;font-size:.68rem;font-weight:800;letter-spacing:.18em;color:#8f939a}.terror-access-pill,.terror-tag{border:1px solid rgba(143,147,154,.34)!important;background:rgba(255,255,255,.04)!important;color:#d8dbe0!important;white-space:nowrap}.terror-scenario{border-color:rgba(115,116,120,.18)!important;background:linear-gradient(145deg,rgba(15,16,18,.98),rgba(6,7,8,.98))!important}.terror-scenario:active,.terror-scenario:focus-visible{border-color:rgba(221,224,229,.34)!important;box-shadow:0 0 0 1px rgba(221,224,229,.08),0 18px 44px rgba(0,0,0,.28)!important}.terror-scenario .scenario-id{color:#8f939a!important}.terror-scenario .scenario-thumb{filter:saturate(.48) contrast(1.06) brightness(.74)}
+@media(max-width:620px){.terror-head{display:block}.terror-access-pill{display:inline-flex;margin-top:10px}}
+
+body.igr-theme-terror .role-choice-card,
+body.igr-theme-terror .igr-random-role-cta,
+body.igr-theme-terror .igr-remove-role-cta,
+body.igr-theme-terror .role-choice-zone,
+body.igr-theme-terror .player,
+body.igr-theme-terror .mini,
+body.igr-theme-terror .event,
+body.igr-theme-terror .roles-row{
+  background:linear-gradient(135deg,rgba(26,28,31,.72),rgba(5,6,7,.98))!important;
+  border-color:rgba(126,130,136,.28)!important;
+  box-shadow:inset 3px 0 0 rgba(126,130,136,.20)!important;
+}
+body.igr-theme-terror .role-choice-card.selected{border-color:rgba(205,209,214,.46)!important;background:linear-gradient(135deg,rgba(38,41,45,.86),rgba(5,6,7,.99))!important}
+.terror-scenario .scenario-thumb{aspect-ratio:3/4!important;min-height:0!important;background:#020203!important;filter:none!important}
+.terror-scenario .scenario-thumb img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;image-rendering:auto!important;filter:none!important}
