@@ -16,6 +16,7 @@ on:
       - 'polish-v12.css'
       - 'ui-polish-v12.css'
       - 'omerta-v12.css'
+      - 'omerta-polish-v12.css'
       - 'app-v11.js'
       - 'qa-fixes-v12.js'
       - 'investigation-sheet-v12.js'
@@ -37,6 +38,7 @@ on:
       - 'ui-polish-v12.js'
       - 'locale-runtime-v12-23.js'
       - 'omerta-v12.js'
+      - 'omerta-polish-v12.js'
       - 'assets/**'
       - '.github/workflows/cloudflare-build-check.yml'
   push:
@@ -65,6 +67,7 @@ jobs:
           node --check rules-v12.js
           node --check ui-polish-v12.js
           node --check omerta-v12.js
+          node --check omerta-polish-v12.js
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: node scripts/build-web.mjs
