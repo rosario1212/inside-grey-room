@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
+<title id="t">OMERTÀ 025 — Il Don</title><desc id="d">Bureau du Don, silhouette assise derrière un grand bureau sous une lumière verticale.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#020304"/><stop offset=".55" stop-color="#080a0d"/><stop offset="1" stop-color="#030405"/></linearGradient><radialGradient id="halo" cx="50%" cy="30%" r="55%"><stop stop-color="#d8d2c7" stop-opacity=".34"/><stop offset=".42" stop-color="#6f6a62" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient><linearGradient id="desk" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#30231f"/><stop offset=".55" stop-color="#171315"/><stop offset="1" stop-color="#090a0c"/></linearGradient></defs>
+<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#halo)"/>
+<path d="M690 0h220l125 540H565Z" fill="#b7b0a5" opacity=".055"/>
+<g fill="#010203"><circle cx="800" cy="300" r="105"/><path d="M585 610c28-218 95-320 215-320s187 102 215 320Z"/></g>
+<path d="M260 585H1340L1255 900H345Z" fill="url(#desk)" stroke="#403631" stroke-width="8"/><path d="M325 642H1278" stroke="#675047" stroke-width="3" opacity=".38"/>
+<g transform="translate(525 625)"><rect width="238" height="132" rx="8" fill="#0b0d10" stroke="#3e4248" stroke-width="5"/><path d="M30 39h178M30 70h140M30 101h188" stroke="#8c8a84" stroke-width="6" opacity=".48"/></g>
+<g transform="translate(915 642)"><circle cx="68" cy="68" r="58" fill="#15171a" stroke="#832329" stroke-width="5"/><path d="M39 69c20-28 39-28 59 0-20 27-39 27-59 0Z" fill="#4a1014"/></g>
+<g fill="#010203" opacity=".8"><ellipse cx="245" cy="390" rx="125" ry="215"/><ellipse cx="1362" cy="394" rx="125" ry="220"/></g>
+<path d="M112 111H520" stroke="#9d292e" stroke-width="8"/><path d="M112 132H365" stroke="#30343a" stroke-width="2"/>
+<path d="M800 62v128" stroke="#d6d0c5" stroke-width="4" opacity=".2"/><ellipse cx="800" cy="190" rx="104" ry="19" fill="#d6d0c5" opacity=".12"/>
+<rect x="0" y="0" width="1600" height="900" fill="none" stroke="#15181c" stroke-width="22"/>
+</svg>

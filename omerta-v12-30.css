@@ -1,0 +1,122 @@
+/* Inside Grey Room — OMERTÀ v12.30 */
+
+/* Base dossiers stay neutral. Red is an OMERTÀ/DLC signal only. */
+.igr-random-role-cta:not(.is-omerta),
+.igr-random-role-cta.is-base{
+  background:#0b0e12!important;
+  border:1px solid #2b3038!important;
+  box-shadow:none!important;
+  color:#f2f3f5!important;
+}
+.igr-random-role-cta:not(.is-omerta) b,
+.igr-random-role-cta.is-base b{color:#f2f3f5!important}
+.igr-random-role-cta:not(.is-omerta) small,
+.igr-random-role-cta.is-base small{color:#8f949d!important}
+.igr-random-role-cta:not(.is-omerta) em,
+.igr-random-role-cta.is-base em{
+  color:#e5e7eb!important;
+  border-color:#343a44!important;
+  background:#11151a!important;
+}
+.igr-random-role-cta.is-omerta{
+  border-color:#8f2b31!important;
+  background:linear-gradient(135deg,rgba(91,22,27,.44),rgba(18,14,17,.96))!important;
+}
+.igr-random-role-cta.is-omerta em{
+  color:#e27a80!important;
+  border-color:#8f2b31!important;
+  background:rgba(91,22,27,.3)!important;
+}
+.igr-random-role-cta.is-rolling{pointer-events:none;opacity:.92}
+
+/* Dedicated SVG artwork remains sharp on Retina/iPhone and desktop. */
+img[src*="omerta-021-l-enveloppe-hd.svg"],
+img[src*="omerta-022-omerta-hd.svg"],
+img[src*="omerta-023-la-table-hd.svg"],
+img[src*="omerta-024-il-pentito-hd.svg"],
+img[src*="omerta-025-il-don-hd.svg"]{
+  image-rendering:auto!important;
+  filter:none!important;
+  transform:none!important;
+  backface-visibility:visible!important;
+  object-fit:cover!important;
+}
+.omerta-scenario .scenario-thumb:has(img[src*="-hd.svg"]),
+.scenario-hero .scenario-hero-art:has(img[src*="omerta-"]){filter:none!important}
+
+/* Character becomes player: the pseudo is the visible identity in the tree. */
+.omerta-family-node.is-player-fused b{letter-spacing:.01em}
+.omerta-family-node.is-player-fused::before{
+  content:"";
+  position:absolute;
+  inset:7px auto 7px 7px;
+  width:2px;
+  background:#8e292f;
+  border-radius:2px;
+  opacity:.75;
+}
+.omerta-family-node{position:relative}
+
+.omerta-tree-pan-hint{
+  display:none;
+  margin:4px 0 10px;
+  color:#858b94;
+  font-size:12px;
+  letter-spacing:.02em;
+}
+.omerta-tree-v1230 .omerta-org-scroll{
+  overflow-x:auto!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y!important;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scroll-behavior:smooth;
+}
+.omerta-tree-v1230 .omerta-org-tree{
+  width:max-content!important;
+  min-width:max-content!important;
+  max-width:none!important;
+  margin-inline:auto;
+  padding-inline:28px;
+}
+.omerta-tree-v1230 .omerta-org-root{width:max-content!important;min-width:max-content!important}
+
+/* iPhone landscape: treat the tree like a wide evidence board, never shrink it to fit. */
+@media (orientation:landscape) and (max-height:600px){
+  .omerta-tree-v1230{
+    align-items:stretch!important;
+    padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))!important;
+  }
+  .omerta-tree-v1230 .omerta-tree-box{
+    width:100%!important;
+    max-width:none!important;
+    height:calc(100dvh - max(16px,env(safe-area-inset-top)) - max(16px,env(safe-area-inset-bottom)))!important;
+    max-height:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+    padding:18px 20px 14px!important;
+  }
+  .omerta-tree-v1230 .omerta-tree-head{flex:0 0 auto!important;margin-bottom:4px!important}
+  .omerta-tree-v1230 .omerta-tree-head h2{font-size:28px!important;line-height:1.02!important}
+  .omerta-tree-v1230 .omerta-tree-head p{font-size:13px!important;margin-top:4px!important}
+  .omerta-tree-v1230 .omerta-tree-pan-hint{display:block}
+  .omerta-tree-v1230 .omerta-org-scroll{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    width:100%!important;
+    padding:6px 0 12px!important;
+  }
+  .omerta-tree-v1230 .omerta-org-tree{margin:0!important;padding-inline:48px!important}
+  .omerta-tree-v1230 .omerta-tree-legend,
+  .omerta-tree-v1230 .omerta-tree-current,
+  .omerta-tree-v1230 .modal-actions{flex:0 0 auto!important}
+  .omerta-tree-v1230 .omerta-tree-current{margin-top:6px!important;padding-block:10px!important}
+  .omerta-tree-v1230 .modal-actions{margin-top:7px!important}
+  .omerta-tree-v1230 .modal-actions .btn{min-height:42px!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .omerta-tree-v1230 .omerta-org-scroll{scroll-behavior:auto}
+}
