@@ -63,7 +63,7 @@ for(const name of files){
 // Only files that are actually referenced by the current runtime are copied.
 const assetRefs=new Set();
 for(const text of runtimeText){
-  for(const match of text.matchAll(/assets/[A-Za-z0-9._/-]+/g))assetRefs.add(match[0]);
+  for(const match of text.matchAll(/assets\/[A-Za-z0-9._\/-]+/g))assetRefs.add(match[0]);
 }
 
 let assetBytes=0;
