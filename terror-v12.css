@@ -1,0 +1,37 @@
+/* Inside Grey Room — TERREUR DLC 026–028 */
+.terror-dlc-section{position:relative;overflow:hidden;border-color:rgba(198,168,92,.22);background:linear-gradient(180deg,rgba(28,29,25,.97),rgba(12,13,12,.98))}
+.terror-dlc-section::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 0 56%,rgba(198,168,92,.035) 56% 57%,transparent 57% 100%)}
+.terror-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.terror-head h2{margin:.18rem 0 .25rem;letter-spacing:.075em;font-size:clamp(1.55rem,7vw,2.15rem)}
+.terror-head p{margin:0;max-width:38rem;color:var(--muted,#a9a9a9);line-height:1.45}
+.terror-eyebrow{display:block;font-size:.68rem;font-weight:800;letter-spacing:.18em;color:#c6a85c}
+.terror-access-pill,.terror-tag{border:1px solid rgba(198,168,92,.38)!important;background:rgba(198,168,92,.08)!important;color:#d7c17f!important;white-space:nowrap}
+.terror-list{position:relative;z-index:1}
+.terror-scenario{border-color:rgba(198,168,92,.17)!important;background:linear-gradient(145deg,rgba(23,24,21,.98),rgba(10,11,10,.98))!important}
+.terror-scenario:active,.terror-scenario:focus-visible{border-color:rgba(215,193,127,.58)!important;box-shadow:0 0 0 1px rgba(215,193,127,.12),0 18px 44px rgba(0,0,0,.28)!important}
+.terror-scenario .scenario-id{color:#c6a85c!important}
+.terror-scenario .scenario-thumb{filter:saturate(.55) contrast(1.06) brightness(.78)}
+.terror-footer{position:relative;z-index:1;margin-top:14px;padding-top:12px;border-top:1px solid rgba(198,168,92,.12);font-size:.74rem;letter-spacing:.04em;color:var(--muted,#999)}
+
+.terror-perimeter-hud{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:48;width:min(720px,calc(100% - 20px));margin:8px auto 12px;padding:11px 13px 12px;border:1px solid rgba(198,168,92,.28);border-radius:16px;background:rgba(11,12,10,.94);box-shadow:0 12px 34px rgba(0,0,0,.32);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.terror-perimeter-top,.terror-perimeter-meta{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.terror-perimeter-top span{font-size:.66rem;font-weight:850;letter-spacing:.16em;color:#c6a85c}
+.terror-perimeter-top b{font-variant-numeric:tabular-nums;font-size:1rem;color:#eee8d8}
+.terror-perimeter-track{height:5px;margin:8px 0 7px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.075)}
+.terror-perimeter-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8c815f,#c6a85c);transition:width .7s cubic-bezier(.2,.7,.2,1)}
+.terror-perimeter-meta{font-size:.66rem;letter-spacing:.075em;color:#9f9c91}
+.terror-perimeter-meta span:first-child{font-weight:750;color:#d2c49b}
+.terror-decision{margin-top:11px;padding-top:11px;border-top:1px solid rgba(198,168,92,.16)}
+.terror-decision small{display:block;margin-bottom:5px;font-size:.64rem;font-weight:800;letter-spacing:.14em;color:#c6a85c}
+.terror-decision b{display:block;color:#f0ede4}
+.terror-decision p{margin:.38rem 0 .7rem;color:#aaa79e;font-size:.82rem;line-height:1.45}
+.terror-decision-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.btn.terror-primary{border-color:rgba(198,168,92,.55)!important;background:#c6a85c!important;color:#11120f!important;font-weight:800}
+.terror-decision--resolved p{margin-bottom:0;color:#d7d2c5}
+
+@media(max-width:620px){
+ .terror-head{display:block}.terror-access-pill{display:inline-flex;margin-top:10px}
+ .terror-perimeter-hud{top:calc(env(safe-area-inset-top,0px) + 5px);width:calc(100% - 14px);margin:5px auto 9px;border-radius:14px;padding:10px 11px}
+ .terror-decision-grid{grid-template-columns:1fr}.terror-decision-grid .btn{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){.terror-perimeter-track i{transition:none}}
