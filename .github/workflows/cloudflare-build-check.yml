@@ -19,6 +19,7 @@ on:
       - 'omerta-polish-v12.css'
       - 'role-tree-polish-v12-29.css'
       - 'omerta-v12-30.css'
+      - 'terror-v12.css'
       - 'app-v11.js'
       - 'qa-fixes-v12.js'
       - 'investigation-sheet-v12.js'
@@ -44,6 +45,7 @@ on:
       - 'omerta-hotfix-v12.js'
       - 'role-tree-polish-v12-29.js'
       - 'omerta-v12-30.js'
+      - 'terror-v12.js'
       - 'assets/**'
       - '.github/workflows/cloudflare-build-check.yml'
   push:
@@ -75,6 +77,7 @@ jobs:
           node --check omerta-polish-v12.js
           node --check role-tree-polish-v12-29.js
           node --check omerta-v12-30.js
+          node --check terror-v12.js
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: node scripts/build-web.mjs
