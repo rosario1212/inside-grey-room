@@ -55,3 +55,35 @@ body.igr-theme-terror .page-scenario-detail .chip,
 body.igr-theme-terror .page-scenario-detail .badge,
 body.igr-theme-terror .page-scenario-detail button.tag,
 body.igr-theme-terror .page-scenario-detail a.tag{color:#d8dbe0!important}
+
+
+/* v12.41 — TERREUR is intentionally almost black, including lower UI */
+body.igr-theme-terror{
+  background:radial-gradient(circle at 50% 0,rgba(255,255,255,.035),transparent 28%),linear-gradient(180deg,#050607 0%,#020304 62%,#010102 100%)!important;
+}
+body.igr-theme-terror .confirm-panel-v10-13,
+body.igr-theme-terror .confirm-panel-v10-13 .confirm,
+body.igr-theme-terror .confirm-panel-v10-13 .roles-block,
+body.igr-theme-terror .confirm-panel-v10-13 .roles-row,
+body.igr-theme-terror .confirm-panel-v10-13 .field,
+body.igr-theme-terror .confirm-panel-v10-13 input,
+body.igr-theme-terror .lobby-v11,
+body.igr-theme-terror .lobby-v11 .lobby-code,
+body.igr-theme-terror .lobby-v11 .lobby-status,
+body.igr-theme-terror .lobby-v11 .player-list,
+body.igr-theme-terror .lobby-v11 .player-line,
+body.igr-theme-terror .lobby-v11 .role-choice-zone,
+body.igr-theme-terror .lobby-v11 .role-choice-grid,
+body.igr-theme-terror .role-choice-card,
+body.igr-theme-terror .igr-choice-status,
+body.igr-theme-terror .igr-random-role-cta{
+  background:linear-gradient(180deg,rgba(10,11,12,.99),rgba(3,4,5,.995))!important;
+  border-color:rgba(129,133,139,.24)!important;
+  box-shadow:none!important;
+}
+body.igr-theme-terror .lobby-v11 .lobby-code,
+body.igr-theme-terror .lobby-v11 .lobby-status,
+body.igr-theme-terror .lobby-v11 .player-line{border-bottom-color:rgba(129,133,139,.18)!important}
+body.igr-theme-terror .confirm-panel-v10-13 input{background:#050607!important;color:#fff!important}
+.terror-dlc-section{background:linear-gradient(180deg,#090a0b,#030405)!important;border-color:rgba(129,133,139,.18)!important}
+.terror-scenario{background:linear-gradient(145deg,#08090a,#020304)!important;border-color:rgba(129,133,139,.18)!important}

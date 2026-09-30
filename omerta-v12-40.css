@@ -184,3 +184,29 @@ body.igr-theme-omerta .page-scenario-detail button.tag,
 body.igr-theme-omerta .page-scenario-detail a.tag{
   color:#f3e6e7!important;
 }
+
+
+/* v12.41 — remove navy surfaces from the complete OMERTÀ flow */
+body.igr-theme-omerta .confirm-panel-v10-13,
+body.igr-theme-omerta .confirm-panel-v10-13 .confirm,
+body.igr-theme-omerta .confirm-panel-v10-13 .roles-block,
+body.igr-theme-omerta .confirm-panel-v10-13 .roles-row,
+body.igr-theme-omerta .confirm-panel-v10-13 .field,
+body.igr-theme-omerta .confirm-panel-v10-13 input,
+body.igr-theme-omerta .lobby-v11,
+body.igr-theme-omerta .lobby-v11 .lobby-code,
+body.igr-theme-omerta .lobby-v11 .lobby-status,
+body.igr-theme-omerta .lobby-v11 .player-list,
+body.igr-theme-omerta .lobby-v11 .player-line,
+body.igr-theme-omerta .lobby-v11 .role-choice-zone,
+body.igr-theme-omerta .lobby-v11 .role-choice-grid{
+  background:linear-gradient(180deg,rgba(29,10,14,.985),rgba(9,7,9,.995))!important;
+  border-color:rgba(190,57,63,.38)!important;
+  box-shadow:none!important;
+}
+body.igr-theme-omerta .lobby-v11 .lobby-code,
+body.igr-theme-omerta .lobby-v11 .lobby-status,
+body.igr-theme-omerta .lobby-v11 .player-line{
+  border-bottom-color:rgba(190,57,63,.22)!important;
+}
+body.igr-theme-omerta .confirm-panel-v10-13 input{color:#fff!important;outline-color:rgba(220,72,78,.35)!important}

@@ -1,5 +1,5 @@
-/* Inside Grey Room — DLC suite v12.37
-   CARTEL 029–031 · LE RÉGIME 032–034 · owner-only DLC gates · sticky filters · scoped DLC themes. */
+/* Inside Grey Room — DLC suite v12.41
+   CARTEL 029–031 · LE RÉGIME 032–034 · server-backed owner gates · stable themes · compact DLC cards. */
 (() => {
   'use strict';
 
@@ -87,9 +87,9 @@
   }
   function visibleScenarioId(){
     const view=String(STATE?.view||'');
-    if(view==='create-list')return '';
+    if(['home','profile','rules','join','create-list'].includes(view))return '';
     if(view==='create-confirm')return String(STATE?.selectedScenario||STATE?.scenarioId||'');
-    if(view==='lobby'||view==='briefing'||view==='game')return String(STATE?.sync?.room?.scenario_id||'');
+    if(view==='lobby'||view==='briefing'||view==='game'||view==='role')return String(STATE?.sync?.room?.scenario_id||'');
 
     const explicitSelector='[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id][aria-current="true"]';
     const explicit=[...document.querySelectorAll(explicitSelector)].filter(isRenderedNode).reverse();
@@ -212,6 +212,45 @@
     }
   }
 
+
+  async function createOwnerDlcRoom(){
+    primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
+    const pseudo=(byId('createPseudo')?.value||'').trim();
+    if(!pseudo)return toast('Entre ton pseudo.');
+    const sc=scenario(STATE.selectedScenario),key=String(sc?.id||'');
+    const status=await ownerAccessStatus(true);
+    if(!status.owner)return toast('Ce DLC est réservé au propriétaire.');
+    const id=identity();
+    if(!id?.id||!id?.token)return toast('Profil propriétaire introuvable. Ouvre ton profil puis réessaie.');
+    let out=null,code=null;
+    for(let attempt=0;attempt<5;attempt++){
+      code=newCode();
+      try{
+        out=await rpc('igr_owner_dlc_create_room',{
+          p_code:code,p_scenario_id:key,p_pseudo:pseudo,p_profile_id:id.id,p_profile_token:id.token
+        });
+        break;
+      }catch(e){
+        if(e.code!=='23505'||attempt===4){
+          console.error(e);
+          const msg=/dlc_locked|owner/i.test(String(e?.message||''))?'Ce DLC est réservé au propriétaire.':'Création non confirmée. Vérifie ta connexion avant de réessayer.';
+          return toast(msg);
+        }
+      }
+    }
+    STORAGE.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
+    Object.assign(STATE,{view:'lobby',scenarioId:key,room:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
+    saveSession();
+    await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+  }
+
+  const baseCreateRoom=createRoom;
+  createRoom=async function(){
+    const key=String(STATE?.selectedScenario||'');
+    if(OWNER_ONLY_IDS.has(key))return createOwnerDlcRoom();
+    return baseCreateRoom();
+  };
+
   const baseSelectScenario=selectScenario;
   selectScenario=async function(id){
     const key=String(id||'');
@@ -236,6 +275,16 @@
     ownerAccessStatus().then(()=>{const root=document.querySelector('.page-create-v10-13');if(root)decorateCreateList()});
     return out;
   };
+
+
+  if(typeof goHome==='function'){
+    const baseGoHome=goHome;
+    goHome=function(){clearDlcVisualState('');const out=baseGoHome.apply(this,arguments);queueMicrotask(updateBodyTheme);return out};
+  }
+  if(typeof leaveRoom==='function'){
+    const baseLeaveRoom=leaveRoom;
+    leaveRoom=function(){clearDlcVisualState('');const out=baseLeaveRoom.apply(this,arguments);queueMicrotask(updateBodyTheme);return out};
+  }
 
   const observer=new MutationObserver(()=>{
     const root=document.querySelector('.page-create-v10-13');

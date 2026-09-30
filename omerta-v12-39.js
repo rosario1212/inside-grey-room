@@ -50,11 +50,11 @@
   }
   function visibleScenarioId(){
     const view = String(STATE?.view || '');
-    if(view === 'create-list') return '';
+    if(['home','profile','rules','join','create-list'].includes(view)) return '';
     // The create confirmation must always follow the freshly selected scenario,
     // never a room that is still cached in STATE.sync from a previous session.
     if(view === 'create-confirm') return readSelectedScenarioId();
-    if(view === 'lobby' || view === 'briefing' || view === 'game') return readRoomScenarioId();
+    if(view === 'lobby' || view === 'briefing' || view === 'game' || view === 'role') return readRoomScenarioId();
 
     const attrSelector = '[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id].selected,[data-igr-scenario-id][aria-current="true"]';
     const attrCandidates = [...document.querySelectorAll(attrSelector)].filter(isRenderedNode).reverse();

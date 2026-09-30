@@ -94,3 +94,103 @@ body.igr-theme-regime .page-scenario-detail .chip,
 body.igr-theme-regime .page-scenario-detail .badge,
 body.igr-theme-regime .page-scenario-detail button.tag,
 body.igr-theme-regime .page-scenario-detail a.tag{color:#9db4c6!important}
+
+
+/* v12.41 — stable list layout, compact cards, and uniform full-DLC surfaces */
+.page-create-v10-13 .igr-scenario-filters{
+  z-index:48!important;
+  background:rgba(5,6,8,.985)!important;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;
+  padding:8px!important;
+  margin-bottom:18px!important;
+  box-shadow:0 14px 32px rgba(0,0,0,.34);
+}
+.page-create-v10-13 > section.panel{position:relative;isolation:isolate;clear:both}
+.page-create-v10-13 > section.panel + section.panel{margin-top:22px!important}
+.page-create-v10-13 section[data-collection]{overflow:hidden!important;scroll-margin-top:120px}
+
+/* Compact non-OMERTÀ DLC cards: poster is a thumbnail, not half the screen. */
+.terror-scenario,.cartel-scenario,.regime-scenario{
+  display:grid!important;
+  grid-template-columns:clamp(104px,29vw,136px) minmax(0,1fr)!important;
+  gap:14px!important;
+  align-items:stretch!important;
+  min-height:0!important;
+  padding:0!important;
+}
+.terror-scenario .scenario-thumb,.cartel-scenario .scenario-thumb,.regime-scenario .scenario-thumb{
+  width:100%!important;
+  max-width:136px!important;
+  aspect-ratio:3/4!important;
+  min-height:0!important;
+  height:auto!important;
+  align-self:stretch!important;
+  overflow:hidden!important;
+}
+.terror-scenario .scenario-thumb img,.cartel-scenario .scenario-thumb img,.regime-scenario .scenario-thumb img{
+  width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;
+}
+.terror-scenario .scenario-body,.cartel-scenario .scenario-body,.regime-scenario .scenario-body{
+  min-width:0!important;padding:14px 14px 14px 0!important;align-self:center!important;
+}
+.terror-scenario .scenario-body p,.cartel-scenario .scenario-body p,.regime-scenario .scenario-body p{margin:.35rem 0 .55rem!important;line-height:1.38!important}
+
+/* CARTEL: remove blue/navy from confirmation and lobby. */
+body.igr-theme-cartel .confirm-panel-v10-13,
+body.igr-theme-cartel .confirm-panel-v10-13 .confirm,
+body.igr-theme-cartel .confirm-panel-v10-13 .roles-block,
+body.igr-theme-cartel .confirm-panel-v10-13 .roles-row,
+body.igr-theme-cartel .confirm-panel-v10-13 .field,
+body.igr-theme-cartel .confirm-panel-v10-13 input,
+body.igr-theme-cartel .lobby-v11,
+body.igr-theme-cartel .lobby-v11 .lobby-code,
+body.igr-theme-cartel .lobby-v11 .lobby-status,
+body.igr-theme-cartel .lobby-v11 .player-list,
+body.igr-theme-cartel .lobby-v11 .player-line,
+body.igr-theme-cartel .lobby-v11 .role-choice-zone,
+body.igr-theme-cartel .lobby-v11 .role-choice-grid,
+body.igr-theme-cartel .igr-choice-status{
+  background:linear-gradient(180deg,rgba(27,23,12,.99),rgba(10,9,6,.995))!important;
+  border-color:rgba(177,151,74,.30)!important;
+  box-shadow:none!important;
+}
+body.igr-theme-cartel .lobby-v11 .lobby-code,
+body.igr-theme-cartel .lobby-v11 .lobby-status,
+body.igr-theme-cartel .lobby-v11 .player-line{border-bottom-color:rgba(177,151,74,.20)!important}
+body.igr-theme-cartel .confirm-panel-v10-13 input{background:#0d0b07!important;color:#fff!important}
+
+/* LE RÉGIME: keep the intended cold archive palette, but no generic navy. */
+body.igr-theme-regime .confirm-panel-v10-13,
+body.igr-theme-regime .confirm-panel-v10-13 .confirm,
+body.igr-theme-regime .confirm-panel-v10-13 .roles-block,
+body.igr-theme-regime .confirm-panel-v10-13 .roles-row,
+body.igr-theme-regime .confirm-panel-v10-13 .field,
+body.igr-theme-regime .confirm-panel-v10-13 input,
+body.igr-theme-regime .lobby-v11,
+body.igr-theme-regime .lobby-v11 .lobby-code,
+body.igr-theme-regime .lobby-v11 .lobby-status,
+body.igr-theme-regime .lobby-v11 .player-list,
+body.igr-theme-regime .lobby-v11 .player-line,
+body.igr-theme-regime .lobby-v11 .role-choice-zone,
+body.igr-theme-regime .lobby-v11 .role-choice-grid,
+body.igr-theme-regime .igr-choice-status{
+  background:linear-gradient(180deg,rgba(18,27,35,.99),rgba(7,10,13,.995))!important;
+  border-color:rgba(104,132,157,.32)!important;
+  box-shadow:none!important;
+}
+body.igr-theme-regime .lobby-v11 .lobby-code,
+body.igr-theme-regime .lobby-v11 .lobby-status,
+body.igr-theme-regime .lobby-v11 .player-line{border-bottom-color:rgba(104,132,157,.20)!important}
+body.igr-theme-regime .confirm-panel-v10-13 input{background:#091016!important;color:#fff!important}
+
+/* Give every DLC section its own clean block with visible separation. */
+.omerta-dlc-section,.terror-dlc-section,.cartel-dlc-section,.regime-dlc-section{margin-top:22px!important;margin-bottom:0!important}
+
+@media(max-width:430px){
+  .terror-scenario,.cartel-scenario,.regime-scenario{grid-template-columns:112px minmax(0,1fr)!important;gap:12px!important}
+  .terror-scenario .scenario-thumb,.cartel-scenario .scenario-thumb,.regime-scenario .scenario-thumb{max-width:112px!important}
+  .terror-scenario .scenario-body,.cartel-scenario .scenario-body,.regime-scenario .scenario-body{padding:11px 11px 11px 0!important}
+  .terror-scenario .scenario-body h3,.cartel-scenario .scenario-body h3,.regime-scenario .scenario-body h3{font-size:1rem!important;line-height:1.12!important}
+  .terror-scenario .scenario-body p,.cartel-scenario .scenario-body p,.regime-scenario .scenario-body p{font-size:.88rem!important;line-height:1.32!important}
+}
