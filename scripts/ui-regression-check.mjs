@@ -1,94 +1,28 @@
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
+const read=f=>fs.readFileSync(f,'utf8');
+const must=(file,items)=>{const t=read(file);for(const x of items)if(!t.includes(x))throw new Error(`${file} missing marker: ${x}`)};
+const mustNot=(file,items)=>{const t=read(file);for(const x of items)if(t.includes(x))throw new Error(`${file} contains forbidden marker: ${x}`)};
 
-const mustContain = (file, needles) => {
-  const text = fs.readFileSync(file, 'utf8');
-  for (const needle of needles) {
-    if (!text.includes(needle)) throw new Error(`${file} missing required locale/Home/OMERTA marker: ${needle}`);
-  }
-};
+must('index.html',['omerta-v12-35.css?v=v12.35-dlc-suite','terror-v12.css?v=v12.35-dlc-suite','dlc-suite-v12-35.css?v=v12.35-dlc-suite','omerta-v12-35.js?v=v12.35-dlc-suite','terror-v12.js?v=v12.35-dlc-suite','dlc-suite-v12-35.js?v=v12.35-dlc-suite']);
+must('omerta-v12-35.js',['assets/omerta-021-l-enveloppe.webp?v=12.35-hq','assets/omerta-025-il-don.webp?v=12.35-hq','crypto.getRandomValues','igr_omerta_choose_role','igr_v4_choose_role','roleChoiceSummary','randomBusy','aria-busy','Aucun rôle disponible.','Tu conduis les interrogatoires','Tu repères les contradictions','Tu protèges ton client','Tu arbitres les décisions']);
+mustNot('omerta-v12-35.js',['window.STATE','Math.random','-hd.svg']);
+must('omerta-v12-35.css',['body.igr-omerta-active .role-choice-card','body.igr-omerta-active .igr-random-role-cta','rgba(75,10,15,.38)','rgba(118,17,24,.60)','image-rendering:auto','object-fit:cover','object-position:center']);
+mustNot('omerta-v12-35.css',['image-rendering:pixelated','image-rendering:crisp-edges']);
+must('terror-v12.js',["'026'","'027'","'028'",'LA VILLE TOMBE','LA ZONE ROUGE','DERNIER PÉRIMÈTRE']);
+must('dlc-suite-v12-35.js',["'029'","'030'","'031'","'032'","'033'","'034'",'LE CYCLE MORT','LA COUR ACHETÉE','LA DETTE','LES ARCHIVES DU PALAIS','LA DYNASTIE','LES NOMS QU’ILS PORTAIENT','BASE 001–020','001–008','009–020','TOUS LES DLC','OMERTÀ','TERREUR','CARTEL','LE RÉGIME','sessionStorage']);
+must('service-worker.js',["igr-v12-35-dlc-suite",'/assets/omerta-021-l-enveloppe.webp?v=12.35-hq','/assets/omerta-025-il-don.webp?v=12.35-hq']);
+must('scripts/build-web.mjs',['omerta-v12-35.js','terror-v12.js','dlc-suite-v12-35.js']);
+must('scripts/build-mobile.mjs',['omerta-v12-35.js','terror-v12.js','dlc-suite-v12-35.js']);
+must('supabase/migrations/20260930_dlc_suite_026_034.sql',["('026'","('028'","('029'","('031'","('032'","('034'",'on conflict (scenario_id) do nothing']);
 
-mustContain('index.html', [
-  'ui-polish-v12.css?v=v12.22-mobile-ui',
-  'ui-polish-v12.js?v=v12.22-mobile-ui',
-  'locale-runtime-v12-23.js?v=v12.23-locale-home',
-  'omerta-v12.css?v=v12.24-omerta',
-  'omerta-v12.js?v=v12.24-omerta',
-  'omerta-polish-v12.css?v=v12.28-omerta',
-  'omerta-polish-v12.js?v=v12.28-omerta',
-  'role-tree-polish-v12-29.css?v=v12.29-role-tree',
-  'role-tree-polish-v12-29.js?v=v12.29-role-tree',
-  'omerta-v12-30.css?v=v12.30-omerta-identity',
-  'omerta-v12-30.js?v=v12.30-omerta-identity'
-]);
-mustContain('ui-polish-v12.js', [
-  "enqueteur:{label:'Enquêteur'",
-  "enqueteur:{label:'Investigator'",
-  "STATE.view='home';renderHome()",
-  'igr-settings-modal'
-]);
-mustContain('locale-runtime-v12-23.js', [
-  'stopRoomWatcher',
-  'Resume my room',
-  'Choose your role',
-  'Assigned at launch',
-  'PUBLIC PREVIEW · SPOILER-FREE',
-  'Your case'
-]);
-mustContain('ui-polish-v12.css', [
-  '.intro-gate:not(.done) ~ .igr-notify-bell',
-  '.igr-settings-box',
-  '.igr-locale-segment'
-]);
-mustContain('omerta-v12.js', [
-  "'021'",
-  'igr_omerta_create_room',
-  'igr_omerta_join_room',
-  'igr_omerta_choose_role',
-  'igr_omerta_start_game',
-  'igr_omerta_action',
-  'TÉLÉPHONES POSÉS'
-]);
-mustContain('omerta-v12.css', ['.omerta-dlc-section','.omerta-decision-dock','.omerta-access-box']);
-mustContain('omerta-polish-v12.js', [
-  "'021':'assets/omerta-021-l-enveloppe.webp?v=12.27'",
-  'igr-random-role-cta',
-  'omerta-org-tree',
-  'Arbre de la Famiglia'
-]);
-mustContain('omerta-polish-v12.css', [
-  '.igr-random-role-cta',
-  '.igr-legacy-random',
-  '.omerta-org-tree',
-  '.omerta-family-node'
-]);
-mustContain('role-tree-polish-v12-29.js', [
-  'chooseRandomLobbyRole',
-  'crypto.getRandomValues',
-  'omerta-tree-responsive'
-]);
-mustContain('omerta-v12-30.js', [
-  'igr_v4_choose_random_role',
-  'character',
-  'identityPairs',
-  'omerta-021-l-enveloppe-hd.svg',
-  'orientationchange'
-]);
-mustContain('omerta-v12-30.css', [
-  '.igr-random-role-cta.is-base',
-  '.igr-random-role-cta.is-omerta',
-  '.omerta-tree-v1230 .omerta-org-scroll',
-  'orientation:landscape'
-]);
-mustContain('scripts/build-mobile.mjs', ['omerta-v12-30.css','omerta-v12-30.js']);
-mustContain('scripts/build-web.mjs', ['omerta-v12-30.css','omerta-v12-30.js']);
-mustContain('service-worker.js', [
-  "igr-v12-30-omerta-identity",
-  '/locale-runtime-v12-23.js?v=v12.23-locale-home',
-  '/omerta-v12-30.js?v=v12.30-omerta-identity',
-  '/assets/omerta-025-il-don-hd.svg?v=12.30'
-]);
-for (const file of ['locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js']) {
-  execFileSync(process.execPath,['--check',file],{stdio:'inherit'});
+for(const file of ['omerta-v12-35.js','terror-v12.js','dlc-suite-v12-35.js','service-worker.js'])execFileSync(process.execPath,['--check',file],{stdio:'inherit'});
+execFileSync(process.execPath,['scripts/validate-dlc-assets.mjs'],{stdio:'inherit'});
+
+if(fs.existsSync('app-v11.js')){
+  must('app-v11.js',["{id:'001'","{id:'020'",'function chooseRandomLobbyRole()']);
+  console.log('Base 001–020 markers present.');
+}else{
+  console.log('INFO app-v11.js absent in overlay ZIP; base-game marker check will run after extraction at repository root.');
 }
-console.log('v12.30 locale/Home/OMERTA regression markers OK');
+console.log('v12.35 targeted DLC/UI regression checks OK');

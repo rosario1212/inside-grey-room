@@ -1,45 +1,17 @@
 import { cp, mkdir, readFile, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
-
-const root = process.cwd();
-const out = path.join(root, 'www');
-const files = [
-  'index.html','en.html','styles-v11.css','polish-v12.css','ui-polish-v12.css','omerta-v12.css','omerta-polish-v12.css','role-tree-polish-v12-29.css','omerta-v12-30.css','app-v11.js','qa-fixes-v12.js',
-  'investigation-sheet-v12.js','video-v12-3.js','turn-v12-4.js','profile-dossier-v12.js',
-  'playstore-ready-v12.js','social-v12.js','notifications-v12.js','native-lifecycle-v12.js',
-  'runtime-optimization-v12.js','gameplay-simple-v12.js','apple-ui-stability-v12.js','gameplay-clean-v12.js',
-  'i18n-en-v12.js','language-v12.js','rules-v12.js','locale-settings-v12.js','ui-polish-v12.js','locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','omerta-hotfix-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js',
-  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
+const root=process.cwd(),out=path.join(root,'www');
+const files=[
+ 'index.html','en.html','styles-v11.css','polish-v12.css','ui-polish-v12.css','omerta-v12.css','omerta-polish-v12.css','role-tree-polish-v12-29.css','omerta-v12-30.css','omerta-v12-35.css','terror-v12.css','dlc-suite-v12-35.css',
+ 'app-v11.js','qa-fixes-v12.js','investigation-sheet-v12.js','video-v12-3.js','turn-v12-4.js','profile-dossier-v12.js','playstore-ready-v12.js','social-v12.js','notifications-v12.js','native-lifecycle-v12.js','runtime-optimization-v12.js','gameplay-simple-v12.js','apple-ui-stability-v12.js','gameplay-clean-v12.js',
+ 'i18n-en-v12.js','language-v12.js','rules-v12.js','locale-settings-v12.js','ui-polish-v12.js','locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','omerta-hotfix-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js','omerta-v12-35.js','terror-v12.js','dlc-suite-v12-35.js',
+ 'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
-
 async function exists(p){try{await stat(p);return true}catch{return false}}
-const indexHtml = await readFile(path.join(root, 'index.html'), 'utf8');
-const declared = new Set(files);
-for (const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
-  const raw = match[1];
-  if (!raw || /^(?:https?:|data:|blob:|#)/i.test(raw)) continue;
-  let relative = raw.split(/[?#]/, 1)[0];
-  if (relative.startsWith('./')) relative = relative.slice(2);
-  if (!relative || relative.startsWith('assets/')) continue;
-  if (!declared.has(relative)) throw new Error(`Mobile runtime list is out of sync with index.html: ${relative}`);
-}
-
-await rm(out,{recursive:true,force:true});
-await mkdir(out,{recursive:true});
-const runtimeText=[];
-for(const name of files){
-  const src=path.join(root,name);
-  if(!(await exists(src)))throw new Error(`Missing mobile runtime file: ${name}`);
-  await cp(src,path.join(out,name),{recursive:true});
-  runtimeText.push(await readFile(src,'utf8'));
-}
-const assetRefs=new Set();
-for(const text of runtimeText)for(const match of text.matchAll(/assets\/[A-Za-z0-9._\/-]+/g))assetRefs.add(match[0]);
-let assetBytes=0;
-for(const relative of [...assetRefs].sort()){
-  const src=path.join(root,relative);
-  if(!(await exists(src)))throw new Error(`Missing referenced mobile asset: ${relative}`);
-  const dst=path.join(out,relative);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst);assetBytes+=(await stat(src)).size;
-}
-console.log(`Inside Grey Room mobile bundle ready: ${out}`);
-console.log(`Runtime files: ${files.length} · assets: ${assetRefs.size} · ${(assetBytes/1024/1024).toFixed(2)} MiB assets`);
+const indexHtml=await readFile(path.join(root,'index.html'),'utf8'),declared=new Set(files);
+for(const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)){const raw=match[1];if(!raw||/^(?:https?:|data:|blob:|#)/i.test(raw))continue;let relative=raw.split(/[?#]/,1)[0];if(relative.startsWith('./'))relative=relative.slice(2);if(!relative||relative.startsWith('assets/'))continue;if(!declared.has(relative))throw new Error(`Mobile runtime list is out of sync with index.html: ${relative}`)}
+await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});const runtimeText=[];
+for(const name of files){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing mobile runtime file: ${name}`);await cp(src,path.join(out,name),{recursive:true});runtimeText.push(await readFile(src,'utf8'))}
+const assetRefs=new Set();for(const text of runtimeText)for(const match of text.matchAll(/assets\/[A-Za-z0-9._\/-]+/g))assetRefs.add(match[0]);let assetBytes=0;
+for(const relative of [...assetRefs].sort()){const src=path.join(root,relative);if(!(await exists(src)))throw new Error(`Missing referenced mobile asset: ${relative}`);const dst=path.join(out,relative);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst);assetBytes+=(await stat(src)).size}
+console.log(`Inside Grey Room mobile bundle ready: ${out}`);console.log(`Runtime files: ${files.length} · assets: ${assetRefs.size} · ${(assetBytes/1024/1024).toFixed(2)} MiB assets`);
