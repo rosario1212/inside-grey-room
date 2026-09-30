@@ -13,44 +13,46 @@
   <meta name="apple-mobile-web-app-title" content="Inside Grey Room">
   <meta name="description" content="Inside Grey Room : enquêtes psychologiques multijoueurs, rôles secrets et vérités à reconstruire.">
   <title>Inside Grey Room</title>
-  <link rel="manifest" href="manifest.webmanifest?v=v12.21-unified-locale">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v12.21-unified-locale">
-  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v12.21-unified-locale">
-  <link rel="preload" as="image" href="assets/intro-v10-14.webp?v=v12.21-unified-locale" fetchpriority="high">
-  <link rel="stylesheet" href="styles-v11.css?v=v12.21-unified-locale">
-  <link rel="stylesheet" href="polish-v12.css?v=v12.21-unified-locale">
+  <link rel="manifest" href="manifest.webmanifest?v=v12.22-mobile-ui">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v12.22-mobile-ui">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v12.22-mobile-ui">
+  <link rel="preload" as="image" href="assets/intro-v10-14.webp?v=v12.22-mobile-ui" fetchpriority="high">
+  <link rel="stylesheet" href="styles-v11.css?v=v12.22-mobile-ui">
+  <link rel="stylesheet" href="polish-v12.css?v=v12.22-mobile-ui">
+  <link rel="stylesheet" href="ui-polish-v12.css?v=v12.22-mobile-ui">
   <style>.intro-gate{touch-action:none!important}</style>
   <script>(()=>{try{const saved=localStorage.getItem('igr_locale');window.IGR_LOCALE=saved==='en'?'en':'fr';document.documentElement.lang=window.IGR_LOCALE}catch(_){window.IGR_LOCALE='fr'}})();</script>
 </head>
 <body>
   <div class="bg-noise"></div><div class="bg-vignette"></div>
   <div id="introGate" class="intro-gate" aria-hidden="false">
-    <img class="intro-art" src="assets/intro-v10-14.webp?v=v12.21-unified-locale" alt="Porte d’entrée Inside Grey Room">
+    <img class="intro-art" src="assets/intro-v10-14.webp?v=v12.22-mobile-ui" alt="Porte d’entrée Inside Grey Room">
     <div class="intro-cinema-shade"></div><div class="intro-light-slit" aria-hidden="true"></div><div class="intro-pulse" aria-hidden="true"></div><div class="intro-whiteout" aria-hidden="true"></div>
     <button id="introEnterBtn" class="intro-enter" type="button" aria-label="Entrer dans Inside Grey Room"><span>ENTRER</span><small id="introHint">TOUCHEZ POUR OUVRIR LA PORTE</small></button>
   </div>
   <div id="app"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
   <noscript>Active JavaScript pour jouer à Inside Grey Room.</noscript>
   <script>(()=>{try{const k='igr_v11_session',p=Storage.prototype,g=p.getItem,s=p.setItem,r=p.removeItem,native=location.protocol==='file:'||location.hostname==='insidegreyroom.local'||/[?&]native=(android|ios)\b/.test(location.search),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(native||standalone)return;const scoped=x=>x===k||String(x).startsWith('igr_v11_notes_');p.getItem=function(x){if(this===localStorage&&scoped(x))return g.call(sessionStorage,x);return g.call(this,x)};p.setItem=function(x,v){if(this===localStorage&&scoped(x))return s.call(sessionStorage,x,v);return s.call(this,x,v)};p.removeItem=function(x){if(this===localStorage&&scoped(x))return r.call(sessionStorage,x);return r.call(this,x)}}catch(_){}})();</script>
-  <script src="app-v11.js?v=v12.21-unified-locale"></script>
-  <script src="qa-fixes-v12.js?v=v12.21-unified-locale"></script>
-  <script src="investigation-sheet-v12.js?v=v12.21-unified-locale"></script>
-  <script src="video-v12-3.js?v=v12.21-unified-locale"></script>
-  <script src="turn-v12-4.js?v=v12.21-unified-locale"></script>
-  <script src="profile-dossier-v12.js?v=v12.21-unified-locale"></script>
-  <script src="playstore-ready-v12.js?v=v12.21-unified-locale"></script>
-  <script src="social-v12.js?v=v12.21-unified-locale"></script>
-  <script src="notifications-v12.js?v=v12.21-unified-locale"></script>
-  <script src="native-lifecycle-v12.js?v=v12.21-unified-locale"></script>
-  <script src="runtime-optimization-v12.js?v=v12.21-unified-locale"></script>
-  <script src="gameplay-simple-v12.js?v=v12.21-unified-locale"></script>
-  <script src="apple-ui-stability-v12.js?v=v12.21-unified-locale"></script>
+  <script src="app-v11.js?v=v12.22-mobile-ui"></script>
+  <script src="qa-fixes-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="investigation-sheet-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="video-v12-3.js?v=v12.22-mobile-ui"></script>
+  <script src="turn-v12-4.js?v=v12.22-mobile-ui"></script>
+  <script src="profile-dossier-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="playstore-ready-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="social-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="notifications-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="native-lifecycle-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="runtime-optimization-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="gameplay-simple-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="apple-ui-stability-v12.js?v=v12.22-mobile-ui"></script>
   <script>(()=>{const nativeInterval=window.setInterval;window.__igrNativeSetInterval=nativeInterval;window.setInterval=function(fn,delay,...args){return nativeInterval.call(window,fn,Number(delay)===300?900:delay,...args)};try{const nativeShell=location.protocol==='file:'||location.hostname==='insidegreyroom.local'||/[?&]native=(android|ios)\b/.test(location.search);const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');if(!nativeShell&&!mobile&&window.MutationObserver){const NativeObserver=window.MutationObserver,created=[];function TrackedObserver(callback){const observer=new NativeObserver(callback);created.push(observer);return observer}TrackedObserver.prototype=NativeObserver.prototype;window.__igrNativeMutationObserver=NativeObserver;window.__igrGameplayMutationObservers=created;window.MutationObserver=TrackedObserver}}catch(_){}})();</script>
-  <script src="gameplay-clean-v12.js?v=v12.21-unified-locale"></script>
+  <script src="gameplay-clean-v12.js?v=v12.22-mobile-ui"></script>
   <script>(()=>{if(window.__igrGameplayMutationObservers){for(const observer of window.__igrGameplayMutationObservers){try{observer.disconnect()}catch(_){}}delete window.__igrGameplayMutationObservers}if(window.__igrNativeMutationObserver){window.MutationObserver=window.__igrNativeMutationObserver;delete window.__igrNativeMutationObserver}if(window.__igrNativeSetInterval){window.setInterval=window.__igrNativeSetInterval;delete window.__igrNativeSetInterval}try{if(typeof liveSessionControls==='function'){const base=liveSessionControls;liveSessionControls=function(){let html=base.apply(this,arguments);if(STATE?.sync?.room?.phase==='cycle_debrief')html=html.replace('Étape suivante →','Passer le débrief →');return html}}}catch(_){}})();</script>
-  <script src="language-v12.js?v=v12.21-unified-locale"></script>
-  <script src="i18n-en-v12.js?v=v12.21-unified-locale"></script>
-  <script src="rules-v12.js?v=v12.21-unified-locale"></script>
-  <script src="locale-settings-v12.js?v=v12.21-unified-locale"></script>
+  <script src="language-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="i18n-en-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="rules-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="locale-settings-v12.js?v=v12.22-mobile-ui"></script>
+  <script src="ui-polish-v12.js?v=v12.22-mobile-ui"></script>
 </body>
 </html>
