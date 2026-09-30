@@ -1,0 +1,84 @@
+/* Inside Grey Room — English client edition.
+   The game protocol stays language-neutral: room codes, role ids and server state
+   are unchanged. This layer only presents the English public experience. */
+(() => {
+  if (window.IGR_LOCALE !== 'en') return;
+
+  document.documentElement.lang = 'en';
+  document.documentElement.dataset.locale = 'en';
+  const set = (object, values) => Object.assign(object, values);
+
+  const scenarios = [
+    ['THE ROOM 222','Maël Sénéchal is found stabbed to death in room 222. Three people crossed his night. None tells exactly the same story.','Maël Sénéchal is found stabbed to death in a hotel room. Three people crossed his night and each has a credible version — until timings, movements and physical details begin to turn them against one another.','Cold, spare police procedural.',['Classic investigation','Physical leads','Hidden permutation']],
+    ['LÉON’S SILENCE','Léon took his own life. Nobody killed him with their hands — but several people shaped the days before it.','After Léon’s suicide, the investigation is not looking for a conventional killer. It must measure what each person did, encouraged, ignored or abandoned before his death, and where real responsibility begins.','Intimate, heavy, with no way out.',['Moral responsibility','Ambiguous behaviour','No simplistic causality']],
+    ['THE LAST PROTOCOL','A biological attack hits a railway station. The trail leads back to Helios Centre — where too many decisions came before the disaster.','A biological attack hits a railway station and leads the investigation back to Helios Centre. Research, validation, transfer, orders and omission form a chain: uncover how separate decisions made the catastrophe possible.','Institutional, cold, contaminated by panic.',['Fragmented responsibility','Technical documents','Political interference']],
+    ['THE THREE ABSENT','Sofia is found dead after an overdose. Before dying, she asked three people for help. All received her call.','Sofia dies from an alcohol-and-medication overdose after asking three people for help. Each hesitated, refused or waited. The case must establish what they knew, what they could do — and when inaction becomes responsibility.','An empty night where inaction becomes a choice.',['Windows to intervene','Passive guilt','Intimate chronology']],
+    ['THE WHITE MASK','A victim is found dead behind a white mask. The scene looks ritualistic — but some details tell a different story.','A victim is found dead in a scene dominated by a white mask. The set seems coherent at first glance; yet traces, objects and behaviour do not all point to the same intent.','Disturbing, symbolic, brutal.',['False culprit','Late physical anchor','Psychological shock']],
+    ['CHALET ASHES','Five years after Noé’s fall in an isolated chalet, the case is reopened. His former friends kept quiet — but not the same version.','Five years after Noé’s fall in an isolated chalet, his former friends meet again. Their memories diverge, certain details have shifted over time, yet all seem to protect the same fragment of that night.','Snow, silence, tainted memory.',['Reopening','Collective secret','Reconstructed memory']],
+    ['THE GREY WILL','An inheritance divides a family. Then an unexpected death turns every interest into a possible motive.','A tense succession brings together a family already fractured by money, resentment and secrets. When a death changes the balance, the same lies suddenly carry more weight and every interest becomes harder to clear.','Closed family, poisoned estate.',['Inheritance','Reversal before cycle three','Crossed secrets']],
+    ['UNDER OATH','They swore to tell the truth. Their statements cannot all be true. Someone is lying — but lying is not enough to prove responsibility.','Several people testify under oath to the same events, but their accounts cannot all be true. Separate defensive lies, perjury, protection of another person and responsibility for the central act.','Cold procedure, truth under pressure.',['Incompatible testimony','Procedural evidence','Responsibility is not just lying']],
+    ['SUBJECT 17','Subject 17 withdraws consent. The experiment continues. After the incident, memory becomes one of the case’s most disputed pieces.','The ORPHÉE programme lies at the centre of an incident involving Subject 17. Withdrawn consent, a continued protocol, a fall and genuine amnesia intertwine: separate what science establishes from what the institution wants to justify.','Clinical, rational, terrifying.',['Genuine amnesia','Withdrawn consent','Neuropsychological evidence']],
+    ['THE SOUND IN THE WALLS','Nora Weiss is found behind a service wall. Someone locked her in — and someone may have realised she was still alive.','Nora Weiss is found trapped behind a service wall. Access, timetables, noises and passages reveal who could know she was there, when, and what each person did with that knowledge.','Claustrophobic, domestic, cruel.',['The 13:54 door','Identity to reconstruct','Deliberate abandonment']],
+    ['36 HOURS','Thirty-six hours of operation. Destroyed villages, deaths and missing people. Orders exist — but responsibility does not stop with the signer.','A fictional military operation leaves destroyed villages, deaths and missing people behind. Command, execution, omission, knowledge and falsification must be separated at every level of responsibility.','Administrative, heavy, morally unbearable.',['Graduated responsibility','Chain of command','No single culprit']],
+    ['THE FAITHFUL','Sacha wanted to leave the community. He is beaten, held and isolated for almost twenty hours before escaping.','Sacha Morel tries to leave a closed community. He is beaten, held and isolated before escaping. Determine who wanted to stop him leaving, who carried out the acts and who chose not to intervene.','Control, false faith, real fear.',['Ambiguous order','Physical execution','Failure to intervene']],
+    ['LINE OF FIRE','President Kessler is assassinated by a paid shooter. The shot is certain. Those who wanted, funded or enabled it are far less clear.','President Kessler is assassinated by a paid shooter. Identifying the shooter is not enough: trace the chain between political intention, funding, preparation and exploitation of the attack.','Political, tense, exposed.',['Prosecutor','PERSEUS network','Three nodes of responsibility']],
+    ['CLASSIFIED','A leak exposes eleven informants and their families. In a service built on secrecy, one piece of information can condemn several lives.','A leak compromises eleven informants and their families. Between those who protect sources, those who control information and those who benefit from its circulation, reconstruct fragmented responsibility.','Cold paranoia, counter-intelligence.',['Crossed covers','Counter-information','State secret']],
+    ['BEFORE DEATH','A doctor is found dead while investigating ELIGIBLE. In her hospital, some patients were written off before they truly were.','A doctor investigating the ELIGIBLE programme is found dead. Her research links clinical, administrative and financial decisions about patients who could still recover. The hospital has something to defend.','Silent hospital, administrative violence.',['Optional journalist','Optional judge','Institutional leads']],
+    ['THE TOP FLOOR','A victim is drugged, humiliated and filmed. Later, they are found dead. The murder appears on no recording.','A victim tied to a narcotics network is drugged, filmed and humiliated, then found dead. The recording stops before the fatal act: separate those who prepared the violence, those who continued it and those who remained afterwards.','Dirty score-settling, almost documentary.',['Possible defence counsel','Humiliation is not murder','Late abandonment']],
+    ['THE PRICE OF SILENCE','Two people are abducted. One dies. The other walks out free. Between them lies a silence nobody wants to explain.','A former network accountant is abducted with a close associate. The accountant dies; the associate survives. Threats, loyalty, fear and survival make every decision hard to judge — especially when only survivors can still speak.','Betrayal, negotiation, impossible loyalty.',['Prosecutor interviews','Mandatory witness','Binding agreements']],
+    ['EMPTY PLATES','The former director of an abusive home is found dead at the end of a table laid for nine absent people. Each plate bears a name.','The former director of an abusive home is found dead before nine empty plates bearing former residents’ names. The scene looks like a deliberate message. Work out what belongs to the murder — and what was arranged to tell another story.','Empty place, ordinary objects, physical horror.',['Field inspector','Moved scene','One lead per cycle']],
+    ['THE GRAND BALL','A whistle-blower is found dead during an elite gala, minutes before exposing a damaging file.','During an elite gala, a whistle-blower preparing to reveal embezzlement is found dead. Security, influence, press, justice and money each have a reason to control what will be discovered.','Elegant on the surface, rotten underneath.',['Mandatory counsel','Prosecutor','Judge','Journalist']],
+    ['APOTHEOSIS','327 people die in the Founders’ Ball fire. Some doors could still be opened. No single decision explains the toll.','A fire devastates the Founders’ Ball and kills 327 people. Exits, maintenance, alarms, materials, security and human decisions combine. The case does not seek one cause, but the chain that turned a fire into a disaster.','Total human and moral collapse.',['Full architecture','Expert','Inspector','Maximum systemic consequences']]
+  ];
+  SCENARIOS.forEach((scenario, index) => set(scenario, {
+    title: scenarios[index][0], short: scenarios[index][1], context: scenarios[index][2], mood: scenarios[index][3], mechanics: scenarios[index][4]
+  }));
+  SCENARIOS.forEach(scenario => { PUBLIC_LOBBY_SUMMARIES[scenario.id] = scenario.context; CANONICAL_BRIEFINGS[scenario.id] = scenario.context; });
+
+  set(ROLE_INFO.enqueteur,{label:'Investigator',win:'Reconstruct the facts, responsibilities and real level of involvement accurately.',body:'You lead interrogations, choose certain investigative decisions and deliver the final factual reconstruction.'});
+  set(ROLE_INFO.analyste,{label:'Analyst',win:'Produce the most accurate psychological reconstruction.',body:'You observe interrogations, use the Investigation Channel and take part in side interviews with the Investigator.'});
+  set(ROLE_INFO.suspect,{label:'Suspect',win:'Keep the real boundary of your responsibility intact.',body:'You may lie, manipulate, accuse, minimise or partly admit. Being implicated does not automatically mean losing.'});
+  set(ROLE_INFO.maitre,{label:'Defence Counsel',win:'Protect the exact responsibility of your clients.',body:'You defend one or more compatible suspects. You never invent facts and share final defence time with your clients.'});
+  set(ROLE_INFO.procureur,{label:'Prosecutor',win:'Pursue responsibility accurately without overpaying for agreements.',body:'You can conduct focused interviews, negotiate canonical agreements and create procedural pressure.'});
+  set(ROLE_INFO.juge,{label:'Judge',win:'Reach the correct final ruling without exceeding your confidentiality limit.',body:'You arbitrate access to protected information and its legal weight. Any secret interest remains secondary.'});
+  set(ROLE_INFO.journaliste,{label:'Journalist',win:'Publish usefully without destroying your credibility or objective.',body:'You can send private messages and publish one Breaking News item per cycle.'});
+  set(ROLE_INFO.inspecteur,{label:'Field Inspector',win:'Choose the right leads and establish essential physical facts.',body:'One field action per cycle. A mistake can cost time, alert someone or delay a lead.'});
+  set(ROLE_INFO.expert,{label:'Expert / Forensic Doctor',win:'Interpret essential technical evidence correctly.',body:'One additional analysis per cycle. You establish technical facts, never a culprit.'});
+  set(ROLE_INFO.temoin,{label:'Witness',win:'Stay consistent with your truth and any secondary objective.',body:'You can be heard during the witness window. You may become a person of interest and then a suspect.'});
+  set(ROLE_INFO.espion,{label:'Spy',win:'Complete your mission without being exposed.',body:'Your public role is a cover. Being the Spy does not mean being the main perpetrator.'});
+
+  const exact = new Map(Object.entries({
+    'ENTRER':'ENTER','TOUCHEZ POUR OUVRIR LA PORTE':'TOUCH TO OPEN THE DOOR','TOUCHEZ POUR ENTRER':'TOUCH TO ENTER','Accueil':'Home','Créer une partie':'Create a game','Rejoindre une partie':'Join a game','Choisir un scénario.':'Choose a case.','Entrer un code de cellule.':'Enter a room code.','Paramètres':'Settings','Confidentialité · Sécurité':'Privacy · Security','Choisissez un scénario':'Choose a case','Rejoindre':'Join','La cellule vous attend':'The room is waiting','Ton pseudo':'Your nickname','Votre pseudo':'Your nickname','Code':'Code','Retour':'Back','← Accueil':'← Home','Obligatoires':'Required','Facultatifs':'Optional','joueur':'player','joueurs':'players','Prêt':'Ready','Démarrer':'Start','Quitter':'Leave','Fermer':'Close','Annuler':'Cancel','Confirmer':'Confirm','Terminé':'Done','Audio':'Audio','Activer le son':'Enable sound','Volume général':'Main volume','Ambiance':'Ambience','Effets / alertes':'Effects / alerts','Confidentialité et données':'Privacy and data','Support':'Support','Règles':'Rules','Profil':'Profile','Sécurité':'Safety','Copier':'Copy','Partage':'Share','Chargement…':'Loading…','Enquêteur':'Investigator','Analyste':'Analyst','Suspect':'Suspect','Procureur':'Prosecutor','Juge':'Judge','Journaliste':'Journalist','Avocat':'Defence Counsel','Maître':'Defence Counsel','Inspecteur':'Field Inspector','Expert':'Expert','Témoin':'Witness','Espion':'Spy','trames':'leads','Trame':'Lead','cycle':'cycle','Cycles':'Cycles','Débrief':'Debrief','Interrogatoire':'Interrogation','Verdict':'Verdict','Révélation':'Reveal','Victoire':'Victory','Défaite':'Defeat','Partie suivante':'Next game','Dossier':'Case','thriller psychologique':'psychological thriller'
+  }));
+  const fragments = [
+    [/Créer une partie/g,'Create a game'],[/Rejoindre une partie/g,'Join a game'],[/Choisir un scénario/g,'Choose a case'],[/Rejoindre la cellule/g,'Join the room'],[/Code de cellule/g,'Room code'],[/joueurs?/g,'players'],[/Joueurs/g,'Players'],[/Obligatoires/g,'Required'],[/Facultatifs/g,'Optional'],[/Paramètres/g,'Settings'],[/Confidentialité/g,'Privacy'],[/Sécurité/g,'Security'],[/Prêt à jouer/g,'Ready to play'],[/Démarrer la partie/g,'Start the game'],[/Lecture des rôles/g,'Read roles'],[/Fin de partie/g,'End of game'],[/Retour à l’accueil/g,'Return home'],[/Copié !/g,'Copied!'],[/Impossible/g,'Unable'],[/Erreur/g,'Error'],[/Connexion/g,'Connection'],[/Déconnecté/g,'Offline'],[/Reconnecter/g,'Reconnect'],[/Activer le son/g,'Enable sound']
+  ];
+  const translate = value => {
+    const raw = String(value || '');
+    if (exact.has(raw.trim())) return raw.replace(raw.trim(), exact.get(raw.trim()));
+    return fragments.reduce((result, [from, to]) => result.replace(from, to), raw);
+  };
+  const textNodes = root => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes=[]; let node; while ((node=walker.nextNode())) nodes.push(node); return nodes;
+  };
+  const localise = root => {
+    if (!root || root.nodeType !== Node.ELEMENT_NODE && root.nodeType !== Node.DOCUMENT_NODE) return;
+    textNodes(root).forEach(node => { const next = translate(node.nodeValue); if (next !== node.nodeValue) node.nodeValue = next; });
+    (root.querySelectorAll?.('[placeholder],[aria-label],[alt],[title]') || []).forEach(el => ['placeholder','aria-label','alt','title'].forEach(name => {
+      if (el.hasAttribute(name)) { const value=el.getAttribute(name), next=translate(value); if (next!==value) el.setAttribute(name,next); }
+    }));
+    const modal = root.matches?.('.modal-box') ? root : root.querySelector?.('.modal-box');
+    if (modal && !modal.querySelector('.locale-setting')) {
+      modal.insertAdjacentHTML('beforeend','<div class="security-settings-actions locale-setting"><button class="btn ghost block" type="button" onclick="window.igrSetLocale(\'fr\')">Français</button></div>');
+    }
+  };
+  window.igrSetLocale = locale => { location.href = locale === 'fr' ? './' : './en.html'; };
+  const observer = new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(node => {
+    if (node.nodeType === Node.ELEMENT_NODE) localise(node);
+  })));
+  observer.observe(document.documentElement,{childList:true,subtree:true});
+  localise(document);
+  const rerender = () => { if (STATE.view === 'home') renderHome(); else localise(document); };
+  queueMicrotask(rerender);
+})();
