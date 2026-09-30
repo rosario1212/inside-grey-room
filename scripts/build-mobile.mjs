@@ -2,9 +2,9 @@ import { cp, mkdir, readFile, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
 const root=process.cwd(),out=path.join(root,'www');
 const files=[
- 'index.html','en.html','styles-v11.css','polish-v12.css','ui-polish-v12.css','omerta-v12.css','omerta-polish-v12.css','role-tree-polish-v12-29.css','omerta-v12-30.css','omerta-v12-37.css','terror-v12-37.css','dlc-suite-v12-37.css',
+ 'index.html','en.html','styles-v11.css','polish-v12.css','ui-polish-v12.css','omerta-v12.css','omerta-polish-v12.css','role-tree-polish-v12-29.css','omerta-v12-30.css','omerta-v12-40.css','terror-v12-40.css','dlc-suite-v12-40.css',
  'app-v11.js','qa-fixes-v12.js','investigation-sheet-v12.js','video-v12-3.js','turn-v12-4.js','profile-dossier-v12.js','playstore-ready-v12.js','social-v12.js','notifications-v12.js','native-lifecycle-v12.js','runtime-optimization-v12.js','gameplay-simple-v12.js','apple-ui-stability-v12.js','gameplay-clean-v12.js',
- 'i18n-en-v12.js','language-v12.js','rules-v12.js','locale-settings-v12.js','ui-polish-v12.js','locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','omerta-hotfix-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js','omerta-v12-37.js','terror-v12-37.js','dlc-suite-v12-37.js',
+ 'i18n-en-v12.js','language-v12.js','rules-v12.js','locale-settings-v12.js','ui-polish-v12.js','locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','omerta-hotfix-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js','omerta-v12-39.js','terror-v12-37.js','dlc-suite-v12-37.js',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
 async function exists(p){try{await stat(p);return true}catch{return false}}
