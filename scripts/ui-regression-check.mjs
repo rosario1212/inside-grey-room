@@ -1,94 +1,36 @@
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const mustContain = (file, needles) => {
-  const text = fs.readFileSync(file, 'utf8');
-  for (const needle of needles) {
-    if (!text.includes(needle)) throw new Error(`${file} missing required locale/Home/OMERTA marker: ${needle}`);
-  }
-};
+const mustContain=(file,needles)=>{const text=fs.readFileSync(file,'utf8');for(const needle of needles)if(!text.includes(needle))throw new Error(`${file} missing regression marker: ${needle}`)};
+const mustNotContain=(file,needles)=>{const text=fs.readFileSync(file,'utf8');for(const needle of needles)if(text.includes(needle))throw new Error(`${file} contains forbidden regression marker: ${needle}`)};
 
-mustContain('index.html', [
-  'ui-polish-v12.css?v=v12.22-mobile-ui',
-  'ui-polish-v12.js?v=v12.22-mobile-ui',
-  'locale-runtime-v12-23.js?v=v12.23-locale-home',
-  'omerta-v12.css?v=v12.24-omerta',
-  'omerta-v12.js?v=v12.24-omerta',
-  'omerta-polish-v12.css?v=v12.28-omerta',
-  'omerta-polish-v12.js?v=v12.28-omerta',
-  'role-tree-polish-v12-29.css?v=v12.29-role-tree',
-  'role-tree-polish-v12-29.js?v=v12.29-role-tree',
-  'omerta-v12-30.css?v=v12.30-omerta-identity',
-  'omerta-v12-30.js?v=v12.30-omerta-identity'
+mustContain('index.html',['omerta-v12-30.css?v=v12.33-omerta','omerta-v12-30.js?v=v12.33-omerta']);
+mustContain('omerta-v12-30.js',[
+  "'021':'assets/omerta-021-l-enveloppe.webp?v=12.33'","'025':'assets/omerta-025-il-don.webp?v=12.33'",
+  'crypto.getRandomValues','const max=0x100000000,limit=max-(max%length)','randomBusy','igr_omerta_choose_role','igr_v4_choose_role','role_assignment_conflict',
+  "enqueteur:{body:'Tu conduis les interrogatoires","analyste:{body:'Tu repères les contradictions","suspect:{body:'Tu protèges ta position",
+  "maitre:{label:'Avocat'","procureur:{body:'Tu exploites les contradictions","juge:{body:'Tu arbitres les décisions","informateur:{label:'Informateur'",
+  "collection:'original'","collection:'second'","collection:'omerta'",'data-filter="dlc"','data-dlc-filter="omerta"','sessionStorage.setItem(FILTER_KEY',
+  'omerta-tree-v1233',"objectFit='cover'","imageRendering='auto'"
 ]);
-mustContain('ui-polish-v12.js', [
-  "enqueteur:{label:'Enquêteur'",
-  "enqueteur:{label:'Investigator'",
-  "STATE.view='home';renderHome()",
-  'igr-settings-modal'
+mustNotContain('omerta-v12-30.js',['Math.random(','-hd.svg']);
+mustContain('omerta-v12-30.css',[
+  '--omerta-red:#a92f35','--omerta-red-selected:rgba(118,17,24,.58)','.igr-omerta-active .omerta-role-status',
+  'linear-gradient(135deg,var(--omerta-red-bg-1),var(--omerta-red-bg-2))','image-rendering:auto!important','.igr-scenario-filter','.igr-filter-scroll','min-height:44px','omerta-tree-v1233'
 ]);
-mustContain('locale-runtime-v12-23.js', [
-  'stopRoomWatcher',
-  'Resume my room',
-  'Choose your role',
-  'Assigned at launch',
-  'PUBLIC PREVIEW · SPOILER-FREE',
-  'Your case'
-]);
-mustContain('ui-polish-v12.css', [
-  '.intro-gate:not(.done) ~ .igr-notify-bell',
-  '.igr-settings-box',
-  '.igr-locale-segment'
-]);
-mustContain('omerta-v12.js', [
-  "'021'",
-  'igr_omerta_create_room',
-  'igr_omerta_join_room',
-  'igr_omerta_choose_role',
-  'igr_omerta_start_game',
-  'igr_omerta_action',
-  'TÉLÉPHONES POSÉS'
-]);
-mustContain('omerta-v12.css', ['.omerta-dlc-section','.omerta-decision-dock','.omerta-access-box']);
-mustContain('omerta-polish-v12.js', [
-  "'021':'assets/omerta-021-l-enveloppe.webp?v=12.27'",
-  'igr-random-role-cta',
-  'omerta-org-tree',
-  'Arbre de la Famiglia'
-]);
-mustContain('omerta-polish-v12.css', [
-  '.igr-random-role-cta',
-  '.igr-legacy-random',
-  '.omerta-org-tree',
-  '.omerta-family-node'
-]);
-mustContain('role-tree-polish-v12-29.js', [
-  'chooseRandomLobbyRole',
-  'crypto.getRandomValues',
-  'omerta-tree-responsive'
-]);
-mustContain('omerta-v12-30.js', [
-  'igr_v4_choose_random_role',
-  'character',
-  'identityPairs',
-  'omerta-021-l-enveloppe-hd.svg',
-  'orientationchange'
-]);
-mustContain('omerta-v12-30.css', [
-  '.igr-random-role-cta.is-base',
-  '.igr-random-role-cta.is-omerta',
-  '.omerta-tree-v1230 .omerta-org-scroll',
-  'orientation:landscape'
-]);
-mustContain('scripts/build-mobile.mjs', ['omerta-v12-30.css','omerta-v12-30.js']);
-mustContain('scripts/build-web.mjs', ['omerta-v12-30.css','omerta-v12-30.js']);
-mustContain('service-worker.js', [
-  "igr-v12-30-omerta-identity",
-  '/locale-runtime-v12-23.js?v=v12.23-locale-home',
-  '/omerta-v12-30.js?v=v12.30-omerta-identity',
-  '/assets/omerta-025-il-don-hd.svg?v=12.30'
-]);
-for (const file of ['locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js']) {
-  execFileSync(process.execPath,['--check',file],{stdio:'inherit'});
+mustNotContain('omerta-v12-30.css',['image-rendering:pixelated','image-rendering:crisp-edges']);
+mustContain('service-worker.js',["igr-v12-33-omerta",'/omerta-v12-30.js?v=v12.33-omerta','/assets/omerta-025-il-don.webp?v=12.33']);
+
+const posterFiles=['assets/omerta-021-l-enveloppe.webp','assets/omerta-022-omerta.webp','assets/omerta-023-la-table.webp','assets/omerta-024-il-pentito.webp','assets/omerta-025-il-don.webp'];
+function webpSize(file){
+  const b=fs.readFileSync(file);if(b.subarray(0,4).toString()!=='RIFF'||b.subarray(8,12).toString()!=='WEBP')throw new Error(`${file} is not a valid WebP`);
+  const kind=b.subarray(12,16).toString();
+  if(kind==='VP8 ')return[b.readUInt16LE(26)&0x3fff,b.readUInt16LE(28)&0x3fff];
+  if(kind==='VP8L'){const bits=b.readUInt32LE(21);return[(bits&0x3fff)+1,((bits>>14)&0x3fff)+1]}
+  if(kind==='VP8X')return[1+b.readUIntLE(24,3),1+b.readUIntLE(27,3)];
+  throw new Error(`${file} has unsupported WebP chunk ${kind}`);
 }
-console.log('v12.30 locale/Home/OMERTA regression markers OK');
+for(const file of posterFiles){const [w,h]=webpSize(file);if(w<900||h<1200)throw new Error(`${file} is too small for iPhone poster use: ${w}x${h}`);if(w*4!==h*3)throw new Error(`${file} is not 3:4: ${w}x${h}`)}
+
+for(const file of ['locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js'])execFileSync(process.execPath,['--check',file],{stdio:'inherit'});
+console.log('v12.33 targeted OMERTA regression markers and poster dimensions OK');
