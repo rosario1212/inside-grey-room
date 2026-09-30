@@ -8,7 +8,6 @@ on:
       - 'package-lock.json'
       - 'capacitor.config.json'
       - 'scripts/**'
-      - 'en.html'
       - 'index.html'
       - 'en.html'
       - 'service-worker.js'
@@ -30,6 +29,7 @@ on:
       - 'apple-ui-stability-v12.js'
       - 'gameplay-clean-v12.js'
       - 'i18n-en-v12.js'
+      - 'language-v12.js'
       - 'privacy.html'
       - 'terms.html'
       - 'delete-account.html'
@@ -77,6 +77,7 @@ jobs:
           node --check apple-ui-stability-v12.js
           node --check gameplay-clean-v12.js
           node --check i18n-en-v12.js
+          node --check language-v12.js
       - name: Build production web bundle
         run: npm run mobile:build
       - name: Create Android shell
