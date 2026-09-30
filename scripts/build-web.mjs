@@ -17,12 +17,14 @@ const runtimeFiles = [
   'profile-dossier-v12.js',
   'playstore-ready-v12.js',
   'social-v12.js',
+  'notifications-v12.js',
   'native-lifecycle-v12.js',
   'runtime-optimization-v12.js',
   'gameplay-simple-v12.js',
   'apple-ui-stability-v12.js',
   'gameplay-clean-v12.js',
   'i18n-en-v12.js',
+  'language-v12.js',
   'service-worker.js',
   'manifest.webmanifest',
   'privacy.html',
@@ -48,11 +50,9 @@ for (const name of runtimeFiles) {
   searchableText.push(await readFile(src, 'utf8'));
 }
 
-// Only ship assets referenced by the active runtime. Historical artwork and backups
-// stay in GitHub, but no longer consume storage in every hosting deployment.
 const assetRefs = new Set();
 for (const text of searchableText) {
-  for (const match of text.matchAll(/assets\/[A-Za-z0-9._/-]+/g)) assetRefs.add(match[0]);
+  for (const match of text.matchAll(/assets/[A-Za-z0-9._/-]+/g)) assetRefs.add(match[0]);
 }
 
 let assetBytes = 0;
@@ -65,8 +65,6 @@ for (const relative of [...assetRefs].sort()) {
   assetBytes += (await stat(src)).size;
 }
 
-// Cloudflare Pages reads this file natively. Vercel ignores it and continues to use
-// vercel.json, so one bundle can be deployed on either host.
 const cloudflareHeaders = `
 /*
   Strict-Transport-Security: max-age=31536000
