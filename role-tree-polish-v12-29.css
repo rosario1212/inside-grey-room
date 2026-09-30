@@ -1,0 +1,91 @@
+/* Inside Grey Room — v12.29 role random + OMERTÀ family-tree polish */
+
+/* Base dossiers 001–020: random-role control belongs to the normal Grey Room palette. */
+.igr-random-role-cta.is-base,
+.igr-random-role-cta:not(.is-omerta){
+  border-color:rgba(255,255,255,.11)!important;
+  background:#0b0e12!important;
+  color:#f4f5f7!important;
+  box-shadow:none!important;
+}
+.igr-random-role-cta.is-base small,
+.igr-random-role-cta:not(.is-omerta) small{color:rgba(238,242,247,.58)!important}
+.igr-random-role-cta.is-base em,
+.igr-random-role-cta:not(.is-omerta) em{
+  border-color:rgba(255,255,255,.11)!important;
+  background:rgba(255,255,255,.025)!important;
+  color:rgba(238,242,247,.58)!important;
+}
+.role-choice-zone.is-base-scenario .role-choice-card.selected{
+  border-color:rgba(255,255,255,.65)!important;
+  background:rgba(255,255,255,.09)!important;
+  box-shadow:none!important;
+}
+.role-choice-zone.is-base-scenario .role-choice-card.selected em{color:#fff!important}
+
+/* OMERTÀ 021–025 alone owns the red accent. */
+.igr-random-role-cta.is-omerta{
+  border-color:rgba(188,58,62,.72)!important;
+  background:linear-gradient(135deg,rgba(112,17,20,.34),rgba(19,21,23,.96))!important;
+  color:#f0ece8!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.025)!important;
+}
+.igr-random-role-cta.is-omerta small{color:#9b9ea1!important}
+.igr-random-role-cta.is-omerta em{
+  border-color:rgba(211,80,83,.55)!important;
+  background:rgba(138,25,29,.32)!important;
+  color:#e17a7d!important;
+}
+.igr-random-role-cta.is-rolling{pointer-events:none;transform:scale(.995);opacity:.92}
+.igr-random-role-cta.is-rolling em{min-width:74px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Family tree: swipe/scroll naturally in both orientations. */
+.omerta-tree-responsive .omerta-org-scroll{
+  touch-action:pan-x pan-y;
+  overscroll-behavior-x:contain;
+  overscroll-behavior-y:contain;
+  scrollbar-gutter:stable both-edges;
+}
+.omerta-tree-responsive .omerta-org-tree{width:max-content;min-width:100%}
+
+/* Rotated iPhone: turn the tree into a near-fullscreen horizontal canvas. */
+@media (orientation:landscape) and (max-height:560px){
+  .omerta-tree-modal.omerta-tree-responsive{
+    place-items:stretch;
+    padding:max(6px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(6px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));
+  }
+  .omerta-tree-responsive .omerta-tree-box{
+    width:100%;
+    max-width:none;
+    height:100%;
+    max-height:none;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    border-radius:18px;
+    padding:14px 16px;
+    overflow:hidden;
+  }
+  .omerta-tree-responsive .omerta-tree-head{
+    flex-direction:row;
+    align-items:flex-start;
+    margin:2px 0 6px;
+  }
+  .omerta-tree-responsive .omerta-tree-head h2{font-size:24px}
+  .omerta-tree-responsive .omerta-tree-head p{font-size:9px;max-width:46ch}
+  .omerta-tree-responsive .omerta-org-scroll{
+    flex:1 1 auto;
+    min-height:0;
+    margin:4px -8px 6px;
+    padding:4px 10px 12px;
+    overflow-x:auto;
+    overflow-y:auto;
+  }
+  .omerta-tree-responsive .omerta-org-tree{min-width:max-content;padding:0 22px}
+  .omerta-tree-responsive .omerta-org-tree li{min-width:132px;padding-left:6px;padding-right:6px}
+  .omerta-tree-responsive .omerta-family-node{min-height:64px;padding:8px 9px}
+  .omerta-tree-responsive .omerta-tree-legend{margin:0 0 5px;flex:none}
+  .omerta-tree-responsive .omerta-tree-current{padding:8px 10px;flex:none}
+  .omerta-tree-responsive .modal-actions{margin-top:6px;flex:none}
+  .omerta-tree-responsive .modal-actions .btn{padding:9px 14px}
+}
