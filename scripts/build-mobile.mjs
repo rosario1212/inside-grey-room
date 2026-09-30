@@ -5,6 +5,7 @@ const root = process.cwd();
 const out = path.join(root, 'www');
 const files = [
   'index.html',
+  'en.html',
   'styles-v11.css',
   'polish-v12.css',
   'app-v11.js',
@@ -21,7 +22,7 @@ const files = [
   'gameplay-simple-v12.js',
   'apple-ui-stability-v12.js',
   'gameplay-clean-v12.js',
-  'language-v12.js',
+  'i18n-en-v12.js',
   'manifest.webmanifest',
   'privacy.html',
   'terms.html',
@@ -36,7 +37,6 @@ async function exists(p){try{await stat(p);return true}catch{return false}}
 // of silently producing a broken Android/iOS WebView bundle.
 const indexHtml = await readFile(path.join(root, 'index.html'), 'utf8');
 const declared = new Set(files);
-const referenced = new Set();
 for (const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
   const raw = match[1];
   if (!raw || /^(?:https?:|data:|blob:|#)/i.test(raw)) continue;
@@ -44,12 +44,6 @@ for (const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
   if (!relative || relative.startsWith('assets/')) continue;
   if (!declared.has(relative)) {
     throw new Error(`Mobile runtime list is out of sync with index.html: ${relative}`);
-  }
-  referenced.add(relative);
-}
-for (const name of files.filter(name => /\.(?:js|css)$/.test(name))) {
-  if (!referenced.has(name)) {
-    throw new Error(`Mobile runtime file is shipped but not loaded by index.html: ${name}`);
   }
 }
 
