@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="theme-color" content="#000000">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://jtasbdiguhiswoyvobkn.supabase.co https://inside-grey-room-last.alial-khafaji2002.workers.dev; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; worker-src 'self' blob:">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://jtasbdiguhiswoyvobkn.supabase.co wss://jtasbdiguhiswoyvobkn.supabase.co https://inside-grey-room-last.alial-khafaji2002.workers.dev; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; worker-src 'self' blob:">
   <meta name="referrer" content="no-referrer">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -16,7 +16,7 @@
   <link rel="manifest" href="manifest.webmanifest?v=v12.22-mobile-ui">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v9.png?v=v12.22-mobile-ui">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v9.png?v=v12.22-mobile-ui">
-  <link rel="preload" as="image" href="assets/intro-v10-14.webp?v=v12.22-mobile-ui" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/intro-v10-14.webp?v=v12.42-startup" fetchpriority="high">
   <link rel="stylesheet" href="styles-v11.css?v=v12.22-mobile-ui">
   <link rel="stylesheet" href="polish-v12.css?v=v12.22-mobile-ui">
   <link rel="stylesheet" href="ui-polish-v12.css?v=v12.22-mobile-ui">
@@ -27,13 +27,14 @@
   <link rel="stylesheet" href="omerta-v12-40.css?v=v12.41-uniform-dlc">
   <link rel="stylesheet" href="terror-v12-40.css?v=v12.41-uniform-dlc">
   <link rel="stylesheet" href="dlc-suite-v12-40.css?v=v12.41-uniform-dlc">
-  <style>.intro-gate{touch-action:none!important}</style>
+  <link rel="stylesheet" href="live-cell-v12-42.css?v=v12.42-live-cell">
+  <style>.intro-gate{touch-action:none!important;background:#000 url('assets/intro-v10-14.webp?v=v12.42-startup') center/cover no-repeat!important}.intro-gate:not(.opening):not(.done) .intro-art{opacity:1!important;visibility:visible!important}</style>
   <script>(()=>{try{const saved=localStorage.getItem('igr_locale');window.IGR_LOCALE=saved==='en'?'en':'fr';document.documentElement.lang=window.IGR_LOCALE}catch(_){window.IGR_LOCALE='fr'}})();</script>
 </head>
 <body>
   <div class="bg-noise"></div><div class="bg-vignette"></div>
   <div id="introGate" class="intro-gate" aria-hidden="false">
-    <img class="intro-art" src="assets/intro-v10-14.webp?v=v12.22-mobile-ui" alt="Porte d’entrée Inside Grey Room">
+    <img class="intro-art" src="assets/intro-v10-14.webp?v=v12.42-startup" alt="Porte d’entrée Inside Grey Room" onerror="this.onerror=null;this.src='assets/home-v10-14.webp?v=v12.42-startup'">
     <div class="intro-cinema-shade"></div><div class="intro-light-slit" aria-hidden="true"></div><div class="intro-pulse" aria-hidden="true"></div><div class="intro-whiteout" aria-hidden="true"></div>
     <button id="introEnterBtn" class="intro-enter" type="button" aria-label="Entrer dans Inside Grey Room"><span>ENTRER</span><small id="introHint">TOUCHEZ POUR OUVRIR LA PORTE</small></button>
   </div>
@@ -70,5 +71,6 @@
   <script src="omerta-v12-39.js?v=v12.41-uniform-dlc"></script>
   <script src="terror-v12-37.js?v=v12.37-final"></script>
   <script src="dlc-suite-v12-37.js?v=v12.41-owner-launch"></script>
+  <script src="live-cell-v12-42.js?v=v12.42-live-cell"></script>
 </body>
 </html>

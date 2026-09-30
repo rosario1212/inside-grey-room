@@ -1,28 +1,19 @@
-# Rapport — v12.38 OMERTÀ state-reset
+# Rapport v12.42 — Live Cell
 
-## Cause du bug
+## Cause principale
+Le lobby reposait surtout sur un polling fixe (environ 700 ms en lobby). Les mutations serveur étaient correctes mais les autres téléphones n’étaient informés qu’au prochain poll. Les changements rapides pouvaient donc sembler retardés ou désynchronisés.
 
-Après une cellule OMERTÀ, `STATE.sync.room.scenario_id` conservait le dossier de l'ancienne salle (ex. 025). La couche visuelle v12.37 pouvait considérer ce vieux `sync` comme plus prioritaire que `STATE.selectedScenario` pendant l'écran de confirmation d'un nouveau scénario (ex. 002).
+## Nouveau flux
+Une petite table Realtime ne contient aucune donnée de partie : seulement un token opaque, une révision et un timestamp. Des triggers serveur incrémentent cette révision lorsqu’un joueur rejoint, modifie son rôle, quitte, lorsqu’un événement change ou lorsque la cellule change d’état. Chaque client abonné reçoit alors un signal et appelle immédiatement la RPC sécurisée `igr_v4_sync` pour récupérer l’état autorisé.
 
-En plus, la réparation des affiches OMERTÀ utilisait parfois l'URL `src` déjà présente comme preuve que l'image appartenait à OMERTÀ. Une affiche 025 injectée par erreur pouvait donc s'auto-maintenir même après le passage à un scénario de base.
+## Rôles
+Le téléphone qui touche un rôle met son interface à jour immédiatement. La requête serveur reste source de vérité. Si deux joueurs prennent presque simultanément un rôle à capacité 1, le serveur tranche et le client refusé est resynchronisé.
 
-## Correction
+## Lancement
+Le bouton est verrouillé pendant l’opération, le lobby est resynchronisé juste avant le lancement, les bornes min/max sont contrôlées, les erreurs réseau transitoires sont retentées et un second contrôle confirme que le serveur a réellement quitté l’état `lobby`.
 
-- `create-confirm` utilise maintenant **toujours `STATE.selectedScenario`** comme source de vérité.
-- `lobby / briefing / game` continuent d'utiliser le scénario du serveur.
-- les nœuds DOM masqués ne sont plus utilisés pour déterminer le scénario visible.
-- le `src` d'une image OMERTÀ n'est plus une source de vérité pour une hero/confirmation.
-- si un scénario base est affiché avec une ancienne image OMERTÀ, l'image est restaurée avec `scenarioArt(scenarioId)`.
-- avant chaque nouvelle sélection, les classes de thème DLC précédentes sont supprimées immédiatement.
-- les classes `igr-omerta-active` et `igr-omerta-cell` sont nettoyées lors du passage hors OMERTÀ.
-- cache-busting JS + Service Worker v12.38 pour iPhone/PWA.
+## Entrée
+L’écran noir observé sur iPhone/PWA est durci avec un fond d’image CSS disponible avant exécution JS, un fallback vers l’image d’accueil si l’asset principal échoue et un watchdog de sortie si la cinématique se bloque.
 
-## Fichiers modifiés
-
-- `omerta-v12-37.js`
-- `dlc-suite-v12-37.js`
-- `index.html`
-- `service-worker.js`
-- `scripts/ui-regression-check.mjs`
-
-Aucune donnée de scénario, image, migration Supabase ou mécanique serveur n'est modifiée.
+## Backend
+Migration `20261001_live_room_realtime_v12_42.sql` appliquée sur le projet Supabase actif. La publication Realtime et la RPC de token ont été vérifiées.
