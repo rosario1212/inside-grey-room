@@ -1,18 +1,18 @@
-const CACHE='igr-v12-21-unified-locale';
+const CACHE='igr-v12-22-mobile-ui';
 const SHELL=[
   '/', '/index.html', '/en.html',
-  '/styles-v11.css?v=v12.21-unified-locale','/polish-v12.css?v=v12.21-unified-locale',
-  '/app-v11.js?v=v12.21-unified-locale','/qa-fixes-v12.js?v=v12.21-unified-locale',
-  '/investigation-sheet-v12.js?v=v12.21-unified-locale','/video-v12-3.js?v=v12.21-unified-locale',
-  '/turn-v12-4.js?v=v12.21-unified-locale','/profile-dossier-v12.js?v=v12.21-unified-locale',
-  '/playstore-ready-v12.js?v=v12.21-unified-locale','/social-v12.js?v=v12.21-unified-locale',
-  '/notifications-v12.js?v=v12.21-unified-locale','/native-lifecycle-v12.js?v=v12.21-unified-locale',
-  '/runtime-optimization-v12.js?v=v12.21-unified-locale','/gameplay-simple-v12.js?v=v12.21-unified-locale',
-  '/apple-ui-stability-v12.js?v=v12.21-unified-locale','/gameplay-clean-v12.js?v=v12.21-unified-locale',
-  '/language-v12.js?v=v12.21-unified-locale','/i18n-en-v12.js?v=v12.21-unified-locale',
-  '/rules-v12.js?v=v12.21-unified-locale','/locale-settings-v12.js?v=v12.21-unified-locale',
+  '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
+  '/app-v11.js?v=v12.22-mobile-ui','/qa-fixes-v12.js?v=v12.22-mobile-ui',
+  '/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
+  '/turn-v12-4.js?v=v12.22-mobile-ui','/profile-dossier-v12.js?v=v12.22-mobile-ui',
+  '/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
+  '/notifications-v12.js?v=v12.22-mobile-ui','/native-lifecycle-v12.js?v=v12.22-mobile-ui',
+  '/runtime-optimization-v12.js?v=v12.22-mobile-ui','/gameplay-simple-v12.js?v=v12.22-mobile-ui',
+  '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v12.22-mobile-ui',
+  '/language-v12.js?v=v12.22-mobile-ui','/i18n-en-v12.js?v=v12.22-mobile-ui',
+  '/rules-v12.js?v=v12.22-mobile-ui','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui',
   '/manifest.webmanifest','/privacy.html','/terms.html','/delete-account.html','/support.html',
-  '/assets/intro-v10-14.webp?v=v12.21-unified-locale','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'
+  '/assets/intro-v10-14.webp?v=v12.22-mobile-ui','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});

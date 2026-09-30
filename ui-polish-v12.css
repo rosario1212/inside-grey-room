@@ -1,0 +1,331 @@
+/* Inside Grey Room v12.22 — mobile header + settings polish. */
+
+/* The entrance is deliberately cinematic: no notification chrome on the Door. */
+.intro-gate:not(.done) ~ .igr-notify-bell,
+html.home-locked .igr-notify-bell {
+  display:none !important;
+}
+
+/* Reserve a real action lane for the fixed notification bell. */
+.app:not(.app-home-locked) .topbar {
+  padding-right:max(66px, calc(env(safe-area-inset-right, 0px) + 62px)) !important;
+  gap:12px;
+}
+.app:not(.app-home-locked) .top-actions {
+  flex:0 0 auto;
+  margin-left:auto;
+}
+.app:not(.app-home-locked) .top-actions .pill-btn {
+  white-space:nowrap;
+}
+.igr-notify-bell {
+  right:max(12px, env(safe-area-inset-right, 0px)) !important;
+}
+
+/* Settings: one clear hierarchy instead of one long undifferentiated list. */
+.igr-settings-modal {
+  align-items:center;
+  padding:calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+}
+.igr-settings-box {
+  width:min(720px, 100%) !important;
+  max-height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 20px) !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  border-radius:26px !important;
+  background:linear-gradient(180deg, rgba(16,22,27,.995), rgba(7,10,12,.995)) !important;
+  border:1px solid rgba(220,230,236,.15) !important;
+  box-shadow:0 28px 90px rgba(0,0,0,.62) !important;
+}
+.igr-settings-head {
+  position:sticky;
+  top:0;
+  z-index:3;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  padding:24px 24px 18px;
+  background:linear-gradient(180deg, rgba(16,22,27,1) 72%, rgba(16,22,27,.94));
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.igr-settings-head .kicker {
+  margin:0 0 7px;
+}
+.igr-settings-head h2 {
+  margin:0 !important;
+  font-size:30px !important;
+  letter-spacing:-.035em;
+}
+.igr-settings-close {
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.025);
+  color:#dfe5e8;
+  font-size:25px;
+  line-height:1;
+  cursor:pointer;
+}
+.igr-settings-body {
+  overflow:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  max-height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 150px);
+  padding:18px 18px 6px;
+}
+.igr-settings-section {
+  margin:0 0 16px;
+  padding:16px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:18px;
+  background:linear-gradient(145deg, rgba(255,255,255,.028), rgba(255,255,255,.012));
+}
+.igr-settings-section-title {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 12px;
+}
+.igr-settings-section-title h3 {
+  margin:0;
+  color:#e9edf0;
+  font-size:16px;
+  letter-spacing:-.01em;
+}
+.igr-settings-section-title span {
+  color:#6f7c85;
+  font:700 9px/1.2 'IBM Plex Mono', monospace;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.igr-setting-row {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:14px;
+  padding:13px 0;
+  border-top:1px solid rgba(255,255,255,.065);
+}
+.igr-setting-row:first-of-type {
+  border-top:0;
+  padding-top:4px;
+}
+.igr-setting-copy {
+  min-width:0;
+}
+.igr-setting-copy b {
+  display:block;
+  color:#eef2f4;
+  font-size:14px;
+  line-height:1.25;
+}
+.igr-setting-copy small {
+  display:block;
+  margin-top:4px;
+  color:#78858e;
+  font-size:10px;
+  line-height:1.45;
+}
+.igr-locale-segment {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  min-width:210px;
+  padding:4px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:13px;
+  background:#080b0e;
+}
+.igr-locale-segment button {
+  min-height:42px;
+  padding:0 14px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#8e9aa2;
+  font:800 12px/1 system-ui, sans-serif;
+  cursor:pointer;
+}
+.igr-locale-segment button[aria-pressed="true"] {
+  background:#edf1f3;
+  color:#0a0d0f;
+  box-shadow:0 2px 12px rgba(255,255,255,.08);
+}
+.igr-audio-row {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:6px 16px;
+  align-items:center;
+  padding:13px 0;
+  border-top:1px solid rgba(255,255,255,.065);
+}
+.igr-audio-row:first-of-type {
+  border-top:0;
+}
+.igr-audio-row label {
+  color:#e8edef;
+  font-size:13px;
+  font-weight:750;
+}
+.igr-audio-value {
+  min-width:48px;
+  color:#87949d;
+  font:700 10px/1 'IBM Plex Mono', monospace;
+  text-align:right;
+}
+.igr-audio-row input[type="range"] {
+  grid-column:1 / -1;
+  width:100%;
+  margin:6px 0 0;
+}
+.igr-settings-switch {
+  position:relative;
+  display:inline-flex;
+  width:48px;
+  height:28px;
+}
+.igr-settings-switch input {
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.igr-settings-switch span {
+  width:100%;
+  height:100%;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.13);
+  background:#090c0f;
+  transition:.18s ease;
+}
+.igr-settings-switch span::after {
+  content:"";
+  position:absolute;
+  width:20px;
+  height:20px;
+  left:4px;
+  top:4px;
+  border-radius:50%;
+  background:#6f7b83;
+  transition:.18s ease;
+}
+.igr-settings-switch input:checked + span {
+  background:#e8edef;
+}
+.igr-settings-switch input:checked + span::after {
+  transform:translateX(20px);
+  background:#0b0e10;
+}
+.igr-settings-nav {
+  display:grid;
+  gap:8px;
+}
+.igr-settings-nav button {
+  width:100%;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 14px;
+  border:1px solid rgba(255,255,255,.085);
+  border-radius:13px;
+  background:rgba(5,8,10,.5);
+  color:#e7ecef;
+  font-weight:760;
+  text-align:left;
+  cursor:pointer;
+}
+.igr-settings-nav button::after {
+  content:"›";
+  color:#63717a;
+  font-size:20px;
+  font-weight:400;
+}
+.igr-settings-footer {
+  position:sticky;
+  bottom:0;
+  z-index:3;
+  padding:12px 18px calc(14px + env(safe-area-inset-bottom, 0px));
+  border-top:1px solid rgba(255,255,255,.07);
+  background:linear-gradient(0deg, rgba(7,10,12,1) 75%, rgba(7,10,12,.93));
+}
+.igr-settings-footer .btn {
+  min-height:48px;
+}
+.igr-locale-sentinel { display:none !important; }
+
+@media (max-width:680px) {
+  .app:not(.app-home-locked) .topbar {
+    padding-right:max(58px, calc(env(safe-area-inset-right, 0px) + 56px)) !important;
+  }
+  .app:not(.app-home-locked) .top-actions .pill-btn {
+    width:42px !important;
+    min-width:42px !important;
+    height:42px !important;
+    padding:0 !important;
+    border-radius:50% !important;
+    font-size:0 !important;
+  }
+  .app:not(.app-home-locked) .top-actions .pill-btn::before {
+    content:"⚙︎";
+    display:block;
+    font-size:18px;
+    line-height:40px;
+    color:#aeb9c0;
+    text-align:center;
+  }
+  .app:not(.app-home-locked) .brand-title {
+    font-size:12px !important;
+    letter-spacing:.22em !important;
+  }
+  .app:not(.app-home-locked) .brand-sub {
+    display:none !important;
+  }
+  .igr-settings-modal {
+    align-items:flex-end;
+    padding:calc(env(safe-area-inset-top, 0px) + 6px) 0 0 !important;
+  }
+  .igr-settings-box {
+    width:100% !important;
+    max-height:calc(100dvh - env(safe-area-inset-top, 0px) - 6px) !important;
+    border-radius:24px 24px 0 0 !important;
+    border-bottom:0 !important;
+  }
+  .igr-settings-head {
+    padding:20px 20px 15px;
+  }
+  .igr-settings-head h2 {
+    font-size:28px !important;
+  }
+  .igr-settings-body {
+    max-height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 138px);
+    padding:14px 14px 4px;
+  }
+  .igr-settings-section {
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:12px;
+  }
+  .igr-setting-row.locale-setting {
+    grid-template-columns:1fr;
+  }
+  .igr-locale-segment {
+    min-width:0;
+    width:100%;
+  }
+}
+
+@media (max-width:390px) {
+  .app:not(.app-home-locked) .brand img {
+    width:38px !important;
+    height:38px !important;
+  }
+  .app:not(.app-home-locked) .brand-title {
+    font-size:11px !important;
+    letter-spacing:.17em !important;
+  }
+}
