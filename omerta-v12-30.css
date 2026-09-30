@@ -1,6 +1,14 @@
-/* Inside Grey Room — OMERTÀ v12.30 */
+/* Inside Grey Room — OMERTÀ v12.32 */
 
-/* Base dossiers stay neutral. Red is an OMERTÀ/DLC signal only. */
+/* Base game stays neutral; OMERTÀ owns the red accent. */
+:root{
+  --omerta-red:#a92f35;
+  --omerta-red-strong:#c53d43;
+  --omerta-red-soft:rgba(169,47,53,.18);
+  --omerta-red-line:rgba(190,57,63,.58);
+  --omerta-red-deep:rgba(74,10,14,.56);
+}
+
 .igr-random-role-cta:not(.is-omerta),
 .igr-random-role-cta.is-base{
   background:#0b0e12!important;
@@ -18,53 +26,130 @@
   border-color:#343a44!important;
   background:#11151a!important;
 }
-.igr-random-role-cta.is-omerta{
-  border-color:#8f2b31!important;
-  background:linear-gradient(135deg,rgba(91,22,27,.44),rgba(18,14,17,.96))!important;
-}
-.igr-random-role-cta.is-omerta em{
-  color:#e27a80!important;
-  border-color:#8f2b31!important;
-  background:rgba(91,22,27,.3)!important;
-}
-.igr-random-role-cta.is-rolling{pointer-events:none;opacity:.92}
 
-/* Dedicated SVG artwork remains sharp on Retina/iPhone and desktop. */
-img[src*="omerta-021-l-enveloppe-hd.svg"],
-img[src*="omerta-022-omerta-hd.svg"],
-img[src*="omerta-023-la-table-hd.svg"],
-img[src*="omerta-024-il-pentito-hd.svg"],
-img[src*="omerta-025-il-don-hd.svg"]{
-  image-rendering:auto!important;
+/* The draw control is explicitly red in the OMERTÀ campaign. */
+.igr-random-role-cta.is-omerta{
+  border-color:var(--omerta-red-line)!important;
+  background:
+    radial-gradient(circle at 88% 18%,rgba(185,43,49,.18),transparent 35%),
+    linear-gradient(135deg,rgba(98,14,19,.62),rgba(20,10,13,.98))!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.32),inset 3px 0 0 rgba(197,61,67,.78)!important;
+}
+.igr-random-role-cta.is-omerta b{color:#fff1f0!important}
+.igr-random-role-cta.is-omerta small{color:#b9a4a5!important}
+.igr-random-role-cta.is-omerta em{
+  color:#ffd8d9!important;
+  border-color:rgba(213,74,80,.75)!important;
+  background:rgba(145,24,30,.52)!important;
+}
+.igr-random-role-cta.is-rolling{
+  pointer-events:none;
+  opacity:.96;
+  transform:none!important;
+}
+.igr-random-role-cta.is-rolling em{
+  animation:omertaDrawPulse .72s ease-in-out infinite alternate;
+}
+@keyframes omertaDrawPulse{
+  from{box-shadow:0 0 0 0 rgba(197,61,67,.04)}
+  to{box-shadow:0 0 0 7px rgba(197,61,67,.10)}
+}
+
+/* All interactive "cells" inside an active OMERTÀ dossier use the same red language. */
+.igr-omerta-active .igr-omerta-cell{
+  border-color:rgba(176,47,53,.42)!important;
+  background:
+    linear-gradient(135deg,rgba(83,12,17,.16),rgba(255,255,255,.012))!important;
+}
+.igr-omerta-active .role-choice-card{
+  border-color:rgba(176,47,53,.48)!important;
+  background:linear-gradient(135deg,rgba(70,10,14,.25),rgba(16,18,21,.98))!important;
+}
+.igr-omerta-active .role-choice-card:hover,
+.igr-omerta-active .role-choice-card:focus-visible{
+  border-color:rgba(205,63,69,.76)!important;
+}
+.igr-omerta-active .role-choice-card.selected{
+  border-color:rgba(216,69,75,.92)!important;
+  background:linear-gradient(135deg,rgba(119,18,24,.5),rgba(22,13,16,.98))!important;
+  box-shadow:inset 3px 0 0 rgba(216,69,75,.95)!important;
+}
+.igr-omerta-active .role-choice-card.selected em,
+.igr-omerta-active .role-choice-card.selected strong{color:#f18d92!important}
+
+.igr-omerta-active .roles-row,
+.igr-omerta-active .omerta-role-status,
+.igr-omerta-active .omerta-objective-card,
+.igr-omerta-active .omerta-private-role,
+.igr-omerta-active .omerta-decision-dock,
+.igr-omerta-active .omerta-tree-current,
+.igr-omerta-active .player,
+.igr-omerta-active .mini,
+.igr-omerta-active .event{
+  border-color:rgba(169,47,53,.36)!important;
+}
+.igr-omerta-active .omerta-tree-open,
+.igr-omerta-active .btn.danger{
+  border-color:rgba(190,57,63,.58)!important;
+}
+.igr-omerta-active .chip,
+.igr-omerta-active .tag{
+  border-color:rgba(169,47,53,.42)!important;
+}
+
+/* DLC selection cells are red even before a dossier is opened. */
+.omerta-dlc-section{
+  border-color:rgba(169,47,53,.52)!important;
+}
+.omerta-dlc-section .omerta-scenario{
+  border-color:rgba(169,47,53,.48)!important;
+  background:linear-gradient(135deg,rgba(67,9,13,.24),rgba(255,255,255,.012))!important;
+}
+.omerta-dlc-section .omerta-scenario:hover,
+.omerta-dlc-section .omerta-scenario:focus-visible{
+  border-color:rgba(205,63,69,.76)!important;
+  box-shadow:inset 3px 0 0 rgba(197,61,67,.72)!important;
+}
+.omerta-dlc-section .omerta-scenario .scenario-id,
+.omerta-dlc-section .omerta-eyebrow{color:#d2575c!important}
+.omerta-dlc-section .omerta-tag{
+  border-color:rgba(190,57,63,.58)!important;
+  color:#dc777b!important;
+  background:rgba(104,17,22,.2)!important;
+}
+
+/* Official supplied posters are 3:4. Preserve that framing instead of the old 16:9 crop. */
+.omerta-scenario.scenario--compact{
+  grid-template-columns:clamp(106px,24vw,144px) minmax(0,1fr)!important;
+}
+.omerta-scenario .scenario-thumb{
+  aspect-ratio:3/4!important;
+  min-height:0!important;
+  align-self:stretch;
+  background:#030303!important;
   filter:none!important;
+}
+.omerta-scenario .scenario-thumb img,
+.scenario-hero .scenario-hero-art img[src*="omerta-"],
+.scenario-hero-art img[src*="omerta-"],
+.confirm-art img[src*="omerta-"],
+.section-cover img[src*="omerta-"]{
+  width:100%!important;
+  height:100%!important;
+  aspect-ratio:3/4!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  filter:none!important;
+  image-rendering:auto!important;
   transform:none!important;
   backface-visibility:visible!important;
-  object-fit:cover!important;
 }
-.omerta-scenario .scenario-thumb:has(img[src*="-hd.svg"]),
-.scenario-hero .scenario-hero-art:has(img[src*="omerta-"]){filter:none!important}
+.omerta-scenario .scenario-thumb:after{
+  background:linear-gradient(180deg,transparent 58%,rgba(0,0,0,.18))!important;
+}
 
-/* Character becomes player: the pseudo is the visible identity in the tree. */
-.omerta-family-node.is-player-fused b{letter-spacing:.01em}
-.omerta-family-node.is-player-fused::before{
-  content:"";
-  position:absolute;
-  inset:7px auto 7px 7px;
-  width:2px;
-  background:#8e292f;
-  border-radius:2px;
-  opacity:.75;
-}
-.omerta-family-node{position:relative}
-
-.omerta-tree-pan-hint{
-  display:none;
-  margin:4px 0 10px;
-  color:#858b94;
-  font-size:12px;
-  letter-spacing:.02em;
-}
-.omerta-tree-v1230 .omerta-org-scroll{
+/* Famiglia remains a wide evidence board in landscape. */
+.omerta-tree-v1232 .omerta-org-scroll{
   overflow-x:auto!important;
   overflow-y:auto!important;
   -webkit-overflow-scrolling:touch;
@@ -73,22 +158,33 @@ img[src*="omerta-025-il-don-hd.svg"]{
   scrollbar-width:thin;
   scroll-behavior:smooth;
 }
-.omerta-tree-v1230 .omerta-org-tree{
+.omerta-tree-v1232 .omerta-org-tree{
   width:max-content!important;
   min-width:max-content!important;
   max-width:none!important;
   margin-inline:auto;
   padding-inline:28px;
 }
-.omerta-tree-v1230 .omerta-org-root{width:max-content!important;min-width:max-content!important}
+.omerta-tree-v1232 .omerta-org-root{
+  width:max-content!important;
+  min-width:max-content!important;
+}
 
-/* iPhone landscape: treat the tree like a wide evidence board, never shrink it to fit. */
-@media (orientation:landscape) and (max-height:600px){
-  .omerta-tree-v1230{
-    align-items:stretch!important;
-    padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))!important;
+@media (max-width:640px){
+  .omerta-scenario.scenario--compact{
+    grid-template-columns:106px minmax(0,1fr)!important;
   }
-  .omerta-tree-v1230 .omerta-tree-box{
+  .omerta-scenario .scenario-body{padding:11px 12px!important}
+  .omerta-scenario .scenario-body h3{font-size:18px!important}
+}
+
+@media (orientation:landscape) and (max-height:600px){
+  .omerta-tree-v1232{
+    align-items:stretch!important;
+    padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right))
+      max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))!important;
+  }
+  .omerta-tree-v1232 .omerta-tree-box{
     width:100%!important;
     max-width:none!important;
     height:calc(100dvh - max(16px,env(safe-area-inset-top)) - max(16px,env(safe-area-inset-bottom)))!important;
@@ -98,25 +194,20 @@ img[src*="omerta-025-il-don-hd.svg"]{
     overflow:hidden!important;
     padding:18px 20px 14px!important;
   }
-  .omerta-tree-v1230 .omerta-tree-head{flex:0 0 auto!important;margin-bottom:4px!important}
-  .omerta-tree-v1230 .omerta-tree-head h2{font-size:28px!important;line-height:1.02!important}
-  .omerta-tree-v1230 .omerta-tree-head p{font-size:13px!important;margin-top:4px!important}
-  .omerta-tree-v1230 .omerta-tree-pan-hint{display:block}
-  .omerta-tree-v1230 .omerta-org-scroll{
+  .omerta-tree-v1232 .omerta-tree-head{flex:0 0 auto!important;margin-bottom:4px!important}
+  .omerta-tree-v1232 .omerta-org-scroll{
     flex:1 1 auto!important;
     min-height:0!important;
     width:100%!important;
     padding:6px 0 12px!important;
   }
-  .omerta-tree-v1230 .omerta-org-tree{margin:0!important;padding-inline:48px!important}
-  .omerta-tree-v1230 .omerta-tree-legend,
-  .omerta-tree-v1230 .omerta-tree-current,
-  .omerta-tree-v1230 .modal-actions{flex:0 0 auto!important}
-  .omerta-tree-v1230 .omerta-tree-current{margin-top:6px!important;padding-block:10px!important}
-  .omerta-tree-v1230 .modal-actions{margin-top:7px!important}
-  .omerta-tree-v1230 .modal-actions .btn{min-height:42px!important}
+  .omerta-tree-v1232 .omerta-org-tree{margin:0!important;padding-inline:48px!important}
+  .omerta-tree-v1232 .omerta-tree-legend,
+  .omerta-tree-v1232 .omerta-tree-current,
+  .omerta-tree-v1232 .modal-actions{flex:0 0 auto!important}
 }
 
 @media (prefers-reduced-motion:reduce){
-  .omerta-tree-v1230 .omerta-org-scroll{scroll-behavior:auto}
+  .igr-random-role-cta.is-rolling em{animation:none}
+  .omerta-tree-v1232 .omerta-org-scroll{scroll-behavior:auto}
 }
