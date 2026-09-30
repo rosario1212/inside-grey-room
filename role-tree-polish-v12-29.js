@@ -26,9 +26,12 @@
   function syncRandomVisual(){
     const btn=randomButton();if(!btn)return;
     const mafia=isOmerta(currentScenarioId());
+    const zone=btn.closest('.role-choice-zone');
     btn.classList.toggle('is-omerta',mafia);
     btn.classList.toggle('is-base',!mafia);
     btn.dataset.scenarioFamily=mafia?'omerta':'base';
+    zone?.classList.toggle('is-omerta-scenario',mafia);
+    zone?.classList.toggle('is-base-scenario',!mafia);
   }
 
   function roleLabel(id){
@@ -57,7 +60,7 @@
     const players=Array.isArray(data.players)?data.players:[];
     const me={...players.find(p=>String(p.id)===String(data.player?.id)),...data.player};
     const choices=roleChoiceSummary?.(sc,players.length,players)||[];
-    return choices.filter(x=>x&&x.id&&(Number(x.taken)||0)<(Number(x.cap)||0)||x&&x.id&&me.preferred_role===x.id).map(x=>x.id);
+    return choices.filter(x=>x&&x.id&&((Number(x.taken)||0)<(Number(x.cap)||0)||me.preferred_role===x.id)).map(x=>x.id);
   }
 
   async function freshSync(){
