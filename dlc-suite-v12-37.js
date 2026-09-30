@@ -1,5 +1,5 @@
-/* Inside Grey Room — DLC suite v12.41
-   CARTEL 029–031 · LE RÉGIME 032–034 · server-backed owner gates · stable themes · compact DLC cards. */
+/* Inside Grey Room — DLC suite v12.43
+   TERREUR / CARTEL / LE RÉGIME owner-access parity with OMERTÀ. */
 (() => {
   'use strict';
 
@@ -112,13 +112,13 @@
   function card(sc,collection,label,tag){
     return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span></div></div></article>`;
   }
-  function sectionFooter(){return `<div class="dlc-access-row">${accessBadge()}</div>`}
+  function accessRow(){return `<div class="dlc-access-row dlc-access-row--top">${accessBadge()}</div>`}
   function appendCollection(root,{collection,title,eyebrow,copy,ids,label,tag}){
     root.querySelector(`.${collection}-dlc-section`)?.remove();
     for(const id of ids)document.getElementById(`scenario-${id}`)?.remove();
     const section=document.createElement('section');section.className=`panel ${collection}-dlc-section`;section.dataset.collection=collection;
     const scenarios=[...ids].map(id=>scenario(id));
-    section.innerHTML=`<div class="dlc-suite-head"><div><span class="dlc-suite-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${copy}</p></div></div>${OWNER_ACCESS.owner?`<div class="scenario-list scenario-list-v10-13 ${collection}-list">${scenarios.map(sc=>card(sc,collection,label,tag)).join('')}</div>`:lockedBlock()}${sectionFooter()}`;
+    section.innerHTML=`<div class="dlc-suite-head"><div><span class="dlc-suite-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${copy}</p></div></div>${accessRow()}${OWNER_ACCESS.owner?`<div class="scenario-list scenario-list-v10-13 ${collection}-list">${scenarios.map(sc=>card(sc,collection,label,tag)).join('')}</div>`:lockedBlock()}`;
     root.appendChild(section);
   }
 
@@ -127,14 +127,18 @@
     section.dataset.collection='terror';
     const list=section.querySelector('.terror-list,.scenario-list');
     section.querySelector('.dlc-owner-lock')?.remove();
-    section.querySelector('.dlc-access-row')?.remove();
+    section.querySelectorAll('.dlc-access-row').forEach(el=>el.remove());
+    const head=section.querySelector('.dlc-suite-head')||section.querySelector('h2')?.parentElement;
+    if(head)head.insertAdjacentHTML('afterend',accessRow());
+    else section.insertAdjacentHTML('afterbegin',accessRow());
     if(OWNER_ACCESS.owner){
       if(list)list.style.display='';
     }else{
       if(list)list.style.display='none';
-      section.insertAdjacentHTML('beforeend',lockedBlock());
+      const row=section.querySelector('.dlc-access-row');
+      if(row)row.insertAdjacentHTML('afterend',lockedBlock());
+      else section.insertAdjacentHTML('beforeend',lockedBlock());
     }
-    section.insertAdjacentHTML('beforeend',sectionFooter());
   }
 
   function markExistingCards(root){
