@@ -41,14 +41,15 @@ mustContain('omerta-polish-v12.js', ['igr-random-role-cta','omerta-org-tree','Ar
 mustContain('omerta-polish-v12.css', ['.igr-random-role-cta','.igr-legacy-random','.omerta-org-tree','.omerta-family-node']);
 mustContain('role-tree-polish-v12-29.js', ['chooseRandomLobbyRole','crypto.getRandomValues','omerta-tree-responsive']);
 // v12.32 owns the current random-role runtime. Validate the implementation that
-// actually ships instead of the removed igr_v4_choose_random_role RPC marker.
+// actually ships instead of removed legacy markers.
 mustContain('omerta-v12-30.js', [
   'chooseRandomLobbyRole',
   'crypto.getRandomValues',
   'igr_v4_choose_role',
   'igr_omerta_choose_role',
   'character',
-  'orientationchange'
+  'omerta-tree-v1232',
+  'overflowX'
 ]);
 mustContain('omerta-v12-30.css', ['.igr-random-role-cta.is-base','.igr-random-role-cta.is-omerta','.omerta-tree-v1230 .omerta-org-scroll','orientation:landscape']);
 
