@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="styles-v11.css?v=v12.22-mobile-ui">
   <link rel="stylesheet" href="polish-v12.css?v=v12.22-mobile-ui">
   <link rel="stylesheet" href="ui-polish-v12.css?v=v12.22-mobile-ui">
+  <link rel="stylesheet" href="omerta-v12.css?v=v12.24-omerta">
   <style>.intro-gate{touch-action:none!important}</style>
   <script>(()=>{try{const saved=localStorage.getItem('igr_locale');window.IGR_LOCALE=saved==='en'?'en':'fr';document.documentElement.lang=window.IGR_LOCALE}catch(_){window.IGR_LOCALE='fr'}})();</script>
 </head>
@@ -32,7 +33,7 @@
   </div>
   <div id="app"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
   <noscript>Active JavaScript pour jouer à Inside Grey Room.</noscript>
-  <script>(()=>{try{const k='igr_v11_session',p=Storage.prototype,g=p.getItem,s=p.setItem,r=p.removeItem,native=location.protocol==='file:'||location.hostname==='insidegreyroom.local'||/[?&]native=(android|ios)\b/.test(location.search),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(native||standalone)return;const scoped=x=>x===k||String(x).startsWith('igr_v11_notes_');p.getItem=function(x){if(this===localStorage&&scoped(x))return g.call(sessionStorage,x);return g.call(this,x)};p.setItem=function(x,v){if(this===localStorage&&scoped(x))return s.call(sessionStorage,x,v);return s.call(this,x,v)};p.removeItem=function(x){if(this===localStorage&&scoped(x))return r.call(sessionStorage,x);return r.call(this,x)}}catch(_){}})();</script>
+  <script>(()=>{try{const k='igr_v11_session',p=Storage.prototype,g=p.getItem,s=p.setItem,r=p.removeItem,native=location.protocol==='file:'||location.hostname==='insidegreyroom.local'||/[?&]native=(android|ios)\b/.test(location.search),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(native||standalone)return;const scoped=x=>x===k||String(x).startsWith('igr_v11_notes_');p.getItem=function(x){if(this===localStorage&&scoped(x))return g.call(sessionStorage,x);return g.call(this,x)};p.setItem=function(x,v){if(this===localStorage&&scoped(x))return s.call(sessionStorage,x,v)};p.removeItem=function(x){if(this===localStorage&&scoped(x))return r.call(sessionStorage,x);return r.call(this,x)}}catch(_){}})();</script>
   <script src="app-v11.js?v=v12.22-mobile-ui"></script>
   <script src="qa-fixes-v12.js?v=v12.22-mobile-ui"></script>
   <script src="investigation-sheet-v12.js?v=v12.22-mobile-ui"></script>
@@ -55,5 +56,6 @@
   <script src="locale-settings-v12.js?v=v12.22-mobile-ui"></script>
   <script src="ui-polish-v12.js?v=v12.22-mobile-ui"></script>
   <script src="locale-runtime-v12-23.js?v=v12.23-locale-home"></script>
+  <script src="omerta-v12.js?v=v12.24-omerta"></script>
 </body>
 </html>
