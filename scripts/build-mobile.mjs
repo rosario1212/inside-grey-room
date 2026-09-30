@@ -41,7 +41,8 @@ const declared = new Set(files);
 for (const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
   const raw = match[1];
   if (!raw || /^(?:https?:|data:|blob:|#)/i.test(raw)) continue;
-  const relative = raw.split(/[?#]/, 1)[0].replace(/^.//, '');
+  let relative = raw.split(/[?#]/, 1)[0];
+  if (relative.startsWith('./')) relative = relative.slice(2);
   if (!relative || relative.startsWith('assets/')) continue;
   if (!declared.has(relative)) {
     throw new Error(`Mobile runtime list is out of sync with index.html: ${relative}`);
