@@ -23,6 +23,7 @@ const files = [
   'apple-ui-stability-v12.js',
   'gameplay-clean-v12.js',
   'i18n-en-v12.js',
+  'language-v12.js',
   'manifest.webmanifest',
   'privacy.html',
   'terms.html',
@@ -40,7 +41,7 @@ const declared = new Set(files);
 for (const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
   const raw = match[1];
   if (!raw || /^(?:https?:|data:|blob:|#)/i.test(raw)) continue;
-  const relative = raw.split(/[?#]/, 1)[0].replace(/^\.\//, '');
+  const relative = raw.split(/[?#]/, 1)[0].replace(/^.//, '');
   if (!relative || relative.startsWith('assets/')) continue;
   if (!declared.has(relative)) {
     throw new Error(`Mobile runtime list is out of sync with index.html: ${relative}`);
@@ -62,7 +63,7 @@ for(const name of files){
 // Only files that are actually referenced by the current runtime are copied.
 const assetRefs=new Set();
 for(const text of runtimeText){
-  for(const match of text.matchAll(/assets\/[A-Za-z0-9._/-]+/g))assetRefs.add(match[0]);
+  for(const match of text.matchAll(/assets/[A-Za-z0-9._/-]+/g))assetRefs.add(match[0]);
 }
 
 let assetBytes=0;
