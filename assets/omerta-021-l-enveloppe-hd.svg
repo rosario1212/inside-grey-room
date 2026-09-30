@@ -1,17 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
-<title id="t">OMERTÀ 021 — L'Enveloppe</title><desc id="d">Enveloppe scellée sur une table sombre, argent et ombres de silhouettes.</desc>
-<defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050608"/><stop offset=".58" stop-color="#0c0e12"/><stop offset="1" stop-color="#020304"/></linearGradient>
-  <radialGradient id="lamp" cx="48%" cy="46%" r="58%"><stop stop-color="#42454a" stop-opacity=".46"/><stop offset=".55" stop-color="#17191d" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
-  <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d6d0c4"/><stop offset="1" stop-color="#918b82"/></linearGradient>
-  <linearGradient id="cash" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#80857e"/><stop offset="1" stop-color="#363b38"/></linearGradient>
-</defs>
-<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#lamp)"/>
-<path d="M0 630 L1600 565 V900 H0Z" fill="#0b0c0e"/><path d="M0 660 L1600 595" stroke="#202329" stroke-width="3" opacity=".8"/>
-<g opacity=".66" fill="#010203"><ellipse cx="250" cy="408" rx="170" ry="260"/><ellipse cx="1345" cy="418" rx="165" ry="250"/></g>
-<g transform="translate(500 480) rotate(-4)"><rect x="0" y="0" width="600" height="260" rx="9" fill="url(#paper)"/><path d="M0 0 300 160 600 0" fill="#b8b1a6"/><path d="M0 260 235 91M600 260 365 91" stroke="#77736d" stroke-width="5" opacity=".6"/><circle cx="305" cy="143" r="47" fill="#6c1519"/><path d="M279 143c17-23 38-23 55 0-17 23-38 23-55 0Z" fill="#3c0b0d" opacity=".85"/></g>
-<g transform="translate(985 665) rotate(7)"><rect width="310" height="98" rx="10" fill="url(#cash)"/><rect x="18" y="15" width="274" height="68" rx="6" fill="none" stroke="#9da39a" stroke-width="3" opacity=".55"/><circle cx="155" cy="49" r="27" fill="none" stroke="#9da39a" stroke-width="3" opacity=".45"/></g>
-<g opacity=".22" stroke="#e4e4e4" fill="none"><path d="M1180 190c-72 91 50 117-9 211-49 78 26 119-30 180" stroke-width="8"/><path d="M1215 170c-65 78 40 118-17 204" stroke-width="4"/></g>
-<path d="M96 110H480" stroke="#8f252a" stroke-width="8"/><path d="M96 130H340" stroke="#31343a" stroke-width="2"/>
-<rect x="0" y="0" width="1600" height="900" fill="none" stroke="#171a1f" stroke-width="22"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1086 1448" role="img" aria-labelledby="t d"><title id="t">OMERTÀ 021 — L'Enveloppe</title><desc id="d">Affiche officielle du dossier 021.</desc><image href="omerta-021-l-enveloppe.webp?v=12.32" x="0" y="0" width="1086" height="1448" preserveAspectRatio="xMidYMid slice"/></svg>

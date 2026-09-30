@@ -1,12 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
-<title id="t">OMERTÀ 023 — La Table</title><desc id="d">Table de réunion mafieuse vue en perspective, chaises et siège vide sous une lumière dure.</desc>
-<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#030405"/><stop offset="1" stop-color="#0a0b0e"/></linearGradient><radialGradient id="cone" cx="50%" cy="12%" r="72%"><stop stop-color="#bdb7aa" stop-opacity=".34"/><stop offset=".55" stop-color="#45413b" stop-opacity=".11"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient><linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2f2521"/><stop offset=".48" stop-color="#151313"/><stop offset="1" stop-color="#08090a"/></linearGradient></defs>
-<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#cone)"/><ellipse cx="800" cy="620" rx="570" ry="185" fill="url(#wood)" stroke="#3b3330" stroke-width="7"/><ellipse cx="800" cy="607" rx="520" ry="136" fill="none" stroke="#68554a" stroke-width="3" opacity=".35"/>
-<g fill="#111317" stroke="#383c42" stroke-width="7"><path d="M276 420h170l28 198H250Z"/><path d="M1125 420h170l25 198h-220Z"/><path d="M605 277h165l22 177H583Z"/><path d="M842 277h165l23 177H820Z"/><path d="M674 710h250l40 170H634Z"/></g>
-<g stroke="#30343b" stroke-width="16"><path d="M268 616l-40 170M456 616l45 170M1118 616l-42 170M1300 616l52 170M645 453l-22 116M780 453l25 116M857 453l-24 116M995 453l27 116"/></g>
-<g transform="translate(770 520)"><circle r="48" fill="#101216" stroke="#8f252b" stroke-width="5"/><path d="M-17-7h34M-17 5h34M-11 17h22" stroke="#b5ada4" stroke-width="4" stroke-linecap="round"/></g>
-<path d="M800 0v242" stroke="#c4beb1" stroke-width="5" opacity=".25"/><ellipse cx="800" cy="245" rx="140" ry="26" fill="#d4cdc0" opacity=".2"/>
-<g fill="#010203" opacity=".82"><circle cx="345" cy="315" r="77"/><path d="M220 530c15-158 61-220 125-220s111 62 130 220Z"/><circle cx="1230" cy="315" r="77"/><path d="M1103 530c16-158 62-220 127-220s112 62 130 220Z"/></g>
-<path d="M105 112H515" stroke="#94262b" stroke-width="8"/><path d="M105 133H355" stroke="#2e3238" stroke-width="2"/>
-<rect x="0" y="0" width="1600" height="900" fill="none" stroke="#15181c" stroke-width="22"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1086 1448" role="img" aria-labelledby="t d"><title id="t">OMERTÀ 023 — La Table</title><desc id="d">Affiche officielle du dossier 023.</desc><image href="omerta-023-la-table.webp?v=12.32" x="0" y="0" width="1086" height="1448" preserveAspectRatio="xMidYMid slice"/></svg>

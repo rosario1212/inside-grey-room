@@ -1,12 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
-<title id="t">OMERTÀ 024 — Il Pentito</title><desc id="d">Salle d'interrogatoire sombre, silhouette face à une lampe et dossier de coopération.</desc>
-<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030405"/><stop offset=".6" stop-color="#0b0d11"/><stop offset="1" stop-color="#020304"/></linearGradient><radialGradient id="lamp" cx="72%" cy="35%" r="50%"><stop stop-color="#ece7dc" stop-opacity=".5"/><stop offset=".45" stop-color="#9a9388" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient><linearGradient id="file" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#bdb7aa"/><stop offset="1" stop-color="#77736c"/></linearGradient></defs>
-<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#lamp)"/><path d="M0 650H1600V900H0Z" fill="#08090b"/><path d="M0 650H1600" stroke="#2c3035" stroke-width="4"/>
-<g fill="#010203"><circle cx="560" cy="337" r="105"/><path d="M350 730c25-250 92-376 210-376s188 126 210 376Z"/></g>
-<g transform="translate(300 580)"><rect width="535" height="120" rx="10" fill="#101216" stroke="#333840" stroke-width="6"/><path d="M30 120h475" stroke="#1f2329" stroke-width="22"/></g>
-<g transform="translate(925 500) rotate(-7)"><rect width="380" height="245" rx="8" fill="url(#file)"/><path d="M35 58h180M35 92h245M35 126h212M35 160h264" stroke="#4b4b49" stroke-width="8" stroke-linecap="round" opacity=".65"/><rect x="255" y="32" width="92" height="58" rx="7" fill="#67171b"/><path d="M270 60h61" stroke="#d2cbc0" stroke-width="6"/></g>
-<g transform="translate(1120 185)"><path d="M0 0h190l-42 72H42Z" fill="#2b2e33"/><path d="M95 72v155" stroke="#3c4046" stroke-width="14"/><ellipse cx="95" cy="238" rx="125" ry="25" fill="#c9c2b5" opacity=".19"/></g>
-<path d="M109 112H510" stroke="#98282d" stroke-width="8"/><path d="M109 133H365" stroke="#30343a" stroke-width="2"/>
-<g opacity=".17" stroke="#d9d5cc" fill="none"><path d="M1315 222c-66 69-21 118-82 179-47 47-19 94-72 141" stroke-width="6"/><path d="M1360 207c-56 58-25 101-66 143" stroke-width="3"/></g>
-<rect x="0" y="0" width="1600" height="900" fill="none" stroke="#15181c" stroke-width="22"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1086 1448" role="img" aria-labelledby="t d"><title id="t">OMERTÀ 024 — Il Pentito</title><desc id="d">Affiche officielle du dossier 024.</desc><image href="omerta-024-il-pentito.webp?v=12.32" x="0" y="0" width="1086" height="1448" preserveAspectRatio="xMidYMid slice"/></svg>
