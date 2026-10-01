@@ -1,0 +1,33 @@
+/* Inside Grey Room — DLC copy format v12.46 */
+.omerta-dlc-section .omerta-head,
+.terror-dlc-section .terror-head,
+.cartel-dlc-section .dlc-suite-head,
+.regime-dlc-section .dlc-suite-head{
+  margin-bottom:14px;
+}
+.omerta-dlc-section .omerta-eyebrow,
+.terror-dlc-section .terror-eyebrow,
+.cartel-dlc-section .dlc-suite-eyebrow,
+.regime-dlc-section .dlc-suite-eyebrow{
+  display:block;
+  margin-bottom:8px;
+  font-size:.68rem;
+  font-weight:850;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.omerta-dlc-section .omerta-head h2,
+.terror-dlc-section .terror-head h2,
+.cartel-dlc-section .dlc-suite-head h2,
+.regime-dlc-section .dlc-suite-head h2{
+  margin:0 0 10px;
+}
+.omerta-dlc-section .omerta-head p,
+.terror-dlc-section .terror-head p,
+.cartel-dlc-section .dlc-suite-head p,
+.regime-dlc-section .dlc-suite-head p{
+  margin:0;
+  max-width:34rem;
+  line-height:1.45;
+}
+.terror-access-pill[hidden]{display:none!important}
