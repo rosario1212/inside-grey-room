@@ -167,3 +167,38 @@
   document.addEventListener('DOMContentLoaded',enhanceLobby,{once:true});
   setTimeout(enhanceLobby,0);
 })();
+
+/* v13.5 — HÉRITAGE + startup fixes bootstrap.
+   This file is already referenced by index.html in v13.2, so uploading/replacing it
+   activates the new mode without requiring an installer or an index.html edit. */
+(()=>{
+  'use strict';
+  const BUILD='v13.5-heritage-integrated';
+  const head=document.head||document.documentElement;
+
+  function loadStyle(id,href){
+    if(document.getElementById(id))return;
+    const link=document.createElement('link');
+    link.id=id;link.rel='stylesheet';link.href=href;
+    head.appendChild(link);
+  }
+  function loadScript(id,src){
+    return new Promise((resolve,reject)=>{
+      if(document.getElementById(id))return resolve();
+      const script=document.createElement('script');
+      script.id=id;script.src=src;script.async=false;
+      script.onload=resolve;script.onerror=()=>reject(new Error(`Unable to load ${src}`));
+      (document.body||head).appendChild(script);
+    });
+  }
+  async function bootHeritage(){
+    loadStyle('igr-startup-stability-v13-3-css',`startup-stability-v13-3.css?v=${BUILD}`);
+    loadStyle('igr-heritage-v13-5-css',`heritage-v13-5.css?v=${BUILD}`);
+    try{
+      if(!window.IGR_STARTUP_STABILITY)await loadScript('igr-startup-stability-v13-3-js',`startup-stability-v13-3.js?v=${BUILD}`);
+      if(!window.IGR_HERITAGE)await loadScript('igr-heritage-v13-5-js',`heritage-v13-5.js?v=${BUILD}`);
+    }catch(err){console.error('[IGR v13.5 bootstrap]',err)}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootHeritage,{once:true});
+  else queueMicrotask(bootHeritage);
+})();
