@@ -1,21 +1,25 @@
 {
-  "name": "Inside Grey Room v13.1 FINAL — Replayable 001-034 + DLC signatures",
-  "version": "13.1-final-replay-dlc",
-  "base": "v13 gameplay flow candidate",
+  "name": "Inside Grey Room v13.2 FINAL — Replayable 001-034 + DLC signatures + lobby UI fixes",
+  "version": "13.2-final-lobby-fix",
+  "base": "v13.1 FINAL replay + DLC",
   "runtime_flow_audited": "001-020",
   "dlc_extension": "021-034",
   "replay_contracts": "001-034 / minimum 3 canonical directions each",
+  "ui_fixes": [
+    "lobby → scenario list at previous scenario position",
+    "neutral selected-role state for 001-020; red reserved for OMERTA"
+  ],
   "heritage_mode": "not included",
   "files": [
     {
       "path": "README_INTEGRATION.md",
-      "bytes": 4612,
-      "sha256": "f4012d462f6d052ead439d4a878250c9edd6d786dca630a00fdc5f6dd0586770"
+      "bytes": 5549,
+      "sha256": "30d31495059f2ce67f3d60aa1ac19cc86d8b48b182f41c466726e27bf171454b"
     },
     {
       "path": "TEST_REPORT.md",
-      "bytes": 1908,
-      "sha256": "a743d180fbf6f1b48099e6ba2fa420149b1ba01be00175fc1d812908188a25af"
+      "bytes": 2028,
+      "sha256": "d1f5a8d22ac491ebea3b76814c7d3b36214ad971b68374e001e750e400ffaad7"
     },
     {
       "path": "dlc-experience-v13.css",
@@ -63,6 +67,11 @@
       "sha256": "fdadd13ec9d3a5a6b74c864dce4fe4b33b5e013b7ca0a33f7f9ef0b6205956df"
     },
     {
+      "path": "docs/UI_FIXES_V13_2.md",
+      "bytes": 1454,
+      "sha256": "71e0992b292f70ddc3789877391c69727cd152caceca84595d7616f7c7f927f2"
+    },
+    {
       "path": "gameplay-flow-v13.css",
       "bytes": 1447,
       "sha256": "cfc1250ea0b8b139e1545157d5f00f6a548ab48585b7fc28ec1d508811c5853a"
@@ -71,6 +80,16 @@
       "path": "gameplay-flow-v13.js",
       "bytes": 19585,
       "sha256": "96f2eaa68bc6797005b8868a557929fc5c4290f3242ca4fbbdf3a1f177fa3056"
+    },
+    {
+      "path": "lobby-ui-fix-v13.css",
+      "bytes": 2784,
+      "sha256": "d551ca76c084cc9cb7266d6cc543373f76877dfcc8d73fc131101f25e2b50d4e"
+    },
+    {
+      "path": "lobby-ui-fix-v13.js",
+      "bytes": 6017,
+      "sha256": "3b470251477892884a8c1930b3126b4ef08aad282ca5098a68d426b7de545640"
     },
     {
       "path": "scenario-flow-v13.js",
@@ -84,13 +103,13 @@
     },
     {
       "path": "scripts/install-v13-flow.mjs",
-      "bytes": 2690,
-      "sha256": "95bee7b862955b3e4ea8b79ad3826c739687a6654589c84d488729b18a9856fc"
+      "bytes": 4485,
+      "sha256": "cbd996062ff686432c285121f5140673fb9c0aa5bbd18f9930e2fce796a376d6"
     },
     {
       "path": "scripts/verify-v13-flow.mjs",
-      "bytes": 3792,
-      "sha256": "e1d0085437e8ca3581292a8ef677bf8e7c6acae5721c636cfaf8b562941bdf63"
+      "bytes": 4695,
+      "sha256": "4e54f83f3e55abc763cbda9d288bcf885f8df86699716d3cdafb7d07370b7f5c"
     },
     {
       "path": "supabase/gameplay-flow-v13.sql",

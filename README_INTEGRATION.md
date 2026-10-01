@@ -96,3 +96,21 @@ Les compteurs TERREUR/CARTEL/RÉGIME sont publics mais purement narratifs. Ils n
 ## Statut
 
 Cette archive est une **candidate finale d’intégration**, pas une migration déjà appliquée en production. Elle doit passer un playtest et un test de migration sur environnement de développement avant fusion dans `main`.
+
+## v13.2 — correctifs lobby iPhone
+
+Deux correctifs UI sont inclus dans `lobby-ui-fix-v13.js/.css` :
+
+1. **Retour vers les scénarios depuis le lobby de choix du rôle**
+   - le bouton `Quitter` du lobby devient `← Scénarios` ;
+   - il quitte proprement la cellule avant lancement ;
+   - il restaure la liste des scénarios au même niveau de défilement ;
+   - si la position n’est pas disponible, le dossier courant est recentré automatiquement.
+
+2. **001–020 restent strictement neutres lors du choix d’un rôle**
+   - suppression de toute fuite du thème rouge OMERTÀ dans les dossiers de base ;
+   - sélection visible par bordure/gris clair uniquement ;
+   - aucune vibration, pulsation, glow rouge ou transformation sur la carte sélectionnée ;
+   - OMERTÀ 021–025 conserve son identité rouge.
+
+Le correctif est chargé **après les couches DLC existantes** afin d’être le dernier garde-fou visuel du lobby.
