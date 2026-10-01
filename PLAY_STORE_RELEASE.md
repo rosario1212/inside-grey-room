@@ -1,19 +1,20 @@
 # Inside Grey Room — Android / Google Play release
 
 ## Current mobile stack
-- Capacitor 8.5.2 (stable)
+- Capacitor 8.5.2
 - Node.js 22+
 - Android compile/target SDK 36
 - Minimum Android SDK 24
 - Android application ID: `com.insidegreyroom.game`
 - Embedded local web bundle in `www/`
 - Supabase remains the shared multiplayer/profile backend
+- Private web beta DLC invite/code UI is excluded from the native Play bundle
 
 > The application ID should be changed **before the first Play Store upload** if another permanent package name is desired. Google Play treats the package/application ID as the app's permanent identity.
 
 ## Install locally
 1. Install Node.js 22 LTS or newer.
-2. Install Android Studio Otter (2025.2.1) or newer and Android SDK 36.
+2. Install a current Android Studio with Android SDK 36.
 3. In the repository root run:
 
 ```bash
@@ -35,6 +36,7 @@ npm run android:open
 From Android Studio choose a physical Android device whenever possible and run the `app` configuration. Validate at minimum:
 - intro/door animation;
 - create + join lobby;
+- one-device local mode;
 - cross-play Android ↔ web/PWA;
 - background/foreground resume;
 - network change Wi-Fi ↔ mobile data;
@@ -51,7 +53,7 @@ From Android Studio choose a physical Android device whenever possible and run t
 Local unsigned release bundle:
 
 ```bash
-npm run android:bundle
+ANDROID_VERSION_NAME=1.0.0 ANDROID_VERSION_CODE=1 npm run android:bundle
 ```
 
 Output:
@@ -78,6 +80,20 @@ Back up this file securely. To create the Base64 GitHub secret on macOS/Linux:
 base64 < inside-grey-room-upload.jks | tr -d '\n'
 ```
 
+## Premium content / Google Play Billing blocker
+
+Inside Grey Room already has premium DLC/access states. The private web/PWA beta may use owner-issued tester codes, but `scripts/build-mobile.mjs` removes that code-unlock module from the native Android bundle.
+
+Before selling any premium digital pack through the Google Play version:
+
+1. create the corresponding one-time products in Play Console;
+2. connect Google Play Billing purchase + restore/query behavior to `window.IGR_STORE_COMMERCE_ADAPTER`;
+3. verify purchase tokens server-side before granting the matching Supabase entitlement;
+4. correctly handle pending, cancelled, refunded/revoked and duplicate purchases;
+5. test with Play license testers/internal testing, including reinstall/new-device restore.
+
+Do not re-enable the legacy DLC invitation/code input as an alternative commercial unlock path inside the Play-distributed app.
+
 ## Play Console checklist
 ### App content
 - Privacy policy URL: `/privacy.html` on the production domain.
@@ -87,6 +103,7 @@ base64 < inside-grey-room-upload.jks | tr -d '\n'
 - Declare user-generated content/social interaction.
 - Declare camera and microphone use for live WebRTC communication.
 - Declare whether the app contains ads (current code contains no ad SDK).
+- Give reviewers the access instructions/resources required to exercise restricted functionality.
 
 ### Data Safety — verify against the final production build
 The service currently handles categories including:
@@ -111,4 +128,11 @@ Before multiplayer/social upload, the Play readiness layer requires acceptance o
 - Safety/support records may be retained for the limited period disclosed in the privacy policy where needed for abuse prevention/support.
 
 ## Before production submission
-A successful build does not by itself guarantee Play review approval. Run a closed test on real devices, keep the Play Console declarations consistent with the actual app, and review Google Play policy changes again on the day of submission.
+A successful build does not by itself guarantee Play review approval.
+
+1. Run `npm run store:check` and keep Android CI green.
+2. Verify the generated `www/` bundle contains no `dlc-invites-v12-45.js/css` references.
+3. If premium products are visible for sale, purchase + restore + revocation tests must pass through Google Play Billing.
+4. Run a closed test on real devices.
+5. Keep Play Console declarations consistent with the actual final app.
+6. Review Google Play policy changes again on the day of submission.
