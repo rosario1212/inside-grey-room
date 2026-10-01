@@ -1,13 +1,14 @@
-# Inside Grey Room — v12.43 Access Parity
+# Inside Grey Room — v12.46 DLC Copy Pass
 
-Patch minimal : TERREUR, CARTEL et LE RÉGIME utilisent maintenant la même présentation d’accès qu’OMERTÀ.
+Patch texte/UI uniquement. Aucun changement Supabase.
 
-- badge **ACCÈS PROPRIÉTAIRE** placé sous le titre / descriptif du DLC, avant les scénarios ;
-- plus de badge d’accès isolé en bas de la section ;
-- si le profil n’est pas propriétaire, les scénarios restent masqués et la section affiche **ACCÈS FERMÉ / DLC PRIVÉ** ;
-- la restriction serveur propriétaire déjà en place reste inchangée.
+## Nouvelles descriptions
+- OMERTÀ — `5 dossiers liés. Une Famiglia. Jusqu’au Don.`
+- TERREUR — `Bloqués dans la Grey Room. Un groupe terroriste s’empare de la ville. Le périmètre se referme.`
+- CARTEL — `Le cartel frappe l’enquête, achète la justice et remonte jusqu’à vos proches.`
+- LE RÉGIME — `Le régime est tombé. Les archives restent. Identifiez ceux qui ont ordonné, couvert et profité.`
 
-À mettre à la racine du dépôt :
-- `index.html`
-- `service-worker.js`
-- `dlc-suite-v12-37.js`
+Le format visuel des quatre en-têtes DLC est harmonisé et le label TERREUR `PRESSION ACTIVE` est supprimé car redondant.
+
+## Installation
+Dézipper à la racine du dépôt et remplacer les fichiers correspondants.
