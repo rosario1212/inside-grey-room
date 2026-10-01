@@ -3,18 +3,75 @@ const read=f=>fs.readFileSync(f,'utf8');
 const must=(f,parts)=>{const s=read(f);for(const p of parts)if(!s.includes(p))throw new Error(`${f}: missing ${p}`)};
 const mustNot=(f,parts)=>{const s=read(f);for(const p of parts)if(s.includes(p))throw new Error(`${f}: unexpected ${p}`)};
 
-must('index.html',['dlc-invites-v12-45.css?v=v12.45-dlc-invites','dlc-invites-v12-45.js?v=v12.45-dlc-invites','omerta-v12-39.js?v=v12.45-choice-copy','dlc-copy-v12-46.css?v=v12.46-copy','dlc-copy-v12-46.js?v=v12.46-copy','gameplay-flow-v13.css?v=v13.2-final','dlc-experience-v13.css?v=v13.2-final','lobby-ui-fix-v13.css?v=v13.2-lobby-fix','scenario-flow-v13.js?v=v13.2-final','gameplay-flow-v13.js?v=v13.2-final','dlc-experience-v13.js?v=v13.2-final','lobby-ui-fix-v13.js?v=v13.2-lobby-fix']);
+must('index.html',[
+  'dlc-invites-v12-45.css?v=v12.45-dlc-invites',
+  'dlc-invites-v12-45.js?v=v12.45-dlc-invites',
+  'omerta-v12-39.js?v=v12.45-choice-copy',
+  'dlc-copy-v12-46.css?v=v12.46-copy',
+  'dlc-copy-v12-46.js?v=v12.46-copy',
+  'gameplay-flow-v13.css?v=v13.2-final',
+  'dlc-experience-v13.css?v=v13.2-final',
+  'lobby-ui-fix-v13.css?v=v13.2-lobby-fix',
+  'scenario-flow-v13.js?v=v13.2-final',
+  'gameplay-flow-v13.js?v=v13.2-final',
+  'dlc-experience-v13.js?v=v13.2-final',
+  'lobby-ui-fix-v13.js?v=v13.2-lobby-fix'
+]);
+
 must('dlc-invites-v12-45.js',['igr_dlc_create_invite','igr_dlc_redeem_invite','igr_dlc_list_access','Gérer les accès','Code d’accès']);
 must('dlc-invites-v12-45.css',['.igr-dlc-access-modal','.igr-dlc-new-code','.igr-dlc-access-action']);
 must('omerta-v12-39.js',['igr-choice-status-note','Aucun rôle choisi']);
 mustNot('omerta-v12-39.js',['igr-choice-status-empty']);
-must('service-worker.js',["igr-v13-6-heritage-premium",'/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/omerta-v12-39.js?v=v12.45-choice-copy','/dlc-copy-v12-46.js?v=v12.46-copy','/dlc-copy-v12-46.css?v=v12.46-copy','/gameplay-flow-v13.js?v=v13.2-final','/dlc-experience-v13.js?v=v13.2-final','/lobby-ui-fix-v13.js?v=v13.2-lobby-fix','/heritage-v13-5.js?v=v13.6-heritage-premium','/heritage-premium-v13-6.js?v=v13.6-heritage-premium','/heritage-premium-v13-6.css?v=v13.6-heritage-premium']);
-must('scripts/build-web.mjs',['dlc-invites-v12-45.js','dlc-invites-v12-45.css','dlc-copy-v12-46.js','dlc-copy-v12-46.css','gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js','heritage-v13-5.js','heritage-premium-v13-6.js','heritage-premium-v13-6.css']);
-must('scripts/build-mobile.mjs',['dlc-invites-v12-45.js','dlc-invites-v12-45.css','dlc-copy-v12-46.js','dlc-copy-v12-46.css','gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js','heritage-v13-5.js','heritage-premium-v13-6.js','heritage-premium-v13-6.css']);
+
+must('service-worker.js',[
+  'igr-v13-8-dual-play',
+  '/play-modes-v13-8.js?v=v13.8-dual-play',
+  '/play-modes-v13-8.css?v=v13.8-dual-play',
+  '/heritage-play-v13-7.js?v=v13.8-dual-play',
+  '/heritage-play-v13-7.css?v=v13.8-dual-play',
+  '/heritage-v13-5.js?v=v13.8-dual-play',
+  '/heritage-premium-v13-6.js?v=v13.8-dual-play',
+  '/heritage-premium-v13-6.css?v=v13.8-dual-play',
+  '/dlc-invites-v12-45.js?v=v12.45-dlc-invites',
+  '/dlc-invites-v12-45.css?v=v12.45-dlc-invites',
+  '/omerta-v12-39.js?v=v12.45-choice-copy',
+  '/dlc-copy-v12-46.js?v=v12.46-copy',
+  '/dlc-copy-v12-46.css?v=v12.46-copy',
+  '/gameplay-flow-v13.js?v=v13.2-final',
+  '/dlc-experience-v13.js?v=v13.2-final',
+  '/lobby-ui-fix-v13.js?v=v13.2-lobby-fix'
+]);
+
+must('scripts/build-web.mjs',[
+  'play-modes-v13-8.js','play-modes-v13-8.css',
+  'heritage-play-v13-7.js','heritage-play-v13-7.css',
+  'heritage-v13-5.js','heritage-premium-v13-6.js','heritage-premium-v13-6.css',
+  'dlc-invites-v12-45.js','dlc-invites-v12-45.css',
+  'dlc-copy-v12-46.js','dlc-copy-v12-46.css',
+  'gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js'
+]);
+
+must('scripts/build-mobile.mjs',[
+  'play-modes-v13-8.js','play-modes-v13-8.css',
+  'heritage-play-v13-7.js','heritage-play-v13-7.css',
+  'heritage-v13-5.js','heritage-premium-v13-6.js','heritage-premium-v13-6.css',
+  'dlc-invites-v12-45.js','dlc-invites-v12-45.css',
+  'dlc-copy-v12-46.js','dlc-copy-v12-46.css',
+  'gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js'
+]);
+
 must('supabase/migrations/20261001_dlc_invites_v12_45.sql',['igr_dlc_invites','igr_dlc_create_invite','igr_dlc_redeem_invite','wrong_dlc','cannot_revoke_owner']);
 must('supabase/migrations/20261001_heritage_premium_access_v13_6.sql',["'heritage'",'igr_dlc_access_status','igr_dlc_grant_access','igr_dlc_revoke_access']);
 must('heritage-premium-v13-6.js',['igr_dlc_access_status','ACCÈS LIMITÉ','window.IGR_HERITAGE_PREMIUM']);
 must('heritage-premium-v13-6.css',['.heritage-premium-home-action','.heritage-premium-modal','.heritage-premium-lock']);
-must('dlc-copy-v12-46.js',['5 dossiers liés. Une Famiglia. Jusqu’au Don.','Bloqués dans la Grey Room. Un groupe terroriste s’empare de la ville. Le périmètre se referme.','Le cartel frappe l’enquête, achète la justice et remonte jusqu’à vos proches.','Le régime est tombé. Les archives restent. Identifiez ceux qui ont ordonné, couvert et profité.']);
+must('play-modes-v13-8.js',['v13.8-dual-play','igr_local_scenario_pack','igr_heritage_online_create','igr_heritage_online_join']);
+must('play-modes-v13-8.css',['.dual-mode-chooser','.dual-mode-card','.heritage-dual-row']);
+must('dlc-copy-v12-46.js',[
+  '5 dossiers liés. Une Famiglia. Jusqu’au Don.',
+  'Bloqués dans la Grey Room. Un groupe terroriste s’empare de la ville. Le périmètre se referme.',
+  'Le cartel frappe l’enquête, achète la justice et remonte jusqu’à vos proches.',
+  'Le régime est tombé. Les archives restent. Identifiez ceux qui ont ordonné, couvert et profité.'
+]);
 must('dlc-copy-v12-46.css',['.terror-access-pill[hidden]']);
-console.log('v13.6 Heritage premium + v13.2 runtime + v12.46 DLC regression markers OK');
+
+console.log('v13.8 Dual Play + Heritage premium + v13.2 runtime + v12.46 DLC regression markers OK');
