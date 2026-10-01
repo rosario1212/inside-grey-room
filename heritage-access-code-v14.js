@@ -124,13 +124,13 @@
   }
   async function decorateOwnerCard(){
     const card=document.querySelector('.heritage-premium-home-action');if(!card)return;
-    card.querySelector('.heritage-code-owner-action')?.remove();
+    const existing=card.querySelector('.heritage-code-owner-action');
     let current;try{current=await window.IGR_HERITAGE_PREMIUM?.check?.()}catch{return}
-    if(!current?.active||current.level!=='owner'||!card.isConnected)return;
-    const side=card.querySelector('.heritage-premium-side')||card;
-    const btn=document.createElement('button');btn.type='button';btn.className='btn ghost small heritage-code-owner-action';btn.textContent='Codes test';btn.style.cssText='margin-top:6px;position:relative;z-index:3;';
+    if(!current?.active||current.level!=='owner'||!card.isConnected){existing?.remove();return}
+    if(existing)return;
+    const btn=document.createElement('button');btn.type='button';btn.className='btn ghost small heritage-code-owner-action';btn.textContent='Codes test';btn.style.cssText='margin-top:6px;position:relative;z-index:3;align-self:center;';
     btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();openAccess()});
-    side.appendChild(btn);
+    card.appendChild(btn);
   }
   let queued=false;
   function scheduleDecorate(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorateLockedModal();decorateOwnerCard()})}
