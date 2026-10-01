@@ -1,14 +1,15 @@
-/* Inside Grey Room v14 — HÉRITAGE playtest access codes
+/* Inside Grey Room v14.1 — HÉRITAGE playtest access codes
    Web/PWA beta only. Native store bundles intentionally do not ship this file. */
 (() => {
   'use strict';
 
-  const VERSION='14-heritage-access-code';
+  const VERSION='14.1-heritage-access-code';
   const DLC_KEY='heritage';
   const LABEL='HÉRITAGE';
   const PREFIX='HER';
   const IDENTITY_KEY='igr_social_identity_v1';
   let busy=false;
+  let ownerDecorationPending=false;
 
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const store=()=>{try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}};
@@ -122,16 +123,27 @@
     btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();modal.remove();openAccess()});
     actions.prepend(btn);modal.dataset.heritageCodeReady='1';
   }
+
   async function decorateOwnerCard(){
-    const card=document.querySelector('.heritage-premium-home-action');if(!card)return;
-    const existing=card.querySelector('.heritage-code-owner-action');
-    let current;try{current=await window.IGR_HERITAGE_PREMIUM?.check?.()}catch{return}
-    if(!current?.active||current.level!=='owner'||!card.isConnected){existing?.remove();return}
-    if(existing)return;
-    const btn=document.createElement('button');btn.type='button';btn.className='btn ghost small heritage-code-owner-action';btn.textContent='Codes test';btn.style.cssText='margin-top:6px;position:relative;z-index:3;align-self:center;';
-    btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();openAccess()});
-    card.appendChild(btn);
+    if(ownerDecorationPending)return;
+    ownerDecorationPending=true;
+    try{
+      const card=document.querySelector('.heritage-premium-home-action');if(!card)return;
+      const duplicates=[...card.querySelectorAll('.heritage-code-owner-action')];
+      duplicates.slice(1).forEach(el=>el.remove());
+      let current;try{current=await window.IGR_HERITAGE_PREMIUM?.check?.()}catch{return}
+      if(!card.isConnected)return;
+      const existing=card.querySelector('.heritage-code-owner-action');
+      if(!current?.active||current.level!=='owner'){existing?.remove();return}
+      if(existing)return;
+      const side=card.querySelector('.heritage-premium-side')||card;
+      const btn=document.createElement('button');
+      btn.type='button';btn.className='heritage-code-owner-action';btn.textContent='TESTEURS';btn.setAttribute('aria-label','Gérer les codes de test HÉRITAGE');btn.style.cssText='appearance:none;-webkit-appearance:none;border:0;background:transparent;padding:2px 0;margin:0;color:#8f989d;font:700 7px/1 \"IBM Plex Mono\",monospace;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;position:relative;z-index:4;cursor:pointer;';
+      btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();openAccess()});
+      side.appendChild(btn);
+    }finally{ownerDecorationPending=false}
   }
+
   let queued=false;
   function scheduleDecorate(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorateLockedModal();decorateOwnerCard()})}
   const observer=new MutationObserver(scheduleDecorate);
