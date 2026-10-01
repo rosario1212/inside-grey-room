@@ -1,0 +1,10 @@
+/* Inside Grey Room v13.1 — DLC world-state surface. No theme colors are forced here. */
+.v13-world-state{display:grid;gap:8px;margin:10px 0 14px;padding:10px 12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22)}
+.v13-world-state__head{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.v13-world-state__head b{font-size:.72rem;letter-spacing:.14em}
+.v13-world-state__metrics{display:flex;gap:8px 14px;flex-wrap:wrap;font-size:.8rem;opacity:.84}
+.v13-district-grid{display:grid;grid-template-columns:repeat(12,minmax(4px,1fr));gap:3px}
+.v13-district-grid span{height:7px;background:rgba(255,255,255,.16)}
+.v13-district-grid span.is-held{background:rgba(255,255,255,.72)}
+.v13-signature-card{margin:12px 0;padding:11px 12px;border-left:2px solid rgba(255,255,255,.26);background:rgba(255,255,255,.025)}
+.v13-signature-card small{display:block;opacity:.62;letter-spacing:.12em;margin-bottom:4px}

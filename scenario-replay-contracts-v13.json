@@ -1,0 +1,841 @@
+{
+  "version": "13.1-final-replay-contracts",
+  "rule": "Un joueur qui rejoue un scénario ne doit jamais pouvoir résoudre la partie de mémoire.",
+  "selection": {
+    "server_only": true,
+    "minimum_variants_per_scenario": 3,
+    "selected_at_game_start": true,
+    "immutable_during_match": true,
+    "never_exposed_to_clients": true,
+    "adaptive_director_may_change_truth": false
+  },
+  "variation_axes": [
+    "canonical_truth",
+    "responsibility_levels",
+    "private_relations",
+    "chronology",
+    "primary_secondary_objectives",
+    "trame_pool",
+    "c2_c3_event_pool",
+    "available_confrontations",
+    "institutional_conflict"
+  ],
+  "scenarios": {
+    "001": {
+      "title": "LA CHAMBRE 222",
+      "invariant": "Hôtel, horaires, passages, responsabilité",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "L’intimidateur quitte Maël vivant; l’homme venu ensuite porte le geste mortel."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La première altercation provoque la blessure fatale; le visiteur suivant ne fait que dissimuler ce qu’il découvre."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le troisième passage devient central: une intervention imprévue provoque la mort tandis que les deux premiers cachent chacun un autre fait."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "002": {
+      "title": "LE SILENCE DE LÉON",
+      "invariant": "Suicide, pression, responsabilité sans causalité simpliste",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Une pression directe et répétée pèse le plus lourd, les autres fautes restant périphériques."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La responsabilité principale vient d’une occasion concrète d’intervention volontairement ignorée."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Aucun acteur n’explique seul l’issue: les responsabilités se répartissent entre pression, abandon et dissimulation."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "003": {
+      "title": "LE DERNIER PROTOCOLE",
+      "invariant": "Chaîne scientifique et institutionnelle",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "La rupture vient d’un ordre de poursuite malgré un signal d’arrêt."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La validation technique défaillante devient le maillon décisif."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Un transfert non autorisé crée la condition critique; les autres acteurs couvrent ensuite leur part."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "004": {
+      "title": "LES TROIS ABSENTS",
+      "invariant": "Overdose, appels, fenêtres d’intervention",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Une personne possédait une fenêtre réaliste de sauvetage et choisit de ne pas agir."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Deux personnes se coordonnent pour minimiser ce qu’elles ont compris pendant la nuit."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La chronologie des appels change le centre de gravité: celui qui semblait le plus absent n’est pas celui qui pouvait encore intervenir."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "005": {
+      "title": "LE MASQUE BLANC",
+      "invariant": "Mise en scène, faux coupable, recontextualisation",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le rituel est entièrement postérieur au meurtre et sert à détourner l’enquête."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le masque provient d’un événement antérieur sans lien avec la mort; l’erreur consiste à lui donner trop de poids."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Une intimidation mise en scène dégénère, puis un tiers reconstruit la scène pour protéger quelqu’un."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "006": {
+      "title": "LES CENDRES DU CHALET",
+      "invariant": "Mémoire collective, chute, secret de groupe",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "La chute est accidentelle mais le groupe organise ensuite un mensonge collectif."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Une confrontation physique provoque réellement la chute; le pacte protège son auteur."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La victime survit d’abord; la responsabilité principale vient du refus volontaire d’appeler les secours."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "007": {
+      "title": "LE TESTAMENT GRIS",
+      "invariant": "Héritage, intérêts, renversement",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Un projet de modification du testament crée un mobile mais le décès vient d’un autre conflit."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Une dette dissimulée devient le vrai moteur de l’acte principal."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Une filiation cachée change le bénéficiaire réel et reconfigure totalement les intérêts de chacun."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "008": {
+      "title": "SOUS SERMENT",
+      "invariant": "Mensonge, témoignage, responsabilité distincte",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le principal menteur protège une relation privée et n’est pas responsable du fait principal."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le mensonge cache une faute procédurale qui a rendu l’événement possible."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le témoin le plus cohérent porte la responsabilité réelle tandis qu’un autre ment seulement par peur."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "009": {
+      "title": "LE SUJET 17",
+      "invariant": "Consentement, mémoire, expertise",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le retrait de consentement est ignoré par la direction du programme."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le point critique vient d’une décision clinique individuelle prise après le retrait."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La chronologie de l’amnésie et des notes modifiées révèle une responsabilité institutionnelle différente de celle attendue."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "010": {
+      "title": "LE BRUIT DES MURS",
+      "invariant": "Accès, sons, enfermement, abandon",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Une personne verrouille volontairement la paroi."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La fermeture est accidentelle; la responsabilité vient de bruits volontairement ignorés."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Un acteur comprend exactement où se trouve Nora mais choisit de ne pas intervenir pour protéger un autre secret."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "011": {
+      "title": "36 HEURES",
+      "invariant": "Chaîne de commandement",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Un ordre initial est illégal et sa transmission explique l’essentiel."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "L’ordre initial est défendable mais un exécutant dépasse volontairement son cadre."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "L’acte principal est suivi d’une réécriture du rapport qui redistribue la responsabilité vers le commandement."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "012": {
+      "title": "FIDÈLES",
+      "invariant": "Communauté fermée, rétention, emprise",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le dirigeant donne réellement l’ordre de retenir Sacha."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Une consigne ambiguë est radicalisée par le groupe sans ordre explicite."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Un membre agit de sa propre initiative; le groupe devient responsable surtout lorsqu’il choisit ensuite de couvrir l’acte."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "013": {
+      "title": "LIGNE DE MIRE",
+      "invariant": "Assassinat, financement, accès, exécution",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le tireur est recruté par une chaîne classique de commandement et financement."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le financeur décide réellement de l’assassinat tandis que le coordinateur ignore la cible finale."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La faille de sécurité est volontairement créée de l’intérieur et devient le maillon central, le tireur restant matériellement responsable."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "014": {
+      "title": "SOUS SECRET",
+      "invariant": "Fuite, sources, contre-espionnage",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "La fuite est volontaire et vise une source précise."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La catastrophe vient d’une protection de source mal exécutée plutôt que d’une trahison directe."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Une fausse piste de contre-espionnage fait croire à une fuite interne alors qu’un accès légitime a été détourné."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "015": {
+      "title": "AVANT LA MORT",
+      "invariant": "Hôpital, programme, décisions institutionnelles",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "La direction maintient le programme malgré les alertes."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le clinicien devient le décideur principal en outrepassant une recommandation d’arrêt."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La chaîne administrative retarde une sortie possible puis réécrit le dossier, déplaçant la responsabilité principale."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "016": {
+      "title": "LE DERNIER ÉTAGE",
+      "invariant": "Violence filmée, meurtre hors caméra",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "L’exécutant resté après la coupure choisit seul le meurtre."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "L’organisateur revient après la vidéo et prend lui-même la décision létale."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La mort résulte du dispositif d’humiliation et de sédation sans geste meurtrier distinct; la dissimulation devient ensuite collective."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "017": {
+      "title": "LE PRIX DU SILENCE",
+      "invariant": "Enlèvement, témoin, accords",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Un captif est tué par un exécutant qui dépasse la consigne initiale."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La victime pouvait être libérée mais un acteur choisit de prolonger la rétention."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Une négociation conclue en cours de séquestration modifie les responsabilités: celui qui semblait secondaire devient le maillon décisif."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "018": {
+      "title": "LES ASSIETTES VIDES",
+      "invariant": "Ancien foyer, scène déplacée, terrain",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Un ancien résident tue l’ancien directeur et déplace ensuite la scène."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La mort précède la mise en scène: une personne innocente du meurtre déplace le corps pour produire un message."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Un projet collectif d’intimidation dérape lorsqu’un participant agit seul, puis les autres réorganisent la scène."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "019": {
+      "title": "LE GRAND BAL",
+      "invariant": "Gala, institutions, sécurité, influence",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le chef de sécurité décide seul du meurtre après avoir reçu une demande de pression."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La figure d’influence donne cette fois un ordre suffisamment précis pour devenir commanditaire principal."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "L’intermédiaire institutionnel agit de sa propre initiative pour protéger le système puis organise la dissimulation."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "020": {
+      "title": "L’APOTHÉOSE",
+      "invariant": "Incendie, système, responsabilités superposées",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Un feu volontaire devient catastrophe à cause des sorties verrouillées et des systèmes défaillants."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le départ de feu est accidentel; la responsabilité principale devient entièrement systémique et décisionnelle."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Une diversion volontaire reste limitée au départ mais le retard d’évacuation, cette fois délibéré, devient le facteur humain dominant."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "021": {
+      "title": "L’ENVELOPPE",
+      "invariant": "OMERTÀ — argent, fuite, cercle de connaissance",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Paolo détourne volontairement l’enveloppe après avoir découvert un paiement caché."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Luca modifie l’itinéraire sur pression d’un supérieur; Paolo est seulement celui qui comprend ensuite la fraude."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Il n’y a pas de vol initial: une double comptabilité crée un manque apparent que quelqu’un transforme ensuite en occasion de chantage."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "022": {
+      "title": "OMERTÀ",
+      "invariant": "OMERTÀ — ordre ambigu, meurtre interne, silence",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Luca tue après une formulation ambiguë de Rinaldi."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "L’ordre est cette fois transmis par un intermédiaire et devient suffisamment explicite pour engager le sommet local."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le meurtre est une initiative personnelle; l’omertà postérieure donne l’illusion d’un ordre hiérarchique qui n’existait pas."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "023": {
+      "title": "LA TABLE",
+      "invariant": "OMERTÀ — négociation, fuite, attaque contre Adriano",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "La fuite vient du cercle familial proche des négociations."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La chaise vide correspond à un intermédiaire qui vend l’itinéraire d’Adriano."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La sécurité connaît une faille avant la réunion; un rival ne fait que l’exploiter, ce qui déplace la responsabilité."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "024": {
+      "title": "IL PENTITO",
+      "invariant": "OMERTÀ — coopération, protection, source",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Paolo devient la source principale et doit choisir jusqu’où remonter."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Nico détient l’information décisive tandis que Paolo sert de diversion involontaire."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Deux sources coopèrent séparément; la Famiglia croit chercher une seule taupe et interprète mal les fuites."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "025": {
+      "title": "IL DON",
+      "invariant": "OMERTÀ — commandement, tolérance, initiatives",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Vittorio a réellement autorisé plusieurs méthodes sans dicter chaque violence."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Les intermédiaires ont systématiquement radicalisé ses demandes et utilisé son nom pour obtenir l’obéissance."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Adriano prend plusieurs décisions en invoquant son père sans accord préalable, créant une fausse chaîne de commandement."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "026": {
+      "title": "LA VILLE TOMBE",
+      "invariant": "TERREUR — ville qui chute, autorité extérieure, responsabilité",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "La figure idéologique connaît l’objectif visant le périmètre judiciaire."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le coordinateur, et non la figure idéologique, détient l’information centrale sur la continuité du réseau."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le soutien administratif possède la seule information permettant de comprendre pourquoi certains secteurs tombent institutionnellement, sans être l’auteur principal des atrocités."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "027": {
+      "title": "LA ZONE ROUGE",
+      "invariant": "TERREUR — vérité sélectionnée, décision sous pression",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le cadre supérieur donne beaucoup de vérités pour faire disparaître ses rivaux."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le coopérant intermédiaire sélectionne les vérités pour protéger une autre branche du groupe."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La source principale est sincère, mais ses informations sont devenues obsolètes; un autre suspect exploite cette erreur sans mentir directement."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "028": {
+      "title": "DERNIER PÉRIMÈTRE",
+      "invariant": "TERREUR — cellule intérieure, coopération, effondrement",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le troisième suspect a validé le maintien d’une présence clandestine intérieure."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le premier suspect a fourni auparavant un accès qu’il pensait désactivé et cache désormais sa responsabilité."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le deuxième a livré des données administratives utilisées pour maintenir une présence interne; il coopère sincèrement mais minimise ce rôle."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "029": {
+      "title": "LE CYCLE MORT",
+      "invariant": "CARTEL — représailles, source, chaîne de décision",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le responsable local lance l’intimidation qui devient meurtrière."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "L’exécutant dépasse volontairement une consigne limitée et devient le principal responsable."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le financier autorise directement une représaille après avoir prétendu ne gérer que les paiements."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "030": {
+      "title": "LA COUR ACHETÉE",
+      "invariant": "CARTEL — justice contaminée, argent, décisions",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "L’intermédiaire institutionnel participe consciemment à une décision achetée."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "La décision judiciaire contestée reste juridiquement défendable; la corruption réelle se situe dans la menace contre un témoin."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "La chaîne financière vise surtout le parquet et non le juge, déplaçant complètement la lecture institutionnelle."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "031": {
+      "title": "LA DETTE",
+      "invariant": "CARTEL — enlèvement, négociation, engagement",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le responsable violent initie l’enlèvement et fixe les exigences."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le gardien poursuit la rétention après le retrait de l’ordre initial et devient le maillon principal."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le négociateur conditionne sciemment la libération à une concession et transforme son rôle supposé secondaire en responsabilité centrale."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "032": {
+      "title": "LES ARCHIVES DU PALAIS",
+      "invariant": "LE RÉGIME — archives, ordres, appareil d’État",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le responsable de sécurité transforme des directives générales en détentions abusives."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le conseiller du palais désigne précisément les cibles et porte la responsabilité politique principale."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "L’administrateur modifie consciemment les listes après avoir appris les abus, devenant un acteur décisionnel plutôt qu’un simple exécutant."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "033": {
+      "title": "LA DYNASTIE",
+      "invariant": "LE RÉGIME — famille, titres, pouvoir réel",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Le conseiller sans titre exerce le pouvoir réel le plus important."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Le ministre, présenté comme simple protecteur, contrôle en réalité les décisions essentielles."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Le financier familial devient le centre de pouvoir par le contrôle des ressources et des nominations indirectes."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    },
+    "034": {
+      "title": "LES NOMS QU’ILS PORTAIENT",
+      "invariant": "LE RÉGIME — surnoms rotatifs, fonctions, pouvoir",
+      "variants": [
+        {
+          "id": "A",
+          "canonical_direction": "Les fonctions NOTAIRE / TOUR / HÉRITIER correspondent à une première répartition sur les opérations critiques."
+        },
+        {
+          "id": "B",
+          "canonical_direction": "Les surnoms tournent entre deux opérations et rendent fausse toute attribution permanente à une personne."
+        },
+        {
+          "id": "C",
+          "canonical_direction": "Une fausse hiérarchie volontaire utilise les mêmes surnoms pour masquer qui décide réellement; seule la fonction exercée à chaque opération est fiable."
+        }
+      ],
+      "must_not_be_fixed": [
+        "responsable_principal",
+        "relation_secrete_centrale",
+        "ordre_des_revelations"
+      ],
+      "note": "Les trois directions sont des contrats d’auteur: chacune doit disposer de cartes privées, trames et révélation compatibles avant activation en production."
+    }
+  }
+}

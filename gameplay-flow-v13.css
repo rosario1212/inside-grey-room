@@ -1,0 +1,18 @@
+/* Inside Grey Room v13 — gameplay flow overlay. Deliberately small: no global reset, no layout rewrite. */
+.v13-preinvestigation,.v13-event-panel,.v13-objectives,.v13-event-status{display:grid;gap:12px}
+.v13-event-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.v13-event-btn{min-height:64px;text-align:left}
+.v13-event-btn small{display:block;opacity:.72;margin-top:4px;font-weight:500}
+.v13-objectives{margin:14px 0}
+.v13-objective{border:1px solid rgba(255,255,255,.13);padding:12px 14px;background:rgba(255,255,255,.025)}
+.v13-objective b{display:block;font-size:.72rem;letter-spacing:.12em;margin-bottom:7px;opacity:.7}
+.v13-objective p{margin:0;line-height:1.45}
+.v13-social-note{border-left:2px solid rgba(255,255,255,.2);padding:10px 12px;margin-top:12px;background:rgba(255,255,255,.02)}
+.v13-target-picker{display:grid;gap:10px;margin-top:12px}
+.v13-target-picker select{width:100%}
+.v13-assembly-list{display:grid;gap:8px;margin:12px 0}
+.v13-assembly-person{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid rgba(255,255,255,.1)}
+.v13-locked{opacity:.7}
+.v13-cold-banner{padding:12px 14px;border:1px solid rgba(255,255,255,.15);letter-spacing:.04em;background:rgba(0,0,0,.3)}
+.v13-cold-banner strong{display:block;font-size:.78rem;letter-spacing:.14em;margin-bottom:5px}
+@media(max-width:600px){.v13-event-grid{grid-template-columns:1fr}.v13-event-btn{min-height:58px}}
