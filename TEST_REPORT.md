@@ -1,38 +1,49 @@
-# Test report — v13.1 FINAL replay + DLC
+# Test report — v13.2 FINAL replay + DLC + lobby UI
 
 ## Contrôles exécutés
 
 - `node --check scenario-flow-v13.js` : PASS
 - `node --check gameplay-flow-v13.js` : PASS
 - `node --check dlc-experience-v13.js` : PASS
+- `node --check lobby-ui-fix-v13.js` : PASS
 - `node --check scripts/install-v13-flow.mjs` : PASS
 - `node --check scripts/verify-v13-flow.mjs` : PASS
-- `node scripts/verify-v13-flow.mjs` : **45/45 PASS**
-- installateur exécuté deux fois sur un mock de la structure actuelle : **idempotence PASS**
+- `node scripts/verify-v13-flow.mjs` : **55/55 PASS**
+- upgrade installateur v13.1 → v13.2 : PASS
+- installateur v13.2 exécuté deux fois : **idempotence PASS**
+- `index.html` : une seule référence CSS + une seule référence JS du correctif : PASS
+- service worker : une seule référence CSS + une seule référence JS du correctif : PASS
+- cache service worker : `igr-v13-2-final-lobby-fix` : PASS
 - JSON replay : **34/34 scénarios**, minimum 3 directions canoniques chacun
-- équilibre lexical SQL principal : PASS
-- équilibre lexical SQL replay/DLC : PASS
 
-## Ce qui est réellement implémenté dans le bundle
+## Correctifs v13.2 vérifiés statiquement
+
+- action lobby `← Scénarios` présente ;
+- conservation de `createListScrollY` ;
+- fallback vers `#scenario-XXX` ;
+- dossiers 001–020 explicitement identifiés comme base ;
+- classes OMERTÀ/DLC nettoyées dans un lobby de base ;
+- style sélectionné 001–020 sans rouge ;
+- animation/transformation de la carte sélectionnée neutralisée ;
+- chargement du correctif après les couches DLC existantes.
+
+## Fonctionnalités v13.1 conservées
 
 - socle v13 de rythme 001–020 ;
 - registre des mécaniques signature 021–034 ;
-- HUD/état narratif DLC prêt à être branché ;
-- primitives serveur pour sélectionner une variante sans l’exposer au client ;
-- refus de considérer un scénario replay-ready avec moins de 3 variantes ;
-- contrats d’auteur pour 3 directions canoniques minimum sur chacun des 34 scénarios ;
-- documentation précise de la ville TERREUR, de la Famiglia OMERTÀ, de la pression CARTEL et du pouvoir réel LE RÉGIME.
-
-## Garde-fou important
-
-Les 102 directions décrites dans `scenario-replay-contracts-v13.json` sont des **contrats canoniques**, pas des preuves générées automatiquement. Une direction doit recevoir ses cartes privées, relations, objectifs, trames et révélation complètes avant d’être ajoutée à `pack.replay_variants`. Le moteur refuse donc de « fabriquer » une intrigue au milieu d’une partie.
+- HUD/état narratif DLC ;
+- primitives serveur de variantes rejouables ;
+- 34 contrats anti-mémoire, minimum 3 directions canoniques chacun ;
+- TERREUR : ville/quartiers/périmètre/liaison ;
+- OMERTÀ : continuité Famiglia ;
+- CARTEL : pression institutionnelle ;
+- LE RÉGIME : pouvoir réel et surnoms rotatifs.
 
 ## Non exécuté volontairement
 
 - aucune migration appliquée à Supabase production ;
 - aucun push ou merge GitHub ;
 - aucun playtest multijoueur physique ;
-- aucun test iPhone/Android physique ;
-- aucune variante incomplète activée en production.
+- aucun test sur iPhone/Android physique.
 
-Ces tests restent obligatoires avant fusion dans `main`.
+Une régression iPhone PWA réelle reste obligatoire avant fusion dans `main`.

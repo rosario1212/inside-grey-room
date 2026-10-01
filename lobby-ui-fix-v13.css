@@ -1,0 +1,78 @@
+/* Inside Grey Room — v13.2 lobby navigation + neutral base-role selection */
+
+/* Back action stays compact on iPhone and respects the existing page-head hierarchy. */
+.igr-v13-back-scenarios{
+  white-space:nowrap;
+  flex:0 0 auto;
+}
+
+/* 001–020: selected role = calm neutral confirmation. Red belongs to OMERTÀ only. */
+body.igr-v13-base-lobby .role-choice-zone,
+body.igr-v13-base-lobby .role-choice-grid,
+body.igr-v13-base-lobby .igr-choice-status{
+  animation:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+body.igr-v13-base-lobby .role-choice-zone .role-choice-card{
+  border-color:rgba(226,234,240,.14)!important;
+  background:#0b0f13!important;
+  box-shadow:none!important;
+  color:#f4f6f8!important;
+}
+body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected{
+  border-color:rgba(232,238,243,.48)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.032))!important;
+  box-shadow:inset 3px 0 0 rgba(232,238,243,.30)!important;
+  color:#f7f8fa!important;
+  animation:none!important;
+  transform:none!important;
+  filter:none!important;
+  transition:background-color .12s ease,border-color .12s ease!important;
+}
+body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected *,
+body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected::before,
+body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected::after{
+  animation:none!important;
+  transform:none!important;
+  filter:none!important;
+  text-shadow:none!important;
+}
+body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected em{
+  color:#f2f5f7!important;
+}
+body.igr-v13-base-lobby .igr-choice-status{
+  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(8,9,11,.96))!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:inset 3px 0 0 rgba(255,255,255,.06)!important;
+}
+body.igr-v13-base-lobby .igr-choice-status-kicker,
+body.igr-v13-base-lobby .igr-choice-status-note,
+body.igr-v13-base-lobby .igr-choice-status-empty{
+  color:#9ea6ae!important;
+}
+body.igr-v13-base-lobby .igr-choice-status-title{
+  color:#f4f6f8!important;
+}
+body.igr-v13-base-lobby .igr-choice-status-button{
+  border-color:rgba(255,255,255,.16)!important;
+  background:rgba(255,255,255,.03)!important;
+  color:#f4f6f8!important;
+  box-shadow:none!important;
+  animation:none!important;
+  transform:none!important;
+}
+
+/* A brief neutral locator when returning to the scenario list; no red flash. */
+.igr-v13-return-target{
+  outline:1px solid rgba(235,240,244,.34)!important;
+  outline-offset:3px;
+}
+
+@media(max-width:520px){
+  .igr-v13-back-scenarios{padding-left:12px!important;padding-right:12px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .igr-v13-return-target{transition:none!important}
+}
