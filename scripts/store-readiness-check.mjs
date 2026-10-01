@@ -73,12 +73,18 @@ requireMatch('delete-account.html', /delete_recovery/, 'must expose a working se
 requireMatch('support.html', /support_request/, 'must expose a support request path');
 requireMatch('terms.html', /blocage[^<]*signalement/i, 'must disclose blocking/reporting moderation');
 
-// Native privacy/icon resources.
+// Native/PWA privacy and brand resources.
 requireFile('PrivacyInfo.xcprivacy', 'Apple privacy manifest source present');
-requireFile('assets/icon-512-v9.png', 'Google Play / app icon source present');
-if (!fs.existsSync(path.join(root, 'assets', 'icon-1024.png')) && !fs.existsSync(path.join(root, 'assets', 'icon-1024-v9.png'))) {
-  warnings.push('No true 1024x1024 master icon is committed; iOS currently derives its 1024 App Store icon from the 512 source. Replace with a native 1024 master before final commercial submission.');
-}
+requireFile('assets/icon-master-v14.jpg', '1024x1024 native app icon master present');
+requireFile('assets/icon-512-v14.jpg', '512x512 PWA/store icon present');
+requireFile('assets/icon-192-v14.jpg', '192x192 PWA icon present');
+requireFile('assets/apple-touch-icon-v9.png', 'Apple touch icon alias present');
+requireFile('assets/favicon-v9.png', 'favicon alias present');
+requireNoMatch('scripts/prepare-ios.mjs', /icon-512-v9\.png/, 'iOS icon pipeline must not use legacy v9 artwork');
+requireMatch('scripts/prepare-ios.mjs', /icon-master-v14\.jpg/, 'must generate the iOS icon from the v14 1024 master');
+requireMatch('scripts/prepare-android.mjs', /igr_icon_v14/, 'must install the v14 icon into Android resources');
+requireMatch('manifest.webmanifest', /icon-192-v14\.jpg/, 'must expose the v14 192px PWA icon');
+requireMatch('manifest.webmanifest', /icon-512-v14\.jpg/, 'must expose the v14 512px PWA icon');
 
 // The web/PWA beta can use owner-issued tester codes. A native store build cannot
 // expose them as an alternative way to unlock paid digital content.

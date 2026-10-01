@@ -4,7 +4,7 @@
   "short_name": "Grey Room",
   "description": "Enquête psychologique multijoueur à informations cachées.",
   "lang": "fr",
-  "start_url": "/?igr=v12.9-release-hardening",
+  "start_url": "/?igr=v14-brand-icon",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -16,15 +16,15 @@
   ],
   "icons": [
     {
-      "src": "assets/icon-192-v9.png",
+      "src": "assets/icon-192-v14.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "assets/icon-512-v9.png",
+      "src": "assets/icon-512-v14.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     }
   ]
