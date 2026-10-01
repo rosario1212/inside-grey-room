@@ -9,7 +9,7 @@ const projectPath=path.join(root,'ios','App','App.xcodeproj','project.pbxproj');
 const privacySource=path.join(root,'PrivacyInfo.xcprivacy');
 const privacyTarget=path.join(appDir,'PrivacyInfo.xcprivacy');
 const launchPath=path.join(appDir,'Base.lproj','LaunchScreen.storyboard');
-const iconSource=path.join(root,'assets','icon-512-v9.png');
+const iconSource=path.join(root,'assets','icon-master-v14.jpg');
 const iconTarget=path.join(appDir,'Assets.xcassets','AppIcon.appiconset','AppIcon-512@2x.png');
 const pkg=JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
 const requestedVersion=String(process.env.IOS_MARKETING_VERSION||pkg.version||'1.0.0').trim();
@@ -44,7 +44,7 @@ launch=launch
 await writeFile(launchPath,launch);
 
 if(process.platform==='darwin'){
-  const icon=spawnSync('sips',['-z','1024','1024',iconSource,'--out',iconTarget],{stdio:'pipe',encoding:'utf8'});
+  const icon=spawnSync('sips',['-s','format','png','-z','1024','1024',iconSource,'--out',iconTarget],{stdio:'pipe',encoding:'utf8'});
   if(icon.status!==0)throw new Error(`Unable to prepare 1024px iOS icon: ${icon.stderr||icon.stdout||'sips failed'}`);
 }
 
@@ -65,4 +65,4 @@ if(!project.includes('PrivacyInfo.xcprivacy')){
   project=project.replace(/(\/\* Resources \*\/ = \{\s*isa = PBXResourcesBuildPhase;[\s\S]*?files = \(\s*)/,`$1\t\t\t\t${buildRef} /* PrivacyInfo.xcprivacy in Resources */,\n`);
 }
 await writeFile(projectPath,project);
-console.log(`iOS hardened for App Store: iOS 15+, bundle ${bundleId}, version ${version} (${build}), camera/mic disclosure, privacy manifest, black launch, 1024px icon, iPhone target.`);
+console.log(`iOS hardened for App Store: iOS 15+, bundle ${bundleId}, version ${version} (${build}), camera/mic disclosure, privacy manifest, black launch, v14 1024px icon, iPhone target.`);
