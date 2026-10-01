@@ -1,0 +1,61 @@
+/* Inside Grey Room v15 — mobile navigation, Heritage presentation and scenario browsing polish.
+   Visual-only layer: no gameplay rules, scenario data or Supabase state are changed. */
+
+.home-actions-v10-13,.home-actions{display:grid!important;gap:10px!important}
+.home-actions-v10-13>.btn.primary.block,.home-actions>.btn.primary.block{order:1}
+.home-actions-v10-13>.home-action.primary,.home-actions>.home-action.primary{order:2}
+.home-actions-v10-13>.home-action[onclick*="goJoin"],.home-actions>.home-action[onclick*="goJoin"]{order:3}
+.home-actions-v10-13>.heritage-premium-home-action,.home-actions>.heritage-premium-home-action,.home-actions-v10-13>.heritage-home-action,.home-actions>.heritage-home-action{order:4}
+.home-actions-v10-13>.home-action[onclick*="goRules"],.home-actions>.home-action[onclick*="goRules"]{order:5}
+.home-actions-v10-13>.home-action[onclick*="goProfile"],.home-actions>.home-action[onclick*="goProfile"]{order:6}
+.home-actions-v10-13>.home-action,.home-actions>.home-action,.home-actions-v10-13>.btn.primary.block,.home-actions>.btn.primary.block{min-height:68px}
+.home-actions-v10-13>.heritage-premium-home-action,.home-actions>.heritage-premium-home-action{margin-top:4px!important;border-color:rgba(231,235,238,.22)!important;background:linear-gradient(115deg,rgba(255,255,255,.045),rgba(255,255,255,.012))!important}
+
+.page-create-v10-13{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+.page-create-v10-13 .page-head>.btn[onclick*="goHome"]{position:fixed!important;z-index:88!important;right:max(14px,env(safe-area-inset-right,0px))!important;bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;min-height:46px!important;padding:0 15px!important;border-color:rgba(239,242,244,.24)!important;border-radius:999px!important;background:rgba(8,11,15,.90)!important;color:#f2f4f6!important;box-shadow:0 14px 38px rgba(0,0,0,.52),inset 0 0 0 1px rgba(255,255,255,.025)!important;-webkit-backdrop-filter:blur(16px)!important;backdrop-filter:blur(16px)!important}
+.page-create-v10-13 .page-head>.btn[onclick*="goHome"]:active{transform:scale(.97)!important}
+
+.scenario-list-v10-13>.scenario,.scenario-list>.scenario,.hplay-cases>.hplay-case{content-visibility:auto;contain-intrinsic-size:auto 170px}
+.scenario-thumb img,.hplay-case-poster img,.hplay-campaign-card>img,.hplay-campaign-hero img{image-rendering:auto}
+
+.hplay-campaign-card{min-height:520px!important;border-color:rgba(235,238,240,.14)!important;box-shadow:0 28px 82px rgba(0,0,0,.46)!important}
+.hplay-campaign-card>img{object-position:center 30%!important;filter:brightness(.73) contrast(1.04) saturate(.82)!important;transform:scale(1.001)}
+.hplay-theme-cendres.hplay-campaign-card>img{filter:brightness(.72) contrast(1.05) saturate(.76)!important}
+.hplay-theme-kuroi.hplay-campaign-card>img{filter:brightness(.70) contrast(1.04) saturate(.80)!important}
+.hplay-campaign-shade{background:linear-gradient(180deg,rgba(0,0,0,.015) 0%,rgba(0,0,0,.07) 38%,rgba(3,4,5,.54) 64%,rgba(3,4,5,.95) 88%,#030405 100%)!important}
+.hplay-campaign-body{padding:24px!important;gap:9px!important}
+.hplay-campaign-body>small{color:#d0d5d9!important;line-height:1.58!important}
+.hplay-campaign-hero{height:auto!important;aspect-ratio:16/10!important;min-height:228px!important;border-color:rgba(235,238,240,.14)!important;box-shadow:0 20px 58px rgba(0,0,0,.34)!important}
+.hplay-campaign-hero img{object-position:center 28%!important;filter:brightness(.69) contrast(1.04) saturate(.82)!important}
+.hplay-campaign-hero::after{background:linear-gradient(90deg,rgba(0,0,0,.02),rgba(0,0,0,.18) 48%,rgba(0,0,0,.72) 100%)!important}
+.hplay-case-poster{width:64px!important;height:96px!important}
+.hplay-case{grid-template-columns:64px minmax(0,1fr) 18px!important;min-height:116px}
+
+@media(max-width:760px){
+  .home-card-v10-13,.home-card{padding:20px!important;border-radius:25px!important}
+  .home-title-spaced{font-size:clamp(48px,14vw,68px)!important;line-height:.88!important;letter-spacing:-.065em!important;margin-bottom:12px!important}
+  .home-subcopy{margin:0 0 18px!important}
+  .home-actions-v10-13>.home-action,.home-actions>.home-action{min-height:70px!important;padding:15px 16px!important}
+  .home-actions-v10-13>.btn.primary.block,.home-actions>.btn.primary.block{min-height:56px!important}
+  .home-action h3,.heritage-premium-copy h3{font-size:20px!important}
+  .home-action p,.heritage-premium-copy p{font-size:11px!important}
+  .heritage-premium-home-action{grid-template-columns:42px minmax(0,1fr) auto!important;min-height:74px!important;padding:15px 16px!important}
+  .heritage-premium-side{min-width:64px!important;max-width:82px!important}
+  .heritage-premium-state{display:none!important}
+  .hplay-hub-grid{gap:18px!important}
+  .hplay-campaign-card{min-height:500px!important}
+  .hplay-campaign-body{padding:22px!important}
+  .hplay-campaign-hero{aspect-ratio:4/3!important;min-height:246px!important}
+  .hplay-campaign-hero>div{right:16px!important;bottom:16px!important}
+}
+@media(max-width:430px){
+  .home{padding-top:4px!important}
+  .home-card-v10-13,.home-card{padding:18px!important}
+  .home-title-spaced{font-size:clamp(45px,13.3vw,59px)!important}
+  .home-actions-v10-13,.home-actions{gap:9px!important}
+  .home-actions-v10-13>.home-action,.home-actions>.home-action{min-height:66px!important;padding:14px!important}
+  .heritage-premium-home-action{min-height:70px!important;padding:14px!important}
+  .hplay-campaign-card{min-height:470px!important}
+  .hplay-campaign-hero{min-height:230px!important}
+}
+@media(prefers-reduced-motion:reduce){.page-create-v10-13 .page-head>.btn[onclick*="goHome"],.hplay-campaign-card>img{transition:none!important;transform:none!important}}
