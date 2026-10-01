@@ -1,0 +1,106 @@
+{
+  "name": "Inside Grey Room v13.1 FINAL — Replayable 001-034 + DLC signatures",
+  "version": "13.1-final-replay-dlc",
+  "base": "v13 gameplay flow candidate",
+  "runtime_flow_audited": "001-020",
+  "dlc_extension": "021-034",
+  "replay_contracts": "001-034 / minimum 3 canonical directions each",
+  "heritage_mode": "not included",
+  "files": [
+    {
+      "path": "README_INTEGRATION.md",
+      "bytes": 4612,
+      "sha256": "f4012d462f6d052ead439d4a878250c9edd6d786dca630a00fdc5f6dd0586770"
+    },
+    {
+      "path": "TEST_REPORT.md",
+      "bytes": 1908,
+      "sha256": "a743d180fbf6f1b48099e6ba2fa420149b1ba01be00175fc1d812908188a25af"
+    },
+    {
+      "path": "dlc-experience-v13.css",
+      "bytes": 938,
+      "sha256": "90082c7d4d7d1a1939ec125a754a6d71e8d646d483127e23529e11e2cd29b8b3"
+    },
+    {
+      "path": "dlc-experience-v13.js",
+      "bytes": 1741,
+      "sha256": "26e6056dd01a4f52250fa9bff264f9ad3831e693c5d7be0327888432ddfc8cd5"
+    },
+    {
+      "path": "docs/DLC_SIGNATURE_MECHANICS.md",
+      "bytes": 5627,
+      "sha256": "bda2cafa060ab87567f2b8246e80d89b12e98271cd5be0ace14f32ad5e8b44b3"
+    },
+    {
+      "path": "docs/GAMEPLAY_PHILOSOPHY_V2.md",
+      "bytes": 34395,
+      "sha256": "fafd9b428148f173e05886c4abd956e70ac756fe0b5af9bacd4b9ce93879dc01"
+    },
+    {
+      "path": "docs/IMPLEMENTATION_MAP_V13.md",
+      "bytes": 8506,
+      "sha256": "85c6d405fcc2003f0f18855a42101c05bb1032001f7d13b5528d77be758099cf"
+    },
+    {
+      "path": "docs/REPLAYABILITY_001_034.md",
+      "bytes": 17673,
+      "sha256": "3c3ce9f04b681a4dc6ddce01aa9b4f4bb1eaccacd2a7469401d884fbf0d62bf7"
+    },
+    {
+      "path": "docs/REPLAY_IMPLEMENTATION_PLAN.md",
+      "bytes": 1700,
+      "sha256": "c08e867b389776645d8bfdaffd9b28018e1db5c59f9d12b05e803a0526604498"
+    },
+    {
+      "path": "docs/ROLLBACK_AND_QA.md",
+      "bytes": 2319,
+      "sha256": "a867e2b5bcf02dab31b621af31b0f59160e1d05b4a4d8d5649fc8966a4030862"
+    },
+    {
+      "path": "docs/SCENARIO_FLOW_001_020.md",
+      "bytes": 4890,
+      "sha256": "fdadd13ec9d3a5a6b74c864dce4fe4b33b5e013b7ca0a33f7f9ef0b6205956df"
+    },
+    {
+      "path": "gameplay-flow-v13.css",
+      "bytes": 1447,
+      "sha256": "cfc1250ea0b8b139e1545157d5f00f6a548ab48585b7fc28ec1d508811c5853a"
+    },
+    {
+      "path": "gameplay-flow-v13.js",
+      "bytes": 19585,
+      "sha256": "96f2eaa68bc6797005b8868a557929fc5c4290f3242ca4fbbdf3a1f177fa3056"
+    },
+    {
+      "path": "scenario-flow-v13.js",
+      "bytes": 4423,
+      "sha256": "edc17dc109cfbdd28a6432d1b7ff96f2c34ccd5bec1bdca8c4f8c5335757555a"
+    },
+    {
+      "path": "scenario-replay-contracts-v13.json",
+      "bytes": 34819,
+      "sha256": "63fdfb034a8d6f8da708f57ed037fd5265f80fc5cafdbd67a10efab66f0f6321"
+    },
+    {
+      "path": "scripts/install-v13-flow.mjs",
+      "bytes": 2690,
+      "sha256": "95bee7b862955b3e4ea8b79ad3826c739687a6654589c84d488729b18a9856fc"
+    },
+    {
+      "path": "scripts/verify-v13-flow.mjs",
+      "bytes": 3792,
+      "sha256": "e1d0085437e8ca3581292a8ef677bf8e7c6acae5721c636cfaf8b562941bdf63"
+    },
+    {
+      "path": "supabase/gameplay-flow-v13.sql",
+      "bytes": 66342,
+      "sha256": "ab336e29fbee78a9c96fe994c4f781e188e43c98bf006582d84b0b969b425099"
+    },
+    {
+      "path": "supabase/replayability-dlc-v13.sql",
+      "bytes": 4102,
+      "sha256": "6b919a4e53643720f860fdbc2cf6c2d9dbb6dac601e655373b47698fda279337"
+    }
+  ]
+}
