@@ -1,0 +1,38 @@
+/* Inside Grey Room v13.6 — HÉRITAGE premium gate. Neutral ivory/silver; no OMERTÀ red. */
+.heritage-premium-home-action{
+  position:relative;overflow:hidden;padding:18px!important;border-radius:18px!important;
+  border:1px solid rgba(225,230,232,.19)!important;
+  background:linear-gradient(112deg,rgba(238,235,224,.055),rgba(255,255,255,.016) 44%,rgba(190,199,204,.035))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 10px 30px rgba(0,0,0,.08);
+}
+.heritage-premium-home-action::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,rgba(235,232,218,.68),transparent);opacity:.78}
+.heritage-premium-home-action::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 0 45%,rgba(255,255,255,.045) 49%,transparent 57%);transform:translateX(-35%);opacity:.55}
+.heritage-premium-home-action:active{transform:scale(.992)}
+.heritage-premium-home-action.is-locked{border-color:rgba(205,210,211,.15)!important}
+.heritage-premium-home-action.is-owned{border-color:rgba(237,234,219,.30)!important;background:linear-gradient(112deg,rgba(240,236,219,.082),rgba(255,255,255,.02) 46%,rgba(188,198,203,.045))!important}
+.heritage-premium-icon{position:relative;flex:0 0 42px!important;color:#e8e6dc!important;border-color:rgba(235,232,219,.22)!important;background:radial-gradient(circle at 50% 28%,rgba(242,238,222,.11),rgba(255,255,255,.018) 62%)!important;font:800 16px/1 'IBM Plex Mono',monospace!important;letter-spacing:.02em}
+.heritage-premium-icon::before{content:"";position:absolute;width:17px;height:17px;border:1px solid rgba(230,228,217,.28);transform:rotate(45deg);border-radius:2px}
+.heritage-premium-icon span{position:relative;z-index:1;font-size:10px;color:#e9e6d8}
+.heritage-premium-copy{min-width:0;flex:1 1 auto}.heritage-premium-copy h3{margin:0!important}.heritage-premium-copy p{margin:4px 0 0!important;color:#899198!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.heritage-premium-side{margin-left:auto;flex:0 0 auto;display:grid;justify-items:end;gap:7px;padding-left:8px}
+.heritage-premium-badge{padding:5px 7px;border:1px solid rgba(232,229,215,.20);border-radius:999px;background:rgba(239,235,217,.035);color:#d8d5c8;font:800 7px/1 'IBM Plex Mono',monospace;letter-spacing:.14em}
+.heritage-premium-state{display:flex;align-items:center;gap:5px;color:#717b83;font:700 7px/1 'IBM Plex Mono',monospace;letter-spacing:.10em;white-space:nowrap}
+.heritage-premium-home-action.is-owned .heritage-premium-state{color:#c6c4b9}.heritage-premium-home-action.is-checking .heritage-premium-state{opacity:.7}
+.heritage-premium-lock{position:relative;width:9px;height:7px;border:1px solid currentColor;border-radius:2px;opacity:.9}.heritage-premium-lock::before{content:"";position:absolute;left:1px;right:1px;top:-6px;height:6px;border:1px solid currentColor;border-bottom:0;border-radius:6px 6px 0 0}.heritage-premium-home-action.is-owned .heritage-premium-lock::before{transform:translateX(3px) rotate(18deg);transform-origin:left bottom}
+
+.heritage-premium-modal{z-index:160;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.heritage-premium-modal-box{position:relative;max-width:560px;padding:28px!important;overflow:hidden;border-color:rgba(232,229,216,.18)!important;background:linear-gradient(165deg,#111519,#07090b 64%,#0d0e0f)!important;box-shadow:0 38px 110px rgba(0,0,0,.72)!important}
+.heritage-premium-modal-box::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(112deg,transparent 10%,rgba(239,236,220,.035) 42%,transparent 58%)}
+.heritage-premium-modal-close{position:absolute;right:16px;top:16px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);color:#aab0b3;font-size:24px;line-height:1;cursor:pointer}
+.heritage-premium-modal-mark{width:52px;height:52px;display:grid;place-items:center;margin-bottom:22px;border:1px solid rgba(232,229,216,.20);border-radius:15px;color:#e3e0d3;background:radial-gradient(circle at 50% 25%,rgba(239,235,219,.10),rgba(255,255,255,.015));font:800 12px 'IBM Plex Mono',monospace;transform:rotate(45deg)}
+.heritage-premium-kicker{color:#aaa79c!important}.heritage-premium-modal-box h2{position:relative;margin:7px 0 10px;font-size:31px;line-height:1.05;letter-spacing:-.045em}.heritage-premium-modal-box>p{position:relative;margin:0;color:#9aa3aa;font-size:13px;line-height:1.65;max-width:48ch}
+.heritage-premium-featureline{position:relative;margin:18px 0;padding:11px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);color:#b6bdc2;font:700 8px/1.5 'IBM Plex Mono',monospace;letter-spacing:.11em;text-transform:uppercase}
+.heritage-premium-accessbox{position:relative;display:grid;gap:6px;padding:14px 15px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.018)}.heritage-premium-accessbox span{color:#8f968f;font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.14em}.heritage-premium-accessbox b{font-size:12px;line-height:1.5;color:#cfd3d4}.heritage-premium-accessbox.is-owned{border-color:rgba(232,229,216,.22)}
+.heritage-premium-modal-actions{position:relative;margin-top:18px!important}
+
+@media(max-width:540px){
+  .heritage-premium-home-action{min-height:0}.heritage-premium-side{gap:5px}.heritage-premium-badge{font-size:6.5px}.heritage-premium-state{font-size:6px;letter-spacing:.07em}.heritage-premium-copy p{max-width:48vw}
+  .heritage-premium-modal{align-items:end;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 0!important}.heritage-premium-modal-box{width:100%!important;max-width:none!important;border-radius:24px 24px 0 0!important;border-bottom:0!important;padding:24px 20px calc(18px + env(safe-area-inset-bottom,0px))!important}.heritage-premium-modal-actions{display:grid!important;grid-template-columns:1fr}.heritage-premium-modal-actions .btn{width:100%}
+}
+@media(max-width:390px){.heritage-premium-state{display:none}.heritage-premium-copy p{max-width:56vw}.heritage-premium-side{padding-left:4px}}
+@media(prefers-reduced-motion:reduce){.heritage-premium-home-action::after{display:none}}
