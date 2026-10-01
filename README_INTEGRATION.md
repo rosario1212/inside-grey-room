@@ -1,116 +1,82 @@
-# Inside Grey Room — v13.1 FINAL · gameplay, DLC et rejouabilité
+# Inside Grey Room — v13.3 HÉRITAGE + Startup Stability
 
-## Base
+## Portée
 
-- Dépôt ciblé : `rosario1212/inside-grey-room`
-- Base de travail : ZIP v13 Gameplay Flow Candidate
-- Moteur de rythme audité : scénarios 001–020
-- Extension DLC : 021–034
-- Rejouabilité : contrat 001–034
-- Mode Héritage : volontairement hors de ce bundle
+Patch **additif** pour la base v13.2 actuelle. Il ne remplace ni `app-v11.js`, ni les scénarios 001–034, ni OMERTÀ / TERREUR / CARTEL / LE RÉGIME.
 
-Cette archive ne remplace pas `app-v11.js`. Elle ajoute des couches isolées afin de limiter les régressions.
+Ce bundle ajoute uniquement :
 
-## Ce que contient la version finale
+1. une entrée **HÉRITAGE** sous **Créer une partie** sur l’accueil ;
+2. le socle de campagnes persistantes **CENDRES** et **KUROI** ;
+3. les deux mécaniques persistantes :
+   - CENDRES → dossier / réseau CERBÈRES + état de crise ;
+   - KUROI → arbre des groupes + registre des dettes + chronique ;
+4. les 5 dossiers de chaque campagne dans leur ordre validé ;
+5. une sauvegarde locale versionnée, exportable/importable par API ;
+6. un correctif de l’écran de Porte sur iPhone : visuel remonté, bouton ENTRER abaissé, davantage d’air ;
+7. une stabilisation WebAudio : un seul réveil concurrent, reprise après l’entrée et après retour au premier plan, sans nouvel intervalle.
 
-### 1. Nouvelle DA de partie
+## Important — ce que ce patch ne prétend pas faire
 
-- pré-enquête sociale de 3:00 ;
-- Salle d’attente active ;
-- relations initiales utiles dès le départ ;
-- Convocations humaines ;
-- interrogatoires stricts de 8:00 ;
-- C1 / C2 / C3 structurés ;
-- Confrontations ;
-- Assemblées ;
-- Expert silencieux ;
-- Inspecteur ↔ Journaliste ;
-- triangle Avocat / Procureur / Juge ;
-- objectifs principal + secondaire ;
-- corruption institutionnelle uniquement privée ;
-- MJ adaptatif à deux questions ;
-- aucune analyse de conversation par micro/IA.
+Il pose le **moteur Héritage et son interface**, sans inventer automatiquement les cartes privées, preuves et vérités des dix dossiers. Les packs de gameplay narratif doivent être branchés ensuite sur `IGR_HERITAGE` afin de respecter la règle actuelle d’Inside Grey Room : aucune preuve ou vérité ne doit être générée pour combler un contenu non écrit.
 
-### 2. Rejouabilité obligatoire 001–034
+Le patch est donc volontairement sans modification du moteur 001–034 : c’est ce qui limite le risque de régression.
 
-Principe :
+## Installation
 
-> **Un joueur qui rejoue un scénario ne doit jamais pouvoir résoudre la partie de mémoire.**
+À la racine du dépôt actuel :
 
-Le fichier `scenario-replay-contracts-v13.json` définit **au moins trois directions canoniques différentes par scénario**. Il ne s’agit pas d’un simple mélange de joueurs : la responsabilité principale, les relations, la chronologie ou le mécanisme causal peuvent changer.
+1. copier le contenu de ce bundle en conservant `assets/`, `scripts/` et `docs/` ;
+2. exécuter :
 
-Une variante ne doit être activée en production que lorsque ses cartes privées, relations, objectifs, trames et révélation ont toutes été écrites de manière cohérente. Le moteur ne doit jamais générer une preuve pour compléter automatiquement une variante incomplète.
+```bash
+node scripts/install-v13-3-heritage.mjs
+node scripts/verify-v13-3-heritage.mjs
+```
 
-### 3. DLC — identité propre
+3. puis lancer les validations existantes :
 
-- **OMERTÀ** : Famiglia vivante + cercle qui se resserre + ordre ambigu + Chaise vide + point de non-retour + chaîne des ordres. Pas de surnoms ajoutés.
-- **TERREUR** : ville qui tombe (`7/12 quartiers`), périmètre, liaison, mini-carte abstraite, VRAI ≠ SINCÈRE, dernière liaison.
-- **CARTEL** : témoins disponibles, intégrité institutionnelle, protection, pression sur les sources, motif écrit, engagement verrouillé.
-- **LE RÉGIME** : archives, pouvoir officiel ≠ pouvoir réel, carte de pouvoir, surnoms rotatifs par opération.
+```bash
+npm run build
+npm run store:check
+```
 
-Voir `docs/DLC_SIGNATURE_MECHANICS.md`.
+4. tester sur iPhone PWA : lancement, ENTRER, musique, verrouillage / retour, accueil, HÉRITAGE, retour accueil.
 
-## Fichiers principaux
+L’installateur est idempotent : il peut être exécuté deux fois sans dupliquer les balises.
 
-- `scenario-flow-v13.js` — configuration du moteur v13 ;
-- `gameplay-flow-v13.js` — overlay d’interface/interaction ;
-- `gameplay-flow-v13.css` — styles du flux ;
-- `dlc-experience-v13.js` — registre des mécaniques DLC ;
-- `dlc-experience-v13.css` — surface de monde DLC ;
-- `scenario-replay-contracts-v13.json` — contrats de variantes 001–034 ;
-- `supabase/gameplay-flow-v13.sql` — moteur de rythme existant ;
-- `supabase/replayability-dlc-v13.sql` — primitives additives replay/DLC ;
-- `docs/REPLAYABILITY_001_034.md` ;
-- `docs/DLC_SIGNATURE_MECHANICS.md` ;
-- `docs/REPLAY_IMPLEMENTATION_PLAN.md`.
+## Architecture de l’accueil
 
-## Installation recommandée
+- Créer une partie
+- **Héritage**
+- Rejoindre une partie
+- Règles du jeu
+- Profil
 
-1. créer une branche dédiée depuis `main` ;
-2. copier les fichiers du bundle à la racine ;
-3. exécuter `node scripts/install-v13-flow.mjs` ;
-4. créer une migration Supabase pour `gameplay-flow-v13.sql` ;
-5. créer une seconde migration additive pour `replayability-dlc-v13.sql` ;
-6. exécuter `node scripts/verify-v13-flow.mjs`, `npm run build`, `npm run store:check` ;
-7. playtest multijoueur avant merge.
+OMERTÀ reste un DLC et ne passe pas dans Héritage.
 
-## Important sur la rejouabilité
+## Campagnes
 
-`scenario-replay-contracts-v13.json` est volontairement un **contrat d’auteur** : il interdit la fausse rejouabilité. Il ne faut pas activer une variante simplement parce qu’elle possède un résumé. Pour être activable, elle doit être entièrement matérialisée dans `pack.replay_variants` avec truth, suspects, relations, trames, role_notes et event_profile compatibles.
+### CENDRES — 5 dossiers
 
-Cette règle évite de casser la cohérence du dossier juste pour rendre la solution aléatoire.
+1. PERSONNE N’EXISTE
+2. 04:17
+3. LA CHAMBRE
+4. CENDRES
+5. POINT ZÉRO
 
-## Sécurité / confidentialité
+Objet persistant : **ce que le groupe sait**. Les intégrations de scénario écrivent les identités, classifications, connexions et événements de crise via l’API CENDRES.
 
-Le client ne doit jamais recevoir :
+### KUROI — 5 dossiers
 
-- `replay_variant_id` ;
-- les variantes alternatives ;
-- les vérités non sélectionnées ;
-- les futures trames ;
-- les objectifs privés d’un autre joueur ;
-- les données Espion protégées.
+1. L’OYABUN
+2. GIRI
+3. LES MAINS SALES
+4. LA DETTE
+5. LE CONSEIL
 
-Les compteurs TERREUR/CARTEL/RÉGIME sont publics mais purement narratifs. Ils ne contiennent aucune donnée tactique cachée.
+Objet persistant : **ce que le groupe doit et à qui**. Les intégrations de scénario écrivent membres, dettes et chronique via l’API KUROI.
 
-## Statut
+## API d’intégration
 
-Cette archive est une **candidate finale d’intégration**, pas une migration déjà appliquée en production. Elle doit passer un playtest et un test de migration sur environnement de développement avant fusion dans `main`.
-
-## v13.2 — correctifs lobby iPhone
-
-Deux correctifs UI sont inclus dans `lobby-ui-fix-v13.js/.css` :
-
-1. **Retour vers les scénarios depuis le lobby de choix du rôle**
-   - le bouton `Quitter` du lobby devient `← Scénarios` ;
-   - il quitte proprement la cellule avant lancement ;
-   - il restaure la liste des scénarios au même niveau de défilement ;
-   - si la position n’est pas disponible, le dossier courant est recentré automatiquement.
-
-2. **001–020 restent strictement neutres lors du choix d’un rôle**
-   - suppression de toute fuite du thème rouge OMERTÀ dans les dossiers de base ;
-   - sélection visible par bordure/gris clair uniquement ;
-   - aucune vibration, pulsation, glow rouge ou transformation sur la carte sélectionnée ;
-   - OMERTÀ 021–025 conserve son identité rouge.
-
-Le correctif est chargé **après les couches DLC existantes** afin d’être le dernier garde-fou visuel du lobby.
+Voir `docs/HERITAGE_ENGINE.md`.
