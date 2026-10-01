@@ -20,6 +20,8 @@
   <link rel="stylesheet" href="styles-v11.css?v=v12.22-mobile-ui">
   <link rel="stylesheet" href="polish-v12.css?v=v12.22-mobile-ui">
   <link rel="stylesheet" href="ui-polish-v12.css?v=v12.22-mobile-ui">
+  <link rel="stylesheet" href="gameplay-flow-v13.css?v=v13.2-final">
+  <link rel="stylesheet" href="dlc-experience-v13.css?v=v13.2-final">
   <link rel="stylesheet" href="omerta-v12.css?v=v12.24-omerta">
   <link rel="stylesheet" href="omerta-polish-v12.css?v=v12.28-omerta">
   <link rel="stylesheet" href="role-tree-polish-v12-29.css?v=v12.29-role-tree">
@@ -31,6 +33,7 @@
   <link rel="stylesheet" href="dlc-profile-ui-v12-44.css?v=v12.44-ui">
   <link rel="stylesheet" href="dlc-invites-v12-45.css?v=v12.45-dlc-invites">
   <link rel="stylesheet" href="dlc-copy-v12-46.css?v=v12.46-copy">
+  <link rel="stylesheet" href="lobby-ui-fix-v13.css?v=v13.2-lobby-fix">
   <style>.intro-gate{touch-action:none!important;background:#000 url('assets/intro-v10-14.webp?v=v12.42-startup') center/cover no-repeat!important}.intro-gate:not(.opening):not(.done) .intro-art{opacity:1!important;visibility:visible!important}</style>
   <script>(()=>{try{const saved=localStorage.getItem('igr_locale');window.IGR_LOCALE=saved==='en'?'en':'fr';document.documentElement.lang=window.IGR_LOCALE}catch(_){window.IGR_LOCALE='fr'}})();</script>
 </head>
@@ -60,6 +63,9 @@
   <script>(()=>{const nativeInterval=window.setInterval;window.__igrNativeSetInterval=nativeInterval;window.setInterval=function(fn,delay,...args){return nativeInterval.call(window,fn,Number(delay)===300?900:delay,...args)};try{const nativeShell=location.protocol==='file:'||location.hostname==='insidegreyroom.local'||/[?&]native=(android|ios)\b/.test(location.search);const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');if(!nativeShell&&!mobile&&window.MutationObserver){const NativeObserver=window.MutationObserver,created=[];function TrackedObserver(callback){const observer=new NativeObserver(callback);created.push(observer);return observer}TrackedObserver.prototype=NativeObserver.prototype;window.__igrNativeMutationObserver=NativeObserver;window.__igrGameplayMutationObservers=created;window.MutationObserver=TrackedObserver}}catch(_){}})();</script>
   <script src="gameplay-clean-v12.js?v=v12.22-mobile-ui"></script>
   <script>(()=>{if(window.__igrGameplayMutationObservers){for(const observer of window.__igrGameplayMutationObservers){try{observer.disconnect()}catch(_){}}delete window.__igrGameplayMutationObservers}if(window.__igrNativeMutationObserver){window.MutationObserver=window.__igrNativeMutationObserver;delete window.__igrNativeMutationObserver}if(window.__igrNativeSetInterval){window.setInterval=window.__igrNativeSetInterval;delete window.__igrNativeSetInterval}try{if(typeof liveSessionControls==='function'){const base=liveSessionControls;liveSessionControls=function(){let html=base.apply(this,arguments);if(STATE?.sync?.room?.phase==='cycle_debrief')html=html.replace('Étape suivante →','Passer le débrief →');return html}}}catch(_){}})();</script>
+  <script src="scenario-flow-v13.js?v=v13.2-final"></script>
+  <script src="gameplay-flow-v13.js?v=v13.2-final"></script>
+  <script src="dlc-experience-v13.js?v=v13.2-final"></script>
   <script src="language-v12.js?v=v12.22-mobile-ui"></script>
   <script src="i18n-en-v12.js?v=v12.22-mobile-ui"></script>
   <script src="rules-v12.js?v=v12.22-mobile-ui"></script>
@@ -78,5 +84,6 @@
   <script src="dlc-profile-ui-v12-44.js?v=v12.44-ui"></script>
   <script src="dlc-invites-v12-45.js?v=v12.45-dlc-invites"></script>
   <script src="dlc-copy-v12-46.js?v=v12.46-copy"></script>
+  <script src="lobby-ui-fix-v13.js?v=v13.2-lobby-fix"></script>
 </body>
 </html>
