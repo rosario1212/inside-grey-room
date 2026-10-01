@@ -1,0 +1,30 @@
+/* v13.3 — entrance spacing: more air between baked-in logo/door and CTA on iPhone. */
+@media (max-width:700px){
+  .intro-gate:not(.opening):not(.done) .intro-art{
+    top:calc(env(safe-area-inset-top,0px) - 2.7svh) !important;
+    height:calc(80.5dvh - env(safe-area-inset-top,0px) + 2.7svh) !important;
+    object-position:50% 50% !important;
+  }
+  .intro-enter{
+    bottom:calc(env(safe-area-inset-bottom,0px) + 2.6svh) !important;
+    width:min(86vw,420px) !important;
+    min-height:78px !important;
+    padding:14px 20px 13px !important;
+  }
+  .intro-enter span{letter-spacing:.28em !important}
+  .intro-enter small{margin-top:8px !important}
+}
+@media (max-width:700px) and (min-aspect-ratio:9/20){
+  .intro-gate:not(.opening):not(.done) .intro-art{
+    top:calc(env(safe-area-inset-top,0px) - 3.1svh) !important;
+    height:calc(81.5dvh - env(safe-area-inset-top,0px) + 3.1svh) !important;
+  }
+  .intro-enter{bottom:calc(env(safe-area-inset-bottom,0px) + 2.3svh) !important}
+}
+@media (max-width:700px) and (max-height:740px){
+  .intro-gate:not(.opening):not(.done) .intro-art{
+    top:calc(env(safe-area-inset-top,0px) - 1.6svh) !important;
+    height:calc(77.5dvh - env(safe-area-inset-top,0px) + 1.6svh) !important;
+  }
+  .intro-enter{bottom:calc(env(safe-area-inset-bottom,0px) + 1.6svh) !important;min-height:68px !important}
+}
