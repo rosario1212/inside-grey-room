@@ -1,5 +1,5 @@
-/* Inside Grey Room — DLC suite v12.43
-   TERREUR / CARTEL / LE RÉGIME owner-access parity with OMERTÀ. */
+/* Inside Grey Room — DLC suite v12.44
+   Per-player DLC ownership for TERREUR / CARTEL / LE RÉGIME, compact filters, stable themes. */
 (() => {
   'use strict';
 
@@ -8,9 +8,9 @@
   const IDENTITY_KEY='igr_social_identity_v1';
   const CARTEL_IDS=new Set(['029','030','031']);
   const REGIME_IDS=new Set(['032','033','034']);
-  const OWNER_ONLY_IDS=new Set(['026','027','028','029','030','031','032','033','034']);
+  const PREMIUM_IDS=new Set(['026','027','028','029','030','031','032','033','034']);
   const DLC_IDS=new Set(['021','022','023','024','025','026','027','028','029','030','031','032','033','034']);
-  const OWNER_ACCESS={loaded:false,owner:false,level:'none',loading:null};
+  const DLC_ACCESS={loaded:false,items:{},loading:null};
 
   const CARTEL=[
     {id:'029',title:'LE CYCLE MORT',short:'L’enquête touche un réseau qui ne se contente plus de cacher ses crimes : il commence à frapper ceux qui posent les questions.',context:'Le dossier s’ouvre sur un premier homicide destiné à neutraliser la dynamique de l’enquête. Les trois suspects ne se valent pas : l’un profite, l’autre couvre, le troisième lance la spirale.',mood:'Pression · réseau · représailles.',min:5,max:8,sound:'threat',mechanics:['Intimidation','Érosion de l’enquête','Violence réseau']},
@@ -51,7 +51,7 @@
   for(let i=29;i<=31;i++)META[String(i).padStart(3,'0')]={origin:'dlc',collection:'cartel'};
   for(let i=32;i<=34;i++)META[String(i).padStart(3,'0')]={origin:'dlc',collection:'regime'};
   window.IGR_SCENARIO_META=Object.freeze(META);
-  window.IGR_DLC_OWNER_ACCESS=OWNER_ACCESS;
+  window.IGR_DLC_ACCESS=DLC_ACCESS;
   SCENARIOS.forEach(sc=>Object.assign(sc,META[sc.id]||{}));
 
   const oldThumb=scenarioThumbArt,oldArt=scenarioArt;
@@ -60,23 +60,43 @@
 
   function storage(){try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}}
   function identity(){try{return JSON.parse(storage().getItem(IDENTITY_KEY)||'null')}catch{return null}}
-  async function ownerAccessStatus(force=false){
-    if(OWNER_ACCESS.loading)return OWNER_ACCESS.loading;
-    if(OWNER_ACCESS.loaded&&!force)return OWNER_ACCESS;
-    OWNER_ACCESS.loading=(async()=>{
-      const id=identity();
-      if(!id?.id||!id?.token){Object.assign(OWNER_ACCESS,{loaded:true,owner:false,level:'none'});return OWNER_ACCESS}
-      try{
-        const out=await rpc('igr_omerta_access_status',{p_profile_id:id.id,p_profile_token:id.token});
-        Object.assign(OWNER_ACCESS,{loaded:true,owner:!!out?.active&&out?.level==='owner',level:out?.level||'none'});
-      }catch(error){
-        console.warn('DLC owner access',error);
-        Object.assign(OWNER_ACCESS,{loaded:true,owner:false,level:'none'});
-      }
-      return OWNER_ACCESS;
-    })();
-    try{return await OWNER_ACCESS.loading}finally{OWNER_ACCESS.loading=null}
+  function profilePayload(){
+    const p=loadProfile();
+    let prefs={visibility:'players_and_friends',allowFriendRequests:true};
+    try{prefs=Object.assign(prefs,JSON.parse(storage().getItem('igr_social_prefs_v1')||'{}'))}catch{}
+    return {pseudo:(p.pseudo||'').trim(),avatar:safeAvatar(p.avatar||''),stats:{games:p.games||0,completed:p.completed||0,wins:p.wins||0,history:Array.isArray(p.history)?p.history.slice(0,10):[]},equippedTitle:p.equippedTitle||'none',equippedBadge:p.equippedBadge||'none',visibility:prefs.visibility,allowFriendRequests:prefs.allowFriendRequests!==false};
   }
+  async function ensureIdentity(){
+    let id=identity();if(id?.id&&id?.token)return id;
+    const profile=profilePayload();if(!profile.pseudo)throw new Error('profile_pseudo_required');
+    const response=await fetch(`${SUPABASE_URL}/functions/v1/igr-social`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({action:'create',profile})});
+    const out=await response.json().catch(()=>({}));
+    if(!response.ok||!out?.identity?.id||!out?.identity?.token)throw new Error(out?.error||'profile_create_failed');
+    storage().setItem(IDENTITY_KEY,JSON.stringify(out.identity));
+    return out.identity;
+  }
+  async function dlcAccessStatus(force=false){
+    if(DLC_ACCESS.loading)return DLC_ACCESS.loading;
+    if(DLC_ACCESS.loaded&&!force)return DLC_ACCESS;
+    DLC_ACCESS.loading=(async()=>{
+      let id=identity();
+      if(!id?.id||!id?.token){
+        try{if(loadProfile()?.pseudo)id=await ensureIdentity()}catch{}
+      }
+      if(!id?.id||!id?.token){DLC_ACCESS.loaded=true;DLC_ACCESS.items={};return DLC_ACCESS}
+      try{
+        const out=await rpc('igr_dlc_access_status',{p_profile_id:id.id,p_profile_token:id.token});
+        DLC_ACCESS.loaded=true;DLC_ACCESS.items=out||{};
+      }catch(error){
+        console.warn('DLC access',error);DLC_ACCESS.loaded=true;DLC_ACCESS.items={};
+      }
+      return DLC_ACCESS;
+    })();
+    try{return await DLC_ACCESS.loading}finally{DLC_ACCESS.loading=null}
+  }
+  function accessFor(collection){return DLC_ACCESS.items?.[collection]||{active:false,level:'none',expires_at:null}}
+  function hasAccess(collection){return !!accessFor(collection).active}
+  function collectionForScenario(id){return META[String(id||'')]?.collection||''}
 
   function readTextScenarioId(text){const match=String(text||'').match(/\bdossier\s*(\d{3})\b/i);return match?match[1]:''}
   function isRenderedNode(node){
@@ -104,21 +124,24 @@
     return String(STATE?.selectedScenario||STATE?.scenarioId||STATE?.sync?.room?.scenario_id||'');
   }
 
-  function accessBadge(){
-    if(!OWNER_ACCESS.loaded)return '<span class="dlc-access-note">VÉRIFICATION…</span>';
-    return OWNER_ACCESS.owner?'<span class="dlc-access-note owner">ACCÈS PROPRIÉTAIRE</span>':'<span class="dlc-access-note locked">ACCÈS FERMÉ</span>';
+  function accessBadge(collection){
+    if(!DLC_ACCESS.loaded)return '<span class="dlc-access-note">VÉRIFICATION…</span>';
+    const entry=accessFor(collection);
+    if(!entry.active)return '<span class="dlc-access-note locked">NON DÉTENU</span>';
+    if(entry.level==='tester')return `<span class="dlc-access-note tester">ACCÈS TESTEUR${entry.expires_at?` · ${h(new Date(entry.expires_at).toLocaleDateString('fr-CH'))}`:''}</span>`;
+    return '<span class="dlc-access-note owned">DLC DÉTENU</span>';
   }
-  function lockedBlock(){return `<div class="dlc-owner-lock"><strong>DLC PRIVÉ</strong><p>Ce contenu est réservé au propriétaire du projet.</p>${accessBadge()}</div>`}
+  function lockedBlock(collection){return `<div class="dlc-owner-lock"><strong>DLC NON DÉTENU</strong><p>Ce profil ne possède pas encore ce contenu.</p>${accessBadge(collection)}</div>`}
   function card(sc,collection,label,tag){
     return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span></div></div></article>`;
   }
-  function accessRow(){return `<div class="dlc-access-row dlc-access-row--top">${accessBadge()}</div>`}
+  function accessRow(collection){return `<div class="dlc-access-row dlc-access-row--top">${accessBadge(collection)}</div>`}
   function appendCollection(root,{collection,title,eyebrow,copy,ids,label,tag}){
     root.querySelector(`.${collection}-dlc-section`)?.remove();
     for(const id of ids)document.getElementById(`scenario-${id}`)?.remove();
     const section=document.createElement('section');section.className=`panel ${collection}-dlc-section`;section.dataset.collection=collection;
     const scenarios=[...ids].map(id=>scenario(id));
-    section.innerHTML=`<div class="dlc-suite-head"><div><span class="dlc-suite-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${copy}</p></div></div>${accessRow()}${OWNER_ACCESS.owner?`<div class="scenario-list scenario-list-v10-13 ${collection}-list">${scenarios.map(sc=>card(sc,collection,label,tag)).join('')}</div>`:lockedBlock()}`;
+    section.innerHTML=`<div class="dlc-suite-head"><div><span class="dlc-suite-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${copy}</p></div></div>${accessRow(collection)}${hasAccess(collection)?`<div class="scenario-list scenario-list-v10-13 ${collection}-list">${scenarios.map(sc=>card(sc,collection,label,tag)).join('')}</div>`:lockedBlock(collection)}`;
     root.appendChild(section);
   }
 
@@ -129,15 +152,15 @@
     section.querySelector('.dlc-owner-lock')?.remove();
     section.querySelectorAll('.dlc-access-row').forEach(el=>el.remove());
     const head=section.querySelector('.dlc-suite-head')||section.querySelector('h2')?.parentElement;
-    if(head)head.insertAdjacentHTML('afterend',accessRow());
-    else section.insertAdjacentHTML('afterbegin',accessRow());
-    if(OWNER_ACCESS.owner){
+    if(head)head.insertAdjacentHTML('afterend',accessRow('terror'));
+    else section.insertAdjacentHTML('afterbegin',accessRow('terror'));
+    if(hasAccess('terror')){
       if(list)list.style.display='';
     }else{
       if(list)list.style.display='none';
       const row=section.querySelector('.dlc-access-row');
-      if(row)row.insertAdjacentHTML('afterend',lockedBlock());
-      else section.insertAdjacentHTML('beforeend',lockedBlock());
+      if(row)row.insertAdjacentHTML('afterend',lockedBlock('terror'));
+      else section.insertAdjacentHTML('beforeend',lockedBlock('terror'));
     }
   }
 
@@ -217,41 +240,39 @@
   }
 
 
-  async function createOwnerDlcRoom(){
+  async function enterRoomState(out,code,pseudo,host){
+    STORAGE.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
+    Object.assign(STATE,{view:'lobby',room:out.room_code||code,token:out.player_token,hostToken:host?out.host_token:null,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
+    saveSession();await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+  }
+
+  async function createDlcRoom(){
     primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
     const pseudo=(byId('createPseudo')?.value||'').trim();
     if(!pseudo)return toast('Entre ton pseudo.');
-    const sc=scenario(STATE.selectedScenario),key=String(sc?.id||'');
-    const status=await ownerAccessStatus(true);
-    if(!status.owner)return toast('Ce DLC est réservé au propriétaire.');
-    const id=identity();
-    if(!id?.id||!id?.token)return toast('Profil propriétaire introuvable. Ouvre ton profil puis réessaie.');
-    let out=null,code=null;
-    for(let attempt=0;attempt<5;attempt++){
-      code=newCode();
-      try{
-        out=await rpc('igr_owner_dlc_create_room',{
-          p_code:code,p_scenario_id:key,p_pseudo:pseudo,p_profile_id:id.id,p_profile_token:id.token
-        });
-        break;
-      }catch(e){
-        if(e.code!=='23505'||attempt===4){
-          console.error(e);
-          const msg=/dlc_locked|owner/i.test(String(e?.message||''))?'Ce DLC est réservé au propriétaire.':'Création non confirmée. Vérifie ta connexion avant de réessayer.';
-          return toast(msg);
-        }
+    saveProfileData({pseudo});
+    const sc=scenario(STATE.selectedScenario),key=String(sc?.id||''),collection=collectionForScenario(key);
+    try{
+      const id=await ensureIdentity();
+      await dlcAccessStatus(true);
+      if(!hasAccess(collection))return toast(`Ce profil ne détient pas le DLC ${collection==='terror'?'TERREUR':collection==='cartel'?'CARTEL':'LE RÉGIME'}.`);
+      let out=null,code=null;
+      for(let attempt=0;attempt<5;attempt++){
+        code=newCode();
+        try{out=await rpc('igr_dlc_create_room',{p_code:code,p_scenario_id:key,p_pseudo:pseudo,p_profile_id:id.id,p_profile_token:id.token});break}
+        catch(e){if(e.code!=='23505'||attempt===4)throw e}
       }
+      await enterRoomState(out,code,pseudo,true);
+    }catch(e){
+      console.error('DLC create',e);
+      toast(/dlc_locked/i.test(String(e?.message||''))?'Ce profil ne détient pas ce DLC.':'Création non confirmée. Vérifie ta connexion avant de réessayer.');
     }
-    STORAGE.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
-    Object.assign(STATE,{view:'lobby',scenarioId:key,room:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
-    saveSession();
-    await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
   }
 
   const baseCreateRoom=createRoom;
   createRoom=async function(){
     const key=String(STATE?.selectedScenario||'');
-    if(OWNER_ONLY_IDS.has(key))return createOwnerDlcRoom();
+    if(PREMIUM_IDS.has(key))return createDlcRoom();
     return baseCreateRoom();
   };
 
@@ -261,9 +282,10 @@
     // Clear the previous DLC theme before rendering the next scenario, preventing
     // a one-frame (or persistent) carry-over when leaving an OMERTÀ room.
     clearDlcVisualState(key);
-    if(OWNER_ONLY_IDS.has(key)){
-      const status=await ownerAccessStatus();
-      if(!status.owner){if(typeof toast==='function')toast('Ce DLC est réservé au propriétaire.');updateBodyTheme();return}
+    if(PREMIUM_IDS.has(key)){
+      await dlcAccessStatus();
+      const collection=collectionForScenario(key);
+      if(!hasAccess(collection)){if(typeof toast==='function')toast('Ce profil ne détient pas ce DLC.');updateBodyTheme();return}
     }
     const result=baseSelectScenario(id);
     queueMicrotask(updateBodyTheme);
@@ -276,8 +298,36 @@
     const out=oldRenderCreateList();
     decorateCreateList();
     updateBodyTheme();
-    ownerAccessStatus().then(()=>{const root=document.querySelector('.page-create-v10-13');if(root)decorateCreateList()});
+    dlcAccessStatus().then(()=>{const root=document.querySelector('.page-create-v10-13');if(root)decorateCreateList()});
     return out;
+  };
+
+
+  // Premium rooms 021–034 require the joining player's own entitlement.
+  const baseJoinRoom=joinRoom;
+  joinRoom=async function(){
+    primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
+    const pseudo=(byId('joinPseudo')?.value||'').trim(),code=(byId('joinCode')?.value||'').trim().toUpperCase();
+    if(!pseudo||code.length!==5)return toast('Pseudo et code requis.');
+    try{
+      let out;
+      try{out=await rpc('igr_v4_join_room',{p_code:code,p_pseudo:pseudo})}
+      catch(error){
+        if(!/premium access required/i.test(String(error?.message||'')))throw error;
+        saveProfileData({pseudo});
+        const id=await ensureIdentity();
+        out=await rpc('igr_dlc_join_room',{p_code:code,p_pseudo:pseudo,p_profile_id:id.id,p_profile_token:id.token});
+      }
+      await enterRoomState(out,code,pseudo,false);
+    }catch(error){
+      console.error('join room v12.44',error);
+      const text=String(error?.message||'');
+      if(/dlc_locked:omerta/i.test(text))return toast('Ce profil ne détient pas OMERTÀ.');
+      if(/dlc_locked:terror/i.test(text))return toast('Ce profil ne détient pas TERREUR.');
+      if(/dlc_locked:cartel/i.test(text))return toast('Ce profil ne détient pas CARTEL.');
+      if(/dlc_locked:regime/i.test(text))return toast('Ce profil ne détient pas LE RÉGIME.');
+      toast('Cellule introuvable, pleine, déjà lancée ou DLC non détenu.');
+    }
   };
 
 
@@ -296,6 +346,6 @@
     updateBodyTheme();
   });
   observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','aria-current']});
-  setTimeout(()=>{ownerAccessStatus().then(()=>{if(STATE?.view==='create-list')decorateCreateList()});updateBodyTheme()},0);
-  window.addEventListener('pageshow',()=>{ownerAccessStatus(true).then(()=>{if(STATE?.view==='create-list')decorateCreateList()});updateBodyTheme()},{passive:true});
+  setTimeout(()=>{dlcAccessStatus().then(()=>{if(STATE?.view==='create-list')decorateCreateList()});updateBodyTheme()},0);
+  window.addEventListener('pageshow',()=>{dlcAccessStatus(true).then(()=>{if(STATE?.view==='create-list')decorateCreateList()});updateBodyTheme()},{passive:true});
 })();

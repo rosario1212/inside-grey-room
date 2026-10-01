@@ -1,0 +1,59 @@
+/* Inside Grey Room v12.44 — startup fallback + fluid live cell */
+html,body,#app,.intro-gate{background-color:#000}
+.intro-gate.igr-intro-v1242{
+  background-color:#000!important;
+  background-image:
+    linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.46)),
+    url('assets/intro-v10-14.webp?v=v12.44-startup'),
+    url('assets/home-v10-14.webp')!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+.intro-gate.igr-intro-v1242 .intro-art{display:block!important;opacity:1;object-fit:cover;object-position:center;width:100%;height:100%;min-height:100dvh;image-rendering:auto}
+.intro-gate.igr-intro-v1242.intro-image-failed .intro-art{opacity:0!important}
+#introEnterBtn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+/* Lobby changes should feel immediate, not flash/reflow violently. */
+.lobby-v11 .player-line,
+.lobby-v11 .role-choice-card,
+.lobby-v11 .igr-choice-status,
+.lobby-v11 .lobby-status,
+.lobby-v11 .lobby-code{
+  transition:border-color .14s ease,background-color .14s ease,box-shadow .14s ease,opacity .14s ease,transform .14s ease;
+}
+.lobby-v11 .role-choice-card:active{transform:scale(.992)}
+html[data-igr-realtime="fallback"] .connection-status{opacity:.9}
+@media(prefers-reduced-motion:reduce){
+  .lobby-v11 .player-line,.lobby-v11 .role-choice-card,.lobby-v11 .igr-choice-status,.lobby-v11 .lobby-status,.lobby-v11 .lobby-code{transition:none!important}
+}
+
+/* v12.42 startup hardening: the entrance artwork is visible before any JS executes. */
+.intro-gate{
+  background-color:#000!important;
+  background-image:
+    linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.44)),
+    url('assets/intro-v10-14.webp?v=v12.44-startup'),
+    url('assets/home-v10-14.webp?v=v12.44-startup')!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+.intro-gate:not(.opening):not(.done) .intro-art{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100dvh!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+html[data-igr-role-pending="1"] .lobby-v11 .role-choice-zone{will-change:contents}
+
+
+/* v12.44 interaction feedback */
+.lobby-v11 .btn,.lobby-v11 button,.lobby-v11 .role-choice-card,.lobby-profile-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.lobby-v11 .btn:active,.lobby-v11 button:active,.lobby-profile-btn:active{transform:scale(.985)}
+html[data-igr-cell-action="role"] .lobby-v11 .role-choice-zone{contain:layout paint style}
+html[data-igr-realtime="live"] .lobby-v11{--igr-live-accent:rgba(180,196,205,.16)}
