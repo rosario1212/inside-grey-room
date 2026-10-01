@@ -1,0 +1,18 @@
+/* Inside Grey Room — v12.45 DLC invite/access UI */
+.dlc-access-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.igr-dlc-access-action{margin-left:2px;min-height:38px;padding-inline:13px!important}
+.igr-dlc-access-modal{z-index:960}
+.igr-dlc-access-box{max-width:590px}
+.igr-dlc-access-kicker{font:800 9px 'IBM Plex Mono',monospace;letter-spacing:.17em;text-transform:uppercase;color:#8a949c;margin-bottom:6px}
+.igr-dlc-access-box>p{color:#919ba3;line-height:1.55;font-size:12px}
+.igr-dlc-invite-builder{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;margin:15px 0}
+.igr-dlc-invite-builder .field{margin:0}
+.igr-dlc-new-code{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:12px 0 18px;padding:13px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.025)}
+.igr-dlc-new-code small{grid-column:1/-1;font:750 8px 'IBM Plex Mono',monospace;letter-spacing:.13em;color:#7d878f}
+.igr-dlc-new-code strong{font:900 16px 'IBM Plex Mono',monospace;letter-spacing:.08em;overflow-wrap:anywhere;color:#edf1f3}
+.igr-dlc-access-list{display:grid;gap:7px;margin-top:8px;max-height:35vh;overflow:auto}
+.igr-dlc-access-person{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.018)}
+.igr-dlc-access-person span{min-width:0}.igr-dlc-access-person b{display:block;font-size:11px}.igr-dlc-access-person small{display:block;margin-top:4px;color:#737e87;font:700 8px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.igr-dlc-authorized{margin:14px 0;padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.018)}
+.igr-dlc-authorized b{font:850 10px 'IBM Plex Mono',monospace;letter-spacing:.12em}.igr-dlc-authorized p{margin:7px 0 0;color:#88939b;font-size:11px}
+@media(max-width:640px){.igr-dlc-invite-builder{grid-template-columns:1fr}.igr-dlc-invite-builder>.btn{width:100%}.igr-dlc-new-code{grid-template-columns:1fr}.igr-dlc-new-code .btn{width:100%}.igr-dlc-access-person{align-items:flex-start}}

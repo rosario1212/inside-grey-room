@@ -303,7 +303,7 @@
     if(!card){
       card = document.createElement('div');
       card.className = 'igr-choice-status';
-      card.innerHTML = '<div class="igr-choice-status-copy"><span class="igr-choice-status-kicker">TON CHOIX</span><strong class="igr-choice-status-title">Aucun rôle choisi</strong><small class="igr-choice-status-note">Un rôle sera attribué au lancement.</small></div><div class="igr-choice-status-actions"><button type="button" class="igr-choice-status-button">Retirer</button><span class="igr-choice-status-empty">Un rôle sera attribué au lancement.</span></div>';
+      card.innerHTML = '<div class="igr-choice-status-copy"><span class="igr-choice-status-kicker">TON CHOIX</span><strong class="igr-choice-status-title">Aucun rôle choisi</strong><small class="igr-choice-status-note">Un rôle sera attribué au lancement.</small></div><div class="igr-choice-status-actions"><button type="button" class="igr-choice-status-button">Retirer</button></div>';
       zone.insertBefore(card, button);
     }
     const lowerControl = removeChoiceControl();
@@ -314,7 +314,6 @@
     const note = card.querySelector('.igr-choice-status-note');
     if(note) note.textContent = chosen ? 'Touchez retirer pour revenir à aucun rôle choisi.' : 'Un rôle sera attribué au lancement.';
     const btn = card.querySelector('.igr-choice-status-button');
-    const empty = card.querySelector('.igr-choice-status-empty');
     if(btn){
       btn.hidden = !removable;
       btn.disabled = !removable;
@@ -325,10 +324,6 @@
         if(target && !target.matches('[disabled],[aria-disabled="true"]')) target.click();
         else toast('Aucun rôle à retirer.');
       };
-    }
-    if(empty){
-      empty.hidden = removable;
-      empty.textContent = 'Un rôle sera attribué au lancement.';
     }
   }
 
