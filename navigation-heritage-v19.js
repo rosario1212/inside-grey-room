@@ -1,8 +1,8 @@
-/* Inside Grey Room v19 — home-safe dock, draggable quick navigation, stable top settings and Heritage polish. */
+/* Inside Grey Room v20 — home-safe dock, draggable quick navigation, stable top settings and Heritage polish. */
 (()=>{
 'use strict';
-const VERSION='19.0-nav-heritage';
-const POS_KEY='igr_quick_nav_positions_v19';
+const VERSION='20.0-settings-nav-symmetry';
+const POS_KEY='igr_quick_nav_positions_v20';
 let queued=false,scrollTimer=0;
 const isFr=()=>window.IGR_LOCALE!=='en';
 const currentView=()=>{try{return String(STATE?.view||'')}catch{return''}};
@@ -33,11 +33,19 @@ function ensureTopSettings(){
   document.getElementById('igrGlobalHome')?.remove();
   const topbar=document.querySelector('#app .topbar');if(!topbar)return;
   let actions=topbar.querySelector('.top-actions');if(!actions){actions=document.createElement('div');actions.className='top-actions';topbar.appendChild(actions)}
-  const candidates=[...actions.querySelectorAll('button')].filter(b=>/openSettings/.test(b.getAttribute('onclick')||'')||/paramètres|settings/i.test(b.textContent||''));
-  let btn=candidates[0]||document.getElementById('igrTopSettings');
-  if(!btn){btn=document.createElement('button');btn.type='button';btn.id='igrTopSettings';btn.addEventListener('click',()=>{try{openSettings()}catch{try{window.openSettings?.()}catch{}}});actions.appendChild(btn)}
-  for(const extra of candidates.slice(1))extra.remove();
-  btn.id='igrTopSettings';btn.classList.add('pill-btn','igr-top-settings');btn.innerHTML='<span aria-hidden="true">⚙</span>';btn.setAttribute('aria-label',isFr()?'Paramètres':'Settings');btn.setAttribute('title',isFr()?'Paramètres':'Settings');
+  const looksLikeSettings=el=>{
+    if(!el)return false;
+    const signature=[el.id,el.className,el.getAttribute?.('onclick'),el.getAttribute?.('aria-label'),el.getAttribute?.('title'),el.textContent].filter(Boolean).join(' ');
+    return /igrTopSettings|igr-top-settings|openSettings|paramètres|settings|⚙/i.test(signature);
+  };
+  const candidates=[...topbar.querySelectorAll('button,[role="button"]')].filter(looksLikeSettings);
+  let btn=candidates.find(el=>el.id==='igrTopSettings')||candidates.find(el=>/openSettings/.test(el.getAttribute?.('onclick')||''))||candidates[0];
+  if(!btn){btn=document.createElement('button');btn.type='button'}
+  for(const extra of candidates){if(extra!==btn)extra.remove()}
+  if(btn.parentElement!==actions)actions.appendChild(btn);
+  btn.id='igrTopSettings';btn.className='pill-btn igr-top-settings';btn.removeAttribute('onclick');
+  btn.onclick=()=>{try{if(typeof openSettings==='function')openSettings();else window.openSettings?.()}catch{try{window.openSettings?.()}catch{}}};
+  btn.innerHTML='<span aria-hidden="true">⚙</span>';btn.setAttribute('aria-label',isFr()?'Paramètres':'Settings');btn.setAttribute('title',isFr()?'Paramètres':'Settings');
 }
 function closeFilters(){
   const nav=scenarioPage()?.querySelector('.igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
@@ -56,8 +64,8 @@ function ensureDock(){
 }
 function bindDockClicks(){
   const home=document.getElementById('igrDockHome'),filters=document.getElementById('igrDockFilters');
-  if(home&&!home.dataset.igrV19Click){home.dataset.igrV19Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
-  if(filters&&!filters.dataset.igrV19Click){filters.dataset.igrV19Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(home&&!home.dataset.igrV20Click){home.dataset.igrV20Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(filters&&!filters.dataset.igrV20Click){filters.dataset.igrV20Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
 }
 function apply(){ensureTopSettings();ensureDock();bindDockClicks()}
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})}
@@ -67,6 +75,6 @@ function boot(){
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',schedule,{passive:true});addEventListener('pageshow',schedule,{passive:true});
   document.addEventListener('click',e=>{if(isHome())return;const nav=document.querySelector('.igr-filter-dock-panel.is-dock-open');if(nav&&!nav.contains(e.target)&&!e.target.closest?.('#igrDockFilters'))closeFilters()});
 }
-window.IGR_NAV_HERITAGE_V19=Object.freeze({version:VERSION,refresh:schedule});
+window.IGR_NAV_HERITAGE_V20=Object.freeze({version:VERSION,refresh:schedule});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
