@@ -1,0 +1,48 @@
+/* Inside Grey Room v14 — home/navigation/Heritage presentation polish */
+:root{--igr-safe-bottom:max(14px,env(safe-area-inset-bottom,0px));--igr-safe-top:max(10px,env(safe-area-inset-top,0px))}
+
+/* Home hierarchy: core play actions first, premium mode after join. */
+.home-actions-v10-13,.home-actions{gap:10px!important}
+.home-actions-v10-13>.btn.primary.block,.home-actions>.btn.primary.block{order:0;min-height:58px;border-radius:18px!important}
+.home-actions-v10-13>.home-action.primary,.home-actions>.home-action.primary{order:1}
+.home-actions-v10-13>.home-action.igr-home-join,.home-actions>.home-action.igr-home-join{order:2}
+.home-actions-v10-13>.heritage-premium-home-action,.home-actions>.heritage-premium-home-action{order:3}
+.home-actions-v10-13>.home-action.igr-home-rules,.home-actions>.home-action.igr-home-rules{order:4}
+.home-actions-v10-13>.home-action.igr-home-profile,.home-actions>.home-action.igr-home-profile{order:5}
+.home-actions-v10-13>.home-action,.home-actions>.home-action{min-height:88px!important}
+.heritage-premium-home-action{min-height:88px!important;background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.012))!important}
+.heritage-premium-home-action .heritage-premium-copy p{max-width:28ch!important}
+
+/* Scenario browser: permanent, thumb-reachable exit; no need to scroll back to the top. */
+.igr-scenario-exit{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--igr-safe-bottom) + 10px);z-index:120;min-height:48px;padding:0 16px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(8,11,14,.90);color:#f3f5f6;box-shadow:0 12px 36px rgba(0,0,0,.45);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);font:800 12px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.01em;touch-action:manipulation}
+.igr-scenario-exit:active{transform:scale(.98)}
+.page-create-v10-13{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+
+/* Heritage: let the original poster art breathe instead of compressing it into banners. */
+.hplay-campaign-card{aspect-ratio:2/3;min-height:0!important}
+.hplay-campaign-card>img{object-position:center center!important;filter:brightness(.68) contrast(1.045) saturate(.78)!important}
+.hplay-theme-cendres.hplay-campaign-card>img{filter:brightness(.66) contrast(1.06) saturate(.72)!important}
+.hplay-theme-kuroi.hplay-campaign-card>img{filter:brightness(.64) contrast(1.05) saturate(.76)!important}
+.hplay-campaign-shade{background:linear-gradient(180deg,rgba(0,0,0,.03) 0%,rgba(0,0,0,.10) 44%,rgba(2,3,4,.74) 72%,#030405 100%)!important}
+.hplay-campaign-body{padding:22px!important}
+.hplay-campaign-body>strong{letter-spacing:-.045em!important;text-shadow:0 3px 20px rgba(0,0,0,.5)}
+.hplay-campaign-body>small{color:#d0d5d8!important}
+
+/* Campaign page cover: preserve the poster ratio on phones, while keeping desktop compact. */
+@media(max-width:760px){
+  .hplay-hub-grid{gap:18px!important}
+  .hplay-campaign-card{width:100%;aspect-ratio:2/3;max-height:none!important;border-radius:24px!important}
+  .hplay-campaign-card>img{object-fit:cover!important;object-position:center center!important}
+  .hplay-campaign-hero{height:auto!important;aspect-ratio:2/3;max-height:min(72dvh,620px);background:#030405!important}
+  .hplay-campaign-hero img{width:100%;height:100%;object-fit:cover!important;object-position:center center!important;filter:brightness(.70) contrast(1.04) saturate(.78)!important}
+  .hplay-campaign-hero::after{background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.12) 52%,rgba(0,0,0,.82) 100%)!important}
+  .hplay-campaign-hero>div{left:18px!important;right:18px!important;bottom:16px!important;text-align:left!important}
+}
+
+@media(max-width:540px){
+  .home-actions-v10-13>.home-action,.home-actions>.home-action,.heritage-premium-home-action{min-height:82px!important}
+  .igr-scenario-exit{right:14px;bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 8px);min-height:46px;padding:0 14px;font-size:11px}
+  .hplay-campaign-body{padding:20px!important}
+}
+
+@media(prefers-reduced-motion:reduce){.igr-scenario-exit{transition:none!important}}
