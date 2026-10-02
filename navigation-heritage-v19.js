@@ -1,7 +1,7 @@
-/* Inside Grey Room v22 — stable settings control + responsive floating navigation. */
+/* Inside Grey Room v23 — stable settings control + scoped floating navigation. */
 (()=>{
 'use strict';
-const VERSION='22.0-home-input-hotfix';
+const VERSION='23.0-cell-controls-stability';
 const POS_KEY='igr_quick_nav_positions_v20';
 let queued=false,scrollTimer=0;
 const isFr=()=>window.IGR_LOCALE!=='en';
@@ -14,6 +14,7 @@ function isHome(){
 }
 function isProfile(){return currentView()==='profile'||!!document.querySelector('#app .profile-page,#app .profile-v12,#app [data-page="profile"]')}
 function scenarioPage(){return document.querySelector('#app .page-create-v10-13')}
+function dockAllowed(){return !!scenarioPage()||isProfile()}
 function readPositions(){try{return JSON.parse(localStorage.getItem(POS_KEY)||'{}')||{}}catch{return{}}}
 function writePosition(key,value){try{const all=readPositions();all[key]=value;localStorage.setItem(POS_KEY,JSON.stringify(all))}catch{}}
 function clearInlinePosition(btn){if(!btn)return;btn.style.left='';btn.style.right='';btn.style.top='';btn.style.bottom=''}
@@ -57,9 +58,6 @@ function ensureTopSettings(){
     btn.addEventListener('click',()=>{try{if(typeof openSettings==='function')openSettings();else window.openSettings?.()}catch{try{window.openSettings?.()}catch{}}});
   }
 
-  /* Remove only actual duplicate controls. This is intentionally idempotent:
-     no replaceChildren/continuous DOM rewrite, so the MutationObserver cannot
-     create a render loop that blocks taps on the home screen. */
   const candidates=[...topbar.querySelectorAll('button,[role="button"],a')];
   for(const el of candidates){if(el!==btn&&settingsLike(el))el.remove()}
   for(const el of [...topbar.querySelectorAll('span')]){
@@ -72,11 +70,18 @@ function ensureTopSettings(){
 function closeFilters(){
   const nav=scenarioPage()?.querySelector('.igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
 }
+function clearDockState(){
+  closeFilters();
+  document.getElementById('igrUniversalDock')?.remove();
+  document.body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view');
+}
 function ensureDock(){
-  const home=isHome(),page=scenarioPage();document.body.classList.toggle('igr-at-home',home);document.body.classList.toggle('igr-scenario-browser',!!page&&!home);document.body.classList.toggle('igr-profile-view',isProfile()&&!home);
-  let dock=document.getElementById('igrUniversalDock');
-  if(home){closeFilters();dock?.remove();document.body.classList.remove('igr-global-dock-active');return}
-  if(!dock)return;
+  const home=isHome(),page=scenarioPage(),profile=isProfile(),allowed=!!page||profile;
+  document.body.classList.toggle('igr-at-home',home);
+  document.body.classList.toggle('igr-scenario-browser',!!page&&!home);
+  document.body.classList.toggle('igr-profile-view',profile&&!home);
+  if(home||!allowed){clearDockState();return}
+  const dock=document.getElementById('igrUniversalDock');if(!dock)return;
   const homeBtn=dock.querySelector('#igrDockHome'),filters=dock.querySelector('#igrDockFilters');
   if(homeBtn){homeBtn.hidden=false;makeDraggable(homeBtn,'home');restorePosition(homeBtn,'home')}
   const nav=page?.querySelector('.igr-scenario-filters');
@@ -86,11 +91,17 @@ function ensureDock(){
 }
 function bindDockClicks(){
   const home=document.getElementById('igrDockHome'),filters=document.getElementById('igrDockFilters');
-  if(home&&!home.dataset.igrV22Click){home.dataset.igrV22Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
-  if(filters&&!filters.dataset.igrV22Click){filters.dataset.igrV22Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(home&&!home.dataset.igrV23Click){home.dataset.igrV23Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(filters&&!filters.dataset.igrV23Click){filters.dataset.igrV23Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
 }
 function apply(){ensureTopSettings();ensureDock();bindDockClicks()}
-function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})}
+function schedule(){
+  const allowed=dockAllowed(),home=isHome(),dock=document.getElementById('igrUniversalDock');
+  /* Inside a live cell there is deliberately no floating dock. Once it has been
+     removed, mutations from realtime game updates no longer trigger navigation work. */
+  if(!home&&!allowed&&!dock)return;
+  if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()});
+}
 function onScroll(){
   if(isHome()||(!scenarioPage()&&!isProfile()))return;
   document.body.classList.add('igr-dock-scrolling');
@@ -101,6 +112,6 @@ function boot(){
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',schedule,{passive:true});addEventListener('pageshow',schedule,{passive:true});
   document.addEventListener('click',e=>{if(isHome())return;const nav=document.querySelector('.igr-filter-dock-panel.is-dock-open');if(nav&&!nav.contains(e.target)&&!e.target.closest?.('#igrDockFilters'))closeFilters()});
 }
-window.IGR_NAV_HERITAGE_V22=Object.freeze({version:VERSION,refresh:schedule});
+window.IGR_NAV_HERITAGE_V23=Object.freeze({version:VERSION,refresh:schedule});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
