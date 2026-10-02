@@ -1,22 +1,32 @@
-/* Inside Grey Room v14 — home/navigation/Heritage presentation polish */
+/* Inside Grey Room v16 — home/navigation/Heritage presentation polish */
 :root{--igr-safe-bottom:max(14px,env(safe-area-inset-bottom,0px));--igr-safe-top:max(10px,env(safe-area-inset-top,0px))}
 
-/* Home hierarchy: core play actions first, premium mode after join. */
-.home-actions-v10-13,.home-actions{gap:10px!important}
-.home-actions-v10-13>.btn.primary.block,.home-actions>.btn.primary.block{order:0;min-height:58px;border-radius:18px!important}
-.home-actions-v10-13>.home-action.primary,.home-actions>.home-action.primary{order:1}
-.home-actions-v10-13>.home-action.igr-home-join,.home-actions>.home-action.igr-home-join{order:2}
-.home-actions-v10-13>.heritage-premium-home-action,.home-actions>.heritage-premium-home-action{order:3}
-.home-actions-v10-13>.home-action.igr-home-rules,.home-actions>.home-action.igr-home-rules{order:4}
-.home-actions-v10-13>.home-action.igr-home-profile,.home-actions>.home-action.igr-home-profile{order:5}
-.home-actions-v10-13>.home-action,.home-actions>.home-action{min-height:88px!important}
+/* Home hierarchy: play first, premium next, secondary utilities compact. */
+.home-actions-v10-13,.home-actions{gap:10px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.home-actions-v10-13>.btn.primary.block,.home-actions>.btn.primary.block{order:0;grid-column:1/-1;min-height:58px;border-radius:18px!important}
+.home-actions-v10-13>.home-action.igr-home-create,.home-actions>.home-action.igr-home-create,.home-actions-v10-13>.home-action.primary,.home-actions>.home-action.primary{order:1;grid-column:1/-1}
+.home-actions-v10-13>.home-action.igr-home-join,.home-actions>.home-action.igr-home-join{order:2;grid-column:1/-1}
+.home-actions-v10-13>.heritage-premium-home-action,.home-actions>.heritage-premium-home-action{order:3;grid-column:1/-1}
+.home-actions-v10-13>.home-action.igr-home-rules,.home-actions>.home-action.igr-home-rules{order:4;grid-column:auto}
+.home-actions-v10-13>.home-action.igr-home-profile,.home-actions>.home-action.igr-home-profile{order:5;grid-column:auto}
+.home-actions-v10-13>.home-action:not(.igr-home-rules):not(.igr-home-profile),.home-actions>.home-action:not(.igr-home-rules):not(.igr-home-profile){min-height:88px!important}
+.home-actions-v10-13>.home-action.igr-home-rules,.home-actions-v10-13>.home-action.igr-home-profile,.home-actions>.home-action.igr-home-rules,.home-actions>.home-action.igr-home-profile{min-height:68px!important;padding:13px!important;gap:10px!important}
+.igr-home-rules .icon,.igr-home-profile .icon{width:34px!important;height:34px!important;min-width:34px!important;border-radius:10px!important;font-size:16px!important}
+.igr-home-rules h3,.igr-home-profile h3{font-size:16px!important;letter-spacing:-.025em!important}
+.igr-home-rules p,.igr-home-profile p{display:none!important}
 .heritage-premium-home-action{min-height:88px!important;background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.012))!important}
 .heritage-premium-home-action .heritage-premium-copy p{max-width:28ch!important}
 
-/* Scenario browser: permanent, thumb-reachable exit; no need to scroll back to the top. */
-.igr-scenario-exit{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--igr-safe-bottom) + 10px);z-index:120;min-height:48px;padding:0 16px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(8,11,14,.90);color:#f3f5f6;box-shadow:0 12px 36px rgba(0,0,0,.45);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);font:800 12px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.01em;touch-action:manipulation}
-.igr-scenario-exit:active{transform:scale(.98)}
-.page-create-v10-13{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+/* Small navigation actions are centralized in the top bar instead of duplicated. */
+.igr-utility-topbar{position:sticky;top:var(--igr-safe-top);z-index:160;margin-bottom:18px!important;padding:7px 0;background:linear-gradient(180deg,rgba(5,7,10,.96),rgba(5,7,10,.80) 78%,rgba(5,7,10,0));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.igr-utility-topbar .top-actions{align-items:center;flex-wrap:nowrap}
+.igr-global-home{border-color:rgba(255,255,255,.16)!important;color:#eef1f3!important;background:rgba(13,17,22,.92)!important;white-space:nowrap}
+.igr-has-global-home .page-head>.igr-local-home{display:none!important}
+.igr-has-global-home .page-head{align-items:flex-end!important;margin-bottom:14px!important}
+
+/* No legacy floating Home/Filter controls over cards. */
+#igrScenarioExit,#igrFilterFab{display:none!important}
+.page-create-v10-13{padding-bottom:calc(48px + env(safe-area-inset-bottom,0px))!important}
 
 /* Heritage: let the original poster art breathe instead of compressing it into banners. */
 .hplay-campaign-card{aspect-ratio:2/3;min-height:0!important}
@@ -40,9 +50,20 @@
 }
 
 @media(max-width:540px){
-  .home-actions-v10-13>.home-action,.home-actions>.home-action,.heritage-premium-home-action{min-height:82px!important}
-  .igr-scenario-exit{right:14px;bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 8px);min-height:46px;padding:0 14px;font-size:11px}
+  .igr-utility-topbar{top:max(6px,env(safe-area-inset-top,0px));padding:5px 0;margin-bottom:13px!important}
+  .igr-utility-topbar .brand-sub{display:none}
+  .igr-utility-topbar .brand img{width:38px;height:38px;border-radius:11px}
+  .igr-utility-topbar .brand-title{font-size:10px;letter-spacing:.14em}
+  .igr-utility-topbar .pill-btn{padding:9px 10px;font-size:8px;letter-spacing:.06em}
+  .home-actions-v10-13>.home-action:not(.igr-home-rules):not(.igr-home-profile),.home-actions>.home-action:not(.igr-home-rules):not(.igr-home-profile),.heritage-premium-home-action{min-height:82px!important}
+  .igr-home-rules,.igr-home-profile{min-width:0}
+  .igr-home-rules h3,.igr-home-profile h3{font-size:14px!important}
   .hplay-campaign-body{padding:20px!important}
 }
 
-@media(prefers-reduced-motion:reduce){.igr-scenario-exit{transition:none!important}}
+@media(max-width:360px){
+  .home-actions-v10-13,.home-actions{grid-template-columns:1fr!important}
+  .home-actions-v10-13>.home-action.igr-home-rules,.home-actions-v10-13>.home-action.igr-home-profile,.home-actions>.home-action.igr-home-rules,.home-actions>.home-action.igr-home-profile{grid-column:1/-1}
+}
+
+@media(prefers-reduced-motion:reduce){.igr-global-home{transition:none!important}}

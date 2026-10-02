@@ -11,8 +11,8 @@ for(const name of ['interface-polish-v14.css','interface-polish-v14.js']){
   await copyFile(path.join(root,name),path.join(out,name));
 }
 
-// iOS caches touch icons very aggressively. Keep a new physical filename so
-// Safari cannot silently reuse an older icon after a deployment.
+// iOS caches touch icons very aggressively. Keep a physical filename dedicated
+// to the current artwork, but keep the PWA identity/start URL stable.
 const iosIcon='apple-touch-icon-v15.png';
 await copyFile(path.join(root,'assets',iosIcon),path.join(out,'assets',iosIcon));
 
@@ -20,11 +20,13 @@ for(const page of ['index.html','en.html']){
   const target=path.join(out,page);
   let html=await readFile(target,'utf8');
   if(!html.includes('interface-polish-v14.css')){
-    html=html.replace('</head>','  <link rel="stylesheet" href="interface-polish-v14.css?v=v14-ui-polish">\n</head>');
+    html=html.replace('</head>','  <link rel="stylesheet" href="interface-polish-v14.css?v=v16-owner-nav">\n</head>');
   }
   if(!html.includes('interface-polish-v14.js')){
-    html=html.replace('</body>','  <script src="interface-polish-v14.js?v=v14-ui-polish"></script>\n</body>');
+    html=html.replace('</body>','  <script src="interface-polish-v14.js?v=v16-owner-nav"></script>\n</body>');
   }
+  html=html.replaceAll('dlc-profile-ui-v12-44.css?v=v12.44-ui','dlc-profile-ui-v12-44.css?v=v16-owner-nav');
+  html=html.replaceAll('dlc-profile-ui-v12-44.js?v=v12.44-ui','dlc-profile-ui-v12-44.js?v=v16-owner-nav');
   // Force the exact Inside Grey Room door artwork for iOS Add to Home Screen,
   // plus a precomposed alias and a normal page icon for Safari's share UI.
   html=html.replace(/<link\s+rel="apple-touch-icon"[^>]*>/i,'<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v15.png?v=v15-ios-home">');
@@ -38,24 +40,31 @@ for(const page of ['index.html','en.html']){
 const manifestPath=path.join(out,'manifest.webmanifest');
 try{
   const manifest=JSON.parse(await readFile(manifestPath,'utf8'));
-  manifest.start_url='/?igr=v15-ios-home-icon';
+  // Never version these fields: changing the launch identity can make iOS open
+  // a fresh storage container and therefore lose the locally stored profile token.
+  manifest.id='/';
+  manifest.start_url='/';
+  manifest.scope='/';
   manifest.icons=[
     {src:'assets/icon-192-v14.png',sizes:'192x192',type:'image/png',purpose:'any'},
     {src:'assets/icon-512-v14.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}
   ];
   await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n','utf8');
-}catch(err){console.warn('[v15] manifest patch skipped',err.message)}
+}catch(err){console.warn('[v16] manifest patch skipped',err.message)}
 
 const swPath=path.join(out,'service-worker.js');
 try{
   let sw=await readFile(swPath,'utf8');
-  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v15-ios-home-icon';");
+  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v16-owner-nav';");
   if(!sw.includes('/interface-polish-v14.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/interface-polish-v14.css?v=v14-ui-polish','/interface-polish-v14.js?v=v14-ui-polish',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/interface-polish-v14.css?v=v16-owner-nav','/interface-polish-v14.js?v=v16-owner-nav',");
+  }else{
+    sw=sw.replaceAll('/interface-polish-v14.css?v=v14-ui-polish','/interface-polish-v14.css?v=v16-owner-nav');
+    sw=sw.replaceAll('/interface-polish-v14.js?v=v14-ui-polish','/interface-polish-v14.js?v=v16-owner-nav');
   }
   sw=sw.replace("'/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'","'/assets/icon-192-v14.png','/assets/icon-512-v14.png','/assets/apple-touch-icon-v15.png','/assets/favicon-v14.png'");
   sw=sw.replaceAll('/assets/apple-touch-icon-v14.png','/assets/apple-touch-icon-v15.png');
   await writeFile(swPath,sw,'utf8');
 }catch{}
 
-console.log(`Inside Grey Room v15 iOS icon + v14 interface polish applied to ${outArg}`);
+console.log(`Inside Grey Room v16 owner/profile/navigation polish applied to ${outArg}`);
