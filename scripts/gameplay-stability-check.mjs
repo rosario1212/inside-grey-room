@@ -49,9 +49,11 @@ ok(files.cell.includes('button.disabled=!canStart'),'Launch button recovery must
 ok(files.cell.includes('__igrV24LaunchGuard'),'Launch calls must be deduplicated');
 ok(files.cell.includes('requestAnimationFrame(syncGameUiState)'),'Launch completion must schedule an immediate UI recovery');
 ok(files.cell.includes("document.getElementById('igrUniversalDock')?.remove()"),'Live cells must purge stale dock shells');
+ok(!files.cell.includes("gate.style.pointerEvents='none'"),'Gameplay repair must not permanently disable the reusable intro gate');
 
-// gameplay-clean-v12 has a legacy document-wide MutationObserver. The build
-// wrapper must track/disconnect it on mobile/PWA too, not only desktop.
+// gameplay-clean-v12 has a legacy document-wide MutationObserver whose callback
+// rewrites child nodes and can therefore retrigger itself. The build wrapper
+// must track/disconnect it on mobile/PWA too, not only desktop.
 ok(files.apply.includes("'if(!nativeShell&&!mobile&&window.MutationObserver){'"),'Build patch must target the old desktop-only observer condition');
 ok(files.apply.includes("'if(window.MutationObserver){'"),'Build patch must enable observer tracking on mobile too');
 
