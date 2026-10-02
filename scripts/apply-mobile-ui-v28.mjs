@@ -7,8 +7,8 @@ if(!outArg)throw new Error('Usage: node scripts/apply-mobile-ui-v28.mjs <dist|ww
 const out=path.resolve(root,outArg);
 await stat(out);
 
-const VERSION='v30-live-controls-no-overlap';
-for(const name of ['mobile-ui-v28.css','mobile-ui-v28.js','prebeta-v30.css']){
+const VERSION='v30-game-only-notification-bell';
+for(const name of ['mobile-ui-v28.css','mobile-ui-v28.js','prebeta-v30.css','notification-bell-visibility-v31.js']){
   await copyFile(path.join(root,name),path.join(out,name));
 }
 
@@ -18,8 +18,9 @@ for(const page of ['index.html','en.html']){
   html=html.replace(/\s*<link[^>]+mobile-ui-v28\.css[^>]*>\s*/gi,'\n');
   html=html.replace(/\s*<link[^>]+prebeta-v30\.css[^>]*>\s*/gi,'\n');
   html=html.replace(/\s*<script[^>]+mobile-ui-v28\.js[^>]*><\/script>\s*/gi,'\n');
+  html=html.replace(/\s*<script[^>]+notification-bell-visibility-v31\.js[^>]*><\/script>\s*/gi,'\n');
   html=html.replace('</head>',`  <link rel="stylesheet" href="mobile-ui-v28.css?v=${VERSION}">\n  <link rel="stylesheet" href="prebeta-v30.css?v=${VERSION}">\n</head>`);
-  html=html.replace('</body>',`  <script src="mobile-ui-v28.js?v=${VERSION}"></script>\n</body>`);
+  html=html.replace('</body>',`  <script src="mobile-ui-v28.js?v=${VERSION}"></script>\n  <script src="notification-bell-visibility-v31.js?v=${VERSION}"></script>\n</body>`);
   await writeFile(target,html,'utf8');
 }
 
@@ -29,7 +30,7 @@ try{
   if(!sw.includes('/mobile-ui-v28.css')){
     sw=sw.replace(
       "  '/', '/index.html', '/en.html',",
-      `  '/', '/index.html', '/en.html',\n  '/mobile-ui-v28.css?v=${VERSION}','/prebeta-v30.css?v=${VERSION}','/mobile-ui-v28.js?v=${VERSION}',`
+      `  '/', '/index.html', '/en.html',\n  '/mobile-ui-v28.css?v=${VERSION}','/prebeta-v30.css?v=${VERSION}','/mobile-ui-v28.js?v=${VERSION}','/notification-bell-visibility-v31.js?v=${VERSION}',`
     );
   }else{
     sw=sw.replace(/\/mobile-ui-v28\.css\?v=[^']+/g,`/mobile-ui-v28.css?v=${VERSION}`);
@@ -39,10 +40,15 @@ try{
     }else{
       sw=sw.replace(/\/prebeta-v30\.css\?v=[^']+/g,`/prebeta-v30.css?v=${VERSION}`);
     }
+    if(!sw.includes('/notification-bell-visibility-v31.js')){
+      sw=sw.replace(/'\/mobile-ui-v28\.js\?v=[^']+'/,match=>`${match},'/notification-bell-visibility-v31.js?v=${VERSION}'`);
+    }else{
+      sw=sw.replace(/\/notification-bell-visibility-v31\.js\?v=[^']+/g,`/notification-bell-visibility-v31.js?v=${VERSION}`);
+    }
   }
   await writeFile(swPath,sw,'utf8');
 }catch(err){
   console.warn('[v30] service worker patch skipped',err.message);
 }
 
-console.log(`Inside Grey Room v30 live-controls no-overlap applied to ${outArg}`);
+console.log(`Inside Grey Room v30 game-only notification bell applied to ${outArg}`);
