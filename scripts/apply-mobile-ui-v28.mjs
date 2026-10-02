@@ -7,7 +7,7 @@ if(!outArg)throw new Error('Usage: node scripts/apply-mobile-ui-v28.mjs <dist|ww
 const out=path.resolve(root,outArg);
 await stat(out);
 
-const VERSION='v30-game-only-notification-bell';
+const VERSION='v30-fixed-top-quit-button';
 for(const name of ['mobile-ui-v28.css','mobile-ui-v28.js','prebeta-v30.css','notification-bell-visibility-v31.js']){
   await copyFile(path.join(root,name),path.join(out,name));
 }
@@ -51,4 +51,4 @@ try{
   console.warn('[v30] service worker patch skipped',err.message);
 }
 
-console.log(`Inside Grey Room v30 game-only notification bell applied to ${outArg}`);
+console.log(`Inside Grey Room v30 fixed top quit button applied to ${outArg}`);
