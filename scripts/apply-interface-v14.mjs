@@ -17,6 +17,18 @@ await copyFile(path.join(root,'assets',iosIcon),path.join(out,'assets',iosIcon))
 for(const page of ['index.html','en.html']){
   const target=path.join(out,page);
   let html=await readFile(target,'utf8');
+
+  /* gameplay-clean-v12 installs a document-wide MutationObserver which rewrites
+     the lobby helper DOM from inside its own callback. The source page already
+     has a temporary observer tracker around that legacy script, but older builds
+     activated it only on desktop. Track/disconnect it on iPhone/Android/PWA too:
+     normal sync/render hooks already perform the required decoration. This
+     removes a self-triggering DOM loop that can starve taps after cell launch. */
+  html=html.replace(
+    'if(!nativeShell&&!mobile&&window.MutationObserver){',
+    'if(window.MutationObserver){'
+  );
+
   if(!html.includes('interface-polish-v14.css'))html=html.replace('</head>','  <link rel="stylesheet" href="interface-polish-v14.css?v=v20-settings-nav">\n</head>');
   else html=html.replace(/interface-polish-v14\.css\?v=[^"']+/g,'interface-polish-v14.css?v=v20-settings-nav');
   if(!html.includes('interface-polish-v14.js'))html=html.replace('</body>','  <script src="interface-polish-v14.js?v=v20-settings-nav"></script>\n</body>');
