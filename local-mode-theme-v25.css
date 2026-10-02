@@ -71,3 +71,5 @@
 @media(prefers-reduced-motion:reduce){
   .dual-mode-card[data-igr-mode-theme],.heritage-local-btn[data-igr-mode-theme],.heritage-online-btn[data-igr-mode-theme]{transition:none!important}
 }
+
+/* v26 contract: the two launch choices share content identity; only hierarchy differs. */
