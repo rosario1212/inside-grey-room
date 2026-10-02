@@ -7,7 +7,7 @@
    - Purges stale floating navigation from live cells/gameplay. */
 (()=>{
   'use strict';
-  const VERSION='24.1-gameplay-stability';
+  const VERSION='24.2-gameplay-stability';
 
   const inRoom=()=>{try{return !!(STATE?.room&&STATE?.token)}catch{return false}};
   const normalize=s=>String(s||'').replace(/\s+/g,' ').trim();
@@ -49,10 +49,8 @@
       document.getElementById('igrUniversalDock')?.remove();
       body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view','igr-filter-dock-open');
     }
-    const gate=document.getElementById('introGate');
-    if(gate&&(gate.getAttribute('aria-hidden')==='true'||gate.classList.contains('done'))){
-      gate.style.pointerEvents='none';
-    }
+    /* Do not mutate introGate here. The door sequence is reusable on genuine
+       app entry/return and owns its own pointer-event lifecycle. */
     healLobbyControls();
   }
 
