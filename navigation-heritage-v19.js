@@ -1,7 +1,7 @@
-/* Inside Grey Room v24 — fixed Home control + scoped low-churn navigation. */
+/* Inside Grey Room v27 — fixed Home controls + scoped low-churn navigation. */
 (()=>{
 'use strict';
-const VERSION='24.0-gameplay-stability';
+const VERSION='27.0-role-choice-nav';
 const POS_KEY='igr_quick_nav_positions_v20';
 let queued=false,scrollTimer=0;
 const isFr=()=>window.IGR_LOCALE!=='en';
@@ -13,7 +13,10 @@ function isHome(){
   return !!root.querySelector('.home-actions-v10-13,.home-actions,.igr-home-create,.igr-home-join,.heritage-premium-home-action');
 }
 function isProfile(){return currentView()==='profile'||!!document.querySelector('#app .profile-page,#app .profile-v12,#app [data-page="profile"]')}
-function scenarioPage(){return document.querySelector('#app .page-create-v10-13')}
+function scenarioPage(){
+  return document.querySelector('#app .page-create-v10-13')||
+    (currentView()==='create-list'?document.querySelector('#app main,#app .page'):null);
+}
 function dockAllowed(){return !!scenarioPage()||isProfile()}
 function readPositions(){try{return JSON.parse(localStorage.getItem(POS_KEY)||'{}')||{}}catch{return{}}}
 function writePositions(value){try{localStorage.setItem(POS_KEY,JSON.stringify(value||{}))}catch{}}
@@ -40,7 +43,6 @@ function settingsLike(el){
   return text==='⚙'||/openSettings|paramètres|settings|igr.?top.?settings|settings.?button|settings.?fab/i.test(signature);
 }
 function ensureTopSettings(){
-  document.getElementById('igrGlobalHome')?.remove();
   const topbar=document.querySelector('#app .topbar');if(!topbar)return;
   let actions=topbar.querySelector('.top-actions');
   if(!actions){actions=document.createElement('div');actions.className='top-actions';topbar.appendChild(actions)}
@@ -68,7 +70,7 @@ function ensureTopSettings(){
   }
 }
 function closeFilters(){
-  const nav=scenarioPage()?.querySelector('.igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
+  const nav=document.querySelector('#app .igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
 }
 function clearDockState(){
   closeFilters();
@@ -94,7 +96,7 @@ function ensureDock(){
     clearInlinePosition(homeBtn);
     forgetHomePosition();
   }
-  const nav=page?.querySelector('.igr-scenario-filters');
+  const nav=page?document.querySelector('#app .igr-scenario-filters'):null;
   if(filters){filters.hidden=!nav;if(nav){makeDraggable(filters,'filters');restorePosition(filters,'filters')}else clearInlinePosition(filters)}
   if(nav)nav.classList.add('igr-filter-dock-panel');else closeFilters();
   document.body.classList.toggle('igr-global-dock-active',!!homeBtn||!!nav);
