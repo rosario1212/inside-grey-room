@@ -9,6 +9,7 @@
   let accessAt=0;
   let accessLoading=null;
   let homeWrapped=false;
+  let heritageCodeLoading=null;
 
   const fr=()=>window.IGR_LOCALE!=='en';
   const copy=()=>fr()?{
@@ -23,11 +24,13 @@
     modalTitle:'HÉRITAGE est en accès limité',
     modalBody:'Ce mode premium contient des campagnes persistantes dont les décisions et les conséquences se transmettent d’un dossier au suivant.',
     modalOwned:'Ce profil possède HÉRITAGE.',
-    modalLocked:'Ce profil ne possède pas encore HÉRITAGE. L’accès est réservé aux profils autorisés après achat ou attribution de test.',
+    modalLocked:'Ce profil ne possède pas encore HÉRITAGE. Entre un code d’accès si tu en as reçu un, ou revérifie un achat déjà attribué à ce profil.',
     details:'2 campagnes · 10 dossiers · progression persistante',
     close:'Fermer',
     profile:'Voir mon profil',
-    retry:'Revérifier l’accès'
+    code:'Entrer un code d’accès',
+    retry:'Revérifier l’accès',
+    codeUnavailable:'Le module de code d’accès n’a pas pu être chargé. Recharge la page puis réessaie.'
   }:{
     title:'Heritage',
     subtitle:'Paid access · persistent campaigns',
@@ -40,11 +43,13 @@
     modalTitle:'HERITAGE has limited access',
     modalBody:'This premium mode contains persistent campaigns where decisions and consequences carry from one case to the next.',
     modalOwned:'This profile owns HERITAGE.',
-    modalLocked:'This profile does not own HERITAGE yet. Access is reserved for authorized profiles after purchase or tester assignment.',
+    modalLocked:'This profile does not own HERITAGE yet. Enter an access code if you received one, or check again for a purchase already assigned to this profile.',
     details:'2 campaigns · 10 cases · persistent progress',
     close:'Close',
     profile:'View my profile',
-    retry:'Check access again'
+    code:'Enter an access code',
+    retry:'Check access again',
+    codeUnavailable:'The access-code module could not be loaded. Reload the page and try again.'
   };
 
   function storage(){
@@ -136,6 +141,31 @@
   }
 
   function closeModal(){document.getElementById('heritagePremiumModal')?.remove()}
+  function loadHeritageCodeModule(){
+    if(window.IGR_HERITAGE_CODES?.open)return Promise.resolve(window.IGR_HERITAGE_CODES);
+    if(heritageCodeLoading)return heritageCodeLoading;
+    heritageCodeLoading=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src='heritage-access-code-v14.js?v=v14-heritage-code-modal';
+      script.async=true;
+      script.addEventListener('load',()=>window.IGR_HERITAGE_CODES?.open?resolve(window.IGR_HERITAGE_CODES):reject(new Error('heritage_code_api_missing')),{once:true});
+      script.addEventListener('error',()=>reject(new Error('heritage_code_script_failed')),{once:true});
+      document.head.appendChild(script);
+    }).finally(()=>{heritageCodeLoading=null});
+    return heritageCodeLoading;
+  }
+  async function openCodeAccess(){
+    const t=copy();
+    closeModal();
+    try{
+      const api=window.IGR_HERITAGE_CODES?.open?window.IGR_HERITAGE_CODES:await loadHeritageCodeModule();
+      await api.open();
+    }catch(error){
+      console.error('[Heritage Premium] access-code UI unavailable',error);
+      try{if(typeof toast==='function')toast(t.codeUnavailable)}catch{}
+      showModal(await access(true));
+    }
+  }
   function showModal(state){
     closeModal();
     const t=copy();
@@ -152,20 +182,24 @@
         <span>${t.premium}</span><b>${state.active?t.modalOwned:t.modalLocked}</b>
       </div>
       <div class="modal-actions heritage-premium-modal-actions">
-        ${!state.active?`<button class="btn ghost" type="button" data-action="retry">${t.retry}</button>`:''}
-        <button class="btn primary" type="button" data-action="close">${t.close}</button>
+        ${!state.active?`<button class="btn primary" type="button" data-action="heritage-code">${t.code}</button><button class="btn ghost" type="button" data-action="retry">${t.retry}</button>`:''}
+        <button class="btn ${state.active?'primary':'ghost'}" type="button" data-action="close">${t.close}</button>
       </div>
     </div>`;
     document.body.appendChild(modal);
+    modal.dataset.heritageCodeReady='1';
     modal.querySelector('.heritage-premium-modal-close')?.addEventListener('click',closeModal);
     modal.querySelector('[data-action="close"]')?.addEventListener('click',closeModal);
+    modal.querySelector('[data-action="heritage-code"]')?.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();void openCodeAccess();
+    });
     modal.querySelector('[data-action="retry"]')?.addEventListener('click',async()=>{
       const btn=modal.querySelector('[data-action="retry"]');if(btn)btn.disabled=true;
       const fresh=await access(true);closeModal();await syncCard(true);
       if(fresh.active)openHeritage();else showModal(fresh);
     });
     modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
-    modal.querySelector('[data-action="close"]')?.focus({preventScroll:true});
+    modal.querySelector(state.active?'[data-action="close"]':'[data-action="heritage-code"]')?.focus({preventScroll:true});
   }
   function openHeritage(){
     if(window.IGR_HERITAGE?.open){window.IGR_HERITAGE.open();return true}
