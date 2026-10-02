@@ -1,9 +1,10 @@
-/* Inside Grey Room v28 — mobile navigation behavior patch. */
+/* Inside Grey Room v29 — utility navigation + universal role-choice presentation. */
 (()=>{
 'use strict';
-const VERSION='28.0-mobile-ui-controls';
+const VERSION='29.0-rules-join-choice';
 let queued=false;
 const isFr=()=>window.IGR_LOCALE!=='en';
+const currentView=()=>{try{return String(STATE?.view||'')}catch{return''}};
 
 function goHomeSafe(){
   try{if(typeof window.goHome==='function')return window.goHome()}catch{}
@@ -11,26 +12,59 @@ function goHomeSafe(){
   try{if(typeof STATE!=='undefined'){STATE.view='home';if(typeof renderHome==='function')renderHome()}}catch{}
 }
 
-function enhanceProfileHome(){
-  const page=document.querySelector('#app .profile-page');
-  if(!page)return;
-  const head=page.querySelector('.page-head');
+function enhanceUtilityExit(){
+  const view=currentView();
+  if(!['profile','rules','join'].includes(view))return;
+  const page=document.querySelector('#app .page');
+  const head=page?.querySelector('.page-head');
   if(!head)return;
-  let button=head.querySelector('.igr-local-home,.igr-profile-home');
+
+  let button=[...head.querySelectorAll('button,.btn,a')].find(el=>/accueil|\bhome\b|fermer|\bclose\b/i.test(el.textContent||''));
   if(!button){
-    button=[...head.querySelectorAll('button,.btn,a')].find(el=>/accueil|\bhome\b/i.test(el.textContent||''));
+    button=document.createElement('button');
+    button.type='button';
+    head.appendChild(button);
   }
-  if(!button)return;
-  button.classList.add('igr-local-home','igr-profile-home');
+
+  button.classList.add('igr-local-home','igr-utility-exit');
+  button.classList.toggle('igr-profile-home',view==='profile');
+  button.classList.toggle('igr-rules-close',view==='rules');
+  button.classList.toggle('igr-join-home',view==='join');
   button.type='button';
   button.removeAttribute('onclick');
-  button.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
-  button.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');
-  button.setAttribute('title',isFr()?'Accueil':'Home');
-  if(button.dataset.igrV28Home!=='1'){
-    button.dataset.igrV28Home='1';
+
+  const close=view==='rules';
+  if(close){
+    button.innerHTML=isFr()?'<span aria-hidden="true">×</span><b>Fermer</b>':'<span aria-hidden="true">×</span><b>Close</b>';
+    button.setAttribute('aria-label',isFr()?'Fermer les règles et revenir à l’accueil':'Close rules and return home');
+    button.setAttribute('title',isFr()?'Fermer':'Close');
+  }else{
+    button.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
+    button.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');
+    button.setAttribute('title',isFr()?'Accueil':'Home');
+  }
+
+  if(button.dataset.igrV29Home!=='1'){
+    button.dataset.igrV29Home='1';
     button.addEventListener('click',goHomeSafe);
   }
+}
+
+function normalizeChoiceStatus(){
+  document.querySelectorAll('#app .role-choice-zone .igr-choice-status').forEach(card=>{
+    card.classList.add('igr-choice-status-v29');
+    const title=card.querySelector('.igr-choice-status-title');
+    const button=card.querySelector('.igr-choice-status-button');
+    const raw=String(title?.textContent||'').trim();
+    const empty=!raw||/aucun\s+r[oô]le\s+choisi|no\s+role\s+(?:selected|chosen)/i.test(raw);
+    card.dataset.igrChoiceState=empty?'empty':'chosen';
+    card.classList.toggle('has-choice',!empty);
+    if(button){
+      button.textContent=isFr()?'Retirer':'Remove';
+      button.setAttribute('aria-label',isFr()?'Retirer ce choix de rôle':'Remove this role choice');
+      button.setAttribute('title',isFr()?'Retirer':'Remove');
+    }
+  });
 }
 
 function setFilterOpen(open){
@@ -82,7 +116,8 @@ function clearLegacyFilterPosition(){
 }
 
 function apply(){
-  enhanceProfileHome();
+  enhanceUtilityExit();
+  normalizeChoiceStatus();
   installFixedFilters();
   clearLegacyFilterPosition();
 }
