@@ -2,13 +2,12 @@
    - Makes every visible Retirer control use the canonical role mutation path.
    - Serializes room syncs and coalesces realtime bursts instead of allowing
      overlapping fetch/render passes to compete for the iPhone main thread.
-   - Repairs a launch-button state that could remain disabled after an aborted
-     or failed launch attempt.
+   - Repairs launch-button state after every launch attempt.
    - Marks only server status=playing as an actual game for the discreet bell.
    - Purges stale floating navigation from live cells/gameplay. */
 (()=>{
   'use strict';
-  const VERSION='24.0-gameplay-stability';
+  const VERSION='24.1-gameplay-stability';
 
   const inRoom=()=>{try{return !!(STATE?.room&&STATE?.token)}catch{return false}};
   const normalize=s=>String(s||'').replace(/\s+/g,' ').trim();
@@ -24,7 +23,8 @@
       if(!button||button.getAttribute('aria-busy')==='true')return;
       const count=(d.players||[]).length;
       const min=Number(d.room?.min_players||0);
-      const canStart=!!STATE?.hostToken&&count>=min;
+      const max=Number(d.room?.max_players||99);
+      const canStart=!!STATE?.hostToken&&count>=min&&count<=max;
       /* live-cell-v12-44 set disabled=true while launching but its legacy
          busy-reset path did not explicitly restore disabled=false. Restore the
          server-derived lobby state, never blindly enable an invalid launch. */
@@ -48,6 +48,10 @@
          from ever participating in hit testing. */
       document.getElementById('igrUniversalDock')?.remove();
       body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view','igr-filter-dock-open');
+    }
+    const gate=document.getElementById('introGate');
+    if(gate&&(gate.getAttribute('aria-hidden')==='true'||gate.classList.contains('done'))){
+      gate.style.pointerEvents='none';
     }
     healLobbyControls();
   }
@@ -143,10 +147,37 @@
     setTimeout(()=>clearInterval(timer),4000);
   }
 
+  /* The legacy launcher owns validation/RPC semantics. This wrapper changes no
+     gameplay rule: it only deduplicates rapid taps and guarantees a UI repair
+     immediately after the launch promise settles. */
+  function installLaunchGuard(){
+    let base=null;
+    try{base=typeof globalThis.startGame==='function'?globalThis.startGame:(typeof startGame==='function'?startGame:null)}catch{}
+    if(typeof base!=='function'||base.__igrV24LaunchGuard)return;
+    let flight=null;
+    const wrapped=function(...args){
+      if(flight)return flight;
+      const ctx=this;
+      flight=Promise.resolve().then(()=>base.apply(ctx,args)).finally(()=>{
+        flight=null;
+        syncGameUiState();
+        requestAnimationFrame(syncGameUiState);
+        setTimeout(syncGameUiState,120);
+      });
+      return flight;
+    };
+    Object.defineProperty(wrapped,'__igrV24LaunchGuard',{value:true});
+    try{globalThis.startGame=wrapped}catch{}
+    try{startGame=wrapped}catch{}
+  }
+  installLaunchGuard();
+
   /* Repair presentation after iOS background/foreground transitions without
      adding another polling loop. */
   addEventListener('pageshow',syncGameUiState,{passive:true});
+  addEventListener('online',syncGameUiState,{passive:true});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGameUiState()},{passive:true});
+  window.addEventListener('igr:sync',syncGameUiState,{passive:true});
   queueMicrotask(syncGameUiState);
   setTimeout(syncGameUiState,0);
 
