@@ -1,4 +1,4 @@
-/* Inside Grey Room v19 — cleaner navigation, movable dock, non-sticky brand bar and Heritage type identities. */
+/* Inside Grey Room v20 — cleaner navigation, movable dock, non-sticky brand bar and Heritage type identities. */
 
 /* Home never shows the floating navigation dock. */
 body.igr-at-home #igrUniversalDock{display:none!important}
@@ -20,6 +20,8 @@ body.igr-at-home{--igr-dock-visible:0}
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging){width:46px!important;min-width:46px!important;max-width:46px!important;padding:0!important;opacity:.72!important}
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) b{display:none!important}
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) span{font-size:17px!important}
+body.igr-scenario-browser.igr-dock-scrolling #igrDockFilters:not(.is-dragging){left:max(12px,env(safe-area-inset-left,0px))!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
+body.igr-scenario-browser.igr-dock-scrolling #igrDockHome:not(.is-dragging){right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
 body.igr-global-dock-active #app::after{content:"";display:block;height:calc(68px + env(safe-area-inset-bottom,0px));pointer-events:none}
 body.igr-dock-keyboard .igr-universal-dock{display:none!important}
 
