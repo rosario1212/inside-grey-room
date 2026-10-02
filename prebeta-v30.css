@@ -93,18 +93,11 @@ body.igr-theme-regime .igr-choice-status-button{
 .role-choice-zone .role-choice-card em{flex:0 0 auto;text-align:right}
 #app button,#app [role="button"]{touch-action:manipulation}
 
-/* v30.2 — active-match controls: Quitter stays fixed in the top-left corner,
-   mirrored against the notification bell. The host advance action stays in flow. */
-#igrNotifyBell.igr-notify-bell{
-  position:fixed!important;
-  left:auto!important;
-  right:max(12px,env(safe-area-inset-right,0px))!important;
-  top:calc(env(safe-area-inset-top,0px) + 12px)!important;
-  bottom:auto!important;
-  transform:none!important;
-}
+/* v30.3 — live match chrome.
+   Quitter is a fixed glass capsule at the top-right. The notification bell sits
+   immediately to its left and is hidden entirely outside a live match. */
 #app .page:has(>.live-session-controls){
-  padding-top:calc(env(safe-area-inset-top,0px) + 58px)!important;
+  padding-top:calc(env(safe-area-inset-top,0px) + 62px)!important;
 }
 #app .page>.live-session-controls{
   position:static!important;
@@ -121,24 +114,48 @@ body.igr-theme-regime .igr-choice-status-button{
 }
 #app .page>.live-session-controls .live-exit-btn{
   position:fixed!important;
-  left:max(12px,env(safe-area-inset-left,0px))!important;
-  right:auto!important;
-  top:calc(env(safe-area-inset-top,0px) + 12px)!important;
+  top:calc(env(safe-area-inset-top,0px) + 11px)!important;
+  right:max(12px,env(safe-area-inset-right,0px))!important;
+  left:auto!important;
   bottom:auto!important;
-  z-index:336!important;
-  min-width:92px!important;
-  min-height:38px!important;
+  z-index:338!important;
+  min-width:108px!important;
+  min-height:42px!important;
   margin:0!important;
-  padding:0 13px!important;
+  padding:0 16px!important;
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
+  gap:7px!important;
+  border:1px solid rgba(220,228,234,.20)!important;
   border-radius:999px!important;
+  background:linear-gradient(180deg,rgba(18,23,28,.94),rgba(7,10,13,.97))!important;
+  color:#f3f5f7!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(16px) saturate(115%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
+  font-family:inherit!important;
+  font-size:13px!important;
+  font-weight:760!important;
+  line-height:1!important;
+  letter-spacing:.055em!important;
+  text-transform:none!important;
   white-space:nowrap!important;
   transform:none!important;
-  box-shadow:0 8px 24px rgba(0,0,0,.26)!important;
-  backdrop-filter:blur(12px)!important;
-  -webkit-backdrop-filter:blur(12px)!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+#app .page>.live-session-controls .live-exit-btn:active{
+  transform:scale(.975)!important;
+  background:linear-gradient(180deg,rgba(28,34,40,.96),rgba(9,12,15,.99))!important;
+}
+body.igr-notification-bell-game-active #igrNotifyBell.igr-notify-bell{
+  position:fixed!important;
+  top:calc(env(safe-area-inset-top,0px) + 11px)!important;
+  right:calc(max(12px,env(safe-area-inset-right,0px)) + 120px)!important;
+  left:auto!important;
+  bottom:auto!important;
+  z-index:337!important;
+  transform:none!important;
 }
 #app .page>.live-session-controls .live-advance-btn{
   position:static!important;
@@ -157,7 +174,18 @@ body.igr-theme-regime .igr-choice-status-button{
   .role-choice-zone .role-choice-card small{font-size:.82rem!important;line-height:1.32!important}
   .role-choice-zone .role-choice-card em{font-size:.64rem!important;letter-spacing:.11em!important}
   #app .page>.live-session-controls{margin-top:12px!important;gap:8px!important}
-  #app .page>.live-session-controls .live-exit-btn{left:max(9px,env(safe-area-inset-left,0px))!important;top:calc(env(safe-area-inset-top,0px) + 9px)!important;min-width:88px!important;min-height:38px!important;padding-inline:11px!important}
+  #app .page>.live-session-controls .live-exit-btn{
+    top:calc(env(safe-area-inset-top,0px) + 9px)!important;
+    right:max(9px,env(safe-area-inset-right,0px))!important;
+    min-width:100px!important;
+    min-height:40px!important;
+    padding-inline:14px!important;
+    font-size:12.5px!important;
+  }
+  body.igr-notification-bell-game-active #igrNotifyBell.igr-notify-bell{
+    top:calc(env(safe-area-inset-top,0px) + 9px)!important;
+    right:calc(max(9px,env(safe-area-inset-right,0px)) + 110px)!important;
+  }
 }
 
 @media(prefers-reduced-motion:reduce){
