@@ -1,0 +1,169 @@
+/* Inside Grey Room v28 — targeted iPhone navigation + lobby geometry fixes. */
+
+/* PROFILE — keep the local Accueil action beside “Ton identité”.
+   Older utility-nav polish hides this button whenever a global Home exists;
+   Profile deliberately restores the page-level action in the empty title row. */
+#app .profile-page .page-head{
+  align-items:flex-end!important;
+  gap:14px!important;
+}
+#app .profile-page .page-head>.igr-local-home,
+#app .profile-page .page-head>.igr-profile-home{
+  display:inline-flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  min-width:112px!important;
+  min-height:48px!important;
+  padding:0 15px!important;
+  margin:0 0 2px!important;
+  border:1px solid rgba(220,228,234,.16)!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,rgba(18,23,28,.90),rgba(7,10,13,.94))!important;
+  color:#eef2f4!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.22)!important;
+  white-space:nowrap!important;
+  font:inherit!important;
+}
+#app .profile-page .page-head>.igr-profile-home span{font-size:16px!important;line-height:1!important}
+#app .profile-page .page-head>.igr-profile-home b{font-size:11px!important;font-weight:850!important;line-height:1!important;letter-spacing:.075em!important;text-transform:uppercase!important}
+#app .profile-page .page-head>.igr-profile-home:active{transform:translateY(1px)}
+
+/* Profile uses the title-row Home above, not a duplicate floating Home. */
+body.igr-profile-view #igrUniversalDock{display:none!important}
+body.igr-profile-view #app::after{height:0!important}
+
+/* SCENARIO HEADER — make Accueil legible beside Settings without crowding. */
+#app .topbar #igrGlobalHome{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:104px!important;
+  min-height:48px!important;
+  padding:0 14px!important;
+  gap:8px!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+}
+#app .topbar #igrGlobalHome span{flex:0 0 auto!important;font-size:16px!important}
+#app .topbar #igrGlobalHome b{
+  display:block!important;
+  flex:0 0 auto!important;
+  max-width:none!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  font-size:11px!important;
+  line-height:1!important;
+  letter-spacing:.075em!important;
+}
+
+/* BOTTOM DOCK — Filters and Accueil are fixed mirror controls. */
+.igr-universal-dock .igr-dock-pill{
+  width:clamp(118px,31vw,134px)!important;
+  min-width:118px!important;
+  max-width:134px!important;
+  min-height:48px!important;
+  padding:0 15px!important;
+  gap:9px!important;
+  touch-action:manipulation!important;
+  cursor:pointer!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+  transition:opacity .16s ease,transform .16s ease,padding .16s ease,width .16s ease,min-width .16s ease,max-width .16s ease!important;
+}
+.igr-universal-dock .igr-dock-filters{
+  position:fixed!important;
+  left:max(12px,env(safe-area-inset-left,0px))!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+}
+.igr-universal-dock .igr-dock-home{
+  position:fixed!important;
+  right:max(12px,env(safe-area-inset-right,0px))!important;
+  left:auto!important;
+  top:auto!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+}
+.igr-universal-dock .igr-dock-pill b{
+  display:block!important;
+  max-width:90px!important;
+  overflow:hidden!important;
+  opacity:1!important;
+  white-space:nowrap!important;
+  transition:opacity .14s ease,max-width .14s ease!important;
+}
+body.igr-dock-scrolling .igr-dock-pill{
+  width:46px!important;
+  min-width:46px!important;
+  max-width:46px!important;
+  padding:0!important;
+  gap:0!important;
+  opacity:.72!important;
+}
+body.igr-dock-scrolling .igr-dock-pill b{
+  display:block!important;
+  max-width:0!important;
+  opacity:0!important;
+}
+body.igr-dock-scrolling .igr-dock-pill span{font-size:17px!important}
+
+/* ROLE CHOICE — reserve the right slot permanently so RETIRER can appear
+   without changing the card size or shifting the selected role copy. */
+.role-choice-zone .igr-choice-status{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  min-height:104px!important;
+  padding-right:clamp(116px,31vw,142px)!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+.role-choice-zone .igr-choice-status>*:not(.igr-choice-status-button){min-width:0!important}
+.role-choice-zone .igr-choice-status-button{
+  position:absolute!important;
+  right:16px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:clamp(92px,25vw,116px)!important;
+  min-width:92px!important;
+  max-width:116px!important;
+  min-height:46px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  white-space:nowrap!important;
+  line-height:1!important;
+  font-size:10px!important;
+  font-weight:850!important;
+  letter-spacing:.14em!important;
+  text-transform:uppercase!important;
+  box-sizing:border-box!important;
+}
+.role-choice-zone .igr-choice-status-button:active{transform:translateY(-50%) scale(.985)!important}
+
+@media(max-width:540px){
+  #app .profile-page .page-head>.igr-local-home,
+  #app .profile-page .page-head>.igr-profile-home{min-width:102px!important;min-height:44px!important;padding-inline:12px!important}
+  #app .topbar #igrGlobalHome{min-width:96px!important;min-height:44px!important;padding-inline:12px!important}
+  #app .topbar #igrGlobalHome b{font-size:10.5px!important;letter-spacing:.06em!important}
+  .igr-universal-dock .igr-dock-pill{width:clamp(116px,32vw,132px)!important;min-width:116px!important;max-width:132px!important;min-height:46px!important;padding-inline:14px!important}
+  body.igr-dock-scrolling .igr-dock-pill{width:46px!important;min-width:46px!important;max-width:46px!important;padding:0!important}
+}
+
+@media(max-width:370px){
+  #app .profile-page .page-head{gap:9px!important}
+  #app .profile-page .page-head>.igr-local-home,
+  #app .profile-page .page-head>.igr-profile-home{min-width:94px!important;padding-inline:10px!important}
+  #app .profile-page .page-head>.igr-profile-home b{font-size:10px!important;letter-spacing:.05em!important}
+  #app .topbar #igrGlobalHome{min-width:90px!important;padding-inline:10px!important;gap:6px!important}
+  .role-choice-zone .igr-choice-status{padding-right:104px!important}
+  .role-choice-zone .igr-choice-status-button{right:11px!important;width:84px!important;min-width:84px!important;max-width:84px!important;padding-inline:8px!important;font-size:9px!important;letter-spacing:.10em!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .igr-universal-dock .igr-dock-pill,.igr-universal-dock .igr-dock-pill b{transition:none!important}
+}
