@@ -24,9 +24,9 @@ function restorePosition(btn,key){
 function makeDraggable(btn,key){
   if(!btn||btn.dataset.igrDraggable==='1')return;btn.dataset.igrDraggable='1';
   let start=null,moved=false;
-  btn.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;const r=btn.getBoundingClientRect();start={x:e.clientX,y:e.clientY,left:r.left,top:r.top};moved=false;btn.setPointerCapture?.(e.pointerId);btn.classList.add('is-dragging')});
-  btn.addEventListener('pointermove',e=>{if(!start)return;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.abs(dx)+Math.abs(dy)>6)moved=true;const w=btn.offsetWidth||r?.width||48,h=btn.offsetHeight||48;const left=Math.max(12,Math.min(innerWidth-w-12,start.left+dx));const top=Math.max(12,Math.min(innerHeight-h-12,start.top+dy));btn.style.right='auto';btn.style.bottom='auto';btn.style.left=`${left}px`;btn.style.top=`${top}px`});
-  const end=e=>{if(!start)return;const r=btn.getBoundingClientRect(),maxX=Math.max(12,innerWidth-r.width-12),maxY=Math.max(12,innerHeight-r.height-12);const x=maxX<=12?0:(r.left-12)/(maxX-12),y=maxY<=12?0:(r.top-12)/(maxY-12);writePosition(key,{x:Math.max(0,Math.min(1,x)),y:Math.max(0,Math.min(1,y))});btn.dataset.igrDragged=moved?'1':'0';btn.classList.remove('is-dragging');start=null;setTimeout(()=>{btn.dataset.igrDragged='0'},80)};
+  btn.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;const r=btn.getBoundingClientRect();start={x:e.clientX,y:e.clientY,left:r.left,top:r.top,width:r.width,height:r.height};moved=false;btn.setPointerCapture?.(e.pointerId);btn.classList.add('is-dragging')});
+  btn.addEventListener('pointermove',e=>{if(!start)return;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.abs(dx)+Math.abs(dy)>6)moved=true;const w=start.width||48,h=start.height||48;const left=Math.max(12,Math.min(innerWidth-w-12,start.left+dx));const top=Math.max(12,Math.min(innerHeight-h-12,start.top+dy));btn.style.right='auto';btn.style.bottom='auto';btn.style.left=`${left}px`;btn.style.top=`${top}px`});
+  const end=()=>{if(!start)return;const r=btn.getBoundingClientRect(),maxX=Math.max(12,innerWidth-r.width-12),maxY=Math.max(12,innerHeight-r.height-12);const x=maxX<=12?0:(r.left-12)/(maxX-12),y=maxY<=12?0:(r.top-12)/(maxY-12);writePosition(key,{x:Math.max(0,Math.min(1,x)),y:Math.max(0,Math.min(1,y))});btn.dataset.igrDragged=moved?'1':'0';btn.classList.remove('is-dragging');start=null;setTimeout(()=>{btn.dataset.igrDragged='0'},100)};
   btn.addEventListener('pointerup',end);btn.addEventListener('pointercancel',end);
 }
 function ensureTopSettings(){
@@ -56,8 +56,8 @@ function ensureDock(){
 }
 function bindDockClicks(){
   const home=document.getElementById('igrDockHome'),filters=document.getElementById('igrDockFilters');
-  if(home&&!home.dataset.igrV19Click){home.dataset.igrV19Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation();return}} ,true)}
-  if(filters&&!filters.dataset.igrV19Click){filters.dataset.igrV19Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation();return}},true)}
+  if(home&&!home.dataset.igrV19Click){home.dataset.igrV19Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(filters&&!filters.dataset.igrV19Click){filters.dataset.igrV19Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
 }
 function apply(){ensureTopSettings();ensureDock();bindDockClicks()}
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})}
