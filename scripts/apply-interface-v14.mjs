@@ -34,15 +34,15 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('interface-polish-v14.js'))html=html.replace('</body>','  <script src="interface-polish-v14.js?v=v20-settings-nav"></script>\n</body>');
   else html=html.replace(/interface-polish-v14\.js\?v=[^"']+/g,'interface-polish-v14.js?v=v20-settings-nav');
 
-  if(!html.includes('navigation-theme-v18.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-theme-v18.css?v=v20-settings-nav">\n</head>');
-  else html=html.replace(/navigation-theme-v18\.css\?v=[^"']+/g,'navigation-theme-v18.css?v=v20-settings-nav');
-  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v25-role-fluidity"></script>\n</body>');
-  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v25-role-fluidity');
+  if(!html.includes('navigation-theme-v18.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-theme-v18.css?v=v27-role-choice-nav">\n</head>');
+  else html=html.replace(/navigation-theme-v18\.css\?v=[^"']+/g,'navigation-theme-v18.css?v=v27-role-choice-nav');
+  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v27-role-choice-nav"></script>\n</body>');
+  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v27-role-choice-nav');
 
-  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v24-gameplay-stability">\n</head>');
-  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v24-gameplay-stability');
-  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v24-gameplay-stability"></script>\n</body>');
-  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v24-gameplay-stability');
+  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v27-role-choice-nav">\n</head>');
+  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v27-role-choice-nav');
+  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v27-role-choice-nav"></script>\n</body>');
+  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v27-role-choice-nav');
 
   if(!html.includes('cell-controls-stability-v23.js'))html=html.replace('</body>','  <script src="cell-controls-stability-v23.js?v=v24-gameplay-stability"></script>\n</body>');
   else html=html.replace(/cell-controls-stability-v23\.js\?v=[^"']+/g,'cell-controls-stability-v23.js?v=v24-gameplay-stability');
@@ -50,7 +50,7 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('local-mode-theme-v25.css'))html=html.replace('</head>','  <link rel="stylesheet" href="local-mode-theme-v25.css?v=v25-role-fluidity">\n</head>');
   else html=html.replace(/local-mode-theme-v25\.css\?v=[^"']+/g,'local-mode-theme-v25.css?v=v25-role-fluidity');
 
-  html=html.replace(/role-tree-polish-v12-29\.css\?v=[^"']+/g,'role-tree-polish-v12-29.css?v=v25-role-fluidity');
+  html=html.replace(/role-tree-polish-v12-29\.css\?v=[^"']+/g,'role-tree-polish-v12-29.css?v=v27-role-choice-nav');
   html=html.replace(/role-tree-polish-v12-29\.js\?v=[^"']+/g,'role-tree-polish-v12-29.js?v=v25-role-fluidity');
   html=html.replace(/dlc-profile-ui-v12-44\.css\?v=[^"']+/g,'dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   html=html.replace(/dlc-profile-ui-v12-44\.js\?v=[^"']+/g,'dlc-profile-ui-v12-44.js?v=v20-settings-nav');
@@ -75,12 +75,12 @@ try{
     {src:'assets/icon-512-v14.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}
   ];
   await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n','utf8');
-}catch(err){console.warn('[v25] manifest patch skipped',err.message)}
+}catch(err){console.warn('[v27] manifest patch skipped',err.message)}
 
 const swPath=path.join(out,'service-worker.js');
 try{
   let sw=await readFile(swPath,'utf8');
-  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v25-role-fluidity';");
+  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v27-role-choice-nav';");
   if(!sw.includes('/premium-access-sync-v17.css')){
     sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/premium-access-sync-v17.css?v=v17-premium-sync','/premium-access-sync-v17.js?v=v17-premium-sync',");
   }
@@ -91,16 +91,16 @@ try{
     sw=sw.replace(/\/interface-polish-v14\.js\?v=[^']+/g,'/interface-polish-v14.js?v=v20-settings-nav');
   }
   if(!sw.includes('/navigation-theme-v18.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v20-settings-nav','/navigation-theme-v18.js?v=v25-role-fluidity',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v27-role-choice-nav','/navigation-theme-v18.js?v=v27-role-choice-nav',");
   }else{
-    sw=sw.replace(/\/navigation-theme-v18\.css\?v=[^']+/g,'/navigation-theme-v18.css?v=v20-settings-nav');
-    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v25-role-fluidity');
+    sw=sw.replace(/\/navigation-theme-v18\.css\?v=[^']+/g,'/navigation-theme-v18.css?v=v27-role-choice-nav');
+    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v27-role-choice-nav');
   }
   if(!sw.includes('/navigation-heritage-v19.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v24-gameplay-stability','/navigation-heritage-v19.js?v=v24-gameplay-stability',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v27-role-choice-nav','/navigation-heritage-v19.js?v=v27-role-choice-nav',");
   }else{
-    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v24-gameplay-stability');
-    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v24-gameplay-stability');
+    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v27-role-choice-nav');
+    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v27-role-choice-nav');
   }
   if(!sw.includes('/cell-controls-stability-v23.js')){
     sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/cell-controls-stability-v23.js?v=v24-gameplay-stability',");
@@ -112,7 +112,7 @@ try{
   }else{
     sw=sw.replace(/\/local-mode-theme-v25\.css\?v=[^']+/g,'/local-mode-theme-v25.css?v=v25-role-fluidity');
   }
-  sw=sw.replace(/\/role-tree-polish-v12-29\.css\?v=[^']+/g,'/role-tree-polish-v12-29.css?v=v25-role-fluidity');
+  sw=sw.replace(/\/role-tree-polish-v12-29\.css\?v=[^']+/g,'/role-tree-polish-v12-29.css?v=v27-role-choice-nav');
   sw=sw.replace(/\/role-tree-polish-v12-29\.js\?v=[^']+/g,'/role-tree-polish-v12-29.js?v=v25-role-fluidity');
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.css\?v=[^']+/g,'/dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.js\?v=[^']+/g,'/dlc-profile-ui-v12-44.js?v=v20-settings-nav');
@@ -126,4 +126,4 @@ try{
   await writeFile(swPath,sw,'utf8');
 }catch{}
 
-console.log(`Inside Grey Room v25 role fluidity + themed local mode applied to ${outArg}`);
+console.log(`Inside Grey Room v27 role choice + navigation repair applied to ${outArg}`);
