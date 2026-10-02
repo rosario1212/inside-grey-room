@@ -44,13 +44,15 @@ ok(runtime.includes("button.textContent=isFr()?'Retirer':'Remove'"),'mobile-ui-v
 // Mobile lifecycle: installed iPhone/Android PWAs must recover without requiring Capacitor.
 ok(lifecycle.includes("version:'12.9-pwa-resume'"),'native-lifecycle-v12.js: PWA lifecycle version marker missing');
 ok(!lifecycle.includes("if(!cap?.isNativePlatform?.()"),'native-lifecycle-v12.js: lifecycle still exits early outside Capacitor');
+ok(lifecycle.includes("typeof STATE!=='undefined'"),'native-lifecycle-v12.js: lexical STATE guard missing');
+ok(!lifecycle.includes('globalThis.STATE?.room'),'native-lifecycle-v12.js: lifecycle incorrectly assumes const STATE is a window property');
 ok(lifecycle.includes("window.addEventListener('pageshow'"),'native-lifecycle-v12.js: pageshow recovery missing');
 ok(lifecycle.includes("window.addEventListener('online'"),'native-lifecycle-v12.js: network recovery listener missing');
 ok(lifecycle.includes("window.addEventListener('offline'"),'native-lifecycle-v12.js: network pause listener missing');
-ok(lifecycle.includes("await globalThis.syncNow?.(true)"),'native-lifecycle-v12.js: forced room resync on resume missing');
-ok(lifecycle.includes("globalThis.startRoomWatcher?.()"),'native-lifecycle-v12.js: room watcher restart on resume missing');
+ok(lifecycle.includes("await syncNow(true)"),'native-lifecycle-v12.js: forced room resync on resume missing');
+ok(lifecycle.includes("startRoomWatcher()"),'native-lifecycle-v12.js: room watcher restart on resume missing');
 ok(lifecycle.includes('await recoverAudio()'),'native-lifecycle-v12.js: audio recovery on resume missing');
-ok(lifecycle.includes("globalThis.stopLocalCapture?.()"),'native-lifecycle-v12.js: background camera release missing');
+ok(lifecycle.includes("stopLocalCapture()"),'native-lifecycle-v12.js: background camera release missing');
 
 // Build/PWA propagation.
 ok(apply.includes("'prebeta-v30.css'"),'apply-mobile-ui-v28.mjs: prebeta stylesheet is not copied into builds');
