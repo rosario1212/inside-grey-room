@@ -1,22 +1,22 @@
-/* Inside Grey Room v28 — targeted iPhone navigation + lobby geometry fixes. */
+/* Inside Grey Room v29 — utility navigation + universal role-choice layout. */
 
-/* PROFILE — keep the local Accueil action beside “Ton identité”.
-   Older utility-nav polish hides this button whenever a global Home exists;
-   Profile deliberately restores the page-level action in the empty title row. */
-#app .profile-page .page-head{
-  align-items:flex-end!important;
-  gap:14px!important;
+/* Utility pages: the page-level action must remain visible even when the older
+   global-home layer marks it as .igr-local-home. */
+#app .page .page-head{
+  min-width:0!important;
 }
-#app .profile-page .page-head>.igr-local-home,
-#app .profile-page .page-head>.igr-profile-home{
+#app .page .page-head>div{
+  min-width:0!important;
+}
+#app .page .page-head>.igr-utility-exit{
   display:inline-flex!important;
   flex:0 0 auto!important;
   align-items:center!important;
   justify-content:center!important;
   gap:8px!important;
-  min-width:112px!important;
-  min-height:48px!important;
-  padding:0 15px!important;
+  min-width:104px!important;
+  min-height:46px!important;
+  padding:0 14px!important;
   margin:0 0 2px!important;
   border:1px solid rgba(220,228,234,.16)!important;
   border-radius:999px!important;
@@ -26,15 +26,27 @@
   white-space:nowrap!important;
   font:inherit!important;
 }
-#app .profile-page .page-head>.igr-profile-home span{font-size:16px!important;line-height:1!important}
-#app .profile-page .page-head>.igr-profile-home b{font-size:11px!important;font-weight:850!important;line-height:1!important;letter-spacing:.075em!important;text-transform:uppercase!important}
-#app .profile-page .page-head>.igr-profile-home:active{transform:translateY(1px)}
+#app .page .page-head>.igr-utility-exit span{
+  flex:0 0 auto!important;
+  font-size:16px!important;
+  line-height:1!important;
+}
+#app .page .page-head>.igr-utility-exit b{
+  display:block!important;
+  font-size:10.5px!important;
+  font-weight:850!important;
+  line-height:1!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase!important;
+}
+#app .page .page-head>.igr-utility-exit:active{transform:translateY(1px)}
+#app .page .page-head>.igr-rules-close{min-width:94px!important}
 
-/* Profile uses the title-row Home above, not a duplicate floating Home. */
+/* Profile still uses the title-row Home, not a duplicate floating Home. */
 body.igr-profile-view #igrUniversalDock{display:none!important}
 body.igr-profile-view #app::after{height:0!important}
 
-/* SCENARIO HEADER — make Accueil legible beside Settings without crowding. */
+/* Scenario header: keep Accueil readable beside Settings. */
 #app .topbar #igrGlobalHome{
   flex:0 0 auto!important;
   width:auto!important;
@@ -58,7 +70,7 @@ body.igr-profile-view #app::after{height:0!important}
   letter-spacing:.075em!important;
 }
 
-/* BOTTOM DOCK — Filters and Accueil are fixed mirror controls. */
+/* Bottom dock: Filters and Accueil are fixed mirror controls. */
 .igr-universal-dock .igr-dock-pill{
   width:clamp(118px,31vw,134px)!important;
   min-width:118px!important;
@@ -109,59 +121,127 @@ body.igr-dock-scrolling .igr-dock-pill b{
 }
 body.igr-dock-scrolling .igr-dock-pill span{font-size:17px!important}
 
-/* ROLE CHOICE — reserve the right slot permanently so RETIRER can appear
-   without changing the card size or shifting the selected role copy. */
+/* Universal TON CHOIX card: same geometry/mechanics as the OMERTÀ card for
+   every scenario. Theme colors remain owned by each scenario family. */
 .role-choice-zone .igr-choice-status{
   position:relative!important;
   display:flex!important;
+  flex-direction:row!important;
   align-items:center!important;
-  min-height:104px!important;
-  padding-right:clamp(116px,31vw,142px)!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  width:100%!important;
+  min-height:94px!important;
+  padding:15px 17px!important;
   box-sizing:border-box!important;
   overflow:hidden!important;
+  border-radius:24px!important;
 }
-.role-choice-zone .igr-choice-status>*:not(.igr-choice-status-button){min-width:0!important}
-.role-choice-zone .igr-choice-status-button{
-  position:absolute!important;
-  right:16px!important;
-  top:50%!important;
-  transform:translateY(-50%)!important;
-  width:clamp(92px,25vw,116px)!important;
-  min-width:92px!important;
-  max-width:116px!important;
+.role-choice-zone .igr-choice-status-copy{
+  display:grid!important;
+  gap:5px!important;
+  min-width:0!important;
+  flex:1 1 auto!important;
+}
+.role-choice-zone .igr-choice-status-kicker{
+  font-size:.70rem!important;
+  font-weight:820!important;
+  letter-spacing:.18em!important;
+  text-transform:uppercase!important;
+  line-height:1.1!important;
+}
+.role-choice-zone .igr-choice-status-title{
+  font-size:1rem!important;
+  line-height:1.2!important;
+  letter-spacing:.01em!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.role-choice-zone .igr-choice-status-note{
+  margin:0!important;
+  font-style:normal!important;
+  font-size:.84rem!important;
+  line-height:1.28!important;
+}
+.role-choice-zone .igr-choice-status.has-choice .igr-choice-status-note,
+.role-choice-zone .igr-choice-status[data-igr-choice-state="chosen"] .igr-choice-status-note{
+  display:none!important;
+}
+.role-choice-zone .igr-choice-status-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex:0 0 clamp(98px,25vw,116px)!important;
+  width:clamp(98px,25vw,116px)!important;
+  min-width:98px!important;
   min-height:46px!important;
   margin:0!important;
-  padding:0 12px!important;
+}
+.role-choice-zone .igr-choice-status-button{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  min-height:46px!important;
+  margin:0!important;
+  padding:0 14px!important;
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
+  border-radius:18px!important;
   white-space:nowrap!important;
   line-height:1!important;
-  font-size:10px!important;
-  font-weight:850!important;
-  letter-spacing:.14em!important;
-  text-transform:uppercase!important;
+  font-size:.92rem!important;
+  font-weight:760!important;
+  letter-spacing:.03em!important;
+  text-transform:none!important;
   box-sizing:border-box!important;
 }
-.role-choice-zone .igr-choice-status-button:active{transform:translateY(-50%) scale(.985)!important}
+.role-choice-zone .igr-choice-status-button[hidden]{display:none!important}
+.role-choice-zone .igr-choice-status-button:active{transform:scale(.985)!important}
+
+/* Neutral/base scenarios keep the Grey Room palette. OMERTÀ's later-scoped
+   theme values remain red because no color is overridden here. */
+body:not(.igr-theme-omerta) .role-choice-zone .igr-choice-status{
+  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(8,9,11,.96));
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:inset 3px 0 0 rgba(255,255,255,.06);
+}
+body:not(.igr-theme-omerta) .role-choice-zone .igr-choice-status-button{
+  border-color:rgba(255,255,255,.16);
+  background:rgba(255,255,255,.03);
+  color:#f4f5f6;
+}
 
 @media(max-width:540px){
-  #app .profile-page .page-head>.igr-local-home,
-  #app .profile-page .page-head>.igr-profile-home{min-width:102px!important;min-height:44px!important;padding-inline:12px!important}
+  #app .page .page-head{align-items:flex-end!important;gap:10px!important}
+  #app .page .page-head>.igr-utility-exit{min-width:96px!important;min-height:44px!important;padding-inline:11px!important}
+  #app .page .page-head>.igr-rules-close{min-width:88px!important}
   #app .topbar #igrGlobalHome{min-width:96px!important;min-height:44px!important;padding-inline:12px!important}
   #app .topbar #igrGlobalHome b{font-size:10.5px!important;letter-spacing:.06em!important}
   .igr-universal-dock .igr-dock-pill{width:clamp(116px,32vw,132px)!important;min-width:116px!important;max-width:132px!important;min-height:46px!important;padding-inline:14px!important}
   body.igr-dock-scrolling .igr-dock-pill{width:46px!important;min-width:46px!important;max-width:46px!important;padding:0!important}
+
+  /* Override the older OMERTÀ mobile rule that stacked this card vertically. */
+  .role-choice-zone .igr-choice-status{flex-direction:row!important;align-items:center!important;min-height:92px!important;padding:14px 15px!important;gap:12px!important}
+  .role-choice-zone .igr-choice-status-actions{width:104px!important;min-width:104px!important;flex-basis:104px!important;min-height:44px!important}
+  .role-choice-zone .igr-choice-status-button{min-height:44px!important;padding-inline:10px!important;font-size:.88rem!important}
+  .role-choice-zone .igr-choice-status-title{font-size:.98rem!important}
+  .role-choice-zone .igr-choice-status-note{font-size:.79rem!important}
 }
 
 @media(max-width:370px){
-  #app .profile-page .page-head{gap:9px!important}
-  #app .profile-page .page-head>.igr-local-home,
-  #app .profile-page .page-head>.igr-profile-home{min-width:94px!important;padding-inline:10px!important}
-  #app .profile-page .page-head>.igr-profile-home b{font-size:10px!important;letter-spacing:.05em!important}
+  #app .page .page-head{gap:8px!important}
+  #app .page .page-head>.igr-utility-exit{min-width:84px!important;padding-inline:9px!important;gap:6px!important}
+  #app .page .page-head>.igr-utility-exit b{font-size:9.5px!important;letter-spacing:.04em!important}
   #app .topbar #igrGlobalHome{min-width:90px!important;padding-inline:10px!important;gap:6px!important}
-  .role-choice-zone .igr-choice-status{padding-right:104px!important}
-  .role-choice-zone .igr-choice-status-button{right:11px!important;width:84px!important;min-width:84px!important;max-width:84px!important;padding-inline:8px!important;font-size:9px!important;letter-spacing:.10em!important}
+  .role-choice-zone .igr-choice-status{padding:13px!important;gap:9px!important}
+  .role-choice-zone .igr-choice-status-actions{width:92px!important;min-width:92px!important;flex-basis:92px!important}
+  .role-choice-zone .igr-choice-status-button{font-size:.82rem!important;padding-inline:8px!important}
+  .role-choice-zone .igr-choice-status-kicker{font-size:.64rem!important}
 }
 
 @media(prefers-reduced-motion:reduce){
