@@ -1,4 +1,4 @@
-/* Inside Grey Room — v25 role-selection fluidity + OMERTÀ family-tree polish */
+/* Inside Grey Room — v26 role-selection layout + OMERTÀ family-tree polish */
 
 /* Base dossiers 001–020: random-role control belongs to the normal Grey Room palette. */
 .igr-random-role-cta.is-base,
@@ -22,6 +22,13 @@
   box-shadow:none!important;
 }
 .role-choice-zone.is-base-scenario .role-choice-card.selected em{color:#fff!important}
+
+/* Once a player has selected a role, the selected role card itself is the only
+   confirmation. Remove the duplicate TON CHOIX panel so switching roles keeps
+   the exact compact layout requested on mobile. */
+.role-choice-zone:has(.role-choice-card.selected) .igr-choice-status,
+.role-choice-zone:has(.role-choice-card[aria-pressed="true"]) .igr-choice-status,
+.role-choice-zone:has(.role-choice-card.is-selected) .igr-choice-status{display:none!important}
 
 /* OMERTÀ 021–025 alone owns the red accent. */
 .igr-random-role-cta.is-omerta{

@@ -67,12 +67,18 @@ ok(files.roleCss.includes('--igr-random-lock-w'),'Random draw geometry lock miss
 ok(files.roleCss.includes('.igr-random-role-cta.is-rolling'),'Random draw stable rolling state missing');
 ok(files.roleCss.includes('.igr-role-updated'),'Role update transition missing');
 
-// Local play entry card must inherit the selected DLC identity, and Heritage's
-// local button must inherit CENDRES / KUROI respectively.
-ok(files.navTheme.includes("document.querySelector('#app .dual-mode-card.is-local')"),'Standard local-mode card theming hook missing');
-ok(files.navTheme.includes("document.querySelector('#app .heritage-local-btn')"),'Heritage local-mode button theming hook missing');
-for(const theme of ['normal','omerta','terror','cartel','regime'])ok(files.localModeCss.includes(`data-igr-mode-theme="${theme}"`),`Local-mode theme ${theme} missing`);
-for(const campaign of ['cendres','kuroi'])ok(files.localModeCss.includes(`data-igr-mode-theme="${campaign}"`),`Heritage local-mode theme ${campaign} missing`);
+// v26 role layout: once a role is selected, the duplicate choice summary must
+// disappear and the selected role card becomes the single visual confirmation.
+ok(files.roleCss.includes(':has(.role-choice-card.selected) .igr-choice-status'),'Selected role must hide the duplicate TON CHOIX summary');
+ok(files.roleCss.includes(':has(.role-choice-card[aria-pressed="true"]) .igr-choice-status'),'ARIA-selected role must hide the duplicate TON CHOIX summary');
+
+// Both launch choices must inherit the same selected DLC/campaign palette.
+ok(files.navTheme.includes("document.querySelectorAll('#app .dual-mode-card')"),'Standard online/local mode theming hook missing');
+ok(files.navTheme.includes("document.querySelectorAll('#app .heritage-local-btn,#app .heritage-online-btn')"),'Heritage online/local mode theming hook missing');
+for(const theme of ['normal','omerta','terror','cartel','regime'])ok(files.localModeCss.includes(`data-igr-mode-theme="${theme}"`),`Play-mode theme ${theme} missing`);
+for(const campaign of ['cendres','kuroi'])ok(files.localModeCss.includes(`data-igr-mode-theme="${campaign}"`),`Heritage play-mode theme ${campaign} missing`);
+ok(files.localModeCss.includes('.dual-mode-card[data-igr-mode-theme]'),'Both standard play-mode cards must use the content theme');
+ok(files.localModeCss.includes('.heritage-online-btn[data-igr-mode-theme]'),'Heritage online button must use the campaign theme');
 
 // gameplay-clean-v12 has a legacy document-wide MutationObserver whose callback
 // rewrites child nodes and can therefore retrigger itself. The build wrapper
@@ -96,11 +102,11 @@ try{
   ok(distIndex.includes('cell-controls-stability-v23.js?v=v24-gameplay-stability'),'dist/index.html has stale cell stability asset');
   ok(distIndex.includes('role-tree-polish-v12-29.js?v=v25-role-fluidity'),'dist/index.html has stale role-selection asset');
   ok(distIndex.includes('role-tree-polish-v12-29.css?v=v25-role-fluidity'),'dist/index.html has stale role-selection CSS');
-  ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the local-mode theme CSS');
+  ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the play-mode theme CSS');
   ok(!distIndex.includes('if(!nativeShell&&!mobile&&window.MutationObserver){'),'dist/index.html still leaves gameplay MutationObserver running on mobile');
   ok(distIndex.includes('if(window.MutationObserver){const NativeObserver'),'dist/index.html does not track/disconnect gameplay observer on all clients');
   ok(distSw.includes("const CACHE='igr-v25-role-fluidity';"),'dist/service-worker.js has stale cache version');
-  ok(distSw.includes('/local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/service-worker.js is missing local-mode theme CSS');
+  ok(distSw.includes('/local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/service-worker.js is missing play-mode theme CSS');
 }catch{}
 
 if(failures.length){
