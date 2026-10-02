@@ -10,9 +10,10 @@ const read=rel=>readFile(path.join(root,rel),'utf8');
 
 const css=await read('prebeta-v30.css');
 const runtime=await read('mobile-ui-v28.js');
+const lifecycle=await read('native-lifecycle-v12.js');
 const apply=await read('scripts/apply-mobile-ui-v28.mjs');
 
-for(const rel of ['mobile-ui-v28.js','scripts/apply-mobile-ui-v28.mjs']){
+for(const rel of ['mobile-ui-v28.js','native-lifecycle-v12.js','scripts/apply-mobile-ui-v28.mjs']){
   const parsed=spawnSync(process.execPath,['--check',path.join(root,rel)],{encoding:'utf8'});
   ok(parsed.status===0,`${rel}: JavaScript syntax check failed: ${parsed.stderr||parsed.stdout}`);
 }
@@ -39,6 +40,17 @@ ok(runtime.includes('sanitizeThemeState();'),'mobile-ui-v28.js: theme sanitizer 
 ok(runtime.includes("['profile','rules','join']"),'mobile-ui-v28.js: utility navigation repair no longer covers rules/join/profile');
 ok(runtime.includes('normalizeChoiceStatus();'),'mobile-ui-v28.js: universal TON CHOIX normalizer missing');
 ok(runtime.includes("button.textContent=isFr()?'Retirer':'Remove'"),'mobile-ui-v28.js: Retirer/Remove control normalization missing');
+
+// Mobile lifecycle: installed iPhone/Android PWAs must recover without requiring Capacitor.
+ok(lifecycle.includes("version:'12.9-pwa-resume'"),'native-lifecycle-v12.js: PWA lifecycle version marker missing');
+ok(!lifecycle.includes("if(!cap?.isNativePlatform?.()"),'native-lifecycle-v12.js: lifecycle still exits early outside Capacitor');
+ok(lifecycle.includes("window.addEventListener('pageshow'"),'native-lifecycle-v12.js: pageshow recovery missing');
+ok(lifecycle.includes("window.addEventListener('online'"),'native-lifecycle-v12.js: network recovery listener missing');
+ok(lifecycle.includes("window.addEventListener('offline'"),'native-lifecycle-v12.js: network pause listener missing');
+ok(lifecycle.includes("await globalThis.syncNow?.(true)"),'native-lifecycle-v12.js: forced room resync on resume missing');
+ok(lifecycle.includes("globalThis.startRoomWatcher?.()"),'native-lifecycle-v12.js: room watcher restart on resume missing');
+ok(lifecycle.includes('await recoverAudio()'),'native-lifecycle-v12.js: audio recovery on resume missing');
+ok(lifecycle.includes("globalThis.stopLocalCapture?.()"),'native-lifecycle-v12.js: background camera release missing');
 
 // Build/PWA propagation.
 ok(apply.includes("'prebeta-v30.css'"),'apply-mobile-ui-v28.mjs: prebeta stylesheet is not copied into builds');
@@ -83,4 +95,4 @@ if(failures.length){
   for(const failure of failures)console.error(`✗ ${failure}`);
   process.exit(1);
 }
-console.log('✓ Theme isolation, navigation, role-choice and bundle propagation checks passed.');
+console.log('✓ Theme isolation, navigation, role-choice, mobile lifecycle and bundle propagation checks passed.');
