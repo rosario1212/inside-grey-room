@@ -1,0 +1,47 @@
+/* Inside Grey Room v19 — cleaner navigation, movable dock, non-sticky brand bar and Heritage type identities. */
+
+/* Home never shows the floating navigation dock. */
+body.igr-at-home #igrUniversalDock{display:none!important}
+body.igr-at-home{--igr-dock-visible:0}
+
+/* Top bar: one settings action at the top-right, never following the scroll. */
+#app .topbar,#app .igr-utility-topbar{position:relative!important;top:auto!important;z-index:40!important;margin-bottom:18px!important;padding:0!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#app .topbar .top-actions{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important}
+#app .topbar #igrGlobalHome{display:none!important}
+#app .topbar .igr-top-settings{display:grid!important;place-items:center!important;width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;border:1px solid rgba(220,228,234,.16)!important;border-radius:50%!important;background:linear-gradient(180deg,rgba(18,23,28,.90),rgba(7,10,13,.94))!important;color:#e9eef1!important;font-size:18px!important;line-height:1!important;box-shadow:0 10px 26px rgba(0,0,0,.22)!important}
+#app .topbar .igr-top-settings:active{transform:translateY(1px)}
+
+/* Floating navigation: draggable, compact and safe-area aware. */
+.igr-universal-dock{position:fixed;inset:0;z-index:380;pointer-events:none}
+.igr-universal-dock .igr-dock-pill{position:fixed!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 16px;border-radius:999px;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;will-change:left,top,transform,opacity,width;transition:opacity .16s ease,transform .16s ease,padding .16s ease,width .16s ease;max-width:calc(100vw - 24px)}
+.igr-universal-dock .igr-dock-pill.is-dragging{cursor:grabbing;transition:none!important;transform:scale(.98);opacity:.95}
+.igr-universal-dock .igr-dock-filters{left:max(12px,env(safe-area-inset-left,0px))}
+.igr-universal-dock .igr-dock-home{right:max(12px,env(safe-area-inset-right,0px))}
+body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging){width:46px!important;min-width:46px!important;max-width:46px!important;padding:0!important;opacity:.72!important}
+body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) b{display:none!important}
+body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) span{font-size:17px!important}
+body.igr-global-dock-active #app::after{content:"";display:block;height:calc(68px + env(safe-area-inset-bottom,0px));pointer-events:none}
+body.igr-dock-keyboard .igr-universal-dock{display:none!important}
+
+/* The filter panel belongs only to the scenario browser. */
+body:not(.igr-scenario-browser) #igrDockFilters{display:none!important}
+body:not(.igr-scenario-browser) .igr-filter-dock-panel{display:none!important}
+.page-create-v10-13 .igr-scenario-filters.igr-filter-dock-panel{z-index:379!important;max-height:min(44vh,350px)!important}
+
+/* MODE HÉRITAGE gets its own institutional premium type language. */
+.hplay .hplay-hub-intro h1,.hplay .hplay-campaign-title h1,.hplay .hplay-setup-head h1,.hplay .hplay-dossier-copy h1{font-family:Copperplate,'DIN Condensed','Arial Narrow','Helvetica Neue Condensed',sans-serif!important;font-weight:800!important;letter-spacing:-.035em!important;text-transform:uppercase!important}
+.hplay .hplay-eyebrow,.hplay .hplay-mode,.hplay .hplay-campaign-body>em,.hplay .hplay-campaign-foot b,.hplay .hplay-campaign-foot i{font-family:'DIN Condensed','Arial Narrow','IBM Plex Mono',monospace!important;letter-spacing:.16em!important}
+
+/* CENDRES — covert-military / early tactical-shooter title language. */
+.hplay-theme-cendres .hplay-campaign-body>strong,.hplay-theme-cendres .hplay-campaign-title h1,.hplay-theme-cendres .hplay-dossier-copy h1,.hplay-theme-cendres .hplay-case-copy>strong,.hplay-theme-cendres .hplay-setup-head h1{font-family:Impact,'DIN Condensed','Arial Narrow Bold','Arial Narrow',sans-serif!important;font-weight:800!important;letter-spacing:.025em!important;text-transform:uppercase!important;text-shadow:0 2px 0 rgba(0,0,0,.7),0 8px 26px rgba(116,162,191,.13)!important}
+.hplay-theme-cendres .hplay-campaign-body>em,.hplay-theme-cendres .hplay-eyebrow,.hplay-theme-cendres .hplay-mode{font-family:'Courier New','IBM Plex Mono',monospace!important;letter-spacing:.18em!important}
+
+/* KUROI — Japanese Mincho-inspired, restrained and ceremonial rather than cliché neon. */
+.hplay-theme-kuroi .hplay-campaign-body>strong,.hplay-theme-kuroi .hplay-campaign-title h1,.hplay-theme-kuroi .hplay-dossier-copy h1,.hplay-theme-kuroi .hplay-case-copy>strong,.hplay-theme-kuroi .hplay-setup-head h1{font-family:'Hiragino Mincho ProN','Yu Mincho','YuMincho','Noto Serif JP',Georgia,'Times New Roman',serif!important;font-weight:700!important;letter-spacing:-.02em!important;text-transform:none!important;text-shadow:0 3px 20px rgba(0,0,0,.5)!important}
+.hplay-theme-kuroi .hplay-campaign-body>em,.hplay-theme-kuroi .hplay-eyebrow,.hplay-theme-kuroi .hplay-mode{font-family:'Hiragino Kaku Gothic ProN','Yu Gothic','Avenir Next',sans-serif!important;letter-spacing:.19em!important}
+
+@media(max-width:540px){
+  #app .topbar .igr-top-settings{width:44px!important;height:44px!important;min-width:44px!important;font-size:17px!important}
+  .igr-universal-dock .igr-dock-pill{min-height:46px;padding-inline:14px}
+}
+@media(prefers-reduced-motion:reduce){.igr-universal-dock .igr-dock-pill{transition:none!important}}
