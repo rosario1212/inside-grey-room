@@ -1,7 +1,7 @@
-/* Inside Grey Room v29 — utility navigation + universal role-choice presentation. */
+/* Inside Grey Room v30 — utility navigation + universal role-choice presentation + theme isolation. */
 (()=>{
 'use strict';
-const VERSION='29.0-rules-join-choice';
+const VERSION='30.0-prebeta-theme-isolation';
 let queued=false;
 const isFr=()=>window.IGR_LOCALE!=='en';
 const currentView=()=>{try{return String(STATE?.view||'')}catch{return''}};
@@ -67,6 +67,35 @@ function normalizeChoiceStatus(){
   });
 }
 
+function expectedDlcTheme(){
+  try{
+    const view=currentView();
+    if(['home','profile','rules','join','create-list'].includes(view))return '';
+    const id=String(view==='create-confirm'?(STATE?.selectedScenario||STATE?.scenarioId||''):(STATE?.sync?.room?.scenario_id||STATE?.selectedScenario||STATE?.scenarioId||''));
+    const collection=window.IGR_SCENARIO_META?.[id]?.collection||'';
+    return ['omerta','terror','cartel','regime'].includes(collection)?`igr-theme-${collection}`:'';
+  }catch{return''}
+}
+
+function sanitizeThemeState(){
+  const body=document.body;if(!body)return;
+  const themes=['igr-theme-omerta','igr-theme-terror','igr-theme-cartel','igr-theme-regime'];
+  const expected=expectedDlcTheme();
+  if(expected){
+    for(const theme of themes)body.classList.toggle(theme,theme===expected);
+  }else if(['home','profile','rules','join','create-list'].includes(currentView())){
+    for(const theme of themes)body.classList.remove(theme);
+  }
+
+  const omertaActive=body.classList.contains('igr-theme-omerta');
+  if(!omertaActive){
+    body.classList.remove('igr-omerta-active');
+    document.querySelectorAll('.igr-omerta-cell').forEach(el=>el.classList.remove('igr-omerta-cell'));
+  }
+  const active=themes.find(theme=>body.classList.contains(theme))||'igr-theme-base';
+  body.dataset.igrActiveTheme=active.replace('igr-theme-','');
+}
+
 function setFilterOpen(open){
   const nav=document.querySelector('#app .igr-scenario-filters');
   const button=document.getElementById('igrDockFilters');
@@ -116,6 +145,7 @@ function clearLegacyFilterPosition(){
 }
 
 function apply(){
+  sanitizeThemeState();
   enhanceUtilityExit();
   normalizeChoiceStatus();
   installFixedFilters();
