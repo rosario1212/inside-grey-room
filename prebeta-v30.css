@@ -93,7 +93,8 @@ body.igr-theme-regime .igr-choice-status-button{
 .role-choice-zone .role-choice-card em{flex:0 0 auto;text-align:right}
 #app button,#app [role="button"]{touch-action:manipulation}
 
-/* v30.1 — live-session controls must never cover private cards or stack with notifications. */
+/* v30.2 — active-match controls: Quitter stays fixed in the top-left corner,
+   mirrored against the notification bell. The host advance action stays in flow. */
 #igrNotifyBell.igr-notify-bell{
   position:fixed!important;
   left:auto!important;
@@ -101,6 +102,9 @@ body.igr-theme-regime .igr-choice-status-button{
   top:calc(env(safe-area-inset-top,0px) + 12px)!important;
   bottom:auto!important;
   transform:none!important;
+}
+#app .page:has(>.live-session-controls){
+  padding-top:calc(env(safe-area-inset-top,0px) + 58px)!important;
 }
 #app .page>.live-session-controls{
   position:static!important;
@@ -110,19 +114,39 @@ body.igr-theme-regime .igr-choice-status-button{
   padding:0!important;
   display:flex!important;
   align-items:center!important;
-  justify-content:space-between!important;
+  justify-content:flex-end!important;
   gap:10px!important;
   pointer-events:auto!important;
   z-index:auto!important;
 }
-#app .page>.live-session-controls .live-exit-btn,
+#app .page>.live-session-controls .live-exit-btn{
+  position:fixed!important;
+  left:max(12px,env(safe-area-inset-left,0px))!important;
+  right:auto!important;
+  top:calc(env(safe-area-inset-top,0px) + 12px)!important;
+  bottom:auto!important;
+  z-index:336!important;
+  min-width:92px!important;
+  min-height:38px!important;
+  margin:0!important;
+  padding:0 13px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:999px!important;
+  white-space:nowrap!important;
+  transform:none!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.26)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+}
 #app .page>.live-session-controls .live-advance-btn{
   position:static!important;
   inset:auto!important;
   transform:none!important;
+  margin-left:auto!important;
+  max-width:min(58vw,320px)!important;
 }
-#app .page>.live-session-controls .live-exit-btn{margin:0!important;flex:0 0 auto!important}
-#app .page>.live-session-controls .live-advance-btn{margin-left:auto!important;max-width:min(58vw,320px)!important}
 #app .game-v11,#app .briefing-page{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))!important}
 #app .role-card-v11{margin-bottom:14px!important}
 
@@ -133,6 +157,7 @@ body.igr-theme-regime .igr-choice-status-button{
   .role-choice-zone .role-choice-card small{font-size:.82rem!important;line-height:1.32!important}
   .role-choice-zone .role-choice-card em{font-size:.64rem!important;letter-spacing:.11em!important}
   #app .page>.live-session-controls{margin-top:12px!important;gap:8px!important}
+  #app .page>.live-session-controls .live-exit-btn{left:max(9px,env(safe-area-inset-left,0px))!important;top:calc(env(safe-area-inset-top,0px) + 9px)!important;min-width:88px!important;min-height:38px!important;padding-inline:11px!important}
 }
 
 @media(prefers-reduced-motion:reduce){
