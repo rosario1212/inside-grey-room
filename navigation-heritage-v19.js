@@ -1,7 +1,7 @@
-/* Inside Grey Room v20 — home-safe dock, draggable quick navigation, stable top settings and Heritage polish. */
+/* Inside Grey Room v21 — single settings control + profile scroll dock minimisation. */
 (()=>{
 'use strict';
-const VERSION='20.0-settings-nav-symmetry';
+const VERSION='21.0-settings-profile-scroll';
 const POS_KEY='igr_quick_nav_positions_v20';
 let queued=false,scrollTimer=0;
 const isFr=()=>window.IGR_LOCALE!=='en';
@@ -12,6 +12,7 @@ function isHome(){
   const root=app();if(!root)return false;
   return !!root.querySelector('.home-actions-v10-13,.home-actions,.igr-home-create,.igr-home-join,.heritage-premium-home-action');
 }
+function isProfile(){return currentView()==='profile'||!!document.querySelector('#app .profile-page,#app .profile-v12,#app [data-page="profile"]')}
 function scenarioPage(){return document.querySelector('#app .page-create-v10-13')}
 function readPositions(){try{return JSON.parse(localStorage.getItem(POS_KEY)||'{}')||{}}catch{return{}}}
 function writePosition(key,value){try{const all=readPositions();all[key]=value;localStorage.setItem(POS_KEY,JSON.stringify(all))}catch{}}
@@ -33,25 +34,31 @@ function ensureTopSettings(){
   document.getElementById('igrGlobalHome')?.remove();
   const topbar=document.querySelector('#app .topbar');if(!topbar)return;
   let actions=topbar.querySelector('.top-actions');if(!actions){actions=document.createElement('div');actions.className='top-actions';topbar.appendChild(actions)}
-  const looksLikeSettings=el=>{
-    if(!el)return false;
-    const signature=[el.id,el.className,el.getAttribute?.('onclick'),el.getAttribute?.('aria-label'),el.getAttribute?.('title'),el.textContent].filter(Boolean).join(' ');
-    return /igrTopSettings|igr-top-settings|openSettings|paramètres|settings|⚙/i.test(signature);
-  };
-  const candidates=[...topbar.querySelectorAll('button,[role="button"]')].filter(looksLikeSettings);
-  let btn=candidates.find(el=>el.id==='igrTopSettings')||candidates.find(el=>/openSettings/.test(el.getAttribute?.('onclick')||''))||candidates[0];
-  if(!btn){btn=document.createElement('button');btn.type='button'}
-  for(const extra of candidates){if(extra!==btn)extra.remove()}
-  if(btn.parentElement!==actions)actions.appendChild(btn);
-  btn.id='igrTopSettings';btn.className='pill-btn igr-top-settings';btn.removeAttribute('onclick');
+
+  /* Rebuild the action slot from scratch. Several legacy modules can re-insert
+     a second naked gear after render; replacing the slot guarantees one control. */
+  const btn=document.createElement('button');
+  btn.type='button';btn.id='igrTopSettings';btn.className='pill-btn igr-top-settings';
+  btn.innerHTML='<span aria-hidden="true">⚙</span>';
+  btn.setAttribute('aria-label',isFr()?'Paramètres':'Settings');
+  btn.setAttribute('title',isFr()?'Paramètres':'Settings');
   btn.onclick=()=>{try{if(typeof openSettings==='function')openSettings();else window.openSettings?.()}catch{try{window.openSettings?.()}catch{}}};
-  btn.innerHTML='<span aria-hidden="true">⚙</span>';btn.setAttribute('aria-label',isFr()?'Paramètres':'Settings');btn.setAttribute('title',isFr()?'Paramètres':'Settings');
+  actions.replaceChildren(btn);
+
+  /* Remove any legacy settings control that lives outside .top-actions,
+     including icon-only spans/buttons such as the small second gear seen on iOS. */
+  for(const el of [...topbar.querySelectorAll('button,[role="button"],a,span')]){
+    if(el===btn||btn.contains(el)||actions===el||el.closest?.('#igrTopSettings'))continue;
+    const text=(el.textContent||'').trim();
+    const signature=[el.id,el.className,el.getAttribute?.('onclick'),el.getAttribute?.('aria-label'),el.getAttribute?.('title')].filter(Boolean).join(' ');
+    if(text==='⚙'||/openSettings|paramètres|settings|igr.?top.?settings|settings.?button|settings.?fab/i.test(signature))el.remove();
+  }
 }
 function closeFilters(){
   const nav=scenarioPage()?.querySelector('.igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
 }
 function ensureDock(){
-  const home=isHome(),page=scenarioPage();document.body.classList.toggle('igr-at-home',home);document.body.classList.toggle('igr-scenario-browser',!!page&&!home);
+  const home=isHome(),page=scenarioPage();document.body.classList.toggle('igr-at-home',home);document.body.classList.toggle('igr-scenario-browser',!!page&&!home);document.body.classList.toggle('igr-profile-view',isProfile()&&!home);
   let dock=document.getElementById('igrUniversalDock');
   if(home){closeFilters();dock?.remove();document.body.classList.remove('igr-global-dock-active');return}
   if(!dock)return;
@@ -64,17 +71,21 @@ function ensureDock(){
 }
 function bindDockClicks(){
   const home=document.getElementById('igrDockHome'),filters=document.getElementById('igrDockFilters');
-  if(home&&!home.dataset.igrV20Click){home.dataset.igrV20Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
-  if(filters&&!filters.dataset.igrV20Click){filters.dataset.igrV20Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(home&&!home.dataset.igrV21Click){home.dataset.igrV21Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(filters&&!filters.dataset.igrV21Click){filters.dataset.igrV21Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
 }
 function apply(){ensureTopSettings();ensureDock();bindDockClicks()}
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})}
-function onScroll(){if(!scenarioPage()||isHome())return;document.body.classList.add('igr-dock-scrolling');clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>document.body.classList.remove('igr-dock-scrolling'),360)}
+function onScroll(){
+  if(isHome()||(!scenarioPage()&&!isProfile()))return;
+  document.body.classList.add('igr-dock-scrolling');
+  clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>document.body.classList.remove('igr-dock-scrolling'),360);
+}
 function boot(){
   apply();const root=app();if(root&&window.MutationObserver){new MutationObserver(schedule).observe(root,{childList:true,subtree:true})}
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',schedule,{passive:true});addEventListener('pageshow',schedule,{passive:true});
   document.addEventListener('click',e=>{if(isHome())return;const nav=document.querySelector('.igr-filter-dock-panel.is-dock-open');if(nav&&!nav.contains(e.target)&&!e.target.closest?.('#igrDockFilters'))closeFilters()});
 }
-window.IGR_NAV_HERITAGE_V20=Object.freeze({version:VERSION,refresh:schedule});
+window.IGR_NAV_HERITAGE_V21=Object.freeze({version:VERSION,refresh:schedule});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();

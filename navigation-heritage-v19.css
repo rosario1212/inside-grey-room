@@ -1,12 +1,14 @@
-/* Inside Grey Room v20 — cleaner navigation, movable dock, non-sticky brand bar and Heritage type identities. */
+/* Inside Grey Room v21 — cleaner navigation, single settings control and profile scroll minimisation. */
 
 /* Home never shows the floating navigation dock. */
 body.igr-at-home #igrUniversalDock{display:none!important}
 body.igr-at-home{--igr-dock-visible:0}
 
-/* Top bar: one settings action at the top-right, never following the scroll. */
+/* Top bar: exactly one settings action at the top-right, never following the scroll. */
 #app .topbar,#app .igr-utility-topbar{position:relative!important;top:auto!important;z-index:40!important;margin-bottom:18px!important;padding:0!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 #app .topbar .top-actions{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important}
+#app .topbar .top-actions>:not(#igrTopSettings){display:none!important}
+#app .topbar .top-actions::before,#app .topbar .top-actions::after,#app .topbar #igrTopSettings::before,#app .topbar #igrTopSettings::after{content:none!important;display:none!important}
 #app .topbar #igrGlobalHome{display:none!important}
 #app .topbar .igr-top-settings{display:grid!important;place-items:center!important;width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;border:1px solid rgba(220,228,234,.16)!important;border-radius:50%!important;background:linear-gradient(180deg,rgba(18,23,28,.90),rgba(7,10,13,.94))!important;color:#e9eef1!important;font-size:18px!important;line-height:1!important;box-shadow:0 10px 26px rgba(0,0,0,.22)!important}
 #app .topbar .igr-top-settings:active{transform:translateY(1px)}
@@ -21,7 +23,7 @@ body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging){width:46px!important;mi
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) b{display:none!important}
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) span{font-size:17px!important}
 body.igr-scenario-browser.igr-dock-scrolling #igrDockFilters:not(.is-dragging){left:max(12px,env(safe-area-inset-left,0px))!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
-body.igr-scenario-browser.igr-dock-scrolling #igrDockHome:not(.is-dragging){right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
+body.igr-scenario-browser.igr-dock-scrolling #igrDockHome:not(.is-dragging),body.igr-profile-view.igr-dock-scrolling #igrDockHome:not(.is-dragging){right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
 body.igr-global-dock-active #app::after{content:"";display:block;height:calc(68px + env(safe-area-inset-bottom,0px));pointer-events:none}
 body.igr-dock-keyboard .igr-universal-dock{display:none!important}
 
