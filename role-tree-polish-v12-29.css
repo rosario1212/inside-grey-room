@@ -1,4 +1,4 @@
-/* Inside Grey Room — v12.29 role random + OMERTÀ family-tree polish */
+/* Inside Grey Room — v25 role-selection fluidity + OMERTÀ family-tree polish */
 
 /* Base dossiers 001–020: random-role control belongs to the normal Grey Room palette. */
 .igr-random-role-cta.is-base,
@@ -36,8 +36,49 @@
   background:rgba(138,25,29,.32)!important;
   color:#e17a7d!important;
 }
-.igr-random-role-cta.is-rolling{pointer-events:none;transform:scale(.995);opacity:.92}
-.igr-random-role-cta.is-rolling em{min-width:74px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Random role: lock geometry while drawing so the screen and role grid never jump. */
+.role-choice-zone{overflow-anchor:none}
+.role-choice-zone .role-choice-card,
+.lobby-player-live{transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease,opacity .18s ease;backface-visibility:hidden}
+.igr-random-role-cta{contain:paint;transform:translateZ(0)}
+.igr-random-role-cta em{
+  display:inline-grid!important;
+  place-items:center;
+  inline-size:clamp(92px,28vw,126px);
+  max-inline-size:126px;
+  min-inline-size:92px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.igr-random-role-cta.is-rolling{
+  pointer-events:none;
+  opacity:1!important;
+  transform:none!important;
+  width:var(--igr-random-lock-w,auto);
+  min-height:var(--igr-random-lock-h,inherit);
+  max-height:var(--igr-random-lock-h,none);
+  will-change:contents;
+}
+.igr-random-role-cta.is-rolling::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  background:linear-gradient(105deg,transparent 28%,rgba(255,255,255,.055) 44%,transparent 60%);
+  transform:translateX(-120%);
+  animation:igrRoleSweep .7s linear infinite;
+}
+.igr-random-role-cta.igr-random-result{animation:igrRoleResult .42s cubic-bezier(.2,.8,.2,1)}
+.igr-role-updated{animation:igrRoleUpdated .38s cubic-bezier(.2,.8,.2,1)}
+.lobby-player-live.igr-player-updated{animation:igrPlayerUpdated .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes igrRoleSweep{to{transform:translateX(120%)}}
+@keyframes igrRoleResult{0%{filter:brightness(1)}45%{filter:brightness(1.18)}100%{filter:brightness(1)}}
+@keyframes igrRoleUpdated{0%{opacity:.72;transform:scale(.992)}55%{opacity:1;transform:scale(1.006)}100%{opacity:1;transform:scale(1)}}
+@keyframes igrPlayerUpdated{0%{opacity:.74}55%{opacity:1;box-shadow:0 0 0 1px rgba(255,255,255,.08)}100%{opacity:1;box-shadow:none}}
 
 /* Family tree: swipe/scroll naturally in both orientations. */
 .omerta-tree-responsive .omerta-org-scroll{
@@ -88,4 +129,8 @@
   .omerta-tree-responsive .omerta-tree-current{padding:8px 10px;flex:none}
   .omerta-tree-responsive .modal-actions{margin-top:6px;flex:none}
   .omerta-tree-responsive .modal-actions .btn{padding:9px 14px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .igr-random-role-cta.is-rolling::after,.igr-random-role-cta.igr-random-result,.igr-role-updated,.lobby-player-live.igr-player-updated{animation:none!important}
 }
