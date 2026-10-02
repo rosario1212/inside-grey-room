@@ -1,7 +1,7 @@
-/* Inside Grey Room v23 — stable settings control + scoped floating navigation. */
+/* Inside Grey Room v24 — fixed Home control + scoped low-churn navigation. */
 (()=>{
 'use strict';
-const VERSION='23.0-cell-controls-stability';
+const VERSION='24.0-gameplay-stability';
 const POS_KEY='igr_quick_nav_positions_v20';
 let queued=false,scrollTimer=0;
 const isFr=()=>window.IGR_LOCALE!=='en';
@@ -16,7 +16,9 @@ function isProfile(){return currentView()==='profile'||!!document.querySelector(
 function scenarioPage(){return document.querySelector('#app .page-create-v10-13')}
 function dockAllowed(){return !!scenarioPage()||isProfile()}
 function readPositions(){try{return JSON.parse(localStorage.getItem(POS_KEY)||'{}')||{}}catch{return{}}}
-function writePosition(key,value){try{const all=readPositions();all[key]=value;localStorage.setItem(POS_KEY,JSON.stringify(all))}catch{}}
+function writePositions(value){try{localStorage.setItem(POS_KEY,JSON.stringify(value||{}))}catch{}}
+function writePosition(key,value){try{const all=readPositions();all[key]=value;writePositions(all)}catch{}}
+function forgetHomePosition(){try{const all=readPositions();if(Object.prototype.hasOwnProperty.call(all,'home')){delete all.home;writePositions(all)}}catch{}}
 function clearInlinePosition(btn){if(!btn)return;btn.style.left='';btn.style.right='';btn.style.top='';btn.style.bottom=''}
 function restorePosition(btn,key){
   if(!btn)return;const p=readPositions()[key];if(!p||typeof p.x!=='number'||typeof p.y!=='number'){clearInlinePosition(btn);return}
@@ -42,7 +44,6 @@ function ensureTopSettings(){
   const topbar=document.querySelector('#app .topbar');if(!topbar)return;
   let actions=topbar.querySelector('.top-actions');
   if(!actions){actions=document.createElement('div');actions.className='top-actions';topbar.appendChild(actions)}
-
   let btn=actions.querySelector('#igrTopSettings');
   if(!btn){
     btn=[...actions.querySelectorAll('button,[role="button"],a')].find(settingsLike)||document.createElement('button');
@@ -57,7 +58,6 @@ function ensureTopSettings(){
     btn.removeAttribute('onclick');
     btn.addEventListener('click',()=>{try{if(typeof openSettings==='function')openSettings();else window.openSettings?.()}catch{try{window.openSettings?.()}catch{}}});
   }
-
   const candidates=[...topbar.querySelectorAll('button,[role="button"],a')];
   for(const el of candidates){if(el!==btn&&settingsLike(el))el.remove()}
   for(const el of [...topbar.querySelectorAll('span')]){
@@ -83,22 +83,29 @@ function ensureDock(){
   if(home||!allowed){clearDockState();return}
   const dock=document.getElementById('igrUniversalDock');if(!dock)return;
   const homeBtn=dock.querySelector('#igrDockHome'),filters=dock.querySelector('#igrDockFilters');
-  if(homeBtn){homeBtn.hidden=false;makeDraggable(homeBtn,'home');restorePosition(homeBtn,'home')}
+
+  /* Accueil is deliberately fixed at the bottom-right. Old persisted drag
+     coordinates are discarded so an earlier build cannot move it again. */
+  if(homeBtn){
+    homeBtn.hidden=false;
+    homeBtn.removeAttribute('data-igr-draggable');
+    homeBtn.removeAttribute('data-igr-dragged');
+    homeBtn.classList.remove('is-dragging');
+    clearInlinePosition(homeBtn);
+    forgetHomePosition();
+  }
   const nav=page?.querySelector('.igr-scenario-filters');
   if(filters){filters.hidden=!nav;if(nav){makeDraggable(filters,'filters');restorePosition(filters,'filters')}else clearInlinePosition(filters)}
   if(nav)nav.classList.add('igr-filter-dock-panel');else closeFilters();
   document.body.classList.toggle('igr-global-dock-active',!!homeBtn||!!nav);
 }
 function bindDockClicks(){
-  const home=document.getElementById('igrDockHome'),filters=document.getElementById('igrDockFilters');
-  if(home&&!home.dataset.igrV23Click){home.dataset.igrV23Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
-  if(filters&&!filters.dataset.igrV23Click){filters.dataset.igrV23Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  const filters=document.getElementById('igrDockFilters');
+  if(filters&&!filters.dataset.igrV24Click){filters.dataset.igrV24Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
 }
 function apply(){ensureTopSettings();ensureDock();bindDockClicks()}
 function schedule(){
   const allowed=dockAllowed(),home=isHome(),dock=document.getElementById('igrUniversalDock');
-  /* Inside a live cell there is deliberately no floating dock. Once it has been
-     removed, mutations from realtime game updates no longer trigger navigation work. */
   if(!home&&!allowed&&!dock)return;
   if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()});
 }
@@ -108,10 +115,11 @@ function onScroll(){
   clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>document.body.classList.remove('igr-dock-scrolling'),360);
 }
 function boot(){
+  forgetHomePosition();
   apply();const root=app();if(root&&window.MutationObserver){new MutationObserver(schedule).observe(root,{childList:true,subtree:true})}
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',schedule,{passive:true});addEventListener('pageshow',schedule,{passive:true});
   document.addEventListener('click',e=>{if(isHome())return;const nav=document.querySelector('.igr-filter-dock-panel.is-dock-open');if(nav&&!nav.contains(e.target)&&!e.target.closest?.('#igrDockFilters'))closeFilters()});
 }
-window.IGR_NAV_HERITAGE_V23=Object.freeze({version:VERSION,refresh:schedule});
+window.IGR_NAV_HERITAGE_V24=Object.freeze({version:VERSION,refresh:schedule});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
