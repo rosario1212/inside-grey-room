@@ -7,7 +7,7 @@ if(!outArg)throw new Error('Usage: node scripts/apply-mobile-ui-v28.mjs <dist|ww
 const out=path.resolve(root,outArg);
 await stat(out);
 
-const VERSION='v28-mobile-ui-controls';
+const VERSION='v29-rules-join-choice';
 for(const name of ['mobile-ui-v28.css','mobile-ui-v28.js']){
   await copyFile(path.join(root,name),path.join(out,name));
 }
@@ -30,10 +30,13 @@ try{
       "  '/', '/index.html', '/en.html',",
       `  '/', '/index.html', '/en.html',\n  '/mobile-ui-v28.css?v=${VERSION}','/mobile-ui-v28.js?v=${VERSION}',`
     );
+  }else{
+    sw=sw.replace(/\/mobile-ui-v28\.css\?v=[^']+/g,`/mobile-ui-v28.css?v=${VERSION}`);
+    sw=sw.replace(/\/mobile-ui-v28\.js\?v=[^']+/g,`/mobile-ui-v28.js?v=${VERSION}`);
   }
   await writeFile(swPath,sw,'utf8');
 }catch(err){
-  console.warn('[v28] service worker patch skipped',err.message);
+  console.warn('[v29] service worker patch skipped',err.message);
 }
 
-console.log(`Inside Grey Room v28 mobile UI controls applied to ${outArg}`);
+console.log(`Inside Grey Room v29 rules/join/choice controls applied to ${outArg}`);
