@@ -203,19 +203,6 @@ body.igr-dock-scrolling .igr-dock-pill span{font-size:17px!important}
 .role-choice-zone .igr-choice-status-button[hidden]{display:none!important}
 .role-choice-zone .igr-choice-status-button:active{transform:scale(.985)!important}
 
-/* Neutral/base scenarios keep the Grey Room palette. OMERTÀ's later-scoped
-   theme values remain red because no color is overridden here. */
-body:not(.igr-theme-omerta) .role-choice-zone .igr-choice-status{
-  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(8,9,11,.96));
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:inset 3px 0 0 rgba(255,255,255,.06);
-}
-body:not(.igr-theme-omerta) .role-choice-zone .igr-choice-status-button{
-  border-color:rgba(255,255,255,.16);
-  background:rgba(255,255,255,.03);
-  color:#f4f5f6;
-}
-
 @media(max-width:540px){
   #app .page .page-head{align-items:flex-end!important;gap:10px!important}
   #app .page .page-head>.igr-utility-exit{min-width:96px!important;min-height:44px!important;padding-inline:11px!important}
