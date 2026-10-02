@@ -25,7 +25,6 @@ for(const page of ['index.html','en.html']){
 const swPath=path.join(out,'service-worker.js');
 try{
   let sw=await readFile(swPath,'utf8');
-  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v28-mobile-ui-controls';");
   if(!sw.includes('/mobile-ui-v28.css')){
     sw=sw.replace(
       "  '/', '/index.html', '/en.html',",
