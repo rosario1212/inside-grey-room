@@ -1,8 +1,10 @@
 /* Inside Grey Room v24 — live-cell/gameplay interaction stability.
-   - Keeps Retirer on the canonical role mutation path.
+   - Makes every visible Retirer control use the canonical role mutation path.
    - Serializes room syncs and coalesces realtime bursts instead of allowing
      overlapping fetch/render passes to compete for the iPhone main thread.
-   - Marks actual running games for the discreet notification control.
+   - Repairs a launch-button state that could remain disabled after an aborted
+     or failed launch attempt.
+   - Marks only server status=playing as an actual game for the discreet bell.
    - Purges stale floating navigation from live cells/gameplay. */
 (()=>{
   'use strict';
@@ -11,14 +13,30 @@
   const inRoom=()=>{try{return !!(STATE?.room&&STATE?.token)}catch{return false}};
   const normalize=s=>String(s||'').replace(/\s+/g,' ').trim();
   const isRoleArea=el=>!!el?.closest?.('.role-choice-zone,.lobby-v11,.page-lobby,[class*="role-choice"]');
-  const terminalStatus=new Set(['closed','finished','ended','complete','completed']);
+  const roomStatus=()=>{try{return String(STATE?.sync?.room?.status||'').toLowerCase()}catch{return''}};
+  const gameActive=()=>inRoom()&&roomStatus()==='playing';
 
-  function roomStatus(){try{return String(STATE?.sync?.room?.status||'').toLowerCase()}catch{return''}}
-  function gameActive(){
-    if(!inRoom())return false;
-    const status=roomStatus();
-    return !!status&&status!=='lobby'&&!terminalStatus.has(status);
+  function healLobbyControls(){
+    try{
+      const d=STATE?.sync;
+      if(!d||String(d.room?.status||'').toLowerCase()!=='lobby')return;
+      const button=document.querySelector('.lobby-v11 .btn.primary.block,.page-lobby .btn.primary.block');
+      if(!button||button.getAttribute('aria-busy')==='true')return;
+      const count=(d.players||[]).length;
+      const min=Number(d.room?.min_players||0);
+      const canStart=!!STATE?.hostToken&&count>=min;
+      /* live-cell-v12-44 set disabled=true while launching but its legacy
+         busy-reset path did not explicitly restore disabled=false. Restore the
+         server-derived lobby state, never blindly enable an invalid launch. */
+      button.disabled=!canStart;
+      button.removeAttribute('aria-busy');
+      if(button.dataset.liveLabel&&button.textContent==='Lancement…'){
+        button.textContent=button.dataset.liveLabel;
+        delete button.dataset.liveLabel;
+      }
+    }catch{}
   }
+
   function syncGameUiState(){
     const body=document.body;if(!body)return;
     const active=gameActive();
@@ -31,6 +49,7 @@
       document.getElementById('igrUniversalDock')?.remove();
       body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view','igr-filter-dock-open');
     }
+    healLobbyControls();
   }
 
   /* The current upper role card says simply “Retirer”, while older markup says
@@ -50,12 +69,12 @@
   },true);
 
   /* One room sync at a time.
-     The previous runtime could receive a fallback poll, a realtime invalidation
-     and an explicit forced sync almost together. Each sync can rerender a large
-     part of the lobby/game. On iOS those overlapping passes could generate a
-     render storm and make controls appear frozen. Passive calls now share the
-     active request; forced calls arriving mid-sync are collapsed into exactly
-     one trailing forced pass, so no server update is lost. */
+     Core syncNow already prevents simultaneous network writes, but a burst of
+     Realtime invalidations plus explicit force=true calls can still queue
+     several complete render passes after one another. Passive calls now share
+     the active request; forced calls arriving mid-sync are collapsed into one
+     trailing forced pass, preserving the newest server state without a render
+     storm. */
   let installed=false;
   function installSyncGuard(){
     if(installed)return;
@@ -71,7 +90,6 @@
     let queuedRest=[];
     let queuedWaiters=[];
     let lastCompletedAt=0;
-
     const currentState=()=>{try{return STATE?.sync||null}catch{return null}};
 
     const startRun=(force,ctx,rest,waiters=[])=>{
@@ -99,24 +117,18 @@
 
     const wrapped=function(force,...rest){
       const forced=force===true;
-      if(!inRoom()){
-        return Promise.resolve(base.call(this,force,...rest)).finally(syncGameUiState);
-      }
+      if(!inRoom())return Promise.resolve(base.call(this,force,...rest)).finally(syncGameUiState);
 
       const now=performance.now();
       if(!forced&&!running&&now-lastCompletedAt<1000){
         syncGameUiState();
         return Promise.resolve(currentState());
       }
-
       if(running){
-        if(!forced){
-          return currentPromise.then(()=>currentState());
-        }
+        if(!forced)return currentPromise.then(()=>currentState());
         queuedForce=true;queuedCtx=this;queuedRest=rest;
         return new Promise((resolve,reject)=>queuedWaiters.push({resolve,reject}));
       }
-
       return startRun(forced,this,rest);
     };
     Object.defineProperty(wrapped,'__igrV24Stable',{value:true});
@@ -131,9 +143,8 @@
     setTimeout(()=>clearInterval(timer),4000);
   }
 
-  /* Keep the UI state correct after lifecycle transitions without polling the
-     application. syncNow is the primary source of truth; these events only
-     repair presentation after iOS background/foreground transitions. */
+  /* Repair presentation after iOS background/foreground transitions without
+     adding another polling loop. */
   addEventListener('pageshow',syncGameUiState,{passive:true});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGameUiState()},{passive:true});
   queueMicrotask(syncGameUiState);
