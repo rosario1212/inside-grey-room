@@ -1,8 +1,10 @@
-/* Inside Grey Room v21 — cleaner navigation, single settings control and profile scroll minimisation. */
+/* Inside Grey Room v23 — cleaner navigation, single settings control and scoped dock. */
 
-/* Home never shows the floating navigation dock. */
+/* Home never shows the floating navigation dock. The dock is reserved for
+   scenario browsing and Profile; live cells/gameplay never receive it. */
 body.igr-at-home #igrUniversalDock{display:none!important}
 body.igr-at-home{--igr-dock-visible:0}
+body:not(.igr-scenario-browser):not(.igr-profile-view) #igrUniversalDock{display:none!important}
 
 /* Top bar: exactly one settings action at the top-right, never following the scroll. */
 #app .topbar,#app .igr-utility-topbar{position:relative!important;top:auto!important;z-index:40!important;margin-bottom:18px!important;padding:0!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
