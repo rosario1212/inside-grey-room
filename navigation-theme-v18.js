@@ -1,7 +1,7 @@
-/* Inside Grey Room v25 — scoped navigation, local-mode theme continuity and low-churn UI refresh. */
+/* Inside Grey Room v26 — scoped navigation, play-mode theme continuity and low-churn UI refresh. */
 (()=>{
 'use strict';
-const VERSION='25.0-role-fluidity';
+const VERSION='26.0-role-panel-mode-theme';
 const LOCAL_KEY='igr_local_standard_v13_8';
 const LOCAL_THEME_CLASSES=['igr-local-theme-normal','igr-local-theme-omerta','igr-local-theme-terror','igr-local-theme-cartel','igr-local-theme-regime','igr-local-theme-cendres','igr-local-theme-kuroi'];
 let applying=false,queued=false;
@@ -47,15 +47,12 @@ function ensureDock(){
   document.getElementById('igrScenarioExit')?.remove();
   document.getElementById('igrFilterFab')?.remove();
   let dock=document.getElementById('igrUniversalDock');
-
-  /* Critical: creator and styling layer must agree on scope. */
   if(!appReady()||!dockAllowed()){
     if(dock)dock.remove();
     document.body.classList.remove('igr-global-dock-active');
     closeFilters();
     return;
   }
-
   if(!dock){
     dock=document.createElement('nav');dock.id='igrUniversalDock';dock.className='igr-universal-dock';dock.setAttribute('aria-label',isFr()?'Navigation rapide':'Quick navigation');
     const filters=document.createElement('button');filters.id='igrDockFilters';filters.type='button';filters.className='igr-dock-pill igr-dock-filters';filters.setAttribute('aria-expanded','false');filters.addEventListener('click',event=>{event.stopPropagation();toggleFilters()});
@@ -109,18 +106,18 @@ function setModeTheme(node,theme){
   if(node.dataset.igrModeTheme!==theme)node.dataset.igrModeTheme=theme;
 }
 function applyModeChooserTheme(){
-  const standard=document.querySelector('#app .dual-mode-card.is-local');
-  if(standard){
+  const standardCards=[...document.querySelectorAll('#app .dual-mode-card')];
+  if(standardCards.length){
     const theme=themeFromId(selectedScenario());
-    setModeTheme(standard,theme);
-    setModeTheme(standard.closest('.dual-mode-chooser'),theme);
+    standardCards.forEach(card=>setModeTheme(card,theme));
+    setModeTheme(standardCards[0]?.closest('.dual-mode-chooser'),theme);
   }
-  const heritage=document.querySelector('#app .heritage-local-btn');
-  if(heritage){
-    const shell=heritage.closest('.hplay-theme-cendres,.hplay-theme-kuroi');
+  const heritageButtons=[...document.querySelectorAll('#app .heritage-local-btn,#app .heritage-online-btn')];
+  if(heritageButtons.length){
+    const shell=heritageButtons[0]?.closest('.hplay-theme-cendres,.hplay-theme-kuroi');
     const theme=shell?.classList.contains('hplay-theme-kuroi')?'kuroi':'cendres';
-    setModeTheme(heritage,theme);
-    setModeTheme(heritage.closest('.heritage-dual-row'),theme);
+    heritageButtons.forEach(button=>setModeTheme(button,theme));
+    setModeTheme(heritageButtons[0]?.closest('.heritage-dual-row'),theme);
   }
 }
 function apply(){if(applying)return;applying=true;try{ensureDock();applyLocalTheme();applyModeChooserTheme()}finally{applying=false}}
