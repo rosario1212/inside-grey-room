@@ -15,7 +15,7 @@ const files={
   apply:await read('scripts/apply-interface-v14.mjs')
 };
 
-for(const rel of ['navigation-theme-v18.js','navigation-heritage-v19.js','cell-controls-stability-v23.js']){
+for(const rel of ['navigation-theme-v18.js','navigation-heritage-v19.js','cell-controls-stability-v23.js','scripts/apply-interface-v14.mjs']){
   const parsed=spawnSync(process.execPath,['--check',path.join(root,rel)],{encoding:'utf8'});
   ok(parsed.status===0,`${rel}: syntax check failed: ${parsed.stderr||parsed.stdout}`);
 }
@@ -46,7 +46,14 @@ ok(files.cell.includes('__igrV24Stable'),'v24 sync guard marker missing');
 ok(files.cell.includes('queuedForce=true'),'Forced realtime syncs must coalesce');
 ok(files.cell.includes('healLobbyControls()'),'Lobby launch recovery is missing');
 ok(files.cell.includes('button.disabled=!canStart'),'Launch button recovery must use server-derived canStart');
+ok(files.cell.includes('__igrV24LaunchGuard'),'Launch calls must be deduplicated');
+ok(files.cell.includes('requestAnimationFrame(syncGameUiState)'),'Launch completion must schedule an immediate UI recovery');
 ok(files.cell.includes("document.getElementById('igrUniversalDock')?.remove()"),'Live cells must purge stale dock shells');
+
+// gameplay-clean-v12 has a legacy document-wide MutationObserver. The build
+// wrapper must track/disconnect it on mobile/PWA too, not only desktop.
+ok(files.apply.includes("'if(!nativeShell&&!mobile&&window.MutationObserver){'"),'Build patch must target the old desktop-only observer condition');
+ok(files.apply.includes("'if(window.MutationObserver){'"),'Build patch must enable observer tracking on mobile too');
 
 ok(files.apply.includes("igr-v24-gameplay-stability"),'Build/service-worker cache must be bumped to v24');
 ok(files.apply.includes("cell-controls-stability-v23.js?v=v24-gameplay-stability"),'Built HTML must load the v24 cell stability asset');
@@ -59,6 +66,8 @@ try{
   ok(distIndex.includes('navigation-theme-v18.js?v=v24-gameplay-stability'),'dist/index.html has stale navigation-theme asset');
   ok(distIndex.includes('navigation-heritage-v19.js?v=v24-gameplay-stability'),'dist/index.html has stale navigation asset');
   ok(distIndex.includes('cell-controls-stability-v23.js?v=v24-gameplay-stability'),'dist/index.html has stale cell stability asset');
+  ok(!distIndex.includes('if(!nativeShell&&!mobile&&window.MutationObserver){'),'dist/index.html still leaves gameplay MutationObserver running on mobile');
+  ok(distIndex.includes('if(window.MutationObserver){const NativeObserver'),'dist/index.html does not track/disconnect gameplay observer on all clients');
   ok(distSw.includes("const CACHE='igr-v24-gameplay-stability';"),'dist/service-worker.js has stale cache version');
 }catch{}
 
