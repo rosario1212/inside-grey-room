@@ -13,6 +13,8 @@ const runtime=await read('mobile-ui-v28.js');
 const lifecycle=await read('native-lifecycle-v12.js');
 const terror=await read('terror-v12-37.js');
 const apply=await read('scripts/apply-mobile-ui-v28.mjs');
+const versionMatch=apply.match(/const VERSION='([^']+)'/);
+const buildVersion=versionMatch?.[1]||'';
 
 for(const rel of ['mobile-ui-v28.js','native-lifecycle-v12.js','terror-v12-37.js','scripts/apply-mobile-ui-v28.mjs']){
   const parsed=spawnSync(process.execPath,['--check',path.join(root,rel)],{encoding:'utf8'});
@@ -66,7 +68,7 @@ ok(lifecycle.includes("stopLocalCapture()"),'native-lifecycle-v12.js: background
 
 // Build/PWA propagation.
 ok(apply.includes("'prebeta-v30.css'"),'apply-mobile-ui-v28.mjs: prebeta stylesheet is not copied into builds');
-ok(apply.includes('v30-prebeta-theme-isolation'),'apply-mobile-ui-v28.mjs: v30 cache-busting marker missing');
+ok(/^v30-[a-z0-9-]+$/.test(buildVersion),'apply-mobile-ui-v28.mjs: v30 cache-busting marker missing or invalid');
 ok(apply.includes('/prebeta-v30.css?v=${VERSION}'),'apply-mobile-ui-v28.mjs: service-worker precache does not include v30 stylesheet');
 
 async function directorySize(rel){
@@ -94,9 +96,9 @@ for(const bundle of ['dist','www']){
   try{
     const index=await read(`${bundle}/index.html`);
     const sw=await read(`${bundle}/service-worker.js`);
-    ok(index.includes('prebeta-v30.css?v=v30-prebeta-theme-isolation'),`${bundle}/index.html: v30 stylesheet missing or stale`);
-    ok(index.includes('mobile-ui-v28.js?v=v30-prebeta-theme-isolation'),`${bundle}/index.html: v30 runtime missing or stale`);
-    ok(sw.includes('/prebeta-v30.css?v=v30-prebeta-theme-isolation'),`${bundle}/service-worker.js: v30 stylesheet not precached`);
+    ok(index.includes(`prebeta-v30.css?v=${buildVersion}`),`${bundle}/index.html: v30 stylesheet missing or stale`);
+    ok(index.includes(`mobile-ui-v28.js?v=${buildVersion}`),`${bundle}/index.html: v30 runtime missing or stale`);
+    ok(sw.includes(`/prebeta-v30.css?v=${buildVersion}`),`${bundle}/service-worker.js: v30 stylesheet not precached`);
   }catch{}
 }
 
