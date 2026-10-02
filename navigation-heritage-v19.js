@@ -1,7 +1,7 @@
-/* Inside Grey Room v21 — single settings control + profile scroll dock minimisation. */
+/* Inside Grey Room v22 — stable settings control + responsive floating navigation. */
 (()=>{
 'use strict';
-const VERSION='21.0-settings-profile-scroll';
+const VERSION='22.0-home-input-hotfix';
 const POS_KEY='igr_quick_nav_positions_v20';
 let queued=false,scrollTimer=0;
 const isFr=()=>window.IGR_LOCALE!=='en';
@@ -30,28 +30,43 @@ function makeDraggable(btn,key){
   const end=()=>{if(!start)return;const r=btn.getBoundingClientRect(),maxX=Math.max(12,innerWidth-r.width-12),maxY=Math.max(12,innerHeight-r.height-12);const x=maxX<=12?0:(r.left-12)/(maxX-12),y=maxY<=12?0:(r.top-12)/(maxY-12);writePosition(key,{x:Math.max(0,Math.min(1,x)),y:Math.max(0,Math.min(1,y))});btn.dataset.igrDragged=moved?'1':'0';btn.classList.remove('is-dragging');start=null;setTimeout(()=>{btn.dataset.igrDragged='0'},100)};
   btn.addEventListener('pointerup',end);btn.addEventListener('pointercancel',end);
 }
+function settingsLike(el){
+  if(!el)return false;
+  const text=(el.textContent||'').trim();
+  const signature=[el.id,typeof el.className==='string'?el.className:'',el.getAttribute?.('onclick'),el.getAttribute?.('aria-label'),el.getAttribute?.('title')].filter(Boolean).join(' ');
+  return text==='⚙'||/openSettings|paramètres|settings|igr.?top.?settings|settings.?button|settings.?fab/i.test(signature);
+}
 function ensureTopSettings(){
   document.getElementById('igrGlobalHome')?.remove();
   const topbar=document.querySelector('#app .topbar');if(!topbar)return;
-  let actions=topbar.querySelector('.top-actions');if(!actions){actions=document.createElement('div');actions.className='top-actions';topbar.appendChild(actions)}
+  let actions=topbar.querySelector('.top-actions');
+  if(!actions){actions=document.createElement('div');actions.className='top-actions';topbar.appendChild(actions)}
 
-  /* Rebuild the action slot from scratch. Several legacy modules can re-insert
-     a second naked gear after render; replacing the slot guarantees one control. */
-  const btn=document.createElement('button');
+  let btn=actions.querySelector('#igrTopSettings');
+  if(!btn){
+    btn=[...actions.querySelectorAll('button,[role="button"],a')].find(settingsLike)||document.createElement('button');
+    if(btn.parentElement!==actions)actions.appendChild(btn);
+  }
   btn.type='button';btn.id='igrTopSettings';btn.className='pill-btn igr-top-settings';
-  btn.innerHTML='<span aria-hidden="true">⚙</span>';
+  if(btn.innerHTML!=='<span aria-hidden="true">⚙</span>')btn.innerHTML='<span aria-hidden="true">⚙</span>';
   btn.setAttribute('aria-label',isFr()?'Paramètres':'Settings');
   btn.setAttribute('title',isFr()?'Paramètres':'Settings');
-  btn.onclick=()=>{try{if(typeof openSettings==='function')openSettings();else window.openSettings?.()}catch{try{window.openSettings?.()}catch{}}};
-  actions.replaceChildren(btn);
+  if(btn.dataset.igrSettingsBound!=='1'){
+    btn.dataset.igrSettingsBound='1';
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click',()=>{try{if(typeof openSettings==='function')openSettings();else window.openSettings?.()}catch{try{window.openSettings?.()}catch{}}});
+  }
 
-  /* Remove any legacy settings control that lives outside .top-actions,
-     including icon-only spans/buttons such as the small second gear seen on iOS. */
-  for(const el of [...topbar.querySelectorAll('button,[role="button"],a,span')]){
-    if(el===btn||btn.contains(el)||actions===el||el.closest?.('#igrTopSettings'))continue;
-    const text=(el.textContent||'').trim();
-    const signature=[el.id,el.className,el.getAttribute?.('onclick'),el.getAttribute?.('aria-label'),el.getAttribute?.('title')].filter(Boolean).join(' ');
-    if(text==='⚙'||/openSettings|paramètres|settings|igr.?top.?settings|settings.?button|settings.?fab/i.test(signature))el.remove();
+  /* Remove only actual duplicate controls. This is intentionally idempotent:
+     no replaceChildren/continuous DOM rewrite, so the MutationObserver cannot
+     create a render loop that blocks taps on the home screen. */
+  const candidates=[...topbar.querySelectorAll('button,[role="button"],a')];
+  for(const el of candidates){if(el!==btn&&settingsLike(el))el.remove()}
+  for(const el of [...topbar.querySelectorAll('span')]){
+    if(el.closest('#igrTopSettings'))continue;
+    if((el.textContent||'').trim()!=='⚙')continue;
+    const clickable=el.closest('button,[role="button"],a');
+    if(clickable&&clickable!==btn)clickable.remove();else el.remove();
   }
 }
 function closeFilters(){
@@ -71,8 +86,8 @@ function ensureDock(){
 }
 function bindDockClicks(){
   const home=document.getElementById('igrDockHome'),filters=document.getElementById('igrDockFilters');
-  if(home&&!home.dataset.igrV21Click){home.dataset.igrV21Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
-  if(filters&&!filters.dataset.igrV21Click){filters.dataset.igrV21Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(home&&!home.dataset.igrV22Click){home.dataset.igrV22Click='1';home.addEventListener('click',e=>{if(home.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
+  if(filters&&!filters.dataset.igrV22Click){filters.dataset.igrV22Click='1';filters.addEventListener('click',e=>{if(filters.dataset.igrDragged==='1'){e.preventDefault();e.stopImmediatePropagation()}},true)}
 }
 function apply(){ensureTopSettings();ensureDock();bindDockClicks()}
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})}
@@ -86,6 +101,6 @@ function boot(){
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',schedule,{passive:true});addEventListener('pageshow',schedule,{passive:true});
   document.addEventListener('click',e=>{if(isHome())return;const nav=document.querySelector('.igr-filter-dock-panel.is-dock-open');if(nav&&!nav.contains(e.target)&&!e.target.closest?.('#igrDockFilters'))closeFilters()});
 }
-window.IGR_NAV_HERITAGE_V21=Object.freeze({version:VERSION,refresh:schedule});
+window.IGR_NAV_HERITAGE_V22=Object.freeze({version:VERSION,refresh:schedule});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
