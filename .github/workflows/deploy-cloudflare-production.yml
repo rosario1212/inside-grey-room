@@ -30,6 +30,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build web app
         run: npm run build
+      - name: Gameplay stability regression guard
+        run: node scripts/gameplay-stability-check.mjs
       - name: Upload deployable bundle
         uses: actions/upload-artifact@v4
         with:
