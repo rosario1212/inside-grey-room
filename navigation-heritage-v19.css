@@ -1,4 +1,4 @@
-/* Inside Grey Room v24 — fixed Home navigation + discreet in-game notifications. */
+/* Inside Grey Room v27 — fixed Home navigation + discreet in-game notifications. */
 
 /* Home never shows the floating navigation dock. The dock is reserved for
    scenario browsing and Profile; live cells/gameplay never receive it. */
@@ -6,14 +6,19 @@ body.igr-at-home #igrUniversalDock{display:none!important}
 body.igr-at-home{--igr-dock-visible:0}
 body:not(.igr-scenario-browser):not(.igr-profile-view) #igrUniversalDock{display:none!important}
 
-/* Top bar: exactly one settings action at the top-right, never following the scroll. */
+/* Top bar: Settings stays at the top-right. Scenario browsing also keeps one
+   explicit Accueil action beside it; unlike the bottom dock it never collapses. */
 #app .topbar,#app .igr-utility-topbar{position:relative!important;top:auto!important;z-index:40!important;margin-bottom:18px!important;padding:0!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 #app .topbar .top-actions{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important}
-#app .topbar .top-actions>:not(#igrTopSettings){display:none!important}
-#app .topbar .top-actions::before,#app .topbar .top-actions::after,#app .topbar #igrTopSettings::before,#app .topbar #igrTopSettings::after{content:none!important;display:none!important}
-#app .topbar #igrGlobalHome{display:none!important}
+#app .topbar .top-actions>:not(#igrTopSettings):not(#igrGlobalHome){display:none!important}
+#app .topbar .top-actions::before,#app .topbar .top-actions::after,#app .topbar #igrTopSettings::before,#app .topbar #igrTopSettings::after,#app .topbar #igrGlobalHome::before,#app .topbar #igrGlobalHome::after{content:none!important;display:none!important}
 #app .topbar .igr-top-settings{display:grid!important;place-items:center!important;width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;border:1px solid rgba(220,228,234,.16)!important;border-radius:50%!important;background:linear-gradient(180deg,rgba(18,23,28,.90),rgba(7,10,13,.94))!important;color:#e9eef1!important;font-size:18px!important;line-height:1!important;box-shadow:0 10px 26px rgba(0,0,0,.22)!important}
 #app .topbar .igr-top-settings:active{transform:translateY(1px)}
+#app .topbar #igrGlobalHome{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:48px!important;padding:0 15px!important;border:1px solid rgba(220,228,234,.16)!important;border-radius:999px!important;background:linear-gradient(180deg,rgba(18,23,28,.90),rgba(7,10,13,.94))!important;color:#eef2f4!important;box-shadow:0 10px 26px rgba(0,0,0,.22)!important;font:inherit!important;white-space:nowrap!important}
+#app .topbar #igrGlobalHome span{font-size:16px!important;line-height:1!important}
+#app .topbar #igrGlobalHome b{font-size:11px!important;font-weight:850!important;line-height:1!important}
+#app .topbar #igrGlobalHome:active{transform:translateY(1px)}
+body:not(.igr-scenario-browser) #app .topbar #igrGlobalHome{display:none!important}
 
 /* Floating navigation. Filters may still be repositioned; Accueil is always
    anchored bottom-right and therefore never steals a drag gesture on iPhone. */
@@ -58,6 +63,8 @@ body.igr-game-active #igrNotifyBell .igr-notify-count{min-width:15px!important;h
 
 @media(max-width:540px){
   #app .topbar .igr-top-settings{width:44px!important;height:44px!important;min-width:44px!important;font-size:17px!important}
+  #app .topbar #igrGlobalHome{min-height:44px!important;padding-inline:12px!important}
+  #app .topbar #igrGlobalHome b{font-size:10px!important}
   .igr-universal-dock .igr-dock-pill{min-height:46px;padding-inline:14px}
 }
 @media(prefers-reduced-motion:reduce){.igr-universal-dock .igr-dock-pill,#igrNotifyBell{transition:none!important}}
