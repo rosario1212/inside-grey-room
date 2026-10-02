@@ -1,7 +1,7 @@
-/* Inside Grey Room v24 — scoped navigation dock + low-churn theme continuity. */
+/* Inside Grey Room v25 — scoped navigation, local-mode theme continuity and low-churn UI refresh. */
 (()=>{
 'use strict';
-const VERSION='24.0-gameplay-stability';
+const VERSION='25.0-role-fluidity';
 const LOCAL_KEY='igr_local_standard_v13_8';
 const LOCAL_THEME_CLASSES=['igr-local-theme-normal','igr-local-theme-omerta','igr-local-theme-terror','igr-local-theme-cartel','igr-local-theme-regime','igr-local-theme-cendres','igr-local-theme-kuroi'];
 let applying=false,queued=false;
@@ -48,10 +48,7 @@ function ensureDock(){
   document.getElementById('igrFilterFab')?.remove();
   let dock=document.getElementById('igrUniversalDock');
 
-  /* Critical: the creator and the styling layer must agree on the same scope.
-     Older builds recreated this dock on every live-cell render while the v23
-     layer removed it again, producing a MutationObserver create/remove loop on
-     iPhone that could eventually starve normal button taps. */
+  /* Critical: creator and styling layer must agree on scope. */
   if(!appReady()||!dockAllowed()){
     if(dock)dock.remove();
     document.body.classList.remove('igr-global-dock-active');
@@ -107,7 +104,26 @@ function applyLocalTheme(){
   body.classList.add(`igr-local-theme-${theme}`);body.dataset.igrLocalTheme=theme;
   local?.setAttribute('data-igr-local-theme',theme);
 }
-function apply(){if(applying)return;applying=true;try{ensureDock();applyLocalTheme()}finally{applying=false}}
+function setModeTheme(node,theme){
+  if(!node)return;
+  if(node.dataset.igrModeTheme!==theme)node.dataset.igrModeTheme=theme;
+}
+function applyModeChooserTheme(){
+  const standard=document.querySelector('#app .dual-mode-card.is-local');
+  if(standard){
+    const theme=themeFromId(selectedScenario());
+    setModeTheme(standard,theme);
+    setModeTheme(standard.closest('.dual-mode-chooser'),theme);
+  }
+  const heritage=document.querySelector('#app .heritage-local-btn');
+  if(heritage){
+    const shell=heritage.closest('.hplay-theme-cendres,.hplay-theme-kuroi');
+    const theme=shell?.classList.contains('hplay-theme-kuroi')?'kuroi':'cendres';
+    setModeTheme(heritage,theme);
+    setModeTheme(heritage.closest('.heritage-dual-row'),theme);
+  }
+}
+function apply(){if(applying)return;applying=true;try{ensureDock();applyLocalTheme();applyModeChooserTheme()}finally{applying=false}}
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})}
 function boot(){
   apply();
