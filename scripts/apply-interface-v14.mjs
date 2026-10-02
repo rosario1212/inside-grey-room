@@ -24,16 +24,16 @@ for(const page of ['index.html','en.html']){
 
   if(!html.includes('navigation-theme-v18.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-theme-v18.css?v=v20-settings-nav">\n</head>');
   else html=html.replace(/navigation-theme-v18\.css\?v=[^"']+/g,'navigation-theme-v18.css?v=v20-settings-nav');
-  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v20-settings-nav"></script>\n</body>');
-  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v20-settings-nav');
+  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v24-gameplay-stability"></script>\n</body>');
+  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v24-gameplay-stability');
 
-  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v23-cell-stability">\n</head>');
-  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v23-cell-stability');
-  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v23-cell-stability"></script>\n</body>');
-  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v23-cell-stability');
+  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v24-gameplay-stability">\n</head>');
+  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v24-gameplay-stability');
+  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v24-gameplay-stability"></script>\n</body>');
+  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v24-gameplay-stability');
 
-  if(!html.includes('cell-controls-stability-v23.js'))html=html.replace('</body>','  <script src="cell-controls-stability-v23.js?v=v23-cell-stability"></script>\n</body>');
-  else html=html.replace(/cell-controls-stability-v23\.js\?v=[^"']+/g,'cell-controls-stability-v23.js?v=v23-cell-stability');
+  if(!html.includes('cell-controls-stability-v23.js'))html=html.replace('</body>','  <script src="cell-controls-stability-v23.js?v=v24-gameplay-stability"></script>\n</body>');
+  else html=html.replace(/cell-controls-stability-v23\.js\?v=[^"']+/g,'cell-controls-stability-v23.js?v=v24-gameplay-stability');
 
   html=html.replace(/dlc-profile-ui-v12-44\.css\?v=[^"']+/g,'dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   html=html.replace(/dlc-profile-ui-v12-44\.js\?v=[^"']+/g,'dlc-profile-ui-v12-44.js?v=v20-settings-nav');
@@ -58,12 +58,12 @@ try{
     {src:'assets/icon-512-v14.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}
   ];
   await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n','utf8');
-}catch(err){console.warn('[v23] manifest patch skipped',err.message)}
+}catch(err){console.warn('[v24] manifest patch skipped',err.message)}
 
 const swPath=path.join(out,'service-worker.js');
 try{
   let sw=await readFile(swPath,'utf8');
-  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v23-cell-stability';");
+  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v24-gameplay-stability';");
   if(!sw.includes('/premium-access-sync-v17.css')){
     sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/premium-access-sync-v17.css?v=v17-premium-sync','/premium-access-sync-v17.js?v=v17-premium-sync',");
   }
@@ -74,21 +74,21 @@ try{
     sw=sw.replace(/\/interface-polish-v14\.js\?v=[^']+/g,'/interface-polish-v14.js?v=v20-settings-nav');
   }
   if(!sw.includes('/navigation-theme-v18.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v20-settings-nav','/navigation-theme-v18.js?v=v20-settings-nav',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v20-settings-nav','/navigation-theme-v18.js?v=v24-gameplay-stability',");
   }else{
     sw=sw.replace(/\/navigation-theme-v18\.css\?v=[^']+/g,'/navigation-theme-v18.css?v=v20-settings-nav');
-    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v20-settings-nav');
+    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v24-gameplay-stability');
   }
   if(!sw.includes('/navigation-heritage-v19.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v23-cell-stability','/navigation-heritage-v19.js?v=v23-cell-stability',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v24-gameplay-stability','/navigation-heritage-v19.js?v=v24-gameplay-stability',");
   }else{
-    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v23-cell-stability');
-    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v23-cell-stability');
+    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v24-gameplay-stability');
+    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v24-gameplay-stability');
   }
   if(!sw.includes('/cell-controls-stability-v23.js')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/cell-controls-stability-v23.js?v=v23-cell-stability',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/cell-controls-stability-v23.js?v=v24-gameplay-stability',");
   }else{
-    sw=sw.replace(/\/cell-controls-stability-v23\.js\?v=[^']+/g,'/cell-controls-stability-v23.js?v=v23-cell-stability');
+    sw=sw.replace(/\/cell-controls-stability-v23\.js\?v=[^']+/g,'/cell-controls-stability-v23.js?v=v24-gameplay-stability');
   }
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.css\?v=[^']+/g,'/dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.js\?v=[^']+/g,'/dlc-profile-ui-v12-44.js?v=v20-settings-nav');
@@ -102,4 +102,4 @@ try{
   await writeFile(swPath,sw,'utf8');
 }catch{}
 
-console.log(`Inside Grey Room v23 cell controls + scoped navigation applied to ${outArg}`);
+console.log(`Inside Grey Room v24 gameplay stability + fixed navigation applied to ${outArg}`);
