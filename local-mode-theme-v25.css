@@ -1,0 +1,63 @@
+/* Inside Grey Room v25 — Local-mode selector identity by DLC / Heritage campaign. */
+
+.dual-mode-card.is-local[data-igr-mode-theme],
+.heritage-local-btn[data-igr-mode-theme]{
+  --igr-mode-accent:#9aa5ad;
+  --igr-mode-line:rgba(180,190,198,.25);
+  --igr-mode-soft:rgba(140,150,158,.08);
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .12s ease!important;
+}
+.dual-mode-card.is-local[data-igr-mode-theme="normal"]{--igr-mode-accent:#aeb7be;--igr-mode-line:rgba(190,199,206,.22);--igr-mode-soft:rgba(150,160,168,.07)}
+.dual-mode-card.is-local[data-igr-mode-theme="omerta"]{--igr-mode-accent:#c34a4d;--igr-mode-line:rgba(181,54,58,.46);--igr-mode-soft:rgba(128,22,26,.24)}
+.dual-mode-card.is-local[data-igr-mode-theme="terror"]{--igr-mode-accent:#a8adb3;--igr-mode-line:rgba(150,155,162,.35);--igr-mode-soft:rgba(112,118,125,.13)}
+.dual-mode-card.is-local[data-igr-mode-theme="cartel"]{--igr-mode-accent:#c8af68;--igr-mode-line:rgba(190,161,78,.46);--igr-mode-soft:rgba(119,94,28,.24)}
+.dual-mode-card.is-local[data-igr-mode-theme="regime"]{--igr-mode-accent:#8caac4;--igr-mode-line:rgba(110,143,170,.45);--igr-mode-soft:rgba(42,72,96,.25)}
+
+.dual-mode-card.is-local[data-igr-mode-theme]{
+  border-color:var(--igr-mode-line)!important;
+  background:
+    radial-gradient(circle at 14% 18%,color-mix(in srgb,var(--igr-mode-accent) 18%,transparent),transparent 32%),
+    linear-gradient(145deg,color-mix(in srgb,#0a0d10 86%,var(--igr-mode-accent) 14%),#050709 72%)!important;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--igr-mode-accent) 9%,transparent),0 14px 36px rgba(0,0,0,.22)!important;
+}
+.dual-mode-card.is-local[data-igr-mode-theme]::after{
+  content:"";
+  position:absolute;
+  inset:auto -18% -62% 30%;
+  height:120%;
+  border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--igr-mode-accent) 11%,transparent),transparent 67%);
+  pointer-events:none;
+  z-index:-1;
+}
+.dual-mode-card.is-local[data-igr-mode-theme] .dual-mode-icon{
+  border-color:var(--igr-mode-line)!important;
+  color:color-mix(in srgb,var(--igr-mode-accent) 78%,white 22%)!important;
+  background:color-mix(in srgb,#080b0e 88%,var(--igr-mode-accent) 12%)!important;
+  box-shadow:inset 0 0 18px color-mix(in srgb,var(--igr-mode-accent) 8%,transparent)!important;
+}
+.dual-mode-card.is-local[data-igr-mode-theme] b{color:#f1f3f4!important}
+.dual-mode-card.is-local[data-igr-mode-theme] i{color:color-mix(in srgb,var(--igr-mode-accent) 78%,#7c858c 22%)!important}
+.dual-mode-card.is-local[data-igr-mode-theme] small{color:color-mix(in srgb,#a1aab1 86%,var(--igr-mode-accent) 14%)!important}
+
+/* Heritage uses the same local-mode language, but follows each campaign rather than DLC IDs. */
+.heritage-local-btn[data-igr-mode-theme="cendres"]{--igr-mode-accent:#b4d1e3;--igr-mode-line:rgba(147,184,206,.44);--igr-mode-soft:rgba(83,124,151,.22)}
+.heritage-local-btn[data-igr-mode-theme="kuroi"]{--igr-mode-accent:#dfd5b9;--igr-mode-line:rgba(191,177,137,.46);--igr-mode-soft:rgba(113,94,52,.22)}
+.heritage-local-btn[data-igr-mode-theme]{
+  border-color:var(--igr-mode-line)!important;
+  background:linear-gradient(180deg,color-mix(in srgb,#0b0e11 82%,var(--igr-mode-accent) 18%),color-mix(in srgb,#050709 94%,var(--igr-mode-accent) 6%))!important;
+  color:color-mix(in srgb,var(--igr-mode-accent) 82%,white 18%)!important;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--igr-mode-accent) 8%,transparent)!important;
+}
+.heritage-local-btn[data-igr-mode-theme="cendres"]{font-family:'Arial Narrow','IBM Plex Mono','Courier New',monospace!important;letter-spacing:.035em}
+.heritage-local-btn[data-igr-mode-theme="kuroi"]{font-family:Georgia,'Times New Roman',serif!important;letter-spacing:.02em}
+
+.dual-mode-card.is-local[data-igr-mode-theme]:active,
+.heritage-local-btn[data-igr-mode-theme]:active{transform:translateY(1px) scale(.997)!important}
+
+@media(prefers-reduced-motion:reduce){
+  .dual-mode-card.is-local[data-igr-mode-theme],.heritage-local-btn[data-igr-mode-theme]{transition:none!important}
+}
