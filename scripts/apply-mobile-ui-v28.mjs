@@ -7,7 +7,7 @@ if(!outArg)throw new Error('Usage: node scripts/apply-mobile-ui-v28.mjs <dist|ww
 const out=path.resolve(root,outArg);
 await stat(out);
 
-const VERSION='v30-prebeta-theme-isolation';
+const VERSION='v30-live-controls-no-overlap';
 for(const name of ['mobile-ui-v28.css','mobile-ui-v28.js','prebeta-v30.css']){
   await copyFile(path.join(root,name),path.join(out,name));
 }
@@ -45,4 +45,4 @@ try{
   console.warn('[v30] service worker patch skipped',err.message);
 }
 
-console.log(`Inside Grey Room v30 pre-beta theme isolation applied to ${outArg}`);
+console.log(`Inside Grey Room v30 live-controls no-overlap applied to ${outArg}`);
