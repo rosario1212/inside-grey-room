@@ -1,4 +1,4 @@
-/* Inside Grey Room — v12.44 DLC ownership profile + unobtrusive controls */
+/* Inside Grey Room — v16 premium ownership profile + clean scenario filters */
 (() => {
   'use strict';
 
@@ -7,7 +7,8 @@
     omerta:{label:'OMERTÀ',className:'omerta'},
     terror:{label:'TERREUR',className:'terror'},
     cartel:{label:'CARTEL',className:'cartel'},
-    regime:{label:'LE RÉGIME',className:'regime'}
+    regime:{label:'LE RÉGIME',className:'regime'},
+    heritage:{label:'HÉRITAGE',className:'heritage'}
   };
   let ownCache=null;
   let pendingProfileId=null;
@@ -25,24 +26,24 @@
     const id=readIdentity();
     if(!id?.id||!id?.token)return normalizeStatus(null);
     try{ownCache=normalizeStatus(await rpc('igr_dlc_access_status',{p_profile_id:id.id,p_profile_token:id.token}));return ownCache}
-    catch(error){console.warn('profile dlc status',error);return normalizeStatus(null)}
+    catch(error){console.warn('profile premium status',error);return normalizeStatus(null)}
   }
   async function getProfileStatus(targetProfileId){
     const id=readIdentity();if(!id?.id||!id?.token||!targetProfileId)return normalizeStatus(null);
     try{return normalizeStatus(await rpc('igr_dlc_profile_access',{p_profile_id:id.id,p_profile_token:id.token,p_target_profile_id:targetProfileId}))}
-    catch(error){console.warn('public dlc status',error);return normalizeStatus(null)}
+    catch(error){console.warn('public premium status',error);return normalizeStatus(null)}
   }
   async function getRoomPlayerStatus(targetPlayerId){
     if(!STATE?.room||!STATE?.token||!targetPlayerId)return normalizeStatus(null);
     try{return normalizeStatus(await rpc('igr_dlc_room_player_access',{p_code:STATE.room,p_player_token:STATE.token,p_target_player_id:targetPlayerId}))}
-    catch(error){console.warn('room dlc status',error);return normalizeStatus(null)}
+    catch(error){console.warn('room premium status',error);return normalizeStatus(null)}
   }
 
   function entitlementCards(status,{compact=false}={}){
     return Object.entries(DLC_META).map(([key,meta])=>{
       const entry=status?.[key];
       const active=statusActive(entry),level=statusLevel(entry);
-      const state=active?(level==='tester'?'TESTEUR':'DÉTENU'):'NON DÉTENU';
+      const state=active?(level==='owner'?'PROPRIÉTAIRE':level==='tester'?'TESTEUR':'DÉTENU'):'NON DÉTENU';
       return `<div class="igr-dlc-owned-card ${meta.className} ${active?'is-owned':'is-locked'} ${compact?'is-compact':''}"><span>${esc(meta.label)}</span><b>${state}</b></div>`;
     }).join('');
   }
@@ -55,7 +56,7 @@
       const before=panel.querySelector('.profile-dossier,.reward-section');
       if(before)panel.insertBefore(box,before);else panel.appendChild(box);
     }
-    box.innerHTML='<div class="igr-profile-dlc-head"><div><small>CONTENUS</small><h2>DLC du joueur</h2></div><span>Vérification…</span></div><div class="igr-profile-dlc-grid is-loading"></div>';
+    box.innerHTML='<div class="igr-profile-dlc-head"><div><small>CONTENUS PREMIUM</small><h2>Contenus du joueur</h2></div><span>Vérification…</span></div><div class="igr-profile-dlc-grid is-loading"></div>';
     const status=await getOwnStatus(true);
     if(!box.isConnected)return;
     box.querySelector('.igr-profile-dlc-head span').textContent='Compte lié';
@@ -78,7 +79,7 @@
     if(!modal.isConnected)return;
     const target=modal.querySelector('.social-modal-meta,.social-modal-history,.modal-actions')||modal.querySelector('.modal-box');
     const owned=document.createElement('div');owned.className='igr-social-dlc-box';
-    owned.innerHTML=`<small>DLC DÉTENUS</small><div class="igr-social-dlc-grid">${entitlementCards(status,{compact:true})}</div>`;
+    owned.innerHTML=`<small>CONTENUS DÉTENUS</small><div class="igr-social-dlc-grid">${entitlementCards(status,{compact:true})}</div>`;
     target?.parentNode?.insertBefore(owned,target);
     modal.dataset.dlcDecorated='1';delete modal.dataset.dlcDecorating;
   }
@@ -97,25 +98,18 @@
 
   function ensureFilterControl(){
     const page=document.querySelector('.page-create-v10-13');
-    let toggle=document.getElementById('igrFilterFab');
-    if(!page){toggle?.remove();return}
+    const toggle=document.getElementById('igrFilterFab');
+    if(toggle)toggle.remove();
+    if(!page)return;
     const nav=page.querySelector('.igr-scenario-filters');if(!nav)return;
-    nav.classList.add('igr-filter-popover');
-    if(!toggle){
-      toggle=document.createElement('button');toggle.id='igrFilterFab';toggle.className='igr-filter-fab';toggle.type='button';toggle.setAttribute('aria-label','Filtrer les scénarios');toggle.innerHTML='<span>☷</span><b>Filtres</b>';
-      document.body.appendChild(toggle);
-      toggle.onclick=()=>{
-        const target=document.querySelector('.page-create-v10-13 .igr-scenario-filters');if(!target)return;
-        const open=!target.classList.contains('is-open');target.classList.toggle('is-open',open);toggle.setAttribute('aria-expanded',open?'true':'false');
-      };
-    }
+    nav.classList.remove('igr-filter-popover','is-open');
+    nav.classList.add('igr-filter-inline');
+    nav.removeAttribute('aria-expanded');
   }
 
   document.addEventListener('click',event=>{
     const chip=event.target.closest?.('.igr-filter-chip');
-    if(chip){setTimeout(()=>{document.querySelector('.igr-scenario-filters')?.classList.remove('is-open');document.getElementById('igrFilterFab')?.setAttribute('aria-expanded','false')},60);return}
-    const nav=document.querySelector('.igr-scenario-filters');const fab=document.getElementById('igrFilterFab');
-    if(nav?.classList.contains('is-open')&&!event.target.closest?.('.igr-scenario-filters,#igrFilterFab')){nav.classList.remove('is-open');fab?.setAttribute('aria-expanded','false')}
+    if(chip)setTimeout(ensureFilterControl,0);
   },true);
 
   const observer=new MutationObserver(()=>{
