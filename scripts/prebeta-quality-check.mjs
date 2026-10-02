@@ -11,9 +11,10 @@ const read=rel=>readFile(path.join(root,rel),'utf8');
 const css=await read('prebeta-v30.css');
 const runtime=await read('mobile-ui-v28.js');
 const lifecycle=await read('native-lifecycle-v12.js');
+const terror=await read('terror-v12-37.js');
 const apply=await read('scripts/apply-mobile-ui-v28.mjs');
 
-for(const rel of ['mobile-ui-v28.js','native-lifecycle-v12.js','scripts/apply-mobile-ui-v28.mjs']){
+for(const rel of ['mobile-ui-v28.js','native-lifecycle-v12.js','terror-v12-37.js','scripts/apply-mobile-ui-v28.mjs']){
   const parsed=spawnSync(process.execPath,['--check',path.join(root,rel)],{encoding:'utf8'});
   ok(parsed.status===0,`${rel}: JavaScript syntax check failed: ${parsed.stderr||parsed.stdout}`);
 }
@@ -38,8 +39,17 @@ ok(runtime.includes('sanitizeThemeState();'),'mobile-ui-v28.js: theme sanitizer 
 
 // Navigation and role-choice regressions caught before field testing.
 ok(runtime.includes("['profile','rules','join']"),'mobile-ui-v28.js: utility navigation repair no longer covers rules/join/profile');
+ok(runtime.includes('normalizeHomeActions();'),'mobile-ui-v28.js: semantic home-action normalizer missing');
+ok(runtime.includes("goProfile:{fr:['Profil'"),'mobile-ui-v28.js: French profile action/icon contract missing');
+ok(runtime.includes("en:['Profile','Photo, nickname and progress.','◉']"),'mobile-ui-v28.js: English profile action/icon contract missing');
+ok(runtime.includes("goJoin:{fr:['Rejoindre une partie'"),'mobile-ui-v28.js: Join action is no longer normalized by function');
 ok(runtime.includes('normalizeChoiceStatus();'),'mobile-ui-v28.js: universal TON CHOIX normalizer missing');
 ok(runtime.includes("button.textContent=isFr()?'Retirer':'Remove'"),'mobile-ui-v28.js: Retirer/Remove control normalization missing');
+
+// TERREUR 026 public copy must never regress to the placeholder wording.
+ok(!terror.includes('organisation terroriste fictive'),'terror-v12-37.js: scenario 026 still contains the word fictive');
+ok(!terror.includes('une structure extérieure continue d’avancer vers la Grey Room'),'terror-v12-37.js: scenario 026 list copy still uses structure extérieure');
+ok(terror.includes('un groupe terroriste continue d’avancer vers la Grey Room'),'terror-v12-37.js: scenario 026 list copy missing groupe terroriste');
 
 // Mobile lifecycle: installed iPhone/Android PWAs must recover without requiring Capacitor.
 ok(lifecycle.includes("version:'12.9-pwa-resume'"),'native-lifecycle-v12.js: PWA lifecycle version marker missing');
@@ -97,4 +107,4 @@ if(failures.length){
   for(const failure of failures)console.error(`✗ ${failure}`);
   process.exit(1);
 }
-console.log('✓ Theme isolation, navigation, role-choice, mobile lifecycle and bundle propagation checks passed.');
+console.log('✓ Theme isolation, navigation, role-choice, TERREUR copy, mobile lifecycle and bundle propagation checks passed.');

@@ -12,6 +12,27 @@ function goHomeSafe(){
   try{if(typeof STATE!=='undefined'){STATE.view='home';if(typeof renderHome==='function')renderHome()}}catch{}
 }
 
+function normalizeHomeActions(){
+  if(currentView()!=='home')return;
+  const actions=document.querySelectorAll('#app .home-actions-v10-13 .home-action,#app .home-actions .home-action');
+  const copy={
+    goCreate:{fr:['Créer une partie','Choisis un dossier.','＋'],en:['Create a game','Choose a case.','＋']},
+    goJoin:{fr:['Rejoindre une partie','Entre un code de cellule.','↳'],en:['Join a game','Enter a room code.','↳']},
+    goRules:{fr:['Règles du jeu','Déroulement, rôles et fin de partie.','≣'],en:['Game rules','Flow, roles and end of game.','≣']},
+    goProfile:{fr:['Profil','Photo, pseudo et progression.','◉'],en:['Profile','Photo, nickname and progress.','◉']}
+  };
+  for(const action of actions){
+    const signature=String(action.getAttribute('onclick')||'');
+    const key=Object.keys(copy).find(name=>signature.includes(name));
+    if(!key)continue;
+    const [title,description,glyph]=copy[key][isFr()?'fr':'en'];
+    const h3=action.querySelector('h3'),p=action.querySelector('p'),icon=action.querySelector('.icon');
+    if(h3&&h3.textContent!==title)h3.textContent=title;
+    if(p&&p.textContent!==description)p.textContent=description;
+    if(icon&&icon.textContent!==glyph)icon.textContent=glyph;
+  }
+}
+
 function enhanceUtilityExit(){
   const view=currentView();
   if(!['profile','rules','join'].includes(view))return;
@@ -146,6 +167,7 @@ function clearLegacyFilterPosition(){
 
 function apply(){
   sanitizeThemeState();
+  normalizeHomeActions();
   enhanceUtilityExit();
   normalizeChoiceStatus();
   installFixedFilters();
