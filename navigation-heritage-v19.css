@@ -1,4 +1,4 @@
-/* Inside Grey Room v23 — cleaner navigation, single settings control and scoped dock. */
+/* Inside Grey Room v24 — fixed Home navigation + discreet in-game notifications. */
 
 /* Home never shows the floating navigation dock. The dock is reserved for
    scenario browsing and Profile; live cells/gameplay never receive it. */
@@ -15,17 +15,18 @@ body:not(.igr-scenario-browser):not(.igr-profile-view) #igrUniversalDock{display
 #app .topbar .igr-top-settings{display:grid!important;place-items:center!important;width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;border:1px solid rgba(220,228,234,.16)!important;border-radius:50%!important;background:linear-gradient(180deg,rgba(18,23,28,.90),rgba(7,10,13,.94))!important;color:#e9eef1!important;font-size:18px!important;line-height:1!important;box-shadow:0 10px 26px rgba(0,0,0,.22)!important}
 #app .topbar .igr-top-settings:active{transform:translateY(1px)}
 
-/* Floating navigation: draggable, compact and safe-area aware. */
+/* Floating navigation. Filters may still be repositioned; Accueil is always
+   anchored bottom-right and therefore never steals a drag gesture on iPhone. */
 .igr-universal-dock{position:fixed;inset:0;z-index:380;pointer-events:none}
 .igr-universal-dock .igr-dock-pill{position:fixed!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 16px;border-radius:999px;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;will-change:left,top,transform,opacity,width;transition:opacity .16s ease,transform .16s ease,padding .16s ease,width .16s ease;max-width:calc(100vw - 24px)}
 .igr-universal-dock .igr-dock-pill.is-dragging{cursor:grabbing;transition:none!important;transform:scale(.98);opacity:.95}
 .igr-universal-dock .igr-dock-filters{left:max(12px,env(safe-area-inset-left,0px))}
-.igr-universal-dock .igr-dock-home{right:max(12px,env(safe-area-inset-right,0px))}
+.igr-universal-dock .igr-dock-home{right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;touch-action:manipulation!important;cursor:pointer!important;will-change:transform,opacity,width!important}
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging){width:46px!important;min-width:46px!important;max-width:46px!important;padding:0!important;opacity:.72!important}
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) b{display:none!important}
 body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) span{font-size:17px!important}
 body.igr-scenario-browser.igr-dock-scrolling #igrDockFilters:not(.is-dragging){left:max(12px,env(safe-area-inset-left,0px))!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
-body.igr-scenario-browser.igr-dock-scrolling #igrDockHome:not(.is-dragging),body.igr-profile-view.igr-dock-scrolling #igrDockHome:not(.is-dragging){right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
+body.igr-scenario-browser.igr-dock-scrolling #igrDockHome,body.igr-profile-view.igr-dock-scrolling #igrDockHome{right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important}
 body.igr-global-dock-active #app::after{content:"";display:block;height:calc(68px + env(safe-area-inset-bottom,0px));pointer-events:none}
 body.igr-dock-keyboard .igr-universal-dock{display:none!important}
 
@@ -33,6 +34,15 @@ body.igr-dock-keyboard .igr-universal-dock{display:none!important}
 body:not(.igr-scenario-browser) #igrDockFilters{display:none!important}
 body:not(.igr-scenario-browser) .igr-filter-dock-panel{display:none!important}
 .page-create-v10-13 .igr-scenario-filters.igr-filter-dock-panel{z-index:379!important;max-height:min(44vh,350px)!important}
+
+/* Notification bell: absent from home, scenario browser, profile and lobby.
+   During an actual running game it becomes a small, low-emphasis control in
+   the lower-left safe area. Notifications themselves continue to be recorded. */
+#igrNotifyBell{display:none!important}
+body.igr-game-active #igrNotifyBell:not([hidden]){display:grid!important;left:max(10px,env(safe-area-inset-left,0px))!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 10px)!important;width:34px!important;height:34px!important;opacity:.62!important;z-index:334!important;border-color:rgba(255,255,255,.09)!important;background:rgba(6,9,11,.78)!important;box-shadow:0 6px 18px rgba(0,0,0,.22)!important;transition:opacity .15s ease,transform .15s ease!important}
+body.igr-game-active #igrNotifyBell:not([hidden]):focus-visible,body.igr-game-active #igrNotifyBell:not([hidden]):active{opacity:.96!important;transform:scale(.97)}
+body.igr-game-active #igrNotifyBell svg{width:15px!important;height:15px!important}
+body.igr-game-active #igrNotifyBell .igr-notify-count{min-width:15px!important;height:15px!important;line-height:15px!important;font-size:8px!important;right:-3px!important;top:-3px!important}
 
 /* MODE HÉRITAGE gets its own institutional premium type language. */
 .hplay .hplay-hub-intro h1,.hplay .hplay-campaign-title h1,.hplay .hplay-setup-head h1,.hplay .hplay-dossier-copy h1{font-family:Copperplate,'DIN Condensed','Arial Narrow','Helvetica Neue Condensed',sans-serif!important;font-weight:800!important;letter-spacing:-.035em!important;text-transform:uppercase!important}
@@ -50,4 +60,4 @@ body:not(.igr-scenario-browser) .igr-filter-dock-panel{display:none!important}
   #app .topbar .igr-top-settings{width:44px!important;height:44px!important;min-width:44px!important;font-size:17px!important}
   .igr-universal-dock .igr-dock-pill{min-height:46px;padding-inline:14px}
 }
-@media(prefers-reduced-motion:reduce){.igr-universal-dock .igr-dock-pill{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.igr-universal-dock .igr-dock-pill,#igrNotifyBell{transition:none!important}}

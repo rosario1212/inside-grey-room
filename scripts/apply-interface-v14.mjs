@@ -17,6 +17,18 @@ await copyFile(path.join(root,'assets',iosIcon),path.join(out,'assets',iosIcon))
 for(const page of ['index.html','en.html']){
   const target=path.join(out,page);
   let html=await readFile(target,'utf8');
+
+  /* gameplay-clean-v12 installs a document-wide MutationObserver which rewrites
+     the lobby helper DOM from inside its own callback. The source page already
+     has a temporary observer tracker around that legacy script, but older builds
+     activated it only on desktop. Track/disconnect it on iPhone/Android/PWA too:
+     normal sync/render hooks already perform the required decoration. This
+     removes a self-triggering DOM loop that can starve taps after cell launch. */
+  html=html.replace(
+    'if(!nativeShell&&!mobile&&window.MutationObserver){',
+    'if(window.MutationObserver){'
+  );
+
   if(!html.includes('interface-polish-v14.css'))html=html.replace('</head>','  <link rel="stylesheet" href="interface-polish-v14.css?v=v20-settings-nav">\n</head>');
   else html=html.replace(/interface-polish-v14\.css\?v=[^"']+/g,'interface-polish-v14.css?v=v20-settings-nav');
   if(!html.includes('interface-polish-v14.js'))html=html.replace('</body>','  <script src="interface-polish-v14.js?v=v20-settings-nav"></script>\n</body>');
@@ -24,16 +36,16 @@ for(const page of ['index.html','en.html']){
 
   if(!html.includes('navigation-theme-v18.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-theme-v18.css?v=v20-settings-nav">\n</head>');
   else html=html.replace(/navigation-theme-v18\.css\?v=[^"']+/g,'navigation-theme-v18.css?v=v20-settings-nav');
-  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v20-settings-nav"></script>\n</body>');
-  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v20-settings-nav');
+  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v24-gameplay-stability"></script>\n</body>');
+  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v24-gameplay-stability');
 
-  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v23-cell-stability">\n</head>');
-  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v23-cell-stability');
-  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v23-cell-stability"></script>\n</body>');
-  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v23-cell-stability');
+  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v24-gameplay-stability">\n</head>');
+  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v24-gameplay-stability');
+  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v24-gameplay-stability"></script>\n</body>');
+  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v24-gameplay-stability');
 
-  if(!html.includes('cell-controls-stability-v23.js'))html=html.replace('</body>','  <script src="cell-controls-stability-v23.js?v=v23-cell-stability"></script>\n</body>');
-  else html=html.replace(/cell-controls-stability-v23\.js\?v=[^"']+/g,'cell-controls-stability-v23.js?v=v23-cell-stability');
+  if(!html.includes('cell-controls-stability-v23.js'))html=html.replace('</body>','  <script src="cell-controls-stability-v23.js?v=v24-gameplay-stability"></script>\n</body>');
+  else html=html.replace(/cell-controls-stability-v23\.js\?v=[^"']+/g,'cell-controls-stability-v23.js?v=v24-gameplay-stability');
 
   html=html.replace(/dlc-profile-ui-v12-44\.css\?v=[^"']+/g,'dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   html=html.replace(/dlc-profile-ui-v12-44\.js\?v=[^"']+/g,'dlc-profile-ui-v12-44.js?v=v20-settings-nav');
@@ -58,12 +70,12 @@ try{
     {src:'assets/icon-512-v14.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}
   ];
   await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n','utf8');
-}catch(err){console.warn('[v23] manifest patch skipped',err.message)}
+}catch(err){console.warn('[v24] manifest patch skipped',err.message)}
 
 const swPath=path.join(out,'service-worker.js');
 try{
   let sw=await readFile(swPath,'utf8');
-  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v23-cell-stability';");
+  sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v24-gameplay-stability';");
   if(!sw.includes('/premium-access-sync-v17.css')){
     sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/premium-access-sync-v17.css?v=v17-premium-sync','/premium-access-sync-v17.js?v=v17-premium-sync',");
   }
@@ -74,21 +86,21 @@ try{
     sw=sw.replace(/\/interface-polish-v14\.js\?v=[^']+/g,'/interface-polish-v14.js?v=v20-settings-nav');
   }
   if(!sw.includes('/navigation-theme-v18.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v20-settings-nav','/navigation-theme-v18.js?v=v20-settings-nav',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v20-settings-nav','/navigation-theme-v18.js?v=v24-gameplay-stability',");
   }else{
     sw=sw.replace(/\/navigation-theme-v18\.css\?v=[^']+/g,'/navigation-theme-v18.css?v=v20-settings-nav');
-    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v20-settings-nav');
+    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v24-gameplay-stability');
   }
   if(!sw.includes('/navigation-heritage-v19.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v23-cell-stability','/navigation-heritage-v19.js?v=v23-cell-stability',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v24-gameplay-stability','/navigation-heritage-v19.js?v=v24-gameplay-stability',");
   }else{
-    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v23-cell-stability');
-    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v23-cell-stability');
+    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v24-gameplay-stability');
+    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v24-gameplay-stability');
   }
   if(!sw.includes('/cell-controls-stability-v23.js')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/cell-controls-stability-v23.js?v=v23-cell-stability',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/cell-controls-stability-v23.js?v=v24-gameplay-stability',");
   }else{
-    sw=sw.replace(/\/cell-controls-stability-v23\.js\?v=[^']+/g,'/cell-controls-stability-v23.js?v=v23-cell-stability');
+    sw=sw.replace(/\/cell-controls-stability-v23\.js\?v=[^']+/g,'/cell-controls-stability-v23.js?v=v24-gameplay-stability');
   }
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.css\?v=[^']+/g,'/dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.js\?v=[^']+/g,'/dlc-profile-ui-v12-44.js?v=v20-settings-nav');
@@ -102,4 +114,4 @@ try{
   await writeFile(swPath,sw,'utf8');
 }catch{}
 
-console.log(`Inside Grey Room v23 cell controls + scoped navigation applied to ${outArg}`);
+console.log(`Inside Grey Room v24 gameplay stability + fixed navigation applied to ${outArg}`);

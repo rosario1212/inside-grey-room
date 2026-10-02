@@ -1,7 +1,7 @@
-/* Inside Grey Room v18 — universal navigation dock, restored Filters FAB and local theme continuity. */
+/* Inside Grey Room v24 — scoped navigation dock + low-churn theme continuity. */
 (()=>{
 'use strict';
-const VERSION='18.0-nav-theme';
+const VERSION='24.0-gameplay-stability';
 const LOCAL_KEY='igr_local_standard_v13_8';
 const LOCAL_THEME_CLASSES=['igr-local-theme-normal','igr-local-theme-omerta','igr-local-theme-terror','igr-local-theme-cartel','igr-local-theme-regime','igr-local-theme-cendres','igr-local-theme-kuroi'];
 let applying=false,queued=false;
@@ -19,6 +19,9 @@ function appReady(){
   return true;
 }
 function isHome(){return currentView()==='home'||!!document.querySelector('#app .home-v10-13,#app .home-actions-v10-13,#app .home-actions')}
+function isProfile(){return currentView()==='profile'||!!document.querySelector('#app .profile-page,#app .profile-v12,#app [data-page="profile"]')}
+function scenarioPage(){return document.querySelector('#app .page-create-v10-13')}
+function dockAllowed(){return !isHome()&&(!!scenarioPage()||isProfile())}
 function closeFilters(){
   const nav=document.querySelector('.page-create-v10-13 .igr-scenario-filters');
   nav?.classList.remove('is-dock-open');
@@ -44,11 +47,18 @@ function ensureDock(){
   document.getElementById('igrScenarioExit')?.remove();
   document.getElementById('igrFilterFab')?.remove();
   let dock=document.getElementById('igrUniversalDock');
-  if(!appReady()){
-    dock?.remove();
+
+  /* Critical: the creator and the styling layer must agree on the same scope.
+     Older builds recreated this dock on every live-cell render while the v23
+     layer removed it again, producing a MutationObserver create/remove loop on
+     iPhone that could eventually starve normal button taps. */
+  if(!appReady()||!dockAllowed()){
+    if(dock)dock.remove();
     document.body.classList.remove('igr-global-dock-active');
+    closeFilters();
     return;
   }
+
   if(!dock){
     dock=document.createElement('nav');dock.id='igrUniversalDock';dock.className='igr-universal-dock';dock.setAttribute('aria-label',isFr()?'Navigation rapide':'Quick navigation');
     const filters=document.createElement('button');filters.id='igrDockFilters';filters.type='button';filters.className='igr-dock-pill igr-dock-filters';filters.setAttribute('aria-expanded','false');filters.addEventListener('click',event=>{event.stopPropagation();toggleFilters()});
@@ -56,12 +66,11 @@ function ensureDock(){
     dock.append(filters,home);document.body.appendChild(dock);
   }
   const home=dock.querySelector('#igrDockHome'),filters=dock.querySelector('#igrDockFilters');
-  if(home){home.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';home.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');home.hidden=isHome()}
-  const filterNav=document.querySelector('.page-create-v10-13 .igr-scenario-filters');
+  if(home){home.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';home.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');home.hidden=false}
+  const filterNav=scenarioPage()?.querySelector('.igr-scenario-filters')||null;
   if(filters){filters.innerHTML=isFr()?'<span aria-hidden="true">☷</span><b>Filtres</b>':'<span aria-hidden="true">☷</span><b>Filters</b>';filters.setAttribute('aria-label',isFr()?'Ouvrir les filtres':'Open filters');filters.hidden=!filterNav}
-  if(filterNav){filterNav.classList.add('igr-filter-dock-panel')}
-  const active=!!((home&&!home.hidden)||(filters&&!filters.hidden));
-  document.body.classList.toggle('igr-global-dock-active',active);
+  if(filterNav)filterNav.classList.add('igr-filter-dock-panel');
+  document.body.classList.add('igr-global-dock-active');
   if(!filterNav)closeFilters();
 }
 function themeFromId(id){
@@ -79,8 +88,7 @@ function resolveLocalScenarioId(local){
   const text=local?.textContent||'';const match=text.match(/\bDOSSIER\s+(0\d\d)\b/i);return match?.[1]||'';
 }
 function applyLocalTheme(){
-  document.body.classList.remove(...LOCAL_THEME_CLASSES);
-  document.body.removeAttribute('data-igr-local-theme');
+  const body=document.body;if(!body)return;
   const local=document.querySelector('#app .localplay');
   const cendres=document.querySelector('#app .hplay-theme-cendres');
   const kuroi=document.querySelector('#app .hplay-theme-kuroi');
@@ -88,8 +96,15 @@ function applyLocalTheme(){
   if(local)theme=themeFromId(resolveLocalScenarioId(local));
   else if(cendres)theme='cendres';
   else if(kuroi)theme='kuroi';
+  const current=body.dataset.igrLocalTheme||'';
+  if(current===theme){
+    if(local&&theme&&local.getAttribute('data-igr-local-theme')!==theme)local.setAttribute('data-igr-local-theme',theme);
+    return;
+  }
+  body.classList.remove(...LOCAL_THEME_CLASSES);
+  body.removeAttribute('data-igr-local-theme');
   if(!theme)return;
-  document.body.classList.add(`igr-local-theme-${theme}`);document.body.dataset.igrLocalTheme=theme;
+  body.classList.add(`igr-local-theme-${theme}`);body.dataset.igrLocalTheme=theme;
   local?.setAttribute('data-igr-local-theme',theme);
 }
 function apply(){if(applying)return;applying=true;try{ensureDock();applyLocalTheme()}finally{applying=false}}
