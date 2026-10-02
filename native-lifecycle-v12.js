@@ -13,35 +13,35 @@
   let resumeInFlight=null;
   let lastResumeAt=0;
 
-  function roomActive(){return !!(globalThis.STATE?.room&&globalThis.STATE?.token)}
+  function roomActive(){return typeof STATE!=='undefined'&&!!(STATE?.room&&STATE?.token)}
   function introVisible(){
     const gate=document.getElementById('introGate');
     return !!(gate&&!gate.classList.contains('done')&&gate.getAttribute('aria-hidden')!=='true');
   }
-  function markConnection(failed){try{globalThis.connectionStatus?.(failed)}catch{}}
+  function markConnection(failed){try{if(typeof connectionStatus==='function')connectionStatus(failed)}catch{}}
 
   function closeVideoTransport(){
     try{
-      const video=globalThis.VIDEO;
-      if(video?.pcs instanceof Map){
-        for(const pc of video.pcs.values())try{pc?.close?.()}catch{}
-        video.pcs.clear();
+      if(typeof VIDEO==='undefined'||!VIDEO)return;
+      if(VIDEO.pcs instanceof Map){
+        for(const pc of VIDEO.pcs.values())try{pc?.close?.()}catch{}
+        VIDEO.pcs.clear();
       }
-      if(video?.remoteStream?.getTracks){
-        for(const track of video.remoteStream.getTracks())try{track.stop()}catch{}
+      if(VIDEO.remoteStream?.getTracks){
+        for(const track of VIDEO.remoteStream.getTracks())try{track.stop()}catch{}
       }
-      if(video)video.remoteStream=null;
+      VIDEO.remoteStream=null;
     }catch{}
   }
 
   function suspendRuntime(){
     if(inactive)return;
     inactive=true;
-    try{wasLiveVideo=!!globalThis.videoState?.()?.video_active}catch{wasLiveVideo=false}
-    try{globalThis.stopRoomWatcher?.()}catch{}
-    try{globalThis.cancelBriefingVoice?.()}catch{}
-    try{globalThis.stopAmbient?.()}catch{}
-    try{globalThis.stopLocalCapture?.()}catch{}
+    try{wasLiveVideo=!!(typeof videoState==='function'&&videoState()?.video_active)}catch{wasLiveVideo=false}
+    try{if(typeof stopRoomWatcher==='function')stopRoomWatcher()}catch{}
+    try{if(typeof cancelBriefingVoice==='function')cancelBriefingVoice()}catch{}
+    try{if(typeof stopAmbient==='function')stopAmbient()}catch{}
+    try{if(typeof stopLocalCapture==='function')stopLocalCapture()}catch{}
     closeVideoTransport();
   }
 
@@ -54,13 +54,12 @@
         if(!ok)stability.recover?.();
         return;
       }
-      const sound=globalThis.SOUND;
-      if(!sound||sound.enabled===false)return;
-      if(sound.ctx?.state==='suspended'){
-        try{await sound.ctx.resume()}catch{}
+      if(typeof SOUND==='undefined'||!SOUND||SOUND.enabled===false)return;
+      if(SOUND.ctx?.state==='suspended'){
+        try{await SOUND.ctx.resume()}catch{}
       }
-      const preset=typeof globalThis.activeSoundPreset==='function'?globalThis.activeSoundPreset():'menu';
-      if(preset!=='silent')globalThis.ensureAmbient?.(preset);
+      const preset=typeof activeSoundPreset==='function'?activeSoundPreset():'menu';
+      if(preset!=='silent'&&typeof ensureAmbient==='function')ensureAmbient(preset);
     }catch(e){console.warn('mobile audio resume',e)}
   }
 
@@ -74,11 +73,11 @@
 
     try{
       if(roomActive()){
-        await globalThis.syncNow?.(true);
-        globalThis.startRoomWatcher?.();
-        setTimeout(()=>{try{globalThis.manageVideoState?.()}catch{}},180);
-        if(returningFromBackground&&wasLiveVideo&&globalThis.STATE?.sync?.player?.public_role==='enqueteur'){
-          setTimeout(()=>globalThis.toast?.('Le flux caméra a été arrêté pendant l’arrière-plan. Réactive-le si l’interrogatoire continue.'),450);
+        if(typeof syncNow==='function')await syncNow(true);
+        if(typeof startRoomWatcher==='function')startRoomWatcher();
+        setTimeout(()=>{try{if(typeof manageVideoState==='function')manageVideoState()}catch{}},180);
+        if(returningFromBackground&&wasLiveVideo&&STATE?.sync?.player?.public_role==='enqueteur'){
+          setTimeout(()=>{try{if(typeof toast==='function')toast('Le flux caméra a été arrêté pendant l’arrière-plan. Réactive-le si l’interrogatoire continue.')}catch{}},450);
         }
       }
     }catch(e){
@@ -102,13 +101,13 @@
 
   function pauseForNetwork(){
     networkPaused=true;
-    try{globalThis.stopRoomWatcher?.()}catch{}
+    try{if(typeof stopRoomWatcher==='function')stopRoomWatcher()}catch{}
     if(roomActive())markConnection(true);
   }
 
   function resumeFromNetwork(){
     networkPaused=false;
-    markConnection(false);
+    if(roomActive())markConnection(false);
     void resumeRuntime('online',true);
   }
 
