@@ -1,7 +1,7 @@
-/* Inside Grey Room v26 — scoped navigation, play-mode theme continuity and low-churn UI refresh. */
+/* Inside Grey Room v27 — resilient scenario navigation + stable role-choice copy. */
 (()=>{
 'use strict';
-const VERSION='26.0-role-panel-mode-theme';
+const VERSION='27.0-role-choice-nav';
 const LOCAL_KEY='igr_local_standard_v13_8';
 const LOCAL_THEME_CLASSES=['igr-local-theme-normal','igr-local-theme-omerta','igr-local-theme-terror','igr-local-theme-cartel','igr-local-theme-regime','igr-local-theme-cendres','igr-local-theme-kuroi'];
 let applying=false,queued=false;
@@ -13,17 +13,20 @@ function selectedScenario(){try{return String(STATE?.selectedScenario||STATE?.sy
 function currentView(){try{return String(STATE?.view||'')}catch{return''}}
 function appReady(){
   const app=document.getElementById('app');
-  if(!app||!app.children.length)return false;
-  const gate=document.getElementById('introGate');
-  if(gate&&gate.getAttribute('aria-hidden')!=='true'&&!gate.classList.contains('done'))return false;
-  return true;
+  /* A reusable intro gate may remain in the document after entry. Once the app
+     has rendered real content it must never suppress scenario navigation. */
+  return !!(app&&app.children.length);
 }
 function isHome(){return currentView()==='home'||!!document.querySelector('#app .home-v10-13,#app .home-actions-v10-13,#app .home-actions')}
 function isProfile(){return currentView()==='profile'||!!document.querySelector('#app .profile-page,#app .profile-v12,#app [data-page="profile"]')}
-function scenarioPage(){return document.querySelector('#app .page-create-v10-13')}
+function scenarioPage(){
+  return document.querySelector('#app .page-create-v10-13')||
+    (currentView()==='create-list'?document.querySelector('#app main,#app .page'):null);
+}
+function isScenarioBrowser(){return !isHome()&&(currentView()==='create-list'||!!document.querySelector('#app .scenario-list-v10-13'))}
 function dockAllowed(){return !isHome()&&(!!scenarioPage()||isProfile())}
 function closeFilters(){
-  const nav=document.querySelector('.page-create-v10-13 .igr-scenario-filters');
+  const nav=document.querySelector('#app .igr-scenario-filters');
   nav?.classList.remove('is-dock-open');
   document.body.classList.remove('igr-filter-dock-open');
   const btn=document.getElementById('igrDockFilters');
@@ -35,15 +38,38 @@ function goHomeSafe(){
   try{if(typeof goHome==='function')return goHome()}catch{}
   try{if(typeof STATE!=='undefined'){STATE.view='home';if(typeof renderHome==='function')renderHome()}}catch{}
 }
+function ensureTopHome(){
+  let btn=document.getElementById('igrGlobalHome');
+  if(!isScenarioBrowser()){
+    btn?.remove();
+    return;
+  }
+  const topbar=document.querySelector('#app .topbar');
+  if(!topbar)return;
+  let actions=topbar.querySelector('.top-actions');
+  if(!actions){actions=document.createElement('div');actions.className='top-actions';topbar.appendChild(actions)}
+  if(!btn){
+    btn=document.createElement('button');
+    btn.id='igrGlobalHome';
+    btn.type='button';
+    btn.className='pill-btn igr-global-home igr-top-home';
+    btn.addEventListener('click',goHomeSafe);
+  }
+  btn.className='pill-btn igr-global-home igr-top-home';
+  btn.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
+  btn.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');
+  btn.setAttribute('title',isFr()?'Accueil':'Home');
+  if(btn.parentElement!==actions)actions.prepend(btn);
+  else if(actions.firstElementChild!==btn)actions.prepend(btn);
+}
 function toggleFilters(){
-  const nav=document.querySelector('.page-create-v10-13 .igr-scenario-filters');if(!nav)return;
+  const nav=document.querySelector('#app .igr-scenario-filters');if(!nav)return;
   const open=!nav.classList.contains('is-dock-open');
   nav.classList.toggle('is-dock-open',open);
   document.body.classList.toggle('igr-filter-dock-open',open);
   document.getElementById('igrDockFilters')?.setAttribute('aria-expanded',String(open));
 }
 function ensureDock(){
-  document.getElementById('igrGlobalHome')?.remove();
   document.getElementById('igrScenarioExit')?.remove();
   document.getElementById('igrFilterFab')?.remove();
   let dock=document.getElementById('igrUniversalDock');
@@ -61,11 +87,19 @@ function ensureDock(){
   }
   const home=dock.querySelector('#igrDockHome'),filters=dock.querySelector('#igrDockFilters');
   if(home){home.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';home.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');home.hidden=false}
-  const filterNav=scenarioPage()?.querySelector('.igr-scenario-filters')||null;
+  const filterNav=isScenarioBrowser()?document.querySelector('#app .igr-scenario-filters'):null;
   if(filters){filters.innerHTML=isFr()?'<span aria-hidden="true">☷</span><b>Filtres</b>':'<span aria-hidden="true">☷</span><b>Filters</b>';filters.setAttribute('aria-label',isFr()?'Ouvrir les filtres':'Open filters');filters.hidden=!filterNav}
   if(filterNav)filterNav.classList.add('igr-filter-dock-panel');
   document.body.classList.add('igr-global-dock-active');
   if(!filterNav)closeFilters();
+}
+function normalizeRoleChoiceHelp(){
+  const help=document.querySelector('#app .role-choice-zone .role-choice-help');
+  if(!help)return;
+  const text=isFr()
+    ?'Choisis un rôle. Pour changer, touche simplement un autre rôle avant le lancement.'
+    :'Choose a role. To change it, simply tap another role before the game starts.';
+  if(help.textContent!==text)help.textContent=text;
 }
 function themeFromId(id){
   const n=Number(id);
@@ -120,7 +154,7 @@ function applyModeChooserTheme(){
     setModeTheme(heritageButtons[0]?.closest('.heritage-dual-row'),theme);
   }
 }
-function apply(){if(applying)return;applying=true;try{ensureDock();applyLocalTheme();applyModeChooserTheme()}finally{applying=false}}
+function apply(){if(applying)return;applying=true;try{ensureTopHome();ensureDock();normalizeRoleChoiceHelp();applyLocalTheme();applyModeChooserTheme()}finally{applying=false}}
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})}
 function boot(){
   apply();
