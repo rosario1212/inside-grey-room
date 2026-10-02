@@ -1,0 +1,108 @@
+/* Inside Grey Room v30 — pre-beta theme isolation + mobile polish.
+   Goal: every DLC owns its accent; OMERTA red must never leak into another collection. */
+
+:root{
+  --igr-role-accent:#f2f5f7;
+  --igr-role-accent-line:rgba(232,238,243,.48);
+  --igr-role-accent-rail:rgba(232,238,243,.30);
+  --igr-role-selected-bg:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.032));
+  --igr-role-chip-bg:rgba(255,255,255,.04);
+}
+body.igr-theme-omerta{
+  --igr-role-accent:#e47a7d;
+  --igr-role-accent-line:rgba(216,69,75,.92);
+  --igr-role-accent-rail:rgba(216,69,75,.95);
+  --igr-role-selected-bg:linear-gradient(135deg,rgba(119,18,24,.50),rgba(22,13,16,.98));
+  --igr-role-chip-bg:rgba(145,24,30,.42);
+}
+body.igr-theme-terror{
+  --igr-role-accent:#d8dbe0;
+  --igr-role-accent-line:rgba(205,209,214,.46);
+  --igr-role-accent-rail:rgba(160,164,170,.42);
+  --igr-role-selected-bg:linear-gradient(135deg,rgba(38,41,45,.86),rgba(5,6,7,.99));
+  --igr-role-chip-bg:rgba(255,255,255,.045);
+}
+body.igr-theme-cartel{
+  --igr-role-accent:#d0bc80;
+  --igr-role-accent-line:rgba(208,188,128,.72);
+  --igr-role-accent-rail:rgba(177,151,74,.72);
+  --igr-role-selected-bg:linear-gradient(135deg,rgba(98,76,23,.52),rgba(18,15,9,.98));
+  --igr-role-chip-bg:rgba(177,151,74,.10);
+}
+body.igr-theme-regime{
+  --igr-role-accent:#9db4c6;
+  --igr-role-accent-line:rgba(157,180,198,.72);
+  --igr-role-accent-rail:rgba(104,132,157,.70);
+  --igr-role-selected-bg:linear-gradient(135deg,rgba(45,67,86,.56),rgba(10,14,18,.98));
+  --igr-role-chip-bg:rgba(104,132,157,.11);
+}
+
+/* Last-loaded ownership layer: neutral by default, explicitly themed for DLCs. */
+.role-choice-zone .role-choice-card.selected{
+  border-color:var(--igr-role-accent-line)!important;
+  background:var(--igr-role-selected-bg)!important;
+  box-shadow:inset 3px 0 0 var(--igr-role-accent-rail)!important;
+  color:#f7f8fa!important;
+  animation:none!important;
+  filter:none!important;
+}
+.role-choice-zone .role-choice-card.selected b{color:#f7f8fa!important}
+.role-choice-zone .role-choice-card.selected em{
+  color:var(--igr-role-accent)!important;
+  text-shadow:none!important;
+}
+
+/* The random-role pill and selected-choice action follow the active collection too. */
+body.igr-theme-omerta .igr-random-role-cta em,
+body.igr-theme-terror .igr-random-role-cta em,
+body.igr-theme-cartel .igr-random-role-cta em,
+body.igr-theme-regime .igr-random-role-cta em,
+body.igr-theme-omerta .igr-choice-status-kicker,
+body.igr-theme-terror .igr-choice-status-kicker,
+body.igr-theme-cartel .igr-choice-status-kicker,
+body.igr-theme-regime .igr-choice-status-kicker{
+  color:var(--igr-role-accent)!important;
+}
+body.igr-theme-omerta .igr-random-role-cta em,
+body.igr-theme-terror .igr-random-role-cta em,
+body.igr-theme-cartel .igr-random-role-cta em,
+body.igr-theme-regime .igr-random-role-cta em,
+body.igr-theme-omerta .igr-choice-status-button,
+body.igr-theme-terror .igr-choice-status-button,
+body.igr-theme-cartel .igr-choice-status-button,
+body.igr-theme-regime .igr-choice-status-button{
+  border-color:var(--igr-role-accent-line)!important;
+  background:var(--igr-role-chip-bg)!important;
+  color:var(--igr-role-accent)!important;
+}
+
+/* Strong focus without introducing a second accent. */
+.role-choice-zone .role-choice-card:focus-visible,
+.role-choice-zone .igr-random-role-cta:focus-visible,
+.role-choice-zone .igr-choice-status-button:focus-visible{
+  outline:2px solid var(--igr-role-accent-line)!important;
+  outline-offset:2px!important;
+}
+
+/* Pre-beta phone hardening: no cramped hit targets or accidental horizontal overflow. */
+.role-choice-zone,.role-choice-grid,.role-choice-card,.igr-choice-status,.igr-random-role-cta{max-width:100%!important}
+.role-choice-zone .role-choice-card{min-height:88px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.role-choice-zone .role-choice-card span{min-width:0!important}
+.role-choice-zone .role-choice-card b,
+.role-choice-zone .role-choice-card small{overflow-wrap:anywhere}
+.role-choice-zone .role-choice-card em{flex:0 0 auto;text-align:right}
+#app button,#app [role="button"]{touch-action:manipulation}
+
+@media(max-width:390px){
+  .role-choice-zone{padding-inline:14px!important}
+  .role-choice-zone .role-choice-card{min-height:84px;padding-inline:13px!important;gap:10px!important}
+  .role-choice-zone .role-choice-card b{font-size:.95rem!important}
+  .role-choice-zone .role-choice-card small{font-size:.82rem!important;line-height:1.32!important}
+  .role-choice-zone .role-choice-card em{font-size:.64rem!important;letter-spacing:.11em!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .role-choice-zone .role-choice-card,
+  .role-choice-zone .igr-random-role-cta,
+  .role-choice-zone .igr-choice-status-button{transition:none!important;animation:none!important}
+}
