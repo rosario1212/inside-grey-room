@@ -6,19 +6,16 @@ const out=path.resolve(root,process.argv[2]||'dist');
 const runtime=[
  'heritage-maitre-data-v34.js',
  'heritage-maitre-assets-v34.js',
+ 'heritage-maitre-poster-loader-v34-3.js',
  'heritage-maitre-v34.css',
  'heritage-maitre-judicial-v34.css',
  'heritage-maitre-hotfix-v34-3.css',
  'heritage-maitre-v34.js',
  'heritage-maitre-online-v34-3.js'
 ];
-const posters=[
- 'heritage-maitre-01-le-client.webp',
- 'heritage-maitre-02-le-deal.webp',
- 'heritage-maitre-03-deux-choix.webp',
- 'heritage-maitre-04-le-proces.webp',
- 'heritage-maitre-05-l-honneur.webp'
-];
+const posterPartCounts={1:4,2:5,3:3,4:4,5:3};
+const posterParts=[];
+for(const [n,count] of Object.entries(posterPartCounts))for(let i=1;i<=count;i++)posterParts.push(`heritage-maitre-0${n}-part-${i}.b64`);
 async function exists(file){try{await stat(file);return true}catch{return false}}
 if(!(await exists(out)))throw new Error(`MAÎTRE target does not exist: ${out}`);
 for(const name of runtime){
@@ -28,13 +25,11 @@ for(const name of runtime){
 }
 const assetDir=path.join(out,'assets');
 await mkdir(assetDir,{recursive:true});
-for(const name of posters){
+for(const name of posterParts){
   const src=path.join(root,'assets',name);
-  if(!(await exists(src)))throw new Error(`Missing MAÎTRE final poster: ${name}`);
-  const bytes=await readFile(src);
-  if(bytes.length<20000||bytes.subarray(0,4).toString('ascii')!=='RIFF'||bytes.subarray(8,12).toString('ascii')!=='WEBP'){
-    throw new Error(`Invalid MAÎTRE WebP poster: ${name}`);
-  }
+  if(!(await exists(src)))throw new Error(`Missing MAÎTRE poster payload: ${name}`);
+  const text=(await readFile(src,'utf8')).trim();
+  if(text.length<500||!/^[A-Za-z0-9+/=]+$/.test(text))throw new Error(`Invalid MAÎTRE poster payload: ${name}`);
   await cp(src,path.join(assetDir,name));
 }
 
@@ -43,6 +38,7 @@ const judicialCss='  <link rel="stylesheet" href="heritage-maitre-judicial-v34.c
 const hotfixCss='  <link rel="stylesheet" href="heritage-maitre-hotfix-v34-3.css?v=v34.3-maitre-online">';
 const dataTag='  <script src="heritage-maitre-data-v34.js?v=v34.3-maitre-online"></script>';
 const assetsTag='  <script src="heritage-maitre-assets-v34.js?v=v34.3-maitre-online"></script>';
+const posterLoader='  <script src="heritage-maitre-poster-loader-v34-3.js?v=v34.3-maitre-online"></script>';
 const js='  <script src="heritage-maitre-v34.js?v=v34.3-maitre-online"></script>';
 const onlineJs='  <script src="heritage-maitre-online-v34-3.js?v=v34.3-maitre-online"></script>';
 for(const page of ['index.html','en.html']){
@@ -52,12 +48,13 @@ for(const page of ['index.html','en.html']){
     if(!html.includes('heritage-maitre-judicial-v34.css'))html=html.replace('</head>',`${judicialCss}\n</head>`);
     if(!html.includes('heritage-maitre-hotfix-v34-3.css'))html=html.replace('</head>',`${hotfixCss}\n</head>`);
   }
-  if(!html.includes('heritage-maitre-data-v34.js'))html=html.replace('</body>',`${dataTag}\n${assetsTag}\n${js}\n${onlineJs}\n</body>`);
+  if(!html.includes('heritage-maitre-data-v34.js'))html=html.replace('</body>',`${dataTag}\n${assetsTag}\n${posterLoader}\n${js}\n${onlineJs}\n</body>`);
   else {
     if(!html.includes('heritage-maitre-assets-v34.js'))html=html.replace(/(<script[^>]+heritage-maitre-v34\.js[^>]*><\/script>)/,`${assetsTag}\n$1`);
+    if(!html.includes('heritage-maitre-poster-loader-v34-3.js'))html=html.replace(/(<script[^>]+heritage-maitre-v34\.js[^>]*><\/script>)/,`${posterLoader}\n$1`);
     if(!html.includes('heritage-maitre-v34.js'))html=html.replace('</body>',`${js}\n</body>`);
     if(!html.includes('heritage-maitre-online-v34-3.js'))html=html.replace('</body>',`${onlineJs}\n</body>`);
   }
   await writeFile(file,html,'utf8');
 }
-console.log(`HÉRITAGE — MAÎTRE v34.3 applied to ${out}: validated WebP posters + 9:16 mobile frame + online multiplayer`);
+console.log(`HÉRITAGE — MAÎTRE v34.3 applied to ${out}: robust posters + 9:16 mobile frame + online multiplayer`);
