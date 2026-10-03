@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-label="HÉRITAGE MAÎTRE — III DEUX CHOIX">
+<rect width="900" height="1200" fill="#eee8dc"/><rect x="28" y="28" width="844" height="1144" fill="none" stroke="#171512" stroke-width="2"/>
+<text x="68" y="88" font-family="Georgia,serif" font-size="24" letter-spacing="8" fill="#171512">HÉRITAGE</text><text x="68" y="142" font-family="Georgia,serif" font-size="52" letter-spacing="4" fill="#171512">MAÎTRE</text>
+<path d="M92 990H808" stroke="#171512" stroke-width="2"/><text x="92" y="1052" font-family="Georgia,serif" font-size="34" letter-spacing="3" fill="#171512">III</text><text x="176" y="1052" font-family="Georgia,serif" font-size="48" letter-spacing="2" fill="#171512">DEUX CHOIX</text>
+<g><path d="M120 840 L780 840 L690 760 L210 760Z" fill="#cfc5b4"/><path d="M180 760 L720 760 L650 690 L250 690Z" fill="#ded5c6"/><path d="M240 690 L660 690 L610 620 L290 620Z" fill="#e8e0d3"/><path d="M310 620 L590 620 L555 560 L345 560Z" fill="#f4efe5"/>
+<path d="M355 560 L450 250 L545 560" fill="#d5ccbc" stroke="#171512" stroke-width="6"/><path d="M390 520V365M450 520V340M510 520V365" stroke="#171512" stroke-width="12"/><path d="M350 560H550" stroke="#171512" stroke-width="18"/>
+<path d="M445 840 L468 770 L438 700 L474 630 L442 560 L470 494" fill="none" stroke="#6e1f1e" stroke-width="15" stroke-linecap="round"/><path d="M450 840 L330 880 L220 860 L130 900" fill="none" stroke="#6e1f1e" stroke-width="12"/><path d="M458 840 L575 885 L680 864 L775 910" fill="none" stroke="#171512" stroke-width="8"/>
+<path d="M424 640c-18-62-10-125 26-160 36 35 44 98 26 160z" fill="#171512"/><path d="M432 508h36l14 32-32 45-32-45z" fill="#eee8dc"/></g>
+</svg>
