@@ -41,12 +41,48 @@
     section.dataset.copyV1246 = '1';
   }
 
+  function fixTerrorDecisionOwnership(){
+    const room=window.STATE?.sync?.room;
+    if(String(room?.scenario_id||'')!=='027'||window.STATE?.view!=='game')return;
+    const panel=document.getElementById('terrorRuntimeV33');
+    if(!panel)return;
+    const runtime=room?.state?.terror_runtime||{};
+    if(runtime.decision)return;
+    const role=String(window.STATE?.sync?.player?.public_role||window.STATE?.role||'');
+    const assessments=runtime.assessments||{};
+    const ready=!!assessments.credibility&&!!assessments.sincerity&&String(room?.phase||'')==='locking';
+
+    panel.querySelectorAll('.terror-v33-decision:not(.locked):not([data-v33-liaison-decision])').forEach(el=>el.remove());
+    const oldNote=panel.querySelector('[data-v33-liaison-note]');
+
+    if(role==='inspecteur'){
+      if(oldNote)oldNote.remove();
+      if(ready&&!panel.querySelector('[data-v33-liaison-decision]')){
+        const grid=panel.querySelector('.terror-v33-grid');
+        const block=document.createElement('div');
+        block.className='terror-v33-decision';
+        block.dataset.v33LiaisonDecision='1';
+        block.innerHTML='<small>OFFICIER DE LIAISON · RECOMMANDATION IRRÉVERSIBLE</small><p>Les évaluations sont verrouillées. Après consultation du groupe, transmets la recommandation extérieure. Elle reste institutionnelle et abstraite.</p><div class="terror-v33-actions"><button class="btn ghost small" type="button" onclick="terrorV33Decision(\'intervenir\')">Intervenir</button><button class="btn primary small" type="button" onclick="terrorV33Decision(\'retarder\')">Retarder</button><button class="btn ghost small" type="button" onclick="terrorV33Decision(\'annuler\')">Annuler</button></div>';
+        (grid||panel).insertAdjacentElement('afterend',block);
+      }else if(!ready&&!oldNote){
+        const note=document.createElement('div');note.className='terror-v33-muted';note.dataset.v33LiaisonNote='1';note.textContent='La recommandation extérieure attend les évaluations indépendantes de l’Enquêteur et de l’Analyste.';panel.appendChild(note);
+      }
+      return;
+    }
+
+    panel.querySelector('[data-v33-liaison-decision]')?.remove();
+    if(ready&&!oldNote){
+      const note=document.createElement('div');note.className='terror-v33-muted';note.dataset.v33LiaisonNote='1';note.textContent='Les évaluations sont verrouillées. L’Officier de liaison doit maintenant transmettre la recommandation extérieure.';panel.appendChild(note);
+    }
+  }
+
   function apply(){
     CONFIG.forEach(applyOne);
     document.querySelectorAll('.terror-access-pill').forEach(el => {
       el.hidden = true;
       el.setAttribute('aria-hidden','true');
     });
+    fixTerrorDecisionOwnership();
   }
 
   let queued = false;
