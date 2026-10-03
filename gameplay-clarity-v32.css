@@ -1,0 +1,153 @@
+/* Inside Grey Room — gameplay clarity v32 */
+
+/* OMERTÀ: make the low-screen rule understandable before the player opens it. */
+.omerta-decision-dock.omerta-decision-dock-v32 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  padding: 22px 24px;
+}
+
+.omerta-decision-copy-v32 {
+  min-width: 0;
+}
+
+.omerta-decision-kicker-v32,
+.notes-kicker-v32 {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.omerta-decision-kicker-v32 {
+  color: rgba(226, 92, 92, .9);
+}
+
+.omerta-decision-copy-v32 > strong {
+  display: block;
+  color: rgba(247, 247, 247, .96);
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.omerta-decision-copy-v32 > p {
+  margin: 7px 0 0;
+  color: rgba(213, 219, 223, .69);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.omerta-decision-cta-v32 {
+  width: 100%;
+  min-height: 54px;
+  white-space: normal;
+  text-wrap: balance;
+}
+
+/* Notes: separate utility view for every dossier instead of extending the card. */
+.notes-tab-v32 {
+  display: grid;
+  gap: 18px;
+  padding: 2px 0 4px;
+}
+
+.notes-title-v32 {
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.notes-title-v32 h2 {
+  margin: 0;
+}
+
+.notes-kicker-v32 {
+  margin-bottom: 5px;
+  color: var(--muted, #8c969d);
+}
+
+.notes-privacy-v32 {
+  flex: 0 0 auto;
+  font-size: 11px;
+  line-height: 1.3;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted, #8c969d);
+}
+
+.notes-help-v32 {
+  margin: -2px 0 0;
+  color: var(--muted, #8c969d);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.notes-tab-v32 textarea {
+  display: block;
+  width: 100%;
+  min-height: min(42vh, 360px);
+  resize: vertical;
+  box-sizing: border-box;
+  padding: 18px;
+  border: 1px solid rgba(139, 153, 162, .24);
+  border-radius: 14px;
+  outline: 0;
+  background: rgba(0, 0, 0, .42);
+  color: rgba(245, 247, 248, .96);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.55;
+  caret-color: currentColor;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.notes-tab-v32 textarea::placeholder {
+  color: rgba(168, 179, 185, .54);
+}
+
+.notes-tab-v32 textarea:focus {
+  border-color: rgba(181, 194, 201, .52);
+  box-shadow: 0 0 0 1px rgba(181, 194, 201, .12);
+}
+
+.notes-actions-v32 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.notes-actions-v32 small {
+  color: var(--muted, #8c969d);
+  font-size: 12px;
+}
+
+@media (max-width: 560px) {
+  .omerta-decision-dock.omerta-decision-dock-v32 {
+    padding: 19px 18px;
+    gap: 14px;
+  }
+
+  .omerta-decision-copy-v32 > strong {
+    font-size: 15px;
+  }
+
+  .omerta-decision-copy-v32 > p {
+    font-size: 13px;
+  }
+
+  .notes-title-v32 {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .notes-tab-v32 textarea {
+    min-height: 44vh;
+  }
+}
