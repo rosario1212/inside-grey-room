@@ -1,11 +1,11 @@
-/* Inside Grey Room v34.8 — MAÎTRE mobile visual recovery */
+/* Inside Grey Room v34.9 — MAÎTRE mobile visual recovery */
 (()=>{'use strict';
 const posters={
-  'LE CLIENT':'/assets/heritage-maitre-01-le-client-final.svg?v=v34.8-maitre-final',
-  'LE DEAL':'/assets/heritage-maitre-02-le-deal-final.svg?v=v34.8-maitre-final',
-  'DEUX CHOIX':'/assets/heritage-maitre-03-deux-choix-final.svg?v=v34.8-maitre-final',
-  'LE PROCÈS':'/assets/heritage-maitre-04-le-proces-final.svg?v=v34.8-maitre-final',
-  'L’HONNEUR':'/assets/heritage-maitre-05-l-honneur-final.svg?v=v34.8-maitre-final'
+  'LE CLIENT':'/assets/heritage-maitre-01-le-client-final.webp?v=v34.9-maitre-theme-posters',
+  'LE DEAL':'/assets/heritage-maitre-02-le-deal-final.webp?v=v34.9-maitre-theme-posters',
+  'DEUX CHOIX':'/assets/heritage-maitre-03-deux-choix-final.webp?v=v34.9-maitre-theme-posters',
+  'LE PROCÈS':'/assets/heritage-maitre-04-le-proces-final.webp?v=v34.9-maitre-theme-posters',
+  'L’HONNEUR':'/assets/heritage-maitre-05-l-honneur-final.webp?v=v34.9-maitre-theme-posters'
 };
 function repair(root=document){
   if(!root.querySelector?.('.maitre-page,.maitre-hub-card'))return;
