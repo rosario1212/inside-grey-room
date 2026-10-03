@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const coreIds=Array.from({length:20},(_,i)=>String(i+1).padStart(3,'0'));
+const coreIds=Array.from({length:34},(_,i)=>String(i+1).padStart(3,'0'));
 const signatures={
 '001':{theme:'Convocation, contradiction, première confrontation',priority:['confrontation']},
 '002':{theme:'Responsabilité morale ≠ causalité directe',priority:['confrontation']},
@@ -21,27 +21,41 @@ const signatures={
 '017':{theme:'Accords, témoin, coopération',priority:['temoin','procureur','negociation','confrontation']},
 '018':{theme:'Inspecteur, terrain, scène déplacée',priority:['retour_inspecteur','assembly','confrontation']},
 '019':{theme:'Guerre institutionnelle',priority:['assembly','enquete_journalistique','negociation','requete','saisine','confrontation']},
-'020':{theme:'Synthèse de tout le système',priority:['retour_inspecteur','expertise','assembly','enquete_journalistique','temoin','confrontation']}
+'020':{theme:'Synthèse de tout le système',priority:['retour_inspecteur','expertise','assembly','enquete_journalistique','temoin','confrontation']},
+'021':{theme:'Cercle de connaissance et pression de la Famiglia',priority:['signature','confrontation']},
+'022':{theme:'Ordre, menace et responsabilité mafieuse',priority:['signature','confrontation']},
+'023':{theme:'Positions, loyauté et chaise vide',priority:['signature','assembly']},
+'024':{theme:'Coopération, protection et point de non-retour',priority:['signature','confrontation']},
+'025':{theme:'Chaîne des ordres et audience du Don',priority:['signature','confrontation']},
+'026':{theme:'Ville qui tombe et périmètre judiciaire',priority:['signature','confrontation']},
+'027':{theme:'Crédibilité ≠ sincérité',priority:['signature','confrontation']},
+'028':{theme:'Dernière liaison et confirmation extérieure',priority:['signature','confrontation']},
+'029':{theme:'Source sous pression',priority:['signature','confrontation']},
+'030':{theme:'Corruption institutionnelle et motif écrit',priority:['signature','assembly']},
+'031':{theme:'Dette, pression intime et engagement',priority:['signature','confrontation']},
+'032':{theme:'Archives fragmentées et chaîne d’ordre',priority:['signature','assembly']},
+'033':{theme:'Titre officiel contre pouvoir réel',priority:['signature','assembly']},
+'034':{theme:'Identité fonctionnelle et hiérarchie opaque',priority:['signature','confrontation']}
 };
 const cfg={
- version:'13.1-final-replay-dlc',
+ version:'13.2-directed-cycles',
  coreScenarioIds:coreIds,
- allScenarioIds:Array.from({length:34},(_,i)=>String(i+1).padStart(3,'0')),
+ allScenarioIds:[...coreIds],
  dlcScenarioIds:Array.from({length:14},(_,i)=>String(i+21).padStart(3,'0')),
  serverCompatibilityPhase:{preInvestigation:'initial_debrief'},
- durations:Object.freeze({preInvestigation:180,interrogation:480,cycleDebrief:120,finalDebrief:180,confrontation:180,assembly:180,judicialShort:120,judicialLong:180,witness:240}),
+ durations:Object.freeze({preInvestigation:120,interrogation:360,cycleDebrief:120,finalDebrief:120,finalDefense:180,confrontation:240,assembly:240,judicialShort:120,judicialLong:180,witness:240}),
  cycles:Object.freeze({
-  withAnalyst:Object.freeze({1:{interrogations:3,events:0},2:{interrogations:2,events:2},3:{interrogationsMax:1,events:3}}),
-  withoutAnalyst:Object.freeze({1:{interrogations:3,events:0},2:{interrogations:2,events:2},3:{interrogationsMax:2,events:3}})
+  withAnalyst:Object.freeze({1:{interrogations:3,events:0},2:{actions:3,interrogationsMax:2},3:{actions:3,interrogationsMax:1}}),
+  withoutAnalyst:Object.freeze({1:{interrogations:3,events:0},2:{actions:3,interrogationsMax:2},3:{actions:3,interrogationsMax:1}})
  }),
  debriefQuestions:Object.freeze([
   Object.freeze({key:'convergence',label:'Vous vous rapprochez d’une conclusion ?',choices:['Non','Un peu','Oui']}),
   Object.freeze({key:'confusion',label:'Le dossier reste difficile à relier ?',choices:['Non','Un peu','Oui']})
  ]),
  eventLabels:Object.freeze({
-  interrogation:'DERNIER INTERROGATOIRE',confrontation:'CONFRONTATION',assembly:'ASSEMBLÉE',expertise:'EXPERTISE',retour_inspecteur:'RETOUR INSPECTEUR',enquete_croisee:'ENQUÊTE CROISÉE',
-  temoin:'TÉMOIN',enquete_journalistique:'ENQUÊTE JOURNALISTIQUE',procureur:'ENTRETIEN PROCUREUR',juge:'DÉCISION DU JUGE',
-  negociation:'NÉGOCIATION',requete:'REQUÊTE',saisine:'SAISINE'
+  interrogation:'INTERROGATOIRE',confrontation:'CONFRONTATION',assembly:'ASSEMBLÉE',analyse_dossier:'ANALYSE DU DOSSIER',signature:'ACTION SIGNATURE',
+  expertise:'EXPERTISE',retour_inspecteur:'RETOUR INSPECTEUR',enquete_croisee:'ENQUÊTE CROISÉE',temoin:'TÉMOIN',enquete_journalistique:'ENQUÊTE JOURNALISTIQUE',
+  procureur:'ENTRETIEN PROCUREUR',juge:'DÉCISION DU JUGE',negociation:'NÉGOCIATION',requete:'REQUÊTE',saisine:'SAISINE'
  }),
  signatures:Object.freeze(signatures),
  principles:Object.freeze({
