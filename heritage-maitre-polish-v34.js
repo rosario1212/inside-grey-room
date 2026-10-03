@@ -3,11 +3,11 @@
 'use strict';
 const POSTER_VERSION='v34.9-maitre-theme-posters';
 const posterMap={
-  '01-le-client':'/assets/heritage-maitre-01-le-client-final.svg',
-  '02-le-deal':'/assets/heritage-maitre-02-le-deal-final.svg',
-  '03-deux-choix':'/assets/heritage-maitre-03-deux-choix-final.svg',
-  '04-le-proces':'/assets/heritage-maitre-04-le-proces-final.svg',
-  '05-l-honneur':'/assets/heritage-maitre-05-l-honneur-final.svg'
+  '01-le-client':'/assets/heritage-maitre-01-le-client-final.webp',
+  '02-le-deal':'/assets/heritage-maitre-02-le-deal-final.webp',
+  '03-deux-choix':'/assets/heritage-maitre-03-deux-choix-final.webp',
+  '04-le-proces':'/assets/heritage-maitre-04-le-proces-final.webp',
+  '05-l-honneur':'/assets/heritage-maitre-05-l-honneur-final.webp'
 };
 function absolutePoster(src=''){
   const hit=Object.entries(posterMap).find(([key])=>String(src).includes(`heritage-maitre-${key}`));
