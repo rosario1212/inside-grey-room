@@ -1,4 +1,4 @@
-/* Inside Grey Room — DLC copy pass v12.46
+/* Inside Grey Room — DLC copy pass v12.47
    Uniform, cold, concise collection descriptions. */
 (() => {
   'use strict';
@@ -6,7 +6,7 @@
   const COPY = Object.freeze({
     omerta: {
       eyebrow: 'DLC CONFIDENTIEL',
-      text: '5 dossiers liés. Une Famiglia. Jusqu’au Don.'
+      text: 'La Famiglia protège ses secrets. L’enquête remonte la chaîne du silence jusqu’au Don.'
     },
     terror: {
       eyebrow: 'DLC DE CRISE',
@@ -38,7 +38,7 @@
     const paragraph = head.querySelector('p');
     if(eyebrow && eyebrow.textContent !== copy.eyebrow) eyebrow.textContent = copy.eyebrow;
     if(paragraph && paragraph.textContent !== copy.text) paragraph.textContent = copy.text;
-    section.dataset.copyV1246 = '1';
+    section.dataset.copyV1247 = '1';
   }
 
   function fixTerrorDecisionOwnership(){
