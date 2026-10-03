@@ -1,0 +1,20 @@
+/* Inside Grey Room — OMERTÀ poster scale refinement.
+   Larger artwork, same confidential/premium visual language. */
+.omerta-scenario.scenario--compact{
+  grid-template-columns:clamp(142px,32vw,172px) minmax(0,1fr)!important;
+  column-gap:16px!important;
+}
+.omerta-scenario.scenario--compact .scenario-thumb{
+  width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+  align-self:stretch!important;aspect-ratio:auto!important;overflow:hidden!important;
+}
+.omerta-scenario.scenario--compact .scenario-thumb img{
+  display:block!important;width:100%!important;height:100%!important;min-height:100%!important;
+  max-height:none!important;aspect-ratio:auto!important;object-fit:cover!important;object-position:center!important;
+}
+@media(max-width:540px){
+  .omerta-scenario.scenario--compact{grid-template-columns:clamp(132px,31vw,150px) minmax(0,1fr)!important;column-gap:14px!important}
+}
+@media(max-width:390px){
+  .omerta-scenario.scenario--compact{grid-template-columns:126px minmax(0,1fr)!important;column-gap:12px!important}
+}
