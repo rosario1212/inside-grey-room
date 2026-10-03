@@ -1,1 +1,0 @@
-Use real approved 864x1536 WebP posters in assets and v34.8 cache busting.
