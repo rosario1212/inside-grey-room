@@ -1,4 +1,4 @@
-/* Inside Grey Room — v35 duration modes + timer end alarm */
+/* Inside Grey Room — v35.1 duration modes + timer end alarm */
 (()=>{
 'use strict';
 const STORE_KEY='igr_duration_modes_v35';
@@ -7,7 +7,7 @@ const MODES={
  long:{estimate:'≈ 70–90 min',preInvestigation:180,interrogation:480,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:240,witness:240,finalDebrief:180},
  legacy:{estimate:'',preInvestigation:120,interrogation:360,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:180,witness:240,finalDebrief:120}
 };
-window.IGR_DURATION_MODES_V35={version:'35.0-duration-modes',modes:MODES,defaultMode:'long'};
+window.IGR_DURATION_MODES_V35={version:'35.1-duration-lobby',modes:MODES,defaultMode:'long'};
 function state(){try{return typeof STATE!=='undefined'?STATE:(window.STATE||null)}catch{return window.STATE||null}}
 function store(){try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}}
 function en(){return (window.IGR_LOCALE||document.documentElement.lang||'fr').toLowerCase().startsWith('en')}
@@ -19,16 +19,80 @@ function roomMode(){const v=state()?.sync?.room?.state?.duration_mode;return v==
 function cfg(){return MODES[roomMode()]||MODES.legacy}
 function mmss(s){s=Math.max(0,Number(s)||0);return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
 function compact(s){s=Math.max(0,Number(s)||0);const m=Math.floor(s/60),r=s%60;return r?`${m} min ${String(r).padStart(2,'0')}`:`${m} min`}
-function sid(cell){return (String(cell?.dataset?.scenarioId||cell?.id||'').match(/(?:scenario-)?(\d{3})/)||String(cell?.getAttribute?.('onclick')||'').match(/['\"](\d{3})['\"]/))?.[1]||''}
-function tabs(id){const m=selected(id);return `<div class="igr-duration-v35" data-duration-for="${id}" role="group" aria-label="${en()?'Game duration':'Durée de la partie'}"><button type="button" class="igr-duration-tab-v35 ${m==='short'?'is-active':''}" data-mode="short" aria-pressed="${m==='short'}" onclick="event.preventDefault();event.stopPropagation();igrSetDurationModeV35('${id}','short')"><span>${en()?'SHORT':'COURT'}</span><small>${MODES.short.estimate}</small></button><button type="button" class="igr-duration-tab-v35 ${m==='long'?'is-active':''}" data-mode="long" aria-pressed="${m==='long'}" onclick="event.preventDefault();event.stopPropagation();igrSetDurationModeV35('${id}','long')"><span>LONG</span><small>${MODES.long.estimate}</small></button></div>`}
-function decorate(){document.querySelectorAll('[id^="scenario-"]').forEach(cell=>{const id=sid(cell);if(!/^0(?:0[1-9]|[12]\d|3[0-4])$/.test(id)||cell.querySelector('.igr-duration-v35'))return;const body=cell.querySelector('.scenario-body')||cell.querySelector('.scenario-content')||cell,wrap=document.createElement('div');wrap.innerHTML=tabs(id);const node=wrap.firstElementChild,row=body.querySelector('.tag-row');row?.parentNode?row.insertAdjacentElement('afterend',node):body.appendChild(node)})}
-function refresh(id){document.querySelectorAll(`.igr-duration-v35[data-duration-for="${String(id)}"]`).forEach(g=>g.querySelectorAll('[data-mode]').forEach(b=>{const active=b.dataset.mode===selected(id);b.classList.toggle('is-active',active);b.setAttribute('aria-pressed',String(active))}))}
-window.igrSetDurationModeV35=(id,m)=>{save(id,m);refresh(id)};
-new MutationObserver(()=>queueMicrotask(decorate)).observe(document.documentElement,{childList:true,subtree:true});
-document.addEventListener('DOMContentLoaded',decorate,{once:true});setTimeout(decorate,0);
-
-const baseCreate=typeof createRoom==='function'?createRoom:window.createRoom;
-if(typeof baseCreate==='function')window.createRoom=async function(){const s0=state(),id=String(s0?.selectedScenario||s0?.scenarioId||''),m=selected(id),out=await baseCreate.apply(this,arguments),s=state(),rpcFn=typeof rpc==='function'?rpc:window.rpc;if(s?.room&&s?.hostToken&&typeof rpcFn==='function'){try{await rpcFn('igr_v35_set_duration_mode',{p_code:s.room,p_host_token:s.hostToken,p_mode:m});const syncFn=typeof syncNow==='function'?syncNow:window.syncNow;if(typeof syncFn==='function')await syncFn(true);const lobbyFn=typeof renderLobby==='function'?renderLobby:window.renderLobby;if(typeof lobbyFn==='function')lobbyFn()}catch(err){console.warn('[IGR v35] duration mode sync',err);const toastFn=typeof toast==='function'?toast:window.toast;if(typeof toastFn==='function')toastFn(en()?'Duration mode could not be saved.':'Le format de durée n’a pas pu être enregistré.')}}return out};
+function currentScenarioId(){return String(state()?.sync?.room?.scenario_id||state()?.scenarioId||state()?.selectedScenario||'')}
+let pendingMode=null;
+function effectiveMode(id){
+ const sid=String(id||'');
+ if(pendingMode&&pendingMode.id===sid)return pendingMode.mode;
+ const r=roomMode();
+ if(r==='short'||r==='long')return r;
+ return selected(sid);
+}
+function tabs(id){
+ const sid=String(id||''),m=effectiveMode(sid),readOnly=!state()?.hostToken;
+ const ownerHint=readOnly?(en()?'Selected by the host':'Choisi par l’hôte'):'';
+ return `<div class="igr-duration-v35 igr-duration-lobby-v35" data-duration-for="${sid}" role="group" aria-label="${en()?'Game duration':'Durée de la partie'}"><button type="button" class="igr-duration-tab-v35 ${m==='short'?'is-active':''}" data-mode="short" aria-pressed="${m==='short'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','short')"><span>${en()?'SHORT':'COURT'}</span><small>${MODES.short.estimate}</small></button><button type="button" class="igr-duration-tab-v35 ${m==='long'?'is-active':''}" data-mode="long" aria-pressed="${m==='long'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','long')"><span>LONG</span><small>${MODES.long.estimate}</small></button></div>`;
+}
+function cleanupScenarioSelectors(){
+ document.querySelectorAll('.scenario-list .igr-duration-v35,.scenario-list-v10-13 .igr-duration-v35').forEach(node=>node.remove());
+}
+function refresh(id){
+ const sid=String(id||''),activeMode=effectiveMode(sid),readOnly=!state()?.hostToken;
+ document.querySelectorAll(`.igr-duration-v35[data-duration-for="${sid}"]`).forEach(g=>g.querySelectorAll('[data-mode]').forEach(b=>{
+  const active=b.dataset.mode===activeMode;
+  b.classList.toggle('is-active',active);
+  b.setAttribute('aria-pressed',String(active));
+  if(g.classList.contains('igr-duration-lobby-v35')){
+   b.disabled=readOnly;
+   b.setAttribute('aria-disabled',String(readOnly));
+  }
+ }));
+}
+function mountLobbySelector(){
+ cleanupScenarioSelectors();
+ const panel=document.querySelector('.lobby-v11');
+ const code=panel?.querySelector('.lobby-code');
+ if(!panel||!code)return;
+ const id=currentScenarioId();
+ if(!/^\d{3}$/.test(id))return;
+ let node=panel.querySelector('.igr-duration-lobby-v35');
+ if(!node){
+  const wrap=document.createElement('div');
+  wrap.innerHTML=tabs(id);
+  node=wrap.firstElementChild;
+  code.insertAdjacentElement('beforebegin',node);
+ }else if(node.dataset.durationFor!==id){
+  const wrap=document.createElement('div');
+  wrap.innerHTML=tabs(id);
+  node.replaceWith(wrap.firstElementChild);
+ }else refresh(id);
+}
+let syncingMode=false;
+window.igrSetDurationModeV35=async(ev,id,m)=>{
+ ev?.preventDefault?.();ev?.stopPropagation?.();
+ const sid=String(id||''),chosen=mode(m),s=state();
+ if(!s?.room||!s?.hostToken){refresh(sid);return}
+ if(syncingMode)return;
+ const before=effectiveMode(sid);
+ pendingMode={id:sid,mode:chosen};save(sid,chosen);refresh(sid);
+ const rpcFn=typeof rpc==='function'?rpc:window.rpc;
+ if(typeof rpcFn!=='function'){pendingMode=null;save(sid,before);refresh(sid);return}
+ syncingMode=true;
+ try{
+  await rpcFn('igr_v35_set_duration_mode',{p_code:s.room,p_host_token:s.hostToken,p_mode:chosen});
+  const syncFn=typeof syncNow==='function'?syncNow:window.syncNow;
+  if(typeof syncFn==='function')await syncFn(true);
+ }catch(err){
+  console.warn('[IGR v35.1] duration mode sync',err);
+  save(sid,before);
+  const toastFn=typeof toast==='function'?toast:window.toast;
+  if(typeof toastFn==='function')toastFn(en()?'Duration mode could not be saved.':'Le format de durée n’a pas pu être enregistré.');
+ }finally{
+  pendingMode=null;syncingMode=false;refresh(sid);queueMicrotask(mountLobbySelector);
+ }
+};
+new MutationObserver(()=>queueMicrotask(mountLobbySelector)).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener('DOMContentLoaded',mountLobbySelector,{once:true});setTimeout(mountLobbySelector,0);
 
 function timeReplace(html,patterns,seconds){let out=String(html??'');for(const p of patterns)out=out.replace(p,mmss(seconds));return out}
 const baseLabel=window.phaseLabel;
