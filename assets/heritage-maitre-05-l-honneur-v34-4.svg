@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-label="HÉRITAGE MAÎTRE — V L’HONNEUR">
+<rect width="900" height="1200" fill="#eee8dc"/><rect x="28" y="28" width="844" height="1144" fill="none" stroke="#171512" stroke-width="2"/>
+<text x="68" y="88" font-family="Georgia,serif" font-size="24" letter-spacing="8" fill="#171512">HÉRITAGE</text><text x="68" y="142" font-family="Georgia,serif" font-size="52" letter-spacing="4" fill="#171512">MAÎTRE</text>
+<path d="M92 990H808" stroke="#171512" stroke-width="2"/><text x="92" y="1052" font-family="Georgia,serif" font-size="34" letter-spacing="3" fill="#171512">V</text><text x="155" y="1052" font-family="Georgia,serif" font-size="48" letter-spacing="2" fill="#171512">L’HONNEUR</text>
+<g><rect x="235" y="430" width="430" height="380" rx="55" fill="#211d19"/><rect x="280" y="380" width="340" height="220" rx="40" fill="#2b2621"/><path d="M316 340 C370 300 530 300 584 340 L548 580 C515 625 385 625 352 580Z" fill="#171512"/><path d="M390 332L430 492L450 555L470 492L510 332" fill="#eee8dc"/><path d="M429 490L390 620M471 490L510 620" stroke="#eee8dc" stroke-width="36"/>
+<path d="M314 595c70 8 120 32 165 66 42 31 95 46 165 42" fill="none" stroke="#6e1f1e" stroke-width="20" stroke-linecap="round"/><path d="M342 650c38 18 70 45 94 84" fill="none" stroke="#6e1f1e" stroke-width="13" stroke-linecap="round"/><circle cx="520" cy="708" r="23" fill="#6e1f1e"/>
+<path d="M200 830H700" stroke="#171512" stroke-width="5"/><path d="M265 865H635" stroke="#6e1f1e" stroke-width="8"/></g>
+</svg>
