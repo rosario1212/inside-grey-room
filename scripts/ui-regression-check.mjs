@@ -24,7 +24,7 @@ must('omerta-v12-39.js',['igr-choice-status-note','Aucun rôle choisi']);
 mustNot('omerta-v12-39.js',['igr-choice-status-empty']);
 
 must('service-worker.js',[
-  'igr-v13-8-dual-play',
+  'igr-v34-1-maitre-posters',
   '/play-modes-v13-8.js?v=v13.8-dual-play',
   '/play-modes-v13-8.css?v=v13.8-dual-play',
   '/heritage-play-v13-7.js?v=v13.8-dual-play',
@@ -32,6 +32,15 @@ must('service-worker.js',[
   '/heritage-v13-5.js?v=v13.8-dual-play',
   '/heritage-premium-v13-6.js?v=v13.8-dual-play',
   '/heritage-premium-v13-6.css?v=v13.8-dual-play',
+  '/heritage-maitre-v34.css?v=v34.1-maitre-posters',
+  '/heritage-maitre-data-v34.js?v=v34.1-maitre-posters',
+  '/heritage-maitre-assets-v34.js?v=v34.1-maitre-posters',
+  '/heritage-maitre-v34.js?v=v34.1-maitre-posters',
+  '/assets/heritage-maitre-01-le-client.webp?v=v34.1-maitre-posters',
+  '/assets/heritage-maitre-02-le-deal.webp?v=v34.1-maitre-posters',
+  '/assets/heritage-maitre-03-deux-choix.webp?v=v34.1-maitre-posters',
+  '/assets/heritage-maitre-04-le-proces.webp?v=v34.1-maitre-posters',
+  '/assets/heritage-maitre-05-l-honneur.webp?v=v34.1-maitre-posters',
   '/dlc-invites-v12-45.js?v=v12.45-dlc-invites',
   '/dlc-invites-v12-45.css?v=v12.45-dlc-invites',
   '/omerta-v12-39.js?v=v12.45-choice-copy',
@@ -92,7 +101,21 @@ must('heritage-maitre-v34.js',[
   'window.IGR_HERITAGE_MAITRE'
 ]);
 must('heritage-maitre-v34.css',['.hplay-theme-maitre','.maitre-angle-box','.maitre-result-grid']);
-must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','HÉRITAGE — MAÎTRE v34 applied']);
+must('heritage-maitre-assets-v34.js',[
+  'v34.1-maitre-posters',
+  'heritage-maitre-01-le-client.webp',
+  'heritage-maitre-02-le-deal.webp',
+  'heritage-maitre-03-deux-choix.webp',
+  'heritage-maitre-04-le-proces.webp',
+  'heritage-maitre-05-l-honneur.webp'
+]);
+mustNot('heritage-maitre-assets-v34.js',['.svg']);
+must('scripts/apply-maitre-v34.mjs',[
+  'heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js',
+  'heritage-maitre-01-le-client.webp','heritage-maitre-02-le-deal.webp','heritage-maitre-03-deux-choix.webp','heritage-maitre-04-le-proces.webp','heritage-maitre-05-l-honneur.webp',
+  '5 final WebP poster assets'
+]);
+mustNot('scripts/apply-maitre-v34.mjs',['.svg','renderPoster']);
 must('package.json',['scripts/apply-maitre-v34.mjs dist','scripts/apply-maitre-v34.mjs www']);
 
-console.log('v13.8 Dual Play + Heritage premium + MAÎTRE v34 + v13.2 runtime + v12.46 DLC regression markers OK');
+console.log('v13.8 Dual Play + Heritage premium + MAÎTRE v34.1 final posters + v13.2 runtime + v12.46 DLC regression markers OK');
