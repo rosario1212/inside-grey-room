@@ -3,8 +3,8 @@ import path from 'node:path';
 
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v36.2-maitre-final';
-const CACHE='igr-v36-2-maitre-final';
+const VERSION='v36.1-parasite-fix';
+const CACHE='igr-v36-1-parasite-fix';
 
 async function exists(file){try{await stat(file);return true}catch{return false}}
 function cleanRef(value=''){
