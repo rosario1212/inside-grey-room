@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root=process.cwd();
 const out=path.resolve(root,process.argv[2]||'dist');
-const runtime=['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js'];
+const runtime=['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-judicial-v34.css','heritage-maitre-v34.js'];
 const posters=[
  'heritage-maitre-01-le-client.webp',
  'heritage-maitre-02-le-deal.webp',
@@ -26,13 +26,15 @@ for(const name of posters){
   await cp(src,path.join(assetDir,name));
 }
 
-const css='  <link rel="stylesheet" href="heritage-maitre-v34.css?v=v34.1-maitre-posters">';
-const dataTag='  <script src="heritage-maitre-data-v34.js?v=v34.1-maitre-posters"></script>';
-const assetsTag='  <script src="heritage-maitre-assets-v34.js?v=v34.1-maitre-posters"></script>';
-const js='  <script src="heritage-maitre-v34.js?v=v34.1-maitre-posters"></script>';
+const css='  <link rel="stylesheet" href="heritage-maitre-v34.css?v=v34.2-maitre-judicial">';
+const judicialCss='  <link rel="stylesheet" href="heritage-maitre-judicial-v34.css?v=v34.2-maitre-judicial">';
+const dataTag='  <script src="heritage-maitre-data-v34.js?v=v34.2-maitre-judicial"></script>';
+const assetsTag='  <script src="heritage-maitre-assets-v34.js?v=v34.2-maitre-judicial"></script>';
+const js='  <script src="heritage-maitre-v34.js?v=v34.2-maitre-judicial"></script>';
 for(const page of ['index.html','en.html']){
   const file=path.join(out,page);let html=await readFile(file,'utf8');
-  if(!html.includes('heritage-maitre-v34.css'))html=html.replace('</head>',`${css}\n</head>`);
+  if(!html.includes('heritage-maitre-v34.css'))html=html.replace('</head>',`${css}\n${judicialCss}\n</head>`);
+  else if(!html.includes('heritage-maitre-judicial-v34.css'))html=html.replace('</head>',`${judicialCss}\n</head>`);
   if(!html.includes('heritage-maitre-data-v34.js'))html=html.replace('</body>',`${dataTag}\n${assetsTag}\n${js}\n</body>`);
   else {
     if(!html.includes('heritage-maitre-assets-v34.js'))html=html.replace(/(<script[^>]+heritage-maitre-v34\.js[^>]*><\/script>)/,`${assetsTag}\n$1`);
@@ -40,4 +42,4 @@ for(const page of ['index.html','en.html']){
   }
   await writeFile(file,html,'utf8');
 }
-console.log(`HÉRITAGE — MAÎTRE v34.1 applied to ${out} with 5 final WebP poster assets`);
+console.log(`HÉRITAGE — MAÎTRE v34.2 applied to ${out} with 5 final WebP posters + white judicial theme`);
