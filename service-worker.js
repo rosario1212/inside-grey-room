@@ -1,4 +1,4 @@
-const CACHE='igr-v36-2-maitre-final';
+const CACHE='igr-v36-1-parasite-fix';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
