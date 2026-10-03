@@ -1,0 +1,7 @@
+MAÎTRE v34.5 mobile visual regression fix
+- iPhone safe-area: header no longer collides with status bar.
+- Campaign hero reduced from oversized portrait block to a controlled 4:3 mobile presentation.
+- Dossier poster constrained and centered instead of filling the whole viewport.
+- Hub card overlay hierarchy repaired so poster typography cannot collide with MAÎTRE card copy.
+- Online lobby contrast restored for code, title, players and disabled waiting state.
+- Runtime poster recovery ensures MAÎTRE poster URLs are reapplied after dynamic renders.
