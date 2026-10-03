@@ -3,8 +3,8 @@ import path from 'node:path';
 
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v36.1-parasite-fix';
-const CACHE='igr-v36-1-parasite-fix';
+const VERSION='v36.2-maitre-theme-fix';
+const CACHE='igr-v36-2-maitre-theme-fix';
 
 async function exists(file){try{await stat(file);return true}catch{return false}}
 function cleanRef(value=''){
@@ -77,7 +77,7 @@ if(await exists(swPath)){
   // Optional late-bound MAÎTRE runtime is injected after the base bundle. Keep every
   // final campaign resource in the PWA shell so online/local play behaves identically offline.
   const optionalShell=[];
-  const maitreVersion='v34.8-maitre-final';
+  const maitreVersion='v34.9-maitre-theme-posters';
   const optional=[
     ['heritage-maitre-v34.css',maitreVersion],
     ['heritage-maitre-judicial-v34.css',maitreVersion],
@@ -92,13 +92,14 @@ if(await exists(swPath)){
   for(const [name,version] of optional){
     if(await exists(path.join(target,name)))optionalShell.push(`/${name}?v=${version}`);
   }
-  for(const name of [
-    'heritage-maitre-01-le-client-final.svg',
-    'heritage-maitre-02-le-deal-final.svg',
-    'heritage-maitre-03-deux-choix-final.svg',
-    'heritage-maitre-04-le-proces-final.svg',
-    'heritage-maitre-05-l-honneur-final.svg'
-  ]){
+  const maitrePosters=[
+    'heritage-maitre-01-le-client-final.webp',
+    'heritage-maitre-02-le-deal-final.webp',
+    'heritage-maitre-03-deux-choix-final.webp',
+    'heritage-maitre-04-le-proces-final.webp',
+    'heritage-maitre-05-l-honneur-final.webp'
+  ];
+  for(const name of maitrePosters){
     if(await exists(path.join(target,'assets',name)))optionalShell.push(`/assets/${name}?v=${maitreVersion}`);
   }
   sw=addShellEntries(sw,optionalShell);
@@ -135,11 +136,12 @@ if(await exists(swPath)){
   const shell=sw.match(/const SHELL=\[([\s\S]*?)\];/);
   if(!shell)throw new Error('service-worker.js: SHELL precache list not found');
   for(const match of shell[1].matchAll(/['"]([^'"]+)['"]/g))await requireFile(match[1],'service-worker.js SHELL');
-  if(await exists(path.join(target,'heritage-maitre-online-v34-4.js'))&&!sw.includes('/heritage-maitre-online-v34-4.js?v=v34.8-maitre-final')){
-    throw new Error('service-worker.js: MAÎTRE v34.8 online runtime missing from final PWA shell');
+  const maitreVersion='v34.9-maitre-theme-posters';
+  if(await exists(path.join(target,'heritage-maitre-online-v34-4.js'))&&!sw.includes(`/heritage-maitre-online-v34-4.js?v=${maitreVersion}`)){
+    throw new Error('service-worker.js: MAÎTRE v34.9 online runtime missing from final PWA shell');
   }
-  for(const name of ['heritage-maitre-01-le-client-final.svg','heritage-maitre-02-le-deal-final.svg','heritage-maitre-03-deux-choix-final.svg','heritage-maitre-04-le-proces-final.svg','heritage-maitre-05-l-honneur-final.svg']){
-    if(await exists(path.join(target,'assets',name))&&!sw.includes(`/assets/${name}?v=v34.8-maitre-final`))throw new Error(`service-worker.js: final MAÎTRE poster missing from shell: ${name}`);
+  for(const name of ['heritage-maitre-01-le-client-final.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp']){
+    if(await exists(path.join(target,'assets',name))&&!sw.includes(`/assets/${name}?v=${maitreVersion}`))throw new Error(`service-worker.js: final MAÎTRE poster missing from shell: ${name}`);
   }
 }
 
