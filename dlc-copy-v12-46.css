@@ -31,3 +31,71 @@
   line-height:1.45;
 }
 .terror-access-pill[hidden]{display:none!important}
+
+/* v12.46a — OMERTÀ uses the same left-aligned DLC rhythm as TERREUR/CARTEL.
+   Only the geometry is normalized: serif title, red palette and confidential identity stay intact. */
+.omerta-dlc-section .omerta-head,
+.omerta-dlc-section .omerta-locked{
+  text-align:left!important;
+}
+.omerta-dlc-section .omerta-head>div,
+.omerta-dlc-section .omerta-locked>div{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  text-align:left!important;
+}
+.omerta-dlc-section .omerta-head .omerta-eyebrow,
+.omerta-dlc-section .omerta-locked .omerta-eyebrow,
+.omerta-dlc-section .omerta-head h2,
+.omerta-dlc-section .omerta-locked h2,
+.omerta-dlc-section .omerta-head p,
+.omerta-dlc-section .omerta-locked p{
+  text-align:left!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
+/* Locked OMERTÀ card mirrors the other DLC cards: copy first, full-width CTA below. */
+.omerta-dlc-section .omerta-locked{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  justify-items:stretch!important;
+  align-items:stretch!important;
+  gap:22px!important;
+  min-height:0!important;
+}
+.omerta-dlc-section .omerta-locked .omerta-eyebrow{
+  display:block!important;
+  margin:0 0 8px!important;
+}
+.omerta-dlc-section .omerta-locked h2{
+  margin:0 0 10px!important;
+}
+.omerta-dlc-section .omerta-locked p{
+  width:100%!important;
+  max-width:34rem!important;
+  margin:0!important;
+  line-height:1.45!important;
+}
+.omerta-dlc-section .omerta-locked>.btn{
+  width:100%!important;
+  max-width:none!important;
+  min-height:54px!important;
+  margin:0!important;
+  justify-self:stretch!important;
+  justify-content:center!important;
+}
+
+@media(max-width:640px){
+  .omerta-dlc-section .omerta-head{
+    align-items:flex-start!important;
+    justify-content:flex-start!important;
+  }
+  .omerta-dlc-section .omerta-access-pill{
+    align-self:flex-start!important;
+  }
+  .omerta-dlc-section .omerta-locked{
+    gap:20px!important;
+  }
+}
