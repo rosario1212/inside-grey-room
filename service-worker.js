@@ -1,4 +1,4 @@
-const CACHE='igr-v34-2-maitre-judicial';
+const CACHE='igr-v36-1-parasite-fix';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
@@ -28,13 +28,64 @@ const SHELL=[
   '/assets/cartel-029-le-cycle-mort.webp?v=12.37-final','/assets/cartel-030-la-cour-achetee.webp?v=12.37-final','/assets/cartel-031-la-dette.webp?v=12.37-final',
   '/assets/regime-032-les-archives-du-palais.webp?v=12.37-final','/assets/regime-033-la-dynastie.webp?v=12.37-final','/assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
 ];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)));self.skipWaiting()});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
+
+async function precacheShell(){
+  const cache=await caches.open(CACHE);
+  const failed=[];
+  await Promise.all(SHELL.map(async url=>{
+    try{
+      const request=new Request(url,{cache:'reload'});
+      const response=await fetch(request);
+      if(!response.ok)throw new Error(`HTTP ${response.status}`);
+      await cache.put(request,response);
+    }catch(error){
+      failed.push(`${url} (${String(error?.message||error)})`);
+    }
+  }));
+  if(failed.length)console.warn('[IGR SW] precache partial failure',failed);
+}
+
+self.addEventListener('install',event=>{
+  event.waitUntil((async()=>{
+    await precacheShell();
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)));
+    await self.clients.claim();
+  })());
+});
+
 self.addEventListener('fetch',event=>{
-  const req=event.request;if(req.method!=='GET')return;
-  const url=new URL(req.url);if(url.origin!==self.location.origin)return;
+  const req=event.request;
+  if(req.method!=='GET')return;
+  const url=new URL(req.url);
+  if(url.origin!==self.location.origin)return;
+
   const runtimeFile=req.mode==='navigate'||/\.(?:js|css|html)$/.test(url.pathname);
-  const key=req.mode==='navigate'?'/index.html':req;
-  if(runtimeFile){event.respondWith(fetch(req,{cache:'no-store'}).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(key,copy))}return r}).catch(()=>caches.match(key)));return}
-  event.respondWith(fetch(req,{cache:'no-store'}).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(req,copy))}return r}).catch(()=>caches.match(req)));
+  const navigationKey=url.pathname==='/en.html'?'/en.html':'/index.html';
+  const key=req.mode==='navigate'?navigationKey:req;
+
+  if(runtimeFile){
+    event.respondWith(fetch(req,{cache:'no-store'}).then(r=>{
+      if(r.ok){
+        const copy=r.clone();
+        event.waitUntil(caches.open(CACHE).then(c=>c.put(key,copy)).catch(()=>{}));
+      }
+      return r;
+    }).catch(()=>caches.match(key).then(cached=>cached||Response.error())));
+    return;
+  }
+
+  event.respondWith(fetch(req,{cache:'no-store'}).then(r=>{
+    if(r.ok){
+      const copy=r.clone();
+      event.waitUntil(caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{}));
+    }
+    return r;
+  }).catch(()=>caches.match(req).then(cached=>cached||Response.error())));
 });
