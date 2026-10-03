@@ -11,11 +11,11 @@ must('index.html',[
   'dlc-copy-v12-46.js?v=v12.46-copy',
   'gameplay-flow-v13.css?v=v13.2-final',
   'dlc-experience-v13.css?v=v13.2-final',
-  'lobby-ui-fix-v13.css?v=v13.2-lobby-fix',
+  'lobby-ui-fix-v13.css?v=v13.3-lobby-settings',
   'scenario-flow-v13.js?v=v13.2-final',
   'gameplay-flow-v13.js?v=v13.2-final',
   'dlc-experience-v13.js?v=v13.2-final',
-  'lobby-ui-fix-v13.js?v=v13.2-lobby-fix'
+  'lobby-ui-fix-v13.js?v=v13.3-lobby-settings'
 ]);
 
 must('dlc-invites-v12-45.js',['igr_dlc_create_invite','igr_dlc_redeem_invite','igr_dlc_list_access','Gérer les accès','Code d’accès']);
@@ -74,4 +74,25 @@ must('dlc-copy-v12-46.js',[
 ]);
 must('dlc-copy-v12-46.css',['.terror-access-pill[hidden]']);
 
-console.log('v13.8 Dual Play + Heritage premium + v13.2 runtime + v12.46 DLC regression markers OK');
+must('heritage-maitre-data-v34.js',[
+  "id:'maitre'",
+  "title:'LE CLIENT'",
+  "title:'LE DEAL'",
+  "title:'DEUX CHOIX'",
+  "title:'LE PROCÈS'",
+  "title:'L’HONNEUR'",
+  'L’ANGLE',
+  'LA DÉMONSTRATION'
+]);
+must('heritage-maitre-v34.js',[
+  'igr_heritage_maitre_live_v1',
+  'completeChapter',
+  'CE QUI EST DÉSORMAIS VRAI',
+  'CARTE DES LIENS',
+  'window.IGR_HERITAGE_MAITRE'
+]);
+must('heritage-maitre-v34.css',['.hplay-theme-maitre','.maitre-angle-box','.maitre-result-grid']);
+must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','HÉRITAGE — MAÎTRE v34 applied']);
+must('package.json',['scripts/apply-maitre-v34.mjs dist','scripts/apply-maitre-v34.mjs www']);
+
+console.log('v13.8 Dual Play + Heritage premium + MAÎTRE v34 + v13.2 runtime + v12.46 DLC regression markers OK');
