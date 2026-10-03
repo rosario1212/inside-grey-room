@@ -15,10 +15,11 @@ const files={
   roleCss:await read('role-tree-polish-v12-29.css'),
   localModeCss:await read('local-mode-theme-v25.css'),
   cell:await read('cell-controls-stability-v23.js'),
-  apply:await read('scripts/apply-interface-v14.mjs')
+  apply:await read('scripts/apply-interface-v14.mjs'),
+  finalize:await read('scripts/finalize-runtime-v36.mjs')
 };
 
-for(const rel of ['navigation-theme-v18.js','navigation-heritage-v19.js','role-tree-polish-v12-29.js','cell-controls-stability-v23.js','scripts/apply-interface-v14.mjs']){
+for(const rel of ['navigation-theme-v18.js','navigation-heritage-v19.js','role-tree-polish-v12-29.js','cell-controls-stability-v23.js','scripts/apply-interface-v14.mjs','scripts/finalize-runtime-v36.mjs']){
   const parsed=spawnSync(process.execPath,['--check',path.join(root,rel)],{encoding:'utf8'});
   ok(parsed.status===0,`${rel}: syntax check failed: ${parsed.stderr||parsed.stdout}`);
 }
@@ -96,7 +97,11 @@ ok(files.localModeCss.includes('.heritage-online-btn[data-igr-mode-theme]'),'Her
 ok(files.apply.includes("'if(!nativeShell&&!mobile&&window.MutationObserver){'"),'Build patch must target the old desktop-only observer condition');
 ok(files.apply.includes("'if(window.MutationObserver){'"),'Build patch must enable observer tracking on mobile too');
 
-ok(files.apply.includes("igr-v27-role-choice-nav"),'Build/service-worker cache must be bumped to v27');
+// v36.1 finalization is authoritative for cache freshness. Older patchers may still
+// contain their historical version labels internally, but the generated runtime must
+// end on the current cache/version and validated resources.
+ok(files.finalize.includes("const CACHE='igr-v36-1-parasite-fix'"),'Finalizer must own the v36.1 service-worker cache version');
+ok(files.finalize.includes('final runtime integrity verified'),'Final runtime integrity verifier marker missing');
 ok(files.apply.includes("navigation-theme-v18.js?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation-theme runtime');
 ok(files.apply.includes("navigation-heritage-v19.js?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation behavior');
 ok(files.apply.includes("navigation-heritage-v19.css?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation CSS');
@@ -119,9 +124,12 @@ try{
   ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the play-mode theme CSS');
   ok(!distIndex.includes('if(!nativeShell&&!mobile&&window.MutationObserver){'),'dist/index.html still leaves gameplay MutationObserver running on mobile');
   ok(distIndex.includes('if(window.MutationObserver){const NativeObserver'),'dist/index.html does not track/disconnect gameplay observer on all clients');
-  ok(distSw.includes("const CACHE='igr-v27-role-choice-nav';"),'dist/service-worker.js has stale cache version');
+  ok(distSw.includes("const CACHE='igr-v36-1-parasite-fix';"),'dist/service-worker.js has stale cache version');
   ok(distSw.includes('/navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/service-worker.js is missing v27 navigation');
   ok(distSw.includes('/role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/service-worker.js is missing restored TON CHOIX CSS');
+  ok(distIndex.includes('live-cell-v12-44.js?v=v36.1-parasite-fix'),'dist/index.html did not bump the v36 live-cell runtime');
+  ok(distIndex.includes('runtime-optimization-v12.js?v=v36.1-parasite-fix'),'dist/index.html did not bump the legacy runtime wrapper');
+  ok(distIndex.includes('native-lifecycle-v12.js?v=v36.1-parasite-fix'),'dist/index.html did not bump the mobile lifecycle runtime');
 }catch{}
 
 if(failures.length){
