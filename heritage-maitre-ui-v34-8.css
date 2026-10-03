@@ -1,0 +1,62 @@
+/* Inside Grey Room v34.8 — MAÎTRE approved mobile presentation */
+body:has(.maitre-page) .brand-title,
+body:has(.maitre-page) .brand-title *{
+  color:#171513!important;
+  text-shadow:none!important;
+}
+body:has(.maitre-page) .brand-title{letter-spacing:.28em!important}
+body:has(.maitre-page) .brand-sub{color:#5d554c!important;text-shadow:none!important}
+
+.maitre-page .hplay-poster{
+  position:relative!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:16/10!important;
+  margin:0 auto!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background:#e8dfd2!important;
+  border:1px solid rgba(64,48,35,.24)!important;
+  border-radius:18px!important;
+  box-shadow:0 16px 34px rgba(51,38,26,.10)!important;
+}
+.maitre-page .hplay-poster img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:none!important;
+  object-fit:cover!important;
+  object-position:center 24%!important;
+  border-radius:inherit!important;
+  background:#e8dfd2!important;
+}
+.maitre-page .hplay-poster img[alt]{color:transparent!important}
+
+.maitre-page .dual-mode-card.is-online{
+  background:linear-gradient(180deg,#291817 0%,#17110f 100%)!important;
+  border:1px solid rgba(122,44,39,.92)!important;
+  color:#f4eee4!important;
+  box-shadow:0 14px 30px rgba(58,22,19,.18)!important;
+}
+.maitre-page .dual-mode-card.is-online b,
+.maitre-page .dual-mode-card.is-online small,
+.maitre-page .dual-mode-card.is-online span,
+.maitre-page .dual-mode-card.is-online i{color:#f4eee4!important}
+.maitre-page .dual-mode-card.is-online .dual-mode-icon{color:#9b3c35!important}
+.maitre-page .dual-mode-card.is-local{
+  background:#f4eee4!important;
+  border:1px solid rgba(122,44,39,.35)!important;
+  color:#171513!important;
+}
+.maitre-page .dual-mode-card.is-local b,
+.maitre-page .dual-mode-card.is-local span{color:#171513!important}
+.maitre-page .dual-mode-card.is-local small,
+.maitre-page .dual-mode-card.is-local i{color:#6f665d!important}
+
+@media(max-width:760px){
+  .maitre-page .hplay-dossier-grid{gap:20px!important}
+  .maitre-page .hplay-poster{width:100%!important;aspect-ratio:16/10!important}
+}
