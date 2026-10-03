@@ -10,11 +10,11 @@ if(!(await exists(out)))throw new Error(`MAÎTRE target does not exist: ${out}`)
 for(const name of runtime){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing MAÎTRE runtime: ${name}`);await cp(src,path.join(out,name));}
 const assetDir=path.join(out,'assets');await mkdir(assetDir,{recursive:true});
 for(const name of posters){const src=path.join(root,'assets',name);if(!(await exists(src)))throw new Error(`Missing MAÎTRE final poster: ${name}`);await cp(src,path.join(assetDir,name));}
-const v='v34.6-maitre-final';
+const v='v34.7-maitre-real';
 const css=`  <link rel="stylesheet" href="heritage-maitre-v34.css?v=${v}">`,judicialCss=`  <link rel="stylesheet" href="heritage-maitre-judicial-v34.css?v=${v}">`,polishCss=`  <link rel="stylesheet" href="heritage-maitre-polish-v34.css?v=${v}">`;
 const dataTag=`  <script src="heritage-maitre-data-v34.js?v=${v}"></script>`,assetsTag=`  <script src="heritage-maitre-assets-v34.js?v=${v}"></script>`,js=`  <script src="heritage-maitre-v34.js?v=${v}"></script>`,online=`  <script src="heritage-maitre-online-v34-4.js?v=${v}"></script>`,polish=`  <script src="heritage-maitre-polish-v34.js?v=${v}"></script>`,mobile=`  <script src="heritage-maitre-mobile-v34-5.js?v=${v}"></script>`;
 for(const page of ['index.html','en.html']){const file=path.join(out,page);let html=await readFile(file,'utf8');
  if(!html.includes('heritage-maitre-v34.css'))html=html.replace('</head>',`${css}\n${judicialCss}\n${polishCss}\n</head>`);else{if(!html.includes('heritage-maitre-judicial-v34.css'))html=html.replace('</head>',`${judicialCss}\n</head>`);if(!html.includes('heritage-maitre-polish-v34.css'))html=html.replace('</head>',`${polishCss}\n</head>`);}
  if(!html.includes('heritage-maitre-data-v34.js'))html=html.replace('</body>',`${dataTag}\n${assetsTag}\n${js}\n${online}\n${polish}\n${mobile}\n</body>`);else{if(!html.includes('heritage-maitre-assets-v34.js'))html=html.replace(/(<script[^>]+heritage-maitre-v34\.js[^>]*><\/script>)/,`${assetsTag}\n$1`);if(!html.includes('heritage-maitre-v34.js'))html=html.replace('</body>',`${js}\n</body>`);if(!html.includes('heritage-maitre-online-v34-4.js'))html=html.replace(/(<script[^>]+heritage-maitre-polish-v34\.js[^>]*><\/script>)/,`${online}\n$1`);if(!html.includes('heritage-maitre-polish-v34.js'))html=html.replace('</body>',`${polish}\n</body>`);if(!html.includes('heritage-maitre-mobile-v34-5.js'))html=html.replace('</body>',`${mobile}\n</body>`);}
  await writeFile(file,html,'utf8');}
-console.log(`HÉRITAGE — MAÎTRE v34.6 applied to ${out}: five final user-approved posters + mobile fixes + online multiplayer`);
+console.log(`HÉRITAGE — MAÎTRE v34.7 applied to ${out}: five approved posters + mobile fixes + online multiplayer`);
