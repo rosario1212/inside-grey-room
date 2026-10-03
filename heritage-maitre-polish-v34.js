@@ -1,13 +1,13 @@
-/* Inside Grey Room v34.3 — MAÎTRE poster + multiplayer bridge */
+/* Inside Grey Room v34.8 — MAÎTRE final poster + multiplayer bridge */
 (()=>{
 'use strict';
-const POSTER_VERSION='v34.3-maitre-polish';
+const POSTER_VERSION='v34.8-maitre-final';
 const posterMap={
-  '01-le-client':'/assets/heritage-maitre-01-le-client.webp',
-  '02-le-deal':'/assets/heritage-maitre-02-le-deal.webp',
-  '03-deux-choix':'/assets/heritage-maitre-03-deux-choix.webp',
-  '04-le-proces':'/assets/heritage-maitre-04-le-proces.webp',
-  '05-l-honneur':'/assets/heritage-maitre-05-l-honneur.webp'
+  '01-le-client':'/assets/heritage-maitre-01-le-client-final.svg',
+  '02-le-deal':'/assets/heritage-maitre-02-le-deal-final.svg',
+  '03-deux-choix':'/assets/heritage-maitre-03-deux-choix-final.svg',
+  '04-le-proces':'/assets/heritage-maitre-04-le-proces-final.svg',
+  '05-l-honneur':'/assets/heritage-maitre-05-l-honneur-final.svg'
 };
 function absolutePoster(src=''){
   const hit=Object.entries(posterMap).find(([key])=>String(src).includes(`heritage-maitre-${key}`));
@@ -28,26 +28,22 @@ function bridgeMultiplayer(root=document){
   if(!page)return;
   const box=page.querySelector('.hplay-launch-box');
   const launch=box?.querySelector('.hplay-launch');
-  if(!box||!launch||box.dataset.maitreMultiBridge==='1')return;
+  if(!box||!launch||box.dataset.maitreMultiBridge==='1'||box.dataset.maitreNet==='1')return;
   launch.dataset.campaign='maitre';
   if(!launch.dataset.chapter){
     const m=(page.querySelector('.hplay-mode')?.textContent||'').match(/(\d+)/);
     if(m)launch.dataset.chapter=String(Number(m[1]));
   }
-  /* play-modes-v13-8 listens to child-list mutations. Reinsert the configured
-     button so its existing Heritage dual-mode enhancer sees MAÎTRE too. */
   const clone=launch.cloneNode(true);
   launch.replaceWith(clone);
   box.dataset.maitreMultiBridge='1';
   queueMicrotask(()=>{
-    /* Fallback UX if the generic enhancer is unavailable: keep local playable
-       and make the missing online option explicit instead of silently hiding it. */
-    if(!box.querySelector('.dual-mode-chooser')){
+    if(!box.querySelector('.dual-mode-chooser')&&!box.querySelector('.heritage-dual-row')){
       const note=document.createElement('div');
       note.className='maitre-multi-pending';
       note.innerHTML='<b>MULTIJOUEUR EN LIGNE</b><span>Le mode en ligne se charge…</span>';
       box.appendChild(note);
-      setTimeout(()=>{if(box.querySelector('.dual-mode-chooser'))note.remove()},250);
+      setTimeout(()=>{if(box.querySelector('.dual-mode-chooser,.heritage-dual-row'))note.remove()},250);
     }
   });
 }
