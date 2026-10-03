@@ -46,7 +46,7 @@ must('heritage-maitre-v34.js',['igr_heritage_maitre_live_v1','completeChapter','
 must('heritage-maitre-v34.css',['.hplay-theme-maitre','.maitre-angle-box','.maitre-result-grid']);
 must('heritage-maitre-assets-v34.js',['v34.1-maitre-posters','heritage-maitre-01-le-client.webp','heritage-maitre-02-le-deal.webp','heritage-maitre-03-deux-choix.webp','heritage-maitre-04-le-proces.webp','heritage-maitre-05-l-honneur.webp']);
 mustNot('heritage-maitre-assets-v34.js',['.svg']);
-must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','heritage-maitre-01-le-client.webp','heritage-maitre-02-le-deal.webp','heritage-maitre-03-deux-choix.webp','heritage-maitre-04-le-proces.webp','heritage-maitre-05-l-honneur.webp','5 final WebP poster assets']);
+must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','heritage-maitre-01-le-client.webp','heritage-maitre-02-le-deal.webp','heritage-maitre-03-deux-choix.webp','heritage-maitre-04-le-proces.webp','heritage-maitre-05-l-honneur.webp','5 final WebP posters + white judicial theme']);
 mustNot('scripts/apply-maitre-v34.mjs',['.svg','renderPoster']);
 must('package.json',['scripts/apply-maitre-v34.mjs dist','scripts/apply-maitre-v34.mjs www']);
 console.log('v35 duration modes + v34.2 MAÎTRE + v13.8 Dual Play + v12.46 DLC regression markers OK');
