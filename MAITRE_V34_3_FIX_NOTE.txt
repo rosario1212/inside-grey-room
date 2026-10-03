@@ -1,0 +1,6 @@
+MAITRE v34.3
+- Poster URLs are absolute and cache-busted.
+- Five final WebP posters are copied into web/mobile builds.
+- Mobile poster frames preserve full aspect ratio with object-fit: contain.
+- Judicial background is softened from pure white to warm ivory.
+- MAITRE launch button is bridged to the existing Heritage online/local dual-mode enhancer.

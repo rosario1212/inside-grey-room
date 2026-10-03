@@ -1,17 +1,17 @@
-/* Inside Grey Room — HÉRITAGE · MAÎTRE v34.2
-   Direction validée : fond blanc, typographie judiciaire/institutionnelle,
-   accents bordeaux discrets, affiches finales non assombries. */
+/* Inside Grey Room — HÉRITAGE · MAÎTRE v34.3
+   Direction : papier ivoire doux, typographie judiciaire/institutionnelle,
+   affiches finales mises en valeur et lisibles sur mobile. */
 
 .maitre-page{
   --hp-accent:#681f1f;
-  --hp-accent-soft:rgba(104,31,31,.07);
-  --hp-panel:#ffffff;
-  --hp-panel2:#f7f5f1;
-  --hp-line:rgba(24,20,18,.14);
-  --hp-muted:#625e59;
-  --hp-dim:#807970;
+  --hp-accent-soft:rgba(104,31,31,.065);
+  --hp-panel:#f7f2e8;
+  --hp-panel2:#efe7da;
+  --hp-line:rgba(45,37,31,.16);
+  --hp-muted:#665f58;
+  --hp-dim:#847b72;
   min-height:100dvh;
-  background:#ffffff;
+  background:#eee8df;
   color:#171513;
   font-family:Baskerville,'Iowan Old Style','Palatino Linotype','Book Antiqua',Georgia,'Times New Roman',serif;
 }
@@ -20,7 +20,7 @@
   position:fixed;
   inset:0;
   z-index:-2;
-  background:#ffffff;
+  background:radial-gradient(circle at 50% -15%,#faf7f1 0,#f3eee6 42%,#ebe4da 100%);
   pointer-events:none;
 }
 .maitre-page .hplay-top,
@@ -29,136 +29,59 @@
 .maitre-page .hplay-dossier-grid,
 .maitre-page .hplay-panel,
 .maitre-page .hplay-management{color:#171513}
-
-/* Hiérarchie typographique : judiciaire pour le contenu, mono seulement pour les micro-libellés. */
-.maitre-page h1,
-.maitre-page h2,
-.maitre-page h3,
-.maitre-page .hplay-case-copy>strong,
-.maitre-page .hplay-result-card strong,
-.maitre-page .hplay-options button,
-.maitre-page .btn{
-  font-family:Baskerville,'Iowan Old Style','Palatino Linotype','Book Antiqua',Georgia,'Times New Roman',serif;
-}
+.maitre-page h1,.maitre-page h2,.maitre-page h3,.maitre-page .hplay-case-copy>strong,.maitre-page .hplay-result-card strong,.maitre-page .hplay-options button,.maitre-page .btn{font-family:Baskerville,'Iowan Old Style','Palatino Linotype','Book Antiqua',Georgia,'Times New Roman',serif}
 .maitre-page h1{font-weight:600;letter-spacing:-.025em!important}
 .maitre-page h2{font-weight:600;letter-spacing:-.015em}
-.maitre-page .hplay-mode,
-.maitre-page .hplay-eyebrow,
-.maitre-page .hplay-section-head span,
-.maitre-page .hplay-section-head>b,
-.maitre-page .hplay-case-copy>em,
-.maitre-page .hplay-case-copy>b,
-.maitre-page .hplay-stats small,
-.maitre-page .hplay-carry-strip span,
-.maitre-page .maitre-public-angle b,
-.maitre-page .maitre-result-grid span,
-.maitre-page .maitre-final-truth>span{
-  font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
-}
+.maitre-page .hplay-mode,.maitre-page .hplay-eyebrow,.maitre-page .hplay-section-head span,.maitre-page .hplay-section-head>b,.maitre-page .hplay-case-copy>em,.maitre-page .hplay-case-copy>b,.maitre-page .hplay-stats small,.maitre-page .hplay-carry-strip span,.maitre-page .maitre-public-angle b,.maitre-page .maitre-result-grid span,.maitre-page .maitre-final-truth>span{font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace}
 
-/* Cartes blanches et texte noir : plus de panneaux noirs dans MAÎTRE. */
-.maitre-page .hplay-panel,
-.maitre-page .hplay-management,
-.maitre-page .hplay-case,
-.maitre-page .hplay-phase-preview>span,
-.maitre-page .maitre-result-grid>div{
-  background:#ffffff!important;
-  border-color:rgba(24,20,18,.14)!important;
-  box-shadow:0 14px 40px rgba(28,22,18,.07);
-  color:#171513!important;
-}
-.maitre-page .hplay-case.is-current{
-  background:linear-gradient(95deg,rgba(104,31,31,.065),#ffffff 46%)!important;
-  border-color:rgba(104,31,31,.28)!important;
-}
-.maitre-page .hplay-case.is-done{opacity:.76}
-.maitre-page .hplay-case-copy>strong,
-.maitre-page .hplay-section-head h2,
-.maitre-page .hplay-stats b,
-.maitre-page .hplay-phase-preview strong,
-.maitre-page .maitre-trace-panel article b,
-.maitre-page .maitre-link-panel article>span{color:#171513!important}
-.maitre-page .hplay-campaign-title p,
-.maitre-page .hplay-lead,
-.maitre-page .hplay-case-copy>small,
-.maitre-page .hplay-phase-preview small,
-.maitre-page .hplay-carry p,
-.maitre-page .maitre-trace-panel article span,
-.maitre-page .maitre-link-panel article>small{color:#625e59!important}
-.maitre-page .hplay-mode,
-.maitre-page .hplay-eyebrow,
-.maitre-page .hplay-section-head span,
-.maitre-page .hplay-case-copy>em,
-.maitre-page .hplay-stats small{color:#807970!important}
-.maitre-page .hplay-section-head>b,
-.maitre-page .hplay-case-copy>b,
-.maitre-page .hplay-campaign-hero strong{color:#681f1f!important}
+.maitre-page .hplay-panel,.maitre-page .hplay-management,.maitre-page .hplay-case,.maitre-page .hplay-phase-preview>span,.maitre-page .maitre-result-grid>div{background:rgba(250,247,241,.92)!important;border-color:rgba(45,37,31,.15)!important;box-shadow:0 14px 38px rgba(38,28,22,.055);color:#171513!important}
+.maitre-page .hplay-case.is-current{background:linear-gradient(95deg,rgba(104,31,31,.06),rgba(250,247,241,.96) 48%)!important;border-color:rgba(104,31,31,.26)!important}
+.maitre-page .hplay-case.is-done{opacity:.78}
+.maitre-page .hplay-case-copy>strong,.maitre-page .hplay-section-head h2,.maitre-page .hplay-stats b,.maitre-page .hplay-phase-preview strong,.maitre-page .maitre-trace-panel article b,.maitre-page .maitre-link-panel article>span{color:#171513!important}
+.maitre-page .hplay-campaign-title p,.maitre-page .hplay-lead,.maitre-page .hplay-case-copy>small,.maitre-page .hplay-phase-preview small,.maitre-page .hplay-carry p,.maitre-page .maitre-trace-panel article span,.maitre-page .maitre-link-panel article>small{color:#665f58!important}
+.maitre-page .hplay-mode,.maitre-page .hplay-eyebrow,.maitre-page .hplay-section-head span,.maitre-page .hplay-case-copy>em,.maitre-page .hplay-stats small{color:#847b72!important}
+.maitre-page .hplay-section-head>b,.maitre-page .hplay-case-copy>b,.maitre-page .hplay-campaign-hero strong{color:#681f1f!important}
 
-/* Boutons et retour : sobre, juridique, sans effet "app noire". */
-.maitre-page .hplay-back,
-.maitre-page .btn.ghost{
-  background:#ffffff!important;
-  border-color:rgba(24,20,18,.18)!important;
-  color:#171513!important;
-  box-shadow:none!important;
-}
-.maitre-page .btn.primary{
-  background:#171513!important;
-  border-color:#171513!important;
-  color:#ffffff!important;
-}
+.maitre-page .hplay-back,.maitre-page .btn.ghost{background:rgba(250,247,241,.9)!important;border-color:rgba(45,37,31,.18)!important;color:#171513!important;box-shadow:none!important}
+.maitre-page .btn.primary{background:#171513!important;border-color:#171513!important;color:#fff!important}
 .maitre-page .hplay-danger{color:#681f1f!important}
+.maitre-page .maitre-angle-box,.maitre-page .maitre-final-truth{background:linear-gradient(145deg,rgba(104,31,31,.04),rgba(250,247,241,.96))!important;border-color:rgba(104,31,31,.23)!important}
+.maitre-page .maitre-angle-box label>span,.maitre-page .maitre-public-angle b,.maitre-page .maitre-final-truth>span{color:#681f1f!important}
+.maitre-page .maitre-angle-box textarea{background:#fbf8f2!important;color:#171513!important;border-color:rgba(45,37,31,.18)!important}
+.maitre-page .maitre-angle-box>small,.maitre-page .maitre-public-angle i,.maitre-page .maitre-final-truth>small{color:#6d6761!important}
+.maitre-page .maitre-public-angle{background:#f5efe6!important;border-left-color:#681f1f!important}
+.maitre-page .maitre-public-angle span,.maitre-page .maitre-final-truth>b{color:#171513!important}
 
-/* Angle / démonstration : feuille de plaidoirie plutôt que panneau sombre. */
-.maitre-page .maitre-angle-box,
-.maitre-page .maitre-final-truth{
-  background:linear-gradient(145deg,rgba(104,31,31,.045),rgba(255,255,255,.98))!important;
-  border-color:rgba(104,31,31,.25)!important;
-}
-.maitre-page .maitre-angle-box label>span,
-.maitre-page .maitre-public-angle b,
-.maitre-page .maitre-final-truth>span{color:#681f1f!important}
-.maitre-page .maitre-angle-box textarea{
-  background:#ffffff!important;
-  color:#171513!important;
-  border-color:rgba(24,20,18,.18)!important;
-  box-shadow:inset 0 1px 0 rgba(0,0,0,.025);
-}
-.maitre-page .maitre-angle-box>small,
-.maitre-page .maitre-public-angle i,
-.maitre-page .maitre-final-truth>small{color:#6d6761!important}
-.maitre-page .maitre-public-angle{
-  background:#faf7f4!important;
-  border-left-color:#681f1f!important;
-}
-.maitre-page .maitre-public-angle span,
-.maitre-page .maitre-final-truth>b{color:#171513!important}
+/* Affiches : grand cadre vertical, proportions conservées, zéro crop agressif. */
+.maitre-page .hplay-campaign-hero{height:min(68vw,560px);min-height:320px;background:#e9e0d4!important;border-color:rgba(45,37,31,.16)!important;box-shadow:0 18px 48px rgba(38,28,22,.10);border-radius:24px;overflow:hidden}
+.maitre-page .hplay-campaign-hero img{filter:none!important;width:100%;height:100%;object-fit:contain!important;object-position:center!important;background:#e9e0d4;padding:10px}
+.maitre-page .hplay-campaign-hero::after{background:linear-gradient(180deg,transparent 0 72%,rgba(245,239,230,.18) 100%)!important;pointer-events:none}
+.maitre-page .hplay-campaign-hero>div{background:rgba(247,242,232,.88);backdrop-filter:blur(8px);padding:8px 10px;border-radius:10px}
+.maitre-page .hplay-poster{background:#e7ded2!important;border:1px solid rgba(45,37,31,.18)!important;box-shadow:0 22px 55px rgba(38,28,22,.14)!important;border-radius:22px;padding:10px;overflow:hidden}
+.maitre-page .hplay-poster img{display:block;width:100%;height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;border-radius:14px;background:#eee6dc}
+.maitre-page .hplay-dossier-grid{grid-template-columns:minmax(280px,420px) minmax(0,1fr);gap:28px}
+.maitre-page .hplay-case-poster{width:68px;height:102px;background:#e7ded2!important;border-color:rgba(45,37,31,.14)!important;border-radius:10px;padding:3px}
+.maitre-page .hplay-case-poster img{object-fit:contain!important;background:#eee6dc;border-radius:7px}
+.maitre-page .hplay-case{grid-template-columns:68px minmax(0,1fr) 18px;min-height:124px}
+.maitre-page .hplay-case:disabled img{filter:grayscale(.55) brightness(.93)!important}
 
-/* Les cinq affiches doivent rester nettes et fidèles, sans filtre sombre. */
-.maitre-page .hplay-campaign-hero{
-  background:#f5f1ea!important;
-  border-color:rgba(24,20,18,.14)!important;
-  box-shadow:0 14px 40px rgba(28,22,18,.08);
-}
-.maitre-page .hplay-campaign-hero img{filter:none!important;object-position:center 32%}
-.maitre-page .hplay-campaign-hero::after{
-  background:linear-gradient(90deg,rgba(255,255,255,0) 0 44%,rgba(255,255,255,.30) 66%,rgba(255,255,255,.92) 100%)!important;
-}
-.maitre-page .hplay-campaign-hero span{color:#6f6861!important}
-.maitre-page .hplay-poster{
-  background:#f5f1ea!important;
-  border-color:rgba(24,20,18,.14)!important;
-  box-shadow:0 24px 60px rgba(28,22,18,.14)!important;
-}
-.maitre-page .hplay-case-poster{background:#f5f1ea!important;border-color:rgba(24,20,18,.12)!important}
-.maitre-page .hplay-case:disabled img{filter:grayscale(.65) brightness(.88)!important}
+.maitre-hub-card>img{filter:none!important;object-fit:cover!important;object-position:center 20%!important}
+.maitre-hub-card .hplay-campaign-shade{background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.10) 44%,rgba(13,10,9,.84) 100%)!important}
 
-/* La carte MAÎTRE du hub garde la photographie lisible, sans écraser l'affiche. */
-.maitre-hub-card>img{filter:brightness(.82) contrast(1.02) saturate(.86)!important}
-.maitre-hub-card .hplay-campaign-shade{background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.12) 42%,rgba(14,10,9,.88))!important}
+/* Le choix local / multijoueur doit être immédiatement visible. */
+.maitre-page .dual-mode-chooser{display:grid!important;grid-template-columns:1fr!important;gap:10px;margin-top:14px}
+.maitre-page .dual-mode-card{min-height:72px;background:#f8f4ec!important;border:1px solid rgba(45,37,31,.17)!important;color:#171513!important;box-shadow:none!important}
+.maitre-page .dual-mode-card b{font-family:Baskerville,'Iowan Old Style',Georgia,serif;font-size:16px}
+.maitre-page .dual-mode-card small{color:#6b645d!important}
+.maitre-page .dual-mode-card i{color:#681f1f!important}
 
 @media (max-width:760px){
   .maitre-page{padding-left:max(0px,env(safe-area-inset-left));padding-right:max(0px,env(safe-area-inset-right))}
-  .maitre-page .hplay-campaign-hero{height:230px}
-  .maitre-page .hplay-campaign-hero::after{background:linear-gradient(180deg,rgba(255,255,255,0) 0 46%,rgba(255,255,255,.88) 100%)!important}
+  .maitre-page .hplay-campaign-hero{height:auto;min-height:0;aspect-ratio:3/4;margin-left:0;margin-right:0}
+  .maitre-page .hplay-campaign-hero img{padding:8px;object-fit:contain!important}
+  .maitre-page .hplay-campaign-hero>div{right:12px;bottom:12px}
+  .maitre-page .hplay-dossier-grid{grid-template-columns:1fr!important;gap:20px}
+  .maitre-page .hplay-poster{width:min(100%,520px);margin:0 auto;padding:8px}
+  .maitre-page .hplay-poster img{width:100%;height:auto!important;max-height:none!important}
+  .maitre-page .hplay-dossier-copy{padding-top:0}
 }
