@@ -151,3 +151,36 @@
     min-height: 44vh;
   }
 }
+
+/* OMERTÀ dossier list: keep every poster in the exact same 3:4 frame.
+   The text column may grow, but the artwork must never stretch with it. */
+.omerta-dlc-section .omerta-list .omerta-scenario.scenario--compact {
+  align-items: center !important;
+}
+
+.omerta-dlc-section .omerta-list .omerta-scenario .scenario-thumb.compact {
+  position: relative !important;
+  align-self: center !important;
+  justify-self: stretch !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  aspect-ratio: 3 / 4 !important;
+  overflow: hidden !important;
+}
+
+.omerta-dlc-section .omerta-list .omerta-scenario .scenario-thumb.compact > img {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: cover !important;
+  object-position: 50% 50% !important;
+  transform: none !important;
+}
