@@ -1,7 +1,7 @@
-/* Inside Grey Room v34.8 — MAÎTRE final poster + multiplayer bridge */
+/* Inside Grey Room v34.9 — MAÎTRE final poster + multiplayer bridge */
 (()=>{
 'use strict';
-const POSTER_VERSION='v34.8-maitre-final';
+const POSTER_VERSION='v34.9-maitre-theme-posters';
 const posterMap={
   '01-le-client':'/assets/heritage-maitre-01-le-client-final.svg',
   '02-le-deal':'/assets/heritage-maitre-02-le-deal-final.svg',
