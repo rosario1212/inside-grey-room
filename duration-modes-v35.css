@@ -1,9 +1,24 @@
-/* Inside Grey Room — v35 duration selector */
-.igr-duration-v35{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:3}
+/* Inside Grey Room — v35.1 duration selector */
+.igr-duration-v35{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;position:relative;z-index:3}
+.igr-duration-lobby-v35{width:min(100%,360px);margin:0 auto 10px;padding:0;border:0;background:transparent}
 .igr-duration-tab-v35{appearance:none;min-width:0;min-height:42px;padding:6px 8px 5px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(255,255,255,.025);color:rgba(255,255,255,.62);font:inherit;line-height:1.05;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .16s ease,background .16s ease,color .16s ease,transform .12s ease}
 .igr-duration-tab-v35 span{display:block;font-size:10px;font-weight:760;letter-spacing:.13em}
 .igr-duration-tab-v35 small{display:block;margin-top:4px;color:inherit;opacity:.72;font-size:9px;font-weight:600;letter-spacing:.015em;white-space:nowrap}
 .igr-duration-tab-v35.is-active{border-color:rgba(255,255,255,.42);background:rgba(255,255,255,.085);color:rgba(255,255,255,.96)}
-.igr-duration-tab-v35:active{transform:scale(.985)}
+.igr-duration-tab-v35:active:not(:disabled){transform:scale(.985)}
 .igr-duration-tab-v35:focus-visible{outline:2px solid rgba(255,255,255,.72);outline-offset:2px}
-@media (max-width:430px){.igr-duration-v35{gap:5px;margin-top:9px;padding-top:8px}.igr-duration-tab-v35{min-height:40px;padding-inline:6px;border-radius:8px}.igr-duration-tab-v35 span{font-size:9.5px}.igr-duration-tab-v35 small{font-size:8.5px}}
+.igr-duration-tab-v35:disabled{cursor:default;opacity:.82}
+.lobby-v11>.igr-duration-lobby-v35+.lobby-code{padding-top:8px}
+
+/* The selector belongs only to the room lobby. Never let it change scenario-card dimensions. */
+.scenario-list .igr-duration-v35,
+.scenario-list-v10-13 .igr-duration-v35,
+.scenario--compact .igr-duration-v35{display:none!important}
+
+@media (max-width:430px){
+ .igr-duration-lobby-v35{width:min(100%,330px);gap:5px;margin-bottom:9px}
+ .igr-duration-tab-v35{min-height:40px;padding-inline:6px;border-radius:8px}
+ .igr-duration-tab-v35 span{font-size:9.5px}
+ .igr-duration-tab-v35 small{font-size:8.5px}
+ .lobby-v11>.igr-duration-lobby-v35+.lobby-code{padding-top:7px}
+}
