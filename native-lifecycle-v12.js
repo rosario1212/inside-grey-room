@@ -14,6 +14,7 @@
   let lastResumeAt=0;
 
   function roomActive(){return typeof STATE!=='undefined'&&!!(STATE?.room&&STATE?.token)}
+  function realtimeOwnsRoomSync(){try{return !!globalThis.__IGR_REALTIME__}catch{return false}}
   function introVisible(){
     const gate=document.getElementById('introGate');
     return !!(gate&&!gate.classList.contains('done')&&gate.getAttribute('aria-hidden')!=='true');
@@ -73,8 +74,12 @@
 
     try{
       if(roomActive()){
-        if(typeof syncNow==='function')await syncNow(true);
-        if(typeof startRoomWatcher==='function')startRoomWatcher();
+        // v36 live-cell owns reconnect + resync on visibility/pageshow/online.
+        // Do not race it with another forced RPC + watcher restart from this older layer.
+        if(!realtimeOwnsRoomSync()){
+          if(typeof syncNow==='function')await syncNow(true);
+          if(typeof startRoomWatcher==='function')startRoomWatcher();
+        }
         setTimeout(()=>{try{if(typeof manageVideoState==='function')manageVideoState()}catch{}},180);
         if(returningFromBackground&&wasLiveVideo&&STATE?.sync?.player?.public_role==='enqueteur'){
           setTimeout(()=>{try{if(typeof toast==='function')toast('Le flux caméra a été arrêté pendant l’arrière-plan. Réactive-le si l’interrogatoire continue.')}catch{}},450);
