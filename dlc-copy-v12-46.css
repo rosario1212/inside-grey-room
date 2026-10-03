@@ -1,4 +1,4 @@
-/* Inside Grey Room — DLC copy format v12.46 */
+/* Inside Grey Room — DLC copy format v12.47 */
 .omerta-dlc-section .omerta-head,
 .terror-dlc-section .terror-head,
 .cartel-dlc-section .dlc-suite-head,
@@ -32,70 +32,90 @@
 }
 .terror-access-pill[hidden]{display:none!important}
 
-/* v12.46a — OMERTÀ uses the same left-aligned DLC rhythm as TERREUR/CARTEL.
-   Only the geometry is normalized: serif title, red palette and confidential identity stay intact. */
-.omerta-dlc-section .omerta-head,
-.omerta-dlc-section .omerta-locked{
-  text-align:left!important;
-}
-.omerta-dlc-section .omerta-head>div,
-.omerta-dlc-section .omerta-locked>div{
-  width:100%!important;
-  min-width:0!important;
-  margin:0!important;
-  text-align:left!important;
-}
-.omerta-dlc-section .omerta-head .omerta-eyebrow,
-.omerta-dlc-section .omerta-locked .omerta-eyebrow,
-.omerta-dlc-section .omerta-head h2,
-.omerta-dlc-section .omerta-locked h2,
-.omerta-dlc-section .omerta-head p,
-.omerta-dlc-section .omerta-locked p{
-  text-align:left!important;
-  margin-left:0!important;
-  margin-right:0!important;
-}
-
-/* Locked OMERTÀ card mirrors the other DLC cards: copy first, full-width CTA below. */
-.omerta-dlc-section .omerta-locked{
+/* OMERTÀ locked card: same content axis and rhythm as TERREUR / CARTEL. */
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked{
   display:grid!important;
   grid-template-columns:minmax(0,1fr)!important;
   justify-items:stretch!important;
   align-items:stretch!important;
   gap:22px!important;
   min-height:0!important;
+  text-align:left!important;
 }
-.omerta-dlc-section .omerta-locked .omerta-eyebrow{
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked>div{
   display:block!important;
-  margin:0 0 8px!important;
-}
-.omerta-dlc-section .omerta-locked h2{
-  margin:0 0 10px!important;
-}
-.omerta-dlc-section .omerta-locked p{
   width:100%!important;
-  max-width:34rem!important;
+  max-width:none!important;
+  min-width:0!important;
   margin:0!important;
+  padding:0!important;
+  justify-self:stretch!important;
+  align-self:stretch!important;
+  text-align:left!important;
+}
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked .omerta-eyebrow,
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked h2,
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked p{
+  display:block!important;
+  width:auto!important;
+  max-width:34rem!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  text-align:left!important;
+  justify-self:start!important;
+}
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked .omerta-eyebrow{
+  margin-top:0!important;
+  margin-bottom:8px!important;
+}
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked h2{
+  margin-top:0!important;
+  margin-bottom:10px!important;
+}
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked p{
+  margin-top:0!important;
+  margin-bottom:0!important;
   line-height:1.45!important;
 }
-.omerta-dlc-section .omerta-locked>.btn{
+#app .page-create-v10-13 .omerta-dlc-section .omerta-locked>.btn{
+  display:flex!important;
   width:100%!important;
   max-width:none!important;
   min-height:54px!important;
   margin:0!important;
   justify-self:stretch!important;
+  align-self:stretch!important;
+  align-items:center!important;
   justify-content:center!important;
 }
 
+/* Unlocked header stays on the same left axis too. */
+#app .page-create-v10-13 .omerta-dlc-section .omerta-head{
+  text-align:left!important;
+}
+#app .page-create-v10-13 .omerta-dlc-section .omerta-head>div{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  text-align:left!important;
+}
+#app .page-create-v10-13 .omerta-dlc-section .omerta-head .omerta-eyebrow,
+#app .page-create-v10-13 .omerta-dlc-section .omerta-head h2,
+#app .page-create-v10-13 .omerta-dlc-section .omerta-head p{
+  text-align:left!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
 @media(max-width:640px){
-  .omerta-dlc-section .omerta-head{
+  #app .page-create-v10-13 .omerta-dlc-section .omerta-head{
     align-items:flex-start!important;
     justify-content:flex-start!important;
   }
-  .omerta-dlc-section .omerta-access-pill{
+  #app .page-create-v10-13 .omerta-dlc-section .omerta-access-pill{
     align-self:flex-start!important;
   }
-  .omerta-dlc-section .omerta-locked{
+  #app .page-create-v10-13 .omerta-dlc-section .omerta-locked{
     gap:20px!important;
   }
 }
