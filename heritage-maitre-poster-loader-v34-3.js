@@ -29,12 +29,12 @@ function installMap(){
   window.IGR_HERITAGE_MAITRE_DATA=Object.freeze({...data,META});
   return true;
 }
-function boot(){
-  if(!installMap())return setTimeout(boot,0);
-  [1,2,3,4,5].forEach(n=>build(n).catch(()=>{}));
+function startDom(){
   replace();
   const obs=new MutationObserver(ms=>{for(const m of ms)for(const node of m.addedNodes)if(node.nodeType===1){if(node.matches?.('img'))replace(node.parentElement||document);else replace(node)}});obs.observe(document.documentElement,{childList:true,subtree:true});
-  window.IGR_HERITAGE_MAITRE_POSTERS=Object.freeze({version:VERSION,build,placeholder});
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+if(!installMap())throw new Error('[MAÎTRE poster] data must load before poster loader');
+[1,2,3,4,5].forEach(n=>build(n).catch(err=>console.error('[MAÎTRE poster preload]',err)));
+window.IGR_HERITAGE_MAITRE_POSTERS=Object.freeze({version:VERSION,build,placeholder});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startDom,{once:true});else startDom();
 })();
