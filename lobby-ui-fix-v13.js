@@ -1,5 +1,6 @@
-/* Inside Grey Room — v13.2 lobby navigation + base-role visual fix
-   - Adds a real back-to-scenarios action from the role-selection lobby.
+/* Inside Grey Room — v13.3 lobby navigation + settings access + base-role visual fix
+   - Adds real back-to-scenarios and settings actions from the role-selection lobby.
+   - Opens the existing Settings modal without leaving or resetting the current room.
    - Returns to the scenario list at the scenario/scroll position previously consulted.
    - Keeps scenarios 001–020 strictly neutral: OMERTÀ red cannot leak into base role selection.
 */
@@ -35,7 +36,6 @@
       zone.classList.toggle('is-omerta-scenario',omerta);
     }
 
-    // A previous OMERTÀ view must never tint a base dossier after navigation/re-render.
     if(base){
       body.classList.remove('igr-theme-omerta','igr-omerta-active','igr-theme-terror','igr-theme-cartel','igr-theme-regime');
       document.documentElement.classList.remove('igr-theme-omerta','igr-omerta-active','igr-theme-terror','igr-theme-cartel','igr-theme-regime');
@@ -103,7 +103,20 @@
     }));
   }
 
+  function openLobbySettings(){
+    try{
+      if(typeof window.openSettings==='function'){
+        window.openSettings();
+        return;
+      }
+      toast?.(window.IGR_LOCALE==='en'?'Settings are temporarily unavailable.':'Paramètres momentanément indisponibles.');
+    }catch(err){
+      console.error('lobby settings',err);
+    }
+  }
+
   globalThis.igrBackToScenarios=returnToScenarioList;
+  globalThis.igrLobbyOpenSettings=openLobbySettings;
 
   function enhanceLobby(){
     if(enhancing)return;
@@ -113,14 +126,13 @@
       const pageHead=zone?.closest('main')?.querySelector('.page-head');
       if(!zone||!pageHead){syncLobbyTheme();return}
 
-      const existing=pageHead.querySelector('.igr-v13-back-scenarios');
-      if(!existing){
+      const en=window.IGR_LOCALE==='en';
+      let back=pageHead.querySelector('.igr-v13-back-scenarios');
+      if(!back){
         const quit=Array.from(pageHead.querySelectorAll('button')).find(btn=>/quitter|leave|exit/i.test(btn.textContent||''));
-        const back=document.createElement('button');
+        back=document.createElement('button');
         back.type='button';
         back.className='btn ghost small igr-v13-back-scenarios';
-        back.textContent=window.IGR_LOCALE==='en'?'← Scenarios':'← Scénarios';
-        back.setAttribute('aria-label',window.IGR_LOCALE==='en'?'Leave this room and return to scenarios':'Quitter cette cellule et revenir aux scénarios');
         back.addEventListener('click',returnToScenarioList);
         if(quit){
           quit.replaceWith(back);
@@ -128,6 +140,29 @@
           pageHead.appendChild(back);
         }
       }
+      back.textContent=en?'← Scenarios':'← Scénarios';
+      back.setAttribute('aria-label',en?'Leave this room and return to scenarios':'Quitter cette cellule et revenir aux scénarios');
+
+      let actions=pageHead.querySelector('.igr-v13-lobby-actions');
+      if(!actions){
+        actions=document.createElement('div');
+        actions.className='igr-v13-lobby-actions';
+        if(back.parentNode)back.parentNode.insertBefore(actions,back);
+        else pageHead.appendChild(actions);
+      }
+      if(back.parentElement!==actions)actions.appendChild(back);
+
+      let settings=actions.querySelector('.igr-v13-lobby-settings');
+      if(!settings){
+        settings=document.createElement('button');
+        settings.type='button';
+        settings.className='btn ghost small igr-v13-lobby-settings';
+        settings.addEventListener('click',openLobbySettings);
+        actions.appendChild(settings);
+      }
+      settings.textContent=en?'Settings':'Paramètres';
+      settings.setAttribute('aria-label',en?'Open settings without leaving the room':'Ouvrir les paramètres sans quitter la cellule');
+
       syncLobbyTheme();
     }finally{
       enhancing=false;
@@ -144,15 +179,13 @@
         return out;
       };
     }
-  }catch(err){console.warn('lobby back hook',err)}
+  }catch(err){console.warn('lobby back/settings hook',err)}
 
   const observer=new MutationObserver(mutations=>{
     if(mutations.some(m=>m.addedNodes?.length || m.removedNodes?.length))queueMicrotask(enhanceLobby);
   });
   observer.observe(document.documentElement,{childList:true,subtree:true});
 
-  // If an older DLC observer reapplies a theme class after the lobby render,
-  // repair it immediately while a base dossier is active.
   const observeBodyTheme=()=>{
     if(!document.body)return;
     const themeObserver=new MutationObserver(()=>{
