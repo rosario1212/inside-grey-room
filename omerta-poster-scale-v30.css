@@ -1,0 +1,70 @@
+/* OMERTA mobile poster scale — preserve the premium confidential dossier treatment. */
+
+/* Covers the known/likely OMERTA wrappers without affecting base scenarios or other DLCs. */
+.omerta .scenario--compact,
+.omerta-pack .scenario--compact,
+.omerta-dlc .scenario--compact,
+.dlc-omerta .scenario--compact,
+[data-dlc="omerta"] .scenario--compact,
+[data-pack="omerta"] .scenario--compact,
+[data-theme="omerta"] .scenario--compact{
+  grid-template-columns:clamp(142px,32vw,172px) minmax(0,1fr)!important;
+  column-gap:16px!important;
+}
+
+.omerta .scenario--compact .scenario-thumb,
+.omerta-pack .scenario--compact .scenario-thumb,
+.omerta-dlc .scenario--compact .scenario-thumb,
+.dlc-omerta .scenario--compact .scenario-thumb,
+[data-dlc="omerta"] .scenario--compact .scenario-thumb,
+[data-pack="omerta"] .scenario--compact .scenario-thumb,
+[data-theme="omerta"] .scenario--compact .scenario-thumb{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  align-self:stretch!important;
+  overflow:hidden!important;
+}
+
+.omerta .scenario--compact .scenario-thumb img,
+.omerta-pack .scenario--compact .scenario-thumb img,
+.omerta-dlc .scenario--compact .scenario-thumb img,
+.dlc-omerta .scenario--compact .scenario-thumb img,
+[data-dlc="omerta"] .scenario--compact .scenario-thumb img,
+[data-pack="omerta"] .scenario--compact .scenario-thumb img,
+[data-theme="omerta"] .scenario--compact .scenario-thumb img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+@media(max-width:540px){
+  .omerta .scenario--compact,
+  .omerta-pack .scenario--compact,
+  .omerta-dlc .scenario--compact,
+  .dlc-omerta .scenario--compact,
+  [data-dlc="omerta"] .scenario--compact,
+  [data-pack="omerta"] .scenario--compact,
+  [data-theme="omerta"] .scenario--compact{
+    grid-template-columns:clamp(132px,31vw,150px) minmax(0,1fr)!important;
+    column-gap:14px!important;
+  }
+}
+
+@media(max-width:390px){
+  .omerta .scenario--compact,
+  .omerta-pack .scenario--compact,
+  .omerta-dlc .scenario--compact,
+  .dlc-omerta .scenario--compact,
+  [data-dlc="omerta"] .scenario--compact,
+  [data-pack="omerta"] .scenario--compact,
+  [data-theme="omerta"] .scenario--compact{
+    grid-template-columns:126px minmax(0,1fr)!important;
+    column-gap:12px!important;
+  }
+}
