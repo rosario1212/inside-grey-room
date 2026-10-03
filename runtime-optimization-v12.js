@@ -6,6 +6,10 @@
   const nativeShell = (() => { try { return typeof NATIVE_SHELL !== 'undefined' && !!NATIVE_SHELL; } catch { return false; } })();
   let watcherGeneration = 0;
 
+  function realtimeOwnsRoomSync(){
+    try{return !!globalThis.__IGR_REALTIME__}catch{return false}
+  }
+
   function secureIndex(size){
     if(size <= 1) return 0;
     try{
@@ -78,10 +82,12 @@
     };
   }
 
-  // Browsers throttle timers aggressively in the background. Refresh immediately when
-  // the player comes back instead of waiting for the next scheduled poll.
+  // The v36 live-cell layer owns foreground/network reconciliation once loaded.
+  // Keep these legacy handlers only as a fallback if that layer failed to initialize;
+  // otherwise three different lifecycle modules can restart the same watcher at once.
   if(!nativeShell){
     document.addEventListener('visibilitychange',()=>{
+      if(realtimeOwnsRoomSync())return;
       if(!document.hidden && globalThis.STATE?.room && globalThis.STATE?.token){
         syncNow?.(true).catch?.(()=>{});
         startRoomWatcher?.();
@@ -89,6 +95,7 @@
     },{passive:true});
   }
   window.addEventListener('online',()=>{
+    if(realtimeOwnsRoomSync())return;
     if(globalThis.STATE?.room && globalThis.STATE?.token){
       syncNow?.(true).catch?.(()=>{});
       startRoomWatcher?.();
