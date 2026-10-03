@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-label="HÉRITAGE MAÎTRE — II LE DEAL">
+<rect width="900" height="1200" fill="#eee8dc"/><rect x="28" y="28" width="844" height="1144" fill="none" stroke="#171512" stroke-width="2"/>
+<text x="68" y="88" font-family="Georgia,serif" font-size="24" letter-spacing="8" fill="#171512">HÉRITAGE</text><text x="68" y="142" font-family="Georgia,serif" font-size="52" letter-spacing="4" fill="#171512">MAÎTRE</text>
+<path d="M92 990H808" stroke="#171512" stroke-width="2"/><text x="92" y="1052" font-family="Georgia,serif" font-size="34" letter-spacing="3" fill="#171512">II</text><text x="165" y="1052" font-family="Georgia,serif" font-size="48" letter-spacing="2" fill="#171512">LE DEAL</text>
+<g transform="translate(0,10)"><rect x="172" y="430" width="530" height="350" rx="4" fill="#d6cdbd" stroke="#171512" stroke-width="5"/><rect x="196" y="402" width="530" height="350" rx="4" fill="#e8e0d2" stroke="#171512" stroke-width="5"/><path d="M242 478H596M242 530H640M242 582H570M242 634H615" stroke="#777064" stroke-width="8" stroke-linecap="round"/>
+<path d="M196 748 C308 716 378 780 480 742 C565 710 629 746 726 705 L726 752 L196 752Z" fill="#6e1f1e" opacity=".95"/>
+<g transform="rotate(-18 500 430)"><rect x="457" y="250" width="52" height="420" rx="20" fill="#171512"/><path d="M457 250L483 188L509 250Z" fill="#6e1f1e"/><rect x="466" y="300" width="8" height="270" fill="#eee8dc" opacity=".7"/></g>
+<path d="M575 695c40 8 78 28 116 12" fill="none" stroke="#6e1f1e" stroke-width="18" stroke-linecap="round"/><circle cx="658" cy="678" r="28" fill="none" stroke="#6e1f1e" stroke-width="8"/></g>
+</svg>
