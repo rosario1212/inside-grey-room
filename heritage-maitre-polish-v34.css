@@ -1,17 +1,17 @@
-/* MAÎTRE v34.8 — final visual polish */
+/* MAÎTRE v34.9 — isolated paper theme + mobile poster fix */
 .maitre-page .maitre-multi-pending{display:grid;gap:4px;margin-top:10px;padding:11px 12px;border:1px dashed rgba(104,31,31,.24);border-radius:12px;background:rgba(104,31,31,.05);color:#171513}
 .maitre-page .maitre-multi-pending b{font:700 11px/1.2 'IBM Plex Mono','SFMono-Regular',monospace;letter-spacing:.1em;color:#681f1f}
 .maitre-page .maitre-multi-pending span{font-size:12px;color:#655e56}
 
-/* Warm paper shell: no painful pure white, black masthead on MAÎTRE screens. */
-body:has(.maitre-page),body:has(.maitre-hub-card){background:#e9e1d4!important;color:#171513!important}
-body:has(.maitre-page) #app,body:has(.maitre-hub-card) #app{background:#e9e1d4!important}
-body:has(.maitre-page) .brand-title,body:has(.maitre-page) .brand-sub,body:has(.maitre-hub-card) .brand-title,body:has(.maitre-hub-card) .brand-sub{color:#171513!important;text-shadow:none!important;opacity:1!important}
-body:has(.maitre-page) .topbar,body:has(.maitre-hub-card) .topbar{color:#171513!important}
+/* Warm paper shell only once MAÎTRE is actually open. The generic HÉRITAGE hub stays dark. */
+body:has(.maitre-page){background:#e9e1d4!important;color:#171513!important}
+body:has(.maitre-page) #app{background:#e9e1d4!important}
+body:has(.maitre-page) .brand-title,body:has(.maitre-page) .brand-sub{color:#171513!important;text-shadow:none!important;opacity:1!important}
+body:has(.maitre-page) .topbar{color:#171513!important}
 .hplay-theme-maitre.maitre-page{background:radial-gradient(circle at 50% 0,rgba(103,31,31,.045),transparent 34%),linear-gradient(180deg,#eee7dc,#e6ddcf 72%,#e1d7c8)!important;color:#171513}
 
 /* Approved 9:16 artwork fills its frame edge to edge. */
-.maitre-page .hplay-poster{width:min(100%,420px);aspect-ratio:9/16;padding:0!important;overflow:hidden;border:1px solid rgba(83,64,48,.24);border-radius:24px;background:#d8cdbd;box-shadow:0 24px 60px rgba(58,43,32,.18)}
+.maitre-page .hplay-poster{width:min(100%,420px);height:auto!important;aspect-ratio:9/16!important;padding:0!important;overflow:hidden;border:1px solid rgba(83,64,48,.24);border-radius:24px;background:#d8cdbd;box-shadow:0 24px 60px rgba(58,43,32,.18)}
 .maitre-page .hplay-poster img{display:block;width:100%!important;height:100%!important;aspect-ratio:auto!important;object-fit:cover!important;object-position:center!important;border-radius:0!important;background:transparent!important;filter:none!important}
 .maitre-page .hplay-case-poster{width:58px;height:auto!important;aspect-ratio:9/16;overflow:hidden;background:#d8cdbd;border-color:rgba(83,64,48,.18)}
 .maitre-page .hplay-case-poster img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;filter:none!important}
@@ -28,7 +28,10 @@ body:has(.maitre-page) .topbar,body:has(.maitre-hub-card) .topbar{color:#171513!
 .maitre-page .hnet-lobby span,.maitre-page .hnet-lobby small,.maitre-page .hnet-lobby p{color:#cdb9a8!important}
 
 @media(max-width:760px){
-  .maitre-page .hplay-poster{width:min(88vw,380px);margin-inline:auto}
+  /* Override the generic Heritage mobile height:190px rule on MAÎTRE dossier pages. */
+  .hplay-page.maitre-page,.page.hplay.maitre-page{padding-left:10px!important;padding-right:10px!important}
+  .maitre-page .hplay-poster{width:min(94vw,430px)!important;max-width:430px!important;height:auto!important;aspect-ratio:9/16!important;margin-inline:auto!important}
+  .maitre-page .hplay-poster img{width:100%!important;height:100%!important;object-fit:cover!important}
   .maitre-page .hplay-campaign-hero{height:238px}
   body:has(.maitre-page) .brand-title{font-size:12px!important;letter-spacing:.17em!important}
 }
