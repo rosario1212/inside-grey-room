@@ -10,4 +10,61 @@ const runtimeFiles=[
 ];
 async function exists(file){try{await stat(file);return true}catch{return false}}
 await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});const searchableText=[];
-for(const name of runtimeFiles){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing web runtime file: ${name}`);const dst=path.join(out,relative=file),noop=0}
+for(const name of runtimeFiles){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing web runtime file: ${name}`);const dst=path.join(out,name);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst,{recursive:true});searchableText.push(await readFile(src,'utf8'))}
+
+const premiumHead=[
+ '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=v13.8-dual-play">',
+ '  <link rel="stylesheet" href="heritage-v13-5.css?v=v13.8-dual-play">',
+ '  <link rel="stylesheet" href="heritage-premium-v13-6.css?v=v13.8-dual-play">',
+ '  <link rel="stylesheet" href="heritage-play-v13-7.css?v=v13.8-dual-play">',
+ '  <link rel="stylesheet" href="play-modes-v13-8.css?v=v13.8-dual-play">',
+ '  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">'
+].join('\n');
+const premiumScripts=[
+ '  <script src="startup-stability-v13-3.js?v=v13.8-dual-play"></script>',
+ '  <script src="heritage-v13-5.js?v=v13.8-dual-play"></script>',
+ '  <script src="heritage-premium-v13-6.js?v=v13.8-dual-play"></script>',
+ '  <script src="heritage-play-v13-7.js?v=v13.8-dual-play"></script>',
+ '  <script src="play-modes-v13-8.js?v=v13.8-dual-play"></script>',
+ '  <script src="heritage-access-code-v14.js?v=v14-heritage-code"></script>',
+ '  <script src="premium-access-sync-v17.js?v=v17-premium-sync"></script>'
+].join('\n');
+const durationHead='  <link rel="stylesheet" href="duration-modes-v35.css?v=v35-duration-modes">';
+const durationScript='  <script src="duration-modes-v35.js?v=v35-duration-modes"></script>';
+for(const page of ['index.html','en.html']){
+  const target=path.join(out,page);let html=await readFile(target,'utf8');
+  if(!html.includes('play-modes-v13-8.css'))html=html.replace('</head>',`${premiumHead}\n</head>`);
+  else if(!html.includes('premium-access-sync-v17.css'))html=html.replace('</head>',`  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">\n</head>`);
+  if(!html.includes('duration-modes-v35.css'))html=html.replace('</head>',`${durationHead}\n</head>`);
+  if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
+  else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v17-premium-sync"></script>\n</body>`);
+  if(!html.includes('duration-modes-v35.js'))html=html.replace('</body>',`${durationScript}\n</body>`);
+  await writeFile(target,html,'utf8');
+}
+
+const assetRefs=new Set();for(const text of searchableText)for(const match of text.matchAll(/assets\/[A-Za-z0-9._\/-]+/g))assetRefs.add(match[0]);let assetBytes=0;
+for(const relative of [...assetRefs].sort()){const src=path.join(root,relative);if(!(await exists(src)))throw new Error(`Missing referenced web asset: ${relative}`);const dst=path.join(out,relative);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst);assetBytes+=(await stat(src)).size}
+const cloudflareHeaders=`
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Permitted-Cross-Domain-Policies: none
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(self), microphone=(self), geolocation=(), payment=(), usb=(), bluetooth=(), serial=()
+  X-Frame-Options: DENY
+  Cross-Origin-Resource-Policy: same-origin
+/service-worker.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Service-Worker-Allowed: /
+/manifest.webmanifest
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/manifest+json; charset=utf-8
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/en.html
+  Cache-Control: public, max-age=0, must-revalidate
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+`;
+await writeFile(path.join(out,'_headers'),cloudflareHeaders.trimStart(),'utf8');
+console.log(`Inside Grey Room web bundle ready: ${out}`);console.log(`Runtime files: ${runtimeFiles.length} · assets: ${assetRefs.size} · ${(assetBytes/1024/1024).toFixed(2)} MiB assets`);
