@@ -47,11 +47,26 @@
     const panel=document.getElementById('terrorRuntimeV33');
     if(!panel)return;
     const runtime=room?.state?.terror_runtime||{};
-    if(runtime.decision)return;
     const role=String(window.STATE?.sync?.player?.public_role||window.STATE?.role||'');
     const assessments=runtime.assessments||{};
-    const ready=!!assessments.credibility&&!!assessments.sincerity&&String(room?.phase||'')==='locking';
+    const phase=String(room?.phase||'');
 
+    panel.querySelectorAll('.terror-v33-assessment').forEach(card=>{
+      const actions=card.querySelector('.terror-v33-actions');
+      if(!actions)return;
+      actions.hidden=phase!=='locking';
+      const note=card.querySelector('[data-v33-assessment-note]');
+      if(phase!=='locking'&&!note){
+        const hint=document.createElement('div');
+        hint.className='terror-v33-muted';
+        hint.dataset.v33AssessmentNote='1';
+        hint.textContent='Évaluation finale disponible au verrouillage.';
+        card.appendChild(hint);
+      }else if(phase==='locking'&&note){note.remove()}
+    });
+
+    if(runtime.decision)return;
+    const ready=!!assessments.credibility&&!!assessments.sincerity&&phase==='locking';
     panel.querySelectorAll('.terror-v33-decision:not(.locked):not([data-v33-liaison-decision])').forEach(el=>el.remove());
     const oldNote=panel.querySelector('[data-v33-liaison-note]');
 
