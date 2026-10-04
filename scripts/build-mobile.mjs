@@ -38,6 +38,7 @@ const premiumScripts=[
  '  <script src="premium-access-sync-v17.js?v=v17-premium-sync"></script>'
 ].join('\n');
 const storeBoundary='  <script src="native-store-boundary-v14.js?v=v14-store-boundary"></script>';
+const authoritativeScript='  <script src="authoritative-runtime-v40.js?v=v40-authoritative-ui"></script>';
 const legacyTagPatterns=[
  /\s*<link[^>]+href=["']dlc-invites-v12-45\.css[^"']*["'][^>]*>\s*/gi,
  /\s*<script[^>]+src=["']dlc-invites-v12-45\.js[^"']*["'][^>]*><\/script>\s*/gi
@@ -50,6 +51,8 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
   else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v17-premium-sync"></script>\n</body>`);
   if(!html.includes('native-store-boundary-v14.js'))html=html.replace('</body>',`${storeBoundary}\n</body>`);
+  html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
+  html=html.replace('</body>',`${authoritativeScript}\n</body>`);
   await writeFile(target,html,'utf8');
 }
 for(const excluded of legacyStoreExcluded){if(await exists(path.join(out,excluded)))throw new Error(`Legacy premium unlock file leaked into native store bundle: ${excluded}`)}
@@ -57,6 +60,7 @@ for(const page of ['index.html','en.html']){
   const html=await readFile(path.join(out,page),'utf8');
   if(/dlc-invites-v12-45\.(?:js|css)/i.test(html))throw new Error(`${page}: legacy DLC code unlock reference leaked into native store bundle`);
   if(!html.includes('native-store-boundary-v14.js'))throw new Error(`${page}: native store commerce boundary missing`);
+  if(!html.trim().endsWith('</html>'))throw new Error(`${page}: malformed output`);
 }
 const assetRefs=new Set();for(const text of runtimeText)for(const match of text.matchAll(/assets\/[A-Za-z0-9._\/-]+/g))assetRefs.add(match[0]);let assetBytes=0;
 for(const relative of [...assetRefs].sort()){const src=path.join(root,relative);if(!(await exists(src)))throw new Error(`Missing referenced mobile asset: ${relative}`);const dst=path.join(out,relative);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst);assetBytes+=(await stat(src)).size}
