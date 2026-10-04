@@ -31,6 +31,7 @@ const premiumScripts=[
 ].join('\n');
 const durationHead='  <link rel="stylesheet" href="duration-modes-v35.css?v=v35-duration-modes">';
 const durationScript='  <script src="duration-modes-v35.js?v=v35-duration-modes"></script>';
+const authoritativeScript='  <script src="authoritative-runtime-v40.js?v=v40-authoritative-ui"></script>';
 for(const page of ['index.html','en.html']){
   const target=path.join(out,page);let html=await readFile(target,'utf8');
   if(!html.includes('play-modes-v13-8.css'))html=html.replace('</head>',`${premiumHead}\n</head>`);
@@ -39,6 +40,8 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
   else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v17-premium-sync"></script>\n</body>`);
   if(!html.includes('duration-modes-v35.js'))html=html.replace('</body>',`${durationScript}\n</body>`);
+  html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
+  html=html.replace('</body>',`${authoritativeScript}\n</body>`);
   await writeFile(target,html,'utf8');
 }
 
