@@ -97,9 +97,9 @@ ok(files.localModeCss.includes('.heritage-online-btn[data-igr-mode-theme]'),'Her
 ok(files.apply.includes("'if(!nativeShell&&!mobile&&window.MutationObserver){'"),'Build patch must target the old desktop-only observer condition');
 ok(files.apply.includes("'if(window.MutationObserver){'"),'Build patch must enable observer tracking on mobile too');
 
-// v36.1 finalization is authoritative for cache freshness. Older patchers may still
-// contain their historical version labels internally, but the generated runtime must
-// end on the current cache/version and validated resources.
+// v36.1 finalization remains the baseline before later gameplay patchers run.
+// A finished distribution may legitimately have the v38 cache namespace after
+// apply-gameplay-v38.mjs takes over the installed-PWA shell.
 ok(files.finalize.includes("const CACHE='igr-v36-1-parasite-fix'"),'Finalizer must own the v36.1 service-worker cache version');
 ok(files.finalize.includes('final runtime integrity verified'),'Final runtime integrity verifier marker missing');
 ok(files.apply.includes("navigation-theme-v18.js?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation-theme runtime');
@@ -124,7 +124,7 @@ try{
   ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the play-mode theme CSS');
   ok(!distIndex.includes('if(!nativeShell&&!mobile&&window.MutationObserver){'),'dist/index.html still leaves gameplay MutationObserver running on mobile');
   ok(distIndex.includes('if(window.MutationObserver){const NativeObserver'),'dist/index.html does not track/disconnect gameplay observer on all clients');
-  ok(distSw.includes("const CACHE='igr-v36-1-parasite-fix';"),'dist/service-worker.js has stale cache version');
+  ok(distSw.includes("const CACHE='igr-v36-1-parasite-fix';")||distSw.includes("const CACHE='igr-v38-gameplay-ui-state';"),'dist/service-worker.js has stale cache version');
   ok(distSw.includes('/navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/service-worker.js is missing v27 navigation');
   ok(distSw.includes('/role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/service-worker.js is missing restored TON CHOIX CSS');
   ok(distIndex.includes('live-cell-v12-44.js?v=v36.1-parasite-fix'),'dist/index.html did not bump the v36 live-cell runtime');
