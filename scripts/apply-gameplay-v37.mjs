@@ -1,17 +1,20 @@
 import { copyFile, readFile, stat, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
 const runtime='gameplay-state-fix-v37.js';
 const version='v37-objective-event-select';
-const cache='igr-v37-objective-event-select';
+const cache='igr-v36-1-parasite-fix';
 
 async function exists(file){try{await stat(file);return true}catch{return false}}
 if(!(await exists(target)))throw new Error(`Gameplay v37 target does not exist: ${target}`);
 
 const source=path.join(root,runtime),destination=path.join(target,runtime);
 if(!(await exists(source)))throw new Error(`Gameplay v37 source missing: ${runtime}`);
+const parsed=spawnSync(process.execPath,['--check',source],{encoding:'utf8'});
+if(parsed.status!==0)throw new Error(`${runtime}: JavaScript syntax check failed: ${parsed.stderr||parsed.stdout}`);
 await copyFile(source,destination);
 
 for(const page of ['index.html','en.html']){
