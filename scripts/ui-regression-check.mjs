@@ -41,7 +41,7 @@ must('heritage-premium-v13-6.js',['igr_dlc_access_status','ACCÈS LIMITÉ','wind
 must('heritage-premium-v13-6.css',['.heritage-premium-home-action','.heritage-premium-modal','.heritage-premium-lock']);
 must('play-modes-v13-8.js',['v13.8-dual-play','igr_local_scenario_pack','igr_heritage_online_create','igr_heritage_online_join']);
 must('play-modes-v13-8.css',['.dual-mode-chooser','.dual-mode-card','.heritage-dual-row']);
-must('dlc-copy-v12-46.js',['5 dossiers liés. Une Famiglia. Jusqu’au Don.','Bloqués dans la Grey Room. Un groupe terroriste s’empare de la ville. Le périmètre se referme.','Le cartel frappe l’enquête, achète la justice et remonte jusqu’à vos proches.','Le régime est tombé. Les archives restent. Identifiez ceux qui ont ordonné, couvert et profité.']);
+must('dlc-copy-v12-46.js',['La Famiglia protège ses secrets. L’enquête remonte la chaîne du silence jusqu’au Don.','Bloqués dans la Grey Room. Un groupe terroriste s’empare de la ville. Le périmètre se referme.','Le cartel frappe l’enquête, achète la justice et remonte jusqu’à vos proches.','Le régime est tombé. Les archives restent. Identifiez ceux qui ont ordonné, couvert et profité.']);
 must('dlc-copy-v12-46.css',['.terror-access-pill[hidden]']);
 
 must('heritage-maitre-data-v34.js',["id:'maitre'","title:'LE CLIENT'","title:'LE DEAL'","title:'DEUX CHOIX'","title:'LE PROCÈS'","title:'L’HONNEUR'",'L’ANGLE','LA DÉMONSTRATION']);
