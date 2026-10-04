@@ -23,12 +23,34 @@ ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing')
 
 for(const dir of ['dist','www']){
   if(!(await exists(path.join(root,dir))))continue;
+
+  // v41 is the consolidated final owner. During mobile:build, dist may already
+  // be finalized to v41 while www is still intentionally at the v38 stage.
+  const v41Path=path.join(root,dir,'authoritative-runtime-v41.js');
+  if(await exists(v41Path)){
+    const v41=await readFile(v41Path,'utf8');
+    if(v41.includes('IGR_AUTHORITATIVE_V41')){
+      for(const page of ['index.html','en.html']){
+        const p=path.join(root,dir,page);if(!(await exists(p)))continue;
+        const html=await readFile(p,'utf8');
+        ok(html.includes('authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/${page}: v41 runtime reference missing`);
+        ok(!html.includes('gameplay-state-fix-v38.js'),`${dir}/${page}: v38 tag should be removed after v41 finalization`);
+      }
+      const appPath=path.join(root,dir,'app-v11.js');
+      if(await exists(appPath))ok((await readFile(appPath,'utf8')).includes('/service-worker.js?v=v41-authoritative-ui'),`${dir}/app-v11.js: v41 service-worker registration missing`);
+      const swPath=path.join(root,dir,'service-worker.js');
+      if(await exists(swPath)){
+        const swText=await readFile(swPath,'utf8');
+        ok(swText.includes("const CACHE='igr-v41-authoritative-ui';"),`${dir}/service-worker.js: v41 cache namespace missing`);
+        ok(swText.includes('/authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/service-worker.js: v41 runtime missing from shell cache`);
+      }
+      continue;
+    }
+  }
+
   const languagePath=path.join(root,dir,'language-v12.js');
   const v39Applied=await exists(languagePath) && (await readFile(languagePath,'utf8')).includes('IGR_AUTHORITATIVE_V39');
   if(v39Applied){
-    // v39 deliberately removes the additive v37/v38 script tags and takes over
-    // through the established language-v12.js path. A postinstall-generated dist
-    // can therefore coexist with a www bundle that is still at the v38 stage.
     const appPath=path.join(root,dir,'app-v11.js');
     if(await exists(appPath))ok((await readFile(appPath,'utf8')).includes('/service-worker.js?v=v39-authoritative-ui'),`${dir}/app-v11.js: v39 service-worker registration missing`);
     const swPath=path.join(root,dir,'service-worker.js');
@@ -55,4 +77,4 @@ for(const dir of ['dist','www']){
 }
 
 if(failures.length){console.error('\nGameplay v38 check FAILED:\n- '+failures.join('\n- '));process.exit(1)}
-console.log('Gameplay v38 check passed.');
+console.log('Gameplay v38 compatibility check passed.');
