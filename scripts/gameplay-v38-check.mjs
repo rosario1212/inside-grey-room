@@ -23,6 +23,18 @@ ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing')
 
 for(const dir of ['dist','www']){
   if(!(await exists(path.join(root,dir))))continue;
+  const languagePath=path.join(root,dir,'language-v12.js');
+  const v39Applied=await exists(languagePath) && (await readFile(languagePath,'utf8')).includes('IGR_AUTHORITATIVE_V39');
+  if(v39Applied){
+    // v39 deliberately removes the additive v37/v38 script tags and takes over
+    // through the established language-v12.js path. A postinstall-generated dist
+    // can therefore coexist with a www bundle that is still at the v38 stage.
+    const appPath=path.join(root,dir,'app-v11.js');
+    if(await exists(appPath))ok((await readFile(appPath,'utf8')).includes('/service-worker.js?v=v39-authoritative-ui'),`${dir}/app-v11.js: v39 service-worker registration missing`);
+    const swPath=path.join(root,dir,'service-worker.js');
+    if(await exists(swPath))ok((await readFile(swPath,'utf8')).includes("const CACHE='igr-v39-authoritative-ui';"),`${dir}/service-worker.js: v39 cache namespace missing`);
+    continue;
+  }
   for(const page of ['index.html','en.html']){
     const p=path.join(root,dir,page);if(!(await exists(p)))continue;
     const html=await readFile(p,'utf8');

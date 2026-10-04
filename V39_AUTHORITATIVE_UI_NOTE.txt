@@ -1,0 +1,1 @@
+v39 routes the live-game repair through language-v12.js, an already-established runtime asset path. This prevents an installed/stale shell from depending on a newly introduced script filename. It restores server-provided suspect objectives, event_select UI, investigator card semantics and the in-game Settings control, then rotates the service-worker cache namespace.
