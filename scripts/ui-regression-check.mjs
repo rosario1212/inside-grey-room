@@ -17,10 +17,10 @@ must('service-worker.js',[
   'igr-v36-1-parasite-fix','/play-modes-v13-8.js?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
   '/heritage-play-v13-7.js?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/heritage-v13-5.js?v=v13.8-dual-play',
   '/heritage-premium-v13-6.js?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play',
-  '/heritage-maitre-v34.css?v=v34.2-maitre-judicial','/heritage-maitre-judicial-v34.css?v=v34.2-maitre-judicial',
-  '/heritage-maitre-data-v34.js?v=v34.2-maitre-judicial','/heritage-maitre-assets-v34.js?v=v34.2-maitre-judicial','/heritage-maitre-v34.js?v=v34.2-maitre-judicial',
-  '/assets/heritage-maitre-01-le-client.webp?v=v34.1-maitre-posters','/assets/heritage-maitre-02-le-deal.webp?v=v34.1-maitre-posters',
-  '/assets/heritage-maitre-03-deux-choix.webp?v=v34.1-maitre-posters','/assets/heritage-maitre-04-le-proces.webp?v=v34.1-maitre-posters','/assets/heritage-maitre-05-l-honneur.webp?v=v34.1-maitre-posters',
+  '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
+  '/heritage-maitre-data-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-assets-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-online-v34-4.js?v=v34.9-maitre-theme-posters',
+  '/assets/heritage-maitre-01-le-client-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-02-le-deal-final.webp?v=v34.9-maitre-theme-posters',
+  '/assets/heritage-maitre-03-deux-choix-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-04-le-proces-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-05-l-honneur-final.webp?v=v34.9-maitre-theme-posters',
   '/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/omerta-v12-39.js?v=v12.45-choice-copy',
   '/dlc-copy-v12-46.js?v=v12.46-copy','/dlc-copy-v12-46.css?v=v12.46-copy','/gameplay-flow-v13.js?v=v13.2-final','/dlc-experience-v13.js?v=v13.2-final','/lobby-ui-fix-v13.js?v=v13.2-lobby-fix'
 ]);
@@ -28,8 +28,10 @@ must('service-worker.js',[
 must('scripts/build-web.mjs',['play-modes-v13-8.js','play-modes-v13-8.css','heritage-play-v13-7.js','heritage-play-v13-7.css','heritage-v13-5.js','heritage-premium-v13-6.js','heritage-premium-v13-6.css','dlc-invites-v12-45.js','dlc-invites-v12-45.css','dlc-copy-v12-46.js','dlc-copy-v12-46.css','gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js','duration-modes-v35.js','duration-modes-v35.css']);
 must('scripts/build-mobile.mjs',['play-modes-v13-8.js','play-modes-v13-8.css','heritage-play-v13-7.js','heritage-play-v13-7.css','heritage-v13-5.js','heritage-premium-v13-6.js','heritage-premium-v13-6.css','dlc-invites-v12-45.js','dlc-invites-v12-45.css','dlc-copy-v12-46.js','dlc-copy-v12-46.css','gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js']);
 must('scripts/apply-duration-v35.mjs',['duration-modes-v35.js','duration-modes-v35.css','v35-duration-modes']);
-must('scripts/finalize-runtime-v36.mjs',['v36.1-parasite-fix','igr-v36-1-parasite-fix','final runtime integrity verified','heritage-maitre-online-v34-4.js','MAÎTRE v34.4 online runtime missing from final PWA shell']);
-must('package.json',['scripts/apply-duration-v35.mjs dist','scripts/apply-duration-v35.mjs www','scripts/finalize-runtime-v36.mjs dist','scripts/finalize-runtime-v36.mjs www']);
+must('scripts/finalize-runtime-v36.mjs',['v36.1-parasite-fix','igr-v36-1-parasite-fix','final runtime integrity verified','heritage-maitre-online-v34-4.js','MAÎTRE v34.9 online runtime missing from final PWA shell']);
+must('scripts/apply-gameplay-v37.mjs',['gameplay-state-fix-v37.js','v37-objective-event-select','--check']);
+must('gameplay-state-fix-v37.js',['Minimise tes faits.','CHOIX DE L’ÉVÉNEMENT','state?.event_options','igr_v13_start_event']);
+must('package.json',['scripts/apply-duration-v35.mjs dist','scripts/apply-duration-v35.mjs www','scripts/finalize-runtime-v36.mjs dist','scripts/finalize-runtime-v36.mjs www','scripts/apply-gameplay-v37.mjs dist','scripts/apply-gameplay-v37.mjs www']);
 must('duration-modes-v35.js',["short:{estimate:'≈ 40–55 min'","long:{estimate:'≈ 70–90 min'",'interrogation:300','interrogation:480','confrontation:120','confrontation:240','assembly:150','assembly:240','igr_v35_set_duration_mode','AudioContext','phase_ends_at']);
 must('duration-modes-v35.css',['.igr-duration-v35','.igr-duration-tab-v35','.is-active']);
 
@@ -45,9 +47,8 @@ must('dlc-copy-v12-46.css',['.terror-access-pill[hidden]']);
 must('heritage-maitre-data-v34.js',["id:'maitre'","title:'LE CLIENT'","title:'LE DEAL'","title:'DEUX CHOIX'","title:'LE PROCÈS'","title:'L’HONNEUR'",'L’ANGLE','LA DÉMONSTRATION']);
 must('heritage-maitre-v34.js',['igr_heritage_maitre_live_v1','completeChapter','CE QUI EST DÉSORMAIS VRAI','CARTE DES LIENS','window.IGR_HERITAGE_MAITRE']);
 must('heritage-maitre-v34.css',['.hplay-theme-maitre','.maitre-angle-box','.maitre-result-grid']);
-must('heritage-maitre-assets-v34.js',['v34.4-maitre-fix','heritage-maitre-01-le-client-v34-4.svg','heritage-maitre-02-le-deal-v34-4.svg','heritage-maitre-03-deux-choix-v34-4.svg','heritage-maitre-04-le-proces-v34-4.svg','heritage-maitre-05-l-honneur-v34-4.svg']);
-mustNot('heritage-maitre-assets-v34.js',['.webp']);
-must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','heritage-maitre-online-v34-4.js','heritage-maitre-01-le-client-v34-4.svg','heritage-maitre-02-le-deal-v34-4.svg','heritage-maitre-03-deux-choix-v34-4.svg','heritage-maitre-04-le-proces-v34-4.svg','heritage-maitre-05-l-honneur-v34-4.svg','corrected posters + dedicated synchronized online runtime']);
+must('heritage-maitre-assets-v34.js',['v34.9','heritage-maitre-01-le-client-final.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp']);
+must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','heritage-maitre-online-v34-4.js','heritage-maitre-01-le-client-final.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp','v34.9-maitre-theme-posters']);
 mustNot('scripts/apply-maitre-v34.mjs',['renderPoster']);
 must('package.json',['scripts/apply-maitre-v34.mjs dist','scripts/apply-maitre-v34.mjs www']);
-console.log('v36.1 runtime hygiene + v35 duration modes + v34.4 MAÎTRE + v13.8 Dual Play + v12.46 DLC regression markers OK');
+console.log('v37 gameplay recovery + v36.1 runtime hygiene + v35 duration modes + v34.9 MAÎTRE + v13.8 Dual Play + v12.46 DLC regression markers OK');
