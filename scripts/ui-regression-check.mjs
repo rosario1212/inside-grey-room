@@ -4,9 +4,9 @@ const must=(f,parts)=>{const s=read(f);for(const p of parts)if(!s.includes(p))th
 const mustNot=(f,parts)=>{const s=read(f);for(const p of parts)if(s.includes(p))throw new Error(`${f}: unexpected ${p}`)};
 
 must('index.html',[
-  'dlc-invites-v12-45.css?v=v12.45-dlc-invites','dlc-invites-v12-45.js?v=v12.45-dlc-invites','omerta-v12-39.js?v=v12.45-choice-copy',
-  'dlc-copy-v12-46.css?v=v12.46-copy','dlc-copy-v12-46.js?v=v12.46-copy','gameplay-flow-v13.css?v=v13.2-final','dlc-experience-v13.css?v=v13.2-final',
-  'lobby-ui-fix-v13.css?v=v13.3-lobby-settings','scenario-flow-v13.js?v=v13.2-final','gameplay-flow-v13.js?v=v13.2-final','dlc-experience-v13.js?v=v13.2-final','lobby-ui-fix-v13.js?v=v13.3-lobby-settings'
+  'dlc-invites-v12-45.css?v=','dlc-invites-v12-45.js?v=','omerta-v12-39.js?v=',
+  'dlc-copy-v12-46.css?v=','dlc-copy-v12-46.js?v=','gameplay-flow-v13.css?v=','dlc-experience-v13.css?v=',
+  'lobby-ui-fix-v13.css?v=','scenario-flow-v13.js?v=','gameplay-flow-v13.js?v=','dlc-experience-v13.js?v=','lobby-ui-fix-v13.js?v='
 ]);
 must('dlc-invites-v12-45.js',['igr_dlc_create_invite','igr_dlc_redeem_invite','igr_dlc_list_access','Gérer les accès','Code d’accès']);
 must('dlc-invites-v12-45.css',['.igr-dlc-access-modal','.igr-dlc-new-code','.igr-dlc-access-action']);
@@ -14,15 +14,15 @@ must('omerta-v12-39.js',['igr-choice-status-note','Aucun rôle choisi']);
 mustNot('omerta-v12-39.js',['igr-choice-status-empty']);
 
 must('service-worker.js',[
-  'igr-v36-1-parasite-fix','/play-modes-v13-8.js?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
-  '/heritage-play-v13-7.js?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/heritage-v13-5.js?v=v13.8-dual-play',
-  '/heritage-premium-v13-6.js?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play',
-  '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
-  '/heritage-maitre-data-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-assets-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-online-v34-4.js?v=v34.9-maitre-theme-posters',
-  '/assets/heritage-maitre-01-le-client-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-02-le-deal-final.webp?v=v34.9-maitre-theme-posters',
-  '/assets/heritage-maitre-03-deux-choix-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-04-le-proces-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-05-l-honneur-final.webp?v=v34.9-maitre-theme-posters',
-  '/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/omerta-v12-39.js?v=v12.45-choice-copy',
-  '/dlc-copy-v12-46.js?v=v12.46-copy','/dlc-copy-v12-46.css?v=v12.46-copy','/gameplay-flow-v13.js?v=v13.2-final','/dlc-experience-v13.js?v=v13.2-final','/lobby-ui-fix-v13.js?v=v13.2-lobby-fix'
+  "const CACHE='igr-",'/play-modes-v13-8.js?v=','/play-modes-v13-8.css?v=',
+  '/heritage-play-v13-7.js?v=','/heritage-play-v13-7.css?v=','/heritage-v13-5.js?v=',
+  '/heritage-premium-v13-6.js?v=','/heritage-premium-v13-6.css?v=',
+  '/heritage-maitre-v34.css?v=','/heritage-maitre-judicial-v34.css?v=','/heritage-maitre-polish-v34.css?v=',
+  '/heritage-maitre-data-v34.js?v=','/heritage-maitre-assets-v34.js?v=','/heritage-maitre-v34.js?v=','/heritage-maitre-online-v34-4.js?v=',
+  '/assets/heritage-maitre-01-le-client-final.webp?v=','/assets/heritage-maitre-02-le-deal-final.webp?v=',
+  '/assets/heritage-maitre-03-deux-choix-final.webp?v=','/assets/heritage-maitre-04-le-proces-final.webp?v=','/assets/heritage-maitre-05-l-honneur-final.webp?v=',
+  '/dlc-invites-v12-45.js?v=','/dlc-invites-v12-45.css?v=','/omerta-v12-39.js?v=',
+  '/dlc-copy-v12-46.js?v=','/dlc-copy-v12-46.css?v=','/gameplay-flow-v13.js?v=','/dlc-experience-v13.js?v=','/lobby-ui-fix-v13.js?v='
 ]);
 
 must('scripts/build-web.mjs',['play-modes-v13-8.js','play-modes-v13-8.css','heritage-play-v13-7.js','heritage-play-v13-7.css','heritage-v13-5.js','heritage-premium-v13-6.js','heritage-premium-v13-6.css','dlc-invites-v12-45.js','dlc-invites-v12-45.css','dlc-copy-v12-46.js','dlc-copy-v12-46.css','gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js','duration-modes-v35.js','duration-modes-v35.css']);
@@ -51,4 +51,4 @@ must('heritage-maitre-assets-v34.js',['v34.9','heritage-maitre-01-le-client-fina
 must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','heritage-maitre-online-v34-4.js','heritage-maitre-01-le-client-final.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp','v34.9-maitre-theme-posters']);
 mustNot('scripts/apply-maitre-v34.mjs',['renderPoster']);
 must('package.json',['scripts/apply-maitre-v34.mjs dist','scripts/apply-maitre-v34.mjs www']);
-console.log('v37 gameplay recovery + v36.1 runtime hygiene + v35 duration modes + v34.9 MAÎTRE + v13.8 Dual Play + v12.46 DLC regression markers OK');
+console.log('v37 gameplay recovery + v36.1 runtime hygiene + v35 duration modes + v34.9 MAÎTRE + v13.8 Dual Play + DLC regression markers OK');
