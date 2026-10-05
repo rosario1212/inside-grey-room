@@ -1,1 +1,0 @@
-Production audit completed transactionally against scenarios 001–034: 34/34 PASS. See FINAL_AUDIENCE_AUDIT_V52.md for the matrix and assertions.
