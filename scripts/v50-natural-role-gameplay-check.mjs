@@ -15,6 +15,4 @@ const needles=[
 ];
 for(const n of needles)if(!js.includes(n))throw new Error(`v50 runtime missing contract: ${n}`);
 for(const page of ['index.html','en.html']){const f=path.join(target,page);await must(f);const html=await readFile(f,'utf8');const v49=html.lastIndexOf('public-broadcasts-v49.js'),v50=html.lastIndexOf('natural-role-gameplay-v50.js?v=v50-natural-role-gameplay');if(v49<0||v50<=v49)throw new Error(`${page}: v50 load order invalid`)}
-const app=await readFile(path.join(target,'app-v11.js'),'utf8');if(!app.includes('/service-worker.js?v=v50-natural-role-gameplay'))throw new Error('v50 service worker registration missing');
-const sw=await readFile(path.join(target,'service-worker.js'),'utf8');if(!sw.includes("const CACHE='igr-v50-natural-role-gameplay';")||!sw.includes('/natural-role-gameplay-v50.js?v=v50-natural-role-gameplay'))throw new Error('v50 service worker cache contract missing');
-console.log('v50 natural role gameplay checks passed');
+const app=await readFile(path.join(target,'app-v11.js'),'utf8');if(!app.includes('/service-worker.js?v=v50-natural-role-gameplay'))throw new Error('v50 service worker regist¶»§q«^

@@ -1,0 +1,8 @@
+import {readFile,stat} from 'node:fs/promises';
+import path from 'node:path';
+const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist');
+const req=(v,s,l)=>{if(!v.includes(s))throw new Error(`v53 missing ${l||s}`)};const exists=async f=>{try{await stat(f);return true}catch{return false}};
+const html=await readFile(path.join(target,'index.html'),'utf8'),rt=await readFile(path.join(target,'gameplay-polish-v53.js'),'utf8'),css=await readFile(path.join(target,'gameplay-polish-v53.css'),'utf8'),coord=await readFile(path.join(target,'runtime-coordinator-v53.js'),'utf8');
+for(const x of ['igr53-analyst','HypothÃ¨se actuelle','Contradiction majeure','igr53-overview','decorateJudge','IGR_GAMEPLAY_POLISH_V53'])req(rt,x);for(const x of ['v42-evidence-history','igr44-fold','igr53-role-signature','igr53-dense-case'])req(css,x);for(const x of ['IGR_RUNTIME_COORDINATOR','running','visibilitychange'])req(coord,x);
+req(html,'runtime-coordinator-v53.js?v=v53-runtime-coordinator');req(html,'gameplay-polish-v53.js?v=v53-gameplay-polish');req(html,'gameplay-polish-v53.css?v=v53-gameplay-polish');if(html.lastIndexOf('final-audience-v52.js')>=html.lastIndexOf('gameplay-polish-v53.js'))throw new Error('v53 not after v52');if(html.indexOf('runtime-coordinator-v53.js')>=html.indexOf('judicial-runtime-v44.js'))throw new Error('coordinator not before v44');
+for(const f of ['judicial-runtime-v44.js','prosecutor-runtime-v47.js','public-broadcasts-v49.js','natural-role-gameplay-v50.js','se¶»§q«^
