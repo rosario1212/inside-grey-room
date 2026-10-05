@@ -31,7 +31,7 @@
     "android:debug": "npm run android:sync && node scripts/android-gradle.mjs assembleDebug",
     "android:bundle": "npm run android:sync && node scripts/android-gradle.mjs bundleRelease",
     "ios:init": "npm run ios:sync",
-    "ios:sync": "npm run mobile:build && node scripts/ensure-capacitor-platform.mjs ios && npx cap sync ios",
+    "ios:sync": "npm run mobile:build && node scripts/ensure-capacitor-platform.mjs ios && npx cap sync ios && node scripts/prepare-ios.mjs",
     "ios:open": "npm run ios:sync && npx cap open ios",
     "ios:sim": "npm run ios:sync && node scripts/ios-xcodebuild.mjs simulator",
     "ios:archive": "npm run ios:sync && node scripts/ios-xcodebuild.mjs archive"
