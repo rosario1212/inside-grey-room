@@ -1,0 +1,1 @@
+Responsibility labels are limited to: 0 = aucune, 1 = secondaire, 2 = principale. No tertiary/level-3 label is used in v52.
