@@ -6,14 +6,16 @@ const target=path.resolve(root,process.argv[2]||'dist');
 const exists=async f=>{try{await stat(f);return true}catch{return false}};
 const runtime=path.join(target,'investigation-runtime-v42.js');
 const audit=path.join(target,'investigation-audit-v42-1.js');
+const authoritative=path.join(target,'authoritative-runtime-v41.js');
 const migration=path.join(root,'supabase','migrations','20261005_v42_audit_hardening.sql');
 
-for(const [file,label] of [[runtime,'v42 runtime'],[audit,'v42.1 audit runtime'],[migration,'v42 audit migration']]){
+for(const [file,label] of [[runtime,'v42 runtime'],[audit,'v42.1 audit runtime'],[authoritative,'v41 authoritative runtime'],[migration,'v42 audit migration']]){
   if(!(await exists(file)))throw new Error(`${label} missing`);
 }
 
 const js=await readFile(runtime,'utf8');
 const auditJs=await readFile(audit,'utf8');
+const v41=await readFile(authoritative,'utf8');
 const sql=await readFile(migration,'utf8');
 const coreIds=Array.from({length:34},(_,i)=>String(i+1).padStart(3,'0'));
 const dlcIds=Array.from({length:14},(_,i)=>String(i+21).padStart(3,'0'));
@@ -38,14 +40,32 @@ for(const id of dlcIds){
 
 for(const marker of [
   'IGR_INVESTIGATION_V42',
+  'IGR_V42_2_CELL_STABILITY',
   "label:copy('Éléments d’enquête'",
   "id:'chronology'",
   'v42-objective-bottom',
   "ph==='event_confrontation'",
   "ph==='provisional_orals'",
   'v42-picker-names',
-  'ensureSettings'
+  'IGR_AUTHORITATIVE_V41?.ensureSettings'
 ])if(!js.includes(marker))throw new Error(`v42 missing: ${marker}`);
+
+// Investigation elements are an investigator-side tool. Suspects/witnesses must
+// neither receive the tab nor be able to force the legacy timeline state open.
+for(const marker of [
+  "tabs.filter(t=>t?.id!=='timeline')",
+  "S()?.tab==='timeline'&&!canSeeEvidence(role())",
+  "return r==='suspect'?renderSuspectChronology():''"
+])if(!js.includes(marker))throw new Error(`v42 evidence access guard missing: ${marker}`);
+
+// Regression for the screenshot bug: v41 and v42 must not observe and rewrite
+// their own Settings DOM. v41 is the sole owner of the top-bar gear.
+if(js.includes('new MutationObserver(queuePost)'))throw new Error('v42 must not use a self-triggering post-render MutationObserver');
+if(js.includes('function postRender(){pickerNames();ensureSettings()}'))throw new Error('v42 must not move/recreate Settings during postRender');
+if(js.includes("btn.id='igrTopSettingsV42'"))throw new Error('v42 must not create a competing Settings button');
+if(v41.includes('new MutationObserver(queueSettings)'))throw new Error('v41 must not use a self-triggering Settings MutationObserver');
+if(!v41.includes('IGR_V41_SETTINGS_SINGLE_OWNER'))throw new Error('v41 single Settings owner marker missing');
+if(!v41.includes("btn.id='igrTopSettings'"))throw new Error('v41 top Settings control missing');
 
 for(const marker of [
   'IGR_INVESTIGATION_AUDIT_V42_1',
@@ -110,10 +130,18 @@ if(!/count\(\*\)[\s\S]*scenario_id between '001' and '034'[\s\S]*<>34/.test(sql)
 for(const page of ['index.html','en.html']){
   const file=path.join(target,page);if(!(await exists(file)))continue;
   const html=await readFile(file,'utf8');
-  const v41=html.lastIndexOf('authoritative-runtime-v41.js?v=v41-authoritative-ui');
-  const v42=html.lastIndexOf('investigation-runtime-v42.js?v=v42-investigation-ui');
+  const v41Pos=html.lastIndexOf('authoritative-runtime-v41.js?v=v41-authoritative-ui');
+  const v42Pos=html.lastIndexOf('investigation-runtime-v42.js?v=v42.2-cell-stability');
   const auditPos=html.lastIndexOf('investigation-audit-v42-1.js?v=v42.1-investigation-audit');
-  if(v41<0||v42<0||auditPos<0||!(v41<v42&&v42<auditPos))throw new Error(`${page}: bad v41/v42/v42.1 runtime order`);
+  if(v41Pos<0||v42Pos<0||auditPos<0||!(v41Pos<v42Pos&&v42Pos<auditPos))throw new Error(`${page}: bad v41/v42.2/v42.1 runtime order`);
 }
 
-console.log('Inside Grey Room v42/v42.1 investigation checks: 34 scenario contexts, 65 DLC objectives, dynamic duration and database content contract OK');
+const app=path.join(target,'app-v11.js');
+if(await exists(app)&&!(await readFile(app,'utf8')).includes('/service-worker.js?v=v42.2-cell-stability'))throw new Error('v42.2 service-worker registration missing');
+const sw=path.join(target,'service-worker.js');
+if(await exists(sw)){
+  const swText=await readFile(sw,'utf8');
+  if(!swText.includes('/investigation-runtime-v42.js?v=v42.2-cell-stability'))throw new Error('v42.2 runtime missing from service-worker cache');
+}
+
+console.log('Inside Grey Room v42.2 checks: 34 dossiers + objectives + dynamic duration + suspect evidence privacy + single Settings owner OK');
