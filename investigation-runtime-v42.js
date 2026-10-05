@@ -26,7 +26,7 @@ const playerById=id=>(sync()?.players||[]).find(p=>String(p.id)===String(id));
 const targetName=id=>playerById(id)?.pseudo||(sync()?.suspects||[]).find(p=>String(p.id)===String(id))?.pseudo||'';
 
 const CONTEXT_HINTS={
-'001':`Fenêtre à reconstruire : <b>02 h 11–03 h 10</b>. Les versions doivent préciser les arrivées, départs et passages autour de la chambre 222. Les horaires plus précis révélés ensuite doivent rester compatibles avec cette fenêtre.`,
+'001':`La nuit de la chambre 222 se reconstruit passage par passage. Chaque suspect doit s’appuyer sur la chronologie de sa carte. Les horaires techniques précis — téléphone, accès, parking ou caméra — ne deviennent communs que lorsqu’un élément les révèle.`,
 '002':`Reconstituez les derniers contacts avec Léon : pressions, demandes d’aide, silences et possibilités concrètes d’intervention. Le dossier porte sur la responsabilité avant sa mort, pas sur la recherche d’un meurtrier.`,
 '003':`Séparez quatre maillons : recherche, accès au matériel, transfert et alertes. Pour chaque étape, distinguez ce qui était connu avant l’attaque de ce qui a été dissimulé après.`,
 '004':`Trois personnes ont reçu un appel ou une demande d’aide de Sofia. Comparez l’ordre des contacts, ce que chacune comprend de son état et la fenêtre dans laquelle une intervention restait possible.`,
@@ -62,7 +62,7 @@ const CONTEXT_HINTS={
 '034':`Les dossiers utilisent des surnoms dont le sens change selon les opérations. Croisez alias, fonctions officielles, périodes et décisions avant d’attribuer un acte à une personne précise.`
 };
 const CONTEXT_HINTS_EN={
-'001':'Timeline to reconstruct: <b>02:11–03:10</b>. Each version must account for arrivals, departures and movement around room 222. More precise times revealed later must remain compatible with this window.'
+'001':'The night around room 222 must be reconstructed passage by passage. Each suspect relies on the timeline on their role card. Precise technical times — phone, access, parking or camera — become shared only when an evidence item reveals them.'
 };
 function scenarioObject(){
   try{return typeof scenario==='function'?scenario(scenarioId()):null}catch(_){return null}
@@ -79,12 +79,15 @@ function contextCards(){
 function renderContextCards(){
   return `<div class="v42-context-grid">${contextCards().map(c=>`<article class="v42-context-card"><small>${esc(c.kicker)}</small><h3>${esc(c.title)}</h3><p>${c.html?c.text:esc(c.text)}</p></article>`).join('')}</div>`;
 }
-const ADMIN_EVENTS=new Set(['message','phase','cycle','ready','timer','score','join','leave','role']);
+const NON_EVIDENCE_EVENTS=new Set(['context','message','phase','cycle','ready','timer','score','join','leave','role','roles_distributed','briefing','room_created','player_joined','player_left','role_selected','sync','turn','interrogation','video']);
+const EVIDENCE_EVENTS=new Set(['trame','reveal','breaking_news','evidence','case_event','witness_statement','expert_result','field_result']);
 function revealedElements(){
   return (sync()?.events||[]).filter(e=>{
-    if(ADMIN_EVENTS.has(String(e?.event_type||'')))return false;
+    const type=String(e?.event_type||'').toLowerCase();
+    if(NON_EVIDENCE_EVENTS.has(type))return false;
+    if(!EVIDENCE_EVENTS.has(type)&&!type.endsWith('_result'))return false;
     const p=e?.payload||{};
-    return !!clean(p.title||p.text||p.summary);
+    return !!clean(p.title||p.text||p.summary||p.message||p.body);
   });
 }
 function eventClass(e){
@@ -94,12 +97,12 @@ function eventClass(e){
 function eventClock(iso){try{return new Date(iso).toLocaleTimeString(fr()?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'})}catch(_){return'--:--'}}
 function renderElementsTab(){
   const r=role(),events=revealedElements();
-  const visible=canSeeEvidence(r)?events:events.filter(e=>String(e.event_type||'')!=='trame');
+  const visible=canSeeEvidence(r)?events:[];
   return `<section class="v42-elements" aria-label="${esc(copy('Éléments d’enquête','Investigation elements'))}">
     <div class="v42-elements-head"><div><span>${esc(copy('DOSSIER COMMUN','SHARED CASE FILE'))}</span><h2>${esc(copy('Éléments d’enquête','Investigation elements'))}</h2></div><small>${esc(copy('Contexte + éléments révélés','Context + revealed elements'))}</small></div>
     ${renderContextCards()}
     <div class="v42-evidence-head"><span>${esc(copy('ÉLÉMENTS RÉVÉLÉS','REVEALED ELEMENTS'))}</span><small>${visible.length}</small></div>
-    ${visible.length?`<div class="v42-evidence-list">${visible.slice().reverse().map(e=>{const p=e.payload||{};return `<article class="v42-evidence ${eventClass(e)}"><div class="v42-evidence-meta"><span>${esc(p.title||e.event_type||copy('ÉLÉMENT','ELEMENT'))}</span><time>${esc(eventClock(e.created_at))}</time></div><p>${esc(p.text||p.summary||'')}</p></article>`}).join('')}</div>`:`<div class="v42-empty">${esc(canSeeEvidence(r)?copy('Les nouveaux indices et trames apparaîtront ici au fil des cycles.','New clues and story elements will appear here as the cycles progress.'):copy('Les éléments réservés à l’enquête ne sont pas affichés. Le contexte commun reste accessible ici.','Investigation-only elements are hidden. Shared context remains available here.'))}</div>`}
+    ${visible.length?`<div class="v42-evidence-list">${visible.slice().reverse().map(e=>{const p=e.payload||{};return `<article class="v42-evidence ${eventClass(e)}"><div class="v42-evidence-meta"><span>${esc(p.title||e.event_type||copy('ÉLÉMENT','ELEMENT'))}</span><time>${esc(eventClock(e.created_at))}</time></div><p>${esc(p.text||p.summary||p.message||p.body||'')}</p></article>`}).join('')}</div>`:`<div class="v42-empty">${esc(canSeeEvidence(r)?copy('Les nouveaux indices et trames apparaîtront ici au fil des cycles.','New clues and story elements will appear here as the cycles progress.'):copy('Les éléments réservés à l’enquête ne sont pas affichés. Le contexte commun reste accessible ici.','Investigation-only elements are hidden. Shared context remains available here.'))}</div>`}
   </section>`;
 }
 function chronologyRows(text){
@@ -164,7 +167,7 @@ if(basePrivate){
       const summary=t.content.querySelector('.role-summary');
       if(card&&summary){
         const ps=me()?.private_state||{};
-        const objective=clean(ps.objective_main)||clean(summary.querySelector('span')?.textContent);
+        const objective=clean(ps.objective_main)||clean(ps.position)||clean(summary.querySelector('span')?.textContent);
         const b=summary.querySelector('b'),span=summary.querySelector('span');
         if(b)b.textContent=copy('OBJECTIF','OBJECTIVE');if(span&&objective)span.textContent=objective;
         summary.classList.add('v42-objective-bottom');
