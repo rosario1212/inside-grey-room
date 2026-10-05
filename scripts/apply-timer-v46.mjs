@@ -3,8 +3,8 @@ import path from 'node:path';
 
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v46-1-long-timers';
-const CACHE='igr-v46-1-long-timers';
+const VERSION='v46-2-six-minute-long';
+const CACHE='igr-v46-2-six-minute-long';
 const runtimeName='timer-runtime-v46.js';
 const source=path.join(root,runtimeName);
 const appTarget=path.join(target,'app-v11.js');
@@ -42,17 +42,17 @@ for(const page of ['index.html','en.html']){
   const html=await readFile(file,'utf8');
   const marker=`${runtimeName}?v=${VERSION}`;
   const pos=html.lastIndexOf(marker);
-  if(pos<0)throw new Error(`${page}: v46.1 timer runtime missing`);
+  if(pos<0)throw new Error(`${page}: v46.2 timer runtime missing`);
   const after=html.slice(pos+marker.length);
-  if(/<script[^>]+src=/i.test(after))throw new Error(`${page}: v46.1 timer runtime must be the final external script`);
+  if(/<script[^>]+src=/i.test(after))throw new Error(`${page}: v46.2 timer runtime must be the final external script`);
 }
 if(await exists(appTarget)){
   const app=await readFile(appTarget,'utf8');
-  if(!app.includes(`/service-worker.js?v=${VERSION}`))throw new Error('service worker registration is stale after v46.1');
+  if(!app.includes(`/service-worker.js?v=${VERSION}`))throw new Error('service worker registration is stale after v46.2');
 }
 if(await exists(swTarget)){
   const sw=await readFile(swTarget,'utf8');
-  if(!sw.includes(`const CACHE='${CACHE}';`))throw new Error('service worker cache namespace is stale after v46.1');
-  if(!sw.includes(`/${runtimeName}?v=${VERSION}`))throw new Error('service worker does not precache v46.1 timer runtime');
+  if(!sw.includes(`const CACHE='${CACHE}';`))throw new Error('service worker cache namespace is stale after v46.2');
+  if(!sw.includes(`/${runtimeName}?v=${VERSION}`))throw new Error('service worker does not precache v46.2 timer runtime');
 }
-console.log(`Inside Grey Room timer runtime v46.1 applied to ${target}`);
+console.log(`Inside Grey Room timer runtime v46.2 applied to ${target}`);
