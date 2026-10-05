@@ -24,6 +24,42 @@ ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing')
 for(const dir of ['dist','www']){
   if(!(await exists(path.join(root,dir))))continue;
 
+  // v43/v43.1 may already have finalized dist during npm postinstall while
+  // mobile:build is validating www at an earlier layer. Treat the newest
+  // finalized bundle as authoritative instead of incorrectly demanding v42 last.
+  const v43Path=path.join(root,dir,'lawyer-runtime-v43.js');
+  const v431Path=path.join(root,dir,'lawyer-reading-v43-1.js');
+  if(await exists(v43Path) && await exists(v431Path)){
+    const v43=await readFile(v43Path,'utf8');
+    const v431=await readFile(v431Path,'utf8');
+    if(v43.includes('v43-lawyer-one-client')&&v431.includes('v43.1-lawyer-reading')){
+      for(const page of ['index.html','en.html']){
+        const p=path.join(root,dir,page);if(!(await exists(p)))continue;
+        const html=await readFile(p,'utf8');
+        const v42Pos=html.lastIndexOf('investigation-audit-v42-1.js');
+        const v43Pos=html.lastIndexOf('lawyer-runtime-v43.js?v=v43-lawyer-one-client');
+        const v431Pos=html.lastIndexOf('lawyer-reading-v43-1.js?v=v43.1-lawyer-reading');
+        ok(v42Pos>=0&&v43Pos>v42Pos&&v431Pos>v43Pos,`${dir}/${page}: expected v42 < v43 < v43.1 runtime order`);
+        const lastScript=html.lastIndexOf('<script');
+        ok(lastScript>=0&&html.slice(lastScript).includes('lawyer-reading-v43-1.js'),`${dir}/${page}: v43.1 lawyer reading bridge must be the final runtime script`);
+        ok(!html.includes('gameplay-state-fix-v38.js'),`${dir}/${page}: v38 tag should be removed after v43 finalization`);
+      }
+      const appPath=path.join(root,dir,'app-v11.js');
+      if(await exists(appPath)){
+        const app=await readFile(appPath,'utf8');
+        ok(app.includes('/service-worker.js?v=v43.1-lawyer-reading'),`${dir}/app-v11.js: v43.1 service-worker registration missing`);
+      }
+      const swPath=path.join(root,dir,'service-worker.js');
+      if(await exists(swPath)){
+        const swText=await readFile(swPath,'utf8');
+        ok(swText.includes("const CACHE='igr-v43-1-lawyer-reading';"),`${dir}/service-worker.js: v43.1 cache namespace missing`);
+        ok(swText.includes('/lawyer-runtime-v43.js?v=v43-lawyer-one-client'),`${dir}/service-worker.js: v43 lawyer runtime missing from shell cache`);
+        ok(swText.includes('/lawyer-reading-v43-1.js?v=v43.1-lawyer-reading'),`${dir}/service-worker.js: v43.1 reading bridge missing from shell cache`);
+      }
+      continue;
+    }
+  }
+
   // v42/v42.1/v42.2/v42.3 may already have finalized dist during npm postinstall
   // while mobile:build is still validating www at the earlier v38 stage.
   const v42Path=path.join(root,dir,'investigation-runtime-v42.js');
