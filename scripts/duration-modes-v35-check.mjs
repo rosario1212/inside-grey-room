@@ -13,6 +13,14 @@ const migration=await readFile(migrationPath,'utf8');
 
 const requireMatch=(text,re,message)=>{if(!re.test(text))throw new Error(message)};
 const forbidMatch=(text,re,message)=>{if(re.test(text))throw new Error(message)};
+const branch=(mode)=>{
+  const marker=`when '${mode}' then case p_kind`;
+  const start=migration.indexOf(marker);
+  if(start<0)throw new Error(`Database migration is missing the ${mode.toUpperCase()} duration branch`);
+  const end=migration.indexOf('else null end',start);
+  if(end<0)throw new Error(`Database migration has an unterminated ${mode.toUpperCase()} duration branch`);
+  return migration.slice(start,end+'else null end'.length);
+};
 
 requireMatch(source,/short:\{[^}]*interrogation:360\b/,'SHORT interrogation must be 360 seconds in duration-modes-v35.js');
 requireMatch(source,/long:\{[^}]*interrogation:480\b/,'LONG interrogation must be 480 seconds in duration-modes-v35.js');
@@ -20,10 +28,12 @@ requireMatch(source,/long:\{[^}]*finalDebrief:240\b/,'LONG final debrief must be
 forbidMatch(source,/short:\{[^}]*interrogation:300\b/,'SHORT interrogation regressed to 300 seconds in duration-modes-v35.js');
 forbidMatch(source,/long:\{[^}]*interrogation:360\b/,'LONG interrogation regressed to 360 seconds in duration-modes-v35.js');
 
-requireMatch(migration,/when 'short' then case p_kind[\s\S]*?when 'interrogation' then 360\b/,'Database migration must keep SHORT interrogation at 360 seconds');
-requireMatch(migration,/when 'long' then case p_kind[\s\S]*?when 'interrogation' then 480\b/,'Database migration must set LONG interrogation to 480 seconds');
-requireMatch(migration,/when 'long' then case p_kind[\s\S]*?when 'final_debrief' then 240\b/,'Database migration must set LONG final debrief to 240 seconds');
-forbidMatch(migration,/when 'long' then case p_kind[\s\S]*?when 'interrogation' then 360\b/,'Database migration regressed LONG interrogation to 360 seconds');
+const shortBranch=branch('short');
+const longBranch=branch('long');
+requireMatch(shortBranch,/when 'interrogation' then 360\b/,'Database migration must keep SHORT interrogation at 360 seconds');
+requireMatch(longBranch,/when 'interrogation' then 480\b/,'Database migration must set LONG interrogation to 480 seconds');
+requireMatch(longBranch,/when 'final_debrief' then 240\b/,'Database migration must set LONG final debrief to 240 seconds');
+forbidMatch(longBranch,/when 'interrogation' then 360\b/,'Database migration regressed LONG interrogation to 360 seconds');
 
 if(await exists(builtPath)){
   const built=await readFile(builtPath,'utf8');
