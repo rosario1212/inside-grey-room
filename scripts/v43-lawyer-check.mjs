@@ -23,7 +23,7 @@ for(const marker of [
 
 for(const marker of [
   'Rencontrer · 1 min','Demander à nouveau l’avocat','unique client officiel','Consultations officieuses',
-  'can never invent information','AVANT LES CONCLUSIONS PROVISOIRES','window.confirm'
+  'may never invent information','AVANT LES CONCLUSIONS PROVISOIRES','window.confirm'
 ])if(!js.includes(marker))throw new Error(`v43 runtime marker missing: ${marker}`);
 
 if(!sourceApp.includes('unique client officiel'))throw new Error('built app does not contain the one-client lawyer rule');
