@@ -12,9 +12,9 @@ for(let i=1;i<=34;i++){
   const id=String(i).padStart(3,'0');
   if(!source.includes(`'${id}':`))fail(`missing scenario guide ${id}`);
 }
-if((source.match(/data-context-card=\\"1\\"/g)||[]).length!==1)fail('context card 1 template missing or duplicated');
-if((source.match(/data-context-card=\\"2\\"/g)||[]).length!==1)fail('context card 2 template missing or duplicated');
-if(source.includes('data-context-card=\\"3\\"'))fail('a third opening context card is present');
+if((source.match(/data-context-card="1"/g)||[]).length!==1)fail('context card 1 template missing or duplicated');
+if((source.match(/data-context-card="2"/g)||[]).length!==1)fail('context card 2 template missing or duplicated');
+if(source.includes('data-context-card="3"'))fail('a third opening context card is present');
 for(const marker of [
   "label:isEn()?'Case evidence':'Éléments d’enquête'",
   "ps.objective_main||ps.position",
