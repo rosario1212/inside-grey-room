@@ -24,8 +24,35 @@ ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing')
 for(const dir of ['dist','www']){
   if(!(await exists(path.join(root,dir))))continue;
 
-  // v41 is the consolidated final owner. During mobile:build, dist may already
-  // be finalized to v41 while www is still intentionally at the v38 stage.
+  // v42 may already have finalized dist during npm postinstall while mobile:build
+  // is still validating www at the earlier v38 stage. Accept that intentional split.
+  const v42Path=path.join(root,dir,'investigation-runtime-v42.js');
+  if(await exists(v42Path)){
+    const v42=await readFile(v42Path,'utf8');
+    if(v42.includes('IGR_INVESTIGATION_V42')){
+      for(const page of ['index.html','en.html']){
+        const p=path.join(root,dir,page);if(!(await exists(p)))continue;
+        const html=await readFile(p,'utf8');
+        ok(html.includes('authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/${page}: v41 base runtime reference missing under v42`);
+        ok(html.includes('investigation-runtime-v42.js?v=v42-investigation-ui'),`${dir}/${page}: v42 runtime reference missing`);
+        ok(!html.includes('gameplay-state-fix-v38.js'),`${dir}/${page}: v38 tag should be removed after v42 finalization`);
+        const lastScript=html.lastIndexOf('<script');
+        ok(lastScript>=0&&html.slice(lastScript).includes('investigation-runtime-v42.js'),`${dir}/${page}: v42 must be the final runtime script`);
+      }
+      const appPath=path.join(root,dir,'app-v11.js');
+      if(await exists(appPath))ok((await readFile(appPath,'utf8')).includes('/service-worker.js?v=v42-investigation-ui'),`${dir}/app-v11.js: v42 service-worker registration missing`);
+      const swPath=path.join(root,dir,'service-worker.js');
+      if(await exists(swPath)){
+        const swText=await readFile(swPath,'utf8');
+        ok(swText.includes("const CACHE='igr-v42-investigation-ui';"),`${dir}/service-worker.js: v42 cache namespace missing`);
+        ok(swText.includes('/authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/service-worker.js: v41 base runtime missing from shell cache`);
+        ok(swText.includes('/investigation-runtime-v42.js?v=v42-investigation-ui'),`${dir}/service-worker.js: v42 runtime missing from shell cache`);
+      }
+      continue;
+    }
+  }
+
+  // v41 is the consolidated authoritative owner before v42 is layered on top.
   const v41Path=path.join(root,dir,'authoritative-runtime-v41.js');
   if(await exists(v41Path)){
     const v41=await readFile(v41Path,'utf8');
