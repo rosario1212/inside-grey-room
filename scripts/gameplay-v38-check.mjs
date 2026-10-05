@@ -10,6 +10,8 @@ const failures=[];
 const ok=(cond,msg)=>{if(!cond)failures.push(msg)};
 const exists=async p=>{try{await stat(p);return true}catch{return false}};
 const read=rel=>readFile(path.join(root,rel),'utf8');
+const requestedTarget=process.argv[2];
+const dirs=requestedTarget?[requestedTarget]:['dist','www'];
 
 const parsed=spawnSync(process.execPath,['--check',path.join(root,runtime)],{encoding:'utf8'});
 ok(parsed.status===0,`${runtime}: syntax check failed: ${parsed.stderr||parsed.stdout}`);
@@ -21,7 +23,7 @@ ok(source.includes("event_select:['CHOIX DE L’ÉVÉNEMENT'"),'event-select hum
 ok(source.includes("const v=room()?.state?.event_options"),'event-select must use authoritative room.state.event_options');
 ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing');
 
-for(const dir of ['dist','www']){
+for(const dir of dirs){
   if(!(await exists(path.join(root,dir))))continue;
 
   // v43/v43.1 may already have finalized dist during npm postinstall while
