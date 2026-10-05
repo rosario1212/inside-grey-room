@@ -1,13 +1,13 @@
-/* Inside Grey Room — v35.1 duration modes + timer end alarm */
+/* Inside Grey Room — v35.2 duration modes + timer end alarm */
 (()=>{
 'use strict';
 const STORE_KEY='igr_duration_modes_v35';
 const MODES={
- short:{estimate:'≈ 40–55 min',preInvestigation:120,interrogation:300,cycleDebrief:90,confrontation:120,assembly:150,judicialShort:90,judicialLong:120,witness:180,finalDebrief:120},
+ short:{estimate:'≈ 40–55 min',preInvestigation:120,interrogation:360,cycleDebrief:90,confrontation:120,assembly:150,judicialShort:90,judicialLong:120,witness:180,finalDebrief:120},
  long:{estimate:'≈ 70–90 min',preInvestigation:180,interrogation:480,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:240,witness:240,finalDebrief:180},
  legacy:{estimate:'',preInvestigation:120,interrogation:360,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:180,witness:240,finalDebrief:120}
 };
-window.IGR_DURATION_MODES_V35={version:'35.1-duration-lobby',modes:MODES,defaultMode:'long'};
+window.IGR_DURATION_MODES_V35={version:'35.2-duration-lobby',modes:MODES,defaultMode:'long'};
 function state(){try{return typeof STATE!=='undefined'?STATE:(window.STATE||null)}catch{return window.STATE||null}}
 function store(){try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}}
 function en(){return (window.IGR_LOCALE||document.documentElement.lang||'fr').toLowerCase().startsWith('en')}
@@ -83,7 +83,7 @@ window.igrSetDurationModeV35=async(ev,id,m)=>{
   const syncFn=typeof syncNow==='function'?syncNow:window.syncNow;
   if(typeof syncFn==='function')await syncFn(true);
  }catch(err){
-  console.warn('[IGR v35.1] duration mode sync',err);
+  console.warn('[IGR v35.2] duration mode sync',err);
   save(sid,before);
   const toastFn=typeof toast==='function'?toast:window.toast;
   if(typeof toastFn==='function')toastFn(en()?'Duration mode could not be saved.':'Le format de durée n’a pas pu être enregistré.');
