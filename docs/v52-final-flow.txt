@@ -1,5 +1,0 @@
-Cycle 3 close -> Final Audience -> Suspect Defences -> Lawyer Views -> Final Reassessment -> Reveal
-Audience: Enquêteur, Analyste, Inspecteur, Expert, Procureur, Juge, Journaliste; 2:00 max; optional except Judge.
-Defences: each Suspect 5:00 max, optional, official Lawyer shares time.
-Lawyer view: 2:00 max, optional, after all suspect defences.
-Responsibility scale: 0 none, 1 secondary, 2 primary.
