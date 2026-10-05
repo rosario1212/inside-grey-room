@@ -90,7 +90,7 @@ for(const marker of ['v43-lawyer-one-client','igr_v43_request_lawyer','igr_v43_a
   if(!finalRuntime.includes(marker))throw new Error(`v43 runtime missing marker: ${marker}`);
 }
 const finalReading=await readFile(readingDest,'utf8');
-for(const marker of ['v43.1-lawyer-reading','PENDANT LA LECTURE DES CARTES','renderLawyerTab','Rencontrer']){
+for(const marker of ['v43.1-lawyer-reading','PENDANT LA LECTURE DES CARTES','renderLawyerTab','igr43-reading-desk']){
   if(!finalReading.includes(marker))throw new Error(`v43.1 reading bridge missing marker: ${marker}`);
 }
 if(await exists(appTarget)){
