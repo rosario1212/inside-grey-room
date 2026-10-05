@@ -1,0 +1,43 @@
+/* Inside Grey Room v49 — public broadcasts
+   Breaking News + publicly presented Expert analyses are visible to every role.
+   Suspects archive them in Chronologie; investigation roles retain them in Éléments d'enquête.
+*/
+(()=>{
+'use strict';
+const VERSION='v49-public-broadcasts';
+const S=()=>{try{return typeof STATE!=='undefined'?STATE:(window.STATE||null)}catch(_){return window.STATE||null}};
+const sync=()=>S()?.sync||null,room=()=>sync()?.room||null,me=()=>sync()?.player||null;
+const role=()=>me()?.public_role||S()?.role||'',code=()=>S()?.room||room()?.code||'',token=()=>S()?.token||'';
+const fr=()=>window.IGR_LOCALE!=='en',copy=(a,b)=>fr()?a:b;
+const esc=v=>typeof window.h==='function'?window.h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const publicTypes=new Set(['breaking_news','expert_public']);
+const investigationCamp=new Set(['enqueteur','analyste','procureur','juge','inspecteur','expert']);
+const broadcasts=()=>Array.isArray(sync()?.events)?sync().events.filter(e=>publicTypes.has(String(e?.event_type||''))):[];
+const time=iso=>{try{return new Date(iso).toLocaleTimeString(fr()?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'})}catch(_){return'--:--'}};
+const label=e=>e?.event_type==='breaking_news'?copy('BREAKING NEWS','BREAKING NEWS'):copy('EXPERTISE PUBLIQUE','PUBLIC EXPERT FINDING');
+let expertState=null,expertLoading=false,lastExpertPublicId=0;
+async function rpc49(name,args={}){if(typeof window.rpc!=='function')throw new Error(copy('Connexion indisponible.','Connection unavailable.'));return window.rpc(name,{p_code:code(),p_player_token:token(),...args})}
+
+function broadcastCard(e){const p=e?.payload||{};return `<article class="igr49-broadcast ${e?.event_type==='breaking_news'?'news':'expert'}"><div class="igr49-broadcast-head"><span>${esc(label(e))}</span><time>${esc(time(e?.created_at))}</time></div><h3>${esc(p.title||label(e))}</h3><p>${esc(p.text||p.summary||'')}</p>${p.author?`<small>${esc(copy('Publié par','Published by'))} ${esc(p.author)}</small>`:''}</article>`}
+function injectBroadcast(){document.getElementById('igr49PublicBroadcast')?.remove();const list=broadcasts();if(!list.length||!room()||['lobby','briefing'].includes(String(room().phase||'')))return;const host=document.querySelector('.phase-strip');if(!host)return;const e=document.createElement('div');e.id='igr49PublicBroadcast';e.className='igr49-public-live';const latest=list.at(-1);e.innerHTML=`<div class="igr49-live-kicker">${esc(copy('PUBLIC · VISIBLE PAR TOUS','PUBLIC · VISIBLE TO EVERYONE'))}</div>${broadcastCard(latest)}`;host.insertAdjacentElement('afterend',e)}
+
+function archiveHtml(){const list=broadcasts();if(!list.length)return'';return `<section class="igr49-archive"><div class="igr49-archive-head"><span>${esc(copy('PUBLICATIONS COMMUNES','SHARED PUBLICATIONS'))}</span><small>${list.length}</small></div>${list.map(broadcastCard).join('')}</section>`}
+function addSuspectArchive(html){if(role()!=='suspect'||S()?.tab!=='chronology'||!broadcasts().length)return html;const archive=archiveHtml();if(String(html).includes('igr49-archive'))return html;const marker='<div class="v42-private-note">';return String(html).includes(marker)?String(html).replace(marker,archive+marker):String(html)+archive}
+
+async function refreshExpert(force=false){if(role()!=='expert'||!code()||!token()||expertLoading)return;expertLoading=true;try{const n=await rpc49('igr_v49_expert_public_state');const changed=JSON.stringify(n||{})!==JSON.stringify(expertState||{});expertState=n||null;if(force||changed)injectExpertPanel()}catch(e){if(force)console.warn('[IGR v49 expert]',e)}finally{expertLoading=false}}
+function expertPanelHtml(){const analyses=expertState?.analyses||[];if(!analyses.length)return'';return `<section class="igr49-expert-panel"><div class="igr49-archive-head"><span>${esc(copy('DIFFUSION DE L’EXPERT','EXPERT PUBLICATION'))}</span><small>${analyses.filter(a=>a.published).length}/${analyses.length}</small></div><p class="igr49-muted">${esc(copy('Tu peux rendre public un résultat canonique déjà obtenu. Une publication est irréversible et devient visible par tous les rôles.','You may make a completed canonical result public. Publication is irreversible and becomes visible to every role.'))}</p>${analyses.slice().reverse().map(a=>`<article class="igr49-analysis"><div><small>${esc(copy('CYCLE','CYCLE'))} ${esc(a.cycle)}</small><h3>${esc(a.title)}</h3><p>${esc(a.result)}</p></div>${a.published?`<span class="igr49-published">${esc(copy('PUBLIC','PUBLIC'))} ✓</span>`:expertState?.can_publish?`<button class="btn primary" onclick="igr49PublishExpert(${a.action_id})">${esc(copy('Présenter publiquement','Present publicly'))}</button>`:`<span class="igr49-published muted">${esc(copy('Publication fermée','Publication closed'))}</span>`}</article>`).join('')}</section>`}
+function injectExpertPanel(){document.getElementById('igr49ExpertPanel')?.remove();if(role()!=='expert'||!expertState)return;const html=expertPanelHtml();if(!html)return;const host=document.querySelector('.phase-strip');if(!host)return;const e=document.createElement('div');e.id='igr49ExpertPanel';e.innerHTML=html;const live=document.getElementById('igr49PublicBroadcast');(live||host).insertAdjacentElement('afterend',e)}
+window.igr49PublishExpert=async id=>{if(!window.confirm?.(copy('Rendre ce résultat public pour tous les rôles ? Cette diffusion est irréversible.','Make this result public to every role? This publication is irreversible.')))return;try{await rpc49('igr_v49_publish_expert_result',{p_action_id:+id});window.toast?.(copy('Expertise rendue publique.','Expert finding published.'));await window.syncNow?.(true);await refreshExpert(true);injectBroadcast()}catch(e){window.toast?.(e?.message||copy('Publication impossible.','Publication unavailable.'))}};
+
+const baseTab=typeof window.renderGameTab==='function'?window.renderGameTab:(typeof renderGameTab==='function'?renderGameTab:null);if(baseTab){const f=function(){const out=baseTab.apply(this,arguments);return addSuspectArchive(out)};try{renderGameTab=f}catch(_){}window.renderGameTab=f}
+const baseGame=typeof window.renderGame==='function'?window.renderGame:(typeof renderGame==='function'?renderGame:null);if(baseGame){const f=function(){const out=baseGame.apply(this,arguments);setTimeout(()=>{injectBroadcast();injectExpertPanel()},0);return out};try{renderGame=f}catch(_){}window.renderGame=f}
+
+function expertPublicCue(){const e=broadcasts().filter(x=>x.event_type==='expert_public').at(-1);if(!e)return;if(!lastExpertPublicId){lastExpertPublicId=e.id||0;return}if((e.id||0)>lastExpertPublicId){lastExpertPublicId=e.id||0;try{window.playCue?.('news')}catch(_){}}}
+const style=document.createElement('style');style.dataset.igrV49=VERSION;style.textContent=`
+.igr49-public-live,.igr49-expert-panel,.igr49-archive{display:grid;gap:10px;margin:12px 0}.igr49-live-kicker,.igr49-archive-head span,.igr49-broadcast-head span{font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#89939c}.igr49-broadcast{padding:14px 15px;border:1px solid rgba(255,255,255,.13);border-radius:15px;background:#0c1116;display:grid;gap:7px}.igr49-broadcast.news{border-left:3px solid #aab4bd}.igr49-broadcast.expert{border-left:3px solid #e4e9ed}.igr49-broadcast-head,.igr49-archive-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.igr49-broadcast-head time,.igr49-archive-head small,.igr49-broadcast small{font-size:11px;color:#818b94}.igr49-broadcast h3,.igr49-analysis h3{margin:0;font-size:15px}.igr49-broadcast p,.igr49-analysis p,.igr49-muted{margin:0;color:#aeb7bf;line-height:1.48}.igr49-archive{padding-top:4px}.igr49-expert-panel{padding:15px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#0a0f14}.igr49-analysis{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}.igr49-analysis>div{display:grid;gap:5px}.igr49-analysis small{color:#7f8992}.igr49-published{white-space:nowrap;font:700 11px 'IBM Plex Mono',monospace;letter-spacing:.08em}.igr49-published.muted{opacity:.55}@media(max-width:700px){.igr49-analysis{align-items:stretch;flex-direction:column}.igr49-analysis button{width:100%}}
+`;document.head.appendChild(style);
+setInterval(()=>{injectBroadcast();expertPublicCue();if(role()==='expert')refreshExpert(false)},2200);
+setTimeout(()=>{injectBroadcast();if(role()==='expert')refreshExpert(true)},250);
+window.IGR_PUBLIC_BROADCASTS_V49=Object.freeze({version:VERSION,broadcasts,investigationCamp});
+console.info(`[IGR ${VERSION}] active`);
+})();
