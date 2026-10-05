@@ -1,0 +1,4 @@
+create index if not exists igr_v47_prosecutor_runtime_prosecutor_idx on public.igr_v47_prosecutor_runtime(prosecutor_id);
+create index if not exists igr_v47_prosecutor_interviews_prosecutor_idx on public.igr_v47_prosecutor_interviews(prosecutor_id);
+create index if not exists igr_v47_prosecutor_cooperations_prosecutor_idx on public.igr_v47_prosecutor_cooperations(prosecutor_id);
+create index if not exists igr_v47_prosecutor_cooperations_interview_idx on public.igr_v47_prosecutor_cooperations(interview_id) where interview_id is not null;
