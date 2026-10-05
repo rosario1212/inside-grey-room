@@ -5,6 +5,7 @@ const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
 const runtimePath=path.join(root,'timer-runtime-v46.js');
 const migrationPath=path.join(root,'supabase','migrations','20261005_restore_long_interrogation_eight_minutes.sql');
+const hardeningPath=path.join(root,'supabase','migrations','20261005_harden_duration_start_paths.sql');
 const builtRuntime=path.join(target,'timer-runtime-v46.js');
 const builtIndex=path.join(target,'index.html');
 const builtApp=path.join(target,'app-v11.js');
@@ -15,6 +16,7 @@ const forbidMatch=(text,re,message)=>{if(re.test(text))throw new Error(message)}
 
 const runtime=await readFile(runtimePath,'utf8');
 const migration=await readFile(migrationPath,'utf8');
+const hardening=await readFile(hardeningPath,'utf8');
 requireMatch(runtime,/long\.interrogation=480/,'v46.1 must set LONG interrogation to 480 seconds');
 requireMatch(runtime,/long\.finalDebrief=240/,'v46.1 must set LONG final debrief to 240 seconds');
 requireMatch(runtime,/DERNIER DÉBRIEF · 04:00/,'v46.1 must render the French final-debrief label as 04:00');
@@ -23,6 +25,9 @@ forbidMatch(runtime,/long\.interrogation=360/,'v46.1 must not regress LONG inter
 forbidMatch(runtime,/Convoquer · 6 min/,'v46.1 must not rewrite LONG interrogation to 6 min');
 requireMatch(migration,/when 'long' then case p_kind[\s\S]*?when 'interrogation' then 480\b/,'DB migration must set LONG interrogation to 480 seconds');
 requireMatch(migration,/when 'long' then case p_kind[\s\S]*?when 'final_debrief' then 240\b/,'DB migration must keep LONG final debrief at 240 seconds');
+requireMatch(hardening,/create or replace function public\.igr_v13_start_event[\s\S]*?make_interval\(secs=>secs\)/,'Event interrogation path must use the duration-derived seconds');
+requireMatch(hardening,/create or replace function public\.igr_v4_start_interrogation[\s\S]*?igr_v35_room_seconds\(r\.code,'interrogation'\)[\s\S]*?make_interval\(secs=>secs\)/,'Cycle-1 interrogation path must use the duration helper');
+forbidMatch(hardening,/phase_ends_at=now\(\)\+interval '6 minutes'/,'Server interrogation paths must not hardcode six minutes');
 if(await exists(builtRuntime)){
   const built=await readFile(builtRuntime,'utf8');
   requireMatch(built,/long\.interrogation=480/,'Built v46.1 runtime must keep LONG interrogation at 480 seconds');
@@ -45,4 +50,4 @@ if(await exists(builtSw)){
   requireMatch(sw,/const CACHE='igr-v46-1-long-timers';/,'Built service worker must use the v46.1 cache namespace');
   requireMatch(sw,/\/timer-runtime-v46\.js\?v=v46-1-long-timers/,'Built service worker must precache the v46.1 timer runtime');
 }
-console.log('v46.1 timer audit passed: LONG interrogation=480s, final debrief=240s, runtime/cache propagation verified.');
+console.log('v46.1 timer audit passed: LONG interrogation=480s, final debrief=240s, server start paths and cache propagation verified.');
