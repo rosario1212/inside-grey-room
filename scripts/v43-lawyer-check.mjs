@@ -22,7 +22,7 @@ for(const marker of [
 ])if(!sql.includes(marker))throw new Error(`v43 migration marker missing: ${marker}`);
 
 for(const marker of [
-  'Rencontrer · 1 min','Demander à nouveau l’avocat','unique client officiel','Consultations officieuses',
+  'Rencontrer · 1 min','Demander à nouveau l’avocat','unique client officiel','CONSULTATIONS OFFICIEUSES',
   'may never invent information','AVANT LES CONCLUSIONS PROVISOIRES','window.confirm'
 ])if(!js.includes(marker))throw new Error(`v43 runtime marker missing: ${marker}`);
 
