@@ -29,9 +29,10 @@ for(const marker of [
   'Rencontrer · 1 min','Demander à nouveau l’avocat','unique client officiel','CONSULTATIONS OFFICIEUSES',
   'may never invent information','AVANT LES CONCLUSIONS PROVISOIRES','window.confirm'
 ])if(!js.includes(marker))throw new Error(`v43 runtime marker missing: ${marker}`);
-for(const marker of ['v43.1-lawyer-reading','PENDANT LA LECTURE DES CARTES','renderLawyerTab','igr43RoleHelper']){
-  if(!readingJs.includes(marker))throw new Error(`v43.1 role-reading marker missing: ${marker}`);
-}
+for(const marker of [
+  'v43.1-lawyer-reading','PENDANT LA LECTURE DES CARTES','renderLawyerTab','igr43RoleHelper',
+  'enforceMeetingFirst','a rencontrer','aria-disabled','Entretien préalable requis'
+])if(!readingJs.includes(marker))throw new Error(`v43.1 role-reading marker missing: ${marker}`);
 
 if(!sourceApp.includes('unique client officiel'))throw new Error('built app does not contain the one-client lawyer rule');
 if(sourceApp.includes('Avocat : peut défendre plusieurs clients compatibles'))throw new Error('legacy multi-client manual copy survived');
