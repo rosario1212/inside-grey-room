@@ -47,7 +47,8 @@
   };
 
   const EN_GUIDE='Use the common facts on the role cards and in the case file. Precise technical evidence becomes shared only when it is revealed in Case Evidence; do not invent missing times, access records or alibis.';
-  const OPERATIONAL=new Set(['context','phase','cycle','roles_distributed','briefing','room_created','player_joined','player_left','ready','role_selected','sync','timer','turn']);
+  const OPERATIONAL=new Set(['context','phase','cycle','roles_distributed','briefing','room_created','player_joined','player_left','ready','role_selected','sync','timer','turn','message','interrogation','video']);
+  const EVIDENCE_TYPES=new Set(['trame','reveal','breaking_news','evidence','case_event','witness_statement','expert_result','field_result']);
 
   function publicContext(events){
     const live=window.STATE?.sync?.scenario?.context;
@@ -64,18 +65,21 @@
   }
 
   function evidenceEvents(events){
+    const role=window.STATE?.sync?.player?.public_role||window.STATE?.role||'';
     return (Array.isArray(events)?events:[]).filter(e=>{
       const type=String(e?.event_type||'').toLowerCase();
       if(OPERATIONAL.has(type)) return false;
+      if(type==='trame'&&typeof window.canInvestigationChannel==='function'&&!window.canInvestigationChannel(role)) return false;
+      if(!EVIDENCE_TYPES.has(type)&&!type.endsWith('_result')) return false;
       const p=e?.payload||{};
-      return Boolean(p.title||p.text||p.message||p.body);
+      return Boolean(p.title||p.text||p.summary||p.message||p.body);
     });
   }
 
   function evidenceCard(e,index){
     const p=e?.payload||{};
     const title=p.title||p.label||(isEn()?'New evidence':'Nouvel élément');
-    const text=p.text||p.message||p.body||'';
+    const text=p.text||p.summary||p.message||p.body||'';
     const cycle=p.cycle||e?.cycle;
     const type=String(e?.event_type||'').replaceAll('_',' ');
     const meta=[cycle?`${isEn()?'Cycle':'Cycle'} ${cycle}`:'',type].filter(Boolean).join(' · ');
