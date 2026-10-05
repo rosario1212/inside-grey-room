@@ -7,6 +7,8 @@ const runtimePath=path.join(root,'timer-runtime-v46.js');
 const migrationPath=path.join(root,'supabase','migrations','20261005_restore_long_interrogation_eight_minutes.sql');
 const builtRuntime=path.join(target,'timer-runtime-v46.js');
 const builtIndex=path.join(target,'index.html');
+const builtApp=path.join(target,'app-v11.js');
+const builtSw=path.join(target,'service-worker.js');
 const exists=async file=>{try{await stat(file);return true}catch{return false}};
 const requireMatch=(text,re,message)=>{if(!re.test(text))throw new Error(message)};
 const forbidMatch=(text,re,message)=>{if(re.test(text))throw new Error(message)};
@@ -30,5 +32,17 @@ if(await exists(builtRuntime)){
 if(await exists(builtIndex)){
   const html=await readFile(builtIndex,'utf8');
   requireMatch(html,/timer-runtime-v46\.js\?v=v46-1-long-timers/,'Built index must load the cache-busted v46.1 timer runtime');
+  const timerPos=html.lastIndexOf('timer-runtime-v46.js?v=v46-1-long-timers');
+  const after=html.slice(timerPos+'timer-runtime-v46.js?v=v46-1-long-timers'.length);
+  forbidMatch(after,/<script[^>]+src=/i,'v46.1 timer runtime must remain the final external script');
 }
-console.log('v46.1 timer check passed: LONG interrogation=480s, final debrief=240s.');
+if(await exists(builtApp)){
+  const app=await readFile(builtApp,'utf8');
+  requireMatch(app,/\/service-worker\.js\?v=v46-1-long-timers/,'Built app must register the v46.1 service worker version');
+}
+if(await exists(builtSw)){
+  const sw=await readFile(builtSw,'utf8');
+  requireMatch(sw,/const CACHE='igr-v46-1-long-timers';/,'Built service worker must use the v46.1 cache namespace');
+  requireMatch(sw,/\/timer-runtime-v46\.js\?v=v46-1-long-timers/,'Built service worker must precache the v46.1 timer runtime');
+}
+console.log('v46.1 timer audit passed: LONG interrogation=480s, final debrief=240s, runtime/cache propagation verified.');
