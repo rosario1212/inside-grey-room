@@ -24,12 +24,14 @@ ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing')
 for(const dir of ['dist','www']){
   if(!(await exists(path.join(root,dir))))continue;
 
-  // v42 may already have finalized dist during npm postinstall while mobile:build
-  // is still validating www at the earlier v38 stage. Accept that intentional split.
+  // v42/v42.1 may already have finalized dist during npm postinstall while
+  // mobile:build is still validating www at the earlier v38 stage.
   const v42Path=path.join(root,dir,'investigation-runtime-v42.js');
   if(await exists(v42Path)){
     const v42=await readFile(v42Path,'utf8');
     if(v42.includes('IGR_INVESTIGATION_V42')){
+      const auditPath=path.join(root,dir,'investigation-audit-v42-1.js');
+      const hasAudit=await exists(auditPath) && (await readFile(auditPath,'utf8')).includes('IGR_INVESTIGATION_AUDIT_V42_1');
       for(const page of ['index.html','en.html']){
         const p=path.join(root,dir,page);if(!(await exists(p)))continue;
         const html=await readFile(p,'utf8');
@@ -37,16 +39,25 @@ for(const dir of ['dist','www']){
         ok(html.includes('investigation-runtime-v42.js?v=v42-investigation-ui'),`${dir}/${page}: v42 runtime reference missing`);
         ok(!html.includes('gameplay-state-fix-v38.js'),`${dir}/${page}: v38 tag should be removed after v42 finalization`);
         const lastScript=html.lastIndexOf('<script');
-        ok(lastScript>=0&&html.slice(lastScript).includes('investigation-runtime-v42.js'),`${dir}/${page}: v42 must be the final runtime script`);
+        if(hasAudit){
+          ok(html.includes('investigation-audit-v42-1.js?v=v42.1-investigation-audit'),`${dir}/${page}: v42.1 audit runtime reference missing`);
+          ok(lastScript>=0&&html.slice(lastScript).includes('investigation-audit-v42-1.js'),`${dir}/${page}: v42.1 audit must be the final runtime script`);
+        }else{
+          ok(lastScript>=0&&html.slice(lastScript).includes('investigation-runtime-v42.js'),`${dir}/${page}: v42 must be the final runtime script`);
+        }
       }
       const appPath=path.join(root,dir,'app-v11.js');
-      if(await exists(appPath))ok((await readFile(appPath,'utf8')).includes('/service-worker.js?v=v42-investigation-ui'),`${dir}/app-v11.js: v42 service-worker registration missing`);
+      if(await exists(appPath)){
+        const app=await readFile(appPath,'utf8');
+        ok(app.includes(hasAudit?'/service-worker.js?v=v42.1-investigation-audit':'/service-worker.js?v=v42-investigation-ui'),`${dir}/app-v11.js: ${hasAudit?'v42.1':'v42'} service-worker registration missing`);
+      }
       const swPath=path.join(root,dir,'service-worker.js');
       if(await exists(swPath)){
         const swText=await readFile(swPath,'utf8');
         ok(swText.includes("const CACHE='igr-v42-investigation-ui';"),`${dir}/service-worker.js: v42 cache namespace missing`);
         ok(swText.includes('/authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/service-worker.js: v41 base runtime missing from shell cache`);
         ok(swText.includes('/investigation-runtime-v42.js?v=v42-investigation-ui'),`${dir}/service-worker.js: v42 runtime missing from shell cache`);
+        if(hasAudit)ok(swText.includes('/investigation-audit-v42-1.js?v=v42.1-investigation-audit'),`${dir}/service-worker.js: v42.1 audit runtime missing from shell cache`);
       }
       continue;
     }
