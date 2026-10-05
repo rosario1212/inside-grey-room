@@ -123,7 +123,7 @@ try{
   ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the play-mode theme CSS');
   ok(!distIndex.includes('if(!nativeShell&&!mobile&&window.MutationObserver){'),'dist/index.html still leaves gameplay MutationObserver running on mobile');
   ok(distIndex.includes('if(window.MutationObserver){const NativeObserver'),'dist/index.html does not track/disconnect gameplay observer on all clients');
-  ok(distSw.includes("const CACHE='igr-v36-1-parasite-fix';")||distSw.includes("const CACHE='igr-v38-gameplay-ui-state';")||distSw.includes("const CACHE='igr-v39-authoritative-ui';")||distSw.includes("const CACHE='igr-v41-authoritative-ui';")||distSw.includes("const CACHE='igr-v42-investigation-ui';"),'dist/service-worker.js has stale cache version');
+  ok(distSw.includes("const CACHE='igr-v36-1-parasite-fix';")||distSw.includes("const CACHE='igr-v38-gameplay-ui-state';")||distSw.includes("const CACHE='igr-v39-authoritative-ui';")||distSw.includes("const CACHE='igr-v41-authoritative-ui';")||distSw.includes("const CACHE='igr-v42-investigation-ui';")||distSw.includes("const CACHE='igr-v42-3-mobile-chrome';")||distSw.includes("const CACHE='igr-v43-1-lawyer-reading';"),'dist/service-worker.js has stale cache version');
   ok(distSw.includes('/navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/service-worker.js is missing v27 navigation');
   ok(distSw.includes('/role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/service-worker.js is missing restored TON CHOIX CSS');
   ok(distIndex.includes('live-cell-v12-44.js?v=v36.1-parasite-fix'),'dist/index.html did not bump the v36 live-cell runtime');
