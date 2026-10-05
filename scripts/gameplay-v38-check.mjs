@@ -24,25 +24,35 @@ ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing')
 for(const dir of ['dist','www']){
   if(!(await exists(path.join(root,dir))))continue;
 
-  // v41 is the consolidated final owner. During mobile:build, dist may already
-  // be finalized to v41 while www is still intentionally at the v38 stage.
+  // v41 is the consolidated authoritative owner. A later v42 investigation
+  // overlay may already have advanced the service-worker version in dist while
+  // mobile:build is still validating www at the v38 stage.
   const v41Path=path.join(root,dir,'authoritative-runtime-v41.js');
   if(await exists(v41Path)){
     const v41=await readFile(v41Path,'utf8');
     if(v41.includes('IGR_AUTHORITATIVE_V41')){
+      const v42Path=path.join(root,dir,'investigation-elements-v42.js');
+      const v42Applied=await exists(v42Path) && (await readFile(v42Path,'utf8')).includes('IGR_INVESTIGATION_V42');
       for(const page of ['index.html','en.html']){
         const p=path.join(root,dir,page);if(!(await exists(p)))continue;
         const html=await readFile(p,'utf8');
         ok(html.includes('authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/${page}: v41 runtime reference missing`);
         ok(!html.includes('gameplay-state-fix-v38.js'),`${dir}/${page}: v38 tag should be removed after v41 finalization`);
+        if(v42Applied)ok(html.includes('investigation-elements-v42.js?v=v42-investigation-elements'),`${dir}/${page}: v42 runtime reference missing after v42 finalization`);
       }
       const appPath=path.join(root,dir,'app-v11.js');
-      if(await exists(appPath))ok((await readFile(appPath,'utf8')).includes('/service-worker.js?v=v41-authoritative-ui'),`${dir}/app-v11.js: v41 service-worker registration missing`);
+      if(await exists(appPath)){
+        const app=await readFile(appPath,'utf8');
+        const expected=v42Applied?'/service-worker.js?v=v42-investigation-elements':'/service-worker.js?v=v41-authoritative-ui';
+        ok(app.includes(expected),`${dir}/app-v11.js: ${v42Applied?'v42':'v41'} service-worker registration missing`);
+      }
       const swPath=path.join(root,dir,'service-worker.js');
       if(await exists(swPath)){
         const swText=await readFile(swPath,'utf8');
-        ok(swText.includes("const CACHE='igr-v41-authoritative-ui';"),`${dir}/service-worker.js: v41 cache namespace missing`);
+        const expectedCache=v42Applied?"const CACHE='igr-v42-investigation-elements';":"const CACHE='igr-v41-authoritative-ui';";
+        ok(swText.includes(expectedCache),`${dir}/service-worker.js: ${v42Applied?'v42':'v41'} cache namespace missing`);
         ok(swText.includes('/authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/service-worker.js: v41 runtime missing from shell cache`);
+        if(v42Applied)ok(swText.includes('/investigation-elements-v42.js?v=v42-investigation-elements'),`${dir}/service-worker.js: v42 runtime missing from shell cache`);
       }
       continue;
     }
