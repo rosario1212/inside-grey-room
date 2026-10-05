@@ -45,7 +45,7 @@ Le texte d’exposition parle toujours du suspect par son nom. Il n’utilise pa
 
 ### 3. Entretien préalable
 
-L’Avocat doit avoir rencontré le suspect avant de pouvoir accepter sa représentation dans l’interface.
+L’Avocat doit avoir rencontré le suspect avant de pouvoir accepter ou refuser sa demande de représentation dans l’interface.
 
 - Durée maximale : 60 secondes.
 - L’entretien peut être terminé avant la fin du minuteur.
@@ -197,7 +197,7 @@ Le dossier 020 possède historiquement une variante de très grand casting pouva
 1. Un suspect peut demander un Avocat pendant la lecture des cartes.
 2. Deux clics rapides ne créent pas deux demandes simultanées.
 3. Un refus permet une nouvelle demande.
-4. L’Avocat ne peut pas accepter avant d’avoir rencontré le suspect dans l’interface.
+4. L’Avocat ne peut ni accepter ni refuser avant d’avoir rencontré le suspect dans l’interface.
 5. L’acceptation demande une confirmation supplémentaire.
 6. Un Avocat ayant un client ne peut pas en accepter un second.
 7. Un suspect représenté ne peut pas être accepté par un second Avocat.
