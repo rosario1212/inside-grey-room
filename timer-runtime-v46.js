@@ -1,10 +1,10 @@
-/* Inside Grey Room v46 — long-mode timer corrections.
-   LONG: interrogation = 06:00; final debrief / judge deliberation = 04:00.
+/* Inside Grey Room v46.1 — canonical long-mode timer corrections.
+   LONG: interrogation = 08:00; final debrief / judge deliberation = 04:00.
    Loaded last so stale labels from older runtimes cannot overwrite the canonical durations.
 */
 (()=>{
 'use strict';
-const VERSION='v46-long-timers';
+const VERSION='v46-1-long-timers';
 const S=()=>{try{return typeof STATE!=='undefined'?STATE:(window.STATE||null)}catch(_){return window.STATE||null}};
 const room=()=>S()?.sync?.room||null;
 const localeEn=()=>String(window.IGR_LOCALE||document.documentElement.lang||'fr').toLowerCase().startsWith('en');
@@ -18,7 +18,7 @@ const isLong=()=>mode()==='long';
 // Keep the shared duration registry aligned for every renderer that reads it after v46 loads.
 try{
   const long=window.IGR_DURATION_MODES_V35?.modes?.long;
-  if(long){long.interrogation=360;long.finalDebrief=240}
+  if(long){long.interrogation=480;long.finalDebrief=240}
 }catch(_){/* no-op */}
 
 const patchFinalCopy=html=>String(html??'')
@@ -27,11 +27,11 @@ const patchFinalCopy=html=>String(html??'')
   .replace(/Dernier débrief\s*:\s*(?:2|3)\s*minutes?/gi,'Dernier débrief : 4 minutes')
   .replace(/Final debrief\s*:\s*(?:2|3)\s*minutes?/gi,'Final debrief: 4 minutes');
 const patchInterrogationCopy=html=>String(html??'')
-  .replace(/Convoquer\s*·\s*8\s*min/gi,'Convoquer · 6 min')
-  .replace(/Interrogatoire\s*·\s*08:00/gi,'Interrogatoire · 06:00')
-  .replace(/Interrogation\s*·\s*08:00/gi,'Interrogation · 06:00')
-  .replace(/Interrogatoire\s*:\s*8\s*minutes?/gi,'Interrogatoire : 6 minutes')
-  .replace(/Interrogation\s*:\s*8\s*minutes?/gi,'Interrogation: 6 minutes');
+  .replace(/Convoquer\s*·\s*6\s*min/gi,'Convoquer · 8 min')
+  .replace(/Interrogatoire\s*·\s*06:00/gi,'Interrogatoire · 08:00')
+  .replace(/Interrogation\s*·\s*06:00/gi,'Interrogation · 08:00')
+  .replace(/Interrogatoire\s*:\s*6\s*minutes?/gi,'Interrogatoire : 8 minutes')
+  .replace(/Interrogation\s*:\s*6\s*minutes?/gi,'Interrogation: 8 minutes');
 const patchLongCopy=html=>isLong()?patchFinalCopy(patchInterrogationCopy(html)):String(html??'');
 
 const basePhaseLabel=window.phaseLabel;
@@ -45,7 +45,7 @@ const basePhaseInstruction=window.phaseInstruction;
 if(typeof basePhaseInstruction==='function')window.phaseInstruction=function(role,phase,target){
   let out=String(basePhaseInstruction.apply(this,arguments)??'');
   if(!isLong())return out;
-  if(phase==='interrogation')out=patchInterrogationCopy(out).replace(/08:00/g,'06:00');
+  if(phase==='interrogation')out=patchInterrogationCopy(out).replace(/06:00/g,'08:00');
   if(phase==='final_debrief')out=patchFinalCopy(out).replace(/0[23]:00/g,'04:00');
   return out;
 };
@@ -68,7 +68,7 @@ function patchVisibleCopy(){
   const nodes=[];let n;
   while((n=walker.nextNode())){
     const t=n.nodeValue||'';
-    if(/DERNIER DÉBRIEF|FINAL DEBRIEF|Dernier débrief|Final debrief|Convoquer\s*·\s*8\s*min|Interrogatoire\s*[·:]|Interrogation\s*[·:]/i.test(t))nodes.push(n);
+    if(/DERNIER DÉBRIEF|FINAL DEBRIEF|Dernier débrief|Final debrief|Convoquer\s*·\s*6\s*min|Interrogatoire\s*[·:]|Interrogation\s*[·:]/i.test(t))nodes.push(n);
   }
   for(const node of nodes){
     const next=patchLongCopy(node.nodeValue);
@@ -79,5 +79,5 @@ function queuePatch(){if(domQueued)return;domQueued=true;queueMicrotask(patchVis
 new MutationObserver(queuePatch).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
 document.addEventListener('DOMContentLoaded',queuePatch,{once:true});
 queuePatch();
-window.IGR_TIMER_RUNTIME_V46={version:VERSION,long:{interrogation:360,finalDebrief:240}};
+window.IGR_TIMER_RUNTIME_V46={version:VERSION,long:{interrogation:480,finalDebrief:240}};
 })();
