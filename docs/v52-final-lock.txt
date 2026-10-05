@@ -1,1 +1,0 @@
-Final reassessment is silent. All investigation roles lock 0/1/2 after every suspect defence and optional lawyer view. Reveal starts only when required locks, judge integrity votes, and scenario-027 recommendation are complete.
