@@ -7,7 +7,7 @@ const target=path.resolve(root,process.argv[2]||'dist');
 const BASE_VERSION='v42.3-mobile-chrome';
 const AUDIT_VERSION='v42.1-investigation-audit';
 const SHELL_VERSION='v42.3-mobile-chrome';
-const CACHE='igr-v42-investigation-ui';
+const CACHE='igr-v42-3-mobile-chrome';
 const runtimeName='investigation-runtime-v42.js';
 const auditName='investigation-audit-v42-1.js';
 const authoritativeName='authoritative-runtime-v41.js';
@@ -50,7 +50,7 @@ if(!authoritative.includes('IGR_V41_SETTINGS_SINGLE_OWNER'))authoritative=`/* IG
 await writeFile(authoritativeTarget,authoritative,'utf8');
 
 let runtime=await readFile(runtimeTarget,'utf8');
-runtime=replaceRequired(runtime,"const VERSION='v42.2-cell-stability';","const VERSION='v42.3-mobile-chrome';",'v42 runtime version');
+runtime=replaceRequired(runtime,"const VERSION='v42-investigation-ui';","const VERSION='v42.3-mobile-chrome';",'v42 runtime version');
 runtime=replaceRequired(
   runtime,
   "function renderElementsTab(){\n  const r=role(),events=revealedElements();\n  const visible=canSeeEvidence(r)?events:events.filter(e=>String(e.event_type||'')!=='trame');",
@@ -86,18 +86,18 @@ runtime=replaceRequired(
 // remains immediately above it, so the sentence can never split the card body.
 runtime=replaceRequired(
   runtime,
-  "      const summary=card.querySelector('.role-summary');\n      const foot=card.querySelector('.role-foot');\n      if(summary){\n        summary.classList.add('v42-objective-bottom');\n        if(foot)card.insertBefore(summary,foot);else card.appendChild(summary);\n      }",
-  "      const summary=card.querySelector('.role-summary');\n      const foot=card.querySelector('.role-foot');\n      if(summary){\n        summary.classList.add('v42-objective-bottom');\n        card.appendChild(summary);\n      }\n      if(foot){\n        foot.classList.add('v42-lie-note-bottom');\n        foot.textContent=copy('Mentir est possible.','Lying is possible.');\n        card.appendChild(foot);\n      }",
+  "        const foot=card.querySelector('.private-foot');\n        if(foot)card.insertBefore(summary,foot);else card.appendChild(summary);",
+  "        const foot=card.querySelector('.private-foot');\n        card.appendChild(summary);\n        if(foot){\n          foot.classList.add('v42-lie-note-bottom');\n          foot.textContent=copy('Mentir est possible.','Lying is possible.');\n          card.appendChild(foot);\n        }",
   'private-card lie note placement'
 );
 
-// v42.3 — Settings must fully own the viewport while open, and the live Quit
-// capsule sits one row below the top-bar gear instead of covering it on iPhone.
+// v42.3 — Settings owns the viewport while its modal is open. During live play,
+// the single v41 gear is stacked below Quitter instead of being covered by it.
 runtime=replaceRequired(
   runtime,
   ".v42-settings span{font-size:18px;line-height:1}.v41-event-panel>.v41-event-head{display:none!important}",
-  ".v42-settings span{font-size:18px;line-height:1}.v42-lie-note-bottom{order:100;margin-top:15px!important;padding-top:14px!important;border-top:1px solid rgba(255,255,255,.10)!important;color:#7e8993!important}.igr-settings-modal{z-index:520!important}body:has(.igr-settings-modal) #igrUniversalDock{display:none!important}body.igr-game-active #app .page>.live-session-controls .live-exit-btn{top:calc(env(safe-area-inset-top,0px) + 30px)!important}@media(max-width:390px){body.igr-game-active #app .page>.live-session-controls .live-exit-btn{top:calc(env(safe-area-inset-top,0px) + 29px)!important}}.v41-event-panel>.v41-event-head{display:none!important}",
-  'settings modal and live quit chrome'
+  ".v42-settings span{font-size:18px;line-height:1}.v42-lie-note-bottom{order:100;margin-top:15px!important;padding-top:14px!important;border-top:1px solid rgba(255,255,255,.10)!important;color:#7e8993!important}.modal:has(.settings-grid){z-index:520!important}body:has(.modal .settings-grid) #igrUniversalDock{display:none!important;pointer-events:none!important}body:has(.live-session-controls) #igrTopSettings{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 64px)!important;right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;bottom:auto!important;z-index:336!important;margin:0!important}@media(max-width:390px){body:has(.live-session-controls) #igrTopSettings{top:calc(env(safe-area-inset-top,0px) + 58px)!important;right:max(9px,env(safe-area-inset-right,0px))!important}}.v41-event-panel>.v41-event-head{display:none!important}",
+  'settings modal and live gear chrome'
 );
 if(!runtime.includes('IGR_V42_2_CELL_STABILITY'))runtime=`/* IGR_V42_2_CELL_STABILITY */\n${runtime}`;
 if(!runtime.includes('IGR_V42_3_MOBILE_CHROME'))runtime=`/* IGR_V42_3_MOBILE_CHROME */\n${runtime}`;
