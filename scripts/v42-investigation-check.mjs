@@ -41,9 +41,16 @@ for(const id of dlcIds){
 for(const marker of [
   'IGR_INVESTIGATION_V42',
   'IGR_V42_2_CELL_STABILITY',
+  'IGR_V42_3_MOBILE_CHROME',
+  "const VERSION='v42.3-mobile-chrome'",
   "label:copy('Éléments d’enquête'",
   "id:'chronology'",
   'v42-objective-bottom',
+  'v42-lie-note-bottom',
+  "card.querySelector('.private-foot')",
+  "foot.textContent=copy('Mentir est possible.','Lying is possible.')",
+  'card.appendChild(summary)',
+  'card.appendChild(foot)',
   "ph==='event_confrontation'",
   "ph==='provisional_orals'",
   'v42-picker-names',
@@ -66,6 +73,18 @@ if(js.includes("btn.id='igrTopSettingsV42'"))throw new Error('v42 must not creat
 if(v41.includes('new MutationObserver(queueSettings)'))throw new Error('v41 must not use a self-triggering Settings MutationObserver');
 if(!v41.includes('IGR_V41_SETTINGS_SINGLE_OWNER'))throw new Error('v41 single Settings owner marker missing');
 if(!v41.includes("btn.id='igrTopSettings'"))throw new Error('v41 top Settings control missing');
+
+// v42.3: the Settings dialog owns the viewport while open; its scenario-browser
+// dock disappears, the live gear is stacked below Quitter, and the short lie
+// sentence is the final private-card child.
+for(const marker of [
+  '.modal:has(.settings-grid){z-index:520!important}',
+  'body:has(.modal .settings-grid) #igrUniversalDock{display:none!important;pointer-events:none!important}',
+  'body:has(.live-session-controls) #igrTopSettings{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 64px)!important',
+  "foot.textContent=copy('Mentir est possible.','Lying is possible.')",
+  'card.appendChild(summary)',
+  'card.appendChild(foot)'
+])if(!js.includes(marker))throw new Error(`v42.3 mobile chrome regression missing: ${marker}`);
 
 for(const marker of [
   'IGR_INVESTIGATION_AUDIT_V42_1',
@@ -131,17 +150,18 @@ for(const page of ['index.html','en.html']){
   const file=path.join(target,page);if(!(await exists(file)))continue;
   const html=await readFile(file,'utf8');
   const v41Pos=html.lastIndexOf('authoritative-runtime-v41.js?v=v41-authoritative-ui');
-  const v42Pos=html.lastIndexOf('investigation-runtime-v42.js?v=v42.2-cell-stability');
+  const v42Pos=html.lastIndexOf('investigation-runtime-v42.js?v=v42.3-mobile-chrome');
   const auditPos=html.lastIndexOf('investigation-audit-v42-1.js?v=v42.1-investigation-audit');
-  if(v41Pos<0||v42Pos<0||auditPos<0||!(v41Pos<v42Pos&&v42Pos<auditPos))throw new Error(`${page}: bad v41/v42.2/v42.1 runtime order`);
+  if(v41Pos<0||v42Pos<0||auditPos<0||!(v41Pos<v42Pos&&v42Pos<auditPos))throw new Error(`${page}: bad v41/v42.3/v42.1 runtime order`);
 }
 
 const app=path.join(target,'app-v11.js');
-if(await exists(app)&&!(await readFile(app,'utf8')).includes('/service-worker.js?v=v42.2-cell-stability'))throw new Error('v42.2 service-worker registration missing');
+if(await exists(app)&&!(await readFile(app,'utf8')).includes('/service-worker.js?v=v42.3-mobile-chrome'))throw new Error('v42.3 service-worker registration missing');
 const sw=path.join(target,'service-worker.js');
 if(await exists(sw)){
   const swText=await readFile(sw,'utf8');
-  if(!swText.includes('/investigation-runtime-v42.js?v=v42.2-cell-stability'))throw new Error('v42.2 runtime missing from service-worker cache');
+  if(!swText.includes("const CACHE='igr-v42-3-mobile-chrome';"))throw new Error('v42.3 service-worker cache namespace missing');
+  if(!swText.includes('/investigation-runtime-v42.js?v=v42.3-mobile-chrome'))throw new Error('v42.3 runtime missing from service-worker cache');
 }
 
-console.log('Inside Grey Room v42.2 checks: 34 dossiers + objectives + dynamic duration + suspect evidence privacy + single Settings owner OK');
+console.log('Inside Grey Room v42.3 checks: settings modal, live controls, short lie note, evidence privacy and scenario audit OK');

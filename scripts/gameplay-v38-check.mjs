@@ -24,21 +24,24 @@ ok(source.includes("b.id='igrGameSettings'"),'in-game Settings control missing')
 for(const dir of ['dist','www']){
   if(!(await exists(path.join(root,dir))))continue;
 
-  // v42/v42.1/v42.2 may already have finalized dist during npm postinstall
+  // v42/v42.1/v42.2/v42.3 may already have finalized dist during npm postinstall
   // while mobile:build is still validating www at the earlier v38 stage.
   const v42Path=path.join(root,dir,'investigation-runtime-v42.js');
   if(await exists(v42Path)){
     const v42=await readFile(v42Path,'utf8');
     if(v42.includes('IGR_INVESTIGATION_V42')){
+      const chrome=v42.includes('IGR_V42_3_MOBILE_CHROME');
       const stable=v42.includes('IGR_V42_2_CELL_STABILITY');
-      const v42Ref=stable?'investigation-runtime-v42.js?v=v42.2-cell-stability':'investigation-runtime-v42.js?v=v42-investigation-ui';
+      const v42Version=chrome?'v42.3-mobile-chrome':stable?'v42.2-cell-stability':'v42-investigation-ui';
+      const v42Label=chrome?'v42.3':stable?'v42.2':'v42';
+      const v42Ref=`investigation-runtime-v42.js?v=${v42Version}`;
       const auditPath=path.join(root,dir,'investigation-audit-v42-1.js');
       const hasAudit=await exists(auditPath) && (await readFile(auditPath,'utf8')).includes('IGR_INVESTIGATION_AUDIT_V42_1');
       for(const page of ['index.html','en.html']){
         const p=path.join(root,dir,page);if(!(await exists(p)))continue;
         const html=await readFile(p,'utf8');
         ok(html.includes('authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/${page}: v41 base runtime reference missing under v42`);
-        ok(html.includes(v42Ref),`${dir}/${page}: ${stable?'v42.2':'v42'} runtime reference missing`);
+        ok(html.includes(v42Ref),`${dir}/${page}: ${v42Label} runtime reference missing`);
         ok(!html.includes('gameplay-state-fix-v38.js'),`${dir}/${page}: v38 tag should be removed after v42 finalization`);
         const lastScript=html.lastIndexOf('<script');
         if(hasAudit){
@@ -51,15 +54,16 @@ for(const dir of ['dist','www']){
       const appPath=path.join(root,dir,'app-v11.js');
       if(await exists(appPath)){
         const app=await readFile(appPath,'utf8');
-        const swRef=stable?'/service-worker.js?v=v42.2-cell-stability':hasAudit?'/service-worker.js?v=v42.1-investigation-audit':'/service-worker.js?v=v42-investigation-ui';
-        ok(app.includes(swRef),`${dir}/app-v11.js: ${stable?'v42.2':hasAudit?'v42.1':'v42'} service-worker registration missing`);
+        const swRef=chrome?'/service-worker.js?v=v42.3-mobile-chrome':stable?'/service-worker.js?v=v42.2-cell-stability':hasAudit?'/service-worker.js?v=v42.1-investigation-audit':'/service-worker.js?v=v42-investigation-ui';
+        ok(app.includes(swRef),`${dir}/app-v11.js: ${chrome?'v42.3':stable?'v42.2':hasAudit?'v42.1':'v42'} service-worker registration missing`);
       }
       const swPath=path.join(root,dir,'service-worker.js');
       if(await exists(swPath)){
         const swText=await readFile(swPath,'utf8');
-        ok(swText.includes("const CACHE='igr-v42-investigation-ui';"),`${dir}/service-worker.js: v42 cache namespace missing`);
+        const expectedCache=chrome?"const CACHE='igr-v42-3-mobile-chrome';":"const CACHE='igr-v42-investigation-ui';";
+        ok(swText.includes(expectedCache),`${dir}/service-worker.js: ${chrome?'v42.3':'v42'} cache namespace missing`);
         ok(swText.includes('/authoritative-runtime-v41.js?v=v41-authoritative-ui'),`${dir}/service-worker.js: v41 base runtime missing from shell cache`);
-        ok(swText.includes(`/${v42Ref}`),`${dir}/service-worker.js: ${stable?'v42.2':'v42'} runtime missing from shell cache`);
+        ok(swText.includes(`/${v42Ref}`),`${dir}/service-worker.js: ${v42Label} runtime missing from shell cache`);
         if(hasAudit)ok(swText.includes('/investigation-audit-v42-1.js?v=v42.1-investigation-audit'),`${dir}/service-worker.js: v42.1 audit runtime missing from shell cache`);
       }
       continue;
