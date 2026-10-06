@@ -81,6 +81,15 @@ function enhancePlay(d){
     mode.textContent=`EN LIGNE · ${word} ${Number(d.room.phase_index||0)+1}/${total}`;
   }
 }
+function enhanceGenericDecision(d){
+  if(d.room.campaign_id==='maitre')return;
+  const page=$('.hplay-decision');if(!page||!markOnlinePage(page,d))return;
+  const head=$('.hplay-decision-head',page);
+  if(head)head.insertAdjacentHTML('beforebegin',playerStrip(d));
+  const options=$('.hplay-options',page);
+  if(options)options.insertAdjacentHTML('afterend',roster(d));
+  const mode=$('.hplay-mode',page);if(mode)mode.textContent='EN LIGNE · DÉCISION';
+}
 function enhanceMaitreDecision(d){
   if(d.room.campaign_id!=='maitre')return;
   const page=$('.maitre-page.mnet.hplay-decision,.maitre-page.hplay-decision');
@@ -136,7 +145,7 @@ async function syncOnline(){
     if(d.room.stage==='lobby')enhanceLobby(d);
     if(d.room.stage==='role_reading')enhanceRoleReading(d);
     if(d.room.stage==='play')enhancePlay(d);
-    if(d.room.stage==='decision')enhanceMaitreDecision(d);
+    if(d.room.stage==='decision'){if(d.room.campaign_id==='maitre')enhanceMaitreDecision(d);else enhanceGenericDecision(d)}
     if(d.room.stage==='reveal')enhanceResult(d);
   }catch(err){console.warn('[HÉRITAGE v55]',err?.message||err)}
   finally{syncBusy=false}
