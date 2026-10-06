@@ -19,6 +19,15 @@ for(const name of pages){
 const app=path.join(target,'app-v11.js');if(await exists(app)){let s=await readFile(app,'utf8');s=s.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'/service-worker.js?v='+VERSION);await writeFile(app,s,'utf8')}
 const swp=path.join(target,'service-worker.js');if(await exists(swp)){
   let sw=await readFile(swp,'utf8');sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='"+CACHE+"';");
+  for(const asset of bump){
+    const safe=asset.replace(/[.*+?^$()|[\\]\\]/g,'\\\\const swp=path.join(target,'service-worker.js');if(await exists(swp)){
+  let sw=await readFile(swp,'utf8');sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='"+CACHE+"';");
+  if(!sw.includes('/'+style+'?v='+VERSION))sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/"+style+"?v="+VERSION+"',");
+  await writeFile(swp,sw,'utf8');
+}');
+    const re=new RegExp('/'+safe+'\\?v=[^\\\'"]+','g');
+    sw=sw.replace(re,'/'+asset+'?v='+VERSION);
+  }
   if(!sw.includes('/'+style+'?v='+VERSION))sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/"+style+"?v="+VERSION+"',");
   await writeFile(swp,sw,'utf8');
 }
