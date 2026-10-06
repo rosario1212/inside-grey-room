@@ -109,7 +109,7 @@
   privateCardHtml=function(){
     let html=prevPrivateCard();if(!isOmerta(STATE.sync?.room?.scenario_id))return html;
     const card=STATE.sync?.player?.private_state||{},facts=Array.isArray(card.fixed_facts)?card.fixed_facts:[],sentence=Number(card.base_sentence||0);
-    if(facts.length||sentence){const objective=card.omerta_objective||card.position||'Reste cohérent avec les faits. Chaque choix aura une conséquence.';html+=`<section class="omerta-objective-card"><span>OBJECTIF</span><b>${h(objective)}</b>${sentence?`<div><small>PEINE DE DÉPART</small><strong>${sentence} ans</strong></div>`:''}${facts.length?`<details><summary>Faits irréversibles</summary><ul>${facts.map(x=>`<li>${h(x)}</li>`).join('')}</ul></details>`:''}</section>`;}
+    if(facts.length||sentence){html+=`<section class="omerta-objective-card omerta-fixed-facts"><span>CONSÉQUENCES FIXES</span>${sentence?`<div><small>PEINE DE DÉPART</small><strong>${sentence} ans</strong></div>`:''}${facts.length?`<details><summary>Faits irréversibles</summary><ul>${facts.map(x=>`<li>${h(x)}</li>`).join('')}</ul></details>`:''}</section>`;}
     return html+`<button class="btn ghost block omerta-tree-open" onclick="igrOmertaOpenFamilyTree()">Arbre de la Famiglia <span>Voir les liens et les conséquences</span></button>`;
   };
 
