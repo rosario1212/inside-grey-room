@@ -20,27 +20,27 @@ const isFr=()=>window.IGR_LOCALE!=='en';
 const ROLES={
   cendres:[
     {id:'chef',name:'CHEF DE CELLULE',public:'Coordonne les décisions et tranche quand le groupe se divise.'},
-    {id:'sigint',name:'ANALYSTE SIGINT',public:'Lit les horaires, communications et anomalies techniques.'},
+    {id:'sigint',name:'ANALYSTE DES COMMUNICATIONS',public:'Lit les horaires, communications et anomalies techniques.'},
     {id:'terrain',name:'AGENT TERRAIN',public:'Connaît les lieux, filatures et contraintes opérationnelles.'},
     {id:'source',name:'OFFICIER TRAITANT',public:'Évalue les sources humaines, leurs motifs et leurs mensonges.'},
-    {id:'liaison',name:'LIAISON VESPER',public:'Représente les autorités et mesure le coût politique des erreurs.'},
+    {id:'liaison',name:'LIAISON MINISTÉRIELLE',public:'Représente les autorités et mesure le coût politique des erreurs.'},
     {id:'legal',name:'ANALYSTE JUDICIAIRE',public:'Sépare preuve exploitable, hypothèse et contamination du dossier.'},
-    {id:'archive',name:'ARCHIVISTE ORPHÉE',public:'Recoupe les archives anciennes et les identités effacées.'}
+    {id:'archive',name:'RESPONSABLE DES ARCHIVES',public:'Recoupe les archives anciennes et les identités effacées.'}
   ],
   kuroi:[
-    {id:'waka_k',name:'WAKAGASHIRA KUROKAWA',public:'Numéro deux du clan Kurokawa. Il protège la continuité de la Famille.'},
-    {id:'kobun_k',name:'KOBUN KUROKAWA',public:'Exécutant du clan. Les ordres reçus et les dettes anciennes le suivent.'},
-    {id:'waka_a',name:'WAKAGASHIRA ARAKIDA',public:'Cadre du clan rival. Il veut empêcher Kurokawa de contrôler le récit.'},
-    {id:'kobun_a',name:'KOBUN ARAKIDA',public:'Homme de terrain Arakida. Il voit ce que les chefs préfèrent ignorer.'},
+    {id:'waka_k',name:'NUMÉRO DEUX · KUROKAWA',public:'Numéro deux du clan Kurokawa. Il protège la continuité de la Famille.'},
+    {id:'kobun_k',name:'HOMME DE TERRAIN · KUROKAWA',public:'Exécutant du clan. Les ordres reçus et les dettes anciennes le suivent.'},
+    {id:'waka_a',name:'CADRE · ARAKIDA',public:'Cadre du clan rival. Il veut empêcher Kurokawa de contrôler le récit.'},
+    {id:'kobun_a',name:'HOMME DE TERRAIN · ARAKIDA',public:'Homme de terrain Arakida. Il voit ce que les chefs préfèrent ignorer.'},
     {id:'commissaire',name:'COMMISSAIRE',public:'Dirige l’enquête officielle et protège l’institution.'},
     {id:'inspecteur',name:'INSPECTEUR',public:'Travaille les scènes, les accès et les contradictions de la police.'},
-    {id:'bengoshi',name:'BENGOSHI',public:'Avocat de la Famille. Il détient des documents que personne ne veut voir publics.'}
+    {id:'bengoshi',name:'AVOCAT DES CLANS',public:'Avocat de la Famille. Il détient des documents que personne ne veut voir publics.'}
   ]
 };
 
 const PACKS={
   cendres:{
-    title:'CENDRES',theme:'INTELLIGENCE / VESPER',min:5,max:7,
+    title:'CENDRES',theme:'RENSEIGNEMENT / CONTRE-ESPIONNAGE',min:5,max:7,
     chapters:{
       1:{
         title:'PERSONNE N’EXISTE',
@@ -53,7 +53,7 @@ const PACKS={
           ['CLASSIFICATION','Classez VENN avant de verrouiller le dossier. Cette classification sera réutilisée dans les dossiers suivants.']
         ],
         secrets:{
-          chef:['La cellule avait reçu l’ordre de surveiller VENN, jamais de l’arrêter. L’ordre venait d’un canal Vesper authentique.','Empêcher le groupe de confondre ordre authentique et cible authentique.'],
+          chef:['La cellule avait reçu l’ordre de surveiller VENN, jamais de l’arrêter. L’ordre venait d’un canal officiel du service de renseignement.','Empêcher le groupe de confondre ordre authentique et cible authentique.'],
           sigint:['Tous les appels attribués à VENN proviennent de trois relais différents, mais avec exactement la même dérive d’horloge de 41 ms.','Faire comprendre qu’une identité numérique peut être fabriquée de façon centralisée.'],
           terrain:['Deux voisins jurent avoir vu “VENN”, mais leurs descriptions ne correspondent pas. Les deux ont reçu la même photo après les faits.','Distinguer témoin de personne réelle et témoin influencé.'],
           source:['Une source CERBÈRES emploie “VENN” comme mot de validation, jamais comme nom de personne.','Garder la source crédible sans révéler trop tôt qu’elle connaît CERBÈRES.'],
@@ -71,7 +71,7 @@ const PACKS={
       },
       2:{
         title:'04:17',
-        briefing:'À 04:17, une attaque frappe le terminal Est de Vesper. Dans les huit minutes suivantes, trois convois officiels quittent une zone sous protocole d’urgence. CERBÈRES revendique l’attaque sous un nom qui n’existe dans aucun de ses messages antérieurs.',
+        briefing:'À 04:17, une attaque frappe le terminal Est de l’aéroport international. Dans les huit minutes suivantes, trois convois officiels quittent une zone sous protocole d’urgence. CERBÈRES revendique l’attaque sous un nom qui n’existe dans aucun de ses messages antérieurs.',
         question:'Quel était l’objectif principal de l’attaque de 04:17 ?',
         phases:[
           ['IMPACT','Séparez ce qui attire l’attention de ce qui profite réellement de la crise.'],
@@ -81,17 +81,17 @@ const PACKS={
         ],
         secrets:{
           chef:['Le protocole 04:17 a déplacé automatiquement les matières classifiées vers un site secondaire.','Obliger le groupe à raisonner sur les effets institutionnels de l’attaque.'],
-          sigint:['La revendication a été publiée 38 secondes avant la première alerte interne officielle.','Établir qu’un acteur connaissait le timing avant les services de Vesper.'],
+          sigint:['La revendication a été publiée 38 secondes avant la première alerte interne officielle.','Établir qu’un acteur connaissait le timing avant les services de renseignement.'],
           terrain:['Le convoi C n’a pas utilisé sa route de secours prévue ; il a pris une route préparée la veille.','Faire du trajet C un indice, pas une preuve suffisante.'],
           source:['Une source décrit ORPHÉE comme “ce que l’on déplace quand tout le monde regarde ailleurs”.','Relier ORPHÉE à un transfert sans prétendre savoir encore ce que c’est.'],
-          liaison:['Le gouvernement veut attribuer l’attaque à Arken pour pouvoir fermer la frontière.','Empêcher le besoin politique de devenir la vérité du dossier.'],
+          liaison:['Le gouvernement veut attribuer l’attaque au pays voisin pour pouvoir fermer la frontière.','Empêcher le besoin politique de devenir la vérité du dossier.'],
           legal:['Deux badges du convoi C ont été activés avec des identifiants créés après minuit.','Faire revenir la logique des identités fabriquées du dossier 01.'],
           archive:['Un ancien plan CERBÈRES emploie le code 04:17 pour “fenêtre de substitution logistique”.','Relier l’heure à une procédure, pas à un groupe revendicatif.']
         },
         options:[
           {id:'transfer',title:'COUVRIR UN TRANSFERT',detail:'L’attaque sert à faire sortir ORPHÉE sous couverture du protocole d’urgence.',grade:2,consequence:'Vous suivez le bon convoi et préservez une piste exploitable.'},
-          {id:'border',title:'PROVOQUER ARKEN',detail:'Le but est de créer un casus belli à la frontière.',grade:1,consequence:'La dimension politique est réelle, mais vous perdez le mouvement matériel.'},
-          {id:'terror',title:'FRAPPER VESPER',detail:'L’attaque est une opération de terreur autonome.',grade:0,consequence:'Le transfert disparaît avant que la cellule comprenne ce qu’elle devait suivre.'}
+          {id:'border',title:'PROVOQUER LE PAYS VOISIN',detail:'Le but est de provoquer un incident diplomatique à la frontière.',grade:1,consequence:'La dimension politique est réelle, mais vous perdez le mouvement matériel.'},
+          {id:'terror',title:'TERRORISER LA POPULATION',detail:'L’attaque est une opération de terreur autonome.',grade:0,consequence:'Le transfert disparaît avant que la cellule comprenne ce qu’elle devait suivre.'}
         ],
         reveal:'04:17 est une diversion logistique. L’attaque a déclenché exactement le protocole permettant de déplacer ORPHÉE sans contrôle normal.',
         apply:{transfer:{crisis:0,flag:'s2_correct'},border:{crisis:1,flag:'s2_partial'},terror:{crisis:1,flag:'s2_wrong'}}
@@ -103,7 +103,7 @@ const PACKS={
         phases:[
           ['SOURCE','Évaluez la prisonnière : ce qu’elle sait, ce qu’elle croit et ce qu’elle veut obtenir.'],
           ['TRANSCRIPTIONS','Comparez formulation, horodatage et chaîne de validation des trois comptes rendus.'],
-          ['PRESSION','Un ordre exige une conclusion immédiate. Décidez si vous continuez à exploiter le dossier ou si vous le geler.'],
+          ['PRESSION','Un ordre exige une conclusion immédiate. Décidez si vous continuez à exploiter le dossier ou si vous le gelez.'],
           ['RECOUPEMENT','Choisissez la contamination précise. Le dossier 04 utilisera ce que vous laissez entrer ici.']
         ],
         secrets:{
@@ -120,7 +120,7 @@ const PACKS={
           {id:'source',title:'LA SOURCE ENTIÈRE',detail:'La prisonnière manipule tout le dossier.',grade:0,consequence:'Vous perdez une piste réelle et CERBÈRES gagne du temps.'},
           {id:'audio',title:'L’ENREGISTREMENT AUDIO',detail:'L’audio a été remonté, les textes sont fiables.',grade:1,consequence:'Vous isolez une anomalie mais conservez une pièce falsifiée dans la synthèse.'}
         ],
-        reveal:'Le compte rendu B a été fabriqué à l’intérieur de Vesper. La prisonnière ment sur elle-même, mais plusieurs de ses informations opérationnelles sont exactes.',
+        reveal:'Le compte rendu B a été fabriqué au sein du service de renseignement. La prisonnière ment sur elle-même, mais plusieurs de ses informations opérationnelles sont exactes.',
         apply:{b:{crisis:0,flag:'s3_correct'},source:{crisis:1,flag:'s3_wrong'},audio:{crisis:1,flag:'s3_partial'}}
       },
       4:{
@@ -130,20 +130,20 @@ const PACKS={
         phases:[
           ['CARTE','Posez à voix haute les liens dont vous êtes certains. Tout lien non recoupé reste une hypothèse.'],
           ['HÉRITAGE','Relisez les conséquences des trois dossiers précédents affichées dans l’état persistant.'],
-          ['RELais','Trois personnes ont accès aux mêmes systèmes. Une seule explique à la fois VENN, 04:17 et le compte rendu B.'],
+          ['RELAIS','Trois personnes ont accès aux mêmes systèmes. Une seule explique à la fois VENN, 04:17 et le compte rendu B.'],
           ['CLASSIFICATION','Verrouillez le relais. Une erreur ici modifiera les options du Point Zéro.']
         ],
         secrets:{
           chef:['Marius KERN a signé les habilitations du protocole 04:17 et la délégation du superviseur absent.','Faire converger deux chaînes administratives vers KERN.'],
           sigint:['Les créations d’identités VENN et les accès du compte rendu B utilisent le même certificat racine : bureau K-9.','Relier le numérique à une autorité concrète.'],
           terrain:['Le convoi C s’est arrêté 96 secondes dans le parking réservé au bureau K-9 avant de disparaître des caméras.','Apporter le lien physique manquant.'],
-          source:['La prisonnière ne connaît pas KERN par son nom mais décrit “le gardien des portes de Vesper”.','Éviter de transformer une description en reconnaissance formelle.'],
+          source:['La prisonnière ne connaît pas KERN par son nom mais décrit “le responsable des accès sécurisés”.','Éviter de transformer une description en reconnaissance formelle.'],
           liaison:['KERN est politiquement intouchable : il dirige la coordination des accès classifiés.','Tester si le groupe cède à la protection institutionnelle.'],
           legal:['Une délégation signée KERN permettait de produire des identités administratives sans biométrie primaire.','Fournir le mécanisme juridique de VENN.'],
           archive:['Dans les archives ORPHÉE, K-9 signifie “keeper”, pas “kilometer”.','Fermer l’ambiguïté du code K-9.']
         },
         options:[
-          {id:'kern',title:'MARIUS KERN',detail:'Le coordinateur des accès est le relais interne qui relie les trois dossiers.',grade:2,consequence:'CERBÈRES perd son relais principal à Vesper.'},
+          {id:'kern',title:'MARIUS KERN',detail:'Le coordinateur des accès est le relais interne qui relie les trois dossiers.',grade:2,consequence:'CERBÈRES perd son relais principal dans les services.'},
           {id:'prisoner',title:'LA PRISONNIÈRE',detail:'Elle a organisé la contamination depuis sa capture.',grade:0,consequence:'Le vrai relais reste actif et prépare Point Zéro.'},
           {id:'minister',title:'LE CABINET DU MINISTRE',detail:'La fuite politique prouve que le cabinet dirige le réseau.',grade:1,consequence:'Vous identifiez une compromission secondaire mais pas le nœud opérationnel.'}
         ],
@@ -244,7 +244,7 @@ const PACKS={
           ['DEMANDE','Identifiez ce que la police ne peut pas faire officiellement.'],
           ['COÛT','Chaque camp estime ce qu’il perd en acceptant ou en refusant.'],
           ['DOUBLE JEU','Le même registre peut protéger le clan et condamner des policiers.'],
-          ['CHOIX','Décidez ce que la Famille fait du registre. Le choix sera conservé dans la Chronique.']
+          ['CHOIX','Décidez ce que la Famille fait du registre. Le choix sera conservé dans le registre des événements.']
         ],
         secrets:{
           waka_k:['Le registre contient aussi des paiements Kurokawa sans rapport avec le meurtre. Le rendre public affaiblit durablement la Famille.','Négocier sans effacer la preuve du meurtre.'],
@@ -295,7 +295,7 @@ const PACKS={
         briefing:'La vérité est connue. Le Conseil réunit Kurokawa, Arakida, la police et le Bengoshi. Il ne s’agit plus seulement de savoir qui a tué : il faut décider ce que devient une vérité capable de détruire plusieurs institutions.',
         question:'Que fait le Conseil de la vérité ?',
         phases:[
-          ['MÉMOIRE','Relisez les dettes et la Chronique. Ce qui s’est passé dans les dossiers précédents limite les options crédibles.'],
+          ['MÉMOIRE','Relisez les dettes et le registre des événements. Ce qui s’est passé dans les dossiers précédents limite les options crédibles.'],
           ['PRIX','Chaque rôle annonce ce qu’il accepte de perdre et ce qu’il refuse de sacrifier.'],
           ['FACE','Décidez ce qui doit être public, ce qui doit rester interne et qui doit assumer une conséquence visible.'],
           ['CONSEIL','Le choix final n’a pas une seule “bonne” réponse. Il définit l’héritage de KUROI.']
@@ -366,7 +366,7 @@ function campaignCarry(id){
   }
   const debts=s.kuroi?.debts||[],chron=s.kuroi?.chronicle||[];
   const due=debts.filter(d=>d.status==='due').length;
-  return [`${due} dette${due>1?'s':''} ouverte${due>1?'s':''}`,`${chron.length} fait${chron.length>1?'s':''} dans la Chronique`,`${Object.keys(s.kuroi?.flags||{}).filter(k=>/^k\d_/.test(k)).length} décisions héritées`];
+  return [`${due} dette${due>1?'s':''} ouverte${due>1?'s':''}`,`${chron.length} fait${chron.length>1?'s':''} dans le registre des événements`,`${Object.keys(s.kuroi?.flags||{}).filter(k=>/^k\d_/.test(k)).length} décisions héritées`];
 }
 
 function renderHub(){
@@ -455,7 +455,9 @@ function renderSetup(id,n){
 function buildNameFields(count,players=[]){const wrap=$('#hplayNames');if(!wrap)return;wrap.innerHTML=Array.from({length:count},(_,i)=>`<label><span>J${i+1}</span><input maxlength="22" autocomplete="off" inputmode="text" value="${esc(players[i]?.name||'')}" placeholder="Pseudo ${i+1}" required></label>`).join('')}
 
 function startSession(id,n,names){
-  const pack=PACKS[id],pc=pack.chapters[n],rolePool=ROLES[id].slice(0,names.length),roles=shuffle(rolePool);
+  const pack=PACKS[id];if(!pack?.chapters[n]||n>current(id)||names.length<pack.min||names.length>pack.max)return;
+  const ids=id==='kuroi'?(names.length===5?['waka_k','kobun_k','waka_a','commissaire','inspecteur']:names.length===6?['waka_k','kobun_k','waka_a','commissaire','inspecteur','bengoshi']:ROLES[id].map(r=>r.id)):ROLES[id].slice(0,names.length).map(r=>r.id);
+  const roles=shuffle(ids.map(roleId=>roleFor(id,roleId)));
   const practice=completed(id,n);
   const players=names.map((name,i)=>({id:`p${i+1}`,name:txt(name,22)||`Joueur ${i+1}`,roleId:roles[i].id}));
   const live={version:2,campaignId:id,chapter:n,players,revealIndex:0,revealed:[],phaseIndex:0,stage:'reveal',decision:null,result:null,practice,startedAt:new Date().toISOString(),finished:false};
@@ -476,7 +478,7 @@ function advanceReveal(){const l=readLive();if(!l)return;const idx=l.revealIndex
 
 function renderPlay(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter],idx=Math.max(0,Math.min(pc.phases.length-1,live.phaseIndex||0)),phase=pc.phases[idx];
-  const s=state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live):'';
+  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live):'';
   shellPut(`<main class="page hplay hplay-session hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="session-menu">••• <span>Session</span></button><div class="hplay-mode">PHASE ${idx+1}/${pc.phases.length}</div></header>
     <section class="hplay-session-head"><span class="hplay-eyebrow">${esc(PACKS[live.campaignId].title)} · DOSSIER 0${live.chapter}</span><h1>${esc(phase[0])}</h1><p>${esc(phase[1])}</p></section>
@@ -505,7 +507,7 @@ function conditionalIntel(id,n,s){
     return `Le niveau de crise actuel est ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}.`;
   }
   const f=s.kuroi?.flags||{};const choices=Object.keys(f).filter(k=>/^k\d_/.test(k)&&f[k]).length;
-  return n===5?`Le Conseil arrive avec ${s.kuroi?.debts?.length||0} dette(s) enregistrée(s) et ${s.kuroi?.chronicle?.length||0} fait(s) dans la Chronique. Ces traces doivent être prises en compte dans le choix final.`:`${choices} décision(s) antérieure(s) influencent désormais la confiance entre la Police et les clans.`;
+  return n===5?`Le Conseil arrive avec ${s.kuroi?.debts?.length||0} dette(s) enregistrée(s) et ${s.kuroi?.chronicle?.length||0} fait(s) dans le registre des événements. Ces traces doivent être prises en compte dans le choix final.`:`${choices} décision(s) antérieure(s) influencent désormais la confiance entre la Police et les clans.`;
 }
 
 function renderDecision(live){const pc=PACKS[live.campaignId].chapters[live.chapter];shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
@@ -519,25 +521,26 @@ function renderResult(live){const pc=PACKS[live.campaignId].chapters[live.chapte
   <section class="hplay-result-card"><span class="hplay-eyebrow">${label.toUpperCase()}</span><h1>${esc(opt.title)}</h1><p class="hplay-result-truth">${esc(pc.reveal)}</p><div class="hplay-result-consequence"><span>CONSÉQUENCE</span><b>${esc(opt.consequence)}</b></div>${live.practice?'<div class="hplay-practice">REJOUÉ — la sauvegarde principale ne sera pas modifiée.</div>':''}<button class="btn primary" data-hp-action="finish">${live.practice?'TERMINER LE REPLAY':'INSCRIRE DANS L’HÉRITAGE'}</button></section>
 </main>`)}
 
-function applyResult(live){
+function applyResult(live,navigate=true){
   if(!live||live.finished)return;
   const pc=PACKS[live.campaignId].chapters[live.chapter],out=pc.apply?.[live.decision]||{};
-  if(!live.practice){
+  if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
       const flag=out.flag;if(flag){const payload={flags:{[flag]:true},crisisDelta:Number(out.crisis||0)};api().completeChapter('cendres',live.chapter,payload)}else api().completeChapter('cendres',live.chapter,{crisisDelta:Number(out.crisis||0)});
       const grade=live.result?.grade||0;
       const labels=['PISTE COMPROMISE','PISTE PARTIELLE','PISTE VALIDÉE'];
       api().cendres.upsertNode({id:`cendres-${live.chapter}-${live.decision}`,label:`D0${live.chapter} · ${labels[grade]}`,kind:'dossier',status:grade===2?'cleared':grade===1?'watch':'unknown',chapter:live.chapter,note:live.result?.consequence});
-      if(live.chapter>1)api().cendres.link(`cendres-${live.chapter-1}-${findPreviousDecision('cendres',live.chapter-1)}`,`cendres-${live.chapter}-${live.decision}`,'héritage de campagne');
+      if(live.chapter>1)api().cendres.link(`cendres-${live.chapter-1}-${findPreviousDecision('cendres',live.chapter-1)}`,`cendres-${live.chapter}-${live.decision}`,'héritage de campagne',live.chapter);
     }else{
       if(out.flag){api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}})}else api().completeChapter('kuroi',live.chapter,{});
       if(out.debt)api().kuroi.addDebt({type:'giri',from:out.debt[0],to:out.debt[1],reason:out.debt[2],status:'due',chapter:live.chapter});
-      if(out.chron)api().kuroi.addChronicle(out.chron,'public');
-      api().kuroi.addChronicle(`Dossier 0${live.chapter} — ${live.result?.title}. ${live.result?.consequence}`,'public');
+      if(out.chron)api().kuroi.addChronicle(out.chron,'public',live.chapter);
+      api().kuroi.addChronicle(`Dossier 0${live.chapter} — ${live.result?.title}. ${live.result?.consequence}`,'public',live.chapter);
     }
     rememberDecision(live.campaignId,live.chapter,live.decision);
   }
-  live.finished=true;live.stage='finished';saveLive(live);
+  live.finished=true;if(navigate)live.stage='finished';saveLive(live);
+  if(!navigate)return {ok:true};
   clearLive();renderCampaign(live.campaignId);toastSafe(live.practice?'Replay terminé.':'Dossier inscrit dans l’Héritage.');
 }
 function decisionKey(id,n){return `igr_heritage_decision_${id}_${n}`}
@@ -596,7 +599,7 @@ function handleClick(e){
   const oldChapter=e.target.closest?.('.heritage-chapter');
   if(oldChapter&&!oldChapter.closest('.hplay')){const id=campaignFromNode(oldChapter);if(id&&!oldChapter.disabled){const rows=$$('.heritage-chapter',oldChapter.parentElement);const n=Math.max(1,rows.indexOf(oldChapter)+1);e.preventDefault();e.stopImmediatePropagation();renderChapter(id,n);return}}
 }
-function handleSubmit(e){const form=e.target.closest?.('#hplaySetupForm');if(!form)return;e.preventDefault();const names=$$('input',form).map(i=>txt(i.value,22)).filter(Boolean),pack=PACKS[form.dataset.campaign];if(names.length<pack.min){toastSafe(`Il faut au moins ${pack.min} joueurs.`);return}startSession(form.dataset.campaign,Number(form.dataset.chapter),names)}
+function handleSubmit(e){const form=e.target.closest?.('#hplaySetupForm');if(!form)return;e.preventDefault();const names=$$('input',form).map(i=>txt(i.value,22)).filter(Boolean),pack=PACKS[form.dataset.campaign];if(new Set(names.map(n=>n.toLocaleLowerCase())).size!==names.length){toastSafe('Chaque joueur doit avoir un pseudo différent.');return}if(names.length<pack.min){toastSafe(`Il faut au moins ${pack.min} joueurs.`);return}startSession(form.dataset.campaign,Number(form.dataset.chapter),names)}
 
 function boot(){
   document.addEventListener('click',handleClick,true);
@@ -606,7 +609,7 @@ function boot(){
   patchHomeCard();
   setTimeout(maybeUpgradeOldHeritage,0);
   window.addEventListener('pageshow',()=>setTimeout(patchHomeCard,0),{passive:true});
-  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
+  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,commitLive:()=>{const l=readLive();if(!l||l.stage!=='result')return {ok:false};if(l.finished)return {ok:true};return applyResult(l,false)},roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();

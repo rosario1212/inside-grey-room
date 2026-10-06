@@ -10,7 +10,7 @@ ok(runtime.includes('À FAIRE MAINTENANT'),'v55 immediate role objective missing
 ok(runtime.includes('data-h55-decide'),'v55 Judge decision control missing');
 ok(runtime.includes('DOSSIER VIVANT'),'v55 MAÎTRE compact dossier missing');
 ok(generic.includes('roleCard:(campaign,chapter,roleId)'),'CENDRES/KUROI safe role-card accessor missing');
-ok(maitre.includes("roleCard:(chapter,roleId,variantKey)"),'MAÎTRE safe role-card accessor missing');
+ok(maitre.includes("roleCard:(chapter,roleId,variantKey,carry)"),'MAÎTRE safe role-card accessor missing');
 ok(migration.includes("set role_id='avocat',ready=false"),'MAÎTRE host must become Avocat');
 ok(migration.includes("v_player.role_id<>'juge'"),'MAÎTRE judge-authority guard missing');
 ok(migration.includes('igr_heritage_online_decide_v55'),'v55 decision RPC missing');

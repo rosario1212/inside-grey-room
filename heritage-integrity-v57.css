@@ -1,0 +1,10 @@
+/* Shared Heritage layouts: readable long titles and consistent 2:3 posters. */
+.hplay .hplay-case-copy,.hplay .hplay-dossier-copy,.hplay .hplay-panel,.h55-player-strip>*{min-width:0;overflow-wrap:anywhere}
+.hplay .hplay-case-poster{aspect-ratio:2/3;overflow:hidden;background:#050709}
+.hplay .hplay-case-poster img{display:block;width:100%;height:100%;object-fit:contain}
+.hplay .hplay-options button{white-space:normal;overflow-wrap:anywhere;min-width:0}
+.hplay .hplay-options button:focus-visible,.hplay .hplay-back:focus-visible,.h55-my-card summary:focus-visible{outline:2px solid #c4b59b;outline-offset:3px}
+.hplay .hplay-secret b,.hplay .hplay-objective b{white-space:normal;overflow-wrap:anywhere}
+.hplay textarea{box-sizing:border-box;max-width:100%;font-size:16px}
+.h55-result-context{box-sizing:border-box}
+@media(max-width:430px){.hplay .hplay-case{grid-template-columns:72px minmax(0,1fr);align-items:start}.hplay .hplay-case-poster{width:72px;height:108px}.hplay .hplay-case-copy>strong{line-height:1.2}.hplay .hplay-session-nav{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}.hplay .hplay-names{grid-template-columns:1fr}}

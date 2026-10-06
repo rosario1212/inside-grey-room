@@ -13,12 +13,13 @@ const read=k=>{try{return JSON.parse(store().getItem(k)||'null')}catch{return nu
 const session=()=>read(ONLINE_KEY);
 const rpcx=(name,args)=>typeof rpc==='function'?rpc(name,args):Promise.reject(new Error('rpc unavailable'));
 const toastx=m=>{try{toast?.(m)}catch{}};
-let syncBusy=false,scheduled=false;
+let syncBusy=false,scheduled=false,latest=null;
+document.addEventListener('igr-heritage-sync',e=>{latest=e.detail;schedule()});
 
 function roleCard(d){
   const campaign=d?.room?.campaign_id,roleId=d?.player?.role_id,chapter=Number(d?.room?.chapter||1);
   if(!campaign||!roleId)return null;
-  if(campaign==='maitre')return window.IGR_HERITAGE_MAITRE_ONLINE?.roleCard?.(chapter,roleId,d.room.maitre_variant)||null;
+  if(campaign==='maitre')return window.IGR_HERITAGE_MAITRE_ONLINE?.roleCard?.(chapter,roleId,d.room.maitre_variant,d.room.campaign_carry)||null;
   return window.IGR_HERITAGE_PLAY?.roleCard?.(campaign,chapter,roleId)||null;
 }
 function campaignName(id){
@@ -35,12 +36,12 @@ function playerStrip(d){
   </section>`;
 }
 function roster(d){
-  const rows=(d.players||[]).map(p=>`<div class="${p.id===d.player.id?'is-me':''}"><b>${esc(p.pseudo)}</b><span>${esc((p.role_id||'').replaceAll('_',' ').toUpperCase()||'RÔLE')}</span></div>`).join('');
+  const rows=(d.players||[]).map(p=>`<div class="${p.id===d.player.id?'is-me':''}"><b>${esc(p.pseudo)}</b><span>${esc(roleCard({...d,player:p})?.name||'RÔLE')}</span></div>`).join('');
   return `<details class="h55-roster" data-h55-injected="1"><summary>TABLE · ${(d.players||[]).length} JOUEURS</summary><div>${rows}</div></details>`;
 }
 function markOnlinePage(page,d){
   if(!page)return false;
-  const stamp=[d.room.stage,d.room.phase_index,d.room.decision_id,d.player.role_id,(d.players||[]).map(p=>`${p.id}:${p.role_id}:${p.ready}`).join('|')].join('::');
+  const stamp=[d.room.code,d.room.chapter,d.room.stage,d.room.phase_index,d.room.decision_id,d.player.role_id,(d.players||[]).map(p=>`${p.id}:${p.role_id}:${p.ready}`).join('|')].join('::');
   if(page.dataset.h55Stamp===stamp)return false;
   page.dataset.h55Stamp=stamp;
   page.classList.add('heritage-v55-online');
@@ -101,15 +102,6 @@ function enhanceMaitreDecision(d){
     head.querySelector('p')?.remove();
     head.insertAdjacentHTML('beforeend',`<div class="h55-decision-owner" data-h55-injected="1"><b>${canLock?'TU ES LE JUGE':'DÉCISION DU JUGE'}</b><span>${canLock?'Choisis la conclusion qui correspond uniquement à ce qui a été établi pendant l’audience.':judge?`${esc(judge.pseudo)} verrouille la conclusion.`:'Le Juge est absent : l’hôte reprend le verrouillage.'}</span></div>`);
   }
-  const options=$('.hplay-options',page);
-  if(options)$$('button',options).forEach(btn=>{
-    const id=btn.dataset.id||btn.dataset.h55Decide;
-    if(!id)return;
-    btn.removeAttribute('data-mnet');
-    btn.dataset.h55Decide=id;
-    btn.disabled=!canLock;
-    const i=$('i',btn);if(i)i.textContent=canLock?'VERROUILLER →':'EN ATTENTE DU JUGE';
-  });
   const mode=$('.hplay-mode',page);if(mode)mode.textContent='EN LIGNE · JUGEMENT';
 }
 function enhanceLobby(d){
@@ -140,7 +132,7 @@ async function syncOnline(){
   if(!relevant)return;
   syncBusy=true;
   try{
-    const d=await rpcx('igr_heritage_online_sync',{p_code:s.code,p_player_token:s.token});
+    const d=latest?.room?.code===s.code?latest:await rpcx('igr_heritage_online_sync',{p_code:s.code,p_player_token:s.token});
     if(!d?.room)return;
     if(d.room.stage==='lobby')enhanceLobby(d);
     if(d.room.stage==='role_reading')enhanceRoleReading(d);
