@@ -4,7 +4,7 @@
 const STORE_KEY='igr_duration_modes_v35';
 const MODES={
  short:{estimate:'≈ 40–55 min',preInvestigation:120,interrogation:360,cycleDebrief:90,confrontation:120,assembly:150,judicialShort:90,judicialLong:120,witness:180,finalDebrief:120},
- long:{estimate:'≈ 70–90 min',preInvestigation:180,interrogation:480,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:240,witness:240,finalDebrief:240},
+ long:{estimate:'≈ 70–90 min',preInvestigation:180,interrogation:360,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:240,witness:240,finalDebrief:240},
  legacy:{estimate:'',preInvestigation:120,interrogation:360,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:180,witness:240,finalDebrief:120}
 };
 window.IGR_DURATION_MODES_V35={version:'35.2-duration-lobby',modes:MODES,defaultMode:'long'};
