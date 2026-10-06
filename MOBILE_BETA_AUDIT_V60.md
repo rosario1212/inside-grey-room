@@ -6,6 +6,7 @@
 |---|---|---|
 | Finale | Apparition/disparition du conseil et accès aux actions | Correctif v58 conservé ; simulation de 120 polls et conservation des onglets passent |
 | Lobby | Réécriture du même texte déclenchant l’observateur DOM | Écriture uniquement si changement ; 120 callbacks sans mutation supplémentaire |
+| Conservation du mode | Démarrage réinitialisant le choix court/long | Mode conservé à chaque remplacement d’état ; 156 démarrages court/long avec compositions min/max validés |
 | Durée | Interrogatoires et finale court/long | 360 secondes dans les deux modes ; prises de parole/défenses distinctes ; estimations dépendant du nombre de rôles |
 | Authentification | Comparaison SQL avec jeton d’hôte NULL | NULL et faux jeton refusés ; vrai jeton accepté dans le lobby |
 | Accès internes | Tick, durée interne et vérification des droits exposés sans jeton | Exécution directe retirée aux clients ; appels internes et service_role conservés |
@@ -26,7 +27,7 @@ Le test serveur v58 compare avant/après six protections les résultats de l’E
 
 Le test v59 vérifie l’objectif du Juge corrompu, le vote majoritaire de corruption, la conclusion personnelle du Journaliste, la décision faisant autorité pour Inspecteur/Expert et la récupération d’un joueur absent. Le test v60 vérifie en plus la priorité de l’objectif Espion sur son rôle public Suspect. Les objectifs de corruption conservent leur risque propre : une cible sous-évaluée et une corruption non détectée sont des conditions de victoire, indépendamment du compteur de protections.
 
-Les variantes Omerta, Terror, Cartel, Régime et Héritage disposent de leurs contrôles historiques inclus dans la construction. Cet audit ne remplace pas un playtest complet de chaque variante avec de vrais groupes. Les 44 packs et les fonctions serveur ont été inspectés ; les fixtures transactionnelles couvrent des compositions représentatives, pas chaque permutation de tous les scénarios.
+Les variantes Omerta, Terror, Cartel, Régime et Héritage disposent de leurs contrôles historiques inclus dans la construction. Cet audit ne remplace pas un playtest complet de chaque variante avec de vrais groupes. Les 44 packs et les fonctions serveur ont été inspectés ; 156 démarrages ont été testés sur les 39 packs du moteur principal (court et long, compositions min/max), avec attribution des rôles, cartes privées, conservation du mode et confidentialité de la liste publique. Les cinq packs Omerta relèvent de leur moteur distinct. Cela ne couvre pas chaque permutation ni des parties complètes jouées par des groupes.
 
 ## Validation effectuée
 
