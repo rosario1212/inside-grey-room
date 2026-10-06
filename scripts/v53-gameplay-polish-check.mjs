@@ -8,7 +8,7 @@ req(rt,'v42-evidence-history','v53 evidence folding');const h=await readFile(pat
 req(await readFile(path.join(root,'omerta-v12-39.js'),'utf8'),'data:image/svg+xml','inline lightweight OMERTA thumbnail');
 for(const f of ['terror-v12-37.js','dlc-suite-v12-37.js']){
  const source=await readFile(path.join(root,f),'utf8');
- req(source,'return ART[','original DLC poster thumbnail');
+ req(source,f==='terror-v12-37.js'?'isTerror(id) ? ART[String(id)] : oldThumb(id)':'if(!ART[key])return oldThumb(id);return ART[key]','original DLC poster thumbnail');
  if(source.includes('v53LightThumb'))throw new Error(`DLC poster replaced by numbered placeholder: ${f}`);
  for(const match of source.matchAll(/assets\/[a-z0-9-]+\.webp/g)){
   for(const base of [root,target])if(!(await exists(path.join(base,match[0]))))throw new Error(`Missing DLC poster: ${path.join(base,match[0])}`);
