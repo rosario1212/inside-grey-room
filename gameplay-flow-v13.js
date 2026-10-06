@@ -143,8 +143,9 @@ window.renderInvestigationTab=renderInvestigationTab=function(){
 
 window.privateCardHtml=privateCardHtml=function(){
  const out=base.privateCardHtml?base.privateCardHtml():'';if(!core())return out;
- const ps=STATE.sync?.player?.private_state||{};if(!ps.objective_main&&!ps.objective_secondary)return out;
- const block=`<div class="v13-objectives">${ps.objective_main?`<div class="v13-objective"><b>OBJECTIF PRINCIPAL</b><p>${esc(ps.objective_main)}</p></div>`:''}${ps.objective_secondary?`<div class="v13-objective"><b>OBJECTIF SECONDAIRE</b><p>${esc(ps.objective_secondary)}</p></div>`:''}</div>`;
+ const ps=STATE.sync?.player?.private_state||{};const primary=String(ps.objective_main||'').replace(/\s+/g,' ').trim(),secondary=String(ps.objective_secondary||'').replace(/\s+/g,' ').trim();
+ if(!secondary||secondary.toLocaleLowerCase('fr')===primary.toLocaleLowerCase('fr'))return out;
+ const block=`<div class="v13-objectives"><div class="v13-objective v13-objective-secondary"><b>OBJECTIF SECONDAIRE</b><p>${esc(ps.objective_secondary)}</p></div></div>`;
  return out.includes('<div class="private-foot">')?out.replace('<div class="private-foot">',block+'<div class="private-foot">'):block+out;
 };
 
