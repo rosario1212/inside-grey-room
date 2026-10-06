@@ -1,0 +1,6 @@
+/* Inside Grey Room v56 — single objective hierarchy */
+.igr56-objectives{display:grid;gap:10px;margin:0 0 14px}
+.igr56-objective-secondary{padding:14px 16px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.018)}
+.igr56-objective-secondary>b{display:block;margin-bottom:7px;color:#8d99a2;font:800 9px 'IBM Plex Mono',monospace;letter-spacing:.13em}
+.igr56-objective-secondary>p{margin:0;color:#dce2e6;font-size:13px;line-height:1.55}
+#igr44JudgeRoleHelper:not(:has(p)),#igr47RoleHelper:not(:has(p)){display:grid;gap:7px}
