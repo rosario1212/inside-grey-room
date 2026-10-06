@@ -1,38 +1,39 @@
-/* v61 — independently positioned title, door and entrance action. */
+/* v62 — quiet title above the doorway and raised entrance action. */
 #introGate.intro-gate{
   background:#000!important;
 }
 #introGate .intro-title{
   position:absolute;z-index:3;left:50%;
-  top:calc(env(safe-area-inset-top,0px) + 4svh);
+  top:calc(env(safe-area-inset-top,0px) + 2svh);
   transform:translateX(-50%);width:min(82vw,360px);
-  display:grid;gap:8px;margin:0;text-align:center;
-  color:#c6cbd0;font:400 clamp(18px,4.8vw,24px)/1.35 'IBM Plex Mono',monospace;
-  letter-spacing:.36em;padding-left:.36em;pointer-events:none;
+  display:grid;gap:4px;margin:0;text-align:center;
+  color:#b1b5b6;font:400 clamp(20px,5.5vw,26px)/1.2 'Arial Narrow',Arial,sans-serif;
+  letter-spacing:.16em;padding-left:.16em;pointer-events:none;
   transition:opacity .18s ease;
 }
 #introGate .intro-title span{display:block;white-space:nowrap}
+#introGate .intro-title span:first-child{font-size:11px;letter-spacing:.3em;color:#777e81;margin-bottom:3px}
 #introGate .intro-art{
-  top:-7svh!important;height:100svh!important;min-height:0!important;
+  top:0!important;height:90svh!important;min-height:0!important;
   width:100%!important;object-fit:cover!important;object-position:50% 50%!important;
   /* Hide the title baked into the original poster; keep the door unchanged. */
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 24%,#000 27%,#000 82%,transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0%,transparent 24%,#000 27%,#000 82%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 80%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 80%,transparent 100%);
 }
 #introGate .intro-cinema-shade{
   background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 25%,transparent 63%,#000 87%);
 }
 #introGate #introEnterBtn{
-  bottom:calc(env(safe-area-inset-bottom,0px) + 8svh)!important;
-  width:min(72vw,300px)!important;min-height:64px!important;
-  padding:12px 18px!important;gap:4px;border-radius:18px;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 16svh)!important;
+  width:min(72vw,300px)!important;min-height:56px!important;
+  padding:10px 18px!important;gap:4px;border-radius:14px;border:1px solid #667073!important;background:rgba(8,12,14,.82)!important;box-shadow:0 8px 32px rgba(0,0,0,.45);
 }
 #introGate #introEnterBtn span{font-size:16px;letter-spacing:.24em!important;padding-left:.24em}
 #introGate #introEnterBtn small{margin-top:3px!important;font-size:8px;letter-spacing:.1em}
 #introGate.opening .intro-title,#introGate.boot-waiting .intro-title{opacity:0}
 @media(max-height:700px){
-  #introGate .intro-title{top:calc(env(safe-area-inset-top,0px) + 2svh);gap:5px;font-size:18px}
-  #introGate #introEnterBtn{bottom:calc(env(safe-area-inset-bottom,0px) + 5svh)!important;min-height:60px!important}
+  #introGate .intro-title{top:calc(env(safe-area-inset-top,0px) + 2svh);gap:4px;font-size:22px}
+  #introGate #introEnterBtn{bottom:calc(env(safe-area-inset-bottom,0px) + 14svh)!important;min-height:56px!important}
 }
 @media(orientation:landscape) and (max-height:500px){
   #introGate .intro-title{top:calc(env(safe-area-inset-top,0px) + 2svh);font-size:14px;gap:2px}
