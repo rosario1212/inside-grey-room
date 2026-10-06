@@ -27,8 +27,7 @@ Sur un Mac avec Xcode 26+/SDK iOS 26+, Node 22 et un compte Apple Developer :
 
 ```sh
 npm ci
-IOS_MARKETING_VERSION=1.0.0 IOS_BUILD_NUMBER=121100 npm run ios:sync
-npm run ios:open
+IOS_MARKETING_VERSION=1.0.0 IOS_BUILD_NUMBER=121100 npm run ios:open
 ```
 
 Sélectionner la Team propriétaire pour `com.insidegreyroom.game`, puis **Product → Archive → Distribute App → App Store Connect**. Dans App Store Connect, créer la fiche, compléter confidentialité/classification, distribuer d’abord aux testeurs internes TestFlight, puis soumettre au Beta App Review pour les testeurs externes. Les builds CI sans signature prouvent la compilation ; ils ne sont pas des IPA distribuables.
