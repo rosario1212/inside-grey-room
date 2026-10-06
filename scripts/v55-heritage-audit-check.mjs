@@ -20,7 +20,7 @@ try{
   ok(html.includes('heritage-audit-v55.css?v=v55-heritage-audit'),'dist missing v55 CSS');
   ok(html.includes('heritage-audit-v55.js?v=v55-heritage-audit'),'dist missing v55 runtime');
   ok(html.lastIndexOf('heritage-audit-v55.js')>html.lastIndexOf('heritage-maitre-online-v34-4.js'),'v55 must load after MAÎTRE online runtime');
-  ok(sw.includes("const CACHE='igr-v55-heritage-audit';")||sw.includes("const CACHE='igr-v56-objective-dedupe';"),'service worker cache is older than v55');
+  ok(sw.includes("const CACHE='igr-v55-heritage-audit';")||sw.includes("const CACHE='igr-v56-objective-dedupe';")||sw.includes("const CACHE='igr-v57-heritage-audit';"),'service worker cache is older than v55');
   ok(sw.includes('/heritage-audit-v55.js?v=v55-heritage-audit'),'service worker missing v55 runtime');
 }catch{}
 if(fail.length){console.error('\nHÉRITAGE v55 audit check FAILED:\n- '+fail.join('\n- '));process.exit(1)}

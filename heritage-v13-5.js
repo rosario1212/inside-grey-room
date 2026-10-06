@@ -6,15 +6,15 @@ const STORAGE_KEY='igr_heritage_v1';
 const MAX_HISTORY=120;
 const CAMPAIGNS=Object.freeze({
   cendres:Object.freeze({
-    id:'cendres', title:'CENDRES', subtitle:'Contre-espionnage · Vesper', cover:'assets/heritage-cendres-01-personne-n-existe.webp?v=v13.5-heritage',
-    promise:'Retrouvez CERBÈRES avant que vos erreurs ne condamnent Vesper.',
+    id:'cendres', title:'CENDRES', subtitle:'Contre-espionnage · Service national de renseignement', cover:'assets/heritage-cendres-01-personne-n-existe.webp?v=v13.5-heritage',
+    promise:'Identifiez une compromission interne avant qu’elle ne déforme toute la chaîne de renseignement.',
     heritage:'Héritage de l’information',
-    mechanic:'DOSSIER CERBÈRES',
+    mechanic:'CARTE DE CONTRE-INGÉRENCE',
     chapters:Object.freeze([
       Object.freeze({n:1,scenarioId:'035',title:'PERSONNE N’EXISTE',poster:'assets/heritage-cendres-01-personne-n-existe.webp?v=v13.5-heritage',note:'Un massacre. Une piste qui n’aurait jamais dû exister.'}),
       Object.freeze({n:2,scenarioId:'036',title:'04:17',poster:'assets/heritage-cendres-02-04-17.webp?v=v13.5-heritage',note:'Un faux drapeau transforme l’enquête en crise internationale.'}),
       Object.freeze({n:3,scenarioId:'037',title:'LA CHAMBRE',poster:'assets/heritage-cendres-03-la-chambre.webp?v=v13.5-heritage',note:'Captures, interrogatoires et informations impossibles à recouper.'}),
-      Object.freeze({n:4,scenarioId:'038',title:'CENDRES',poster:'assets/heritage-cendres-04-cendres.webp?v=v13.5-heritage',note:'Le réseau se dévoile. ORPHÉE cesse d’être une rumeur.'}),
+      Object.freeze({n:4,scenarioId:'038',title:'CENDRES',poster:'assets/heritage-cendres-04-cendres.webp?v=v13.5-heritage',note:'La compromission interne se précise. Les trois dossiers précédents convergent.'}),
       Object.freeze({n:5,scenarioId:'039',title:'POINT ZÉRO',poster:'assets/heritage-cendres-05-point-zero.webp?v=v13.5-heritage',note:'Tous les choix précédents convergent.'})
     ])
   }),
@@ -250,7 +250,7 @@ function renderMechanic(id,c){
   if(id==='cendres'){
     const d=c?.cendres,level=d?.crisis?.level??0,nodes=d?.network?.nodes??[],links=d?.network?.links??[];
     const visibleNodes=nodes.slice(-6);
-    return `<section class="panel heritage-panel heritage-mechanic"><div class="section-title"><h2>Dossier CERBÈRES</h2><span>état persistant</span></div>
+    return `<section class="panel heritage-panel heritage-mechanic"><div class="section-title"><h2>Carte de contre-ingérence</h2><span>état persistant</span></div>
       <div class="heritage-crisis"><span>ÉTAT DE CRISE</span><b>${esc(d?.crisis?.label||crisisLabel(level))}</b><div class="heritage-crisis-bars" aria-label="Niveau de crise">${[0,1,2,3,4].map(i=>`<i class="${i<=level?'on':''}"></i>`).join('')}</div></div>
       <div class="heritage-network-mini">${visibleNodes.length?visibleNodes.map(n=>`<div class="heritage-node status-${esc(n.status)}"><b>${esc(n.label)}</b><small>${esc(n.status)}</small></div>`).join(''):`<div class="heritage-empty">Aucun agent classifié. Le réseau se construira au fil de la campagne.</div>`}</div>
       <div class="heritage-meta-row"><span>${nodes.length} identités</span><span>${links.length} connexions</span></div>
@@ -269,7 +269,7 @@ function renderChapter(id,n){
   const ch=meta.chapters[n-1];UI.screen='chapter';UI.campaignId=id;
   put(`<main class="page heritage-page heritage-dossier heritage-${id}"><div class="page-head heritage-head"><div><div class="kicker">${esc(meta.title)} · DOSSIER 0${n}</div><h1>${esc(ch.title)}</h1><p>${esc(ch.note)}</p></div><button type="button" class="btn ghost small" onclick="IGR_HERITAGE.openCampaign('${id}')">← ${esc(meta.title)}</button></div>
     <section class="heritage-dossier-poster"><img src="${ch.poster}" alt="Affiche ${esc(ch.title)}" decoding="async"></section>
-    <section class="panel heritage-dossier-card"><span class="heritage-dossier-label">${esc(meta.mechanic)}</span><h2>${n===c.currentChapter&&!c.completed.includes(n)?'DOSSIER ACTIF':'DOSSIER ARCHIVÉ'}</h2><p>${id==='cendres'?'Les classifications, connexions et erreurs de renseignement de ce dossier doivent être écrites dans le tableau CERBÈRES avant de passer au suivant.':'Les faveurs, ruptures, dettes et changements de hiérarchie de ce dossier doivent être inscrits dans l’arbre et le registre avant de passer au suivant.'}</p>
+    <section class="panel heritage-dossier-card"><span class="heritage-dossier-label">${esc(meta.mechanic)}</span><h2>${n===c.currentChapter&&!c.completed.includes(n)?'DOSSIER ACTIF':'DOSSIER ARCHIVÉ'}</h2><p>${id==='cendres'?'Les classifications, connexions et erreurs de renseignement de ce dossier doivent être inscrites dans la carte de contre-ingérence avant de passer au suivant.':'Les faveurs, ruptures, dettes et changements de hiérarchie de ce dossier doivent être inscrits dans l’arbre et le registre avant de passer au suivant.'}</p>
       <div class="heritage-dossier-notice"><b>Socle Héritage prêt</b><span>Le moteur de persistance est actif. Le pack de gameplay privé de ce dossier se branche ici sans modifier les scénarios 001–034.</span></div>
     </section>
   </main>`);

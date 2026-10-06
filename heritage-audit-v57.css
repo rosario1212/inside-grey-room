@@ -1,0 +1,298 @@
+/* Inside Grey Room v57 — HÉRITAGE visual audit
+   MAÎTRE keeps its paper identity, but follows the exact spatial system used by
+   CENDRES/KUROI so campaign, dossier, setup and multiplayer screens feel related. */
+
+.hplay-campaign-definition{
+  display:grid;gap:6px;max-width:62ch;margin-top:14px;padding:12px 14px;
+  border-left:2px solid var(--hp-accent);background:var(--hp-accent-soft);
+  color:var(--hp-muted);font-size:12px;line-height:1.55
+}
+.hplay-campaign-definition b{
+  color:var(--hp-accent);font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.13em
+}
+
+/* MAÎTRE palette: paper, not a mixture of dark cards + paper shell. */
+.maitre-page{
+  --hp-accent:#6d2723!important;
+  --hp-accent-soft:rgba(109,39,35,.075)!important;
+  --hp-panel:#f8f4ec!important;
+  --hp-panel2:#efe7da!important;
+  --hp-line:rgba(45,37,31,.16)!important;
+  --hp-muted:#655f58!important;
+  --hp-dim:#837a72!important;
+  --h55-line:rgba(45,37,31,.15)!important;
+  background:linear-gradient(180deg,#eee8df,#e7dfd3)!important;
+  color:#171513!important;
+}
+body:has(.maitre-page),body:has(.maitre-page) #app{background:#e7dfd3!important;color:#171513!important}
+.maitre-page::before{
+  background:radial-gradient(circle at 50% -12%,rgba(255,255,255,.72),transparent 42%)!important;
+  opacity:1!important
+}
+.maitre-page .hplay-panel,
+.maitre-page .hplay-case,
+.maitre-page .hplay-phase-preview>span,
+.maitre-page .hplay-private,
+.maitre-page .hplay-options button,
+.maitre-page .hplay-result-card,
+.maitre-page .hplay-setup-form,
+.maitre-page .hplay-management,
+.maitre-page .h55-player-id,
+.maitre-page .h55-focus,
+.maitre-page .h55-my-card,
+.maitre-page .h55-roster,
+.maitre-page .h55-decision-owner,
+.maitre-page .h55-result-context,
+.maitre-page .h55-dossier-live,
+.maitre-page .maitre-result-grid>div{
+  background:linear-gradient(180deg,#faf7f1,#f3ece2)!important;
+  border-color:var(--hp-line)!important;
+  color:#171513!important;
+  box-shadow:0 12px 32px rgba(38,28,22,.055)!important
+}
+.maitre-page .hplay-case.is-current{
+  background:linear-gradient(95deg,rgba(109,39,35,.07),#faf7f1 52%)!important;
+  border-color:rgba(109,39,35,.27)!important
+}
+.maitre-page .hplay-case:disabled{opacity:.38!important}
+.maitre-page .hplay-case:disabled img{filter:brightness(.72) grayscale(.62)!important}
+.maitre-page .hplay-campaign-title p,
+.maitre-page .hplay-lead,
+.maitre-page .hplay-case-copy>small,
+.maitre-page .hplay-phase-preview small,
+.maitre-page .hplay-table-card>p,
+.maitre-page .h55-focus p,
+.maitre-page .h55-my-card>div>b,
+.maitre-page .h55-my-card p,
+.maitre-page .h55-roster span,
+.maitre-page .h55-decision-owner span,
+.maitre-page .hplay-result-truth,
+.maitre-page .maitre-trace-panel article span,
+.maitre-page .maitre-link-panel article>small{
+  color:#655f58!important
+}
+.maitre-page .hplay-case-copy>strong,
+.maitre-page .hplay-section-head h2,
+.maitre-page .hplay-table-card h2,
+.maitre-page .hplay-private h1,
+.maitre-page .hplay-result-card h1,
+.maitre-page .h55-player-id strong,
+.maitre-page .h55-roster b,
+.maitre-page .maitre-trace-panel article b,
+.maitre-page .maitre-link-panel article>span{
+  color:#171513!important
+}
+.maitre-page .hplay-mode,
+.maitre-page .hplay-eyebrow,
+.maitre-page .hplay-section-head span,
+.maitre-page .hplay-case-copy>em,
+.maitre-page .hplay-stats small,
+.maitre-page .h55-player-id span,
+.maitre-page .h55-focus span,
+.maitre-page .h55-my-card p span,
+.maitre-page .h55-result-context span{
+  color:#837a72!important
+}
+.maitre-page .hplay-section-head>b,
+.maitre-page .hplay-case-copy>b,
+.maitre-page .hplay-mode b,
+.maitre-page .h55-decision-owner b{
+  color:#6d2723!important
+}
+
+/* One spatial language: MAÎTRE now inherits CENDRES/KUROI dimensions. */
+.maitre-hub-card{
+  min-height:480px!important;
+  max-height:none!important;
+  border-radius:26px!important
+}
+.maitre-page .hplay-campaign-title{margin:0 0 18px!important}
+.maitre-page .hplay-campaign-title h1{
+  margin:7px 0 9px!important;
+  font-size:clamp(48px,12vw,78px)!important;
+  line-height:.9!important;
+  letter-spacing:-.055em!important
+}
+.maitre-page .hplay-campaign-hero,
+.maitre-page.heritage-v55-maitre-campaign .hplay-campaign-hero{
+  height:210px!important;
+  min-height:210px!important;
+  aspect-ratio:auto!important;
+  margin:0 0 15px!important;
+  border-radius:23px!important;
+  background:#e4d9ca!important
+}
+.maitre-page .hplay-campaign-hero img{
+  width:100%!important;height:100%!important;object-fit:cover!important;
+  object-position:center 32%!important;filter:brightness(.72) saturate(.84) contrast(1.02)!important
+}
+.maitre-page .hplay-campaign-hero>div{
+  left:auto!important;right:18px!important;bottom:17px!important;top:auto!important;
+  width:auto!important;background:rgba(247,242,232,.92)!important;
+  padding:9px 11px!important;border-radius:12px!important;text-align:right!important
+}
+.maitre-page .hplay-campaign-hero>div span{color:#7c736c!important}
+.maitre-page .hplay-campaign-hero>div strong{color:#6d2723!important}
+.maitre-page .hplay-campaign-layout{
+  grid-template-columns:minmax(0,1.28fr) minmax(260px,.72fr)!important;
+  gap:14px!important;align-items:start!important
+}
+.maitre-page .hplay-side{gap:14px!important;top:14px!important}
+.maitre-page .hplay-case{
+  grid-template-columns:58px minmax(0,1fr) 18px!important;
+  gap:13px!important;min-height:0!important;padding:11px 13px!important;border-radius:17px!important
+}
+.maitre-page .hplay-case-poster{
+  width:58px!important;height:86px!important;aspect-ratio:auto!important;
+  padding:0!important;border-radius:9px!important;background:#e4d9ca!important
+}
+.maitre-page .hplay-case-poster img{
+  width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;
+  border-radius:0!important;filter:none!important
+}
+.maitre-page .hplay-dossier-grid{
+  grid-template-columns:minmax(220px,340px) minmax(0,1fr)!important;
+  gap:22px!important;align-items:start!important;margin-bottom:15px!important
+}
+.maitre-page .hplay-poster{
+  width:100%!important;max-width:none!important;height:auto!important;aspect-ratio:auto!important;
+  margin:0!important;padding:0!important;border-radius:24px!important;background:#e4d9ca!important
+}
+.maitre-page .hplay-poster img{
+  width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:2/3!important;
+  object-fit:cover!important;object-position:center!important;border-radius:0!important;filter:none!important
+}
+.maitre-page .hplay-dossier-copy{padding:8px 0!important}
+.maitre-page .hplay-phase-preview.maitre-cycles{
+  grid-template-columns:repeat(3,1fr)!important;gap:9px!important
+}
+.maitre-page .maitre-cycles>span{min-height:175px!important;padding:14px!important;border-radius:15px!important}
+.maitre-page .hplay-setup-form{max-width:680px!important}
+.maitre-page .hplay-private{width:min(100%,620px)!important;padding:28px!important;border-radius:28px!important}
+.maitre-page .hplay-options{grid-template-columns:repeat(3,1fr)!important;gap:10px!important}
+.maitre-page .hplay-options button{min-height:210px!important;padding:18px!important;border-radius:20px!important}
+.maitre-page .hplay-result-card{width:min(100%,700px)!important;padding:30px!important;border-radius:28px!important}
+
+/* Form/role cards must remain readable on paper. */
+.maitre-page .hplay-secret,
+.maitre-page .hplay-objective,
+.maitre-page .hplay-launch-box,
+.maitre-page .hplay-conditional,
+.maitre-page .maitre-angle-box,
+.maitre-page .maitre-public-angle,
+.maitre-page .maitre-final-truth{
+  background:rgba(109,39,35,.055)!important;
+  border-color:rgba(109,39,35,.19)!important;
+  color:#171513!important
+}
+.maitre-page .hplay-secret b,
+.maitre-page .hplay-objective b,
+.maitre-page .maitre-public-angle span,
+.maitre-page .maitre-public-angle i,
+.maitre-page .maitre-final-truth>b,
+.maitre-page .maitre-final-truth>small{color:#342d29!important}
+.maitre-page .maitre-angle-box textarea,
+.maitre-page .hplay-names label{
+  background:#f7f1e7!important;border-color:rgba(45,37,31,.16)!important;color:#171513!important
+}
+.maitre-page .hplay-names input,
+.maitre-page .maitre-angle-box textarea{background:transparent!important;color:#171513!important}
+.maitre-page .hplay-names input::placeholder,
+.maitre-page .maitre-angle-box textarea::placeholder{color:#91877f!important}
+.maitre-page .btn.primary,
+.maitre-page .heritage-dual-row .btn.primary,
+.maitre-page [data-mnet="create"],
+.maitre-page [data-mnet="createNow"],
+.maitre-page [data-mnet="start"]{
+  background:linear-gradient(180deg,#7b302b,#5c201d)!important;
+  border-color:#7b302b!important;color:#fff8f0!important
+}
+.maitre-page .btn.ghost,
+.maitre-page .heritage-dual-row .btn.ghost{
+  background:#f8f4ec!important;border-color:rgba(45,37,31,.18)!important;color:#3f3731!important
+}
+
+/* MAÎTRE multiplayer uses the same paper palette instead of a dark lobby inserted in a white page. */
+.maitre-page.hnet,
+.maitre-page.hnet .hnet-lobby,
+.maitre-page.hnet .hnet-code,
+.maitre-page.hnet .hnet-players>div{
+  background:#f8f4ec!important;color:#171513!important;border-color:rgba(45,37,31,.16)!important
+}
+.maitre-page.hnet .hnet-lobby{box-shadow:0 16px 42px rgba(38,28,22,.08)!important}
+.maitre-page.hnet .hnet-code strong,
+.maitre-page.hnet .hnet-title h1,
+.maitre-page.hnet .hnet-players b{color:#171513!important;text-shadow:none!important}
+.maitre-page.hnet .hnet-code span,
+.maitre-page.hnet .hnet-title>span,
+.maitre-page.hnet .hnet-code small,
+.maitre-page.hnet .hnet-title p,
+.maitre-page.hnet .hnet-players span,
+.maitre-page.hnet .hnet-players small{color:#6d655e!important}
+.maitre-page .h55-maitre-lobby-note{
+  background:rgba(109,39,35,.06)!important;border-color:#6d2723!important
+}
+.maitre-page .heritage-v55-online .hplay-session-nav,
+.maitre-page.heritage-v55-online .hplay-session-nav{
+  background:rgba(247,242,232,.94)!important;border-color:rgba(45,37,31,.14)!important
+}
+.maitre-page .h55-dossier-live>summary,
+.maitre-page .h55-mobile-carry>summary{color:#171513!important}
+.maitre-page .h55-dossier-live summary span,
+.maitre-page .h55-mobile-carry summary span{color:#837a72!important}
+.maitre-page .h55-dossier-live summary i{color:#6d2723!important}
+
+/* Prevent long legal copy and role labels from creating horizontal overflow. */
+.maitre-page .hplay-case-copy,
+.maitre-page .hplay-dossier-copy,
+.maitre-page .hplay-session-head,
+.maitre-page .hplay-table-card,
+.maitre-page .hplay-private,
+.maitre-page .hplay-result-card,
+.maitre-page .hnet-title,
+.maitre-page .hnet-players>div{min-width:0!important;overflow-wrap:anywhere}
+.maitre-page textarea,.maitre-page input,.maitre-page button{max-width:100%}
+
+@media(max-width:760px){
+  .maitre-page{padding-left:max(14px,env(safe-area-inset-left))!important;padding-right:max(14px,env(safe-area-inset-right))!important}
+  .maitre-hub-card{min-height:420px!important;max-height:none!important}
+  .maitre-page .hplay-campaign-title h1{font-size:52px!important}
+  .maitre-page .hplay-campaign-hero,
+  .maitre-page.heritage-v55-maitre-campaign .hplay-campaign-hero{
+    height:180px!important;min-height:180px!important;aspect-ratio:auto!important;margin:0 0 15px!important
+  }
+  .maitre-page .hplay-campaign-layout,
+  .maitre-page .hplay-dossier-grid,
+  .maitre-page .hplay-session-grid{grid-template-columns:1fr!important}
+  .maitre-page .hplay-side{position:static!important}
+  .maitre-page .hplay-dossier-grid{gap:16px!important}
+  .maitre-page .hplay-poster{
+    width:100%!important;max-width:none!important;height:220px!important;aspect-ratio:auto!important;margin:0 auto!important
+  }
+  .maitre-page .hplay-poster img{
+    width:100%!important;height:100%!important;aspect-ratio:auto!important;
+    object-fit:cover!important;object-position:center 28%!important
+  }
+  .maitre-page .hplay-case{
+    grid-template-columns:58px minmax(0,1fr) 18px!important;
+    gap:13px!important;padding:11px 13px!important
+  }
+  .maitre-page .hplay-case-poster{width:58px!important;height:86px!important}
+  .maitre-page .hplay-phase-preview.maitre-cycles{grid-template-columns:1fr!important}
+  .maitre-page .maitre-cycles>span{min-height:auto!important}
+  .maitre-page .hplay-options{grid-template-columns:1fr!important}
+  .maitre-page .hplay-options button{min-height:0!important}
+  .maitre-page .hplay-private{padding:22px!important}
+  .maitre-page .hplay-result-card{padding:22px!important}
+}
+@media(max-width:540px){
+  .maitre-hub-card{min-height:390px!important}
+  .maitre-page .hplay-campaign-hero,
+  .maitre-page.heritage-v55-maitre-campaign .hplay-campaign-hero{
+    height:158px!important;min-height:158px!important
+  }
+  .maitre-page .hplay-case{grid-template-columns:52px minmax(0,1fr) 14px!important;gap:11px!important;padding:10px!important}
+  .maitre-page .hplay-case-poster{width:52px!important;height:78px!important}
+  .maitre-page .hplay-panel{padding:16px!important;border-radius:19px!important}
+}
+@media(prefers-reduced-motion:reduce){.maitre-page *{transition:none!important;animation:none!important}}
