@@ -1,5 +1,4 @@
-/* Inside Grey Room v53 — gameplay / UI polish.
-   Witness rosters and witness content are intentionally untouched. */
+/* Inside Grey Room v53 — gameplay / UI polish. Witness scenario alignment is handled by the v54 data migration. */
 (()=>{
 'use strict';
 if(window.IGR_GAMEPLAY_POLISH_V53)return;

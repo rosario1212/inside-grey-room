@@ -36,7 +36,7 @@
 
   for(const sc of [...CARTEL,...REGIME])if(!SCENARIOS.some(x=>x.id===sc.id))SCENARIOS.push(sc);
   Object.assign(SCENARIO_ROLES,{
-    '029':{required:['Enquêteur','Analyste','3 suspects'],optional:['Avocat','Procureur','Témoin']},
+    '029':{required:['Enquêteur','Analyste','3 suspects'],optional:['Avocat','Procureur','2e Avocat']},
     '030':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Avocat','Journaliste']},
     '031':{required:['Enquêteur','Analyste','3 suspects','Avocat'],optional:['Procureur','Témoin']},
     '032':{required:['Enquêteur','Analyste','Procureur','3 suspects'],optional:['Juge','Témoin']},

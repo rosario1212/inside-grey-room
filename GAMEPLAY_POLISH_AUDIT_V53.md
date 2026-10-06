@@ -1,8 +1,8 @@
-# Inside Grey Room — Gameplay / UI polish v53
+# Inside Grey Room — Gameplay / UI polish v53 + alignement Témoins v54
 
 ## Scope appliqué
 
-- **Aucune composition, carte ou règle Témoin n'est modifiée.** La question des Témoins des dossiers concernés est volontairement laissée en attente pour une revue commune.
+- **Alignement Témoins v54 :** dans le jeu de base, le rôle reste limité aux dossiers 017 et 020. Le dossier DLC 029 n'a plus de Témoin et utilise un second Avocat à 8 joueurs. Les dossiers 031–034 reçoivent chacun un Témoin écrit, limité à des faits observés et incapable de résoudre seul l'affaire.
 - L'Analyste reçoit une synthèse privée locale : hypothèse actuelle, contradiction majeure, personne à réentendre.
 - Les Éléments d'enquête gardent les quatre éléments les plus récents ouverts ; l'historique antérieur devient repliable.
 - Les dossiers denses reçoivent une vue synthèse Enquêteur et une densité visuelle réduite, sans retirer d'action.
@@ -25,5 +25,5 @@ La v53 rend cette correspondance explicite côté métadonnées et interface, to
 - aucun changement de l'échelle de responsabilité ;
 - aucun changement des chronomètres ;
 - aucun nouveau pouvoir de rôle ;
-- aucun ajout/suppression de Témoin ;
+- aucun Témoin ajouté artificiellement aux scénarios qui n'en ont pas besoin ;
 - aucun changement de vérité canonique d'un scénario.
