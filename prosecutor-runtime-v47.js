@@ -54,8 +54,9 @@ const baseReveal=typeof window.renderReveal==='function'?window.renderReveal:(ty
 const baseRole=typeof window.renderRole==='function'?window.renderRole:(typeof renderRole==='function'?renderRole:null);if(baseRole){const f=function(){const out=baseRole.apply(this,arguments);setTimeout(()=>{refresh(true);injectRoleHelper()},0);return out};try{renderRole=f}catch(_){}window.renderRole=f}
 const baseGame=typeof window.renderGame==='function'?window.renderGame:(typeof renderGame==='function'?renderGame:null);if(baseGame){const f=function(){const out=baseGame.apply(this,arguments);setTimeout(()=>injectLive(),0);return out};try{renderGame=f}catch(_){}window.renderGame=f}
 
-setInterval(()=>{if(relevant())refresh(false)},1800);
-setInterval(()=>document.querySelectorAll('[data-v47-end]').forEach(n=>n.textContent=clock(left(n.dataset.v47End))),1000);
+const every47=(key,ms,fn)=>window.IGR_RUNTIME_COORDINATOR?.every?window.IGR_RUNTIME_COORDINATOR.every(key,ms,fn):setInterval(fn,ms);
+every47('v47-state',1800,()=>{if(relevant())refresh(false)});
+every47('v47-timers',1000,()=>document.querySelectorAll('[data-v47-end]').forEach(n=>n.textContent=clock(left(n.dataset.v47End))));
 addEventListener('pageshow',()=>setTimeout(()=>refresh(true),150),{passive:true});
 setTimeout(()=>refresh(true),350);
 window.IGR_PROSECUTOR_VERSION=VERSION;

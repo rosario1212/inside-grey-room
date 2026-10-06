@@ -11,6 +11,8 @@
     '024':'assets/omerta-024-il-pentito.webp?v=12.37-final',
     '025':'assets/omerta-025-il-don.webp?v=12.37-final'
   });
+  function v53LightThumb(id){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="540"><rect width="360" height="540" fill="#080b0e"/><rect x="22" y="22" width="316" height="496" fill="none" stroke="#7e2229" stroke-opacity=".6"/><text x="34" y="76" fill="#9b3038" font-family="monospace" font-size="16" letter-spacing="4">OMERTÀ</text><text x="32" y="230" fill="#f0f2f3" font-family="monospace" font-size="78" font-weight="800">${id}</text><text x="34" y="478" fill="#75818a" font-family="monospace" font-size="11" letter-spacing="3">INSIDE GREY ROOM</text></svg>`;return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`}
+
   const DRAW_MIN_MS = 620;
   const DRAW_RESULT_MS = 760;
 
@@ -81,7 +83,7 @@
 
   const previousThumb = scenarioThumbArt;
   const previousArt = scenarioArt;
-  scenarioThumbArt = function(id){ return isOmerta(id) ? ART[String(id)] : previousThumb(id); };
+  scenarioThumbArt = function(id){ return isOmerta(id) ? v53LightThumb(String(id)) : previousThumb(id); };
   scenarioArt = function(id){ return isOmerta(id) ? ART[String(id)] : previousArt(id); };
 
   const HERO_IMAGE_SELECTOR = '.scenario-hero img,.scenario-hero-art img,.confirm-art img,.section-cover img,.briefing-poster img';

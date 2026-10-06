@@ -1,0 +1,13 @@
+import {copyFile,readFile,stat,writeFile} from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
+import path from 'node:path';
+const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist'),VERSION='v53-gameplay-polish',CACHE='igr-v53-gameplay-polish';
+const runtime='gameplay-polish-v53.js',style='gameplay-polish-v53.css',coord='runtime-coordinator-v53.js',pages=['index.html','en.html'];
+const exists=async f=>{try{await stat(f);return true}catch{return false}};
+for(const n of [runtime,style,coord])if(!(await exists(path.join(root,n))))throw new Error(`v53 source missing: ${n}`);
+for(const n of [runtime,coord]){const r=spawnSync(process.execPath,['--check',path.join(root,n)],{encoding:'utf8'});if(r.status!==0)throw new Error(r.stderr||r.stdout)}
+await copyFile(path.join(root,runtime),path.join(target,runtime));await copyFile(path.join(root,style),path.join(target,style));if(!(await exists(path.join(target,coord))))await copyFile(path.join(root,coord),path.join(target,coord));
+for(const name of pages){const file=path.join(target,name);if(!(await exists(file)))continue;let html=await readFile(file,'utf8');html=html.replace(/\s*<link[^>]+href=["']gameplay-polish-v53\.css[^"']*["'][^>]*>\s*/gi,'\n').replace('</head>',`  <link rel="stylesheet" href="${style}?v=${VERSION}">\n</head>`);html=html.replace(/\s*<script[^>]+src=["']runtime-coordinator-v53\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');const judge=html.match(/<script[^>]+src=["'][^"']*judicial-runtime-v44\.js[^"']*["'][^>]*><\/script>/i)?.[0];html=judge?html.replace(judge,`<script src="${coord}?v=v53-runtime-coordinator"></script>\n  ${judge}`):html.replace('</body>',`<script src="${coord}?v=v53-runtime-coordinator"></script>\n</body>`);html=html.replace(/\s*<script[^>]+src=["']gameplay-polish-v53\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n').replace('</body>',`  <script src="${runtime}?v=${VERSION}"></script>\n</body>`);await writeFile(file,html,'utf8')}
+const app=path.join(target,'app-v11.js');if(await exists(app)){let s=await readFile(app,'utf8');s=s.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,`/service-worker.js?v=${VERSION}`);await writeFile(app,s,'utf8')}
+const swp=path.join(target,'service-worker.js');if(await exists(swp)){let sw=await readFile(swp,'utf8');sw=sw.replace(/const CACHE='[^']+';/,`const CACHE='${CACHE}';`);sw=sw.replace("  '/', '/index.html', '/en.html',",`  '/', '/index.html', '/en.html',\n  '/${coord}?v=v53-runtime-coordinator',\n  '/${runtime}?v=${VERSION}',\n  '/${style}?v=${VERSION}',`);await writeFile(swp,sw,'utf8')}
+console.log(`Inside Grey Room ${VERSION}: applied to ${process.argv[2]||'dist'}`);

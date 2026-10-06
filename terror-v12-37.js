@@ -12,6 +12,8 @@
     '027':'assets/terror-027-la-zone-rouge.webp?v=12.37-final',
     '028':'assets/terror-028-dernier-perimetre.webp?v=12.37-final'
   });
+  function v53LightThumb(id){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="540"><rect width="360" height="540" fill="#080b0e"/><rect x="22" y="22" width="316" height="496" fill="none" stroke="#9d4932" stroke-opacity=".65"/><text x="34" y="76" fill="#b65d42" font-family="monospace" font-size="16" letter-spacing="4">TERREUR</text><text x="32" y="230" fill="#f0f2f3" font-family="monospace" font-size="78" font-weight="800">${id}</text><text x="34" y="478" fill="#75818a" font-family="monospace" font-size="11" letter-spacing="3">INSIDE GREY ROOM</text></svg>`;return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`}
+
   const isTerror = id => IDS.has(String(id || ''));
 
   for(const sc of DATA) if(!SCENARIOS.some(x => x.id === sc.id)) SCENARIOS.push(sc);
@@ -27,7 +29,7 @@
   });
 
   const oldThumb = scenarioThumbArt, oldArt = scenarioArt;
-  scenarioThumbArt = function(id){ return isTerror(id) ? ART[String(id)] : oldThumb(id); };
+  scenarioThumbArt = function(id){ return isTerror(id) ? v53LightThumb(String(id)) : oldThumb(id); };
   scenarioArt = function(id){ return isTerror(id) ? ART[String(id)] : oldArt(id); };
 
   const oldRoleInfo = roleInfo;

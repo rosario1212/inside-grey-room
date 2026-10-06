@@ -11,11 +11,11 @@ const CAMPAIGNS=Object.freeze({
     heritage:'Héritage de l’information',
     mechanic:'DOSSIER CERBÈRES',
     chapters:Object.freeze([
-      Object.freeze({n:1,title:'PERSONNE N’EXISTE',poster:'assets/heritage-cendres-01-personne-n-existe.webp?v=v13.5-heritage',note:'Un massacre. Une piste qui n’aurait jamais dû exister.'}),
-      Object.freeze({n:2,title:'04:17',poster:'assets/heritage-cendres-02-04-17.webp?v=v13.5-heritage',note:'Un faux drapeau transforme l’enquête en crise internationale.'}),
-      Object.freeze({n:3,title:'LA CHAMBRE',poster:'assets/heritage-cendres-03-la-chambre.webp?v=v13.5-heritage',note:'Captures, interrogatoires et informations impossibles à recouper.'}),
-      Object.freeze({n:4,title:'CENDRES',poster:'assets/heritage-cendres-04-cendres.webp?v=v13.5-heritage',note:'Le réseau se dévoile. ORPHÉE cesse d’être une rumeur.'}),
-      Object.freeze({n:5,title:'POINT ZÉRO',poster:'assets/heritage-cendres-05-point-zero.webp?v=v13.5-heritage',note:'Tous les choix précédents convergent.'})
+      Object.freeze({n:1,scenarioId:'035',title:'PERSONNE N’EXISTE',poster:'assets/heritage-cendres-01-personne-n-existe.webp?v=v13.5-heritage',note:'Un massacre. Une piste qui n’aurait jamais dû exister.'}),
+      Object.freeze({n:2,scenarioId:'036',title:'04:17',poster:'assets/heritage-cendres-02-04-17.webp?v=v13.5-heritage',note:'Un faux drapeau transforme l’enquête en crise internationale.'}),
+      Object.freeze({n:3,scenarioId:'037',title:'LA CHAMBRE',poster:'assets/heritage-cendres-03-la-chambre.webp?v=v13.5-heritage',note:'Captures, interrogatoires et informations impossibles à recouper.'}),
+      Object.freeze({n:4,scenarioId:'038',title:'CENDRES',poster:'assets/heritage-cendres-04-cendres.webp?v=v13.5-heritage',note:'Le réseau se dévoile. ORPHÉE cesse d’être une rumeur.'}),
+      Object.freeze({n:5,scenarioId:'039',title:'POINT ZÉRO',poster:'assets/heritage-cendres-05-point-zero.webp?v=v13.5-heritage',note:'Tous les choix précédents convergent.'})
     ])
   }),
   kuroi:Object.freeze({
@@ -24,11 +24,11 @@ const CAMPAIGNS=Object.freeze({
     heritage:'Héritage des relations',
     mechanic:'ARBRE & DETTES',
     chapters:Object.freeze([
-      Object.freeze({n:1,title:'L’OYABUN',poster:'assets/heritage-kuroi-01-l-oyabun.webp?v=v13.5-heritage',note:'Le chef Kurokawa est assassiné. Police et clan coopèrent.'}),
-      Object.freeze({n:2,title:'GIRI',poster:'assets/heritage-kuroi-02-giri.webp?v=v13.5-heritage',note:'Les services rendus deviennent des obligations.'}),
-      Object.freeze({n:3,title:'LES MAINS SALES',poster:'assets/heritage-kuroi-03-les-mains-sales.webp?v=v13.5-heritage',note:'La police réclame ce qu’elle ne peut pas faire elle-même.'}),
-      Object.freeze({n:4,title:'LA DETTE',poster:'assets/heritage-kuroi-04-la-dette.webp?v=v13.5-heritage',note:'Le meurtre et les obligations anciennes se rejoignent.'}),
-      Object.freeze({n:5,title:'LE CONSEIL',poster:'assets/heritage-kuroi-05-le-conseil.webp?v=v13.5-heritage',note:'La vérité est connue. Reste à décider qui doit payer.'})
+      Object.freeze({n:1,scenarioId:'040',title:'L’OYABUN',poster:'assets/heritage-kuroi-01-l-oyabun.webp?v=v13.5-heritage',note:'Le chef Kurokawa est assassiné. Police et clan coopèrent.'}),
+      Object.freeze({n:2,scenarioId:'041',title:'GIRI',poster:'assets/heritage-kuroi-02-giri.webp?v=v13.5-heritage',note:'Les services rendus deviennent des obligations.'}),
+      Object.freeze({n:3,scenarioId:'042',title:'LES MAINS SALES',poster:'assets/heritage-kuroi-03-les-mains-sales.webp?v=v13.5-heritage',note:'La police réclame ce qu’elle ne peut pas faire elle-même.'}),
+      Object.freeze({n:4,scenarioId:'043',title:'LA DETTE',poster:'assets/heritage-kuroi-04-la-dette.webp?v=v13.5-heritage',note:'Le meurtre et les obligations anciennes se rejoignent.'}),
+      Object.freeze({n:5,scenarioId:'044',title:'LE CONSEIL',poster:'assets/heritage-kuroi-05-le-conseil.webp?v=v13.5-heritage',note:'La vérité est connue. Reste à décider qui doit payer.'})
     ])
   })
 });

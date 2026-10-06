@@ -107,7 +107,8 @@ const style=document.createElement('style');style.dataset.igrV51=VERSION;style.t
 const baseTab=typeof window.renderGameTab==='function'?window.renderGameTab:(typeof renderGameTab==='function'?renderGameTab:null);if(baseTab){const f=function(){if(S()?.tab==='rules')return rulebookHtml(false);return baseTab.apply(this,arguments)};try{renderGameTab=f}catch(_){}window.renderGameTab=f}
 const baseGame=typeof window.renderGame==='function'?window.renderGame:(typeof renderGame==='function'?renderGame:null);if(baseGame){const f=function(){const out=baseGame.apply(this,arguments);setTimeout(()=>{installFreeLawyerMeet();rewriteLegacyLawyerCopy();rewriteInterrogationBanner();injectNow()},0);return out};try{renderGame=f}catch(_){}window.renderGame=f}
 const baseRules=typeof window.renderRules==='function'?window.renderRules:(typeof renderRules==='function'?renderRules:null);if(baseRules){const f=function(){const out=baseRules.apply(this,arguments);setTimeout(()=>{const panel=document.querySelector('.page .panel');if(panel)panel.innerHTML=rulebookHtml(true)},0);return out};try{renderRules=f}catch(_){}window.renderRules=f}
-setInterval(()=>{installFreeLawyerMeet();rewriteLegacyLawyerCopy();rewriteInterrogationBanner();injectNow()},1800);
+const every51=(key,ms,fn)=>window.IGR_RUNTIME_COORDINATOR?.every?window.IGR_RUNTIME_COORDINATOR.every(key,ms,fn):setInterval(fn,ms);
+every51('v51-guidance',1800,()=>{installFreeLawyerMeet();rewriteLegacyLawyerCopy();rewriteInterrogationBanner();injectNow()});
 setTimeout(()=>{installFreeLawyerMeet();rewriteLegacyLawyerCopy();rewriteInterrogationBanner();injectNow()},250);
 window.IGR_SELF_GUIDED_RULES_V51=Object.freeze({version:VERSION,rulebookHtml,nowText});
 console.info(`[IGR ${VERSION}] active`);

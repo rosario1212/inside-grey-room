@@ -1,1 +1,22 @@
-{"version":"13.7","status":"work-in-progress"}
+{
+  "version": "13.7",
+  "status": "playable",
+  "canonicalScenarioIds": {
+    "cendres": [
+      "035",
+      "036",
+      "037",
+      "038",
+      "039"
+    ],
+    "kuroi": [
+      "040",
+      "041",
+      "042",
+      "043",
+      "044"
+    ]
+  },
+  "surface": "heritage-premium",
+  "note": "035-044 are Heritage campaign chapters and remain separate from the standard 001-034 list."
+}

@@ -391,8 +391,8 @@ function renderCampaign(id){
   const chapters=m.chapters.map(ch=>{
     const status=statusFor(id,ch.n),locked=status==='VERROUILLÉ',resume=activeLive(id,ch.n);
     return `<button type="button" class="hplay-case ${status==='DISPONIBLE'?'is-current':''} ${status==='ARCHIVÉ'?'is-done':''}" data-hp-chapter="${ch.n}" ${locked?'disabled':''}>
-      <span class="hplay-case-poster"><img src="${ch.poster}" alt="" loading="lazy"></span>
-      <span class="hplay-case-copy"><em>0${ch.n}</em><strong>${esc(ch.title)}</strong><small>${esc(ch.note)}</small><b>${resume?'PARTIE EN COURS':status}</b></span>
+      <span class="hplay-case-poster hplay-case-lite"><b>${esc(ch.scenarioId||String(ch.n).padStart(3,'0'))}</b><small>${esc(m.title)}</small></span>
+      <span class="hplay-case-copy"><em>${esc(ch.scenarioId||String(ch.n).padStart(3,'0'))}</em><strong>${esc(ch.title)}</strong><small>${esc(ch.note)}</small><b>${resume?'PARTIE EN COURS':status}</b></span>
       <i>${locked?'⌁':'›'}</i>
     </button>`;
   }).join('');
@@ -400,7 +400,7 @@ function renderCampaign(id){
   shellPut(`<main class="page hplay hplay-campaign hplay-theme-${id}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="hub">← <span>MODE HÉRITAGE</span></button><div class="hplay-mode">${pack.theme}</div></header>
     <section class="hplay-campaign-title"><span class="hplay-eyebrow">${esc(m.heritage)}</span><h1>${esc(m.title)}</h1><p>${esc(m.promise)}</p></section>
-    <section class="hplay-campaign-hero"><img src="${m.cover}" alt=""><div><span>${campaignProgress(id)}/5 DOSSIERS</span><strong>${s?.status==='completed'?'CAMPAGNE TERMINÉE':`DOSSIER 0${cur} ACTIF`}</strong></div></section>
+    <section class="hplay-campaign-hero"><img src="${m.cover}" alt=""><div><span>${campaignProgress(id)}/5 DOSSIERS</span><strong>${s?.status==='completed'?'CAMPAGNE TERMINÉE':`DOSSIER ${esc(m.chapters[cur-1]?.scenarioId||String(cur).padStart(3,'0'))} ACTIF`}</strong></div></section>
     <section class="hplay-campaign-layout">
       <div class="hplay-panel hplay-cases-panel"><div class="hplay-section-head"><div><span>DOSSIERS</span><h2>Progression</h2></div><b>SÉQUENTIELLE</b></div><div class="hplay-cases">${chapters}</div></div>
       <aside class="hplay-side">${dash}<div class="hplay-panel hplay-carry"><div class="hplay-section-head"><div><span>CE QUI REVIENT</span><h2>Héritage actif</h2></div></div>${carry.map(x=>`<p>${esc(x)}</p>`).join('')}</div></aside>
