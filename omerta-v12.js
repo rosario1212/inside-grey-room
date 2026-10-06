@@ -245,7 +245,10 @@
   privateCardHtml=function(){
     let html=basePrivateCardHtml();if(!isOmerta(STATE.sync?.room?.scenario_id))return html;
     const ps=STATE.sync?.player?.private_state||{},role=omertaRole(),info=roleInfo(role);
-    const note=`<div class="omerta-private-role"><span>RÔLE OMERTÀ</span><h3>${h(ps.omerta_role||info.label||role)}</h3>${ps.omerta_objective?`<p><b>OBJECTIF</b>${h(ps.omerta_objective)}</p>`:''}${ps.omerta_power?`<p><b>POUVOIR</b>${h(ps.omerta_power)}</p>`:''}</div>`;
+    if(ps.omerta_objective){
+      try{const t=document.createElement('template');t.innerHTML=html;const summary=t.content.querySelector('.role-summary span');if(summary)summary.textContent=ps.omerta_objective;html=t.innerHTML}catch(_){}
+    }
+    const note=`<div class="omerta-private-role"><span>RÔLE OMERTÀ</span><h3>${h(ps.omerta_role||info.label||role)}</h3>${ps.omerta_power?`<p><b>POUVOIR</b>${h(ps.omerta_power)}</p>`:''}</div>`;
     const dock=`<div class="omerta-decision-dock"><span><b>TÉLÉPHONES POSÉS</b>Discute d’abord. Valide seulement une décision irréversible.</span><button class="btn primary small" onclick="igrOmertaOpenDecision()">Valider une décision</button></div>`;
     html=html.replace('<div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div>',`<div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div>${note}`);
     return html + dock;
