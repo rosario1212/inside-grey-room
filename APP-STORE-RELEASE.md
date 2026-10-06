@@ -1,3 +1,5 @@
+Bêta actuelle : version interne v12.11.0 ; version store 1.0.0, build initial 121100. Voir `MOBILE_BETA_RELEASE_V60.md`.
+
 # Inside Grey Room — App Store release candidate
 
 ## Native baseline
