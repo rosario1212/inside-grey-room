@@ -28,7 +28,9 @@ for(const marker of ['Rencontrer · 1 min','Demander à nouveau l’avocat','uni
 for(const marker of ['v43.1-lawyer-reading','PENDANT LA LECTURE DES CARTES','renderLawyerTab','igr43RoleHelper','enforceMeetingFirst','a rencontrer','aria-disabled','Entretien préalable requis'])if(!readingJs.includes(marker))throw new Error(`v43.1 role-reading marker missing: ${marker}`);
 for(const marker of ['v44-judge-lawyer','CABINET DU JUGE','3 protections','Convoquer · 2 min','CONSULTATION DEMANDÉE','DÉLIBÉRATION OBLIGATOIRE','ÉVALUATION SECRÈTE','igr_v44_request_lawyer_consultation','igr_v44_integrity_vote'])if(!judicialJs.includes(marker))throw new Error(`v44 runtime marker missing: ${marker}`);
 for(const marker of ['v44_role_integration_tests_ok','v44_reveal_tests_ok','v44_endgame_flow_tests_ok','Maximum **3 protections','une seule** consultation','courte : **3:00**','longue : **4:00**'])if(!audit.includes(marker))throw new Error(`v44 audit marker missing: ${marker}`);
-if(/5 points de confidentialité|jauge de 5 points/.test(judicialJs))throw new Error('v44 runtime reintroduced the old five-point Judge model');
+if(/5 points de confidentialité|jauge de 5 points|6 protections/.test(judicialJs))throw new Error('v44 runtime reintroduced an obsolete Judge protection model');
+if(!judicialJs.includes('Cette saisine a déjà été utilisée pendant cette partie.'))throw new Error('v65 Judge duplicate-saisine guard missing from runtime');
+if(!judicialJs.includes('3e fait échouer ton objectif personnel'))throw new Error('v65 Judge personal-objective protection rule missing from runtime');
 if(/SALLE D[’']ATTENTE|Consultations officieuses/.test(judicialJs))throw new Error('v44 runtime reintroduced free waiting-room consultations');
 
 if(!sourceApp.includes('unique client officiel'))throw new Error('built app does not contain the one-client lawyer rule');
