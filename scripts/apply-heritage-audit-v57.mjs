@@ -3,7 +3,7 @@ import path from 'node:path';
 const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist');
 const VERSION='v57-heritage-audit',CACHE='igr-v57-heritage-audit',style='heritage-audit-v57.css',pages=['index.html','en.html'];
 const exists=async f=>{try{await stat(f);return true}catch{return false}};
-const escapeRe=s=>s.replace(/[.*+?^$()|[\\]\\]/g,'\\$&');
+const escapeRe=s=>String(s).replaceAll('.','\\.');
 if(!(await exists(path.join(root,style))))throw new Error('v57 source missing: '+style);
 await copyFile(path.join(root,style),path.join(target,style));
 const bump=['heritage-v13-5.js','heritage-play-v13-7.js','play-modes-v13-8.js'];
