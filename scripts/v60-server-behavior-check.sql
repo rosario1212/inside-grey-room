@@ -30,4 +30,11 @@ begin
  assert actual->'success'=canonical->'success','spy lost secret-role victory rule';assert actual->>'role'='espion';
  assert not exists(select 1 from jsonb_array_elements(res->'results') v where not (v->>'success')::boolean and jsonb_array_length(v->'achievements')>0),'defeated role retains victory achievement';
 end $test$;
+do $permissions$
+begin
+ assert not has_function_privilege('anon','public.igr_v4_tick(text)','execute');
+ assert not has_function_privilege('authenticated','public.igr_v35_room_mode(text)','execute');
+ assert not has_function_privilege('anon','public.igr_dlc_has_access(uuid,text)','execute');
+ assert has_function_privilege('service_role','public.igr_v4_tick(text)','execute');
+end $permissions$;
 select 'v60 authorization, paused debrief, spy role precedence and defeat achievements OK' as result;

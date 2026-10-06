@@ -8,6 +8,7 @@
 | Lobby | Réécriture du même texte déclenchant l’observateur DOM | Écriture uniquement si changement ; 120 callbacks sans mutation supplémentaire |
 | Durée | Interrogatoires et finale court/long | 360 secondes dans les deux modes ; prises de parole/défenses distinctes ; estimations dépendant du nombre de rôles |
 | Authentification | Comparaison SQL avec jeton d’hôte NULL | NULL et faux jeton refusés ; vrai jeton accepté dans le lobby |
+| Accès internes | Tick, durée interne et vérification des droits exposés sans jeton | Exécution directe retirée aux clients ; appels internes et service_role conservés |
 | Pause | Débrief initial sans échéance considéré expiré | Pause liée à la phase et son début vérifiée avant progression |
 | Espion | Couverture Suspect écrasant la victoire secrète | Objectif Espion restauré depuis la règle canonique avant calcul des gagnants |
 | Procureur corrompu | Cible innocente impossible à protéger par sous-évaluation | Cible responsable obligatoire ; corruption désactivée sans cible valide ; 100 tirages testés |
@@ -34,6 +35,10 @@ Les variantes Omerta, Terror, Cartel, Régime et Héritage disposent de leurs co
 - Migration v60 + fixtures v58/v59/v60 exécutées dans une transaction sur le serveur, puis annulées intégralement ; aucun joueur de test persistant.
 - Contrôle store : 41 contrôles statiques, un avertissement connu sur les paiements natifs non intégrés.
 - Compilations iOS/Android de cette révision suivies dans GitHub Actions ; utiliser leurs résultats comme preuve de compilation, pas de validation sur appareil.
+
+## Contrôle des accès serveur
+
+Les tables de jeu restent protégées par RLS sans accès direct aux clients. Les avis de sécurité recensent les fonctions SECURITY DEFINER accessibles : les RPC destinées aux joueurs utilisent leurs jetons propres plutôt qu’une session Supabase Auth. Quatre helpers internes sans authentification ont été retirés de l’API exécutable par anon/authenticated. Les autres avis de cette architecture ne sont pas déclarés « résolus » par ce seul audit.
 
 ## Limites et décision de publication
 
