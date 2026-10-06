@@ -1,7 +1,7 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const target=path.resolve(process.argv[2]||'dist');
-const version='v63-entrance-harmony';
+const version='v64-silver-entrance';
 const assets=['startup-stability-v13-3.css','app-v11.js','playstore-ready-v12.js','duration-modes-v35.js','final-audience-v52.js','self-guided-rules-v51.js','judicial-runtime-v44.js','duration-modes-v35.css','natural-role-gameplay-v50.js'];
 for(const page of ['index.html','en.html']){
  const file=path.join(target,page);let s=await readFile(file,'utf8');
