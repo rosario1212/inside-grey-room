@@ -6,7 +6,7 @@ Inside Grey Room est un jeu social d’enquête multijoueur piloté par une appl
 
 1. Lecture des cartes privées.
 2. Assemblée I du camp Enquête — 05:00.
-3. Cycle 1 — enquête, Gray Room et interactions libres.
+3. Cycle 1 — enquête, Grey Room et interactions libres.
 4. Assemblée II — 04:00.
 5. Cycle 2.
 6. Assemblée III — 04:00.
@@ -31,7 +31,7 @@ La référence actuelle pour le mode LONG est :
 - cartes privées et rôles publics/spécialisés ;
 - trois cycles d’enquête ;
 - Assemblées du camp Enquête ;
-- Gray Room et procédures officielles ;
+- Grey Room et procédures officielles ;
 - interactions physiques libres hors procédure ;
 - Audience finale v52 avec échelle de responsabilité 0–2 ;
 - interface FR / EN ;

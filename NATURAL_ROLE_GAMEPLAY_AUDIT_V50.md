@@ -2,7 +2,7 @@
 
 ## Périmètre
 
-La v50 aligne le gameplay sur les interactions physiques naturelles : l'application contrôle les phases collectives, la Gray Room, les preuves, les actions canoniques, les quotas et le scoring ; elle ne crée plus de rendez-vous chronométrés ordinaires entre deux joueurs.
+La v50 aligne le gameplay sur les interactions physiques naturelles : l'application contrôle les phases collectives, la Grey Room, les preuves, les actions canoniques, les quotas et le scoring ; elle ne crée plus de rendez-vous chronométrés ordinaires entre deux joueurs.
 
 Backend production vérifié sur le projet Supabase `jtasbdiguhiswoyvobkn` et frontend v50 ajouté après le runtime v49.
 
@@ -10,7 +10,7 @@ Backend production vérifié sur le projet Supabase `jtasbdiguhiswoyvobkn` et fr
 
 1. Lecture des cartes.
 2. Assemblée I du camp Enquête — 5:00, obligatoire pour Enquêteur, Analyste, Procureur, Juge, Inspecteur et Expert présents.
-3. Cycle 1 — enquête, Gray Room et interactions libres.
+3. Cycle 1 — enquête, Grey Room et interactions libres.
 4. Assemblée II — 4:00.
 5. Cycle 2.
 6. Assemblée III — 4:00.
@@ -23,10 +23,10 @@ Les anciens `cycle_debrief` / `final_debrief` ne deviennent plus des phases sép
 
 ## Interactions naturelles
 
-- Hors convocation officielle de l'application dans la Gray Room, les conversations sont libres.
+- Hors convocation officielle de l'application dans la Grey Room, les conversations sont libres.
 - Juge : aucune convocation individuelle chronométrée ; il va chercher le joueur directement.
 - Procureur : aucun entretien chronométré ni minimum d'entretien par cycle ; négociation physique puis enregistrement éventuel d'une coopération.
-- Avocat / Suspect : échanges libres et illimités hors Gray Room.
+- Avocat / Suspect : échanges libres et illimités hors Grey Room.
 - Exception : pendant son propre interrogatoire, un Suspect peut consulter un Avocat 1:00, une fois par cycle ; l'interrogatoire est suspendu puis reprend avec le temps restant exact.
 - Expert : consultations libres, sans chrono.
 - Inspecteur : interventions en salle d'attente sans chrono.
@@ -78,7 +78,7 @@ Le libellé signifie la fréquence moyenne des interventions et décisions, pas 
 - Une publication manuelle doit déclarer sa base : observation, déclaration, document, élément public ou résultat d'enquête.
 - Une publication manuelle reste une affirmation de presse (`verified=false`) et n'est pas transformée en vérité canonique.
 - Une faute journalistique signalée ne déclenche pas automatiquement −10 : le Juge valide, ou l'Enquêteur si aucun Juge n'est présent.
-- Motifs contrôlés : intrusion Gray Room, refus de partir, zone interdite, perturbation d'une procédure officielle, règle spécifique au scénario.
+- Motifs contrôlés : intrusion Grey Room, refus de partir, zone interdite, perturbation d'une procédure officielle, règle spécifique au scénario.
 
 ## Scoring procédural
 
