@@ -13,16 +13,18 @@ window.IGR_HERITAGE_CONTEXT_V57=Object.freeze({snapshot,publish});
 /* Concise campaign framing, shared by the hub, dossier and opening phase. */
 (()=>{'use strict';
 const frames={
- kuroi:{setting:'Japon, aujourd’hui. Le chef du clan Kurokawa est assassiné. Kurokawa, son rival Arakida et la police doivent reconstituer les faits.',table:'Les clans protègent leurs intérêts. La police enquête. Chaque rôle détient une partie des faits ; aucun camp ne dispose seul de toute la réponse.',stakes:'Le groupe retient une conclusion après discussion. Les dettes, accusations et ruptures reviennent dans les cinq dossiers. Une accusation ne devient pas un fait sans recoupement.'},
- maitre:{setting:'Une enquête fiscale mène à un réseau criminel. Le Client est mis en cause ; son implication reste à établir, acte par acte.',table:'L’Avocat défend, le Client choisit ce qu’il révèle, l’Enquêteur recoupe et le Procureur accuse. Le Juge tranche sur les éléments présentés. L’Associé devient central au troisième dossier.',stakes:'Les admissions, conclusions et relations restent dans la campagne. La défense peut contester et garder sa stratégie privée ; elle ne crée pas de preuves. Le Juge ignore les faits cachés.'}
+ cendres:'Vous enquêtez au sein d’un service de renseignement sur des identités falsifiées et des accès détournés. Chaque rôle apporte des informations à recouper. Le groupe choisit une conclusion ; les erreurs et les preuves retenues influencent les dossiers suivants.',
+ kuroi:'Au Japon, le chef d’un clan est assassiné. Les deux clans et la police reconstituent les faits avec des informations différentes. Le groupe choisit une conclusion ; les accusations, les dettes et les relations influencent les dossiers suivants.',
+ maitre:'Une enquête fiscale révèle des liens avec un réseau criminel. La défense et l’accusation confrontent leurs informations ; le Juge tranche sur les éléments présentés. Les faits retenus, les relations et les décisions influencent les dossiers suivants.'
 };
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function refresh(){const page=document.querySelector('.hplay-campaign,.hplay-dossier,.hplay-session');if(!page||page.querySelector('[data-heritage-frame]'))return;
-const id=page.classList.contains('hplay-theme-kuroi')?'kuroi':page.classList.contains('hplay-theme-maitre')?'maitre':null;if(!id)return;
+const id=page.classList.contains('hplay-theme-cendres')?'cendres':page.classList.contains('hplay-theme-kuroi')?'kuroi':page.classList.contains('hplay-theme-maitre')?'maitre':null;if(!id)return;
 if(page.classList.contains('hplay-session')){const mode=page.querySelector('.hplay-mode')?.textContent||'';if(!/(?:PHASE|CYCLE)\s+1\/|CYCLE I\b/.test(mode))return}
-const frame=frames[id],block=document.createElement('section');block.className='h57-campaign-frame';block.dataset.heritageFrame=id;
-block.innerHTML='<h2>Cadre de campagne</h2>'+[['SITUATION',frame.setting],['À LA TABLE',frame.table],['CE QUI RESTE',frame.stakes]].map(([label,text])=>`<div><b>${label}</b><p>${esc(text)}</p></div>`).join('');
-const anchor=page.querySelector('.hplay-campaign-hero,.hplay-dossier-grid,.hplay-session-head');if(anchor)anchor.insertAdjacentElement('afterend',block);else page.appendChild(block)}
+const frame=frames[id],block=document.createElement('section');block.className='hplay-campaign-definition h57-campaign-frame';block.dataset.heritageFrame=id;
+block.innerHTML='<b>CADRE DE LA CAMPAGNE</b><span>'+esc(frame)+'</span>';
+const existing=page.querySelector('.hplay-campaign-definition');if(existing){existing.replaceWith(block);return}
+const anchor=page.querySelector('.hplay-campaign-title,.hplay-dossier-copy,.hplay-session-head');if(anchor)anchor.insertAdjacentElement('afterend',block);else page.appendChild(block)}
 let pending=false;const schedule=()=>{if(pending)return;pending=true;queueMicrotask(()=>{pending=false;refresh()})};
 new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});document.addEventListener('igr-heritage-sync',schedule);schedule();
 })();

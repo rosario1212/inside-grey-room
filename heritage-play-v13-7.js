@@ -41,7 +41,7 @@ const ROLES={
 const PACKS={
   cendres:{
     title:'CENDRES',theme:'CONTRE-ESPIONNAGE / SERVICE NATIONAL',min:5,max:7,
-    definition:'Vous incarnez une cellule interne d’un service national de renseignement. Votre mission est de détecter une compromission : faux dossiers d’identité, détournement de procédures d’urgence, documents falsifiés et accès internes abusifs. Aucun nom de réseau ou de programme n’est à connaître à l’avance : seuls les faits du dossier comptent.',
+    definition:'Vous enquêtez au sein d’un service de renseignement sur des identités falsifiées et des accès détournés. Chaque rôle apporte des informations à recouper. Le groupe choisit une conclusion ; les erreurs et les preuves retenues influencent les dossiers suivants.',
     chapters:{
       1:{
         title:'PERSONNE N’EXISTE',

@@ -5,7 +5,7 @@ const META=Object.freeze({
   id:'maitre',title:'MAÎTRE',subtitle:'Droit pénal · Réputation · Dossier vivant',
   cover:'assets/heritage-maitre-01-le-client.webp?v=v34-maitre',
   promise:'Construisez une défense. Laissez des traces. Assumez ce qu’elles deviendront.',
-  heritage:'Héritage de la défense',mechanic:'LES TRACES · L’ANGLE · LA DÉMONSTRATION',
+  heritage:'Héritage de la défense',mechanic:'LES DÉCISIONS · LA STRATÉGIE DE DÉFENSE · LA ARGUMENTS',
   chapters:Object.freeze([
     Object.freeze({n:1,title:'LE CLIENT',poster:'assets/heritage-maitre-01-le-client.webp?v=v34-maitre',note:'Fraude fiscale, soupçons de stupéfiants et entourage beaucoup plus sale que le dossier ne le laisse croire.'}),
     Object.freeze({n:2,title:'LE DEAL',poster:'assets/heritage-maitre-02-le-deal.webp?v=v34-maitre',note:'Un lien devient certain. Le parquet veut un nom en échange d’une porte de sortie.'}),
@@ -22,7 +22,7 @@ const VARIANTS=Object.freeze({
 });
 
 const ROLES=Object.freeze([
-  {id:'avocat',name:'AVOCAT',public:'Vous défendez le Client. Votre force vient de l’angle que vous construisez, pas d’une vérité fournie par l’application.'},
+  {id:'avocat',name:'AVOCAT',public:'Vous défendez le Client. Votre force vient de la stratégie que vous défendez, pas d’des faits supposés connus.'},
   {id:'client',name:'CLIENT',public:'Vous êtes le point d’entrée du dossier. Vous n’êtes pas automatiquement le centre du réseau et vous ne dites pas forcément tout à votre avocat.'},
   {id:'enqueteur',name:'ENQUÊTEUR',public:'Vous devez établir la place exacte du Client : proximité, connaissance, bénéfice, aveuglement, complicité ou responsabilité directe.'},
   {id:'procureur',name:'PROCUREUR',public:'Vous transformez ce qui est légalement exploitable en théorie d’accusation, sans disposer de la réalité des faits complète.'},
@@ -40,8 +40,8 @@ const PACK=Object.freeze({
       question:'Quelle place le dossier permet-il réellement d’attribuer au Client ?',
       cycles:[
         ['CYCLE I · AUDITION','Avocat, Client et Enquêteur ouvrent le dossier. Séparez chaque fait brut de l’interprétation qu’on lui donne. Le Client peut demander un entretien confidentiel avec son Avocat avant de répondre.'],
-        ['CYCLE II · L’ANGLE','L’Enquêteur choisit la piste qu’il veut approfondir : argent, communications, déplacements ou entourage. L’Avocat formule ensuite son ANGLE et, s’il le souhaite, une DÉMONSTRATION qui rend cette lecture testable.'],
-        ['CYCLE III · AUDIENCE','Le Procureur assemble les liens ; l’Avocat attaque les raccourcis ; l’Enquêteur justifie ses choix. Le Juge ne tranche que sur ce qui a été établi devant lui. Une démonstration fragile peut être retournée par le Procureur.']
+        ['CYCLE II · LA STRATÉGIE DE DÉFENSE','L’Enquêteur choisit la piste qu’il veut approfondir : argent, communications, déplacements ou entourage. L’Avocat formule ensuite sa STRATÉGIE et, s’il le souhaite, une ARGUMENTS qui rend cette lecture testable.'],
+        ['CYCLE III · AUDIENCE','Le Procureur assemble les liens ; l’Avocat attaque les raccourcis ; l’Enquêteur justifie ses choix. Le Juge ne tranche que sur ce qui a été établi devant lui. Une argumentation fragile peut être retournée par le Procureur.']
       ],
       outcomes:[
         {id:'fiscal_only',title:'FAUTE FISCALE · LIEN CRIMINEL NON ÉTABLI',detail:'La dissimulation fiscale est retenue, mais le dossier ne démontre pas que le Client connaissait ou participait au trafic.',reputation:'TECHNIQUE',facts:[['fraude_fiscale','Fraude / dissimulation fiscale','established'],['trafic_client','Participation du Client au trafic','contested']],links:[['client_associe','CLIENT','ASSOCIÉ','probable','Relation financière réelle, connaissance du trafic non démontrée']],trace:'L’Avocat a séparé une faute réelle d’une accusation plus large.'},
@@ -85,8 +85,8 @@ const PACK=Object.freeze({
       question:'Jusqu’où le procès permet-il juridiquement de relier le Client au réseau ?',
       cycles:[
         ['CYCLE I · THÉORIE DU PARQUET','Le Procureur présente une chaîne complète. L’Enquêteur doit expliquer les pistes abandonnées et les décisions prises depuis LE CLIENT.'],
-        ['CYCLE II · DÉMONSTRATION','L’Avocat choisit son ANGLE final et peut construire une DÉMONSTRATION. Le Procureur dispose ensuite d’un droit de retournement : montrer que la démonstration confirme en réalité une partie de sa thèse.'],
-        ['CYCLE III · JUGEMENT','Le Juge distingue ce qui est établi, probable et seulement supposé. Les décisions des trois dossiers précédents sont recevables comme histoire procédurale, pas comme vérité automatique.']
+        ['CYCLE II · ARGUMENTS','L’Avocat choisit sa STRATÉGIE final et peut construire une ARGUMENTS. Le Procureur dispose ensuite d’un droit de retournement : montrer que la argumentation confirme en réalité une partie de sa thèse.'],
+        ['CYCLE III · JUGEMENT','Le Juge distingue ce qui est établi, probable et seulement supposé. Les décisions des trois dossiers précédents sont recevables comme historique de l’enquête, pas comme vérité automatique.']
       ],
       outcomes:[
         {id:'narrow',title:'RESPONSABILITÉ LIMITÉE',detail:'Le tribunal retient certaines infractions ou aides précises mais rejette l’idée que le Client porte la responsabilité globale du réseau.',reputation:'TECHNIQUE',facts:[['trial_scope','Responsabilité du Client limitée à des faits précis','established']],trace:'La théorie globale du réseau est fragmentée au procès.'},
@@ -99,7 +99,7 @@ const PACK=Object.freeze({
       briefing:'Le nom de l’Avocat est désormais attaché à cette affaire. Une dernière pièce rattache l’entourage du Client à des faits graves que les premiers dossiers ne permettaient pas d’attribuer proprement. Le Client revient avec une demande : le défendre encore, mais cette fois en sachant beaucoup mieux quel homme il est devenu aux yeux du dossier.',
       question:'Quel héritage l’Avocat choisit-il de laisser ?',
       cycles:[
-        ['CYCLE I · CE QUI RESTE','Relisez les Traces : ce qui est établi, ce qui reste contesté, qui a été protégé, qui a été exposé. Aucune ancienne conclusion ne peut être effacée.'],
+        ['CYCLE I · CE QUI RESTE','Relisez les décisions précédentes : ce qui est établi, ce qui reste contesté, qui a été protégé, qui a été exposé. Aucune ancienne conclusion ne peut être effacée.'],
         ['CYCLE II · LA LIMITE','L’Avocat choisit ce qu’il peut encore défendre légalement et moralement : contester ce qui n’est pas prouvé, rechercher une coopération encadrée ou refuser une stratégie qui exigerait de tromper la procédure.'],
         ['CYCLE III · L’HONNEUR','Le Juge rend la dernière décision sur le dossier. L’épilogue, lui, porte sur l’Avocat : ce qu’il a gagné, ce qu’il a protégé et ce que son nom signifie désormais.']
       ],

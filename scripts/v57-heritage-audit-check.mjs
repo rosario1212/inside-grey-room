@@ -20,7 +20,7 @@ ok(css.includes('.hplay-campaign-definition'),'CENDRES campaign-definition styli
 for(const bad of ['VESPER','ORPHÉE','CERBÈRES','ARKEN'])for(const [name,src] of [['heritage-play-v13-7.js',play],['heritage-v13-5.js',legacy],['play-modes-v13-8.js',modes]])ok(!src.includes(bad),name+' still exposes fictional label '+bad);
 for(const token of [
   'CONTRE-ESPIONNAGE / SERVICE NATIONAL',
-  'cellule interne d’un service national de renseignement',
+  'service de renseignement',
   'IDENTITÉ DE COUVERTURE PARTAGÉE',
   'RESPONSABLE DES HABILITATIONS',
   'ANCIENNE GALERIE HYDROÉLECTRIQUE'
