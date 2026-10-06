@@ -18,7 +18,7 @@ Périmètre : CENDRES, KUROI et MAÎTRE, soit 15 dossiers ; modes local et en li
 | Copier une sauvegarde annonçait parfois un succès avant la copie | Attente effective du presse-papiers et gestion des erreurs |
 | Rôles techniques et statuts anglais exposés à l’écran | Noms français lisibles, statuts traduits, distinction entre fait retenu et réalité des faits |
 | Petites affiches, titres longs et largeur de la carte de résultat | Format 2:3 homogène, affiches contenues, retour à la ligne et correction du calcul de largeur |
-| Vesper et Arken désignaient des pays inventés | Services de renseignement, ministère, aéroport international et pays voisin ; CERBÈRES et ORPHÉE restent des noms de code |
+| Vesper et Arken désignaient des pays inventés | Service national de renseignement, centre logistique gouvernemental, pays voisin et fonctions opérationnelles concrètes ; rédaction harmonisée avec la mise à jour de main |
 
 ## Validation
 
@@ -34,3 +34,7 @@ Périmètre : CENDRES, KUROI et MAÎTRE, soit 15 dossiers ; modes local et en li
 Les protections serveur et le contexte partagé ont été appliqués à Supabase. Le frontend reste proposé en PR jusqu’à fusion et déploiement. Une partie complète avec plusieurs téléphones physiques reste nécessaire pour évaluer le rythme, la lisibilité et le plaisir de chaque rôle. Le navigateur de test n’a pas pu être installé dans cet environnement ; la validation visuelle sur iPhone réel reste à faire. Les corrections CSS sont compilées et revues, sans prétendre à une validation visuelle complète.
 
 Le contexte de campagne reste issu de la sauvegarde locale de l’hôte ; cette correction le partage, elle ne crée pas une sauvegarde de campagne multiappareil. Les dossiers restent des récits de jeu contemporains, sans revendiquer une simulation exacte du droit national d’un pays donné.
+
+## Complément : cadre de campagne
+
+KUROI et MAÎTRE disposent d’un cadre commun de trois paragraphes : situation, place des rôles et conséquences persistantes. Il apparaît sur la campagne, le dossier et la première phase, en local et en ligne. Il rappelle le partage incomplet de l’information et le recoupement dans KUROI ; dans MAÎTRE, la répartition défense/accusation/jugement, l’ignorance du Juge sur les faits cachés et la séparation des responsabilités. Aucun bonus de camp ni condition de victoire supplémentaire n’est ajouté.

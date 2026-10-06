@@ -38,8 +38,9 @@ try{
  ok(html.includes('objective-dedupe-v56.css?v=v56-objective-dedupe'),'dist missing v56 CSS');
  ok(html.includes('objective-dedupe-v56.js?v=v56-objective-dedupe'),'dist missing v56 runtime');
  ok(html.lastIndexOf('objective-dedupe-v56.js')>html.lastIndexOf('gameplay-polish-v53.js'),'v56 must load after gameplay layers');
- for(const asset of ['gameplay-flow-v13.js','judicial-runtime-v44.js','prosecutor-runtime-v47.js','omerta-v12.js','omerta-polish-v12.js','heritage-play-v13-7.js'])ok(html.includes(asset+'?v=v56-objective-dedupe'),'dist did not cache-bust '+asset);
- ok(sw.includes("const CACHE='igr-v56-objective-dedupe';"),'service worker cache not bumped to v56');
+ for(const asset of ['gameplay-flow-v13.js','judicial-runtime-v44.js','prosecutor-runtime-v47.js','omerta-v12.js','omerta-polish-v12.js'])ok(html.includes(asset+'?v=v56-objective-dedupe'),'dist did not cache-bust '+asset);
+ ok(html.includes('heritage-play-v13-7.js?v=v56-objective-dedupe')||html.includes('heritage-play-v13-7.js?v=v57-heritage-audit'),'Heritage play asset is older than v56');
+ ok(sw.includes("const CACHE='igr-v56-objective-dedupe';")||sw.includes("const CACHE='igr-v57-heritage-audit';"),'service worker cache is older than v56');
 }catch{}
 if(fail.length){console.error('\nObjective/thumbnail v56 check FAILED:\n- '+fail.join('\n- '));process.exit(1)}
 console.log('Objective/thumbnail v56 checks OK');

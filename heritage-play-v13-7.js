@@ -19,13 +19,13 @@ const isFr=()=>window.IGR_LOCALE!=='en';
 
 const ROLES={
   cendres:[
-    {id:'chef',name:'CHEF DE CELLULE',public:'Coordonne les décisions et tranche quand le groupe se divise.'},
-    {id:'sigint',name:'ANALYSTE DES COMMUNICATIONS',public:'Lit les horaires, communications et anomalies techniques.'},
-    {id:'terrain',name:'AGENT TERRAIN',public:'Connaît les lieux, filatures et contraintes opérationnelles.'},
-    {id:'source',name:'OFFICIER TRAITANT',public:'Évalue les sources humaines, leurs motifs et leurs mensonges.'},
-    {id:'liaison',name:'LIAISON MINISTÉRIELLE',public:'Représente les autorités et mesure le coût politique des erreurs.'},
-    {id:'legal',name:'ANALYSTE JUDICIAIRE',public:'Sépare preuve exploitable, hypothèse et contamination du dossier.'},
-    {id:'archive',name:'RESPONSABLE DES ARCHIVES',public:'Recoupe les archives anciennes et les identités effacées.'}
+    {id:'chef',name:'CHEF DE CELLULE',public:'Coordonne l’analyse, répartit les priorités et tranche quand les informations restent contradictoires.'},
+    {id:'sigint',name:'ANALYSTE COMMUNICATIONS',public:'Recoupe horaires, métadonnées, accès numériques et anomalies de transmission.'},
+    {id:'terrain',name:'AGENT TERRAIN',public:'Travaille les lieux, déplacements, contraintes physiques et témoignages de proximité.'},
+    {id:'source',name:'OFFICIER TRAITANT',public:'Évalue les sources humaines, ce qu’elles savent réellement et ce qu’elles cherchent à obtenir.'},
+    {id:'liaison',name:'LIAISON INSTITUTIONNELLE',public:'Coordonne avec la direction et les autorités sans laisser la pression politique remplacer les faits.'},
+    {id:'legal',name:'ANALYSTE JUDICIAIRE',public:'Sépare preuve primaire, document dérivé, hypothèse et élément juridiquement exploitable.'},
+    {id:'archive',name:'ANALYSTE DOCUMENTAIRE',public:'Recoupe les archives, habilitations, versions de documents et traces administratives anciennes.'}
   ],
   kuroi:[
     {id:'waka_k',name:'NUMÉRO DEUX · KUROKAWA',public:'Numéro deux du clan Kurokawa. Il protège la continuité de la Famille.'},
@@ -40,141 +40,142 @@ const ROLES={
 
 const PACKS={
   cendres:{
-    title:'CENDRES',theme:'RENSEIGNEMENT / CONTRE-ESPIONNAGE',min:5,max:7,
+    title:'CENDRES',theme:'CONTRE-ESPIONNAGE / SERVICE NATIONAL',min:5,max:7,
+    definition:'Vous incarnez une cellule interne d’un service national de renseignement. Votre mission est de détecter une compromission : faux dossiers d’identité, détournement de procédures d’urgence, documents falsifiés et accès internes abusifs. Aucun nom de réseau ou de programme n’est à connaître à l’avance : seuls les faits du dossier comptent.',
     chapters:{
       1:{
         title:'PERSONNE N’EXISTE',
-        briefing:'Une équipe clandestine est massacrée dans un appartement sûr. Parmi les dossiers retrouvés figure ÉLIAS VENN : passeport valide, comptes actifs, dossiers médicaux cohérents — mais aucune trace antérieure à six mois.',
-        question:'Que représente réellement ÉLIAS VENN ?',
+        briefing:'Une équipe de surveillance est retrouvée morte dans un appartement sécurisé. Dans ses dossiers apparaît l’identité V-17 : passeport valide, comptes actifs et dossier médical cohérent, mais aucune trace vérifiable avant les six derniers mois.',
+        question:'Que représente réellement l’identité V-17 ?',
         phases:[
-          ['SCÈNE','Recoupez la scène et les horaires. Ne cherchez pas encore un coupable : cherchez ce qui ne devrait pas pouvoir exister.'],
-          ['IDENTITÉ','Chaque joueur expose une seule information privée. Interdiction de montrer l’écran : vous devez la raconter.'],
-          ['CONTRADICTION','Décidez quelles données peuvent avoir été fabriquées après coup et lesquelles nécessitent une présence physique réelle.'],
-          ['CLASSIFICATION','Classez VENN avant de verrouiller le dossier. Cette classification sera réutilisée dans les dossiers suivants.']
+          ['SCÈNE','Recoupez la scène et les horaires. Ne cherchez pas encore un coupable : cherchez quelles données supposent une personne réelle et lesquelles peuvent être créées administrativement.'],
+          ['IDENTITÉ','Chaque joueur expose une seule information privée. Interdiction de montrer l’écran : l’information doit être racontée et discutée.'],
+          ['CONTRADICTION','Séparez les données primaires des copies, résumés et témoignages influencés après les faits.'],
+          ['CLASSIFICATION','Classez V-17 avant de verrouiller le dossier. Cette conclusion sera reprise dans les dossiers suivants.']
         ],
         secrets:{
-          chef:['La cellule avait reçu l’ordre de surveiller VENN, jamais de l’arrêter. L’ordre venait d’un canal officiel du service de renseignement.','Empêcher le groupe de confondre ordre authentique et cible authentique.'],
-          sigint:['Tous les appels attribués à VENN proviennent de trois relais différents, mais avec exactement la même dérive d’horloge de 41 ms.','Faire comprendre qu’une identité numérique peut être fabriquée de façon centralisée.'],
-          terrain:['Deux voisins jurent avoir vu “VENN”, mais leurs descriptions ne correspondent pas. Les deux ont reçu la même photo après les faits.','Distinguer témoin de personne réelle et témoin influencé.'],
-          source:['Une source CERBÈRES emploie “VENN” comme mot de validation, jamais comme nom de personne.','Garder la source crédible sans révéler trop tôt qu’elle connaît CERBÈRES.'],
-          liaison:['Le ministère exige un suspect nominatif avant 22 h. Politiquement, “VENN” est la réponse la plus commode.','Résister à la pression de fabriquer une certitude.'],
-          legal:['Aucune donnée biométrique brute de VENN n’existe : seulement des copies ou résumés administratifs.','Faire distinguer preuve primaire et document dérivé.'],
-          archive:['Le nom VENN apparaît dans un manuel ORPHÉE vieux de neuf ans à côté de la mention “identité fantôme / routage”.','Révéler l’archive au moment où elle peut être recoupée, pas comme argument d’autorité.']
+          chef:['La cellule avait reçu un ordre interne authentique de surveiller V-17, jamais de l’arrêter.','Empêcher le groupe de confondre authenticité de l’ordre et existence réelle de la cible.'],
+          sigint:['Tous les appels attribués à V-17 proviennent de trois relais différents mais présentent exactement la même dérive d’horloge de 41 ms.','Montrer qu’une identité numérique peut être administrée depuis une même infrastructure.'],
+          terrain:['Deux voisins disent avoir vu V-17, mais leurs descriptions ne correspondent pas. Les deux ont reçu la même photo après les faits.','Distinguer observation directe et souvenir influencé par une image transmise ensuite.'],
+          source:['Une source du réseau hostile utilise “V-17” comme code de validation, jamais comme nom de personne.','Préserver la valeur de la source sans transformer son vocabulaire en preuve unique.'],
+          liaison:['Le ministère exige un suspect nominatif avant 22 h. V-17 fournirait une réponse politiquement simple mais non démontrée.','Empêcher une exigence institutionnelle de devenir une certitude factuelle.'],
+          legal:['Aucune donnée biométrique brute de V-17 n’existe : seulement des copies, exports et résumés administratifs.','Faire distinguer preuve primaire et document dérivé.'],
+          archive:['Une ancienne procédure interne décrit la création d’identités de couverture partagées pour cloisonner plusieurs opérations.','Relier V-17 à une méthode documentée sans supposer qui l’utilise aujourd’hui.']
         },
         options:[
-          {id:'alias',title:'IDENTITÉ FANTÔME',detail:'VENN est un alias opérationnel partagé, pas une personne unique.',grade:2,consequence:'Le réseau gagne un premier nœud fiable et la crise reste contenue.'},
-          {id:'agent',title:'AGENT CERBÈRES',detail:'VENN est une personne réelle à retrouver.',grade:0,consequence:'La cellule gaspille ses moyens sur une cible qui n’existe pas.'},
-          {id:'victim',title:'VICTIME SUPPRIMÉE',detail:'VENN a existé mais CERBÈRES a effacé toute trace antérieure.',grade:1,consequence:'Vous conservez l’hypothèse, mais le dossier reste contaminé par une fausse piste.'}
+          {id:'alias',title:'IDENTITÉ DE COUVERTURE PARTAGÉE',detail:'V-17 est un dossier administratif utilisé par plusieurs opérations, pas une personne unique.',grade:2,consequence:'La cellule cesse de chercher un individu inexistant et conserve une piste exploitable.'},
+          {id:'agent',title:'AGENT RÉEL À RETROUVER',detail:'V-17 correspond à une seule personne opérant sous une identité récente.',grade:0,consequence:'La cellule mobilise ses moyens sur une personne qui n’existe pas sous cette forme.'},
+          {id:'victim',title:'IDENTITÉ D’UNE PERSONNE EFFACÉE',detail:'Une personne réelle a existé mais ses antécédents ont été supprimés.',grade:1,consequence:'L’hypothèse reste possible mais ne correspond pas aux traces techniques disponibles.'}
         ],
-        reveal:'ÉLIAS VENN n’est pas une personne. CERBÈRES utilise cette identité fantôme comme enveloppe administrative pour plusieurs opérations.',
+        reveal:'V-17 n’est pas une personne unique. C’est une identité de couverture administrée depuis une même infrastructure et réutilisée pour plusieurs opérations du réseau hostile.',
         apply:{alias:{crisis:0,flag:'s1_correct'},agent:{crisis:1,flag:'s1_wrong'},victim:{crisis:1,flag:'s1_partial'}}
       },
       2:{
         title:'04:17',
-        briefing:'À 04:17, une attaque frappe le terminal Est de l’aéroport international. Dans les huit minutes suivantes, trois convois officiels quittent une zone sous protocole d’urgence. CERBÈRES revendique l’attaque sous un nom qui n’existe dans aucun de ses messages antérieurs.',
+        briefing:'À 04:17, une explosion frappe un centre logistique gouvernemental. Dans les huit minutes suivantes, trois convois officiels quittent le périmètre sécurisé sous protocole d’urgence. Une revendication apparaît presque immédiatement sur un canal jusque-là inconnu.',
         question:'Quel était l’objectif principal de l’attaque de 04:17 ?',
         phases:[
-          ['IMPACT','Séparez ce qui attire l’attention de ce qui profite réellement de la crise.'],
-          ['MOUVEMENTS','Recoupez les convois, badges et changements de procédure déclenchés par l’urgence.'],
-          ['FAUX DRAPEAU','Cherchez qui avait intérêt à signer l’attaque d’un nom nouveau.'],
-          ['PRIORITÉ','Vous n’avez les moyens de suivre qu’une piste. Choisissez celle qui survivra au dossier suivant.']
+          ['IMPACT','Séparez l’événement visible de ce qui change concrètement dans les procédures de sécurité.'],
+          ['MOUVEMENTS','Recoupez les convois, badges et itinéraires activés par le protocole d’urgence.'],
+          ['ATTRIBUTION','Évaluez la revendication : heure de publication, canal utilisé et intérêt politique d’une attribution rapide.'],
+          ['PRIORITÉ','Vous ne pouvez suivre qu’une piste. Choisissez l’effet opérationnel le mieux étayé.']
         ],
         secrets:{
-          chef:['Le protocole 04:17 a déplacé automatiquement les matières classifiées vers un site secondaire.','Obliger le groupe à raisonner sur les effets institutionnels de l’attaque.'],
-          sigint:['La revendication a été publiée 38 secondes avant la première alerte interne officielle.','Établir qu’un acteur connaissait le timing avant les services de renseignement.'],
-          terrain:['Le convoi C n’a pas utilisé sa route de secours prévue ; il a pris une route préparée la veille.','Faire du trajet C un indice, pas une preuve suffisante.'],
-          source:['Une source décrit ORPHÉE comme “ce que l’on déplace quand tout le monde regarde ailleurs”.','Relier ORPHÉE à un transfert sans prétendre savoir encore ce que c’est.'],
-          liaison:['Le gouvernement veut attribuer l’attaque au pays voisin pour pouvoir fermer la frontière.','Empêcher le besoin politique de devenir la vérité du dossier.'],
-          legal:['Deux badges du convoi C ont été activés avec des identifiants créés après minuit.','Faire revenir la logique des identités fabriquées du dossier 01.'],
-          archive:['Un ancien plan CERBÈRES emploie le code 04:17 pour “fenêtre de substitution logistique”.','Relier l’heure à une procédure, pas à un groupe revendicatif.']
+          chef:['Le protocole d’urgence déplace automatiquement certains matériels classifiés vers un site secondaire.','Faire raisonner le groupe sur les effets institutionnels de l’attaque.'],
+          sigint:['La revendication a été publiée 38 secondes avant la première alerte interne officielle.','Établir qu’un acteur connaissait le calendrier avant la diffusion normale de l’alerte.'],
+          terrain:['Le convoi C n’a pas utilisé sa route de secours prévue ; il a emprunté un itinéraire préparé la veille.','Faire du trajet C un indice important sans le transformer seul en conclusion.'],
+          source:['Une source interne au réseau hostile indique qu’un matériel classifié devait sortir du site pendant une alerte majeure.','Relier la crise à un transfert sans prétendre connaître encore la nature du matériel.'],
+          liaison:['Le cabinet ministériel veut attribuer immédiatement l’attaque à un État voisin afin de justifier la fermeture de la frontière.','Empêcher l’intérêt politique de devenir la vérité du dossier.'],
+          legal:['Deux badges du convoi C ont été activés avec des identifiants créés après minuit.','Relier les accès du convoi aux anomalies d’identité du dossier précédent.'],
+          archive:['Un ancien exercice d’urgence décrit exactement la même substitution logistique : évacuer un chargement classifié pendant la saturation des contrôles.','Relier 04:17 à une procédure concrète plutôt qu’à une signature mystérieuse.']
         },
         options:[
-          {id:'transfer',title:'COUVRIR UN TRANSFERT',detail:'L’attaque sert à faire sortir ORPHÉE sous couverture du protocole d’urgence.',grade:2,consequence:'Vous suivez le bon convoi et préservez une piste exploitable.'},
-          {id:'border',title:'PROVOQUER LE PAYS VOISIN',detail:'Le but est de provoquer un incident diplomatique à la frontière.',grade:1,consequence:'La dimension politique est réelle, mais vous perdez le mouvement matériel.'},
-          {id:'terror',title:'TERRORISER LA POPULATION',detail:'L’attaque est une opération de terreur autonome.',grade:0,consequence:'Le transfert disparaît avant que la cellule comprenne ce qu’elle devait suivre.'}
+          {id:'transfer',title:'COUVRIR UN TRANSFERT CLASSIFIÉ',detail:'L’attaque déclenche le protocole qui permet au convoi C de sortir un chargement sans contrôle normal.',grade:2,consequence:'Vous suivez le mouvement matériel utile et préservez une piste pour la suite.'},
+          {id:'border',title:'CRÉER UN INCIDENT DIPLOMATIQUE',detail:'Le but principal est de faire accuser un État voisin et de provoquer une fermeture de frontière.',grade:1,consequence:'La pression politique est réelle, mais elle n’explique pas le trajet préparé du convoi C.'},
+          {id:'terror',title:'FRAPPER LE CENTRE LOGISTIQUE',detail:'L’attaque vise principalement les dégâts et la peur, sans objectif logistique secondaire.',grade:0,consequence:'Le convoi C et le chargement déplacé sortent de votre priorité.'}
         ],
-        reveal:'04:17 est une diversion logistique. L’attaque a déclenché exactement le protocole permettant de déplacer ORPHÉE sans contrôle normal.',
+        reveal:'04:17 est une diversion logistique. L’attaque a déclenché le protocole qui permettait de sortir un chargement classifié par le convoi C avec des contrôles réduits.',
         apply:{transfer:{crisis:0,flag:'s2_correct'},border:{crisis:1,flag:'s2_partial'},terror:{crisis:1,flag:'s2_wrong'}}
       },
       3:{
         title:'LA CHAMBRE',
-        briefing:'Une opératrice CERBÈRES capturée est enfermée dans une chambre d’interrogatoire sans fenêtre. Trois comptes rendus de ses déclarations circulent. L’un d’eux contient une phrase qu’elle n’a jamais prononcée.',
-        question:'Quel élément du dossier d’interrogatoire est contaminé ?',
+        briefing:'Une opératrice du réseau hostile est détenue. Trois comptes rendus de son audition circulent. Le compte rendu B contient une phrase absente de l’enregistrement audio et semble avoir été ajouté après l’entretien.',
+        question:'Quel élément du dossier d’audition est contaminé ?',
         phases:[
-          ['SOURCE','Évaluez la prisonnière : ce qu’elle sait, ce qu’elle croit et ce qu’elle veut obtenir.'],
-          ['TRANSCRIPTIONS','Comparez formulation, horodatage et chaîne de validation des trois comptes rendus.'],
-          ['PRESSION','Un ordre exige une conclusion immédiate. Décidez si vous continuez à exploiter le dossier ou si vous le gelez.'],
-          ['RECOUPEMENT','Choisissez la contamination précise. Le dossier 04 utilisera ce que vous laissez entrer ici.']
+          ['SOURCE','Évaluez ce que la détenue sait directement, ce qu’elle suppose et ce qu’elle peut vouloir négocier.'],
+          ['TRANSCRIPTIONS','Comparez formulation, horodatage, signature et chaîne de validation des trois comptes rendus.'],
+          ['PRESSION','La direction réclame une conclusion immédiate. Décidez quelles pièces peuvent encore être utilisées sans contaminer la synthèse.'],
+          ['RECOUPEMENT','Identifiez précisément la pièce falsifiée sans invalider automatiquement tout le témoignage.']
         ],
         secrets:{
-          chef:['Le compte rendu B est le seul validé par un superviseur absent cette nuit-là.','Faire auditer la chaîne de validation, pas seulement le contenu.'],
-          sigint:['L’horodatage du fichier B précède de neuf minutes la création de l’enregistrement audio auquel il est censé correspondre.','Donner une anomalie technique décisive.'],
-          terrain:['La prisonnière a dessiné de mémoire un carrefour correspondant au trajet du convoi C.','Conserver la valeur de la source malgré une pièce falsifiée.'],
-          source:['La prisonnière ment sur son ancienneté dans CERBÈRES mais dit vrai sur le transfert ORPHÉE.','Éviter le raisonnement “elle ment donc tout est faux”.'],
-          liaison:['Le cabinet du ministre cite déjà la phrase du compte rendu B dans une note confidentielle.','Identifier une fuite en amont de la validation.'],
-          legal:['Le compte rendu B n’a pas de signature cryptographique, contrairement aux deux autres.','Faire isoler B sans invalider A et C.'],
-          archive:['La phrase suspecte reprend mot pour mot une doctrine CERBÈRES publiée dans un vieux dossier public.','Montrer qu’elle a pu être greffée pour rendre la source “trop parfaite”.']
+          chef:['Le compte rendu B est le seul validé par un superviseur qui n’était pas présent cette nuit-là.','Faire auditer la chaîne de validation, pas seulement le contenu.'],
+          sigint:['L’horodatage du fichier B précède de neuf minutes la création de l’enregistrement audio auquel il est censé correspondre.','Apporter une anomalie technique vérifiable.'],
+          terrain:['La détenue a dessiné de mémoire un carrefour correspondant au trajet réel du convoi C.','Conserver la valeur d’une information recoupée malgré une pièce falsifiée.'],
+          source:['La détenue ment sur son ancienneté dans le réseau, mais sa description du transfert du convoi C correspond aux éléments terrain.','Éviter le raisonnement “elle ment sur un point donc tout est faux”.'],
+          liaison:['Le cabinet du ministre cite déjà la phrase du compte rendu B dans une note confidentielle diffusée avant la validation finale du dossier.','Identifier une circulation anormale de l’information.'],
+          legal:['Le compte rendu B n’a pas de signature cryptographique, contrairement aux deux autres.','Isoler B sans invalider A, C et l’audio.'],
+          archive:['La phrase suspecte reprend mot pour mot un ancien document public sur les méthodes du réseau hostile.','Montrer qu’elle a pu être ajoutée pour rendre le témoignage artificiellement convaincant.']
         },
         options:[
-          {id:'b',title:'COMPTE RENDU B',detail:'B a été injecté dans la chaîne et doit être exclu.',grade:2,consequence:'La source reste exploitable et une contamination interne est confirmée.'},
-          {id:'source',title:'LA SOURCE ENTIÈRE',detail:'La prisonnière manipule tout le dossier.',grade:0,consequence:'Vous perdez une piste réelle et CERBÈRES gagne du temps.'},
-          {id:'audio',title:'L’ENREGISTREMENT AUDIO',detail:'L’audio a été remonté, les textes sont fiables.',grade:1,consequence:'Vous isolez une anomalie mais conservez une pièce falsifiée dans la synthèse.'}
+          {id:'b',title:'COMPTE RENDU B',detail:'B a été injecté dans la chaîne documentaire et doit être exclu.',grade:2,consequence:'Le témoignage reste partiellement exploitable et une compromission interne est confirmée.'},
+          {id:'source',title:'TOUT LE TÉMOIGNAGE',detail:'La détenue manipule l’ensemble du dossier et aucune de ses informations ne doit être conservée.',grade:0,consequence:'Vous perdez plusieurs éléments déjà recoupés indépendamment.'},
+          {id:'audio',title:'ENREGISTREMENT AUDIO',detail:'L’audio a été modifié et les comptes rendus écrits sont considérés comme fiables.',grade:1,consequence:'Vous identifiez une anomalie mais conservez la pièce falsifiée dans la synthèse.'}
         ],
-        reveal:'Le compte rendu B a été fabriqué au sein du service de renseignement. La prisonnière ment sur elle-même, mais plusieurs de ses informations opérationnelles sont exactes.',
+        reveal:'Le compte rendu B a été fabriqué à l’intérieur du service. La détenue ment sur certains éléments biographiques, mais plusieurs de ses informations opérationnelles sont confirmées par des sources indépendantes.',
         apply:{b:{crisis:0,flag:'s3_correct'},source:{crisis:1,flag:'s3_wrong'},audio:{crisis:1,flag:'s3_partial'}}
       },
       4:{
         title:'CENDRES',
-        briefing:'Le réseau commence à apparaître. Les identités fantômes, le transfert 04:17 et le faux compte rendu convergent vers une même infrastructure interne. Mais les erreurs des trois premiers dossiers ont peut-être déjà contaminé votre carte.',
-        question:'Quel nœud doit être classé comme relais interne CERBÈRES ?',
+        briefing:'Les trois dossiers précédents convergent : l’identité V-17, l’itinéraire préparé du convoi C et l’injection du compte rendu B nécessitent tous un accès interne aux habilitations et aux systèmes documentaires.',
+        question:'Quel poste interne constitue le relais opérationnel du réseau hostile ?',
         phases:[
-          ['CARTE','Posez à voix haute les liens dont vous êtes certains. Tout lien non recoupé reste une hypothèse.'],
-          ['HÉRITAGE','Relisez les conséquences des trois dossiers précédents affichées dans l’état persistant.'],
-          ['RELAIS','Trois personnes ont accès aux mêmes systèmes. Une seule explique à la fois VENN, 04:17 et le compte rendu B.'],
-          ['CLASSIFICATION','Verrouillez le relais. Une erreur ici modifiera les options du Point Zéro.']
+          ['CARTE','Posez uniquement les liens recoupés. Un accès possible n’est pas une participation prouvée.'],
+          ['HÉRITAGE','Relisez les conclusions précédentes : identité de couverture, transfert et document falsifié.'],
+          ['ACCÈS','Trois acteurs disposent d’une partie des autorisations. Cherchez celui qui peut expliquer les trois mécanismes à la fois.'],
+          ['CLASSIFICATION','Verrouillez le relais interne. Une erreur ici réduira les informations fiables du dernier dossier.']
         ],
         secrets:{
-          chef:['Marius KERN a signé les habilitations du protocole 04:17 et la délégation du superviseur absent.','Faire converger deux chaînes administratives vers KERN.'],
-          sigint:['Les créations d’identités VENN et les accès du compte rendu B utilisent le même certificat racine : bureau K-9.','Relier le numérique à une autorité concrète.'],
-          terrain:['Le convoi C s’est arrêté 96 secondes dans le parking réservé au bureau K-9 avant de disparaître des caméras.','Apporter le lien physique manquant.'],
-          source:['La prisonnière ne connaît pas KERN par son nom mais décrit “le responsable des accès sécurisés”.','Éviter de transformer une description en reconnaissance formelle.'],
-          liaison:['KERN est politiquement intouchable : il dirige la coordination des accès classifiés.','Tester si le groupe cède à la protection institutionnelle.'],
-          legal:['Une délégation signée KERN permettait de produire des identités administratives sans biométrie primaire.','Fournir le mécanisme juridique de VENN.'],
-          archive:['Dans les archives ORPHÉE, K-9 signifie “keeper”, pas “kilometer”.','Fermer l’ambiguïté du code K-9.']
+          chef:['Le responsable des habilitations a signé à la fois la délégation utilisée pour le protocole d’urgence et l’autorisation du superviseur absent du dossier B.','Faire converger deux chaînes administratives vers la même fonction.'],
+          sigint:['La création de V-17 et l’accès ayant modifié le compte rendu B utilisent le même certificat racine d’administration des habilitations.','Relier les anomalies numériques à un compte privilégié concret.'],
+          terrain:['Le convoi C s’est arrêté 96 secondes dans la zone de chargement réservée au service des habilitations avant de disparaître des caméras.','Apporter le lien physique manquant.'],
+          source:['La détenue ne connaît pas le responsable par son nom mais décrit la personne qui “valide les accès et peut faire exister un dossier”.','Utiliser une description fonctionnelle seulement lorsqu’elle est recoupée.'],
+          liaison:['Le responsable des habilitations est protégé institutionnellement parce qu’il centralise les accès classifiés de plusieurs directions.','Tester si le groupe confond importance hiérarchique et innocence.'],
+          legal:['Une délégation permanente permet au service des habilitations de créer certaines identités administratives sans donnée biométrique primaire.','Fournir le mécanisme administratif de V-17.'],
+          archive:['Les journaux d’administration montrent le même identifiant opérateur lors de la création de V-17, de la préparation du convoi C et de la modification du dossier B.','Fermer la chaîne documentaire avec une trace commune.']
         },
         options:[
-          {id:'kern',title:'MARIUS KERN',detail:'Le coordinateur des accès est le relais interne qui relie les trois dossiers.',grade:2,consequence:'CERBÈRES perd son relais principal dans les services.'},
-          {id:'prisoner',title:'LA PRISONNIÈRE',detail:'Elle a organisé la contamination depuis sa capture.',grade:0,consequence:'Le vrai relais reste actif et prépare Point Zéro.'},
-          {id:'minister',title:'LE CABINET DU MINISTRE',detail:'La fuite politique prouve que le cabinet dirige le réseau.',grade:1,consequence:'Vous identifiez une compromission secondaire mais pas le nœud opérationnel.'}
+          {id:'kern',title:'RESPONSABLE DES HABILITATIONS',detail:'Cette fonction dispose des accès nécessaires pour relier V-17, le convoi C et le compte rendu B.',grade:2,consequence:'Le principal relais interne est neutralisé avant le dernier dossier.'},
+          {id:'prisoner',title:'OPÉRATRICE DÉTENUE',detail:'Elle aurait organisé la contamination depuis sa capture en manipulant les enquêteurs.',grade:0,consequence:'Le compte privilégié interne reste actif et peut encore fausser le dernier dossier.'},
+          {id:'minister',title:'CABINET MINISTÉRIEL',detail:'La fuite politique montre une compromission, mais le cabinet ne possède pas les accès techniques nécessaires aux trois manipulations.',grade:1,consequence:'Vous identifiez une circulation anormale de l’information sans neutraliser le relais technique.'}
         ],
-        reveal:'Marius KERN est le relais interne de CERBÈRES. Il a utilisé ses habilitations pour fabriquer VENN, ouvrir la fenêtre 04:17 et injecter le compte rendu B.',
+        reveal:'Le responsable des habilitations est le relais interne. Son compte privilégié a permis de créer V-17, de préparer la sortie du convoi C et d’injecter le compte rendu B.',
         apply:{kern:{crisis:-1,flag:'s4_correct'},prisoner:{crisis:1,flag:'s4_wrong'},minister:{crisis:0,flag:'s4_partial'}}
       },
       5:{
         title:'POINT ZÉRO',
-        briefing:'ORPHÉE est enfin identifié : une ogive stratégique disparue des inventaires après un programme de démantèlement. Trois sites peuvent l’abriter. CERBÈRES déclenche une dernière série de fausses alertes pour vous faire choisir trop vite.',
-        question:'Où se trouve réellement ORPHÉE ?',
+        briefing:'Le chargement déplacé à 04:17 est identifié : une ogive stratégique retirée d’un programme de démantèlement mais jamais enregistrée comme détruite. Trois sites correspondent à une partie de sa chaîne logistique.',
+        question:'Dans quel site l’ogive est-elle réellement stockée ?',
         phases:[
-          ['SITES','Comparez logistique, accès et contraintes physiques des trois sites.'],
-          ['COMPTE À REBOURS','La crise atteint son niveau final. Vos erreurs antérieures réduisent le temps et la quantité d’informations fiables.'],
-          ['SYNTHÈSE','Reprenez VENN, 04:17, la Chambre et KERN. La réponse doit expliquer les quatre dossiers, pas seulement le dernier indice.'],
-          ['POINT ZÉRO','Choisissez le site. Il n’y aura pas de retour arrière.']
+          ['SITES','Comparez accès, poids, itinéraires, responsabilités administratives et capacité physique des trois sites.'],
+          ['COMPTE À REBOURS','Le niveau de crise hérité réduit le temps disponible et peut rendre certaines informations moins fiables.'],
+          ['SYNTHÈSE','Reprenez V-17, le convoi C, le rapport B et le responsable des habilitations. La réponse doit expliquer toute la chaîne.'],
+          ['POINT ZÉRO','Choisissez le site final. Aucun nouvel indice ne sera ajouté après ce choix.']
         ],
         secrets:{
-          chef:['KERN avait autorité sur les tunnels hydroélectriques déclassés mais pas sur la base aérienne.','Faire revenir les habilitations comme fil directeur.'],
-          sigint:['Les coupures réseau associées à 04:17 suivent une ligne enterrée vers le complexe hydroélectrique Nadir.','Relier la trace numérique au site Nadir.'],
-          terrain:['Le convoi C était trop lourd pour l’itinéraire montagne de la base, mais compatible avec la rampe de service Nadir.','Écarter la base par contrainte physique.'],
-          source:['La prisonnière disait “sous l’eau, mais jamais mouillé”. Nadir possède une galerie sèche derrière le barrage.','Donner une description qui ne vaut qu’avec les autres indices.'],
-          liaison:['Le gouvernement veut évacuer la capitale, ce qui détournerait les forces de Nadir.','Protéger la décision opérationnelle de la panique politique.'],
-          legal:['Le site Nadir n’apparaît plus dans les inventaires militaires depuis son transfert au ministère de l’Énergie.','Expliquer pourquoi ORPHÉE peut y être caché sans alerte militaire.'],
-          archive:['Le manuel ORPHÉE désigne “Point Zéro” comme un site civil converti, jamais une installation active.','Éliminer la base aérienne et le dépôt militaire.']
+          chef:['Le responsable des habilitations avait autorité sur les anciens tunnels hydroélectriques transférés au domaine civil, mais pas sur la base aérienne active.','Faire revenir les habilitations comme fil directeur.'],
+          sigint:['Les coupures réseau observées autour de 04:17 suivent une ligne enterrée qui rejoint une ancienne galerie hydroélectrique.','Relier la trace numérique au site civil déclassé.'],
+          terrain:['Le poids estimé du convoi C rend l’itinéraire montagne vers la base aérienne incompatible avec la fenêtre de huit minutes, mais correspond à l’accès routier de la galerie.','Écarter un site par une contrainte physique vérifiable.'],
+          source:['La détenue avait décrit un stockage “sous le niveau du réservoir, dans une galerie sèche”. Une ancienne installation hydroélectrique correspond à cette configuration.','Utiliser la description seulement en combinaison avec les données techniques.'],
+          liaison:['Le gouvernement envisage d’évacuer la capitale, ce qui détournerait des moyens du site civil pourtant mieux étayé.','Protéger la décision opérationnelle de la panique politique.'],
+          legal:['L’ancienne galerie ne figure plus dans les inventaires militaires depuis son transfert administratif au ministère de l’Énergie.','Expliquer pourquoi un matériel stratégique peut y échapper aux contrôles militaires habituels.'],
+          archive:['Les documents de démantèlement mentionnent un transfert temporaire vers une infrastructure civile convertie avant destruction définitive.','Relier le dernier site à la chaîne documentaire historique.']
         },
         options:[
-          {id:'nadir',title:'GALERIE NADIR',detail:'Ancienne galerie hydroélectrique devenue angle mort administratif.',grade:2,consequence:'ORPHÉE est retrouvé. La qualité de la victoire dépend de l’état de crise accumulé.'},
-          {id:'airbase',title:'BASE AÉRIENNE R-6',detail:'Site militaire évident, sécurisé et proche de la capitale.',grade:0,consequence:'La base est un leurre. CERBÈRES garde l’initiative.'},
-          {id:'depot',title:'DÉPÔT SABLE',detail:'Ancien dépôt de démantèlement où l’ogive a officiellement disparu.',grade:1,consequence:'Vous retrouvez la chaîne historique mais arrivez après le transfert final.'}
+          {id:'nadir',title:'ANCIENNE GALERIE HYDROÉLECTRIQUE',detail:'Site civil déclassé, accessible par le trajet du convoi C et couvert par les habilitations du relais interne.',grade:2,consequence:'L’ogive est retrouvée et sécurisée. La qualité de la victoire dépend du niveau de crise accumulé.'},
+          {id:'airbase',title:'BASE AÉRIENNE ACTIVE',detail:'Site militaire sécurisé et évident, mais incompatible avec l’autorité du relais et le trajet du convoi.',grade:0,consequence:'La base était une fausse piste et le dispositif de recherche perd un temps critique.'},
+          {id:'depot',title:'ANCIEN DÉPÔT DE DÉMANTÈLEMENT',detail:'Lieu où l’ogive a officiellement quitté l’inventaire, mais les traces montrent qu’elle en est repartie ensuite.',grade:1,consequence:'Vous retrouvez l’origine de la disparition mais pas le stockage final.'}
         ],
-        reveal:'ORPHÉE se trouve dans la galerie sèche du complexe Nadir. La campagne se conclut selon votre choix final et le niveau de crise laissé par les quatre dossiers précédents.',
+        reveal:'L’ogive est stockée dans une ancienne galerie hydroélectrique passée sous gestion civile. Le convoi C y a livré le chargement à la faveur du protocole d’urgence.',
         apply:{nadir:{crisis:-1,flag:'s5_nadir'},airbase:{crisis:2,flag:'s5_fail'},depot:{crisis:1,flag:'s5_late'}}
       }
     }
@@ -399,7 +400,7 @@ function renderCampaign(id){
   const dash=id==='cendres'?renderCendresDash(s):renderKuroiDash(s);
   shellPut(`<main class="page hplay hplay-campaign hplay-theme-${id}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="hub">← <span>MODE HÉRITAGE</span></button><div class="hplay-mode">${pack.theme}</div></header>
-    <section class="hplay-campaign-title"><span class="hplay-eyebrow">${esc(m.heritage)}</span><h1>${esc(m.title)}</h1><p>${esc(m.promise)}</p></section>
+    <section class="hplay-campaign-title"><span class="hplay-eyebrow">${esc(m.heritage)}</span><h1>${esc(m.title)}</h1><p>${esc(m.promise)}</p>${pack.definition?`<div class="hplay-campaign-definition"><b>CADRE DE LA CAMPAGNE</b><span>${esc(pack.definition)}</span></div>`:''}</section>
     <section class="hplay-campaign-hero"><img src="${m.cover}" alt=""><div><span>${campaignProgress(id)}/5 DOSSIERS</span><strong>${s?.status==='completed'?'CAMPAGNE TERMINÉE':`DOSSIER ${esc(m.chapters[cur-1]?.scenarioId||String(cur).padStart(3,'0'))} ACTIF`}</strong></div></section>
     <section class="hplay-campaign-layout">
       <div class="hplay-panel hplay-cases-panel"><div class="hplay-section-head"><div><span>DOSSIERS</span><h2>Progression</h2></div><b>SÉQUENTIELLE</b></div><div class="hplay-cases">${chapters}</div></div>
@@ -409,7 +410,7 @@ function renderCampaign(id){
   </main>`);
 }
 function renderCendresDash(s){const c=s?.cendres||{},level=Math.max(0,Math.min(4,c.crisis?.level||0));return `<div class="hplay-panel hplay-dashboard">
-  <div class="hplay-section-head"><div><span>DOSSIER CERBÈRES</span><h2>État persistant</h2></div><b>${esc(c.crisis?.label||'SOUS CONTRÔLE')}</b></div>
+  <div class="hplay-section-head"><div><span>CARTE DE CONTRE-INGÉRENCE</span><h2>État persistant</h2></div><b>${esc(c.crisis?.label||'SOUS CONTRÔLE')}</b></div>
   <div class="hplay-meter">${[0,1,2,3,4].map(i=>`<i class="${i<=level?'on':''}"></i>`).join('')}</div>
   <div class="hplay-stats"><span><b>${c.network?.nodes?.length||0}</b><small>IDENTITÉS</small></span><span><b>${c.network?.links?.length||0}</b><small>CONNEXIONS</small></span><span><b>${level}</b><small>CRISE</small></span></div>
 </div>`}
@@ -429,7 +430,7 @@ function renderChapter(id,n){
       <div class="hplay-poster"><img src="${ch.poster}" alt="Affiche ${esc(ch.title)}"></div>
       <div class="hplay-dossier-copy"><span class="hplay-eyebrow">${esc(m.title)} · DOSSIER 0${n}</span><h1>${esc(ch.title)}</h1><p class="hplay-lead">${esc(pc.briefing)}</p>
         <div class="hplay-carry-strip">${carry.map(x=>`<span>${esc(x)}</span>`).join('')}</div>
-        <div class="hplay-launch-box"><b>${archived?'DOSSIER ARCHIVÉ':live?'PARTIE EN COURS':'PRÊT À JOUER'}</b><p>${id==='kuroi'?'5 à 7 joueurs · rôles Kurokawa / Arakida / Police':'5 à 7 joueurs · cellule de contre-espionnage'} · téléphone partagé pour les informations privées.</p>
+        <div class="hplay-launch-box"><b>${archived?'DOSSIER ARCHIVÉ':live?'PARTIE EN COURS':'PRÊT À JOUER'}</b><p>${id==='kuroi'?'5 à 7 joueurs · rôles Kurokawa / Arakida / Police':'5 à 7 joueurs · cellule interne d’un service de renseignement'} · téléphone partagé pour les informations privées.</p>
           <button class="btn primary hplay-launch" data-hp-action="${live?'resume':'setup'}" data-campaign="${id}" data-chapter="${n}">${live?'REPRENDRE LA PARTIE':archived?'REJOUER LE DOSSIER':'LANCER LA PARTIE'}</button>
         </div>
       </div>
@@ -503,7 +504,7 @@ function conditionalIntel(id,n,s){
   if(id==='cendres'){
     const f=s.cendres?.flags||{};
     if(n===4){const good=['s1_correct','s2_correct','s3_correct'].filter(k=>f[k]).length;return good>=2?`Vos recoupements précédents sont solides (${good}/3). Le lien administratif K-9 peut être utilisé comme ancrage fiable.`:`Votre carte est contaminée : seulement ${good}/3 recoupements antérieurs sont fiables. Exigez deux preuves indépendantes avant toute classification.`}
-    if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne VENN → 04:17 → K-9 est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
+    if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne V-17 → 04:17 → accès internes est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
     return `Le niveau de crise actuel est ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}.`;
   }
   const f=s.kuroi?.flags||{};const choices=Object.keys(f).filter(k=>/^k\d_/.test(k)&&f[k]).length;
