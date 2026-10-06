@@ -1,3 +1,5 @@
+La livraison actuelle est une bêta de test 12.11.0, sans paiements natifs activés. Ce document commercial ne constitue pas une autorisation de sortie publique. Voir `MOBILE_BETA_RELEASE_V60.md`.
+
 # Inside Grey Room — Commercial release runbook
 
 Last reviewed: 1 October 2026

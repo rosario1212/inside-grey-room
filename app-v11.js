@@ -880,12 +880,13 @@ function syncSignature(d){
  const r=d.room||{},p=d.player||{},ev=d.events||[],acts=d.my_actions||[];
  return JSON.stringify([r.status,r.cycle,r.phase,r.phase_ends_at,r.state,p.public_role,p.secret_role,p.ready,p.audio_ready,p.private_state,(d.players||[]).map(x=>[x.id,x.pseudo,x.public_role,x.preferred_role,x.ready,x.avatar_rev,x.audio_ready,x.equipped_title,x.equipped_badge]),ev.length,(ev.length?ev[ev.length-1].id:0),acts,(d.pending_requests||[])]);
 }
+function draftScope(){return [STATE.sync?.room?.code,STATE.sync?.room?.state?.match_no,STATE.sync?.player?.id,STATE.view,STATE.tab,STATE.sync?.room?.phase].join(':')}
 function captureDrafts(){
  const active=document.activeElement;
- return {scope:[STATE.view,STATE.tab,STATE.sync?.room?.phase].join(':'),fields:[...byId('app').querySelectorAll('input[id],textarea[id],select[id]')].filter(e=>e.type!=='file').map(e=>({id:e.id,value:e.value,checked:e.checked})),focus:active?.id,start:active?.selectionStart,end:active?.selectionEnd,scroll:window.scrollY};
+ return {scope:draftScope(),fields:[...byId('app').querySelectorAll('input[id],textarea[id],select[id]')].filter(e=>e.type!=='file').map(e=>({id:e.id,value:e.value,checked:e.checked})),focus:active?.id,start:active?.selectionStart,end:active?.selectionEnd,scroll:window.scrollY};
 }
 function restoreDrafts(draft){
- if(draft.scope!==[STATE.view,STATE.tab,STATE.sync?.room?.phase].join(':'))return;
+ if(draft.scope!==draftScope())return;
  for(const f of draft.fields){const el=byId(f.id);if(el){el.value=f.value;el.checked=f.checked}}
  const el=byId(draft.focus);if(el){el.focus({preventScroll:true});try{el.setSelectionRange(draft.start,draft.end)}catch{}}
  window.scrollTo(0,draft.scroll);

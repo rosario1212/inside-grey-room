@@ -40,7 +40,7 @@ function cleanupScenarioSelectors(){
 function refresh(id){
  const sid=String(id||''),activeMode=effectiveMode(sid),readOnly=!state()?.hostToken;
  document.querySelectorAll(`.igr-duration-v35[data-duration-for="${sid}"]`).forEach(g=>g.querySelectorAll('[data-mode]').forEach(b=>{
-  const small=b.querySelector('small');if(small)small.textContent=estimate(b.dataset.mode);const active=b.dataset.mode===activeMode;
+  const small=b.querySelector('small'),text=estimate(b.dataset.mode);if(small&&small.textContent!==text)small.textContent=text;const active=b.dataset.mode===activeMode;
   b.classList.toggle('is-active',active);
   b.setAttribute('aria-pressed',String(active));
   if(g.classList.contains('igr-duration-lobby-v35')){

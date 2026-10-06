@@ -1,0 +1,11 @@
+{
+  "channel": "beta",
+  "internalVersion": "12.11.0",
+  "storeVersion": "1.0.0",
+  "initialBuildNumber": 121100,
+  "iosDistribution": "TestFlight",
+  "androidDistribution": "internal-or-closed-testing",
+  "nativePaymentsEnabled": false,
+  "physicalDeviceValidation": "pending",
+  "storeSubmission": "requires-owner-accounts-and-signing"
+}

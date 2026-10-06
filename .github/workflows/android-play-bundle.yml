@@ -2,6 +2,15 @@ name: Android Play Bundle
 
 on:
   workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Store version (x.y.z)'
+        default: '1.0.0'
+        required: true
+      version_code:
+        description: 'Unique increasing build number'
+        default: '121100'
+        required: true
 
 permissions:
   contents: read
@@ -9,6 +18,9 @@ permissions:
 jobs:
   build-aab:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_VERSION_NAME: ${{ inputs.version_name }}
+      ANDROID_VERSION_CODE: ${{ inputs.version_code }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,6 +58,7 @@ jobs:
           test -n "$STORE_PASS" || (echo 'Missing ANDROID_KEYSTORE_PASSWORD' && exit 1)
           test -n "$KEY_ALIAS" || (echo 'Missing ANDROID_KEY_ALIAS' && exit 1)
           test -n "$KEY_PASS" || (echo 'Missing ANDROID_KEY_PASSWORD' && exit 1)
+          trap 'rm -f upload-keystore.jks' EXIT
           printf '%s' "$KEYSTORE_B64" | base64 --decode > upload-keystore.jks
           jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
             -keystore upload-keystore.jks \
