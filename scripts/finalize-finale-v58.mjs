@@ -10,6 +10,7 @@ for(const page of ['index.html','en.html']){
 const file=path.join(target,'service-worker.js');if(await stat(file).catch(()=>null)){let sw=await readFile(file,'utf8');
 sw=sw.replace(/const CACHE='[^']+';/,`const CACHE='igr-${version}';`);
 for(const asset of assets)sw=sw.replace(new RegExp(asset.replaceAll('.','\\.')+'\\?v=[^"\'<> ]+','g'),asset+'?v='+version);
+for(const asset of assets)if(!sw.includes('/'+asset+'?v='+version))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '/${asset}?v=${version}',`);
 await writeFile(file,sw);}
 const app=path.join(target,'app-v11.js');await writeFile(app,(await readFile(app,'utf8')).replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'/service-worker.js?v='+version));
 console.log('v58 final cache revision applied');
