@@ -1,14 +1,20 @@
 name: Dependency Lock
 
 on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/dependency-lock.yml'
   push:
     branches: [main]
     paths:
       - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/dependency-lock.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   lock:
@@ -16,24 +22,19 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: package-lock.json
-        continue-on-error: true
       - name: Generate deterministic lockfile
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Commit lockfile when dependencies changed
+      - name: Verify committed lockfile is current
         run: |
           if git diff --quiet -- package-lock.json && git ls-files --error-unmatch package-lock.json >/dev/null 2>&1; then
             echo 'package-lock.json is already current.'
             exit 0
           fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add package-lock.json
-          git commit -m 'Lock npm dependencies'
-          git push
+          echo '::error::package-lock.json is out of date. Run npm install --package-lock-only --ignore-scripts --no-audit --no-fund and commit the result in the PR.'
+          git diff -- package-lock.json
+          exit 1
