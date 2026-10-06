@@ -7,7 +7,7 @@ const element=()=>({dataset:{},remove(){nodes.delete(this.id)},set innerHTML(v){
 const host={insertAdjacentElement(_,el){nodes.set(el.id,el);inserts++}};
 const document={head:{appendChild(){}},createElement:element,getElementById:id=>nodes.get(id),querySelector:s=>s==='.phase-strip'?host:null,querySelectorAll:()=>[],addEventListener(){}};
 const STATE={tab:'investigation',room:'TEST',token:'test',sync:{room:{code:'TEST',phase:'final_audience',status:'playing',cycle:3,state:{duration_mode:'short',v52_queue:[{player_id:'judge',pseudo:'Ali',role:'juge',required:true}],v52_index:0,v52_status:'waiting'}},player:{id:'judge',public_role:'juge'},players:[{id:'judge',public_role:'juge'}]}};
-const c={document,STATE,console:{info(){}},setInterval:f=>intervals.push(f),setTimeout:f=>timeouts.push(f),gameTabs:()=>[{id:'investigation'},{id:'rules'}],renderGameTab:()=>'<p>legacy</p>',renderGame(){},renderRules(){},phaseLabel:p=>p.toUpperCase()};c.window=c;
+const c={document,STATE,MutationObserver:class{observe(){}},queueMicrotask:f=>timeouts.push(f),console:{info(){}},setInterval:f=>intervals.push(f),setTimeout:f=>timeouts.push(f),gameTabs:()=>[{id:'investigation'},{id:'rules'}],renderGameTab:()=>'<p>legacy</p>',renderGame(){},renderRules(){},phaseLabel:p=>p.toUpperCase()};c.window=c;
 vm.createContext(c);
 for(const file of ['self-guided-rules-v51.js','final-audience-v52.js'])vm.runInContext(readFileSync(file,'utf8'),c);
 c.renderGame();for(const f of timeouts.splice(0))f();
@@ -23,5 +23,14 @@ STATE.sync.room.state.duration_mode='long';STATE.tab='final52';assert.ok(c.rende
 STATE.sync.room.phase='final_suspect_defenses';STATE.sync.room.state.v52_queue=[{player_id:'judge',pseudo:'Ali',role:'suspect'}];
 assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 5:00'));
 STATE.sync.room.state.duration_mode='short';assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 2:00'));
+STATE.sync.room.phase='locking';STATE.sync.player.public_role='journaliste';STATE.tab='final52';
+assert.ok(c.renderGameTab().includes('Ton angle final personnel'));
+STATE.hostToken='host-test';STATE.sync.player.id='host';STATE.sync.room.state.v59_pending=[{player_id:'absent',pseudo:'Cyrus',role:'expert'}];
+assert.ok(c.renderGameTab().includes('CONFIRMER L’ABSENCE ET CONTINUER'));
+STATE.hostToken=null;assert.ok(!c.renderGameTab().includes('CONFIRMER L’ABSENCE ET CONTINUER'));
+vm.runInContext(readFileSync('duration-modes-v35.js','utf8'),c);
+STATE.sync.players=['enqueteur','analyste','juge','maitre','suspect','suspect','suspect'].map((public_role,i)=>({id:String(i),public_role}));
+assert.equal(c.IGR_DURATION_MODES_V35.estimate('short'),'≈ 40–55 min');assert.equal(c.IGR_DURATION_MODES_V35.estimate('long'),'≈ 70–90 min');
+STATE.sync.players.push({id:'extra',public_role:'expert'});assert.equal(c.IGR_DURATION_MODES_V35.estimate('short'),'≈ 41–56 min');assert.equal(c.IGR_DURATION_MODES_V35.estimate('long'),'≈ 72–92 min');
 STATE.sync.room.phase='reveal';for(const f of intervals)f();assert.equal(nodes.has('igr52Now'),false);assert.ok(nodes.has('igr51Now'));
-console.log('v58 behavior: stable guidance over 120 polling rounds, final access, tab retention, short/long labels OK');
+console.log('v59 behavior: journalist angle, host-only recovery, roster estimates and stable guidance over 120 polling rounds, final access, tab retention, short/long labels OK');

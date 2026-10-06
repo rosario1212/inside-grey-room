@@ -1,4 +1,4 @@
-# Finale, durées et protections — v58
+# Finale, durées, protections et intégrité des rôles — v58/v59
 
 ## Finale
 
@@ -49,7 +49,7 @@ Le test a également découvert une erreur SQL réelle dans la révélation si u
 
 Limite : vérification comportementale en environnement simulé ; pas de partie complète jouée sur un iPhone physique. La migration doit être appliquée avec la livraison du client pour aligner les temps et le quota.
 
-## Audit approfondi du 6 octobre — anomalies restantes
+## Audit approfondi du 6 octobre — constats initiaux v58
 
 Périmètre : parcours standard de finale et chaîne de calcul `v52 → v47 → v50 → v44 → v4`, interfaces des rôles, formats et publication web/mobile. Les mécaniques internes de chaque campagne DLC ne sont pas intégralement simulées.
 
@@ -64,4 +64,23 @@ Périmètre : parcours standard de finale et chaîne de calcul `v52 → v47 → 
 
 La vérification des droits distingue les RPC publiques avec jeton de joueur des fonctions internes. `igr_v52_advance` et `igr_v52_maybe_finish` ne sont pas exécutables par `anon` ; les actions de finale publiques vérifient le jeton, le tour et la phase. Le verrouillage final valide les niveaux et refuse un second verrouillage. Le contrôle ne remplace pas un audit complet de sécurité de tous les RPC historiques.
 
-Ces anomalies supplémentaires sont documentées, pas corrigées dans v58 : certaines nécessitent de fixer la règle de victoire ou la politique de reprise des absents. La v58 publiée ne doit donc pas être présentée comme un audit entièrement PASS de tous les rôles.
+Ces constats ont été corrigés dans v59, selon les règles et vérifications ci-dessous.
+
+
+## Corrections v59
+
+- Juge honnête : décision exacte. Juge corrompu : diminuer la responsabilité réelle de sa cible et éviter une majorité de votes de corruption. Une cible innocente est remplacée par une cible responsable ; sans cible possible, le juge devient honnête. Aucun nombre de protections ne provoque une défaite automatique.
+- Votes : majorité stricte des votants éligibles présents, donc 1/1, 2/2 ou 2/3. Les absents sont exclus du calcul.
+- Journaliste : angle personnel de 8 à 300 caractères verrouillé lors de la réévaluation. Parler ou passer ne génère aucune conclusion automatique.
+- Inspecteur et Expert : au moins une action de leur rôle et au moins deux tiers des responsabilités exactes dans la décision faisant autorité du camp. Le règlement et le résultat affiché expliquent ce critère. Les parcours OMERTA conservent leurs règles particulières.
+- Reprise par l’hôte : après 60 secondes d’attente avant une prise de parole, ou 120 secondes dans le verrouillage, l’hôte peut déclarer absent un joueur qui bloque. Confirmation, motif public d’au moins 8 caractères et jeton d’hôte obligatoires. Aucun vote ni verrouillage fictif n’est créé. Les décisions déjà reçues restent enregistrées. Le résultat signale les décisions incomplètes et un absent ne valide pas son objectif final. Le joueur hôte ne peut pas être exclu par cette action.
+- Durée : les estimations du lobby suivent la composition des rôles et précisent que les pauses et attentes prolongées sont supplémentaires. Les temps des assemblées courtes sont aussi affichés correctement dans le guide d’activité.
+- Livraison : contrôle CI corrigé pour six minutes dans les deux formats ; la vérification Cloudflare utilise désormais la chaîne complète de construction et ses correctifs.
+
+### Vérification v59
+
+Tests SQL dans une transaction annulée : victoire/défaite du juge corrompu, victoire du juge honnête malgré une accusation erronée, majorité avec un seul votant, Inspecteur/Expert évalués selon la décision faisant autorité, aucun verrouillage automatique du Journaliste, refus d’un angle trop court, angle explicite accepté, refus d’un faux jeton d’hôte, refus d’une reprise trop tôt, trace publique de reprise, finale débloquée sans fabriquer le verrouillage de l’absent et défaite de l’absent.
+
+Tests client : angle du Journaliste, commande de reprise visible seulement pour l’hôte, estimation selon la composition et stabilité de la consigne sur 120 tours de scrutation. Construction web, construction mobile et 41 contrôles de préparation aux stores réussis (deux avertissements préexistants sur la facturation et la documentation de version).
+
+Les migrations v58 et v59 doivent accompagner la livraison du client. Elles ont été vérifiées puis annulées dans la base de production ; elles ne sont pas encore appliquées. L’audit ne certifie pas tous les RPC historiques ni toutes les campagnes DLC et ne remplace pas une partie jouée sur un iPhone physique.

@@ -1,7 +1,7 @@
 import {readFile,writeFile,stat} from 'node:fs/promises';
 import path from 'node:path';
-const target=path.resolve(process.argv[2]||'dist'),version='v58-stable-finale-six-protections';
-const assets=['final-audience-v52.js','self-guided-rules-v51.js','judicial-runtime-v44.js','duration-modes-v35.js'];
+const target=path.resolve(process.argv[2]||'dist'),version='v59-role-finale-integrity';
+const assets=['final-audience-v52.js','self-guided-rules-v51.js','judicial-runtime-v44.js','duration-modes-v35.js','duration-modes-v35.css','natural-role-gameplay-v50.js'];
 for(const page of ['index.html','en.html']){
  const file=path.join(target,page);let s=await readFile(file,'utf8');
  for(const asset of assets)s=s.replace(new RegExp(asset.replaceAll('.','\\.')+'\\?v=[^"\'<> ]+','g'),asset+'?v='+version);

@@ -22,3 +22,4 @@
  .igr-duration-tab-v35 small{font-size:8.5px}
  .lobby-v11>.igr-duration-lobby-v35+.lobby-code{padding-top:7px}
 }
+.igr-duration-note{grid-column:1/-1;flex-basis:100%;display:block;color:#9aa5ae;font-size:11px;line-height:1.4;margin-top:4px}
