@@ -1,0 +1,43 @@
+/* Inside Grey Room v55 — HÉRITAGE audit / phone-first multiplayer */
+.heritage-v55-online{--h55-line:rgba(238,243,247,.11);--h55-soft:rgba(255,255,255,.035);--h55-muted:#909ba3}
+.heritage-v55-online .hplay-session-grid{grid-template-columns:1fr!important}
+.heritage-v55-online .hplay-roster{display:none!important}
+.heritage-v55-online .hplay-session-head{margin:2px 0 13px}
+.heritage-v55-online .hplay-session-head h1{font-size:clamp(34px,8vw,52px)!important;line-height:.96!important;margin-bottom:8px!important}
+.heritage-v55-online .hplay-session-head p{font-size:13px!important;line-height:1.55!important;max-width:68ch}
+.h55-player-strip{display:grid;grid-template-columns:minmax(130px,.45fr) minmax(0,1fr);gap:9px;margin:0 0 14px}
+.h55-player-id,.h55-focus,.h55-my-card,.h55-roster,.h55-decision-owner,.h55-result-context{border:1px solid var(--h55-line,rgba(238,243,247,.11));background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-radius:16px}
+.h55-player-id{display:grid;align-content:center;gap:4px;padding:13px 14px}
+.h55-player-id span,.h55-focus span,.h55-my-card p span,.h55-result-context span{color:#7f8a92;font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.13em}
+.h55-player-id strong{font-size:15px;line-height:1.1}.h55-player-id small{color:#7f8a92;font-size:9px}
+.h55-focus{padding:12px 14px}.h55-focus p{margin:6px 0 0;color:#d7dde1;font-size:12px;line-height:1.5}
+.h55-my-card{grid-column:1/-1;overflow:hidden}.h55-my-card summary,.h55-roster summary,.h55-dossier-live summary,.h55-mobile-carry summary{list-style:none;cursor:pointer;touch-action:manipulation}.h55-my-card summary::-webkit-details-marker,.h55-roster summary::-webkit-details-marker,.h55-dossier-live summary::-webkit-details-marker,.h55-mobile-carry summary::-webkit-details-marker{display:none}
+.h55-my-card summary{padding:11px 14px;color:#aeb7bd;font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.12em}.h55-my-card[open] summary{border-bottom:1px solid var(--h55-line)}
+.h55-my-card>div{display:grid;gap:11px;padding:14px}.h55-my-card>div>b{font-size:11px;line-height:1.5;color:#aeb7bd}.h55-my-card p{margin:0;display:grid;gap:5px;color:#e1e6e9;font-size:12px;line-height:1.55}
+.h55-roster{margin:10px 0 0;overflow:hidden}.h55-roster summary{padding:12px 14px;color:#89949c;font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.12em}.h55-roster>div{padding:0 14px 10px}.h55-roster>div>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid rgba(255,255,255,.055)}.h55-roster>div>div.is-me b::after{content:' · MOI';color:#77828a;font-size:8px}.h55-roster b{font-size:11px}.h55-roster span{color:#77828a;font:800 7px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-align:right}
+.heritage-v55-online .hplay-table-card{padding:16px!important;border-radius:18px!important;box-shadow:none!important}.heritage-v55-online .hplay-table-card>span{color:#8a959d!important}.heritage-v55-online .hplay-table-card h2{font-size:22px!important;margin:7px 0!important}.heritage-v55-online .hplay-table-card>p{font-size:12px!important;line-height:1.55!important}
+.heritage-v55-online .hplay-session-nav{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);z-index:8;margin-top:14px;padding:7px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(6,9,11,.88);backdrop-filter:blur(16px)}
+.heritage-v55-online .hplay-session-nav .btn{min-height:48px!important}
+.h55-decision-owner{display:grid;gap:5px;margin-top:13px;padding:12px 14px}.h55-decision-owner b{font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.13em;color:#c7a790}.h55-decision-owner span{color:#aeb7bd;font-size:11px;line-height:1.5}
+.heritage-v55-online .hplay-options button:disabled{opacity:.42;cursor:default;transform:none!important}.heritage-v55-online .hplay-options button:disabled i{color:#7c858b!important}
+.h55-result-context{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 auto 12px;width:min(100%,700px);padding:10px 13px}.h55-result-context b{font-size:10px}.h55-maitre-lobby-note{display:grid;gap:5px;margin-top:12px;padding:11px 12px;border-left:2px solid #7a2c27;background:rgba(122,44,39,.1)}.h55-maitre-lobby-note b{font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#c6a995}.h55-maitre-lobby-note span{color:#aeb6bb;font-size:10px;line-height:1.45}
+.heritage-v55-maitre-campaign .hplay-campaign-layout{grid-template-columns:1fr!important}.heritage-v55-maitre-campaign .hplay-side{position:static!important;display:grid!important}.heritage-v55-maitre-campaign .hplay-cases-panel{min-width:0}
+.h55-dossier-live,.h55-mobile-carry{margin-top:14px;border:1px solid rgba(239,232,218,.11);border-radius:20px;background:rgba(255,255,255,.015);overflow:hidden}
+.h55-dossier-live>summary,.h55-mobile-carry>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:15px 17px}.h55-dossier-live summary span,.h55-mobile-carry summary span{grid-column:1;color:#847b74;font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.13em}.h55-dossier-live summary b,.h55-mobile-carry summary b{grid-column:1;font-size:12px}.h55-dossier-live summary i{grid-column:2;grid-row:1/3;color:#9a8476;font:800 7px 'IBM Plex Mono',monospace;letter-spacing:.1em;font-style:normal}.h55-dossier-live[open] summary i{font-size:0}.h55-dossier-live[open] summary i::after{content:'FERMER';font-size:7px}
+.h55-dossier-live-body,.h55-mobile-carry>div{display:grid;gap:12px;padding:0 12px 12px}.h55-dossier-live-body>.hplay-side{gap:12px}.h55-dossier-live-body>.hplay-panel,.h55-dossier-live-body .hplay-panel{margin:0!important}.h55-mobile-carry .hplay-side{position:static!important}
+@media(max-width:760px){
+  .heritage-v55-maitre-campaign .hplay-campaign-hero{height:150px!important}
+  .heritage-v55-maitre-campaign .hplay-campaign-title{margin-bottom:12px!important}
+  .heritage-v55-maitre-campaign .hplay-campaign-title p{font-size:12px;line-height:1.5}
+  .h55-player-strip{grid-template-columns:1fr}
+  .h55-my-card{grid-column:auto}
+  .heritage-v55-online .hplay-session-head h1{font-size:38px!important}
+  .heritage-v55-online .hplay-options{grid-template-columns:1fr!important}
+  .heritage-v55-online .hplay-options button{min-height:0!important;padding:15px!important}
+  .heritage-v55-online .hplay-session-nav{grid-template-columns:1fr!important}
+}
+@media(max-width:430px){
+  .h55-player-id,.h55-focus{padding:11px 12px}
+  .h55-dossier-live>summary,.h55-mobile-carry>summary{padding:13px 14px}
+}
+@media(prefers-reduced-motion:reduce){.heritage-v55-online *{scroll-behavior:auto!important}}
