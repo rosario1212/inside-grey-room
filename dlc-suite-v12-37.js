@@ -31,7 +31,6 @@
     '033':'assets/regime-033-la-dynastie.webp?v=12.37-final',
     '034':'assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
   });
-  function v53LightThumb(id,label,accent){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="540"><rect width="360" height="540" fill="#080b0e"/><rect x="22" y="22" width="316" height="496" fill="none" stroke="${accent}" stroke-opacity=".6"/><text x="34" y="76" fill="${accent}" font-family="monospace" font-size="16" letter-spacing="4">${label}</text><text x="32" y="230" fill="#f0f2f3" font-family="monospace" font-size="78" font-weight="800">${id}</text><text x="34" y="478" fill="#75818a" font-family="monospace" font-size="11" letter-spacing="3">INSIDE GREY ROOM</text></svg>`;return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`}
 
 
   for(const sc of [...CARTEL,...REGIME])if(!SCENARIOS.some(x=>x.id===sc.id))SCENARIOS.push(sc);
@@ -57,7 +56,7 @@
   SCENARIOS.forEach(sc=>Object.assign(sc,META[sc.id]||{}));
 
   const oldThumb=scenarioThumbArt,oldArt=scenarioArt;
-  scenarioThumbArt=function(id){const key=String(id||'');if(!ART[key])return oldThumb(id);return v53LightThumb(key,REGIME_IDS.has(key)?'LE RÉGIME':'CARTEL',REGIME_IDS.has(key)?'#7c8793':'#a47a3a')};
+  scenarioThumbArt=function(id){const key=String(id||'');if(!ART[key])return oldThumb(id);return ART[key]};
   scenarioArt=function(id){const key=String(id||'');return ART[key]||oldArt(id)};
 
   function storage(){try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}}

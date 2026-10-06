@@ -17,7 +17,7 @@ const SHELL=[
   '/language-v12.js?v=v12.22-mobile-ui','/i18n-en-v12.js?v=v12.22-mobile-ui',
   '/rules-v12.js?v=v12.22-mobile-ui','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui','/locale-runtime-v12-23.js?v=v12.23-locale-home',
   '/omerta-v12.js?v=v12.24-omerta','/omerta-polish-v12.js?v=v12.28-omerta','/omerta-hotfix-v12.js?v=v12.28-omerta','/role-tree-polish-v12-29.js?v=v12.29-role-tree','/omerta-v12-30.js?v=v12.32-omerta-final',
-  '/omerta-v12-39.js?v=v12.45-choice-copy','/terror-v12-37.js?v=v12.37-final','/dlc-suite-v12-37.js?v=v12.44-per-player-dlc','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=v12.46-copy',
+  '/omerta-v12-39.js?v=v12.45-choice-copy','/terror-v12-37.js?v=v56-dlc-posters','/dlc-suite-v12-37.js?v=v56-dlc-posters','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=v12.46-copy',
   '/manifest.webmanifest','/privacy.html','/terms.html','/delete-account.html','/support.html',
   '/assets/intro-v10-14.webp?v=v12.42-startup','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png',
   '/assets/heritage-cendres-01-personne-n-existe.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-02-04-17.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-03-la-chambre.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-04-cendres.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-05-point-zero.webp?v=v13.6-heritage-premium',
