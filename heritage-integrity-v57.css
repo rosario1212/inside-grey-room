@@ -1,0 +1,43 @@
+/* Shared Heritage layouts: readable long titles and consistent 2:3 posters. */
+.hplay .hplay-case-copy,.hplay .hplay-dossier-copy,.hplay .hplay-panel,.h55-player-strip>*{min-width:0;overflow-wrap:anywhere}
+.hplay .hplay-case-poster{aspect-ratio:2/3;overflow:hidden;background:#050709}
+.hplay .hplay-case-poster img{display:block;width:100%;height:100%;object-fit:contain}
+.hplay .hplay-options button{white-space:normal;overflow-wrap:anywhere;min-width:0}
+.hplay .hplay-options button:focus-visible,.hplay .hplay-back:focus-visible,.h55-my-card summary:focus-visible{outline:2px solid #c4b59b;outline-offset:3px}
+.hplay .hplay-secret b,.hplay .hplay-objective b{white-space:normal;overflow-wrap:anywhere}
+.hplay textarea{box-sizing:border-box;max-width:100%;font-size:16px}
+.h55-result-context{box-sizing:border-box}
+@media(max-width:430px){.hplay .hplay-case{grid-template-columns:72px minmax(0,1fr);align-items:start}.hplay .hplay-case-poster{width:72px;height:108px}.hplay .hplay-case-copy>strong{line-height:1.2}.hplay .hplay-session-nav{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}.hplay .hplay-names{grid-template-columns:1fr}}
+.h57-campaign-frame{margin:14px 0;display:grid;gap:10px;padding:16px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.025)}
+.h57-campaign-frame h2{margin:0;font-size:18px;line-height:1.3}
+.h57-campaign-frame b{font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#a5abb0}
+.h57-campaign-frame p{margin:4px 0 0;font-size:13px;line-height:1.55;color:#d2d7da;overflow-wrap:anywhere}
+@media(min-width:900px){.h57-campaign-frame{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.h57-campaign-frame h2{grid-column:1/-1}}
+.maitre-page .h57-campaign-frame{background:#f8f4ec;border-color:#d9cec0;color:#2d2925}
+.maitre-page .h57-campaign-frame p{color:#494139}
+.maitre-page .h57-campaign-frame b{color:#74624f}
+
+/* MAÎTRE: keep setup and the online waiting room in the same readable paper palette. */
+.maitre-page.hnet .hnet-create,.maitre-page.hnet .hnet-lobby{background:#f8f4ec!important;color:#211c18!important;border:1px solid #c9bcad!important;border-radius:22px;padding:24px;max-width:680px;margin-inline:auto}
+.maitre-page.hnet .hnet-create h1,.maitre-page.hnet .hnet-title h1{color:#211c18!important;text-shadow:none!important}
+.maitre-page.hnet .hnet-head,.maitre-page.hnet .hnet-create>span,.maitre-page.hnet .hnet-create p,.maitre-page.hnet .hnet-create label,.maitre-page.hnet .hnet-wait{color:#50463e!important}
+.maitre-page.hnet .hnet-create label{display:grid;gap:8px;margin:20px 0}
+.maitre-page.hnet input{background:#fffaf2!important;color:#211c18!important;border:1px solid #998b7c!important;border-radius:12px;padding:14px;width:100%;box-sizing:border-box;font-size:16px}
+.maitre-page.hnet input::placeholder{color:#6b6055!important}
+.maitre-page.hnet .hnet-wait{background:#eee5d9!important;border:1px solid #c9bcad!important;border-radius:12px;padding:16px}
+.maitre-page .hplay-launch-box>p,.maitre-page .hplay-launch-box>b,.maitre-page .hplay-dossier-copy>p,.maitre-page .hplay-setup-form p,.maitre-page .hplay-setup-form label{color:#443a32!important}
+.maitre-page .heritage-dual-row{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+.maitre-page .heritage-dual-row .btn{white-space:normal!important;line-height:1.4!important;padding:15px!important;min-height:54px}
+.maitre-page .btn.primary:disabled{background:#ddd2c4!important;color:#50463e!important;border-color:#b6a797!important;opacity:1!important}
+.maitre-page .hplay-case:disabled{opacity:1!important;background:#eee7dd!important}
+.maitre-page .hplay-case:disabled img{filter:none!important;opacity:1!important}
+/* Preserve the full portrait artwork: no panorama crop or dimmed locked thumbnails. */
+.maitre-page .hplay-campaign-hero,.maitre-page.heritage-v55-maitre-campaign .hplay-campaign-hero{width:min(100%,320px)!important;height:auto!important;min-height:0!important;aspect-ratio:2/3!important;margin:0 auto 20px!important}
+.maitre-page .hplay-campaign-hero img,.maitre-page .hplay-poster img,.maitre-page .hplay-case-poster img{object-fit:contain!important;filter:none!important;opacity:1!important;transform:none!important}
+.maitre-page .hplay-campaign-hero::after{display:none!important}
+.maitre-page .hplay-campaign-hero>div{left:10px!important;right:10px!important;bottom:10px!important;backdrop-filter:none!important}
+.maitre-page .hplay-poster{width:min(100%,320px)!important;aspect-ratio:2/3!important;margin-inline:auto!important}
+.maitre-page .hplay-poster img{height:100%!important;max-height:none!important;aspect-ratio:2/3!important}
+.maitre-page .hplay-case{grid-template-columns:72px minmax(0,1fr) 16px!important;gap:12px!important}
+.maitre-page .hplay-case-poster{width:72px!important;height:108px!important;aspect-ratio:2/3!important}
+@media(max-width:430px){.maitre-page.hnet .hnet-create,.maitre-page.hnet .hnet-lobby{padding:18px!important}.maitre-page .hplay-campaign-hero,.maitre-page.heritage-v55-maitre-campaign .hplay-campaign-hero{width:min(75vw,280px)!important}}

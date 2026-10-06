@@ -25,8 +25,8 @@ const ROLES=Object.freeze([
   {id:'avocat',name:'AVOCAT',public:'Vous défendez le Client. Votre force vient de l’angle que vous construisez, pas d’une vérité fournie par l’application.'},
   {id:'client',name:'CLIENT',public:'Vous êtes le point d’entrée du dossier. Vous n’êtes pas automatiquement le centre du réseau et vous ne dites pas forcément tout à votre avocat.'},
   {id:'enqueteur',name:'ENQUÊTEUR',public:'Vous devez établir la place exacte du Client : proximité, connaissance, bénéfice, aveuglement, complicité ou responsabilité directe.'},
-  {id:'procureur',name:'PROCUREUR',public:'Vous transformez ce qui est légalement exploitable en théorie d’accusation, sans disposer de la vérité canonique complète.'},
-  {id:'juge',name:'JUGE',public:'Vous ne connaissez jamais la vérité canonique. Vous tranchez uniquement sur ce qui vous a été présenté et ce qui a survécu à la discussion.'},
+  {id:'procureur',name:'PROCUREUR',public:'Vous transformez ce qui est légalement exploitable en théorie d’accusation, sans disposer de la réalité des faits complète.'},
+  {id:'juge',name:'JUGE',public:'Vous ne connaissez jamais la réalité des faits. Vous tranchez uniquement sur ce qui vous a été présenté et ce qui a survécu à la discussion.'},
   {id:'associe',name:'ASSOCIÉ',public:'Vous appartenez à l’entourage du Client. À partir du dossier III, vous pouvez devenir le second mis en cause défendu par le même avocat.'},
   {id:'temoin',name:'TÉMOIN / EXPERT',public:'Vous détenez une pièce de contexte : comptabilité, chronologie, relation ou témoignage qui peut déplacer la lecture du dossier.'}
 ]);

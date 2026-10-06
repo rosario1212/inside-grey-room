@@ -131,6 +131,7 @@ function crisisLabel(level){return ['SOUS CONTRÔLE','TENSION','CRISE','ALERTE N
 function completeChapter(id,chapter,payload={}){
   const c=getCampaign(id,true);chapter=clampInt(chapter,1,5);
   if(chapter>c.currentChapter)return {ok:false,reason:'locked',campaign:c};
+  if(c.completed.includes(chapter))return {ok:true,replayed:true,campaign:c};
   if(!c.completed.includes(chapter))c.completed.push(chapter);
   c.completed.sort((a,b)=>a-b);
   if(chapter===5){c.status='completed';c.currentChapter=5}else c.currentChapter=Math.max(c.currentChapter,chapter+1);
@@ -151,12 +152,12 @@ function upsertCendresNode(input){
   if(idx>=0)d.nodes[idx]={...d.nodes[idx],...node};else d.nodes.push(node);
   log(c,'cendres-node',node);saveCampaign(c);renderIfOpen('cendres');return node;
 }
-function linkCendres(from,to,label=''){
+function linkCendres(from,to,label='',chapter){
   const c=getCampaign('cendres',true),d=c.cendres.network;
   from=text(from,80);to=text(to,80);if(!from||!to||from===to)return null;
   const key=[from,to].sort().join('::');
   const existing=d.links.find(l=>l.key===key);
-  const link={key,from,to,label:text(label,90),chapter:c.currentChapter};
+  const link={key,from,to,label:text(label,90),chapter:clampInt(chapter||c.currentChapter,1,5)};
   if(existing)Object.assign(existing,link);else d.links.push(link);
   log(c,'cendres-link',link);saveCampaign(c);renderIfOpen('cendres');return link;
 }
@@ -186,8 +187,8 @@ function updateDebt(id,patch={}){
   if(patch.reason!=null)d.reason=text(patch.reason,220);
   log(c,'kuroi-debt-update',{id,patch});saveCampaign(c);renderIfOpen('kuroi');return d;
 }
-function addChronicle(label,visibility='public'){
-  const c=getCampaign('kuroi',true);const entry={id:uid(),at:nowISO(),chapter:c.currentChapter,label:text(label,220),visibility:visibility==='private'?'private':'public'};
+function addChronicle(label,visibility='public',chapter){
+  const c=getCampaign('kuroi',true);const entry={id:uid(),at:nowISO(),chapter:clampInt(chapter||c.currentChapter,1,5),label:text(label,220),visibility:visibility==='private'?'private':'public'};
   c.kuroi.chronicle.push(entry);log(c,'kuroi-chronicle',entry);saveCampaign(c);renderIfOpen('kuroi');return entry;
 }
 function resetCampaign(id){

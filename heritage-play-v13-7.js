@@ -28,13 +28,13 @@ const ROLES={
     {id:'archive',name:'ANALYSTE DOCUMENTAIRE',public:'Recoupe les archives, habilitations, versions de documents et traces administratives anciennes.'}
   ],
   kuroi:[
-    {id:'waka_k',name:'WAKAGASHIRA KUROKAWA',public:'Numéro deux du clan Kurokawa. Il protège la continuité de la Famille.'},
-    {id:'kobun_k',name:'KOBUN KUROKAWA',public:'Exécutant du clan. Les ordres reçus et les dettes anciennes le suivent.'},
-    {id:'waka_a',name:'WAKAGASHIRA ARAKIDA',public:'Cadre du clan rival. Il veut empêcher Kurokawa de contrôler le récit.'},
-    {id:'kobun_a',name:'KOBUN ARAKIDA',public:'Homme de terrain Arakida. Il voit ce que les chefs préfèrent ignorer.'},
+    {id:'waka_k',name:'NUMÉRO DEUX · KUROKAWA',public:'Numéro deux du clan Kurokawa. Il protège la continuité de la Famille.'},
+    {id:'kobun_k',name:'HOMME DE TERRAIN · KUROKAWA',public:'Exécutant du clan. Les ordres reçus et les dettes anciennes le suivent.'},
+    {id:'waka_a',name:'CADRE · ARAKIDA',public:'Cadre du clan rival. Il veut empêcher Kurokawa de contrôler le récit.'},
+    {id:'kobun_a',name:'HOMME DE TERRAIN · ARAKIDA',public:'Homme de terrain Arakida. Il voit ce que les chefs préfèrent ignorer.'},
     {id:'commissaire',name:'COMMISSAIRE',public:'Dirige l’enquête officielle et protège l’institution.'},
     {id:'inspecteur',name:'INSPECTEUR',public:'Travaille les scènes, les accès et les contradictions de la police.'},
-    {id:'bengoshi',name:'BENGOSHI',public:'Avocat de la Famille. Il détient des documents que personne ne veut voir publics.'}
+    {id:'bengoshi',name:'AVOCAT DES CLANS',public:'Avocat de la Famille. Il détient des documents que personne ne veut voir publics.'}
   ]
 };
 
@@ -245,7 +245,7 @@ const PACKS={
           ['DEMANDE','Identifiez ce que la police ne peut pas faire officiellement.'],
           ['COÛT','Chaque camp estime ce qu’il perd en acceptant ou en refusant.'],
           ['DOUBLE JEU','Le même registre peut protéger le clan et condamner des policiers.'],
-          ['CHOIX','Décidez ce que la Famille fait du registre. Le choix sera conservé dans la Chronique.']
+          ['CHOIX','Décidez ce que la Famille fait du registre. Le choix sera conservé dans le registre des événements.']
         ],
         secrets:{
           waka_k:['Le registre contient aussi des paiements Kurokawa sans rapport avec le meurtre. Le rendre public affaiblit durablement la Famille.','Négocier sans effacer la preuve du meurtre.'],
@@ -296,7 +296,7 @@ const PACKS={
         briefing:'La vérité est connue. Le Conseil réunit Kurokawa, Arakida, la police et le Bengoshi. Il ne s’agit plus seulement de savoir qui a tué : il faut décider ce que devient une vérité capable de détruire plusieurs institutions.',
         question:'Que fait le Conseil de la vérité ?',
         phases:[
-          ['MÉMOIRE','Relisez les dettes et la Chronique. Ce qui s’est passé dans les dossiers précédents limite les options crédibles.'],
+          ['MÉMOIRE','Relisez les dettes et le registre des événements. Ce qui s’est passé dans les dossiers précédents limite les options crédibles.'],
           ['PRIX','Chaque rôle annonce ce qu’il accepte de perdre et ce qu’il refuse de sacrifier.'],
           ['FACE','Décidez ce qui doit être public, ce qui doit rester interne et qui doit assumer une conséquence visible.'],
           ['CONSEIL','Le choix final n’a pas une seule “bonne” réponse. Il définit l’héritage de KUROI.']
@@ -367,7 +367,7 @@ function campaignCarry(id){
   }
   const debts=s.kuroi?.debts||[],chron=s.kuroi?.chronicle||[];
   const due=debts.filter(d=>d.status==='due').length;
-  return [`${due} dette${due>1?'s':''} ouverte${due>1?'s':''}`,`${chron.length} fait${chron.length>1?'s':''} dans la Chronique`,`${Object.keys(s.kuroi?.flags||{}).filter(k=>/^k\d_/.test(k)).length} décisions héritées`];
+  return [`${due} dette${due>1?'s':''} ouverte${due>1?'s':''}`,`${chron.length} fait${chron.length>1?'s':''} dans le registre des événements`,`${Object.keys(s.kuroi?.flags||{}).filter(k=>/^k\d_/.test(k)).length} décisions héritées`];
 }
 
 function renderHub(){
@@ -456,7 +456,9 @@ function renderSetup(id,n){
 function buildNameFields(count,players=[]){const wrap=$('#hplayNames');if(!wrap)return;wrap.innerHTML=Array.from({length:count},(_,i)=>`<label><span>J${i+1}</span><input maxlength="22" autocomplete="off" inputmode="text" value="${esc(players[i]?.name||'')}" placeholder="Pseudo ${i+1}" required></label>`).join('')}
 
 function startSession(id,n,names){
-  const pack=PACKS[id],pc=pack.chapters[n],rolePool=ROLES[id].slice(0,names.length),roles=shuffle(rolePool);
+  const pack=PACKS[id];if(!pack?.chapters[n]||n>current(id)||names.length<pack.min||names.length>pack.max)return;
+  const ids=id==='kuroi'?(names.length===5?['waka_k','kobun_k','waka_a','commissaire','inspecteur']:names.length===6?['waka_k','kobun_k','waka_a','commissaire','inspecteur','bengoshi']:ROLES[id].map(r=>r.id)):ROLES[id].slice(0,names.length).map(r=>r.id);
+  const roles=shuffle(ids.map(roleId=>roleFor(id,roleId)));
   const practice=completed(id,n);
   const players=names.map((name,i)=>({id:`p${i+1}`,name:txt(name,22)||`Joueur ${i+1}`,roleId:roles[i].id}));
   const live={version:2,campaignId:id,chapter:n,players,revealIndex:0,revealed:[],phaseIndex:0,stage:'reveal',decision:null,result:null,practice,startedAt:new Date().toISOString(),finished:false};
@@ -477,7 +479,7 @@ function advanceReveal(){const l=readLive();if(!l)return;const idx=l.revealIndex
 
 function renderPlay(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter],idx=Math.max(0,Math.min(pc.phases.length-1,live.phaseIndex||0)),phase=pc.phases[idx];
-  const s=state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live):'';
+  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live):'';
   shellPut(`<main class="page hplay hplay-session hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="session-menu">••• <span>Session</span></button><div class="hplay-mode">PHASE ${idx+1}/${pc.phases.length}</div></header>
     <section class="hplay-session-head"><span class="hplay-eyebrow">${esc(PACKS[live.campaignId].title)} · DOSSIER 0${live.chapter}</span><h1>${esc(phase[0])}</h1><p>${esc(phase[1])}</p></section>
@@ -502,11 +504,11 @@ function conditionalIntel(id,n,s){
   if(id==='cendres'){
     const f=s.cendres?.flags||{};
     if(n===4){const good=['s1_correct','s2_correct','s3_correct'].filter(k=>f[k]).length;return good>=2?`Vos recoupements précédents sont solides (${good}/3). Le lien administratif K-9 peut être utilisé comme ancrage fiable.`:`Votre carte est contaminée : seulement ${good}/3 recoupements antérieurs sont fiables. Exigez deux preuves indépendantes avant toute classification.`}
-    if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne VENN → 04:17 → K-9 est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
+    if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne V-17 → 04:17 → accès internes est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
     return `Le niveau de crise actuel est ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}.`;
   }
   const f=s.kuroi?.flags||{};const choices=Object.keys(f).filter(k=>/^k\d_/.test(k)&&f[k]).length;
-  return n===5?`Le Conseil arrive avec ${s.kuroi?.debts?.length||0} dette(s) enregistrée(s) et ${s.kuroi?.chronicle?.length||0} fait(s) dans la Chronique. Ces traces doivent être prises en compte dans le choix final.`:`${choices} décision(s) antérieure(s) influencent désormais la confiance entre la Police et les clans.`;
+  return n===5?`Le Conseil arrive avec ${s.kuroi?.debts?.length||0} dette(s) enregistrée(s) et ${s.kuroi?.chronicle?.length||0} fait(s) dans le registre des événements. Ces traces doivent être prises en compte dans le choix final.`:`${choices} décision(s) antérieure(s) influencent désormais la confiance entre la Police et les clans.`;
 }
 
 function renderDecision(live){const pc=PACKS[live.campaignId].chapters[live.chapter];shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
@@ -520,25 +522,26 @@ function renderResult(live){const pc=PACKS[live.campaignId].chapters[live.chapte
   <section class="hplay-result-card"><span class="hplay-eyebrow">${label.toUpperCase()}</span><h1>${esc(opt.title)}</h1><p class="hplay-result-truth">${esc(pc.reveal)}</p><div class="hplay-result-consequence"><span>CONSÉQUENCE</span><b>${esc(opt.consequence)}</b></div>${live.practice?'<div class="hplay-practice">REJOUÉ — la sauvegarde principale ne sera pas modifiée.</div>':''}<button class="btn primary" data-hp-action="finish">${live.practice?'TERMINER LE REPLAY':'INSCRIRE DANS L’HÉRITAGE'}</button></section>
 </main>`)}
 
-function applyResult(live){
+function applyResult(live,navigate=true){
   if(!live||live.finished)return;
   const pc=PACKS[live.campaignId].chapters[live.chapter],out=pc.apply?.[live.decision]||{};
-  if(!live.practice){
+  if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
       const flag=out.flag;if(flag){const payload={flags:{[flag]:true},crisisDelta:Number(out.crisis||0)};api().completeChapter('cendres',live.chapter,payload)}else api().completeChapter('cendres',live.chapter,{crisisDelta:Number(out.crisis||0)});
       const grade=live.result?.grade||0;
       const labels=['PISTE COMPROMISE','PISTE PARTIELLE','PISTE VALIDÉE'];
       api().cendres.upsertNode({id:`cendres-${live.chapter}-${live.decision}`,label:`D0${live.chapter} · ${labels[grade]}`,kind:'dossier',status:grade===2?'cleared':grade===1?'watch':'unknown',chapter:live.chapter,note:live.result?.consequence});
-      if(live.chapter>1)api().cendres.link(`cendres-${live.chapter-1}-${findPreviousDecision('cendres',live.chapter-1)}`,`cendres-${live.chapter}-${live.decision}`,'héritage de campagne');
+      if(live.chapter>1)api().cendres.link(`cendres-${live.chapter-1}-${findPreviousDecision('cendres',live.chapter-1)}`,`cendres-${live.chapter}-${live.decision}`,'héritage de campagne',live.chapter);
     }else{
       if(out.flag){api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}})}else api().completeChapter('kuroi',live.chapter,{});
       if(out.debt)api().kuroi.addDebt({type:'giri',from:out.debt[0],to:out.debt[1],reason:out.debt[2],status:'due',chapter:live.chapter});
-      if(out.chron)api().kuroi.addChronicle(out.chron,'public');
-      api().kuroi.addChronicle(`Dossier 0${live.chapter} — ${live.result?.title}. ${live.result?.consequence}`,'public');
+      if(out.chron)api().kuroi.addChronicle(out.chron,'public',live.chapter);
+      api().kuroi.addChronicle(`Dossier 0${live.chapter} — ${live.result?.title}. ${live.result?.consequence}`,'public',live.chapter);
     }
     rememberDecision(live.campaignId,live.chapter,live.decision);
   }
-  live.finished=true;live.stage='finished';saveLive(live);
+  live.finished=true;if(navigate)live.stage='finished';saveLive(live);
+  if(!navigate)return {ok:true};
   clearLive();renderCampaign(live.campaignId);toastSafe(live.practice?'Replay terminé.':'Dossier inscrit dans l’Héritage.');
 }
 function decisionKey(id,n){return `igr_heritage_decision_${id}_${n}`}
@@ -597,7 +600,7 @@ function handleClick(e){
   const oldChapter=e.target.closest?.('.heritage-chapter');
   if(oldChapter&&!oldChapter.closest('.hplay')){const id=campaignFromNode(oldChapter);if(id&&!oldChapter.disabled){const rows=$$('.heritage-chapter',oldChapter.parentElement);const n=Math.max(1,rows.indexOf(oldChapter)+1);e.preventDefault();e.stopImmediatePropagation();renderChapter(id,n);return}}
 }
-function handleSubmit(e){const form=e.target.closest?.('#hplaySetupForm');if(!form)return;e.preventDefault();const names=$$('input',form).map(i=>txt(i.value,22)).filter(Boolean),pack=PACKS[form.dataset.campaign];if(names.length<pack.min){toastSafe(`Il faut au moins ${pack.min} joueurs.`);return}startSession(form.dataset.campaign,Number(form.dataset.chapter),names)}
+function handleSubmit(e){const form=e.target.closest?.('#hplaySetupForm');if(!form)return;e.preventDefault();const names=$$('input',form).map(i=>txt(i.value,22)).filter(Boolean),pack=PACKS[form.dataset.campaign];if(new Set(names.map(n=>n.toLocaleLowerCase())).size!==names.length){toastSafe('Chaque joueur doit avoir un pseudo différent.');return}if(names.length<pack.min){toastSafe(`Il faut au moins ${pack.min} joueurs.`);return}startSession(form.dataset.campaign,Number(form.dataset.chapter),names)}
 
 function boot(){
   document.addEventListener('click',handleClick,true);
@@ -607,7 +610,7 @@ function boot(){
   patchHomeCard();
   setTimeout(maybeUpgradeOldHeritage,0);
   window.addEventListener('pageshow',()=>setTimeout(patchHomeCard,0),{passive:true});
-  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
+  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,commitLive:()=>{const l=readLive();if(!l||l.stage!=='result')return {ok:false};if(l.finished)return {ok:true};return applyResult(l,false)},roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
