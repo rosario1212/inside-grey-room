@@ -4,10 +4,10 @@
 const STORE_KEY='igr_duration_modes_v35';
 const MODES={
  short:{estimate:'≈ 40–55 min',preInvestigation:120,interrogation:360,cycleDebrief:90,confrontation:120,assembly:150,judicialShort:90,judicialLong:120,witness:180,finalDebrief:120},
- long:{estimate:'≈ 70–90 min',preInvestigation:180,interrogation:480,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:240,witness:240,finalDebrief:240},
+ long:{estimate:'≈ 70–90 min',preInvestigation:180,interrogation:360,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:240,witness:240,finalDebrief:240},
  legacy:{estimate:'',preInvestigation:120,interrogation:360,cycleDebrief:120,confrontation:240,assembly:240,judicialShort:120,judicialLong:180,witness:240,finalDebrief:120}
 };
-window.IGR_DURATION_MODES_V35={version:'35.2-duration-lobby',modes:MODES,defaultMode:'long'};
+window.IGR_DURATION_MODES_V35={version:'35.2-duration-lobby',modes:MODES,defaultMode:'long',estimate};
 function state(){try{return typeof STATE!=='undefined'?STATE:(window.STATE||null)}catch{return window.STATE||null}}
 function store(){try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}}
 function en(){return (window.IGR_LOCALE||document.documentElement.lang||'fr').toLowerCase().startsWith('en')}
@@ -28,10 +28,11 @@ function effectiveMode(id){
  if(r==='short'||r==='long')return r;
  return selected(sid);
 }
+function estimate(m){const roster=state()?.sync?.players||[];if(!roster.length)return MODES[m].estimate;const speech=m==='short'?1:2,defense=m==='short'?2:5;let audiences=0,suspects=0,lawyers=0;for(const p of roster){const role=p.public_role==='en_attente'?p.preferred_role:p.public_role;if(['enqueteur','analyste','inspecteur','expert','procureur','juge','journaliste'].includes(role))audiences++;if(role==='suspect')suspects++;if(role==='maitre')lawyers++;}if(!suspects||!audiences)return MODES[m].estimate;const delta=audiences*speech+suspects*defense+lawyers*speech-(3*speech+3*defense+speech);return `≈ ${Math.max(m==='short'?25:45,(m==='short'?40:70)+delta)}–${Math.max(m==='short'?35:55,(m==='short'?55:90)+delta)} min`}
 function tabs(id){
  const sid=String(id||''),m=effectiveMode(sid),readOnly=!state()?.hostToken;
  const ownerHint=readOnly?(en()?'Selected by the host':'Choisi par l’hôte'):'';
- return `<div class="igr-duration-v35 igr-duration-lobby-v35" data-duration-for="${sid}" role="group" aria-label="${en()?'Game duration':'Durée de la partie'}"><button type="button" class="igr-duration-tab-v35 ${m==='short'?'is-active':''}" data-mode="short" aria-pressed="${m==='short'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','short')"><span>${en()?'SHORT':'COURT'}</span><small>${MODES.short.estimate}</small></button><button type="button" class="igr-duration-tab-v35 ${m==='long'?'is-active':''}" data-mode="long" aria-pressed="${m==='long'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','long')"><span>LONG</span><small>${MODES.long.estimate}</small></button></div>`;
+ return `<div class="igr-duration-v35 igr-duration-lobby-v35" data-duration-for="${sid}" role="group" aria-label="${en()?'Game duration':'Durée de la partie'}"><button type="button" class="igr-duration-tab-v35 ${m==='short'?'is-active':''}" data-mode="short" aria-pressed="${m==='short'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','short')"><span>${en()?'SHORT':'COURT'}</span><small>${estimate('short')}</small></button><button type="button" class="igr-duration-tab-v35 ${m==='long'?'is-active':''}" data-mode="long" aria-pressed="${m==='long'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','long')"><span>LONG</span><small>${estimate('long')}</small></button><small class="igr-duration-note">${en()?'Estimate for selected roles, excluding manual pauses and extended waiting.':'Estimation selon les rôles choisis, hors pauses et attentes prolongées.'}</small></div>`;
 }
 function cleanupScenarioSelectors(){
  document.querySelectorAll('.scenario-list .igr-duration-v35,.scenario-list-v10-13 .igr-duration-v35').forEach(node=>node.remove());
@@ -39,7 +40,7 @@ function cleanupScenarioSelectors(){
 function refresh(id){
  const sid=String(id||''),activeMode=effectiveMode(sid),readOnly=!state()?.hostToken;
  document.querySelectorAll(`.igr-duration-v35[data-duration-for="${sid}"]`).forEach(g=>g.querySelectorAll('[data-mode]').forEach(b=>{
-  const active=b.dataset.mode===activeMode;
+  const small=b.querySelector('small');if(small)small.textContent=estimate(b.dataset.mode);const active=b.dataset.mode===activeMode;
   b.classList.toggle('is-active',active);
   b.setAttribute('aria-pressed',String(active));
   if(g.classList.contains('igr-duration-lobby-v35')){

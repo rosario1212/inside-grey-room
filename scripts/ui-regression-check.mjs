@@ -32,7 +32,7 @@ must('scripts/finalize-runtime-v36.mjs',['v36.1-parasite-fix','igr-v36-1-parasit
 must('scripts/apply-gameplay-v37.mjs',['gameplay-state-fix-v37.js','v37-objective-event-select','--check']);
 must('gameplay-state-fix-v37.js',['Minimise tes faits.','CHOIX DE L’ÉVÉNEMENT','state?.event_options','igr_v13_start_event']);
 must('package.json',['scripts/apply-duration-v35.mjs dist','scripts/apply-duration-v35.mjs www','scripts/duration-modes-v35-check.mjs dist','scripts/duration-modes-v35-check.mjs www','scripts/finalize-runtime-v36.mjs dist','scripts/finalize-runtime-v36.mjs www','scripts/apply-gameplay-v37.mjs dist','scripts/apply-gameplay-v37.mjs www']);
-must('duration-modes-v35.js',["short:{estimate:'≈ 40–55 min'","long:{estimate:'≈ 70–90 min'",'interrogation:360','interrogation:480','confrontation:120','confrontation:240','assembly:150','assembly:240','igr_v35_set_duration_mode','AudioContext','phase_ends_at']);
+must('duration-modes-v35.js',["short:{estimate:'≈ 40–55 min'","long:{estimate:'≈ 70–90 min'",'interrogation:360','confrontation:120','confrontation:240','assembly:150','assembly:240','igr_v35_set_duration_mode','AudioContext','phase_ends_at']);
 must('duration-modes-v35.css',['.igr-duration-v35','.igr-duration-tab-v35','.is-active']);
 
 must('supabase/migrations/20261001_dlc_invites_v12_45.sql',['igr_dlc_invites','igr_dlc_create_invite','igr_dlc_redeem_invite','wrong_dlc','cannot_revoke_owner']);

@@ -80,6 +80,6 @@ jobs:
           node --check live-cell-v12-44.js
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
-        run: node scripts/build-web.mjs
+        run: npm run build
       - name: Validate Cloudflare Worker package
         run: npx --yes wrangler@4.102.0 deploy --dry-run --outdir .wrangler-dry-run
