@@ -92,10 +92,15 @@ function eventClass(e){
   return t==='trame'?'trame':t==='breaking_news'?'news':t==='reveal'?'urgent':'';
 }
 function eventClock(iso){try{return new Date(iso).toLocaleTimeString(fr()?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'})}catch(_){return'--:--'}}
-function evidenceCardHtml(e){const p=e.payload||{};return `<article class="v42-evidence ${eventClass(e)}"><div class="v42-evidence-meta"><span>${esc(p.title||e.event_type||copy('ÉLÉMENT','ELEMENT'))}</span><time>${esc(eventClock(e.created_at))}</time></div><p>${esc(p.text||p.summary||'')}</p></article>`}
 function renderElementsTab(){
- const r=role(),events=revealedElements(),visible=canSeeEvidence(r)?events:events.filter(e=>String(e.event_type||'')!=='trame'),ordered=visible.slice().reverse(),recent=ordered.slice(0,4),older=ordered.slice(4);
- return `<section class="v42-elements" aria-label="${esc(copy('Éléments d’enquête','Investigation elements'))}"><div class="v42-elements-head"><div><span>${esc(copy('DOSSIER COMMUN','SHARED CASE FILE'))}</span><h2>${esc(copy('Éléments d’enquête','Investigation elements'))}</h2></div><small>${esc(copy('Contexte + éléments révélés','Context + revealed elements'))}</small></div>${renderContextCards()}<div class="v42-evidence-head"><span>${esc(copy('ÉLÉMENTS RÉVÉLÉS','REVEALED ELEMENTS'))}</span><small>${visible.length}</small></div>${visible.length?`<div class="v42-evidence-list">${recent.map(evidenceCardHtml).join('')}${older.length?`<details class="v42-evidence-history"><summary><span>${esc(copy('Éléments précédents','Earlier elements'))}</span><b>${older.length}</b></summary><div>${older.map(evidenceCardHtml).join('')}</div></details>`:''}</div>`:`<div class="v42-empty">${esc(canSeeEvidence(r)?copy('Les nouveaux indices et trames apparaîtront ici au fil des cycles.','New clues and story elements will appear here as the cycles progress.'):copy('Les éléments réservés à l’enquête ne sont pas affichés. Le contexte commun reste accessible ici.','Investigation-only elements are hidden. Shared context remains available here.'))}</div>`}</section>`;
+  const r=role(),events=revealedElements();
+  const visible=canSeeEvidence(r)?events:events.filter(e=>String(e.event_type||'')!=='trame');
+  return `<section class="v42-elements" aria-label="${esc(copy('Éléments d’enquête','Investigation elements'))}">
+    <div class="v42-elements-head"><div><span>${esc(copy('DOSSIER COMMUN','SHARED CASE FILE'))}</span><h2>${esc(copy('Éléments d’enquête','Investigation elements'))}</h2></div><small>${esc(copy('Contexte + éléments révélés','Context + revealed elements'))}</small></div>
+    ${renderContextCards()}
+    <div class="v42-evidence-head"><span>${esc(copy('ÉLÉMENTS RÉVÉLÉS','REVEALED ELEMENTS'))}</span><small>${visible.length}</small></div>
+    ${visible.length?`<div class="v42-evidence-list">${visible.slice().reverse().map(e=>{const p=e.payload||{};return `<article class="v42-evidence ${eventClass(e)}"><div class="v42-evidence-meta"><span>${esc(p.title||e.event_type||copy('ÉLÉMENT','ELEMENT'))}</span><time>${esc(eventClock(e.created_at))}</time></div><p>${esc(p.text||p.summary||'')}</p></article>`}).join('')}</div>`:`<div class="v42-empty">${esc(canSeeEvidence(r)?copy('Les nouveaux indices et trames apparaîtront ici au fil des cycles.','New clues and story elements will appear here as the cycles progress.'):copy('Les éléments réservés à l’enquête ne sont pas affichés. Le contexte commun reste accessible ici.','Investigation-only elements are hidden. Shared context remains available here.'))}</div>`}
+  </section>`;
 }
 function chronologyRows(text){
   const raw=String(text||'').trim();if(!raw)return'';
