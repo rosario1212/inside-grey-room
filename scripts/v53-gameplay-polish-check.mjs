@@ -14,7 +14,7 @@ for(const f of ['terror-v12-37.js','dlc-suite-v12-37.js']){
   for(const base of [root,target])if(!(await exists(path.join(base,match[0]))))throw new Error(`Missing DLC poster: ${path.join(base,match[0])}`);
  }
 }
-req(await readFile(path.join(root,'heritage-play-v13-7.js'),'utf8'),'hplay-case-lite');
+req(await readFile(path.join(root,'heritage-play-v13-7.js'),'utf8'),'hplay-case-poster"><img src="','Heritage scenario artwork thumbnail');
 const app=await readFile(path.join(root,'app-v11.js'),'utf8'),dlcRoles=await readFile(path.join(root,'dlc-suite-v12-37.js'),'utf8');
 const baseBlock=app.slice(app.indexOf('const SCENARIO_ROLES = {'),app.indexOf('function playerCountLabel'));
 for(let i=1;i<=20;i++){const id=String(i).padStart(3,'0'),line=baseBlock.split('\n').find(x=>x.trimStart().startsWith(`'${id}':`))||'';if(!line)throw new Error(`v54 missing base role config ${id}`);if(!['017','020'].includes(id)&&/t[ée]moin/i.test(line))throw new Error(`v54 unexpected witness in base scenario ${id}`)}

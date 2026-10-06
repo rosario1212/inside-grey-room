@@ -391,7 +391,7 @@ function renderCampaign(id){
   const chapters=m.chapters.map(ch=>{
     const status=statusFor(id,ch.n),locked=status==='VERROUILLÉ',resume=activeLive(id,ch.n);
     return `<button type="button" class="hplay-case ${status==='DISPONIBLE'?'is-current':''} ${status==='ARCHIVÉ'?'is-done':''}" data-hp-chapter="${ch.n}" ${locked?'disabled':''}>
-      <span class="hplay-case-poster hplay-case-lite"><b>${esc(ch.scenarioId||String(ch.n).padStart(3,'0'))}</b><small>${esc(m.title)}</small></span>
+      <span class="hplay-case-poster"><img src="${esc(ch.poster)}" alt="Affiche ${esc(ch.title)}" loading="lazy" decoding="async"></span>
       <span class="hplay-case-copy"><em>${esc(ch.scenarioId||String(ch.n).padStart(3,'0'))}</em><strong>${esc(ch.title)}</strong><small>${esc(ch.note)}</small><b>${resume?'PARTIE EN COURS':status}</b></span>
       <i>${locked?'⌁':'›'}</i>
     </button>`;
