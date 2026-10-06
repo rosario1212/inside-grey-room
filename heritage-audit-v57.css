@@ -296,3 +296,26 @@ body:has(.maitre-page),body:has(.maitre-page) #app{background:#e7dfd3!important;
   .maitre-page .hplay-panel{padding:16px!important;border-radius:19px!important}
 }
 @media(prefers-reduced-motion:reduce){.maitre-page *{transition:none!important;animation:none!important}}
+/* v58: complete posters and readable paper-theme entry/lobby screens. */
+.maitre-page .heritage-dual-row p,
+.maitre-page .h55-maitre-lobby-note,
+.maitre-page .h55-maitre-lobby-note p {color:#51463f!important}
+.maitre-page .h55-maitre-lobby-note b,
+.maitre-page .h55-maitre-lobby-note span {color:#6d2723!important}
+.maitre-page .heritage-dual-row .btn.primary,
+.maitre-page #hnetCreateBtn {background:#6d2723!important;color:#fff8f0!important;border-color:#6d2723!important}
+.maitre-page.hnet .hnet-create {background:#f8f4ec!important;color:#171513!important;border-color:rgba(45,37,31,.18)!important}
+.maitre-page.hnet .hnet-create h1 {color:#171513!important;font-size:clamp(28px,7vw,44px)!important;line-height:1.12!important;overflow-wrap:break-word}
+.maitre-page.hnet .hnet-create p,
+.maitre-page.hnet .hnet-create>span,
+.maitre-page.hnet .hnet-create label>span,
+.maitre-page.hnet .hnet-head>span {color:#655f58!important}
+.maitre-page.hnet .hnet-create input {background:#fffaf3!important;color:#171513!important;border-color:rgba(45,37,31,.25)!important}
+.maitre-page.hnet .hnet-create input::placeholder {color:#766b61!important}
+.maitre-page.hnet .hnet-head {margin-bottom:20px!important}
+.maitre-page.hnet .hnet-lobby .btn:disabled {background:#e6ded2!important;color:#655f58!important;border-color:#b9aea0!important;opacity:1!important}
+@media(max-width:760px){
+  .maitre-page .hplay-poster {width:min(100%,280px)!important;height:auto!important;aspect-ratio:2/3!important;border-radius:16px!important}
+  .maitre-page .hplay-poster img {display:block!important;width:100%!important;height:auto!important;aspect-ratio:2/3!important;object-fit:contain!important;object-position:center!important}
+  .maitre-page.hnet {padding-top:20px!important}
+}

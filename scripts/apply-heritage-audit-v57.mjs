@@ -1,7 +1,7 @@
 import {copyFile,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v57-heritage-audit',CACHE='igr-v57-heritage-audit',style='heritage-audit-v57.css',pages=['index.html','en.html'];
+const VERSION='v57-heritage-audit-v58',CACHE='igr-v57-heritage-audit-v58',style='heritage-audit-v57.css',pages=['index.html','en.html'];
 const exists=async f=>{try{await stat(f);return true}catch{return false}};
 const escapeRe=s=>String(s).replaceAll('.','\\.');
 if(!(await exists(path.join(root,style))))throw new Error('v57 source missing: '+style);

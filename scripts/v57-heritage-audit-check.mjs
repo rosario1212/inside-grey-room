@@ -31,11 +31,11 @@ ok(modes.includes("title:'RESPONSABLE DES HABILITATIONS'"),'online CENDRES resul
 try{
   await stat(path.join(target,'index.html'));
   const html=await readFile(path.join(target,'index.html'),'utf8'),sw=await readFile(path.join(target,'service-worker.js'),'utf8');
-  ok(html.includes('heritage-audit-v57.css?v=v57-heritage-audit'),'dist missing v57 Heritage CSS');
-  for(const asset of ['heritage-v13-5.js','heritage-play-v13-7.js','play-modes-v13-8.js'])ok(html.includes(asset+'?v=v57-heritage-audit'),'dist did not cache-bust '+asset);
-  ok(sw.includes("const CACHE='igr-v57-heritage-audit';"),'service worker cache not bumped to v57');
-  ok(sw.includes('/heritage-audit-v57.css?v=v57-heritage-audit'),'service worker missing v57 CSS');
-  for(const asset of ['heritage-v13-5.js','heritage-play-v13-7.js','play-modes-v13-8.js'])ok(sw.includes('/'+asset+'?v=v57-heritage-audit'),'service worker did not cache-bust '+asset);
+  ok(html.includes('heritage-audit-v57.css?v=v57-heritage-audit-v58'),'dist missing v57 Heritage CSS');
+  for(const asset of ['heritage-v13-5.js','heritage-play-v13-7.js','play-modes-v13-8.js'])ok(html.includes(asset+'?v=v57-heritage-audit-v58'),'dist did not cache-bust '+asset);
+  ok(sw.includes("const CACHE='igr-v57-heritage-audit-v58';"),'service worker cache not bumped to v57');
+  ok(sw.includes('/heritage-audit-v57.css?v=v57-heritage-audit-v58'),'service worker missing v57 CSS');
+  for(const asset of ['heritage-v13-5.js','heritage-play-v13-7.js','play-modes-v13-8.js'])ok(sw.includes('/'+asset+'?v=v57-heritage-audit-v58'),'service worker did not cache-bust '+asset);
 }catch{}
 if(fail.length){console.error('\nHÉRITAGE v57 audit check FAILED:\n- '+fail.join('\n- '));process.exit(1)}
 console.log('HÉRITAGE v57 audit checks OK');
