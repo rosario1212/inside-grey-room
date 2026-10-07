@@ -35,19 +35,19 @@ await copyFile(v44Source,v44Dest);
 
 if(await exists(appTarget)){
   let app=await readFile(appTarget,'utf8');
-  app=replaceRequired(
+  if(!app.includes("unique client officiel"))app=replaceRequired(
     app,
     "maitre:{label:'Maître',win:'Protège la responsabilité exacte de tes clients.',body:'Tu défends un ou plusieurs suspects compatibles. Tu n’inventes jamais de faits et tu partages le temps de défense finale de tes clients.'}",
     "maitre:{label:'Maître',win:'Protège la responsabilité exacte de ton unique client officiel.',body:'Les suspects peuvent te solliciter. Après un entretien de 1 minute maximum, tu peux accepter un seul client officiel. Les autres suspects non représentés disposent chacun d’une unique consultation pendant leur propre interrogatoire.'}",
     'lawyer role info'
   );
-  app=replaceRequired(
+  if(!app.includes("Avocat : un seul client officiel"))app=replaceRequired(
     app,
     "'Avocat : peut défendre plusieurs clients compatibles ; obligatoire dans le dossier 019.'",
     "'Avocat : un seul client officiel par avocat. Chaque suspect non représenté dispose d’une seule consultation de 1 minute pendant son propre interrogatoire.'",
     'manual lawyer rule'
   );
-  app=replaceRequired(
+  if(app.includes("<span>5 minutes · l’Avocat éventuel partage ce temps.</span>"))app=replaceRequired(
     app,
     "<span>5 minutes · l’Avocat éventuel partage ce temps.</span>",
     "<span>5 minutes · l’Avocat partage ce temps uniquement avec son client officiel.</span>",

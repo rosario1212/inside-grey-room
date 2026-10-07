@@ -8,8 +8,10 @@ const html=await readFile(path.join(target,'index.html'),'utf8');
 const rt=await readFile(path.join(target,'final-audience-v52.js'),'utf8');
 for(const x of ['0 · aucune responsabilité','1 · responsabilité secondaire','2 · responsabilité principale'])req(app,x);
 if(app.includes('3 · centrale'))throw new Error('legacy level 3 remains');
-for(const x of ['final_audience','final_suspect_defenses','final_lawyer_opinions'])req(app,x);
-for(const x of ['igr_v52_stage_action','ME DÉFENDRE · ${defenseMinutes()}:00','DONNER MON VERDICT · ${speechMinutes()}:00','Réévaluation finale','v52_queue','v52_status'])req(rt,x);
+for(const x of ['final_audience','final_suspect_defenses'])req(app,x);
+if(app.includes('final_lawyer_opinions'))throw new Error('removed lawyer final phase still present');
+for(const x of ['igr_v52_stage_action','ME DÉFENDRE · ${defenseMinutes()}:00','DONNER MON VERDICT · ${speechMinutes()}:00','Réévaluation finale','v52_queue','v52_status',"defenseMinutes=()=>short()?2:3"])req(rt,x);
+if(rt.includes('igr52pre')||rt.includes('igr52Lawyer')||rt.includes('final_lawyer_opinions'))throw new Error('duplicate final-stage UI remains');
 req(html,'final-audience-v52.js?v=v52-final-audience');
 const swPath=path.join(target,'service-worker.js');
 if(await exists(swPath)){

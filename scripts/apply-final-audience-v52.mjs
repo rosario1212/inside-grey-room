@@ -11,10 +11,10 @@ const parsed=spawnSync(process.execPath,['--check',source],{encoding:'utf8'});if
 await copyFile(source,dest);
 if(await exists(appTarget)){
  let app=await readFile(appTarget,'utf8');
- app=required(app,"<option value=\"0\">0 · aucune responsabilité</option><option value=\"1\">1 · secondaire / indirecte</option><option value=\"2\">2 · importante</option><option value=\"3\">3 · centrale</option>","<option value=\"0\">0 · aucune responsabilité</option><option value=\"1\">1 · responsabilité secondaire</option><option value=\"2\">2 · responsabilité principale</option>",'0..2 levels form');
- app=required(app,"function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Secondaire / indirecte',2:'Importante',3:'Centrale'})[+level]||'Non renseignée'}","function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Responsabilité secondaire',2:'Responsabilité principale'})[+level]||'Non renseignée'}",'responsibility labels');
+ if(app.includes('3 · centrale'))app=required(app,"<option value=\"0\">0 · aucune responsabilité</option><option value=\"1\">1 · secondaire / indirecte</option><option value=\"2\">2 · importante</option><option value=\"3\">3 · centrale</option>","<option value=\"0\">0 · aucune responsabilité</option><option value=\"1\">1 · responsabilité secondaire</option><option value=\"2\">2 · responsabilité principale</option>",'0..2 levels form');
+ if(app.includes("3:'Centrale'"))app=required(app,"function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Secondaire / indirecte',2:'Importante',3:'Centrale'})[+level]||'Non renseignée'}","function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Responsabilité secondaire',2:'Responsabilité principale'})[+level]||'Non renseignée'}",'responsibility labels');
  app=app.replace(/\$\{x\.truth_level\}\/3/g,'${x.truth_level}/2').replace(/\$\{x\.enqueteur_level\}\/3/g,'${x.enqueteur_level}/2').replace(/niveau 0–3/g,'niveau 0–2');
- app=app.replace("closed:'ENQUÊTE CLOSE',provisional_orals:","closed:'ENQUÊTE CLOSE',final_audience:'AUDIENCE FINALE',final_suspect_defenses:'DÉFENSES FINALES',final_lawyer_opinions:'AVIS FINAL DES AVOCATS',provisional_orals:");
+ app=app.replace("closed:'ENQUÊTE CLOSE',provisional_orals:","closed:'ENQUÊTE CLOSE',final_audience:'AUDIENCE FINALE',final_suspect_defenses:'DÉFENSES FINALES',provisional_orals:");
  app=app.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,`/service-worker.js?v=${VERSION}`);
  await writeFile(appTarget,app,'utf8');
 }
