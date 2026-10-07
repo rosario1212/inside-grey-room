@@ -21,7 +21,7 @@ STATE.tab='investigation';assert.ok(c.renderGameTab().includes('igr52-page'),'En
 STATE.tab='rules';c.renderGame();for(const f of timeouts.splice(0))f();assert.equal(STATE.tab,'rules','same phase must not steal selected tab');
 STATE.sync.room.state.duration_mode='long';STATE.tab='final52';assert.ok(c.renderGameTab().includes('DONNER MON VERDICT · 2:00'));
 STATE.sync.room.phase='final_suspect_defenses';STATE.sync.room.state.v52_queue=[{player_id:'judge',pseudo:'Ali',role:'suspect'}];
-assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 5:00'));
+assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 3:00'));
 STATE.sync.room.state.duration_mode='short';assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 2:00'));
 STATE.sync.room.phase='locking';STATE.sync.player.public_role='journaliste';STATE.tab='final52';
 assert.ok(c.renderGameTab().includes('Ton angle final personnel'));
