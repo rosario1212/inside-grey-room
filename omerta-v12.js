@@ -5,6 +5,8 @@
   const IDS = new Set(['021','022','023','024','025']);
   const IDENTITY_KEY = 'igr_social_identity_v1';
   const ACCESS = { loaded:false, active:false, level:'none', expiresAt:null, loading:null };
+  const nativeBuild=()=>window.IGR_NATIVE_STORE_BUILD===true||location.hostname==='insidegreyroom.local'||location.protocol==='capacitor:';
+  const omertaPrice=()=>window.IGR_STORE_COMMERCE?.displayPrice?.('omerta')||window.IGR_STORE_CATALOG?.product?.('omerta')?.fallbackPrice||'CHF 3.–';
   const ROLE_SETS = {
     '021':['enqueteur','analyste','suspect','associato','uomo_onore','contabile','caporegime','consigliere'],
     '022':['enqueteur','analyste','suspect','associato','uomo_onore','contabile','caporegime','consigliere'],
@@ -111,8 +113,8 @@
     return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact omerta-scenario" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">OMERTÀ · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">4–8 joueurs</span><span class="tag omerta-tag">CONFIDENTIEL</span></div></div></article>`;
   }
   function accessLabel(){
-    if(ACCESS.level==='owner')return 'ACCÈS PROPRIÉTAIRE';
-    if(ACCESS.level==='tester')return ACCESS.expiresAt?`TESTEUR · jusqu’au ${new Date(ACCESS.expiresAt).toLocaleDateString('fr-CH')}`:'ACCÈS TESTEUR';
+    if(ACCESS.level==='tester')return ACCESS.expiresAt?`LICENCE TEST HÔTE · jusqu’au ${new Date(ACCESS.expiresAt).toLocaleDateString('fr-CH')}`:'LICENCE TEST HÔTE';
+    if(ACCESS.active)return 'LICENCE HÔTE';
     return 'ACCÈS FERMÉ';
   }
   function decorateCreateList(){
@@ -121,8 +123,8 @@
     root.querySelector('.omerta-dlc-section')?.remove();
     const section=document.createElement('section'); section.className='panel omerta-dlc-section';
     section.innerHTML=ACCESS.active
-      ? `<div class="omerta-head"><div><span class="omerta-eyebrow">DLC CONFIDENTIEL</span><h2>OMERTÀ</h2><p>5 dossiers liés. Une Famiglia. Jusqu’au Don.</p></div><span class="omerta-access-pill">${h(accessLabel())}</span></div><div class="scenario-list scenario-list-v10-13 omerta-list">${omertaScenarios().map(dlcCard).join('')}</div><div class="omerta-footer"><span>Téléphones posés · décisions irréversibles · rôles Mafia facultatifs</span>${ACCESS.level==='owner'?'<button class="btn ghost small" onclick="igrOmertaOpenAccess()">Gérer les accès</button>':''}</div>`
-      : `<div class="omerta-locked"><div><span class="omerta-eyebrow">DOSSIER CLASSIFIÉ</span><h2>OMERTÀ</h2><p>Le contenu est installé mais verrouillé côté serveur. Une invitation autorisée est nécessaire pour ouvrir les cinq dossiers.</p></div><button class="btn primary" onclick="igrOmertaOpenAccess()">Déverrouiller</button></div>`;
+      ? `<div class="omerta-head"><div><span class="omerta-eyebrow">DLC CONFIDENTIEL</span><h2>OMERTÀ</h2><p>5 dossiers liés. Une Famiglia. Jusqu’au Don.</p><small>Licence hôte · ${h(omertaPrice())} · les invités rejoignent gratuitement.</small></div><span class="omerta-access-pill">${h(accessLabel())}</span></div><div class="scenario-list scenario-list-v10-13 omerta-list">${omertaScenarios().map(dlcCard).join('')}</div><div class="omerta-footer"><span>Téléphones posés · décisions irréversibles · rôles Mafia facultatifs</span>${!nativeBuild()&&ACCESS.level==='owner'?'<button class="btn ghost small" onclick="igrOmertaOpenAccess()">Accès bêta</button>':''}</div>`
+      : `<div class="omerta-locked"><div><span class="omerta-eyebrow">DLC CONFIDENTIEL</span><h2>OMERTÀ</h2><p>Licence hôte permanente. Une seule personne achète OMERTÀ ; tous les invités rejoignent gratuitement sa cellule.</p><small>${h(omertaPrice())} · paiement unique</small></div><button class="btn primary" onclick="igrOmertaOpenAccess()">${nativeBuild()?`Acheter · ${h(omertaPrice())}`:'Accès bêta'}</button></div>`;
     root.appendChild(section);
   }
   const baseRenderCreateList=renderCreateList;
@@ -142,16 +144,38 @@
   async function accessList(){
     const id=await ensureIdentity(); return await rpc('igr_omerta_list_access',{p_profile_id:id.id,p_profile_token:id.token});
   }
+  async function purchaseOmerta(){
+    const store=window.IGR_STORE_COMMERCE;
+    if(!store?.isConfigured?.()){
+      try{toast('Les achats Store ne sont pas encore configurés sur cette version.')}catch{}
+      return;
+    }
+    try{
+      await store.purchase('omerta');
+      await accessStatus(true);
+      if(STATE.view==='create')renderCreateList();
+    }catch(error){
+      console.error('[OMERTA] purchase',error);
+      if(!/cancel/i.test(String(error?.message||'')))try{toast('Achat non finalisé.')}catch{}
+    }
+  }
+  window.igrOmertaStorePurchase=purchaseOmerta;
+
   function renderAccessModal(list=[]){
     document.querySelector('.omerta-access-modal')?.remove();
     const modal=document.createElement('div');modal.className='modal omerta-access-modal';
     const owner=ACCESS.active&&ACCESS.level==='owner';
     const rows=owner?(list||[]).map(x=>`<div class="omerta-access-row"><span><b>${h(x.pseudo||'Profil')}</b><small>${h(x.level)}${x.expires_at?` · expire ${h(new Date(x.expires_at).toLocaleDateString('fr-CH'))}`:' · permanent'}</small></span>${x.level!=='owner'&&x.status==='active'?`<button class="btn danger small" onclick="igrOmertaRevoke('${x.profile_id}')">Révoquer</button>`:''}</div>`).join(''):'';
-    modal.innerHTML=`<div class="modal-box omerta-access-box"><div class="omerta-eyebrow">OMERTÀ · CONTRÔLE D’ACCÈS</div><h2>${owner?'Accès propriétaire':ACCESS.active?'Accès autorisé':'Déverrouiller'}</h2>${!ACCESS.active?`<p class="omerta-modal-copy">Entre une invitation OMERTÀ. Le code propriétaire n’est utilisé qu’une fois pour lier ce profil à l’accès OWNER.</p><div class="field"><label for="omertaUnlockCode">Code d’accès</label><input id="omertaUnlockCode" autocomplete="off" autocapitalize="characters" placeholder="OMR-…"></div><button class="btn primary block" onclick="igrOmertaRedeem()">Valider l’accès</button>`:owner?`<p class="omerta-modal-copy">Génère un code à usage unique pour la personne que tu veux autoriser. Elle devra l’activer sur son propre profil avant de rejoindre une cellule OMERTÀ.</p><div class="omerta-invite-builder"><div class="field"><label for="omertaInviteDays">Durée en jours</label><input id="omertaInviteDays" type="number" min="0" max="90" value="7"><small>0 = accès test sans expiration.</small></div><button class="btn primary" onclick="igrOmertaCreateInvite()">Créer une invitation</button></div><div id="omertaInviteResult"></div><div class="section-title"><h3>Accès existants</h3><span>${list.length}</span></div><div class="omerta-access-list">${rows||'<div class="empty-state">Aucun testeur autorisé.</div>'}</div>`:`<div class="omerta-authorized"><b>${h(accessLabel())}</b><p>Ce profil peut créer et rejoindre les cellules OMERTÀ.</p></div>`}<div class="modal-actions"><button class="btn ghost" onclick="this.closest('.modal').remove()">Fermer</button></div></div>`;
+    modal.innerHTML=`<div class="modal-box omerta-access-box"><div class="omerta-eyebrow">OMERTÀ · CONTRÔLE D’ACCÈS</div><h2>${owner?'Accès propriétaire':ACCESS.active?'Accès autorisé':'Déverrouiller'}</h2>${!ACCESS.active?`<p class="omerta-modal-copy">Entre une invitation OMERTÀ. Le code propriétaire n’est utilisé qu’une fois pour lier ce profil à l’accès OWNER.</p><div class="field"><label for="omertaUnlockCode">Code d’accès</label><input id="omertaUnlockCode" autocomplete="off" autocapitalize="characters" placeholder="OMR-…"></div><button class="btn primary block" onclick="igrOmertaRedeem()">Valider l’accès</button>`:owner?`<p class="omerta-modal-copy">Génère un code à usage unique pour la personne que tu veux autoriser. Elle l’activera sur son profil pour tester la création de cellules OMERTÀ. Les invités n’ont aucun accès à activer pour rejoindre.</p><div class="omerta-invite-builder"><div class="field"><label for="omertaInviteDays">Durée en jours</label><input id="omertaInviteDays" type="number" min="0" max="90" value="7"><small>0 = accès test sans expiration.</small></div><button class="btn primary" onclick="igrOmertaCreateInvite()">Créer une invitation</button></div><div id="omertaInviteResult"></div><div class="section-title"><h3>Accès existants</h3><span>${list.length}</span></div><div class="omerta-access-list">${rows||'<div class="empty-state">Aucun testeur autorisé.</div>'}</div>`:`<div class="omerta-authorized"><b>${h(accessLabel())}</b><p>Ce profil possède une licence d’hôte OMERTÀ et peut créer des cellules. Les invités rejoignent gratuitement.</p></div>`}<div class="modal-actions"><button class="btn ghost" onclick="this.closest('.modal').remove()">Fermer</button></div></div>`;
     modal.addEventListener('click',e=>{if(e.target===modal)modal.remove()});document.body.appendChild(modal);
   }
   window.igrOmertaOpenAccess=async()=>{
-    await accessStatus(true); let list=[];
+    await accessStatus(true);
+    if(nativeBuild()){
+      if(ACCESS.active){toast('Licence hôte OMERTÀ active. Les invités rejoignent gratuitement.');return}
+      return purchaseOmerta();
+    }
+    let list=[];
     if(ACCESS.level==='owner'){try{list=await accessList()}catch(e){console.warn(e)}}
     renderAccessModal(list);
   };
@@ -196,11 +220,11 @@
       try{out=await rpc('igr_v4_join_room',{p_code:code,p_pseudo:pseudo})}
       catch(e){
         if(!/premium access required/i.test(e.message||''))throw e;
-        const id=await ensureIdentity();const status=await accessStatus(true);if(!status.active){toast('Cette cellule utilise OMERTÀ. Active une invitation avant de rejoindre.');window.igrOmertaOpenAccess();return}
+        const id=await ensureIdentity();
         out=await rpc('igr_omerta_join_room',{p_code:code,p_pseudo:pseudo,p_profile_id:id.id,p_profile_token:id.token});
       }
       await enterRoomState(out,code,pseudo,false);
-    }catch(e){console.error(e);toast('Cellule introuvable, pleine, lancée ou accès OMERTÀ manquant.')}
+    }catch(e){console.error(e);toast('Cellule introuvable, pleine ou déjà lancée.')}
   };
 
   const baseChooseLobbyRole=chooseLobbyRole;
