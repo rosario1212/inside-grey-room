@@ -1,5 +1,5 @@
 /* Inside Grey Room — DLC suite v12.44
-   Per-player DLC ownership for TERREUR / CARTEL / LE RÉGIME, compact filters, stable themes. */
+   Host-owned DLC licences for TERREUR / CARTEL / LE RÉGIME. Guests join licensed rooms for free. */
 (() => {
   'use strict';
 
@@ -304,7 +304,7 @@
   };
 
 
-  // Premium rooms 021–034 require the joining player's own entitlement.
+  // Premium rooms are host-licensed: guests never need their own entitlement.
   const baseJoinRoom=joinRoom;
   joinRoom=async function(){
     primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
@@ -323,11 +323,7 @@
     }catch(error){
       console.error('join room v12.44',error);
       const text=String(error?.message||'');
-      if(/dlc_locked:omerta/i.test(text))return toast('Ce profil ne détient pas OMERTÀ.');
-      if(/dlc_locked:terror/i.test(text))return toast('Ce profil ne détient pas TERREUR.');
-      if(/dlc_locked:cartel/i.test(text))return toast('Ce profil ne détient pas CARTEL.');
-      if(/dlc_locked:regime/i.test(text))return toast('Ce profil ne détient pas LE RÉGIME.');
-      toast('Cellule introuvable, pleine, déjà lancée ou DLC non détenu.');
+      toast('Cellule introuvable, pleine ou déjà lancée.');
     }
   };
 
