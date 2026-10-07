@@ -47,7 +47,7 @@ if(await exists(appTarget)){
     "'Avocat : un seul client officiel par avocat. Chaque suspect non représenté dispose d’une seule consultation de 1 minute pendant son propre interrogatoire.'",
     'manual lawyer rule'
   );
-  app=replaceRequired(
+  if(app.includes("<span>5 minutes · l’Avocat éventuel partage ce temps.</span>"))app=replaceRequired(
     app,
     "<span>5 minutes · l’Avocat éventuel partage ce temps.</span>",
     "<span>5 minutes · l’Avocat partage ce temps uniquement avec son client officiel.</span>",
