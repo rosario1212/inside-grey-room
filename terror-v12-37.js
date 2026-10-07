@@ -41,7 +41,7 @@
   };
 
   function terrorCards(){
-    return DATA.map(sc => scenario(sc.id)).map(sc => `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact terror-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">TERREUR · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag terror-tag">PÉRIMÈTRE</span></div></div></article>`).join('');
+    return DATA.map(sc => scenario(sc.id)).map(sc => `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact terror-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">TERREUR · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag terror-tag">PÉRIMÈTRE</span>${typeof scenarioDifficultyTag==='function'?scenarioDifficultyTag(sc):''}</div></div></article>`).join('');
   }
   function decorate(){
     const root = document.querySelector('.page-create-v10-13'); if(!root) return;
