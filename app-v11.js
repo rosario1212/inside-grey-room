@@ -100,7 +100,7 @@ analyste:{label:'Analyste',win:'Produis la reconstruction psychologique la plus 
 suspect:{label:'Suspect',win:'Fais respecter la frontière réelle de ta responsabilité.',body:'Tu peux mentir, manipuler, accuser, minimiser ou admettre partiellement. Être compromis ne signifie pas automatiquement perdre.'},
 maitre:{label:'Maître',win:'Protège la responsabilité exacte de ton unique client officiel.',body:'Tu peux parler librement aux suspects hors procédure. Une fois un client accepté, tu l’accompagnes dans les procédures officielles et partages son temps de défense finale.'},
 procureur:{label:'Procureur',win:'Poursuis correctement les responsabilités sans surpayer tes accords.',body:'Tu parles directement aux joueurs disponibles, négocies des coopérations puis utilises l’application uniquement pour formaliser les accords et ta décision.'},
-juge:{label:'Juge',win:'Rends le bon jugement final sans dépasser ta jauge de confidentialité.',body:'Tu arbitres l’accès à certaines informations protégées et leur portée judiciaire. Ton éventuel intérêt secret reste secondaire.'},
+juge:{label:'Juge',win:'Rends une décision exacte sans sacrifier ton objectif personnel.',body:'Tu arbitres les saisines et les accès protégés. Tu peux consommer au maximum 3 protections ; la 3e fait échouer ton objectif personnel.'},
 journaliste:{label:'Journaliste',win:'Publie utilement sans détruire ta crédibilité ni ton objectif.',body:'Tu enquêtes librement et peux publier jusqu’à 3 Breaking News par cycle, 6 sur toute la partie.'},
 inspecteur:{label:'Inspecteur de terrain',win:'Choisis les bonnes pistes et aide à établir les faits matériels essentiels.',body:'Tu peux explorer jusqu’à 3 lieux par cycle ; les résultats matériels alimentent l’enquête sans désigner automatiquement un coupable.'},
 expert:{label:'Expert / Médecin légiste',win:'Interprète correctement les éléments techniques essentiels.',body:'Une analyse complémentaire par cycle. Tu établis des faits techniques, jamais un coupable.'},
@@ -581,7 +581,7 @@ const PROFILE_BADGES=[
  {id:'analyste_parfait',glyph:'◈',label:'Lecture Parfaite',desc:'Analyste : verrouillage final entièrement exact.',ok:p=>hasAchievement(p,'analyste_parfait')},
  {id:'suspect_sous_pression',glyph:'◆',label:'Sous Pression',desc:'Suspect : faire reconnaître exactement une responsabilité réelle importante ou centrale.',ok:p=>hasAchievement(p,'suspect_sous_pression')},
  {id:'avocat_double_defense',glyph:'⚖',label:'Défense Multiple',desc:'Avocat : protéger exactement au moins deux clients dans la même partie.',ok:p=>hasAchievement(p,'avocat_double_defense')},
- {id:'procureur_double_entretien',glyph:'▲',label:'Double Entretien',desc:'Procureur : gagner après deux entretiens acceptés dans un même cycle.',ok:p=>hasAchievement(p,'procureur_double_entretien')},
+ {id:'procureur_double_entretien',glyph:'▲',label:'Double Entretien',desc:'Badge historique de l’ancienne règle d’entretiens ciblés.',hidden:true,ok:p=>hasAchievement(p,'procureur_double_entretien')},
  {id:'juge_confidentiel',glyph:'◇',label:'Secret Maîtrisé',desc:'Juge : gagner en consommant au maximum 2 protections.',ok:p=>hasAchievement(p,'juge_confidentiel')},
  {id:'journaliste_trois_unes',glyph:'✦',label:'Trois Unes',desc:'Journaliste : gagner après avoir publié trois Breaking News.',ok:p=>hasAchievement(p,'journaliste_trois_unes')},
  {id:'inspecteur_trois_pistes',glyph:'▣',label:'Terrain Quadrillé',desc:'Inspecteur : gagner après au moins trois actions de terrain.',ok:p=>hasAchievement(p,'inspecteur_trois_pistes')},
@@ -1291,7 +1291,7 @@ function renderBreakingPanel(){
 }
 async function publishBreaking(choice){try{await rpc('igr_v4_publish_breaking',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Breaking News impossible ou quota atteint.')}}
 function renderOralStatus(){const st=STATE.sync.room.state||{},q=st.oral_queue||[],i=+st.oral_index||0,item=q[i];return item?`<div class="speaker-card">${avatarHtml(item.player_id,item.pseudo,'avatar-small')}<small>${h(publicRoleLabel(item.role))}</small><strong>${h(item.pseudo)}</strong><span>${item.seconds}s · conclusion provisoire</span></div>`:`<p>Conclusions provisoires en cours.</p>`}
-function renderDefenseStatus(role){const st=STATE.sync.room.state||{},q=st.defense_queue||[],i=+st.defense_index||0,item=q[i];if(!item)return`<p>Défenses en cours.</p>`;const active=STATE.playerId===item.id||role==='maitre';return`<div class="speaker-card ${active?'active':''}">${avatarHtml(item.id,item.pseudo,'avatar-small')}<small>DERNIÈRE DÉFENSE</small><strong>${h(item.pseudo)}</strong><span>5 minutes · l’Avocat éventuel partage ce temps.</span></div>`}
+function renderDefenseStatus(role){const st=STATE.sync.room.state||{},q=st.defense_queue||[],i=+st.defense_index||0,item=q[i];if(!item)return`<p>Défenses en cours.</p>`;const active=STATE.playerId===item.id||role==='maitre';return`<div class="speaker-card ${active?'active':''}">${avatarHtml(item.id,item.pseudo,'avatar-small')}<small>DERNIÈRE DÉFENSE</small><strong>${h(item.pseudo)}</strong><span>3 minutes maximum en LONG · l’Avocat officiel partage ce temps.</span></div>`}
 function levelsForm(prefix='lvl'){return STATE.sync.suspects.map(s=>`<div class="level-row"><span>${h(s.pseudo)}</span><select id="${prefix}_${s.id}"><option value="0">0 · aucune responsabilité</option><option value="1">1 · responsabilité secondaire</option><option value="2">2 · responsabilité principale</option></select></div>`).join('')}
 function collectLevels(prefix='lvl'){const o={};STATE.sync.suspects.forEach(s=>o[s.id]=+byId(`${prefix}_${s.id}`).value);return o}
 function renderProvisionalForm(){if(myAction('provisional'))return`<div class="locked-state">Accusations provisoires verrouillées.</div>`;return`<div class="action-section"><h3>Degré provisoire de responsabilité</h3>${levelsForm('prov')}<button class="btn danger block" onclick="setProvisional()">Verrouiller les accusations provisoires</button></div>`}
@@ -1305,7 +1305,7 @@ function renderFinalLockForm(){
 async function lockFinal(){
  const role=STATE.sync.player.public_role;let payload={note:(byId('finalText')?.value||'').trim()};if(role!=='journaliste')payload.levels=collectLevels('final');if(role==='juge')payload.consequence=byId('finalConsequence')?.value||'';
  try{await rpc('igr_v4_lock_final',{p_code:STATE.room,p_player_token:STATE.token,p_payload:payload});await syncNow(true)}catch(e){console.error(e);toast('Choix déjà verrouillé ou phase terminée.')}}
-function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Secondaire / indirecte',2:'Importante',3:'Centrale'})[+level]||'Non renseignée'}
+function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Responsabilité secondaire',2:'Responsabilité principale'})[+level]||'Non renseignée'}
 function revealSummaryWithNames(summary,responsibilities=[]){
  let out=String(summary||'');
  responsibilities.slice(0,26).forEach((x,i)=>{const letter=String.fromCharCode(65+i);out=out.replace(new RegExp(`\\b${letter}\\b`,'g'),x.pseudo||letter)});
