@@ -1,0 +1,71 @@
+/* Inside Grey Room — Release Candidate v68
+   Final presentation/accessibility layer. Loaded last so commercial UI rules
+   remain stable without rewriting scenario/gameplay styles. */
+:root{
+  color-scheme:dark;
+  --igr-tap-target:44px;
+  --igr-focus:#eef1f3;
+  --igr-focus-shadow:0 0 0 3px rgba(238,241,243,.22);
+  --igr-safe-top:max(env(safe-area-inset-top),0px);
+  --igr-safe-right:max(env(safe-area-inset-right),0px);
+  --igr-safe-bottom:max(env(safe-area-inset-bottom),0px);
+  --igr-safe-left:max(env(safe-area-inset-left),0px);
+}
+html,body{min-height:100%;background:#000}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  overscroll-behavior-y:none;
+}
+button,input,select,textarea{font:inherit}
+button,[role="button"],a,input,select,textarea{
+  -webkit-tap-highlight-color:transparent;
+}
+button:focus-visible,[role="button"]:focus-visible,a:focus-visible,
+input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--igr-focus)!important;
+  outline-offset:3px!important;
+  box-shadow:var(--igr-focus-shadow);
+}
+img,video,canvas{max-width:100%}
+#app,.page,.modal,.modal-card,.sheet,.panel{box-sizing:border-box}
+.igr-beta-footer{
+  box-sizing:border-box;
+  width:100%;
+  padding-bottom:calc(18px + var(--igr-safe-bottom))!important;
+}
+.igr-beta-footer>span{display:none!important}
+.igr-beta-footer a{
+  min-height:var(--igr-tap-target);
+  align-items:center;
+}
+@media(pointer:coarse){
+  #app button,
+  #app [role="button"],
+  .modal button,
+  .sheet button,
+  .igr-universal-dock button,
+  .intro-enter{
+    min-height:var(--igr-tap-target);
+  }
+}
+@media(max-width:768px){
+  input,select,textarea{
+    font-size:16px!important;
+  }
+  .modal,.sheet,.panel{
+    max-width:100%;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
