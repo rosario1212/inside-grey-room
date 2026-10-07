@@ -75,6 +75,7 @@ requireMatch('terms.html', /blocage[^<]*signalement/i, 'must disclose blocking/r
 
 // Native/PWA privacy and brand resources.
 requireFile('PrivacyInfo.xcprivacy', 'Apple privacy manifest source present');
+requireFile('release-polish-v68.css', 'commercial RC polish layer present');
 requireFile('assets/icon-master-v14.jpg', '1024x1024 native app icon master present');
 requireFile('assets/icon-512-v14.jpg', '512x512 PWA/store icon present');
 requireFile('assets/icon-192-v14.jpg', '192x192 PWA icon present');
@@ -92,6 +93,8 @@ requireFile('native-store-boundary-v14.js', 'native commerce boundary present');
 requireMatch('scripts/build-mobile.mjs', /legacyStoreExcluded/, 'must explicitly separate private beta unlock tooling from native store bundles');
 requireMatch('scripts/build-mobile.mjs', /native-store-boundary-v14\.js/, 'must load the native commerce boundary');
 for (const page of ['www/index.html', 'www/en.html']) {
+  requireMatch(page, /release-polish-v68\\.css\\?v=v68-rc1/, 'must load the commercial RC polish layer');
+  requireNoMatch(page, /Inside Grey Room\\s*·\\s*B(?:ê|e)ta\\s*12\\.11\\.0/i, 'must not expose the obsolete beta version label');
   requireNoMatch(page, /dlc-invites-v12-45\.(?:js|css)/i, 'native bundle must not reference legacy DLC invite/code unlock UI');
   requireMatch(page, /native-store-boundary-v14\.js/, 'must include native store commerce boundary');
 }
