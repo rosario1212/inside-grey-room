@@ -3,7 +3,9 @@ import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
 const VERSION='v68-rc1';
+const RUNTIME_VERSION='v70-fluidity1';
 const POLISH='release-polish-v68.css';
+const FRESH_ASSETS=['startup-stability-v13-3.css','gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v40.js'];
 
 for(const page of ['index.html','en.html']){
   const file=path.join(target,page);
@@ -21,13 +23,22 @@ for(const page of ['index.html','en.html']){
   html=html.replace(/Inside Grey Room\s*·\s*Bêta\s*12\.11\.0/gi,'Inside Grey Room');
   html=html.replace(/Inside Grey Room\s*·\s*Beta\s*12\.11\.0/gi,'Inside Grey Room');
 
+  for(const asset of FRESH_ASSETS){
+    const escaped=asset.replaceAll('.','\\.');
+    html=html.replace(new RegExp(`${escaped}\\?v=[^"'<> ]+`,'g'),asset+'?v='+RUNTIME_VERSION);
+  }
+
   await writeFile(file,html,'utf8');
 }
 
 try{
   const sw=path.join(target,'service-worker.js');
   let text=await readFile(sw,'utf8');
-  text=text.replace(/const CACHE='[^']+';/,`const CACHE='igr-${VERSION}';`);
+  text=text.replace(/const CACHE='[^']+';/,`const CACHE='igr-${RUNTIME_VERSION}';`);
+  for(const asset of FRESH_ASSETS){
+    const escaped=asset.replaceAll('.','\\.');
+    text=text.replace(new RegExp(`${escaped}\\?v=[^"'<> ]+`,'g'),asset+'?v='+RUNTIME_VERSION);
+  }
   if(!text.includes('/'+POLISH+'?v='+VERSION) && text.includes('const SHELL=[')){
     text=text.replace('const SHELL=[',`const SHELL=[\n  '/${POLISH}?v=${VERSION}',`);
   }
@@ -39,10 +50,10 @@ try{
 try{
   const app=path.join(target,'app-v11.js');
   let text=await readFile(app,'utf8');
-  text=text.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'/service-worker.js?v='+VERSION);
+  text=text.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'/service-worker.js?v='+RUNTIME_VERSION);
   await writeFile(app,text,'utf8');
 }catch(error){
   if(error?.code!=='ENOENT')throw error;
 }
 
-console.log(`Inside Grey Room ${VERSION}: commercial presentation polish applied`);
+console.log(`Inside Grey Room ${VERSION}: commercial polish applied, runtime ${RUNTIME_VERSION}`);
