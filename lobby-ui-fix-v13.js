@@ -212,7 +212,7 @@
    activates the new mode without requiring an installer or an index.html edit. */
 (()=>{
   'use strict';
-  const BUILD='v13.5-heritage-integrated';
+  const BUILD='v70-fluidity1';
   const head=document.head||document.documentElement;
 
   function loadStyle(id,href){
