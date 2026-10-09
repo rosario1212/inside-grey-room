@@ -16,7 +16,8 @@ const files={
   localModeCss:await read('local-mode-theme-v25.css'),
   cell:await read('cell-controls-stability-v23.js'),
   apply:await read('scripts/apply-interface-v14.mjs'),
-  finalize:await read('scripts/finalize-runtime-v36.mjs')
+  finalize:await read('scripts/finalize-runtime-v36.mjs'),
+  releaseCandidateFinalize:await read('scripts/finalize-release-candidate-v68.mjs')
 };
 
 for(const rel of ['navigation-theme-v18.js','navigation-heritage-v19.js','role-tree-polish-v12-29.js','cell-controls-stability-v23.js','scripts/apply-interface-v14.mjs','scripts/finalize-runtime-v36.mjs']){
@@ -123,7 +124,9 @@ try{
   ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the play-mode theme CSS');
   ok(!distIndex.includes('if(!nativeShell&&!mobile&&window.MutationObserver){'),'dist/index.html still leaves gameplay MutationObserver running on mobile');
   ok(distIndex.includes('if(window.MutationObserver){const NativeObserver'),'dist/index.html does not track/disconnect gameplay observer on all clients');
-  ok(distSw.includes("const CACHE='igr-v36-1-parasite-fix';")||distSw.includes("const CACHE='igr-v38-gameplay-ui-state';")||distSw.includes("const CACHE='igr-v39-authoritative-ui';")||distSw.includes("const CACHE='igr-v41-authoritative-ui';")||distSw.includes("const CACHE='igr-v42-investigation-ui';")||distSw.includes("const CACHE='igr-v42-3-mobile-chrome';")||distSw.includes("const CACHE='igr-v43-1-lawyer-reading';")||distSw.includes("const CACHE='igr-v53-gameplay-polish';")||distSw.includes("const CACHE='igr-v55-heritage-audit';")||distSw.includes("const CACHE='igr-v56-objective-dedupe';")||distSw.includes("const CACHE='igr-v57-heritage-audit';")||distSw.includes("const CACHE='igr-v59-role-finale-integrity';")||distSw.includes("const CACHE='igr-v60-mobile-beta';")||distSw.includes("const CACHE='igr-v64-silver-entrance';"),'dist/service-worker.js has stale cache version');
+  const rcRuntimeVersion=files.releaseCandidateFinalize.match(/const RUNTIME_VERSION='([^']+)'/)?.[1];
+  const rcCache=rcRuntimeVersion?`const CACHE='igr-${rcRuntimeVersion}';`:'';
+  ok((rcCache&&distSw.includes(rcCache))||distSw.includes("const CACHE='igr-v36-1-parasite-fix';")||distSw.includes("const CACHE='igr-v38-gameplay-ui-state';")||distSw.includes("const CACHE='igr-v39-authoritative-ui';")||distSw.includes("const CACHE='igr-v41-authoritative-ui';")||distSw.includes("const CACHE='igr-v42-investigation-ui';")||distSw.includes("const CACHE='igr-v42-3-mobile-chrome';")||distSw.includes("const CACHE='igr-v43-1-lawyer-reading';")||distSw.includes("const CACHE='igr-v53-gameplay-polish';")||distSw.includes("const CACHE='igr-v55-heritage-audit';")||distSw.includes("const CACHE='igr-v56-objective-dedupe';")||distSw.includes("const CACHE='igr-v57-heritage-audit';")||distSw.includes("const CACHE='igr-v59-role-finale-integrity';")||distSw.includes("const CACHE='igr-v60-mobile-beta';")||distSw.includes("const CACHE='igr-v64-silver-entrance';"),'dist/service-worker.js has stale cache version');
   if(distSw.includes("const CACHE='igr-v59-role-finale-integrity';"))for(const asset of ['final-audience-v52.js','self-guided-rules-v51.js','judicial-runtime-v44.js','duration-modes-v35.js','duration-modes-v35.css','natural-role-gameplay-v50.js']){
     ok(distIndex.includes(asset+'?v=v59-role-finale-integrity'),'dist/index.html: stale finale asset '+asset);
     ok(distSw.includes('/'+asset+'?v=v59-role-finale-integrity'),'dist/service-worker.js: stale finale asset '+asset);
