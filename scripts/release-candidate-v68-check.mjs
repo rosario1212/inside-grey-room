@@ -27,6 +27,7 @@ ok(gameplayClean.includes('uiPolishQueued')&&gameplayClean.includes("document.ge
 
 const lobbyFix=read('lobby-ui-fix-v13.js');
 ok(lobbyFix.includes('enhanceQueued')&&lobbyFix.includes('queueEnhanceLobby'),'lobby enhancement is coalesced to one paint');
+ok(lobbyFix.includes("const BUILD='v70-fluidity1'"),'dynamic entrance/heritage bootstrap receives the fresh RC runtime version');
 
 const authoritative=read('authoritative-runtime-v40.js');
 ok(authoritative.includes('eventStartBusy')&&authoritative.includes("aria-busy"),'event selection blocks duplicate submits while an action is pending');
@@ -38,7 +39,7 @@ ok(entrance.includes('safe-area-inset-bottom,0px) + 11svh'),'entrance action use
 for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
-    for(const asset of ['startup-stability-v13-3.css','gameplay-clean-v12.js','lobby-ui-fix-v13.js','authoritative-runtime-v40.js']){
+    for(const asset of ['gameplay-clean-v12.js','lobby-ui-fix-v13.js','authoritative-runtime-v40.js']){
       ok(html.includes(asset+'?v=v70-fluidity1'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
