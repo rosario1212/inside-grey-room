@@ -42,4 +42,4 @@ if(await exists(builtPath)){
   requireMatch(built,/long:\{[^}]*finalDebrief:240\b/,'Built runtime must expose LONG final debrief as 240 seconds');
 }
 
-console.log('Duration mode regression check passed: SHORT interrogation=360s, LONG interrogation=480s, LONG final debrief=240s.');
+console.log('Duration mode regression check passed: SHORT interrogation=360s, LONG interrogation=360s, LONG final debrief=240s.');
