@@ -25,7 +25,7 @@ for(const page of ['index.html','en.html']){
 
   for(const asset of FRESH_ASSETS){
     const escaped=asset.replaceAll('.','\\.');
-    html=html.replace(new RegExp(escaped+'\\?v=[^"\\'<> ]+','g'),asset+'?v='+RUNTIME_VERSION);
+    html=html.replace(new RegExp(`${escaped}\\?v=[^"'<> ]+`,'g'),asset+'?v='+RUNTIME_VERSION);
   }
 
   await writeFile(file,html,'utf8');
@@ -37,7 +37,7 @@ try{
   text=text.replace(/const CACHE='[^']+';/,`const CACHE='igr-${RUNTIME_VERSION}';`);
   for(const asset of FRESH_ASSETS){
     const escaped=asset.replaceAll('.','\\.');
-    text=text.replace(new RegExp(escaped+'\\?v=[^"\\'<> ]+','g'),asset+'?v='+RUNTIME_VERSION);
+    text=text.replace(new RegExp(`${escaped}\\?v=[^"'<> ]+`,'g'),asset+'?v='+RUNTIME_VERSION);
   }
   if(!text.includes('/'+POLISH+'?v='+VERSION) && text.includes('const SHELL=[')){
     text=text.replace('const SHELL=[',`const SHELL=[\n  '/${POLISH}?v=${VERSION}',`);
