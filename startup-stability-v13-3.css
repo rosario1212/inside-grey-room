@@ -1,4 +1,4 @@
-/* v64 — neutral silver typography and translucent illuminated entrance. */
+/* v70 — neutral silver entrance with final vertical alignment. */
 #introGate.intro-gate{
   background:#000!important;
 }
@@ -25,7 +25,7 @@
   background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 25%,transparent 74%,rgba(0,0,0,.7) 100%);
 }
 #introGate #introEnterBtn{
-  bottom:calc(env(safe-area-inset-bottom,0px) + 13svh)!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 12svh)!important;
   width:min(84vw,360px)!important;min-height:80px!important;
   padding:16px 24px!important;gap:6px;border-radius:40px;border:1px solid #afb2ae!important;background:linear-gradient(180deg,rgba(30,30,29,.5),rgba(8,8,8,.65))!important;color:#ebebe7!important;box-shadow:0 0 18px rgba(225,225,210,.12),inset 0 1px 12px rgba(230,230,220,.06);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
 }
@@ -34,7 +34,7 @@
 #introGate.opening .intro-title,#introGate.boot-waiting .intro-title{opacity:0}
 @media(max-height:700px){
   #introGate .intro-title{top:calc(env(safe-area-inset-top,0px) + 3svh);gap:5px;font-size:18px}
-  #introGate #introEnterBtn{bottom:calc(env(safe-area-inset-bottom,0px) + 12svh)!important;min-height:72px!important}
+  #introGate #introEnterBtn{bottom:calc(env(safe-area-inset-bottom,0px) + 11svh)!important;min-height:72px!important}
 }
 @media(orientation:landscape) and (max-height:500px){
   #introGate .intro-title{top:calc(env(safe-area-inset-top,0px) + 2svh);font-size:14px;gap:2px}
