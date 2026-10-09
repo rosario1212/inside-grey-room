@@ -12,9 +12,11 @@
   let heritageCodeLoading=null;
 
   const fr=()=>window.IGR_LOCALE!=='en';
+  const nativeBuild=()=>window.IGR_NATIVE_STORE_BUILD===true||location.hostname==='insidegreyroom.local'||location.protocol==='capacitor:';
+  const heritagePrice=()=>window.IGR_STORE_COMMERCE?.displayPrice?.('heritage')||window.IGR_STORE_CATALOG?.product?.('heritage')?.fallbackPrice||'CHF 15.–';
   const copy=()=>fr()?{
     title:'Héritage',
-    subtitle:'Accès payant · campagnes persistantes',
+    subtitle:'Licence hôte · 15 CHF · campagnes persistantes',
     premium:'PREMIUM',
     checking:'VÉRIFICATION…',
     locked:'ACCÈS LIMITÉ',
@@ -23,8 +25,8 @@
     modalKicker:'MODE PREMIUM',
     modalTitle:'HÉRITAGE est en accès limité',
     modalBody:'Ce mode premium contient des campagnes persistantes dont les décisions et les conséquences se transmettent d’un dossier au suivant.',
-    modalOwned:'Ce profil possède HÉRITAGE.',
-    modalLocked:'Ce profil ne possède pas encore HÉRITAGE. Entre un code d’accès si tu en as reçu un, ou revérifie un achat déjà attribué à ce profil.',
+    modalOwned:'Licence hôte HÉRITAGE active. Les invités rejoignent gratuitement les cellules créées avec cette licence.',
+    modalLocked:'Ce profil ne possède pas encore la licence hôte HÉRITAGE.',
     details:'3 campagnes · 15 dossiers · progression persistante',
     close:'Fermer',
     profile:'Voir mon profil',
@@ -33,7 +35,7 @@
     codeUnavailable:'Le module de code d’accès n’a pas pu être chargé. Recharge la page puis réessaie.'
   }:{
     title:'Heritage',
-    subtitle:'Paid access · persistent campaigns',
+    subtitle:'Host licence · CHF 15 · persistent campaigns',
     premium:'PREMIUM',
     checking:'CHECKING…',
     locked:'LIMITED ACCESS',
@@ -42,8 +44,8 @@
     modalKicker:'PREMIUM MODE',
     modalTitle:'HERITAGE has limited access',
     modalBody:'This premium mode contains persistent campaigns where decisions and consequences carry from one case to the next.',
-    modalOwned:'This profile owns HERITAGE.',
-    modalLocked:'This profile does not own HERITAGE yet. Enter an access code if you received one, or check again for a purchase already assigned to this profile.',
+    modalOwned:'HERITAGE host licence active. Guests can join rooms created with this licence for free.',
+    modalLocked:'This profile does not own the HERITAGE host licence yet.',
     details:'3 campaigns · 15 cases · persistent progress',
     close:'Close',
     profile:'View my profile',
@@ -154,7 +156,27 @@
     }).finally(()=>{heritageCodeLoading=null});
     return heritageCodeLoading;
   }
+  async function purchaseHeritage(){
+    const store=window.IGR_STORE_COMMERCE;
+    if(!store?.isConfigured?.()){
+      try{if(typeof toast==='function')toast(fr()?'Les achats Store ne sont pas encore configurés sur cette version.':'Store purchases are not configured in this build yet.')}catch{}
+      return;
+    }
+    try{
+      await store.purchase('heritage');
+      accessCache=null;accessAt=0;
+      const fresh=await access(true);
+      closeModal();
+      await syncCard(true);
+      if(fresh.active)openHeritage();else showModal(fresh);
+    }catch(error){
+      console.error('[Heritage Premium] purchase failed',error);
+      try{if(typeof toast==='function'&&!/cancel/i.test(String(error?.message||'')))toast(fr()?'Achat non finalisé.':'Purchase not completed.')}catch{}
+    }
+  }
+
   async function openCodeAccess(){
+    if(nativeBuild())return purchaseHeritage();
     const t=copy();
     closeModal();
     try{
@@ -179,10 +201,12 @@
       <p>${t.modalBody}</p>
       <div class="heritage-premium-featureline">${t.details}</div>
       <div class="heritage-premium-accessbox ${state.active?'is-owned':'is-locked'}">
-        <span>${t.premium}</span><b>${state.active?t.modalOwned:t.modalLocked}</b>
+        <span>${t.premium}</span><b>${state.active?t.modalOwned:(nativeBuild()?`${t.modalLocked} · ${heritagePrice()} · paiement unique.`:t.modalLocked)}</b>
       </div>
       <div class="modal-actions heritage-premium-modal-actions">
-        ${!state.active?`<button class="btn primary" type="button" data-action="heritage-code">${t.code}</button><button class="btn ghost" type="button" data-action="retry">${t.retry}</button>`:''}
+        ${!state.active?(nativeBuild()
+          ?`<button class="btn primary" type="button" data-action="heritage-purchase">${fr()?'Acheter':'Buy'} · ${heritagePrice()}</button><button class="btn ghost" type="button" data-action="retry">${t.retry}</button>`
+          :`<button class="btn primary" type="button" data-action="heritage-code">${t.code}</button><button class="btn ghost" type="button" data-action="retry">${t.retry}</button>`):''}
         <button class="btn ${state.active?'primary':'ghost'}" type="button" data-action="close">${t.close}</button>
       </div>
     </div>`;
@@ -193,13 +217,16 @@
     modal.querySelector('[data-action="heritage-code"]')?.addEventListener('click',event=>{
       event.preventDefault();event.stopPropagation();void openCodeAccess();
     });
+    modal.querySelector('[data-action="heritage-purchase"]')?.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();void purchaseHeritage();
+    });
     modal.querySelector('[data-action="retry"]')?.addEventListener('click',async()=>{
       const btn=modal.querySelector('[data-action="retry"]');if(btn)btn.disabled=true;
       const fresh=await access(true);closeModal();await syncCard(true);
       if(fresh.active)openHeritage();else showModal(fresh);
     });
     modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
-    modal.querySelector(state.active?'[data-action="close"]':'[data-action="heritage-code"]')?.focus({preventScroll:true});
+    modal.querySelector(state.active?'[data-action="close"]':(nativeBuild()?'[data-action="heritage-purchase"]':'[data-action="heritage-code"]'))?.focus({preventScroll:true});
   }
   function openHeritage(){
     if(window.IGR_HERITAGE?.open){window.IGR_HERITAGE.open();return true}
@@ -222,6 +249,8 @@
     wrapHome();
     setTimeout(()=>syncCard(false),0);
     window.addEventListener('pageshow',()=>{accessCache=null;accessAt=0;syncCard(true)},{passive:true});
+    window.addEventListener('igr:native-store-ready',()=>{accessCache=null;accessAt=0;syncCard(true)});
+    window.addEventListener('igr:store-entitlement-changed',()=>{accessCache=null;accessAt=0;syncCard(true)});
     window.addEventListener('resize',()=>{const card=document.querySelector('.heritage-premium-home-action');if(card)equalize(card)},{passive:true});
   }
 

@@ -1,5 +1,26 @@
 La livraison actuelle est une bêta de test 12.11.0, sans paiements natifs activés. Ce document commercial ne constitue pas une autorisation de sortie publique. Voir `MOBILE_BETA_RELEASE_V60.md`.
 
+
+## Canonical launch monetization — v69
+
+Inside Grey Room itself is free to install and free to join as a guest. Premium content uses **permanent host licences**: only the person creating the premium room needs to own the product. Other players join that host's room without buying the DLC and do not receive a permanent entitlement.
+
+| Product | Swiss launch price | Product type | Commercial entitlement |
+| --- | ---: | --- | --- |
+| OMERTÀ | CHF 3.– | Non-consumable | Host licence |
+| TERREUR | CHF 2.– | Non-consumable | Host licence |
+| CARTEL | CHF 2.– | Non-consumable | Host licence |
+| LE RÉGIME | CHF 2.– | Non-consumable | Host licence |
+| HÉRITAGE | CHF 15.– | Non-consumable | Host licence |
+
+Canonical product identifiers currently used by the app contract:
+
+- iOS: `com.insidegreyroom.game.omerta`, `com.insidegreyroom.game.terror`, `com.insidegreyroom.game.cartel`, `com.insidegreyroom.game.regime`, `com.insidegreyroom.game.heritage`
+- Android: `igr_dlc_omerta`, `igr_dlc_terror`, `igr_dlc_cartel`, `igr_dlc_regime`, `igr_mode_heritage`
+
+StoreKit / Play Billing must remain the source of truth for the displayed localized price in production. The CHF strings in the web layer are Swiss-launch fallbacks, not a replacement for store product metadata.
+
+
 # Inside Grey Room — Commercial release runbook
 
 Last reviewed: 1 October 2026
@@ -157,7 +178,7 @@ Before public release, the public legal/store surfaces must identify the actual 
 - production domain to use for Privacy, Support, Terms and Account Deletion;
 - countries/regions of distribution;
 - free base app + paid DLC versus another launch model;
-- final DLC catalogue and prices.
+- final DLC catalogue and prices: locked by `store-catalog-v69.js` and the v69 monetization gate.
 
 If distribution includes jurisdictions with additional consumer/privacy requirements, have the final legal text reviewed for those markets before a paid commercial launch.
 

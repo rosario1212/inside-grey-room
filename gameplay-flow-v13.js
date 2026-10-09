@@ -48,7 +48,7 @@ window.phaseInstruction=phaseInstruction=function(r,ph,target){
   return r==='enqueteur'?`<p><b>CONVOQUER.</b> Il reste ${left} fenêtre${left>1?'s':''} d’interrogatoire dans ce cycle. Tu choisis qui entre. L’Analyste gère le rythme s’il est présent.</p>`:`<p>L’Enquêteur choisit la prochaine convocation. La Salle d’attente reste libre pendant ce temps.</p>`;
  }
  if(ph==='interrogation'){
-  if(r==='enqueteur')return `<p>Conduis l’interrogatoire. <b>08:00 signifie 08:00.</b> Aucun arrêt anticipé.</p>`;
+  if(r==='enqueteur')return `<p>Conduis l’interrogatoire. <b>06:00 signifie 06:00.</b> Aucun arrêt anticipé.</p>`;
   if(r==='analyste')return `<p>Gère le temps. Observe les contradictions. L’Enquêteur reste concentré sur la personne en face.</p>`;
   if(target?.id===window.STATE?.playerId)return `<p>Tu es dans la Grey Room. Sauve ta peau. Tu peux mentir, minimiser ou accuser. Tu n’inventes aucune preuve.</p>`;
   if(r==='expert')return `<p>Si tu as été admis comme observateur, reste silencieux. Tu n’interviens que lorsqu’une expertise t’est formellement demandée.</p>`;
@@ -69,7 +69,7 @@ window.renderInterrogationSelect=renderInterrogationSelect=function(){
  if(!core())return base.renderInterrogationSelect?base.renderInterrogationSelect():'';
  const d=STATE.sync,st=d.room.state||{},heard=st.heard||[],limit=+st.interrogation_limit||0,count=+st.interrogation_count||0,left=Math.max(0,limit-count);
  const remaining=d.suspects.filter(s=>!heard.includes(s.id));
- return `<div class="action-section"><h3>CONVOQUER</h3><p class="choice-helper">${left} fenêtre${left>1?'s':''} restante${left>1?'s':''}. L’ordre est ton choix. La responsabilité réelle n’est jamais déduite de cet écran.</p>${left&&remaining.length?remaining.map(s=>`<button class="choice-row" onclick="startInterrogation('${s.id}')"><span>${esc(s.pseudo)}</span><b>Convoquer · 8 min</b></button>`).join(''):`<div class="locked-state">Aucune autre convocation dans ce cycle.</div>`}</div>`;
+ return `<div class="action-section"><h3>CONVOQUER</h3><p class="choice-helper">${left} fenêtre${left>1?'s':''} restante${left>1?'s':''}. L’ordre est ton choix. La responsabilité réelle n’est jamais déduite de cet écran.</p>${left&&remaining.length?remaining.map(s=>`<button class="choice-row" onclick="startInterrogation('${s.id}')"><span>${esc(s.pseudo)}</span><b>Convoquer · 6 min</b></button>`).join(''):`<div class="locked-state">Aucune autre convocation dans ce cycle.</div>`}</div>`;
 };
 
 window.renderDebriefForm=renderDebriefForm=function(){
@@ -86,9 +86,9 @@ function eventOption(key){return (room()?.state?.event_options||[]).find(x=>x.ke
 function optionButton(o){return `<button class="btn v13-event-btn" onclick="igr13StartEvent('${esc(o.key)}')"><b>${esc(o.label||CFG.eventLabels[o.key]||o.key)}</b><small>${esc(o.hint||'Événement annexe')}</small></button>`}
 function suspectOptions(exclude){return (STATE.sync?.suspects||[]).filter(x=>x.id!==exclude).map(x=>`<option value="${esc(x.id)}">${esc(x.pseudo)}</option>`).join('')}
 function renderConfrontationPicker(o){const ss=STATE.sync?.suspects||[];if(ss.length<2)return'';return `<div class="v13-target-picker"><b>${esc(o.label||'CONFRONTATION')}</b><select id="v13ConfrontA">${suspectOptions()}</select><select id="v13ConfrontB">${suspectOptions(ss[0]?.id)}</select><button class="btn primary" onclick="igr13StartConfrontation()">Convoquer les deux joueurs · 3 min</button></div>`}
-function renderInterrogationEvent(o){return `<div class="v13-target-picker"><b>${esc(o.label||'INTERROGATOIRE')}</b><select id="v13EventInterTarget">${suspectOptions()}</select><button class="btn primary" onclick="igr13StartEventInterrogation()">Convoquer · 8 min</button></div>`}
+function renderInterrogationEvent(o){return `<div class="v13-target-picker"><b>${esc(o.label||'INTERROGATOIRE')}</b><select id="v13EventInterTarget">${suspectOptions()}</select><button class="btn primary" onclick="igr13StartEventInterrogation()">Convoquer · 6 min</button></div>`}
 function assemblyEligible(){return (STATE.sync?.players||[]).filter(p=>['analyste','procureur','juge','inspecteur','expert','journaliste'].includes(p.public_role))}
-function renderAssembly(o){if(+room()?.cycle<3)return optionButton(o);const people=assemblyEligible();return `<div class="v13-target-picker"><b>ASSEMBLÉE FINALE</b><p class="choice-helper">Cycle 3 : l’Enquêteur peut restreindre l’accès. L’Analyste reste requis s’il existe.</p><div class="v13-assembly-list">${people.map(p=>`<label class="v13-assembly-person"><input type="checkbox" data-v13-assembly value="${esc(p.id)}" ${p.public_role==='analyste'?'checked disabled':''}><span>${esc(p.pseudo)} · ${esc(p.public_role)}</span></label>`).join('')}</div><button class="btn primary" onclick="igr13StartAssembly()">Ouvrir l’Assemblée · 3 min</button></div>`}
+function renderAssembly(o){if(+room()?.cycle<3)return optionButton(o);const people=assemblyEligible();return `<div class="v13-target-picker"><b>ASSEMBLÉE FINALE</b><p class="choice-helper">Cycle 3 : l’Enquêteur peut restreindre l’accès. L’Analyste reste requis s’il existe.</p><div class="v13-assembly-list">${people.map(p=>`<label class="v13-assembly-person"><input type="checkbox" data-v13-assembly value="${esc(p.id)}" ${p.public_role==='analyste'?'checked disabled':''}><span>${esc(p.pseudo)} · ${esc(p.public_role)}</span></label>`).join('')}</div><button class="btn primary" onclick="igr13StartAssembly()">Ouvrir l’Assemblée</button></div>`}
 function renderEventSelect(){
  const opts=room()?.state?.event_options||[];
  if(!opts.length)return `<div class="locked-state">Aucun événement compatible. Le serveur doit recalculer les options.</div>`;

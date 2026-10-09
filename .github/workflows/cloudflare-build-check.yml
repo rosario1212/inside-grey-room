@@ -40,6 +40,7 @@ on:
       - 'rules-v12.js'
       - 'locale-settings-v12.js'
       - 'ui-polish-v12.js'
+      - 'store-catalog-v69.js'
       - 'locale-runtime-v12-23.js'
       - 'omerta-v12.js'
       - 'omerta-polish-v12.js'

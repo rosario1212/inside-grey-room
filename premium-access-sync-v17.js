@@ -14,6 +14,11 @@
     omerta:{label:'OMERTÀ'},terror:{label:'TERREUR'},cartel:{label:'CARTEL'},regime:{label:'LE RÉGIME'},heritage:{label:'HÉRITAGE'}
   };
   const state={status:null,loading:null,lastFetch:0,observer:null,applying:false};
+  const nativeBuild=()=>window.IGR_NATIVE_STORE_BUILD===true||location.hostname==='insidegreyroom.local'||location.protocol==='capacitor:';
+  const catalogue=()=>window.IGR_STORE_CATALOG||null;
+  const product=key=>catalogue()?.product?.(key)||null;
+  const priceFor=key=>window.IGR_STORE_COMMERCE?.displayPrice?.(key)||product(key)?.fallbackPrice||'';
+  const hostOffer=key=>`Licence hôte · ${priceFor(key)||'prix Store'} · les invités rejoignent gratuitement`;
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const store=()=>{try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}};
   function identity(){try{return JSON.parse(store().getItem(IDENTITY_KEY)||'null')}catch{return null}}
@@ -27,9 +32,8 @@
   }
   function label(entry){
     if(!entry?.active)return 'NON DÉTENU';
-    if(entry.level==='owner')return 'PROPRIÉTAIRE';
-    if(entry.level==='tester')return 'TESTEUR';
-    return 'DÉTENU';
+    if(entry.level==='tester')return 'LICENCE TEST HÔTE';
+    return 'LICENCE HÔTE';
   }
   function accessPill(entry){return `<span class="igr-premium-access-pill">${esc(label(entry))}</span>`}
   function playerLabel(sc){try{return typeof playerCountLabel==='function'?playerCountLabel(sc):`${sc?.min||'—'}–${sc?.max||'—'} joueurs`}catch{return `${sc?.min||'—'}–${sc?.max||'—'} joueurs`}}
@@ -65,20 +69,40 @@
     const meta=META[key];
     return `<article id="scenario-${esc(sc.id)}" class="scenario scenario--art scenario--compact ${key}-scenario" data-igr-scenario-id="${esc(sc.id)}" role="button" tabindex="0" onclick="selectScenario('${esc(sc.id)}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${esc(artFor(sc.id))}" alt="${esc(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${esc(meta.label)} · Dossier ${esc(sc.id)}</div><h3>${esc(sc.title)}</h3><p>${esc(sc.short||'')}</p><div class="tag-row"><span class="tag">${esc(playerLabel(sc))}</span><span class="tag ${key}-tag">${esc(meta.tag)}</span></div></div></article>`;
   }
+  async function purchaseHostLicence(key){
+    const store=window.IGR_STORE_COMMERCE;
+    if(!store?.isConfigured?.()){
+      try{if(typeof toast==='function')toast('Les achats Store ne sont pas encore configurés sur cette version.')}catch{}
+      return;
+    }
+    try{
+      await store.purchase(key);
+      await refresh(true);
+    }catch(error){
+      console.error('[premium sync] purchase',key,error);
+      try{if(typeof toast==='function'&&!/cancel/i.test(String(error?.message||'')))toast('Achat non finalisé.')}catch{}
+    }
+  }
+  window.igrPurchaseHostLicence=purchaseHostLicence;
+
   function accessButton(key,entry){
+    if(nativeBuild()){
+      if(entry?.active)return '';
+      return `<button class="btn primary small igr-premium-purchase" type="button" onclick="igrPurchaseHostLicence('${key}')">Acheter · ${esc(priceFor(key)||'Store')}</button>`;
+    }
     if(key==='omerta'){
       if(typeof window.igrOmertaOpenAccess!=='function')return'';
-      return `<button class="btn ghost small igr-premium-manage" type="button" onclick="igrOmertaOpenAccess()">${entry?.active&&entry.level==='owner'?'Gérer les accès':'Déverrouiller'}</button>`;
+      return `<button class="btn ghost small igr-premium-manage" type="button" onclick="igrOmertaOpenAccess()">${entry?.active?'Licence test':'Accès bêta'}</button>`;
     }
     if(typeof window.igrDlcOpenAccess!=='function')return'';
-    return `<button class="btn ghost small igr-premium-manage" type="button" onclick="igrDlcOpenAccess('${key}')">${entry?.active&&entry.level==='owner'?'Gérer les accès':'Déverrouiller'}</button>`;
+    return `<button class="btn ghost small igr-premium-manage" type="button" onclick="igrDlcOpenAccess('${key}')">${entry?.active?'Licence test':'Accès bêta'}</button>`;
   }
   function sectionHtml(key,entry){
     const meta=META[key],scenarios=meta.ids.map(scenarioById).filter(Boolean);
     if(entry?.active){
-      return `<div class="igr-premium-head"><div><span class="igr-premium-eyebrow">${esc(meta.eyebrow)}</span><h2>${esc(meta.label)}</h2><p>${esc(meta.copy)}</p></div>${accessPill(entry)}</div><div class="scenario-list scenario-list-v10-13 ${key}-list">${scenarios.map(sc=>card(sc,key)).join('')}</div><div class="igr-premium-footer"><span>${esc(meta.footer)}</span>${entry.level==='owner'?accessButton(key,entry):''}</div>`;
+      return `<div class="igr-premium-head"><div><span class="igr-premium-eyebrow">${esc(meta.eyebrow)}</span><h2>${esc(meta.label)}</h2><p>${esc(meta.copy)}</p><small class="igr-host-offer">${esc(hostOffer(key))}</small></div>${accessPill(entry)}</div><div class="scenario-list scenario-list-v10-13 ${key}-list">${scenarios.map(sc=>card(sc,key)).join('')}</div><div class="igr-premium-footer"><span>${esc(meta.footer)} · licence hôte</span>${entry.level==='owner'?accessButton(key,entry):''}</div>`;
     }
-    return `<div class="igr-premium-locked"><div><span class="igr-premium-eyebrow">${esc(meta.eyebrow)}</span><h2>${esc(meta.label)}</h2><p>${esc(meta.copy)}</p></div>${accessButton(key,entry)}</div>`;
+    return `<div class="igr-premium-locked"><div><span class="igr-premium-eyebrow">${esc(meta.eyebrow)}</span><h2>${esc(meta.label)}</h2><p>${esc(meta.copy)}</p><small class="igr-host-offer">${esc(hostOffer(key))}</small></div>${accessButton(key,entry)}</div>`;
   }
   function patchSection(key,status){
     const root=document.querySelector('.page-create-v10-13');if(!root)return;
@@ -114,7 +138,7 @@
     const fingerprint=Object.keys(PROFILE_META).map(k=>`${k}:${status?.[k]?.active?1:0}:${status?.[k]?.level||'none'}`).join('|');
     if(box.dataset.igrV17===fingerprint)return;
     box.dataset.igrV17=fingerprint;
-    box.innerHTML=`<div class="igr-profile-dlc-head"><div><small>CONTENUS PREMIUM</small><h2>Contenus du joueur</h2></div><span>Compte lié</span></div><div class="igr-profile-dlc-grid">${profileCards(status)}</div>`;
+    box.innerHTML=`<div class="igr-profile-dlc-head"><div><small>CONTENUS PREMIUM</small><h2>Licences d’hôte</h2></div><span>Compte lié</span></div><div class="igr-profile-dlc-grid">${profileCards(status)}</div><small class="igr-profile-dlc-note">Une licence permet de créer la partie. Les invités rejoignent gratuitement la cellule.</small>`;
   }
   function cleanLegacyFloatingUi(){
     document.getElementById('igrFilterFab')?.remove();
@@ -148,6 +172,8 @@
     }
     window.addEventListener('pageshow',()=>schedule(true),{passive:true});
     window.addEventListener('focus',()=>schedule(true),{passive:true});
+    window.addEventListener('igr:native-store-ready',()=>schedule(true));
+    window.addEventListener('igr:store-entitlement-changed',()=>schedule(true));
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(true)},{passive:true});
   }
   window.IGR_PREMIUM_SYNC=Object.freeze({version:VERSION,refresh:()=>refresh(true),status:()=>state.status});

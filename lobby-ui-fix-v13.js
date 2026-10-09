@@ -9,7 +9,7 @@
 
   const OMERTA_IDS=new Set(['021','022','023','024','025']);
   const BASE_IDS=new Set(Array.from({length:20},(_,i)=>String(i+1).padStart(3,'0')));
-  let enhancing=false;
+  let enhancing=false,enhanceQueued=false;
 
   const currentScenarioId=()=>String(
     STATE?.sync?.room?.scenario_id ||
@@ -169,20 +169,26 @@
     }
   }
 
+  function queueEnhanceLobby(){
+    if(enhanceQueued)return;
+    enhanceQueued=true;
+    const run=()=>{enhanceQueued=false;enhanceLobby()};
+    if(typeof requestAnimationFrame==='function')requestAnimationFrame(run);else queueMicrotask(run);
+  }
+
   try{
     const previous=renderLobby;
     if(typeof previous==='function'){
       renderLobby=function(){
         const out=previous.apply(this,arguments);
-        queueMicrotask(enhanceLobby);
-        requestAnimationFrame(enhanceLobby);
+        queueEnhanceLobby();
         return out;
       };
     }
   }catch(err){console.warn('lobby back/settings hook',err)}
 
   const observer=new MutationObserver(mutations=>{
-    if(mutations.some(m=>m.addedNodes?.length || m.removedNodes?.length))queueMicrotask(enhanceLobby);
+    if(mutations.some(m=>m.addedNodes?.length || m.removedNodes?.length))queueEnhanceLobby();
   });
   observer.observe(document.documentElement,{childList:true,subtree:true});
 
@@ -196,9 +202,9 @@
   };
   if(document.body)observeBodyTheme();
   else document.addEventListener('DOMContentLoaded',observeBodyTheme,{once:true});
-  window.addEventListener('pageshow',enhanceLobby,{passive:true});
-  document.addEventListener('DOMContentLoaded',enhanceLobby,{once:true});
-  setTimeout(enhanceLobby,0);
+  window.addEventListener('pageshow',queueEnhanceLobby,{passive:true});
+  document.addEventListener('DOMContentLoaded',queueEnhanceLobby,{once:true});
+  setTimeout(queueEnhanceLobby,0);
 })();
 
 /* v13.5 — HÉRITAGE + startup fixes bootstrap.
@@ -206,7 +212,7 @@
    activates the new mode without requiring an installer or an index.html edit. */
 (()=>{
   'use strict';
-  const BUILD='v13.5-heritage-integrated';
+  const BUILD='v70-fluidity1';
   const head=document.head||document.documentElement;
 
   function loadStyle(id,href){

@@ -70,5 +70,5 @@ Utiliser uniquement des captures du build final. Ne pas fabriquer une interface 
 - URL de suppression de compte (Google Play) : domaine de production + `/delete-account.html`
 - Nom légal de l'éditeur : à confirmer par le propriétaire du compte développeur
 - Email public de support/confidentialité : à confirmer
-- Prix : à décider (gratuit ou prix d'achat Store)
+- Prix de l’application : gratuit. Achats intégrés non consommables pour l’hôte uniquement : OMERTÀ 3 CHF ; TERREUR 2 CHF ; CARTEL 2 CHF ; LE RÉGIME 2 CHF ; HÉRITAGE 15 CHF. Les invités rejoignent gratuitement les cellules premium créées par un hôte licencié.
 - Pays/régions : à décider

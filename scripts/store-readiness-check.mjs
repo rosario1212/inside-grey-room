@@ -75,6 +75,7 @@ requireMatch('terms.html', /blocage[^<]*signalement/i, 'must disclose blocking/r
 
 // Native/PWA privacy and brand resources.
 requireFile('PrivacyInfo.xcprivacy', 'Apple privacy manifest source present');
+requireFile('release-polish-v68.css', 'commercial RC polish layer present');
 requireFile('assets/icon-master-v14.jpg', '1024x1024 native app icon master present');
 requireFile('assets/icon-512-v14.jpg', '512x512 PWA/store icon present');
 requireFile('assets/icon-192-v14.jpg', '192x192 PWA icon present');
@@ -89,14 +90,29 @@ requireMatch('manifest.webmanifest', /icon-512-v14\.jpg/, 'must expose the v14 5
 // The web/PWA beta can use owner-issued tester codes. A native store build cannot
 // expose them as an alternative way to unlock paid digital content.
 requireFile('native-store-boundary-v14.js', 'native commerce boundary present');
+requireFile('store-catalog-v69.js', 'canonical commercial catalogue present');
+requireFile('scripts/v69-host-monetization-check.mjs', 'host-only monetization gate present');
+requireFile('supabase/migrations/20261007235402_host_only_premium_access_v69.sql', 'host-only premium server migration recorded');
+requireFile('supabase/migrations/20261007235525_unify_host_premium_guest_join_v69.sql', 'unified premium guest join migration recorded');
+requireMatch('store-catalog-v69.js', /model:'host_pays_guests_free'/, 'must keep the host-pays / guests-free business model');
+requireMatch('store-catalog-v69.js', /omerta:\{[\s\S]{0,420}?priceChf:3/, 'must keep OMERTÀ at CHF 3');
+requireMatch('store-catalog-v69.js', /terror:\{[\s\S]{0,420}?priceChf:2/, 'must keep TERREUR at CHF 2');
+requireMatch('store-catalog-v69.js', /cartel:\{[\s\S]{0,420}?priceChf:2/, 'must keep CARTEL at CHF 2');
+requireMatch('store-catalog-v69.js', /regime:\{[\s\S]{0,420}?priceChf:2/, 'must keep LE RÉGIME at CHF 2');
+requireMatch('store-catalog-v69.js', /heritage:\{[\s\S]{0,420}?priceChf:15/, 'must keep HÉRITAGE at CHF 15');
 requireMatch('scripts/build-mobile.mjs', /legacyStoreExcluded/, 'must explicitly separate private beta unlock tooling from native store bundles');
 requireMatch('scripts/build-mobile.mjs', /native-store-boundary-v14\.js/, 'must load the native commerce boundary');
 for (const page of ['www/index.html', 'www/en.html']) {
+  requireMatch(page, /release-polish-v68\.css\?v=v68-rc1/, 'must load the commercial RC polish layer');
+  requireNoMatch(page, /Inside Grey Room\s*·\s*B(?:ê|e)ta\s*12\.11\.0/i, 'must not expose the obsolete beta version label');
   requireNoMatch(page, /dlc-invites-v12-45\.(?:js|css)/i, 'native bundle must not reference legacy DLC invite/code unlock UI');
   requireMatch(page, /native-store-boundary-v14\.js/, 'must include native store commerce boundary');
 }
 requireAbsent('www/dlc-invites-v12-45.js', 'legacy code unlock JavaScript must not ship in the native bundle');
 requireAbsent('www/dlc-invites-v12-45.css', 'legacy code unlock stylesheet must not ship in the native bundle');
+requireAbsent('www/heritage-access-code-v14.js', 'legacy HÉRITAGE access-code module must not ship in the native bundle');
+requireMatch('www/index.html', /store-catalog-v69\.js\?v=v69-host-pays/, 'native bundle must load the canonical commercial catalogue');
+requireMatch('native-store-boundary-v14.js', /host_pays_guests_free/, 'native commerce boundary must enforce the host-pays model');
 
 // Prevent accidental privileged backend credentials from being shipped in client/runtime code.
 const forbidden = [/SUPABASE_SERVICE_ROLE/i, /service_role\s*[:=]/i, /sb_secret_[A-Za-z0-9_-]+/];

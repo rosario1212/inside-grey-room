@@ -2,7 +2,7 @@
    The app stays synchronized in the foreground, while the lobby remains simple and reversible.
 */
 (() => {
-  const REV='v12.14-instant-flow-20260928-1';
+  const REV='v12.14-instant-flow-fluidity-v70';
   const SYNC_MS=300;
   const EVIDENCE_TYPES=new Set(['trame','breaking_news','field','expert','judge']);
   const OPERATION_TYPES=new Set(['room_created','player_joined','roles_distributed','context','phase','cycle','interrogation','video','reveal']);
@@ -31,7 +31,7 @@
   },SYNC_MS);
 
   /* When a visible timer reaches zero, ask the authoritative server to tick immediately.
-     Other clients then receive the new phase on the next 300 ms heartbeat. */
+     Do not force a full DOM rerender while the server still reports the same phase. */
   setInterval(()=>{
     if(document.hidden||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
     const room=STATE.sync?.room;
@@ -41,7 +41,7 @@
     if(left!==0)return;
     const key=[room.code,room.cycle,room.phase,room.phase_ends_at].join('|');
     const now=Date.now();
-    if(key!==phaseKickKey||now-phaseKickAt>700){phaseKickKey=key;phaseKickAt=now;void cleanSync(true)}
+    if(key!==phaseKickKey||now-phaseKickAt>700){phaseKickKey=key;phaseKickAt=now;void cleanSync(false)}
   },100);
 
   window.addEventListener('pageshow',()=>void cleanSync(true),{passive:true});
@@ -119,14 +119,25 @@
       let tools=zone.querySelector('.role-choice-tools-clean');
       if(!tools){tools=document.createElement('div');tools.className='role-choice-tools-clean';grid.after(tools)}
       const current=myPreferredRole();
-      tools.innerHTML=`<button type="button" class="role-choice-quiet" onclick="chooseRandomLobbyRole()">${current?'Changer au hasard':'Choisir au hasard'}</button>${current?'<button type="button" class="role-choice-quiet muted" onclick="igrClearLobbyRole()">Retirer mon choix</button>':''}`;
+      const toolsKey=`${window.IGR_LOCALE||'fr'}|${current||'none'}`;
+      if(tools.dataset.igrRoleTools!==toolsKey){
+        tools.dataset.igrRoleTools=toolsKey;
+        tools.innerHTML=`<button type="button" class="role-choice-quiet" onclick="chooseRandomLobbyRole()">${current?'Changer au hasard':'Choisir au hasard'}</button>${current?'<button type="button" class="role-choice-quiet muted" onclick="igrClearLobbyRole()">Retirer mon choix</button>':''}`;
+      }
     }catch(_){}
   }
 
   /* ---------- remove the old shared discussion-focus experiment ---------- */
   function removeInvestigationFocus(){try{document.querySelectorAll('.investigation-sheet,.investigation-focus-controls,.investigation-focus-current,.investigation-focus-readonly').forEach(el=>el.remove())}catch(_){}}
-  const uiObserver=new MutationObserver(()=>{decorateLobbyRole();removeInvestigationFocus()});
-  uiObserver.observe(document.documentElement,{subtree:true,childList:true});
+  let uiPolishQueued=false;
+  function queueUiPolish(){
+    if(uiPolishQueued)return;
+    uiPolishQueued=true;
+    const run=()=>{uiPolishQueued=false;decorateLobbyRole();removeInvestigationFocus()};
+    if(typeof requestAnimationFrame==='function')requestAnimationFrame(run);else queueMicrotask(run);
+  }
+  const uiObserver=new MutationObserver(queueUiPolish);
+  uiObserver.observe(document.getElementById('app')||document.documentElement,{subtree:true,childList:true});
 
   /* ---------- Fil = investigation evidence only; Partie = operational history ---------- */
   function evidenceEvents(){
