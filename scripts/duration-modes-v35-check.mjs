@@ -4,11 +4,13 @@ import path from 'node:path';
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
 const sourcePath=path.join(root,'duration-modes-v35.js');
+const qaPath=path.join(root,'qa-fixes-v12.js');
 const migrationPath=path.join(root,'supabase','migrations','20261005211500_long_interrogation_six_minutes_canonical.sql');
 const builtPath=path.join(target,'duration-modes-v35.js');
 const exists=async file=>{try{await stat(file);return true}catch{return false}};
 
 const source=await readFile(sourcePath,'utf8');
+const qa=await readFile(qaPath,'utf8');
 const migration=await readFile(migrationPath,'utf8');
 
 const requireMatch=(text,re,message)=>{if(!re.test(text))throw new Error(message)};
