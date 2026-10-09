@@ -522,7 +522,7 @@
   activateVideo = async function() {
     if (STATE.sync?.player?.public_role !== 'enqueteur') return;
     if (!phaseAllowsVideo()) {
-      toast('Le flux peut être activé uniquement pendant les 8 minutes d’interrogatoire.');
+      toast('Le flux peut être activé uniquement pendant les 6 minutes d’interrogatoire.');
       return;
     }
     if (VIDEO.starting) return;
@@ -658,7 +658,7 @@
     }
 
     if (d.room.phase !== 'interrogation') {
-      return `<div class="video-panel"><div class="video-policy"><b>Flux réservé aux interrogatoires</b><span>La caméra et le micro ne peuvent être activés que pendant les interrogatoires de 8 minutes.</span></div><div class="waiting-pulse">Flux inactif jusqu’au prochain interrogatoire.</div></div>`;
+      return `<div class="video-panel"><div class="video-policy"><b>Flux réservé aux interrogatoires</b><span>La caméra et le micro ne peuvent être activés que pendant les interrogatoires de 6 minutes.</span></div><div class="waiting-pulse">Flux inactif jusqu’au prochain interrogatoire.</div></div>`;
     }
 
     const st = videoState();
@@ -667,7 +667,7 @@
 
     if (role === 'enqueteur') {
       return `<div class="video-panel">
-        <div class="video-policy"><b>Flux direct · interrogatoire uniquement</b><span>Caméra + micro. Aucun enregistrement, aucun replay. Tu décides quand l’activer pendant ces 8 minutes.</span></div>
+        <div class="video-policy"><b>Flux direct · interrogatoire uniquement</b><span>Caméra + micro. Aucun enregistrement, aucun replay. Tu décides quand l’activer pendant ces 6 minutes.</span></div>
         <video id="localVideo" autoplay muted playsinline></video>
         <div id="videoConnectionStatus" class="video-connection-status">${active && !cut ? 'Caméra et micro en direct' : cut ? 'Coupure confidentielle en cours…' : 'Flux arrêté'}</div>
         <div class="tag-row">
@@ -710,7 +710,7 @@
     if (communications) {
       const idx = communications.items.findIndex(x => x.includes('flux vidéo'));
       if (idx >= 0) {
-        communications.items[idx] = 'Pendant chaque interrogatoire de 8 minutes uniquement, l’Enquêteur peut activer quand il le souhaite un flux vidéo + audio en direct pour les rôles autorisés présents, sans enregistrement ni replay.';
+        communications.items[idx] = 'Pendant chaque interrogatoire de 6 minutes uniquement, l’Enquêteur peut activer quand il le souhaite un flux vidéo + audio en direct pour les rôles autorisés présents, sans enregistrement ni replay.';
       }
     }
   } catch (_) {}
