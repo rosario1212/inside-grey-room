@@ -104,13 +104,31 @@ function eventPanel(){
   }
   return `<div class="v41-event-panel"><div class="v41-event-head"><strong>${copy('ÉVÉNEMENTS DU CYCLE','CYCLE EVENTS')}</strong><span>${progress()?`${esc(progress())} ${copy('actions utilisées','actions used')} · `:''}${copy('Choisis la prochaine scène.','Choose the next scene.')}</span></div>${buttons.length?`<div class="v41-event-grid">${buttons.join('')}</div>`:''}${special.join('')}</div>`;
 }
+let eventStartBusy=false;
+function setEventStartBusy(busy){
+  const panel=document.querySelector('.v41-event-panel');
+  if(!panel)return;
+  if(busy)panel.setAttribute('aria-busy','true');else panel.removeAttribute('aria-busy');
+  panel.querySelectorAll('button,select,input').forEach(el=>{
+    if(busy){
+      if(el.dataset.igrV41WasDisabled===undefined)el.dataset.igrV41WasDisabled=el.disabled?'1':'0';
+      el.disabled=true;
+    }else if(el.dataset.igrV41WasDisabled!==undefined){
+      el.disabled=el.dataset.igrV41WasDisabled==='1';
+      delete el.dataset.igrV41WasDisabled;
+    }
+  });
+}
 async function startEvent(key,targets=[]){
+  if(eventStartBusy)return;
+  eventStartBusy=true;setEventStartBusy(true);
   const st=S();
   try{
     if(!st?.room||!st?.token||typeof rpc!=='function')throw new Error(copy('Connexion indisponible.','Connection unavailable.'));
     await rpc('igr_v13_start_event',{p_code:st.room,p_player_token:st.token,p_event:key,p_targets:targets});
     if(typeof syncNow==='function')await syncNow(true);
   }catch(e){console.error('[IGR v41] event',e);if(typeof toast==='function')toast(e?.message||copy('Événement impossible.','Unable to start event.'))}
+  finally{eventStartBusy=false;setEventStartBusy(false)}
 }
 window.igrV41StartEvent=key=>startEvent(key,[]);
 window.igrV41StartInterrogation=()=>{const t=document.getElementById('igrV41InterTarget')?.value;if(t)return startEvent('interrogation',[t])};
@@ -158,7 +176,7 @@ addEventListener('pageshow',queueSettings,{passive:true});
 setTimeout(queueSettings,0);setTimeout(queueSettings,400);
 
 const style=document.createElement('style');style.dataset.igrV41=VERSION;style.textContent=`
-.v41-event-panel{display:grid;gap:14px}.v41-event-head,.v41-event-picker{display:grid;gap:8px;padding:16px;border:1px solid rgba(255,255,255,.11);border-radius:18px;background:#0d1217}.v41-event-head span,.v41-event-picker small{color:#9ba5ae}.v41-event-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.v41-event-btn{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:6px;text-align:left!important;min-height:82px}.v41-event-btn small{white-space:normal;color:#9ba5ae}.v41-event-picker select{min-height:48px;border:1px solid #39424b;border-radius:13px;background:#080c10;color:#fff;padding:0 12px}.v41-assembly{display:grid;gap:8px}.v41-assembly label{display:flex;gap:9px;align-items:center}#igrTopSettings{display:inline-flex!important;align-items:center;justify-content:center;min-width:48px}@media(max-width:700px){.v41-event-grid{grid-template-columns:1fr}#igrTopSettings{width:48px;height:48px;padding:0}}
+.v41-event-panel{display:grid;gap:14px;transition:opacity .12s ease}.v41-event-panel[aria-busy="true"]{opacity:.72;pointer-events:none}.v41-event-head,.v41-event-picker{display:grid;gap:8px;padding:16px;border:1px solid rgba(255,255,255,.11);border-radius:18px;background:#0d1217}.v41-event-head span,.v41-event-picker small{color:#9ba5ae}.v41-event-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.v41-event-btn{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:6px;text-align:left!important;min-height:82px}.v41-event-btn small{white-space:normal;color:#9ba5ae}.v41-event-picker select{min-height:48px;border:1px solid #39424b;border-radius:13px;background:#080c10;color:#fff;padding:0 12px}.v41-assembly{display:grid;gap:8px}.v41-assembly label{display:flex;gap:9px;align-items:center}#igrTopSettings{display:inline-flex!important;align-items:center;justify-content:center;min-width:48px}@media(max-width:700px){.v41-event-grid{grid-template-columns:1fr}#igrTopSettings{width:48px;height:48px;padding:0}}
 `;document.head.appendChild(style);
 window.IGR_AUTHORITATIVE_V41=Object.freeze({version:VERSION,eventPanel,ensureSettings,getState:S});
 console.info(`[IGR ${VERSION}] active`);
