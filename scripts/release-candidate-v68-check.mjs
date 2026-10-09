@@ -21,6 +21,10 @@ ok(css.includes('safe-area-inset-bottom'),'RC polish handles bottom safe area');
 ok(css.includes(':focus-visible'),'RC polish exposes keyboard focus');
 ok(css.includes('prefers-reduced-motion'),'RC polish respects reduced motion');
 
+const gameplayFlow=read('gameplay-flow-v13.js');
+ok(!/08:00 signifie 08:00|Convoquer · 8 min/.test(gameplayFlow),'no stale eight-minute interrogation copy remains');
+ok(!/Ouvrir l’Assemblée · 3 min/.test(gameplayFlow),'assembly CTA does not hard-code a duration that conflicts with duration mode');
+
 const gameplayClean=read('gameplay-clean-v12.js');
 ok(/phaseKickKey[\s\S]{0,240}cleanSync\(false\)/.test(gameplayClean),'phase-end sync avoids forced identical rerenders');
 ok(gameplayClean.includes('uiPolishQueued')&&gameplayClean.includes("document.getElementById('app')||document.documentElement"),'gameplay DOM observer is paint-debounced and scoped');
@@ -39,7 +43,7 @@ ok(entrance.includes('safe-area-inset-bottom,0px) + 11svh'),'entrance action use
 for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
-    for(const asset of ['gameplay-clean-v12.js','lobby-ui-fix-v13.js','authoritative-runtime-v40.js']){
+    for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v40.js']){
       ok(html.includes(asset+'?v=v70-fluidity1'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
