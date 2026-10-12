@@ -22,6 +22,7 @@ ok(online.includes("IGR_HERITAGE_CONTEXT_V71?.publish"),'MAÎTRE host carry is n
 ok(online.includes("d.room.campaign_carry"),'MAÎTRE guests do not consume host carry');
 ok(online.includes("roleCard:(chapter,roleId,variantKey,carry)")&&audit.includes("d.room.maitre_variant,d.room.campaign_carry"),'MAÎTRE private-card overlay must consume the host campaign carry');
 ok(online.includes("igr_heritage_online_decide_v71")&&online.includes("igr_heritage_online_advance_v71"),'MAÎTRE v71 RPCs not wired');
+ok(online.includes("Formule un ANGLE avant de passer au Cycle III.")&&online.includes("p_angle:angle"),'MAÎTRE online advance must validate and persist the current Angle first');
 ok(audit.includes('function immediateFocus'),'phase-contextual role guidance missing');
 ok(audit.includes("if(options)$('button',options).forEach"),'MAÎTRE decision buttons must use the collection selector');
 ok(context.includes("igr_heritage_online_context_v57"),'v71 public carry publisher missing server sync');
