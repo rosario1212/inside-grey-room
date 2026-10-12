@@ -20,6 +20,7 @@ ok(maitre.includes("ownerRole=live.chapter===1||live.chapter===4?'juge':live.cha
 ok(maitre.includes("roleCard:(chapter,roleId,variantKey,carry)"),'MAÎTRE shared role-card accessor missing');
 ok(online.includes("IGR_HERITAGE_CONTEXT_V71?.publish"),'MAÎTRE host carry is not published');
 ok(online.includes("d.room.campaign_carry"),'MAÎTRE guests do not consume host carry');
+ok(online.includes("roleCard:(chapter,roleId,variantKey,carry)")&&audit.includes("d.room.maitre_variant,d.room.campaign_carry"),'MAÎTRE private-card overlay must consume the host campaign carry');
 ok(online.includes("igr_heritage_online_decide_v71")&&online.includes("igr_heritage_online_advance_v71"),'MAÎTRE v71 RPCs not wired');
 ok(audit.includes('function immediateFocus'),'phase-contextual role guidance missing');
 ok(audit.includes("if(options)$('button',options).forEach"),'MAÎTRE decision buttons must use the collection selector');
