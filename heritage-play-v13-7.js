@@ -479,7 +479,7 @@ function advanceReveal(){const l=readLive();if(!l)return;const idx=l.revealIndex
 
 function renderPlay(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter],idx=Math.max(0,Math.min(pc.phases.length-1,live.phaseIndex||0)),phase=pc.phases[idx];
-  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live):'';
+  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live,idx,s):'';
   shellPut(`<main class="page hplay hplay-session hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="session-menu">••• <span>Session</span></button><div class="hplay-mode">PHASE ${idx+1}/${pc.phases.length}</div></header>
     <section class="hplay-session-head"><span class="hplay-eyebrow">${esc(PACKS[live.campaignId].title)} · DOSSIER 0${live.chapter}</span><h1>${esc(phase[0])}</h1><p>${esc(phase[1])}</p></section>
@@ -491,11 +491,16 @@ function renderPlay(live){
   </main>`);
 }
 
-function missingRoleIntel(live){
+function missingRoleIntel(live,phaseIndex,carry){
   const selected=new Set(live.players.map(p=>p.roleId));
-  const omitted=ROLES[live.campaignId].filter(r=>!selected.has(r.id));
+  let omitted=ROLES[live.campaignId].filter(r=>!selected.has(r.id));
   if(!omitted.length)return '';
   const secrets=PACKS[live.campaignId].chapters[live.chapter].secrets;
+  if(live.campaignId==='cendres'){
+    const crisis=Math.max(0,Number(carry?.cendres?.crisis?.level||0)),last=PACKS.cendres.chapters[live.chapter].phases.length-1;
+    if(crisis>=3&&phaseIndex<last)return 'CRISE · Les annexes des rôles absents sont retenues en validation. Elles seront libérées avant la synthèse finale.';
+    if(crisis===2&&phaseIndex<last){omitted=omitted.slice(0,1);return omitted.map(r=>`${r.name} (rôle absent) : ${secrets[r.id]?.[0]||''}`).join(' · ')+' · CRISE : les autres annexes restent en validation jusqu’à la synthèse.'}
+  }
   return omitted.map(r=>`${r.name} (rôle absent) : ${secrets[r.id]?.[0]||''}`).join(' · ');
 }
 
@@ -504,7 +509,7 @@ function conditionalIntel(id,n,s){
   if(id==='cendres'){
     const f=s.cendres?.flags||{};
     if(n===4){const good=['s1_correct','s2_correct','s3_correct'].filter(k=>f[k]).length;return good>=2?`Vos recoupements précédents sont solides (${good}/3). Le compte privilégié du service des habilitations peut être utilisé comme ancrage fiable.`:`Votre carte est contaminée : seulement ${good}/3 recoupements antérieurs sont fiables. Exigez deux preuves indépendantes avant toute classification.`}
-    if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne VENN → 04:17 → K-9 est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
+    if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne V-17 → 04:17 → accès internes est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
     return `Le niveau de crise actuel est ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}.`;
   }
   const f=s.kuroi?.flags||{};const choices=Object.keys(f).filter(k=>/^k\d_/.test(k)&&f[k]).length;
@@ -528,13 +533,32 @@ function applyResult(live){
   if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
       const flag=out.flag;if(flag){const payload={flags:{[flag]:true},crisisDelta:Number(out.crisis||0)};api().completeChapter('cendres',live.chapter,payload)}else api().completeChapter('cendres',live.chapter,{crisisDelta:Number(out.crisis||0)});
-      const grade=live.result?.grade||0;
-      const labels=['PISTE COMPROMISE','PISTE PARTIELLE','PISTE VALIDÉE'];
+      const grade=live.result?.grade||0,labels=['PISTE COMPROMISE','PISTE PARTIELLE','PISTE VALIDÉE'];
       api().cendres.upsertNode({id:`cendres-${live.chapter}-${live.decision}`,label:`D0${live.chapter} · ${labels[grade]}`,kind:'dossier',status:grade===2?'cleared':grade===1?'watch':'unknown',chapter:live.chapter,note:live.result?.consequence});
       if(live.chapter>1)api().cendres.link(`cendres-${live.chapter-1}-${findPreviousDecision('cendres',live.chapter-1)}`,`cendres-${live.chapter}-${live.decision}`,'héritage de campagne');
     }else{
-      if(out.flag){api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}})}else api().completeChapter('kuroi',live.chapter,{});
-      if(out.debt)api().kuroi.addDebt({type:'giri',from:out.debt[0],to:out.debt[1],reason:out.debt[2],status:'due',chapter:live.chapter});
+      if(out.flag)api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}});else api().completeChapter('kuroi',live.chapter,{});
+      if(live.chapter===1){
+        api().kuroi.upsertClanMember('kurokawa',{id:'oyabun-kurokawa',name:'OYABUN KUROKAWA',role:'Chef du clan',status:'dead',chapter:1,note:'Assassiné avant l’ouverture de la campagne.'});
+        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun',status:'active',chapter:1,note:'Présent dans la chaîne d’accès au meurtre.'});
+        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur',status:'active',chapter:1,note:'Intermédiaire entre la police et Kurokawa.'});
+        api().kuroi.upsertClanMember('police',{id:'ishida',name:'ISHIDA',role:'Commissaire',status:'active',chapter:1,note:'Responsable institutionnel de l’enquête.'});
+      }
+      if(out.debt)api().kuroi.addDebt({id:`kuroi-debt-${live.chapter}-${live.decision}`,type:'giri',from:out.debt[0],to:out.debt[1],reason:out.debt[2],status:'due',chapter:live.chapter});
+      if(live.chapter===2&&live.decision==='mori_ren'){
+        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun · débiteur de Mori',status:'active',chapter:2,note:'Une ancienne faveur familiale est devenue GIRI.'});
+        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur · créancier',status:'active',chapter:2,note:'A transformé une faveur ancienne en obligation.'});
+      }
+      if(live.chapter===4&&live.decision==='chain'){
+        api().kuroi.updateDebt('kuroi-debt-2-mori_ren',{status:'paid',reason:'La dette Mori → Ren a été utilisée pour imposer le meurtre puis révélée.'});
+        api().kuroi.upsertClanMember('police',{id:'ishida',name:'ISHIDA',role:'Commissaire · donneur d’ordre',status:'detained',chapter:4,note:'La chaîne Ishida → Mori → Ren est établie.'});
+        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur · facilitateur',status:'detained',chapter:4,note:'A transmis l’ordre, ouvert l’accès et couvert les traces.'});
+        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun · exécutant',status:'detained',chapter:4,note:'A exécuté le meurtre sous le poids de sa dette.'});
+      }
+      if(live.chapter===5){
+        const status=live.decision==='public'?'broken':live.decision==='internal'?'paid':'due';
+        for(const id of ['kuroi-debt-2-mori_ren','kuroi-debt-4-chain'])api().kuroi.updateDebt(id,{status});
+      }
       if(out.chron)api().kuroi.addChronicle(out.chron,'public');
       api().kuroi.addChronicle(`Dossier 0${live.chapter} — ${live.result?.title}. ${live.result?.consequence}`,'public');
     }
