@@ -125,7 +125,7 @@ async function decideMaitre(button){
   const s=session();if(!s||s.campaign!=='maitre'||button.disabled)return;
   button.disabled=true;
   try{
-    await rpcx('igr_heritage_online_decide_v55',{p_code:s.code,p_player_token:s.token,p_option_id:button.dataset.h55Decide});
+    await rpcx('igr_heritage_online_decide_v71',{p_code:s.code,p_player_token:s.token,p_option_id:button.dataset.h55Decide});
     window.IGR_HERITAGE_MAITRE_ONLINE?.resume?.();
   }catch(err){
     console.error(err);button.disabled=false;
