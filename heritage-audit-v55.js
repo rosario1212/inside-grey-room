@@ -18,7 +18,7 @@ let syncBusy=false,scheduled=false;
 function roleCard(d){
   const campaign=d?.room?.campaign_id,roleId=d?.player?.role_id,chapter=Number(d?.room?.chapter||1);
   if(!campaign||!roleId)return null;
-  if(campaign==='maitre')return window.IGR_HERITAGE_MAITRE_ONLINE?.roleCard?.(chapter,roleId,d.room.maitre_variant)||null;
+  if(campaign==='maitre')return window.IGR_HERITAGE_MAITRE_ONLINE?.roleCard?.(chapter,roleId,d.room.maitre_variant,d.room.campaign_carry)||null;
   return window.IGR_HERITAGE_PLAY?.roleCard?.(campaign,chapter,roleId)||null;
 }
 function campaignName(id){
@@ -26,11 +26,23 @@ function campaignName(id){
   return window.IGR_HERITAGE?.campaigns?.[id]?.title||String(id||'HÉRITAGE').toUpperCase();
 }
 function cleanup(root){$$('[data-h55-injected]',root).forEach(n=>n.remove())}
+function immediateFocus(d,card){
+  const phase=Math.max(0,Number(d.room?.phase_index||0)),role=String(d.player?.role_id||'');
+  if(d.room?.campaign_id==='maitre'){
+    if(phase===0)return role==='avocat'?'Fais reconstruire les faits sans annoncer encore ta stratégie.':'Expose uniquement ce que ton rôle sait et teste les contradictions.';
+    if(phase===1)return role==='avocat'?'Formule un ANGLE clair : une thèse défendable qui organise les faits sans en inventer.':'Teste l’Angle de l’Avocat : cherche ce qui le confirme, le fragilise ou reste non prouvé.';
+    if(phase===2)return role==='juge'?'Sépare ce qui est établi, probable et seulement supposé avant la conclusion.':role==='avocat'?'Défends l’Angle et indique précisément ce qu’il permet — et ce qu’il ne permet pas — de conclure.':'Confronte la stratégie aux faits avant que le rôle décisionnaire verrouille la conclusion.';
+  }
+  if(phase===0)return 'Écoute le briefing puis situe ton information privée sans la montrer aux autres.';
+  if(phase===1)return 'Partage les faits utiles de ta carte et demande aux autres ce qui peut les confirmer.';
+  if(phase===2)return 'Confronte les versions : cherche une contradiction, un recoupement ou une dette qui change la lecture.';
+  return 'Aide la table à choisir une seule conclusion en distinguant faits, conséquences et zones d’incertitude.';
+}
 function playerStrip(d){
   const card=roleCard(d);if(!card)return '';
   return `<section class="h55-player-strip" data-h55-injected="1">
     <div class="h55-player-id"><span>TON RÔLE</span><strong>${esc(card.name)}</strong><small>${esc(d.player.pseudo||'')}</small></div>
-    <div class="h55-focus"><span>À FAIRE MAINTENANT</span><p>${esc(card.objective||card.public||'Participe au recoupement.')}</p></div>
+    <div class="h55-focus"><span>À FAIRE MAINTENANT</span><p>${esc(immediateFocus(d,card)||card.objective||card.public||'Participe au recoupement.')}</p></div>
     <details class="h55-my-card"><summary>MA CARTE PRIVÉE</summary><div><b>${esc(card.public||'')}</b>${card.secret?`<p><span>INFORMATION</span>${esc(card.secret)}</p>`:''}${card.objective?`<p><span>OBJECTIF</span>${esc(card.objective)}</p>`:''}</div></details>
   </section>`;
 }
@@ -94,23 +106,21 @@ function enhanceMaitreDecision(d){
   if(d.room.campaign_id!=='maitre')return;
   const page=$('.maitre-page.mnet.hplay-decision,.maitre-page.hplay-decision');
   if(!page||!markOnlinePage(page,d))return;
-  const judge=(d.players||[]).find(p=>p.role_id==='juge');
-  const canLock=d.player.role_id==='juge'||(!judge&&d.player.is_host);
+  const chapter=Number(d.room.chapter),ownerRole=chapter===1||chapter===4?'juge':chapter===2?'client':'avocat';
+  const owner=(d.players||[]).find(p=>p.role_id===ownerRole),canLock=d.player.role_id===ownerRole||(!owner&&d.player.is_host);
+  const ownerLabel=ownerRole==='juge'?'JUGE':ownerRole==='client'?'CLIENT':'AVOCAT';
   const head=$('.hplay-decision-head',page);
   if(head){
     head.querySelector('p')?.remove();
-    head.insertAdjacentHTML('beforeend',`<div class="h55-decision-owner" data-h55-injected="1"><b>${canLock?'TU ES LE JUGE':'DÉCISION DU JUGE'}</b><span>${canLock?'Choisis la conclusion qui correspond uniquement à ce qui a été établi pendant l’audience.':judge?`${esc(judge.pseudo)} verrouille la conclusion.`:'Le Juge est absent : l’hôte reprend le verrouillage.'}</span></div>`);
+    head.insertAdjacentHTML('beforeend',`<div class="h55-decision-owner" data-h55-injected="1"><b>${canLock?`TU ES LE ${ownerLabel}`:`DÉCISION DU ${ownerLabel}`}</b><span>${canLock?'Verrouille le choix discuté à la table.':owner?`${esc(owner.pseudo)} verrouille la conclusion.`:'L’hôte reprend le verrouillage faute de rôle décisionnaire.'}</span></div>`);
   }
   const options=$('.hplay-options',page);
-  if(options)$$('button',options).forEach(btn=>{
-    const id=btn.dataset.id||btn.dataset.h55Decide;
-    if(!id)return;
-    btn.removeAttribute('data-mnet');
-    btn.dataset.h55Decide=id;
-    btn.disabled=!canLock;
-    const i=$('i',btn);if(i)i.textContent=canLock?'VERROUILLER →':'EN ATTENTE DU JUGE';
+  if(options)$('button',options).forEach(btn=>{
+    const id=btn.dataset.id||btn.dataset.h55Decide;if(!id)return;
+    btn.removeAttribute('data-mnet');btn.dataset.h55Decide=id;btn.disabled=!canLock;
+    const i=$('i',btn);if(i)i.textContent=canLock?'VERROUILLER →':`EN ATTENTE DU ${ownerLabel}`;
   });
-  const mode=$('.hplay-mode',page);if(mode)mode.textContent='EN LIGNE · JUGEMENT';
+  const mode=$('.hplay-mode',page);if(mode)mode.textContent='EN LIGNE · CONCLUSION';
 }
 function enhanceLobby(d){
   if(d.room.campaign_id!=='maitre')return;
@@ -127,11 +137,11 @@ async function decideMaitre(button){
   const s=session();if(!s||s.campaign!=='maitre'||button.disabled)return;
   button.disabled=true;
   try{
-    await rpcx('igr_heritage_online_decide_v55',{p_code:s.code,p_player_token:s.token,p_option_id:button.dataset.h55Decide});
+    await rpcx('igr_heritage_online_decide_v71',{p_code:s.code,p_player_token:s.token,p_option_id:button.dataset.h55Decide});
     window.IGR_HERITAGE_MAITRE_ONLINE?.resume?.();
   }catch(err){
     console.error(err);button.disabled=false;
-    toastx(/judge/i.test(err?.message||'')?'Seul le Juge peut verrouiller la conclusion.':'Décision impossible.');
+    toastx(/decision owner|judge|client|lawyer|avocat/i.test(err?.message||'')?'Ce rôle ne peut pas verrouiller cette conclusion.':'Décision impossible.');
   }
 }
 async function syncOnline(){
