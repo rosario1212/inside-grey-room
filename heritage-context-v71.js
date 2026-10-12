@@ -4,7 +4,7 @@
 const VERSION='71.0-heritage-carry';
 const readSession=()=>{try{return JSON.parse((typeof STORAGE!=='undefined'?STORAGE:localStorage).getItem('igr_heritage_online_v13_8')||'null')}catch{return null}};
 function snapshot(id){
-  const s=window.IGR_HERITAGE?.get?.(id);if(!s)return null;
+  const s=id==='maitre'?(window.IGR_HERITAGE_MAITRE?.get?.()||window.IGR_HERITAGE?.get?.('maitre')):window.IGR_HERITAGE?.get?.(id);if(!s)return null;
   const out={id,completed:Array.isArray(s.completed)?s.completed:[]};
   if(id==='cendres'){
     out.cendres={flags:s.cendres?.flags||{},crisis:s.cendres?.crisis||{},network:s.cendres?.network||{nodes:[],links:[]}};
