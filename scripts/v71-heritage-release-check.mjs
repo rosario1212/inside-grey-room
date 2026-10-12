@@ -25,6 +25,7 @@ ok(online.includes("igr_heritage_online_decide_v71")&&online.includes("igr_herit
 ok(audit.includes('function immediateFocus'),'phase-contextual role guidance missing');
 ok(audit.includes("if(options)$('button',options).forEach"),'MAÎTRE decision buttons must use the collection selector');
 ok(context.includes("igr_heritage_online_context_v57"),'v71 public carry publisher missing server sync');
+ok(context.includes("IGR_HERITAGE_MAITRE?.get?.()"),'MAÎTRE carry must read from the canonical MAÎTRE engine');
 ok(!context.includes("maitre_variant")&&!context.includes(".canon"),'v71 carry publisher leaks hidden MAÎTRE truth');
 ok(modes.includes("campaignCarry:d.room.campaign_carry||null"),'generic online bridge does not propagate campaign carry');
 ok(migration.includes("when v_room.chapter in (1,4) then 'juge'")&&migration.includes("when v_room.chapter=2 then 'client'")&&migration.includes("when v_room.chapter in (3,5) then 'avocat'"),'server decision authority mapping missing');
