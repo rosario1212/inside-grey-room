@@ -71,7 +71,7 @@ const PACK=Object.freeze({
       cycles:[
         ['CYCLE I · DÉFENSE COMMUNE','Avocat, Client, Associé et Enquêteur reconstituent les faits partagés. L’état de confiance hérité du DEAL est public dès le départ.'],
         ['CYCLE II · DIVERGENCE','Une pièce nouvelle attribue une connaissance différente à chacun. L’Avocat doit séparer responsabilité commune et responsabilité individuelle sans inventer une fausse preuve.'],
-        ['CYCLE III · DEUX VOIX','Le Procureur tente de faire de toute contradiction une preuve de culpabilité commune. Le Juge doit déterminer ce qui peut être attribué à chacun, séparément.']
+        ['CYCLE III · DEUX VOIX','L’accusation confronte les contradictions de la défense commune. Le Juge doit déterminer ce qui peut être attribué à chacun, séparément ; à 5 joueurs, l’Enquêteur porte les objections factuelles faute de Procureur dédié.']
       ],
       outcomes:[
         {id:'separate',title:'RESPONSABILITÉS SÉPARÉES',detail:'La défense obtient que les actes et connaissances du Client et de l’Associé soient appréciés séparément.',reputation:'PRÉCIS',facts:[['individual_responsibility','Responsabilités individuelles distinctes','established']],relations:{associe:'strained'},trace:'La défense commune survit, mais les responsabilités ne peuvent plus être fondues en une seule histoire.'},
@@ -101,7 +101,7 @@ const PACK=Object.freeze({
       cycles:[
         ['CYCLE I · CE QUI RESTE','Relisez les Traces : ce qui est établi, ce qui reste contesté, qui a été protégé, qui a été exposé. Aucune ancienne conclusion ne peut être effacée.'],
         ['CYCLE II · LA LIMITE','L’Avocat choisit ce qu’il peut encore défendre légalement et moralement : contester ce qui n’est pas prouvé, rechercher une coopération encadrée ou refuser une stratégie qui exigerait de tromper la procédure.'],
-        ['CYCLE III · L’HONNEUR','Le Juge rend la dernière décision sur le dossier. L’épilogue, lui, porte sur l’Avocat : ce qu’il a gagné, ce qu’il a protégé et ce que son nom signifie désormais.']
+        ['CYCLE III · L’HONNEUR','Le Juge expose ce que le dossier permet juridiquement de retenir. L’Avocat choisit ensuite l’héritage professionnel qu’il accepte de laisser : ce qu’il a gagné, protégé et ce que son nom signifie désormais.']
       ],
       outcomes:[
         {id:'defender',title:'LE DÉFENSEUR',detail:'L’Avocat continue à exiger une preuve précise pour chaque responsabilité, même quand son Client est moralement difficile à défendre.',reputation:'DÉFENSEUR',facts:[['legacy','Héritage professionnel : défense exigeante et limites claires','established']],trace:'Le nom de l’Avocat reste associé à l’exigence de preuve plutôt qu’à l’innocence supposée de ses clients.'},
