@@ -26,11 +26,23 @@ function campaignName(id){
   return window.IGR_HERITAGE?.campaigns?.[id]?.title||String(id||'HÉRITAGE').toUpperCase();
 }
 function cleanup(root){$$('[data-h55-injected]',root).forEach(n=>n.remove())}
+function immediateFocus(d,card){
+  const phase=Math.max(0,Number(d.room?.phase_index||0)),role=String(d.player?.role_id||'');
+  if(d.room?.campaign_id==='maitre'){
+    if(phase===0)return role==='avocat'?'Fais reconstruire les faits sans annoncer encore ta stratégie.':'Expose uniquement ce que ton rôle sait et teste les contradictions.';
+    if(phase===1)return role==='avocat'?'Formule un ANGLE clair : une thèse défendable qui organise les faits sans en inventer.':'Teste l’Angle de l’Avocat : cherche ce qui le confirme, le fragilise ou reste non prouvé.';
+    if(phase===2)return role==='juge'?'Sépare ce qui est établi, probable et seulement supposé avant la conclusion.':role==='avocat'?'Défends l’Angle et indique précisément ce qu’il permet — et ce qu’il ne permet pas — de conclure.':'Confronte la stratégie aux faits avant que le rôle décisionnaire verrouille la conclusion.';
+  }
+  if(phase===0)return 'Écoute le briefing puis situe ton information privée sans la montrer aux autres.';
+  if(phase===1)return 'Partage les faits utiles de ta carte et demande aux autres ce qui peut les confirmer.';
+  if(phase===2)return 'Confronte les versions : cherche une contradiction, un recoupement ou une dette qui change la lecture.';
+  return 'Aide la table à choisir une seule conclusion en distinguant faits, conséquences et zones d’incertitude.';
+}
 function playerStrip(d){
   const card=roleCard(d);if(!card)return '';
   return `<section class="h55-player-strip" data-h55-injected="1">
     <div class="h55-player-id"><span>TON RÔLE</span><strong>${esc(card.name)}</strong><small>${esc(d.player.pseudo||'')}</small></div>
-    <div class="h55-focus"><span>À FAIRE MAINTENANT</span><p>${esc(card.objective||card.public||'Participe au recoupement.')}</p></div>
+    <div class="h55-focus"><span>À FAIRE MAINTENANT</span><p>${esc(immediateFocus(d,card)||card.objective||card.public||'Participe au recoupement.')}</p></div>
     <details class="h55-my-card"><summary>MA CARTE PRIVÉE</summary><div><b>${esc(card.public||'')}</b>${card.secret?`<p><span>INFORMATION</span>${esc(card.secret)}</p>`:''}${card.objective?`<p><span>OBJECTIF</span>${esc(card.objective)}</p>`:''}</div></details>
   </section>`;
 }
