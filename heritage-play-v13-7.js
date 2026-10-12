@@ -240,7 +240,7 @@ const PACKS={
       3:{
         title:'LES MAINS SALES',
         briefing:'La police demande désormais à la Famille de récupérer un registre avant l’Inspection interne. La coopération devient une opération de nettoyage. Refuser expose le clan ; accepter détruit une partie de la vérité.',
-        question:'Pourquoi la police veut-elle que Kurokawa récupère le registre ?',
+        question:'Que fait Kurokawa du registre ?',
         phases:[
           ['DEMANDE','Identifiez ce que la police ne peut pas faire officiellement.'],
           ['COÛT','Chaque camp estime ce qu’il perd en acceptant ou en refusant.'],
@@ -311,9 +311,9 @@ const PACKS={
           bengoshi:['L’enveloppe contient assez de preuves pour déclencher une enquête indépendante, mais l’Oyabun écrivait aussi : “ne remplacez pas un mensonge par une guerre”.','Forcer le Conseil à penser aux conséquences, pas seulement à la vengeance.']
         },
         options:[
-          {id:'public',title:'VÉRITÉ PUBLIQUE',detail:'Transmettre le dossier complet à une autorité indépendante et assumer les conséquences des deux côtés.',grade:2,consequence:'Fin — LA LUMIÈRE FROIDE : les institutions paient, la Famille se fracture mais la dette cesse d’être secrète.'},
-          {id:'internal',title:'JUSTICE INTERNE',detail:'Ishida tombe, Ren assume, mais le dossier complet ne devient pas public.',grade:1,consequence:'Fin — LE SILENCE NÉGOCIÉ : la paix tient, mais une partie du système survit.'},
-          {id:'scapegoat',title:'BOUC ÉMISSAIRE',detail:'Accuser Arakida et refermer le dossier.',grade:0,consequence:'Fin — LA DETTE CONTINUE : la guerre évitée aujourd’hui devient la prochaine dette.'}
+          {id:'public',title:'VÉRITÉ PUBLIQUE',qualitative:true,detail:'Transmettre le dossier complet à une autorité indépendante et assumer les conséquences des deux côtés.',grade:2,consequence:'Fin — LA LUMIÈRE FROIDE : les institutions paient, la Famille se fracture mais la dette cesse d’être secrète.'},
+          {id:'internal',title:'JUSTICE INTERNE',qualitative:true,detail:'Ishida tombe, Ren assume, mais le dossier complet ne devient pas public.',grade:1,consequence:'Fin — LE SILENCE NÉGOCIÉ : la paix tient, mais une partie du système survit.'},
+          {id:'scapegoat',title:'BOUC ÉMISSAIRE',qualitative:true,detail:'Accuser Arakida et refermer le dossier.',grade:0,consequence:'Fin — LA DETTE CONTINUE : la guerre évitée aujourd’hui devient la prochaine dette.'}
         ],
         reveal:'Il n’existe pas de fin sans coût. KUROI mesure ce que le groupe accepte de rendre public, de sacrifier et de transmettre à ceux qui restent.',
         apply:{public:{flag:'k5_public',chron:'Le dossier Kuroi est transmis à une autorité indépendante.'},internal:{flag:'k5_internal',chron:'Le Conseil impose une justice interne et maintient une partie du secret.'},scapegoat:{flag:'k5_scapegoat',chron:'Arakida devient le bouc émissaire officiel du meurtre.'}}
@@ -456,7 +456,9 @@ function renderSetup(id,n){
 function buildNameFields(count,players=[]){const wrap=$('#hplayNames');if(!wrap)return;wrap.innerHTML=Array.from({length:count},(_,i)=>`<label><span>J${i+1}</span><input maxlength="22" autocomplete="off" inputmode="text" value="${esc(players[i]?.name||'')}" placeholder="Pseudo ${i+1}" required></label>`).join('')}
 
 function startSession(id,n,names){
-  const pack=PACKS[id],pc=pack.chapters[n],rolePool=ROLES[id].slice(0,names.length),roles=shuffle(rolePool);
+  const pack=PACKS[id];if(!pack?.chapters[n]||n>current(id)||names.length<pack.min||names.length>pack.max)return;
+  const ids=id==='kuroi'?(names.length===5?['waka_k','kobun_k','waka_a','commissaire','inspecteur']:names.length===6?['waka_k','kobun_k','waka_a','commissaire','inspecteur','bengoshi']:ROLES[id].map(r=>r.id)):ROLES[id].slice(0,names.length).map(r=>r.id);
+  const roles=shuffle(ids.map(roleId=>roleFor(id,roleId)));
   const practice=completed(id,n);
   const players=names.map((name,i)=>({id:`p${i+1}`,name:txt(name,22)||`Joueur ${i+1}`,roleId:roles[i].id}));
   const live={version:2,campaignId:id,chapter:n,players,revealIndex:0,revealed:[],phaseIndex:0,stage:'reveal',decision:null,result:null,practice,startedAt:new Date().toISOString(),finished:false};
@@ -523,7 +525,7 @@ function renderResult(live){const pc=PACKS[live.campaignId].chapters[live.chapte
 function applyResult(live){
   if(!live||live.finished)return;
   const pc=PACKS[live.campaignId].chapters[live.chapter],out=pc.apply?.[live.decision]||{};
-  if(!live.practice){
+  if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
       const flag=out.flag;if(flag){const payload={flags:{[flag]:true},crisisDelta:Number(out.crisis||0)};api().completeChapter('cendres',live.chapter,payload)}else api().completeChapter('cendres',live.chapter,{crisisDelta:Number(out.crisis||0)});
       const grade=live.result?.grade||0;
