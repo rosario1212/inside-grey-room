@@ -18,7 +18,7 @@ let syncBusy=false,scheduled=false;
 function roleCard(d){
   const campaign=d?.room?.campaign_id,roleId=d?.player?.role_id,chapter=Number(d?.room?.chapter||1);
   if(!campaign||!roleId)return null;
-  if(campaign==='maitre')return window.IGR_HERITAGE_MAITRE_ONLINE?.roleCard?.(chapter,roleId,d.room.maitre_variant)||null;
+  if(campaign==='maitre')return window.IGR_HERITAGE_MAITRE_ONLINE?.roleCard?.(chapter,roleId,d.room.maitre_variant,d.room.campaign_carry)||null;
   return window.IGR_HERITAGE_PLAY?.roleCard?.(campaign,chapter,roleId)||null;
 }
 function campaignName(id){
