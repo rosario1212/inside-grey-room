@@ -15,61 +15,157 @@
   flex:0 0 auto;
 }
 
-/* 001–020: selected role = calm neutral confirmation. Red belongs to OMERTÀ only. */
-body.igr-v13-base-lobby .role-choice-zone,
-body.igr-v13-base-lobby .role-choice-grid,
-body.igr-v13-base-lobby .igr-choice-status{
-  animation:none!important;
-  transform:none!important;
-  filter:none!important;
+/* The rendered room owns its palette immediately. Body classes from a previous
+   dossier cannot recolor role cards, random selection or status badges. */
+#app .lobby-v11[data-igr-lobby-theme]{
+  --igr-lobby-accent:#f2f5f7;
+  --igr-lobby-line:rgba(226,234,240,.18);
+  --igr-lobby-selected-line:rgba(232,238,243,.60);
+  --igr-lobby-card:#0b0f13;
+  --igr-lobby-selected:#171d23;
+  --igr-lobby-chip:#20272e;
 }
-body.igr-v13-base-lobby .role-choice-zone .role-choice-card{
-  border-color:rgba(226,234,240,.14)!important;
-  background:#0b0f13!important;
+#app .lobby-v11[data-igr-lobby-theme="omerta"]{
+  --igr-lobby-accent:#f0a0a4;
+  --igr-lobby-line:rgba(190,57,63,.38);
+  --igr-lobby-selected-line:#d8454b;
+  --igr-lobby-card:#1b1013;
+  --igr-lobby-selected:#321419;
+  --igr-lobby-chip:#452027;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"]{
+  --igr-lobby-accent:#d8dbe0;
+  --igr-lobby-line:rgba(160,164,170,.30);
+  --igr-lobby-selected-line:#a0a4aa;
+  --igr-lobby-card:#101215;
+  --igr-lobby-selected:#24272b;
+  --igr-lobby-chip:#30343a;
+}
+#app .lobby-v11[data-igr-lobby-theme="cartel"]{
+  --igr-lobby-accent:#d0bc80;
+  --igr-lobby-line:rgba(177,151,74,.34);
+  --igr-lobby-selected-line:#b1974a;
+  --igr-lobby-card:#17150e;
+  --igr-lobby-selected:#2b2414;
+  --igr-lobby-chip:#39311d;
+}
+#app .lobby-v11[data-igr-lobby-theme="regime"]{
+  --igr-lobby-accent:#afc6d9;
+  --igr-lobby-line:rgba(104,132,157,.36);
+  --igr-lobby-selected-line:#7896af;
+  --igr-lobby-card:#0f151b;
+  --igr-lobby-selected:#1a2935;
+  --igr-lobby-chip:#253949;
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-zone{
+  min-width:0;
+  border-color:var(--igr-lobby-line)!important;
+  background:var(--igr-lobby-card)!important;
   box-shadow:none!important;
+  overflow-anchor:none;
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-grid{min-width:0}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card,
+#app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:88px;
+  border:1px solid var(--igr-lobby-line)!important;
+  background:var(--igr-lobby-card)!important;
   color:#f4f6f8!important;
-}
-body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected{
-  border-color:rgba(232,238,243,.48)!important;
-  background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.032))!important;
-  box-shadow:inset 3px 0 0 rgba(232,238,243,.30)!important;
-  color:#f7f8fa!important;
+  box-shadow:none!important;
+  opacity:1!important;
   animation:none!important;
   transform:none!important;
   filter:none!important;
-  transition:background-color .12s ease,border-color .12s ease!important;
+  transition:border-color .12s ease,background-color .12s ease!important;
+  touch-action:manipulation;
 }
-body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected *,
-body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected::before,
-body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected::after{
-  animation:none!important;
-  transform:none!important;
-  filter:none!important;
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card.selected{
+  border-color:var(--igr-lobby-selected-line)!important;
+  background:var(--igr-lobby-selected)!important;
+  box-shadow:inset 3px 0 0 var(--igr-lobby-selected-line)!important;
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card b,
+#app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta b{color:#f4f6f8!important}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card>span,
+#app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta>span{
+  min-width:0;
+  flex:1 1 auto;
+  overflow-wrap:anywhere;
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card small,
+#app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta small,
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-help{color:#b7bec6!important}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card em,
+#app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta em{
+  box-sizing:border-box;
+  flex:0 0 auto;
+  min-inline-size:72px;
+  max-inline-size:126px;
+  padding:7px 9px;
+  border:1px solid var(--igr-lobby-line)!important;
+  border-radius:8px;
+  background:var(--igr-lobby-chip)!important;
+  color:#dce2e7!important;
+  font-style:normal;
+  font-size:11px;
+  line-height:1.4;
+  letter-spacing:.045em;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:center;
   text-shadow:none!important;
 }
-body.igr-v13-base-lobby .role-choice-zone .role-choice-card.selected em{
-  color:#f2f5f7!important;
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card.selected em,
+#app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta em{color:var(--igr-lobby-accent)!important}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card.full,
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card:disabled{
+  border-style:dashed!important;
+  cursor:not-allowed;
 }
-body.igr-v13-base-lobby .igr-choice-status{
-  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(8,9,11,.96))!important;
-  border-color:rgba(255,255,255,.14)!important;
-  box-shadow:inset 3px 0 0 rgba(255,255,255,.06)!important;
+#app .lobby-v11[data-igr-lobby-theme] .igr-choice-status{
+  background:var(--igr-lobby-selected)!important;
+  border-color:var(--igr-lobby-line)!important;
+  box-shadow:none!important;
+  min-width:0;
 }
-body.igr-v13-base-lobby .igr-choice-status-kicker,
-body.igr-v13-base-lobby .igr-choice-status-note,
-body.igr-v13-base-lobby .igr-choice-status-empty{
-  color:#9ea6ae!important;
-}
-body.igr-v13-base-lobby .igr-choice-status-title{
-  color:#f4f6f8!important;
-}
-body.igr-v13-base-lobby .igr-choice-status-button{
-  border-color:rgba(255,255,255,.16)!important;
-  background:rgba(255,255,255,.03)!important;
+#app .lobby-v11[data-igr-lobby-theme] .igr-choice-status-copy{min-width:0;overflow-wrap:anywhere}
+#app .lobby-v11[data-igr-lobby-theme] .igr-choice-status-title{color:#f4f6f8!important}
+#app .lobby-v11[data-igr-lobby-theme] .igr-choice-status-kicker{color:var(--igr-lobby-accent)!important}
+#app .lobby-v11[data-igr-lobby-theme] .igr-choice-status-note{color:#b7bec6!important}
+#app .lobby-v11[data-igr-lobby-theme] .igr-choice-status-button{
+  min-height:44px;
+  border-color:var(--igr-lobby-line)!important;
+  background:var(--igr-lobby-chip)!important;
   color:#f4f6f8!important;
   box-shadow:none!important;
-  animation:none!important;
-  transform:none!important;
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card:focus-visible,
+#app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta:focus-visible,
+#app .lobby-v11[data-igr-lobby-theme] .igr-choice-status-button:focus-visible{
+  outline:2px solid var(--igr-lobby-accent)!important;
+  outline-offset:3px!important;
+}
+#app .lobby-head>div:first-child{min-width:0}
+#app .lobby-head h1,#app .lobby-player-name{overflow-wrap:anywhere}
+#app .lobby-v11 .player-ident,#app .lobby-v11 .lobby-player-name{min-width:0}
+#app .lobby-v11 .lobby-role-pending{color:#aeb8c1}
+
+@media(max-width:430px){
+  #app .lobby-v11[data-igr-lobby-theme] .role-choice-zone{padding:12px}
+  #app .lobby-v11[data-igr-lobby-theme] .role-choice-card,
+  #app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:10px;
+    padding:13px;
+  }
+  #app .lobby-v11[data-igr-lobby-theme] .role-choice-card em,
+  #app .lobby-v11[data-igr-lobby-theme] .igr-random-role-cta em{justify-self:start;text-align:left}
+  #app .lobby-v11[data-igr-lobby-theme] .igr-choice-status{flex-wrap:wrap;gap:10px}
+  #app .lobby-v11[data-igr-lobby-theme] .role-choice-zone .section-title{flex-wrap:wrap;gap:6px}
 }
 
 /* A brief neutral locator when returning to the scenario list; no red flash. */
