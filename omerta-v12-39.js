@@ -36,7 +36,10 @@
 
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
   const readSelectedScenarioId = () => String(STATE?.selectedScenario || STATE?.scenarioId || '');
-  const readRoomScenarioId = () => String(STATE?.sync?.room?.scenario_id || '');
+  const readRoomScenarioId = () => String(
+    (STATE?.view === 'lobby' ? document.querySelector('.lobby-v11[data-igr-scenario-id]')?.dataset.igrScenarioId : '') ||
+    STATE?.sync?.room?.scenario_id || ''
+  );
   const readTextScenarioId = text => {
     const match = String(text || '').match(/\bdossier\s*(\d{3})\b/i);
     return match ? match[1] : '';
@@ -284,7 +287,7 @@
 
   function removeChoiceControl(){
     const candidates = [...document.querySelectorAll('button,a,[role="button"]')];
-    return candidates.find(el => !el.classList?.contains('igr-remove-role-cta') && !el.classList?.contains('igr-choice-status-button') && /retirer mon choix/i.test(el.textContent || '')) || null;
+    return candidates.find(el => !el.classList?.contains('igr-remove-role-cta') && !el.classList?.contains('igr-choice-status-button') && /retirer mon choix|remove my choice/i.test(el.textContent || '')) || null;
   }
 
   function selectedRoleLabel(zone){
@@ -306,22 +309,37 @@
       card = document.createElement('div');
       card.className = 'igr-choice-status';
       card.innerHTML = '<div class="igr-choice-status-copy"><span class="igr-choice-status-kicker">TON CHOIX</span><strong class="igr-choice-status-title">Aucun rôle choisi</strong><small class="igr-choice-status-note">Un rôle sera attribué au lancement.</small></div><div class="igr-choice-status-actions"><button type="button" class="igr-choice-status-button">Retirer</button></div>';
-      zone.insertBefore(card, button);
+      const grid = button.closest('.role-choice-grid');
+      zone.insertBefore(card, grid?.parentElement === zone ? grid : zone.firstChild);
     }
     const lowerControl = removeChoiceControl();
+    const clearRole = typeof window.igrClearLobbyRole === 'function' ? window.igrClearLobbyRole : null;
     const chosen = selectedRoleLabel(zone);
-    const removable = !!lowerControl && !lowerControl.matches('[disabled],[aria-disabled="true"]') && !!chosen;
+    const removable = !!chosen && (!!clearRole || (!!lowerControl && !lowerControl.matches('[disabled],[aria-disabled="true"]')));
     card.classList.toggle('has-choice', !!chosen);
-    card.querySelector('.igr-choice-status-title').textContent = chosen || 'Aucun rôle choisi';
+    const title = card.querySelector('.igr-choice-status-title');
+    const english = window.IGR_LOCALE === 'en';
+    const titleText = chosen || (english ? 'No role selected' : 'Aucun rôle choisi');
+    if(title && title.textContent !== titleText) title.textContent = titleText;
     const note = card.querySelector('.igr-choice-status-note');
-    if(note) note.textContent = chosen ? 'Touchez retirer pour revenir à aucun rôle choisi.' : 'Un rôle sera attribué au lancement.';
+    const noteText = chosen
+      ? (english ? 'Tap Remove to return to automatic assignment.' : 'Touchez retirer pour revenir à aucun rôle choisi.')
+      : (english ? 'A role will be assigned at launch.' : 'Un rôle sera attribué au lancement.');
+    if(note && note.textContent !== noteText) note.textContent = noteText;
+    const kicker = card.querySelector('.igr-choice-status-kicker');
+    const kickerText = english ? 'YOUR CHOICE' : 'TON CHOIX';
+    if(kicker && kicker.textContent !== kickerText) kicker.textContent = kickerText;
     const btn = card.querySelector('.igr-choice-status-button');
     if(btn){
-      btn.hidden = !removable;
-      btn.disabled = !removable;
-      btn.setAttribute('aria-disabled', removable ? 'false' : 'true');
+      const buttonText = english ? 'Remove' : 'Retirer';
+      if(btn.textContent !== buttonText) btn.textContent = buttonText;
+      if(btn.hidden !== !removable) btn.hidden = !removable;
+      if(btn.disabled !== !removable) btn.disabled = !removable;
+      const disabled = removable ? 'false' : 'true';
+      if(btn.getAttribute('aria-disabled') !== disabled) btn.setAttribute('aria-disabled', disabled);
       btn.onclick = (event) => {
         event.preventDefault();
+        if(clearRole) return clearRole();
         const target = removeChoiceControl();
         if(target && !target.matches('[disabled],[aria-disabled="true"]')) target.click();
         else toast('Aucun rôle à retirer.');
@@ -354,8 +372,14 @@
     }
   }
 
+  let refreshQueued = false;
+  function queueRefreshOmertaUi(){
+    if(refreshQueued) return;
+    refreshQueued = true;
+    requestAnimationFrame(() => {refreshQueued = false;refreshOmertaUi()});
+  }
   const observer = new MutationObserver(mutations => {
-    if(mutations.some(m => m.addedNodes?.length || m.type === 'attributes')) queueMicrotask(refreshOmertaUi);
+    if(mutations.some(m => m.addedNodes?.length || m.removedNodes?.length || m.type === 'attributes')) queueRefreshOmertaUi();
   });
   observer.observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['class','src']});
   document.addEventListener('DOMContentLoaded', refreshOmertaUi, {once:true});

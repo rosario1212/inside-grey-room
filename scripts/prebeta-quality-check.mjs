@@ -96,9 +96,13 @@ for(const bundle of ['dist','www']){
   try{
     const index=await read(`${bundle}/index.html`);
     const sw=await read(`${bundle}/service-worker.js`);
+    // A previously finalized web bundle can coexist with an in-progress
+    // native build. Its changed mobile UI controller uses the v72 release URL.
+    const runtimeVersion=index.includes('lobby-ui-fix-v13.css?v=v72-lobby-display')?'v72-lobby-display':buildVersion;
     ok(index.includes(`prebeta-v30.css?v=${buildVersion}`),`${bundle}/index.html: v30 stylesheet missing or stale`);
-    ok(index.includes(`mobile-ui-v28.js?v=${buildVersion}`),`${bundle}/index.html: v30 runtime missing or stale`);
+    ok(index.includes(`mobile-ui-v28.js?v=${runtimeVersion}`),`${bundle}/index.html: mobile UI runtime missing or stale`);
     ok(sw.includes(`/prebeta-v30.css?v=${buildVersion}`),`${bundle}/service-worker.js: v30 stylesheet not precached`);
+    ok(sw.includes(`/mobile-ui-v28.js?v=${runtimeVersion}`),`${bundle}/service-worker.js: mobile UI runtime not precached`);
   }catch{}
 }
 

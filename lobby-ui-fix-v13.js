@@ -9,9 +9,11 @@
 
   const OMERTA_IDS=new Set(['021','022','023','024','025']);
   const BASE_IDS=new Set(Array.from({length:20},(_,i)=>String(i+1).padStart(3,'0')));
+  const THEME_CLASSES=['igr-theme-omerta','igr-theme-terror','igr-theme-cartel','igr-theme-regime'];
   let enhancing=false,enhanceQueued=false;
 
   const currentScenarioId=()=>String(
+    document.querySelector('.lobby-v11[data-igr-scenario-id]')?.dataset.igrScenarioId ||
     STATE?.sync?.room?.scenario_id ||
     STATE?.scenarioId ||
     STATE?.selectedScenario || ''
@@ -19,6 +21,13 @@
 
   function isLobbyVisible(){
     return !!document.querySelector('.role-choice-zone') && !!STATE?.room;
+  }
+
+  function setText(node,value){if(node && node.textContent!==value)node.textContent=value}
+  function setAttribute(node,name,value){if(node && node.getAttribute(name)!==value)node.setAttribute(name,value)}
+  function removeClasses(node,names){
+    const present=names.filter(name=>node?.classList.contains(name));
+    if(present.length)node.classList.remove(...present);
   }
 
   function syncLobbyTheme(){
@@ -36,11 +45,16 @@
       zone.classList.toggle('is-omerta-scenario',omerta);
     }
 
-    if(base){
-      body.classList.remove('igr-theme-omerta','igr-omerta-active','igr-theme-terror','igr-theme-cartel','igr-theme-regime');
-      document.documentElement.classList.remove('igr-theme-omerta','igr-omerta-active','igr-theme-terror','igr-theme-cartel','igr-theme-regime');
-      document.querySelector('.igr-random-role-cta')?.classList.remove('is-omerta');
-      document.querySelector('.igr-random-role-cta')?.classList.add('is-base');
+    const panel=zone?.closest('.lobby-v11');
+    if(panel && isLobbyVisible()){
+      const theme=lobbyThemeForScenario(sid);
+      setAttribute(panel,'data-igr-lobby-theme',theme);
+      for(const name of THEME_CLASSES)body.classList.toggle(name,name===`igr-theme-${theme}`);
+      removeClasses(document.documentElement,[...THEME_CLASSES,'igr-omerta-active']);
+      if(!omerta)removeClasses(body,['igr-omerta-active']);
+      const random=zone.querySelector('.igr-random-role-cta,.random-role-card');
+      random?.classList.toggle('is-omerta',omerta);
+      random?.classList.toggle('is-base',!omerta);
     }
   }
 
@@ -140,8 +154,8 @@
           pageHead.appendChild(back);
         }
       }
-      back.textContent=en?'← Scenarios':'← Scénarios';
-      back.setAttribute('aria-label',en?'Leave this room and return to scenarios':'Quitter cette cellule et revenir aux scénarios');
+      setText(back,en?'← Scenarios':'← Scénarios');
+      setAttribute(back,'aria-label',en?'Leave this room and return to scenarios':'Quitter cette cellule et revenir aux scénarios');
 
       let actions=pageHead.querySelector('.igr-v13-lobby-actions');
       if(!actions){
@@ -160,8 +174,8 @@
         settings.addEventListener('click',openLobbySettings);
         actions.appendChild(settings);
       }
-      settings.textContent=en?'Settings':'Paramètres';
-      settings.setAttribute('aria-label',en?'Open settings without leaving the room':'Ouvrir les paramètres sans quitter la cellule');
+      setText(settings,en?'Settings':'Paramètres');
+      setAttribute(settings,'aria-label',en?'Open settings without leaving the room':'Ouvrir les paramètres sans quitter la cellule');
 
       syncLobbyTheme();
     }finally{
@@ -181,6 +195,7 @@
     if(typeof previous==='function'){
       renderLobby=function(){
         const out=previous.apply(this,arguments);
+        syncLobbyTheme();
         queueEnhanceLobby();
         return out;
       };
@@ -190,7 +205,8 @@
   const observer=new MutationObserver(mutations=>{
     if(mutations.some(m=>m.addedNodes?.length || m.removedNodes?.length))queueEnhanceLobby();
   });
-  observer.observe(document.documentElement,{childList:true,subtree:true});
+  const app=document.getElementById('app');
+  if(app)observer.observe(app,{childList:true,subtree:true});
 
   const observeBodyTheme=()=>{
     if(!document.body)return;

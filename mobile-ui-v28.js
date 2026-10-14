@@ -92,7 +92,8 @@ function expectedDlcTheme(){
   try{
     const view=currentView();
     if(['home','profile','rules','join','create-list'].includes(view))return '';
-    const id=String(view==='create-confirm'?(STATE?.selectedScenario||STATE?.scenarioId||''):(STATE?.sync?.room?.scenario_id||STATE?.selectedScenario||STATE?.scenarioId||''));
+    const rendered=view==='lobby'?document.querySelector('.lobby-v11[data-igr-scenario-id]')?.dataset.igrScenarioId:'';
+    const id=String(rendered||(view==='create-confirm'?(STATE?.selectedScenario||STATE?.scenarioId||''):(STATE?.sync?.room?.scenario_id||STATE?.selectedScenario||STATE?.scenarioId||'')));
     const collection=window.IGR_SCENARIO_META?.[id]?.collection||'';
     return ['omerta','terror','cartel','regime'].includes(collection)?`igr-theme-${collection}`:'';
   }catch{return''}
@@ -104,17 +105,18 @@ function sanitizeThemeState(){
   const expected=expectedDlcTheme();
   if(expected){
     for(const theme of themes)body.classList.toggle(theme,theme===expected);
-  }else if(['home','profile','rules','join','create-list'].includes(currentView())){
-    for(const theme of themes)body.classList.remove(theme);
+  }else{
+    for(const theme of themes)if(body.classList.contains(theme))body.classList.remove(theme);
   }
 
   const omertaActive=body.classList.contains('igr-theme-omerta');
   if(!omertaActive){
-    body.classList.remove('igr-omerta-active');
+    if(body.classList.contains('igr-omerta-active'))body.classList.remove('igr-omerta-active');
     document.querySelectorAll('.igr-omerta-cell').forEach(el=>el.classList.remove('igr-omerta-cell'));
   }
   const active=themes.find(theme=>body.classList.contains(theme))||'igr-theme-base';
-  body.dataset.igrActiveTheme=active.replace('igr-theme-','');
+  const label=active.replace('igr-theme-','');
+  if(body.dataset.igrActiveTheme!==label)body.dataset.igrActiveTheme=label;
 }
 
 function setFilterOpen(open){

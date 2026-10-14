@@ -16,8 +16,14 @@
   const DRAW_MIN_MS=560;
   const DRAW_FINAL_MS=760;
   const tr=(fr,en)=>window.IGR_LOCALE==='en'?en:fr;
-  const state=()=>window.STATE||null;
-  const currentId=()=>String(state()?.sync?.room?.scenario_id||state()?.scenarioId||state()?.selectedScenario||'');
+  const state=()=>{try{return typeof STATE!=='undefined'?STATE:window.STATE||null}catch{return null}};
+  const currentId=()=>{
+    const s=state(),view=String(s?.view||'');
+    if(['home','profile','rules','join','create-list'].includes(view))return '';
+    if(view==='create-confirm')return String(s?.selectedScenario||s?.scenarioId||'');
+    if(view==='lobby')return String(document.querySelector('.lobby-v11[data-igr-scenario-id]')?.dataset.igrScenarioId||s?.sync?.room?.scenario_id||'');
+    return String(s?.sync?.room?.scenario_id||s?.scenarioId||s?.selectedScenario||'');
+  };
   const isOmerta=id=>OMERTA.has(String(id||''));
   const campaign=()=>state()?.sync?.room?.state?.omerta_campaign||null;
 
@@ -62,7 +68,7 @@
         const first=p.name.split(/\s+/)[0];
         if(first&&first.length>3)text=text.replace(new RegExp(`\\b${first.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'g'),p.player);
       }
-      node.nodeValue=text;
+      if(node.nodeValue!==text)node.nodeValue=text;
     }
   }
 
@@ -92,11 +98,11 @@
   function applyDrawVisual(){
     const btn=randomButton();if(!btn)return;
     const target=btn.querySelector('em');
-    btn.disabled=drawVisual.active;
+    if(btn.disabled!==drawVisual.active)btn.disabled=drawVisual.active;
     btn.classList.toggle('is-rolling',drawVisual.active);
-    if(drawVisual.active)btn.setAttribute('aria-busy','true');
-    else btn.removeAttribute('aria-busy');
-    if(target&&drawVisual.display)target.textContent=drawVisual.display;
+    if(drawVisual.active && btn.getAttribute('aria-busy')!=='true')btn.setAttribute('aria-busy','true');
+    else if(!drawVisual.active && btn.hasAttribute('aria-busy'))btn.removeAttribute('aria-busy');
+    if(target&&drawVisual.display&&target.textContent!==drawVisual.display)target.textContent=drawVisual.display;
   }
 
   function animationFrame(now){

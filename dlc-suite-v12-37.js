@@ -110,6 +110,7 @@
     const view=String(STATE?.view||'');
     if(['home','profile','rules','join','create-list'].includes(view))return '';
     if(view==='create-confirm')return String(STATE?.selectedScenario||STATE?.scenarioId||'');
+    if(view==='lobby')return String(document.querySelector('.lobby-v11[data-igr-scenario-id]')?.dataset.igrScenarioId||STATE?.sync?.room?.scenario_id||'');
     if(view==='lobby'||view==='briefing'||view==='game'||view==='role')return String(STATE?.sync?.room?.scenario_id||'');
 
     const explicitSelector='[data-active-scenario-id],[data-selected-scenario-id],[data-scenario-id],[data-igr-scenario-id][aria-current="true"]';
@@ -213,14 +214,11 @@
 
   function updateBodyTheme(){
     const body=document.body;if(!body)return;
-    body.classList.remove('igr-theme-omerta','igr-theme-terror','igr-theme-cartel','igr-theme-regime');
-    if(document.querySelector('.page-create-v10-13'))return;
-    const id=visibleScenarioId();if(!DLC_IDS.has(String(id||'')))return;
-    const collection=META[id]?.collection;
-    if(collection==='omerta')body.classList.add('igr-theme-omerta');
-    if(collection==='terror')body.classList.add('igr-theme-terror');
-    if(collection==='cartel')body.classList.add('igr-theme-cartel');
-    if(collection==='regime')body.classList.add('igr-theme-regime');
+    const id=document.querySelector('.page-create-v10-13')?'':visibleScenarioId();
+    const collection=DLC_IDS.has(String(id||''))?META[id]?.collection:'';
+    for(const theme of ['omerta','terror','cartel','regime']){
+      body.classList.toggle(`igr-theme-${theme}`,theme===collection);
+    }
   }
 
   function decorateCreateList(){
