@@ -15,6 +15,8 @@ const terror=await read('terror-v12-37.js');
 const apply=await read('scripts/apply-mobile-ui-v28.mjs');
 const versionMatch=apply.match(/const VERSION='([^']+)'/);
 const buildVersion=versionMatch?.[1]||'';
+const lobbyApply=await read('scripts/apply-lobby-display-v72.mjs');
+const lobbyVersion=lobbyApply.match(/const VERSION='([^']+)'/)?.[1]||'';
 
 for(const rel of ['mobile-ui-v28.js','native-lifecycle-v12.js','terror-v12-37.js','scripts/apply-mobile-ui-v28.mjs']){
   const parsed=spawnSync(process.execPath,['--check',path.join(root,rel)],{encoding:'utf8'});
@@ -97,8 +99,8 @@ for(const bundle of ['dist','www']){
     const index=await read(`${bundle}/index.html`);
     const sw=await read(`${bundle}/service-worker.js`);
     // A previously finalized web bundle can coexist with an in-progress
-    // native build. Its changed mobile UI controller uses the v72 release URL.
-    const runtimeVersion=index.includes('lobby-ui-fix-v13.css?v=v72-lobby-display')?'v72-lobby-display':buildVersion;
+    // native build. Read the current release URL from its finalizer.
+    const runtimeVersion=lobbyVersion&&index.includes(`lobby-ui-fix-v13.css?v=${lobbyVersion}`)?lobbyVersion:buildVersion;
     ok(index.includes(`prebeta-v30.css?v=${buildVersion}`),`${bundle}/index.html: v30 stylesheet missing or stale`);
     ok(index.includes(`mobile-ui-v28.js?v=${runtimeVersion}`),`${bundle}/index.html: mobile UI runtime missing or stale`);
     ok(sw.includes(`/prebeta-v30.css?v=${buildVersion}`),`${bundle}/service-worker.js: v30 stylesheet not precached`);
