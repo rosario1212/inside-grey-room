@@ -91,7 +91,10 @@ try{
       assert(layout.hint.height<=layout.hintLine*1.1,'The entrance hint must remain on one line');
       assert(layout.art.width/layout.art.height<=941/1672+.001,'Wide viewports must retain the full height of the doorway');
       if(width/height>=4/3&&height<=600)assert(layout.title.right+16<=layout.art.left&&layout.button.right+16<=layout.art.left,'Landscape identity and action must leave the door unobstructed');
-      else assert(layout.title.bottom+12<=layout.art.top+layout.art.height*.233,'Wordmark must leave space above the doorway');
+      else {
+        assert(layout.title.bottom+12<=layout.art.top+layout.art.height*.233,'Wordmark must leave space above the doorway');
+        assert(layout.art.top+layout.art.height*.86+20<=layout.button.top,'The door threshold must remain visible above the entrance button');
+      }
       assert.equal(await page.evaluate(()=>{scrollTo(0,500);return scrollY}),0,'Entrance must remain fixed without scrolling');
       if(locale==='fr'&&['phone','safe-area','landscape','desktop'].includes(name))await page.screenshot({path:path.join(report,'entrance-'+name+'.png')});
       await page.keyboard.press('Tab');
