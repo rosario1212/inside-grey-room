@@ -37,7 +37,7 @@ const page=await browser.newPage();
 await page.route('**/*',route=>route.abort());
 const failures=[];
 async function check(name,run){
-  try{await run();console.log('OK · '+name)}
+  try{await page.goto('about:blank');await run();console.log('OK · '+name)}
   catch(error){failures.push(name+': '+error.message);await page.screenshot({path:path.join(report,name.replace(/[^a-z0-9]+/gi,'-')+'.png')});}
 }
 try{
@@ -71,24 +71,24 @@ try{
         assert(b.height>=(b.footer?32:44)-.5,`${b.label} needs a usable touch target`);
         assert(b.x>=-.5&&b.right<=width+.5&&b.y>=-.5&&b.bottom<=b.limit+.5,`${b.label} is clipped: ${JSON.stringify(b)}`);
       }
-      await page.mouse.wheel(0,700);
-      assert.equal(await page.evaluate(()=>scrollY),0,'Home must not scroll');
+      assert.equal(await page.evaluate(()=>{scrollTo(0,700);return scrollY}),0,'Home must not scroll');
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Home must not overflow horizontally');
+      if((name==='phone'&&!resume)||(name==='landscape'&&resume))await page.screenshot({path:path.join(report,name+'.png')});
     });
   }
   for(const theme of ['base','omerta','terror','cartel','regime']){
     await check('role-hierarchy-'+theme,async()=>{
       await page.setViewportSize({width:320,height:568});
-      await page.setContent(`<style>${css}</style><div id="app"><main class="page"><section class="panel lobby-v11" data-igr-lobby-theme="${theme}"><div class="role-choice-zone"><div class="section-title"><h2>Choisis ton rôle</h2></div><p class="role-choice-help">Choisis un rôle. Pour changer, touche simplement un autre rôle avant le lancement.</p><button class="igr-random-role-cta"><span><b>RÔLE AU HASARD</b><small>Tirage uniforme parmi les rôles encore disponibles.</small></span><em>TIRER</em></button><div class="role-choice-grid">${'<button class="role-choice-card"><span><b>Enquêteur</b><small>Recoupe les informations du dossier et les déclarations.</small></span><em>0/1</em></button>'.repeat(10)}</div></div></section></main></div>`);
+      await page.setContent(`<!doctype html><html class=""><head><style>${css}</style></head><body class=""><div id="app"><main class="page"><section class="panel lobby-v11" data-igr-lobby-theme="${theme}"><div class="role-choice-zone"><div class="section-title"><h2>Choisis ton rôle</h2></div><p class="role-choice-help">Choisis un rôle. Pour changer, touche simplement un autre rôle avant le lancement.</p><button class="igr-random-role-cta"><span><b>RÔLE AU HASARD</b><small>Tirage uniforme parmi les rôles encore disponibles.</small></span><em>TIRER</em></button><div class="role-choice-grid">${'<button class="role-choice-card"><span><b>Enquêteur</b><small>Recoupe les informations du dossier et les déclarations.</small></span><em>0/1</em></button>'.repeat(10)}</div></div></section></main></div></body></html>`);
       await page.addScriptTag({content:`var selected='Expert';var randomButton=()=>document.querySelector('.igr-random-role-cta');var removeChoiceControl=()=>null;var selectedRoleLabel=()=>selected;window.igrClearLobbyRole=()=>{selected='';ensureChoiceStatusCard()};${choiceFunction};ensureChoiceStatusCard();ensureChoiceStatusCard();`});
       assert.equal(await page.locator('.igr-choice-status').count(),1,'Summary updates must be idempotent');
       const boxes=await page.evaluate(()=>['.section-title','.role-choice-help','.igr-choice-status','.igr-random-role-cta'].map(s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,right:r.right,top:r.top,bottom:r.bottom}}));
       assert(boxes.every(b=>b.x>=0&&b.right<=320),'Role controls must fit a narrow screen');
       assert(boxes[0].bottom<boxes[1].top&&boxes[1].bottom+14<=boxes[2].top&&boxes[2].bottom<boxes[3].top,'Heading, help, summary and random control must have clear visual separation');
+      if(theme==='base')await page.screenshot({path:path.join(report,'role-choice.png')});
       await page.getByRole('button',{name:'Retirer',exact:true}).click();
       assert.equal(await page.locator('.igr-choice-status-title').innerText(),'Aucun rôle choisi','Remove must keep returning to automatic assignment');
-      await page.mouse.wheel(0,500);
-      assert(await page.evaluate(()=>scrollY>0),'The lobby must retain vertical scrolling');
+      assert(await page.evaluate(()=>{scrollTo(0,500);return scrollY>0}),'The lobby must retain vertical scrolling');
     });
   }
 }finally{await browser.close()}
