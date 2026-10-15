@@ -309,8 +309,9 @@
       card = document.createElement('div');
       card.className = 'igr-choice-status';
       card.innerHTML = '<div class="igr-choice-status-copy"><span class="igr-choice-status-kicker">TON CHOIX</span><strong class="igr-choice-status-title">Aucun rôle choisi</strong><small class="igr-choice-status-note">Un rôle sera attribué au lancement.</small></div><div class="igr-choice-status-actions"><button type="button" class="igr-choice-status-button">Retirer</button></div>';
-      const grid = button.closest('.role-choice-grid');
-      zone.insertBefore(card, grid?.parentElement === zone ? grid : zone.firstChild);
+      const intro = zone.querySelector('.role-choice-help') || zone.querySelector('.section-title');
+      if(intro) intro.insertAdjacentElement('afterend', card);
+      else zone.insertBefore(card, zone.firstChild);
     }
     const lowerControl = removeChoiceControl();
     const clearRole = typeof window.igrClearLobbyRole === 'function' ? window.igrClearLobbyRole : null;

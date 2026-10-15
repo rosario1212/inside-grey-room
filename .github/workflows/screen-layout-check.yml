@@ -1,0 +1,38 @@
+name: Screen Layout Check
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'screen-polish-v73.css'
+      - 'app-v11.js'
+      - 'omerta-v12-39.js'
+      - 'scripts/screen-layout-check.mjs'
+      - 'scripts/apply-lobby-display-v72.mjs'
+      - '.github/workflows/screen-layout-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Build canonical web bundle
+        run: npm ci --no-audit --no-fund
+      - name: Install isolated browser test dependency
+        run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright@1.62.1
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify screen layouts
+        run: node scripts/screen-layout-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screen-layout-failures
+          path: layout-check-results
+          if-no-files-found: ignore
