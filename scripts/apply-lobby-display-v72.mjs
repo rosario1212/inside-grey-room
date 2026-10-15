@@ -2,9 +2,9 @@ import {readFile,writeFile,stat,copyFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v73-home-role-polish';
+const VERSION='v74-entry-polish';
 const polish='screen-polish-v73.css';
-const assets=['app-v11.js','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','rules-v12.js','self-guided-rules-v51.js',polish];
+const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','rules-v12.js','self-guided-rules-v51.js',polish];
 const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 // Run after the existing gameplay/HÉRITAGE layers. Keep their generated code;
@@ -41,4 +41,4 @@ try{
   }
   await writeFile(swFile,sw,'utf8');
 }catch(error){if(error.code!=='ENOENT')throw error}
-console.log(`Inside Grey Room ${VERSION}: home viewport, role-choice hierarchy and PWA cache finalized`);
+console.log(`Inside Grey Room ${VERSION}: entrance, home viewport, role-choice hierarchy and PWA cache finalized`);

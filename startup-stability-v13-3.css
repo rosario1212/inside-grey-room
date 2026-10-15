@@ -1,43 +1,81 @@
-/* v70 — neutral silver entrance with final vertical alignment. */
+/* v74 — the same wordmark as the home screen, with the original door artwork. */
 #introGate.intro-gate{
   background:#000!important;
 }
 #introGate .intro-title{
-  position:absolute;z-index:3;left:50%;
-  top:calc(env(safe-area-inset-top,0px) + 3svh);
-  transform:translateX(-50%);width:min(82vw,360px);
-  display:grid;gap:6px;margin:0;text-align:center;
-  color:#bfc0bd;font:300 clamp(24px,6.2vw,30px)/1.3 Arial,sans-serif;
-  letter-spacing:.28em;padding-left:.28em;text-shadow:0 0 16px rgba(235,235,225,.12);pointer-events:none;
+  position:absolute;z-index:3;left:0;right:0;
+  top:calc(env(safe-area-inset-top,0px) + clamp(20px,3svh,36px));
+  width:min(calc(100% - 48px),520px);margin:0 auto;padding:0;
+  display:grid;gap:0;text-align:center;
+  color:#f2f3f5;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:clamp(32px,min(11vw,5.6svh),64px);font-weight:700;
+  line-height:.96;letter-spacing:-.045em;
+  text-shadow:none;pointer-events:none;transform:none;
   transition:opacity .18s ease;
 }
 #introGate .intro-title span{display:block;white-space:nowrap}
-#introGate .intro-title span:first-child{font-size:clamp(16px,4.2vw,20px);letter-spacing:.55em;color:#7f8280;margin:0;padding-left:.27em}
-#introGate .intro-title span:first-child::after{content:"";display:block;width:110px;height:1px;margin:7px auto 1px;background:linear-gradient(90deg,transparent,rgba(185,185,178,.25),transparent)}
+#introGate .intro-title span:first-child{font:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}
+#introGate .intro-title span:first-child::after{content:none}
 #introGate .intro-art{
-  top:-1svh!important;height:96svh!important;min-height:0!important;
-  width:100%!important;object-fit:cover!important;object-position:50% 50%!important;filter:grayscale(1) brightness(1.12);
-  /* Hide the title baked into the original poster; keep the door unchanged. */
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 90%,transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 90%,transparent 100%);
+  top:0!important;left:0;right:0;margin:0 auto;
+  height:100svh!important;min-height:0!important;
+  /* Limit wide screens to the poster's aspect ratio; never enlarge and crop the door. */
+  width:min(100%,56.28svh)!important;
+  object-fit:cover!important;object-position:50% 50%!important;
+  filter:grayscale(1) brightness(1.02);
+  /* The poster contains an older title. Mask it so there is only one wordmark. */
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 82%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 82%,transparent 100%);
 }
 #introGate .intro-cinema-shade{
-  background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 25%,transparent 74%,rgba(0,0,0,.7) 100%);
+  background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 30%,transparent 70%,rgba(0,0,0,.35));
 }
+/* Keep the existing opening light aligned with the doorway's new framing. */
+#introGate .intro-light-slit{left:calc(50% - 5.91svh);top:27svh;height:56svh;width:2.6svh}
+#introGate .intro-pulse{left:calc(50% - 5.91svh);top:55svh}
 #introGate #introEnterBtn{
-  bottom:calc(env(safe-area-inset-bottom,0px) + 12svh)!important;
-  width:min(84vw,360px)!important;min-height:80px!important;
-  padding:16px 24px!important;gap:6px;border-radius:40px;border:1px solid #afb2ae!important;background:linear-gradient(180deg,rgba(30,30,29,.5),rgba(8,8,8,.65))!important;color:#ebebe7!important;box-shadow:0 0 18px rgba(225,225,210,.12),inset 0 1px 12px rgba(230,230,220,.06);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  bottom:calc(env(safe-area-inset-bottom,0px) + clamp(28px,6svh,64px))!important;
+  width:min(calc(100% - 48px),340px)!important;min-height:72px!important;
+  padding:16px 20px!important;gap:7px;border-radius:20px;
+  border:1px solid #70767d!important;
+  background:rgba(13,17,22,.94)!important;color:#f2f4f6!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
 }
-#introGate #introEnterBtn span{color:#ebebe7!important;text-shadow:0 0 12px rgba(235,235,220,.15);font-size:20px;letter-spacing:.24em!important;padding-left:.24em}
-#introGate #introEnterBtn small{color:#a4a5a1!important;margin-top:3px!important;font-size:10px;letter-spacing:.1em}
+#introGate #introEnterBtn span{
+  color:inherit!important;text-shadow:none;
+  font:700 17px/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  letter-spacing:.14em!important;padding-left:.14em;
+}
+#introGate #introEnterBtn small{
+  color:#b7bec6!important;margin:0!important;
+  font-size:9px;line-height:1.4;letter-spacing:.08em;
+}
+@media(hover:hover){#introGate #introEnterBtn:hover{border-color:#c3c9cf!important;background:#151b22!important}}
+#introGate #introEnterBtn:active{border-color:#e6e9ec!important}
 #introGate.opening .intro-title,#introGate.boot-waiting .intro-title{opacity:0}
-@media(max-height:700px){
-  #introGate .intro-title{top:calc(env(safe-area-inset-top,0px) + 3svh);gap:5px;font-size:18px}
-  #introGate #introEnterBtn{bottom:calc(env(safe-area-inset-bottom,0px) + 11svh)!important;min-height:72px!important}
+/* A compact two-column composition keeps the full doorway visible in landscape. */
+@media(min-aspect-ratio:4/3) and (max-height:600px){
+  #introGate .intro-title{
+    left:calc(env(safe-area-inset-left,0px) + 6vw);right:auto;
+    top:calc(env(safe-area-inset-top,0px) + 18svh);
+    width:40vw;margin:0;text-align:left;
+    font-size:clamp(30px,min(5.3vw,11svh),54px);
+  }
+  #introGate .intro-art{
+    left:auto;right:calc(env(safe-area-inset-right,0px) + 6vw);margin:0;
+  }
+  #introGate .intro-light-slit,#introGate .intro-pulse{left:calc(94vw - env(safe-area-inset-right,0px) - 34.05svh)}
+  #introGate #introEnterBtn{
+    left:calc(env(safe-area-inset-left,0px) + 6vw);
+    bottom:calc(env(safe-area-inset-bottom,0px) + 12svh)!important;
+    width:min(40vw,300px)!important;min-height:68px!important;
+    padding:14px 16px!important;transform:none;
+  }
+  #introGate #introEnterBtn:active{transform:scale(.985)}
 }
-@media(orientation:landscape) and (max-height:500px){
-  #introGate .intro-title{top:calc(env(safe-area-inset-top,0px) + 2svh);font-size:14px;gap:2px}
-  #introGate #introEnterBtn{bottom:calc(env(safe-area-inset-bottom,0px) + 3svh)!important;min-height:56px!important;width:min(60vw,260px)!important;padding:8px 16px!important}
+@media(prefers-reduced-motion:reduce){
+  #introGate .intro-title{transition:none}
+  #introGate.opening .intro-art,#introGate.opening .intro-light-slit,#introGate.opening .intro-pulse{animation:none!important;transition:none!important}
 }
-@media(prefers-reduced-motion:reduce){#introGate .intro-title{transition:none}}

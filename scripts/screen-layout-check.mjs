@@ -14,6 +14,10 @@ for(const match of index.matchAll(/<link[^>]+rel="stylesheet"[^>]*>|<style[^>]*>
   else styles.push(await read(match[0].match(/href="([^"]+)"/)[1].split('?')[0]));
 }
 const css=styles.join('\n');
+const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/button>\s*<\/div>/);
+assert(introMatch,'Canonical entrance markup must exist');
+const introArt=await readFile(path.join(target,'assets/intro-v10-14.webp'));
+const introHtml=introMatch[0].replace(/src="[^"]+"/,`src="data:image/webp;base64,${introArt.toString('base64')}"`);
 const app=await read('app-v11.js');
 const homeStart=app.indexOf('function shell('),homeEnd=app.indexOf('function goHome(',homeStart);
 assert(homeStart>=0&&homeEnd>homeStart,'Canonical home renderer must exist');
@@ -46,6 +50,47 @@ try{
     ['browser-toolbar',390,664,0,0],['small-safe-area',375,667,44,34],
     ['landscape',844,390,0,21],['short-landscape',667,320,0,0],['narrow-landscape',568,320,0,0],['desktop',1280,800,0,0]
   ];
+  for(const [name,width,height,top,bottom] of presets)for(const locale of ['fr','en']){
+    await check('entrance-'+name+'-'+locale,async()=>{
+      await page.setViewportSize({width,height});
+      const side=name==='landscape'?44:0;
+      const safeCss=css.replace(/env\(safe-area-inset-(top|bottom|left|right)(?:,\s*0px)?\)/g,(_,edge)=>`${({top,bottom,left:side,right:side})[edge]}px`);
+      const entrance=locale==='en'?introHtml.replace('ENTRER','ENTER').replace('TOUCHEZ POUR OUVRIR LA PORTE','TOUCH TO OPEN THE DOOR'):introHtml;
+      await page.setContent(`<!doctype html><html lang="${locale}" class="home-locked"><head><style>${safeCss}</style></head><body class="home-locked">${entrance}<div id="app">${homeHtml(false)}</div></body></html>`);
+      await page.locator('.intro-art').evaluate(img=>img.decode());
+      const layout=await page.evaluate(()=>{
+        const box=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+        const title=document.querySelector('.intro-title'),home=document.querySelector('.home-title-spaced');
+        return {
+          title:box('.intro-title'),art:box('.intro-art'),button:box('#introEnterBtn'),hint:box('#introHint'),
+          lines:[...title.children].map(el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:r.height,overflow:el.scrollWidth>el.clientWidth}}),
+          sameFont:getComputedStyle(title).fontFamily===getComputedStyle(home).fontFamily,
+          weight:getComputedStyle(title).fontWeight,fontSize:parseFloat(getComputedStyle(title).fontSize),
+          hintLine:parseFloat(getComputedStyle(document.querySelector('#introHint')).lineHeight)
+        };
+      });
+      for(const [label,b] of Object.entries(layout).filter(([key])=>['title','button','hint'].includes(key))){
+        assert(b.left>=side&&b.right<=width-side+.5&&b.top>=top&&b.bottom<=height-bottom+.5,`${label} must remain inside safe areas: ${JSON.stringify(b)}`);
+      }
+      assert(layout.sameFont&&Number(layout.weight)===700,'Entrance must use the home wordmark family and weight');
+      assert(layout.fontSize>=30&&layout.lines.length===2&&!layout.lines.some(line=>line.overflow),'The two-line wordmark must remain legible and unclipped');
+      assert(Math.abs(layout.lines[0].height-layout.lines[1].height)<1,'Both wordmark lines must have the same typographic scale');
+      assert(layout.title.bottom+24<=layout.button.top,'The title and entrance action need clear separation');
+      assert(layout.button.height>=44,'Entrance action needs a usable touch target');
+      assert(layout.hint.height<=layout.hintLine*1.1,'The entrance hint must remain on one line');
+      assert(layout.art.width/layout.art.height<=941/1672+.001,'Wide viewports must retain the full height of the doorway');
+      if(width/height>=4/3&&height<=600)assert(layout.title.right+16<=layout.art.left&&layout.button.right+16<=layout.art.left,'Landscape identity and action must leave the door unobstructed');
+      else assert(layout.title.bottom+12<=layout.art.top+layout.art.height*.233,'Wordmark must leave space above the doorway');
+      assert.equal(await page.evaluate(()=>{scrollTo(0,500);return scrollY}),0,'Entrance must remain fixed without scrolling');
+      if(locale==='fr'&&['phone','safe-area','landscape','desktop'].includes(name))await page.screenshot({path:path.join(report,'entrance-'+name+'.png')});
+      await page.keyboard.press('Tab');
+      assert.equal(await page.evaluate(()=>document.activeElement?.id),'introEnterBtn','Entrance must remain keyboard accessible');
+      await page.emulateMedia({reducedMotion:'reduce'});
+      await page.locator('#introGate').evaluate(el=>el.classList.add('opening'));
+      assert.equal(await page.locator('.intro-art').evaluate(el=>getComputedStyle(el).animationName),'none','Reduced motion must skip the door zoom');
+      await page.emulateMedia({reducedMotion:'no-preference'});
+    });
+  }
   for(const [name,width,height,top,bottom] of presets)for(const resume of [false,true]){
     await check(name+(resume?'-resume':''),async()=>{
       await page.setViewportSize({width,height});
@@ -94,4 +139,4 @@ try{
   }
 }finally{await browser.close()}
 assert.equal(failures.length,0,failures.join('\n'));
-console.log('Home viewport and role hierarchy checks passed.');
+console.log('Entrance, home viewport and role hierarchy checks passed.');
