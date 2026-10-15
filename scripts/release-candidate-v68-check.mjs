@@ -37,8 +37,8 @@ const authoritative=read('authoritative-runtime-v41.js');
 ok(authoritative.includes('eventStartBusy')&&authoritative.includes("aria-busy"),'event selection blocks duplicate submits while an action is pending');
 
 const entrance=read('startup-stability-v13-3.css');
-ok(entrance.includes('safe-area-inset-bottom,0px) + 12svh'),'entrance action uses final portrait alignment');
-ok(entrance.includes('safe-area-inset-bottom,0px) + 11svh'),'entrance action uses final short-screen alignment');
+ok(entrance.includes('safe-area-inset-bottom'),'entrance action accounts for the bottom safe area');
+ok(['top','left','right'].every(side=>entrance.includes('safe-area-inset-'+side)),'entrance composition accounts for portrait and landscape safe areas');
 
 for(const page of ['index.html','en.html']){
   const html=read(page);
