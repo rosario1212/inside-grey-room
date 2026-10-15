@@ -34,6 +34,11 @@ const choiceStart=choiceSource.indexOf('function ensureChoiceStatusCard(){');
 const choiceEnd=choiceSource.indexOf('function markOmertaCells(',choiceStart);
 assert(choiceStart>=0&&choiceEnd>choiceStart,'Canonical role summary renderer must exist');
 const choiceFunction=choiceSource.slice(choiceStart,choiceEnd);
+const bootstrap=await read('lobby-ui-fix-v13.js');
+const loadStyleStart=bootstrap.indexOf('function loadStyle('),loadStyleEnd=bootstrap.indexOf('function loadScript(',loadStyleStart);
+assert(loadStyleStart>=0&&loadStyleEnd>loadStyleStart,'Canonical style bootstrap must exist');
+const startupLink=index.match(/<link\b[^>]+href="startup-stability-v13-3\.css[^>]*>/)?.[0];
+assert(startupLink,'Canonical entrance stylesheet must exist');
 const report=path.join(root,'layout-check-results');
 await mkdir(report,{recursive:true});
 const browser=await chromium.launch({headless:true});
@@ -45,6 +50,12 @@ async function check(name,run){
   catch(error){failures.push(name+': '+error.message);await page.screenshot({path:path.join(report,name.replace(/[^a-z0-9]+/gi,'-')+'.png')});}
 }
 try{
+  await check('entrance-stylesheet-bootstrap',async()=>{
+    await page.setContent(`<!doctype html><html><head>${startupLink}</head><body></body></html>`);
+    await page.addScriptTag({content:`const head=document.head;${bootstrap.match(/const BUILD='[^']+';/)[0]}${bootstrap.slice(loadStyleStart,loadStyleEnd)}${bootstrap.match(/loadStyle\('igr-startup-stability-v13-3-css',[^\n]+/)[0]}`});
+    assert.equal(await page.locator('link[href*="startup-stability-v13-3.css"]').count(),1,'Startup must not append an older entrance stylesheet');
+    assert.equal(await page.locator('#igr-startup-stability-v13-3-css').getAttribute('href'),startupLink.match(/href="([^"]+)"/)[1],'Startup must retain the versioned head stylesheet');
+  });
   const presets=[
     ['phone',390,844,0,0],['safe-area',393,852,44,34],['small-phone',320,568,0,0],
     ['browser-toolbar',390,664,0,0],['small-safe-area',375,667,44,34],

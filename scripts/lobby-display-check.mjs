@@ -4,7 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v74-entry-polish';
+const VERSION='v74-entry-polish2';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','rules-v12.js','self-guided-rules-v51.js','screen-polish-v73.css'];
 const read=name=>readFile(path.join(target,name),'utf8');
 const app=await read('app-v11.js');
@@ -92,5 +92,6 @@ for(const page of ['index.html','en.html']){
     if(sw)assert(shell.includes('/'+url),`${page}: ${url} must match the PWA precache`);
   }
   assert.equal([...html.matchAll(/<link[^>]+href=["']lobby-ui-fix-v13\.css/g)].length,1,`${page}: load the lobby stylesheet once`);
+  assert.equal([...html.matchAll(/<link[^>]+id="igr-startup-stability-v13-3-css"/g)].length,1,`${page}: the startup bootstrap must reuse the current entrance stylesheet`);
 }
 console.log('Lobby v72: 34 first-render palettes, chosen/full/available states, text contrast and web/mobile cache propagation OK');

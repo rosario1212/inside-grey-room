@@ -2,7 +2,7 @@ import {readFile,writeFile,stat,copyFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v74-entry-polish';
+const VERSION='v74-entry-polish2';
 const polish='screen-polish-v73.css';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','rules-v12.js','self-guided-rules-v51.js',polish];
 const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
@@ -22,6 +22,9 @@ for(const page of ['index.html','en.html']){
     if(!re.test(html)&&!redirect)throw new Error(`${page}: missing lobby asset ${asset}`);
     html=html.replace(re,asset+'?v='+VERSION);
   }
+  // The legacy bootstrap recognizes this ID. Reuse the versioned head stylesheet
+  // instead of appending a second copy with the old runtime cache key.
+  html=html.replace(/<link\b[^>]+href=["']startup-stability-v13-3\.css[^"']*["'][^>]*>/gi,tag=>tag.includes('id=')?tag:tag.replace('<link','<link id="igr-startup-stability-v13-3-css"'));
   if(!redirect){
     html=html.replace(/\s*<link[^>]+href=["']lobby-ui-fix-v13\.css[^"']*["'][^>]*>\s*/gi,'\n');
     html=html.replace(`  <link rel="stylesheet" href="${polish}`,`  <link rel="stylesheet" href="lobby-ui-fix-v13.css?v=${VERSION}">\n  <link rel="stylesheet" href="${polish}`);
