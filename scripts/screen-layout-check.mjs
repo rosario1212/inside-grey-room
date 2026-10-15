@@ -44,7 +44,7 @@ try{
   const presets=[
     ['phone',390,844,0,0],['safe-area',393,852,44,34],['small-phone',320,568,0,0],
     ['browser-toolbar',390,664,0,0],['small-safe-area',375,667,44,34],
-    ['landscape',844,390,0,21],['short-landscape',667,320,0,0],['desktop',1280,800,0,0]
+    ['landscape',844,390,0,21],['short-landscape',667,320,0,0],['narrow-landscape',568,320,0,0],['desktop',1280,800,0,0]
   ];
   for(const [name,width,height,top,bottom] of presets)for(const resume of [false,true]){
     await check(name+(resume?'-resume':''),async()=>{
@@ -60,17 +60,18 @@ try{
         document.querySelector('.home-actions .primary').insertAdjacentElement('afterend',card);
       });
       const bounds=await page.evaluate(()=>{
-        const app=document.querySelector('#app').getBoundingClientRect();
+        const app=document.querySelector('.home-card').getBoundingClientRect();
         return [...document.querySelectorAll('.home-action,.home-actions>.btn,.home-settings-link,.igr-beta-footer a')].map(el=>{
-          const r=el.getBoundingClientRect();return {label:el.querySelector('h3')?.textContent||el.textContent.trim(),x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height,visible:getComputedStyle(el).display!=='none',limit:el.closest('footer')?innerHeight:app.bottom,footer:!!el.closest('footer')};
+          const r=el.getBoundingClientRect();return {label:el.querySelector('h3')?.textContent||el.textContent.trim(),x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height,visible:getComputedStyle(el).display!=='none',start:el.closest('footer')?0:app.top,limit:el.closest('footer')?innerHeight:app.bottom,footer:!!el.closest('footer')};
         });
       });
       assert.equal(bounds.length,resume?9:8,'All home destinations, settings, privacy and report access must remain present');
       for(const b of bounds){
         assert(b.visible&&b.width>0,`${b.label} must remain visible`);
         assert(b.height>=(b.footer?32:44)-.5,`${b.label} needs a usable touch target`);
-        assert(b.x>=-.5&&b.right<=width+.5&&b.y>=-.5&&b.bottom<=b.limit+.5,`${b.label} is clipped: ${JSON.stringify(b)}`);
+        assert(b.x>=-.5&&b.right<=width+.5&&b.y>=b.start-.5&&b.bottom<=b.limit+.5,`${b.label} is clipped: ${JSON.stringify(b)}`);
       }
+      assert(await page.evaluate(()=>[...document.querySelectorAll('.home-action h3')].every(el=>el.getBoundingClientRect().height<=parseFloat(getComputedStyle(el).lineHeight)*2.25)),'Home labels must not break into narrow columns');
       assert.equal(await page.evaluate(()=>{scrollTo(0,700);return scrollY}),0,'Home must not scroll');
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Home must not overflow horizontally');
       if((name==='phone'&&!resume)||(name==='landscape'&&resume))await page.screenshot({path:path.join(report,name+'.png')});

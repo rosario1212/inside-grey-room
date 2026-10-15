@@ -88,11 +88,15 @@ body.home-locked .app-home-locked .home-actions-v10-13>.home-action h3{font-size
 body.home-locked .app-home-locked .home-actions-v10-13>.home-action p{font-size:12px!important;line-height:1.35}
 body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-rules,
 body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-profile{grid-column:auto!important;min-height:48px!important}
+body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-rules h3,
+body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-profile h3{font-size:14px!important;letter-spacing:-.02em!important}
 body.home-locked .home-actions-v10-13>.btn{min-height:44px!important;padding:10px 12px!important}
 body.home-locked .home-utility-links{flex:0 0 auto;gap:0;flex-wrap:nowrap;width:100%;align-items:center;justify-content:center}
 body.home-locked .app-home-locked .home-settings-link{min-height:44px;margin:0!important;padding:8px!important;font-size:12px!important;line-height:1.3}
-body.home-locked .heritage-premium-copy p{white-space:normal;overflow:visible;text-overflow:clip;max-width:none!important}
-body.home-locked .heritage-premium-side{gap:6px;padding-left:0}
+body.home-locked .app-home-locked .home-actions-v10-13>.heritage-premium-home-action{display:grid!important;grid-template-columns:32px minmax(0,1fr) auto!important}
+body.home-locked .heritage-premium-copy p{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;max-width:none!important}
+body.home-locked .heritage-premium-copy h3{overflow-wrap:normal!important;word-break:normal}
+body.home-locked .heritage-premium-side{min-width:0!important;max-width:none!important;gap:6px;padding-left:0}
 
 @media(max-width:900px),(max-height:500px){
   body.home-locked .app-home-locked .home-v10-13{grid-template-columns:minmax(0,1fr)}
@@ -107,23 +111,32 @@ body.home-locked .heritage-premium-side{gap:6px;padding-left:0}
   body.home-locked .home-actions-v10-13 .icon{width:32px!important;height:32px!important;min-width:32px!important;flex-basis:32px!important;font-size:16px!important}
   body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-rules,
   body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-profile{min-height:44px!important}
+  body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-rules h3,
+  body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-profile h3{font-size:14px!important}
+}
+@media(max-width:360px){
+  body.home-locked .home-actions-v10-13>.igr-home-rules .icon,
+  body.home-locked .home-actions-v10-13>.igr-home-profile .icon{display:none!important}
 }
 @media(max-height:500px) and (min-width:560px){
+  body.home-locked .app-home-locked .topbar{display:none!important}
   body.home-locked .app-home-locked .home-card-v10-13{
     display:grid!important;
     grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);
-    grid-template-rows:1fr auto auto;
-    column-gap:24px!important;
+    grid-template-rows:minmax(0,1fr) auto auto;
+    gap:4px 18px!important;
     align-content:center;
   }
   body.home-locked .home-title-spaced{grid-column:1;grid-row:1;align-self:end}
   body.home-locked .home-subcopy{grid-column:1;grid-row:2;align-self:start}
   body.home-locked .app-home-locked .home-actions-v10-13{grid-column:2;grid-row:1/3;margin:0!important;gap:6px!important}
   body.home-locked .app-home-locked .home-actions-v10-13>.home-action{min-height:44px!important;padding:8px 10px!important}
+  body.home-locked .app-home-locked .home-actions-v10-13>.home-action h3{font-size:14px!important}
   body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-create,
   body.home-locked .app-home-locked .home-actions-v10-13>.igr-home-join{grid-column:auto!important}
   body.home-locked .home-actions-v10-13>.home-action p{display:none!important}
   body.home-locked .home-actions-v10-13 .icon{display:none!important}
+  body.home-locked .app-home-locked .home-actions-v10-13>.heritage-premium-home-action{grid-template-columns:minmax(0,1fr) auto!important}
   body.home-locked .home-utility-links{grid-column:1/-1;grid-row:3}
 }
 
