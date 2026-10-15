@@ -82,9 +82,9 @@ try{
       if(width/height>=4/3&&height<=600)assert(layout.title.right+16<=layout.art.left&&layout.button.right+16<=layout.art.left,'Landscape identity and action must leave the door unobstructed');
       else assert(layout.title.bottom+12<=layout.art.top+layout.art.height*.233,'Wordmark must leave space above the doorway');
       assert.equal(await page.evaluate(()=>{scrollTo(0,500);return scrollY}),0,'Entrance must remain fixed without scrolling');
+      if(locale==='fr'&&['phone','safe-area','landscape','desktop'].includes(name))await page.screenshot({path:path.join(report,'entrance-'+name+'.png')});
       await page.keyboard.press('Tab');
       assert.equal(await page.evaluate(()=>document.activeElement?.id),'introEnterBtn','Entrance must remain keyboard accessible');
-      if(locale==='fr'&&['phone','safe-area','landscape','desktop'].includes(name))await page.screenshot({path:path.join(report,'entrance-'+name+'.png')});
       await page.emulateMedia({reducedMotion:'reduce'});
       await page.locator('#introGate').evaluate(el=>el.classList.add('opening'));
       assert.equal(await page.locator('.intro-art').evaluate(el=>getComputedStyle(el).animationName),'none','Reduced motion must skip the door zoom');
