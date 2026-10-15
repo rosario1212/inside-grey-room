@@ -1,18 +1,22 @@
-import {readFile,writeFile,stat} from 'node:fs/promises';
+import {readFile,writeFile,stat,copyFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v72-room-setup-rules';
-const assets=['app-v11.js','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','rules-v12.js','self-guided-rules-v51.js'];
+const VERSION='v73-home-role-polish';
+const polish='screen-polish-v73.css';
+const assets=['app-v11.js','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','rules-v12.js','self-guided-rules-v51.js',polish];
 const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 // Run after the existing gameplay/HÉRITAGE layers. Keep their generated code;
 // only finalize the URLs and cache for the changed presentation and rules assets.
+await copyFile(path.resolve(polish),path.join(target,polish));
 for(const asset of assets)await stat(path.join(target,asset));
 for(const page of ['index.html','en.html']){
   const file=path.join(target,page);
   let html=await readFile(file,'utf8');
   const redirect=page==='en.html'&&html.includes("location.replace('./')")&&!html.includes('app-v11.js');
+  html=html.replace(/\s*<link[^>]+href=["']screen-polish-v73\.css[^"']*["'][^>]*>\s*/gi,'\n');
+  if(!redirect)html=html.replace('</head>',`  <link rel="stylesheet" href="${polish}?v=${VERSION}">\n</head>`);
   for(const asset of assets){
     const re=new RegExp(escapeRe(asset)+'\\?v=[^"\'<> ]+','g');
     if(!re.test(html)&&!redirect)throw new Error(`${page}: missing lobby asset ${asset}`);
@@ -20,7 +24,7 @@ for(const page of ['index.html','en.html']){
   }
   if(!redirect){
     html=html.replace(/\s*<link[^>]+href=["']lobby-ui-fix-v13\.css[^"']*["'][^>]*>\s*/gi,'\n');
-    html=html.replace('</head>',`  <link rel="stylesheet" href="lobby-ui-fix-v13.css?v=${VERSION}">\n</head>`);
+    html=html.replace(`  <link rel="stylesheet" href="${polish}`,`  <link rel="stylesheet" href="lobby-ui-fix-v13.css?v=${VERSION}">\n  <link rel="stylesheet" href="${polish}`);
   }
   await writeFile(file,html,'utf8');
 }
@@ -37,4 +41,4 @@ try{
   }
   await writeFile(swFile,sw,'utf8');
 }catch(error){if(error.code!=='ENOENT')throw error}
-console.log(`Inside Grey Room ${VERSION}: room palettes, physical setup rules and PWA cache finalized`);
+console.log(`Inside Grey Room ${VERSION}: home viewport, role-choice hierarchy and PWA cache finalized`);
