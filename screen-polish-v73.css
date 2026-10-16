@@ -112,6 +112,7 @@ body.home-locked .heritage-premium-copy h3{overflow-wrap:normal!important;word-b
 body.home-locked .heritage-premium-side{min-width:0!important;max-width:none!important;gap:6px;padding-left:0}
 
 /* Keep the complete portrait artwork at its native proportions, including its type. */
+#app .maitre-hub-card>img{object-position:center top!important}
 #app .maitre-page .hplay-poster{aspect-ratio:941/1672!important;overflow:hidden}
 #app .maitre-page .hplay-poster img{display:block!important;width:100%!important;height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;filter:none!important}
 

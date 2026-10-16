@@ -48,13 +48,14 @@ export async function runMaitrePosterChecks({page,css,read,check,report,target})
       await page.locator(selector).evaluate(img=>img.decode());
       const image=await page.locator(selector).evaluate(img=>{
         const r=img.getBoundingClientRect(),s=getComputedStyle(img);
-        return {naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,width:r.width,height:r.height,left:r.left,right:r.right,filter:s.filter};
+        return {naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,width:r.width,height:r.height,left:r.left,right:r.right,filter:s.filter,position:s.objectPosition};
       });
       assert.equal(image.naturalWidth,941,'The decoded source must be the restored poster, not the 320px thumbnail');
       assert.equal(image.naturalHeight,1672);
       assert(image.naturalWidth/image.width>=(width<=760?2:1),'Use a Retina-quality source on phones and avoid upscaling on desktop');
       assert(image.left>=-.5&&image.right<=width+.5,'The artwork must stay inside the viewport');
       assert(!image.filter.includes('blur('),'The poster must not be blurred by CSS');
+      if(view==='hub')assert.equal(image.position,'50% 0%','The campaign card must keep the top of the poster and its lettering visible');
       if(view==='dossier')assert(Math.abs(image.width/image.height-941/1672)<.002,'The dossier must preserve the complete poster proportions');
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'MAÎTRE must not overflow horizontally');
       if(name==='phone')await page.screenshot({path:path.join(report,`maitre-${view}.png`),fullPage:true});
