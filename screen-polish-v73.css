@@ -11,6 +11,7 @@
 #app .game-v11 .tabs-v11 .tab{flex:0 0 auto;min-height:44px;white-space:nowrap}
 #app .game-v11 .phase-clock{font-variant-numeric:tabular-nums;min-width:5ch;text-align:right}
 #app .game-v11 .game-panel-v11{min-width:0;overflow-wrap:anywhere}
+#app .game-v11 .game-panel-v11 :is(input,select,textarea){min-width:0;max-width:100%}
 html.home-locked{
   height:100%!important;
   min-height:0!important;

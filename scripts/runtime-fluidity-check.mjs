@@ -44,11 +44,12 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
       await loadControllers(page,css,sources,mode,locale);
       const after=await idleMutations(page);
       assert.equal(after,0,'Unchanged controls must stop rebuilding their own child nodes');
+      console.log(`Idle ${mode}/${locale}: ${before===null?'n/a':before} → ${after} child-list mutations over 12 frames`);
       await page.locator('#externalUpdate').evaluate(el=>{el.textContent='Nouvel état reçu'});
       await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))));
       assert.equal(await idleMutations(page),0,'One external update must settle instead of starting another render loop');
       if(['rules','profile','join'].includes(mode)){
-        assert.equal(await page.locator('.igr-utility-exit b').innerText(),mode==='rules'?(locale==='fr'?'Fermer':'Close'):(locale==='fr'?'Accueil':'Home'));
+        assert.equal(await page.locator('.igr-utility-exit b').textContent(),mode==='rules'?(locale==='fr'?'Fermer':'Close'):(locale==='fr'?'Accueil':'Home'));
         await page.locator('.igr-utility-exit').click();
         assert.equal(await page.evaluate(()=>window.homeCalls),1,'The exit control must retain a single working action');
       }else if(mode==='create-list'){
@@ -64,7 +65,6 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
         await page.locator('#igrTopSettings').click();
         assert(await page.evaluate(()=>window.settingsCalls>0),'In-game settings must remain usable');
       }
-      console.log(`Idle ${mode}/${locale}: ${before===null?'n/a':before} → ${after} child-list mutations over 12 frames`);
     });
   }
 
@@ -100,7 +100,7 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
     await page.locator('.tabs-v11').evaluate(el=>{el.scrollLeft=el.scrollWidth});
     await page.locator('#tab-rules').click();
     const bounds=await page.evaluate(()=>{const strip=document.querySelector('.tabs-v11'),a=strip.getBoundingClientRect(),b=strip.querySelector('.active').getBoundingClientRect();return {left:strip.scrollLeft,visible:b.left>=a.left-.5&&b.right<=a.right+.5,tabs:strip.children.length,noOverflow:document.documentElement.scrollWidth<=innerWidth,oneRow:Math.max(...[...strip.children].map(el=>el.offsetTop))-Math.min(...[...strip.children].map(el=>el.offsetTop))<2}});
-    assert(bounds.visible&&bounds.tabs===6&&bounds.noOverflow&&bounds.oneRow,'All game tabs must remain reachable in one contained horizontal row');
+    assert(bounds.visible&&bounds.tabs===6&&bounds.noOverflow&&bounds.oneRow,'All game tabs must remain reachable in one contained horizontal row: '+JSON.stringify(bounds));
     if(width===320)assert(bounds.left>0,'Switching tabs must not jump the strip back to its start');
     if(width===390)await page.screenshot({path:path.join(report,'game-navigation.png')});
   });
