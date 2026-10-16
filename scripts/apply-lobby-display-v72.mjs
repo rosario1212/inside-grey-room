@@ -44,7 +44,7 @@ try{
     sw=sw.replace(new RegExp('/'+escapeRe(asset)+'\\?v=[^"\']+','g'),'/'+asset+'?v='+VERSION);
     if(!sw.includes('/'+asset+'?v='+VERSION))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '/${asset}?v=${VERSION}',`);
   }
-  for(const posterUrl of posterUrls)if(!sw.includes(posterUrl))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${posterUrl}',`);
+  for(const posterUrl of posterUrls)if(!sw.includes("'"+posterUrl+"'")&&!sw.includes('"'+posterUrl+'"'))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${posterUrl}',`);
   await writeFile(swFile,sw,'utf8');
 }catch(error){if(error.code!=='ENOENT')throw error}
 console.log(`Inside Grey Room ${VERSION}: entrance, home viewport, role-choice hierarchy and PWA cache finalized`);
