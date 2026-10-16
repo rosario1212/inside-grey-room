@@ -48,7 +48,7 @@ ok(runtime.includes("goProfile:{fr:['Profil'"),'mobile-ui-v28.js: French profile
 ok(runtime.includes("en:['Profile','Photo, nickname and progress.','◉']"),'mobile-ui-v28.js: English profile action/icon contract missing');
 ok(runtime.includes("goJoin:{fr:['Rejoindre une partie'"),'mobile-ui-v28.js: Join action is no longer normalized by function');
 ok(runtime.includes('normalizeChoiceStatus();'),'mobile-ui-v28.js: universal TON CHOIX normalizer missing');
-ok(runtime.includes("button.textContent=isFr()?'Retirer':'Remove'"),'mobile-ui-v28.js: Retirer/Remove control normalization missing');
+ok(runtime.includes("const text=isFr()?'Retirer':'Remove'")&&runtime.includes('if(button.textContent!==text)button.textContent=text'),'mobile-ui-v28.js: idempotent Retirer/Remove control normalization missing');
 
 // TERREUR 026 public copy must never regress to the placeholder wording.
 ok(!terror.includes('organisation terroriste fictive'),'terror-v12-37.js: scenario 026 still contains the word fictive');

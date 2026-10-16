@@ -3,6 +3,7 @@ import {readFile,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import vm from 'node:vm';
 import {chromium} from 'playwright';
+import {runFluidityChecks} from './runtime-fluidity-check.mjs';
 
 // Offline layout checks: no accounts, live rooms or backend requests are used.
 const root=process.cwd(),target=path.join(root,'dist');
@@ -50,6 +51,7 @@ async function check(name,run){
   catch(error){failures.push(name+': '+error.message);await page.screenshot({path:path.join(report,name.replace(/[^a-z0-9]+/gi,'-')+'.png')});}
 }
 try{
+  await runFluidityChecks({page,css,app,read,check,report});
   await check('entrance-stylesheet-bootstrap',async()=>{
     await page.setContent(`<!doctype html><html><head>${startupLink}</head><body></body></html>`);
     await page.addScriptTag({content:`const head=document.head;${bootstrap.match(/const BUILD='[^']+';/)[0]}${bootstrap.slice(loadStyleStart,loadStyleEnd)}${bootstrap.match(/loadStyle\('igr-startup-stability-v13-3-css',[^\n]+/)[0]}`});

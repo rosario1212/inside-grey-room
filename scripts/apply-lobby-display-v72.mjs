@@ -2,9 +2,9 @@ import {readFile,writeFile,stat,copyFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v75-doorway-framing';
+const VERSION='v76-interface-fluidity';
 const polish='screen-polish-v73.css';
-const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','rules-v12.js','self-guided-rules-v51.js',polish];
+const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js',polish];
 const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 // Run after the existing gameplay/HÉRITAGE layers. Keep their generated code;

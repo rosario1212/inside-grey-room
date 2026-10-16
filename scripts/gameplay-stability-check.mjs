@@ -117,7 +117,10 @@ try{
   await stat(path.join(root,'dist','index.html'));
   const distIndex=await read('dist/index.html');
   const distSw=await read('dist/service-worker.js');
-  ok(distIndex.includes('navigation-theme-v18.js?v=v27-role-choice-nav'),'dist/index.html has stale navigation-theme asset');
+  const presentationVersion=files.lobbyDisplayApply.match(/const VERSION='([^']+)'/)?.[1];
+  const presentationFinalized=presentationVersion&&distSw.includes(`const CACHE='igr-${presentationVersion}';`);
+  const navigationThemeUrl='navigation-theme-v18.js?v='+(presentationFinalized?presentationVersion:'v27-role-choice-nav');
+  ok(distIndex.includes(navigationThemeUrl),'dist/index.html has stale navigation-theme asset');
   ok(distIndex.includes('navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/index.html has stale navigation behavior');
   ok(distIndex.includes('navigation-heritage-v19.css?v=v27-role-choice-nav'),'dist/index.html has stale navigation CSS');
   ok(distIndex.includes('cell-controls-stability-v23.js?v=v24-gameplay-stability'),'dist/index.html has stale cell stability asset');
@@ -139,6 +142,7 @@ try{
     ok(distSw.includes('/'+asset+'?v=v59-role-finale-integrity'),'dist/service-worker.js: stale finale asset '+asset);
   }
   ok(distSw.includes('/navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/service-worker.js is missing v27 navigation');
+  ok(distSw.includes('/'+navigationThemeUrl),'dist/service-worker.js is missing the current navigation-theme asset');
   ok(distSw.includes('/role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/service-worker.js is missing restored TON CHOIX CSS');
   ok(distIndex.includes('live-cell-v12-44.js?v=v36.1-parasite-fix'),'dist/index.html did not bump the v36 live-cell runtime');
   ok(distIndex.includes('runtime-optimization-v12.js?v=v36.1-parasite-fix'),'dist/index.html did not bump the legacy runtime wrapper');

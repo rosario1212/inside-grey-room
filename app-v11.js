@@ -886,13 +886,16 @@ function syncSignature(d){
 function draftScope(){return [STATE.sync?.room?.code,STATE.sync?.room?.state?.match_no,STATE.sync?.player?.id,STATE.view,STATE.tab,STATE.sync?.room?.phase].join(':')}
 function captureDrafts(){
  const active=document.activeElement;
- return {scope:draftScope(),fields:[...byId('app').querySelectorAll('input[id],textarea[id],select[id]')].filter(e=>e.type!=='file').map(e=>({id:e.id,value:e.value,checked:e.checked})),focus:active?.id,start:active?.selectionStart,end:active?.selectionEnd,scroll:window.scrollY};
+ const root=byId('app');
+ const panels=['.tabs-v11','.message-list','.timeline-v11'].flatMap(selector=>[...root.querySelectorAll(selector)].map((el,index)=>({selector,index,left:el.scrollLeft,top:el.scrollTop})));
+ return {scope:draftScope(),fields:[...root.querySelectorAll('input[id],textarea[id],select[id]')].filter(e=>e.type!=='file').map(e=>({id:e.id,value:e.value,checked:e.checked})),focus:active?.id,start:active?.selectionStart,end:active?.selectionEnd,scroll:window.scrollY,panels};
 }
 function restoreDrafts(draft){
  if(draft.scope!==draftScope())return;
- for(const f of draft.fields){const el=byId(f.id);if(el){el.value=f.value;el.checked=f.checked}}
+ for(const f of draft.fields){const el=byId(f.id);if(el){if(el.tagName!=='SELECT'||[...el.options].some(option=>option.value===f.value))el.value=f.value;el.checked=f.checked}}
  const el=byId(draft.focus);if(el){el.focus({preventScroll:true});try{el.setSelectionRange(draft.start,draft.end)}catch{}}
  window.scrollTo(0,draft.scroll);
+ for(const panel of draft.panels||[]){const el=byId('app').querySelectorAll(panel.selector)[panel.index];if(el){el.scrollLeft=panel.left;el.scrollTop=panel.top}}
 }
 function connectionStatus(failed){
  let el=byId('connectionStatus');
@@ -912,8 +915,8 @@ async function performSync(force=false){
   const d=await rpc('igr_v4_sync',{p_code:STATE.room,p_player_token:STATE.token});
   if(STATE.room!==room||STATE.token!==token)return null;
   connectionStatus(false);
-  const draft=captureDrafts();
   const sig=syncSignature(d),changed=force||sig!==STATE.syncSig;
+  const draft=changed?captureDrafts():null;
   STATE.sync=d;STATE.syncSig=sig;
   STATE.scenarioId=d.room.scenario_id;STATE.playerId=d.player.id;STATE.playerPseudo=d.player.pseudo;STATE.role=d.player.public_role||STATE.role;STATE.players=d.players||[];STATE.cycle=d.room.cycle||0;
   saveSession();
@@ -1068,7 +1071,16 @@ function renderRole(){
 async function ackRole(){
  try{await rpc('igr_v4_ack_role',{p_code:STATE.room,p_player_token:STATE.token});STATE.view='game';STATE.tab='investigation';await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de valider la carte.')}
 }
-function setTab(t){STATE.tab=t;saveSession();renderGame()}
+function setTab(t){
+ const left=document.querySelector('#app .tabs-v11')?.scrollLeft||0;
+ STATE.tab=t;saveSession();renderGame();
+ const tabs=document.querySelector('#app .tabs-v11');if(!tabs)return;
+ tabs.scrollLeft=left;
+ const active=tabs.querySelector('.tab.active');if(!active)return;
+ const box=tabs.getBoundingClientRect(),target=active.getBoundingClientRect();
+ if(target.left<box.left)tabs.scrollLeft-=box.left-target.left;
+ else if(target.right>box.right)tabs.scrollLeft+=target.right-box.right;
+}
 function appConfirm({title='Confirmer',text='',confirmLabel='Continuer',danger=false}={}){
  return new Promise(resolve=>{
   if(byId('actionConfirmModal')){resolve(false);return}

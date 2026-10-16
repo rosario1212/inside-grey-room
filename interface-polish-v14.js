@@ -72,7 +72,12 @@ function normalizeScenarioBrowser(){
 }
 
 function apply(){markHomeActions();organizeUtilityNavigation();normalizeScenarioBrowser()}
-function schedule(){queueMicrotask(apply);requestAnimationFrame(apply);setTimeout(apply,80)}
+let queued=false;
+function schedule(){
+  if(queued)return;
+  queued=true;
+  requestAnimationFrame(()=>{queued=false;apply()});
+}
 
 /* Hooks stay additive and execute only when those screens render. */
 for(const name of ['renderHome','renderCreateList','renderCreateConfirm','renderJoin','renderRules','renderProfile']){

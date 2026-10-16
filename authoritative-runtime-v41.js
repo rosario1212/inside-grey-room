@@ -159,7 +159,7 @@ function ensureSettings(){
     if(duplicate!==btn&&(/paramètres|settings/i.test(clean(duplicate.textContent))||/openSettings/i.test(duplicate.getAttribute?.('onclick')||'')))duplicate.remove();
   }
   btn.id='igrTopSettings';btn.type='button';btn.className='pill-btn igr-top-settings';
-  btn.innerHTML='<span aria-hidden="true">⚙</span>';
+  if(btn.innerHTML!=='<span aria-hidden="true">⚙</span>')btn.innerHTML='<span aria-hidden="true">⚙</span>';
   btn.setAttribute('aria-label',copy('Paramètres','Settings'));btn.setAttribute('title',copy('Paramètres','Settings'));
   btn.onclick=()=>{try{if(typeof openSettings==='function')openSettings();else if(typeof window.openSettings==='function')window.openSettings()}catch(e){console.error('[IGR v41] settings',e)}};
 }
