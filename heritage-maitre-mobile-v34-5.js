@@ -1,24 +1,13 @@
 /* Inside Grey Room v34.9 — MAÎTRE mobile visual recovery */
 (()=>{'use strict';
-const posters={
-  'LE CLIENT':'/assets/heritage-maitre-01-le-client-hd-v77.webp?v=v77-heritage-clarity',
-  'LE DEAL':'/assets/heritage-maitre-02-le-deal-final.webp?v=v34.9-maitre-theme-posters',
-  'DEUX CHOIX':'/assets/heritage-maitre-03-deux-choix-final.webp?v=v34.9-maitre-theme-posters',
-  'LE PROCÈS':'/assets/heritage-maitre-04-le-proces-final.webp?v=v34.9-maitre-theme-posters',
-  'L’HONNEUR':'/assets/heritage-maitre-05-l-honneur-final.webp?v=v34.9-maitre-theme-posters'
-};
 function repair(root=document){
   if(!root.querySelector?.('.maitre-page,.maitre-hub-card'))return;
-  root.querySelectorAll?.('.maitre-page img,.maitre-hub-card>img').forEach(img=>{
-    const box=img.closest('.hplay-case,.hplay-dossier-grid,.hplay-campaign-hero,.maitre-hub-card');
-    const text=(box?.textContent||'').toUpperCase();
-    let key=Object.keys(posters).find(k=>text.includes(k));
-    if(!key&&img.closest('.hplay-campaign-hero,.maitre-hub-card'))key='LE CLIENT';
-    if(!key)return;
-    const expected=posters[key];
+  root.querySelectorAll?.('.maitre-page .hplay-poster img,.maitre-page .hplay-case-poster img,.maitre-page .hplay-campaign-hero img,.maitre-hub-card>img').forEach(img=>{
     const current=img.getAttribute('src')||'';
+    const number=Number(current.match(/heritage-maitre-(\d{2})-/)?.[1]);
+    const expected=window.IGR_HERITAGE_MAITRE_DATA?.META?.chapters?.find(ch=>ch.n===number)?.poster;
+    if(!expected)return;
     if(current!==expected)img.src=expected;
-    img.onerror=()=>{img.onerror=null;img.src=expected;};
     img.decoding='async';
   });
 }
