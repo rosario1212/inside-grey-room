@@ -4,7 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v77-heritage-clarity';
+const VERSION='v78-maitre-burgundy';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','screen-polish-v73.css'];
 const read=name=>readFile(path.join(target,name),'utf8');
 const app=await read('app-v11.js');
@@ -77,7 +77,7 @@ try{
   vm.runInNewContext(sw.slice(0,sw.indexOf('];')+2)+';globalThis.shell=SHELL;globalThis.cache=CACHE;',scope);
   shell=scope.shell;
   const poster='assets/heritage-maitre-01-le-client-hd-v77.webp';
-  const posterUrl='/'+poster+'?v='+VERSION;
+  const posterUrl='/'+poster+'?v=v77-heritage-clarity';
   await stat(path.join(target,poster));
   assert(shell.includes(posterUrl),'Restored MAÎTRE artwork must be precached for offline use');
   for(const script of ['heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js'])assert((await read(script)).includes(posterUrl),script+': keep the restored poster through every renderer');
