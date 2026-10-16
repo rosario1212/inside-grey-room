@@ -2,10 +2,11 @@ import {readFile,writeFile,stat,copyFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v77-heritage-clarity';
+const VERSION='v78-maitre-burgundy';
 const polish='screen-polish-v73.css';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js',polish];
 const poster='assets/heritage-maitre-01-le-client-hd-v77.webp';
+const posterUrl='/'+poster+'?v=v77-heritage-clarity';
 const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 // Run after the existing gameplay/HÉRITAGE layers. Keep their generated code;
@@ -44,7 +45,7 @@ try{
     sw=sw.replace(new RegExp('/'+escapeRe(asset)+'\\?v=[^"\']+','g'),'/'+asset+'?v='+VERSION);
     if(!sw.includes('/'+asset+'?v='+VERSION))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '/${asset}?v=${VERSION}',`);
   }
-  if(!sw.includes('/'+poster+'?v='+VERSION))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '/${poster}?v=${VERSION}',`);
+  if(!sw.includes(posterUrl))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${posterUrl}',`);
   await writeFile(swFile,sw,'utf8');
 }catch(error){if(error.code!=='ENOENT')throw error}
 console.log(`Inside Grey Room ${VERSION}: entrance, home viewport, role-choice hierarchy and PWA cache finalized`);

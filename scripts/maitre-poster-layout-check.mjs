@@ -18,6 +18,17 @@ export async function runMaitrePosterChecks({page,css,read,check,report,target})
   };
   const hubRenderer=extract('function injectHubCard(){','function patchPremiumCopy(');
   const chapterRenderer=extract('function renderChapter(n){','function renderSetup(');
+  const chooserSources=[
+    [await read('heritage-maitre-online-v34-4.js'),'function inject(){','function createView('],
+    [await read('play-modes-v13-8.js'),'function enhanceHeritageChapter(){','function renderHeritageOnlineCreate(']
+  ];
+  const chooserRenderers=chooserSources.map(([source,start,end])=>{
+    const from=source.indexOf(start),to=source.indexOf(end,from);
+    assert(from>=0&&to>from,'Canonical mode chooser must exist');
+    return source.slice(from,to);
+  });
+  const navigation=await read('navigation-theme-v18.js');
+  const themeStart=navigation.indexOf('function setModeTheme('),themeEnd=navigation.indexOf('function apply(){',themeStart);
   let dossier='';
   vm.runInNewContext(chapterRenderer+';renderChapter(1);',{
     META,PACK,current:()=>1,completed:()=>false,carryForChapter:()=>[],chapterCondition:()=>'',readLive:()=>null,
@@ -39,6 +50,14 @@ export async function runMaitrePosterChecks({page,css,read,check,report,target})
         const META=${JSON.stringify({...META,cover:dataUri})},PACK=${JSON.stringify(PACK)};
         const $=s=>document.querySelector(s),extendEngine=()=>{},progress=()=>0,esc=v=>String(v??'');
         ${hubRenderer}injectHubCard();
+      })();`});
+      else await page.addScriptTag({content:`(()=>{
+        const $=(s,root=document)=>root.querySelector(s),sess=()=>null,hSession=()=>null,esc=v=>String(v??'');
+        ${chooserRenderers[name==='small-phone'?0:1]}
+        document.querySelector('.hplay-launch').dataset.campaign='maitre';
+        ${name==='small-phone'?'inject()':'enhanceHeritageChapter()'};
+        ${navigation.slice(themeStart,themeEnd)}
+        applyModeChooserTheme();
       })();`});
       // The mobile recovery layer must agree with the canonical map, without
       // repeatedly reverting a sharp source to the old thumbnail after a render.

@@ -116,6 +116,16 @@ body.home-locked .heritage-premium-side{min-width:0!important;max-width:none!imp
 #app .maitre-page .hplay-poster{aspect-ratio:941/1672!important;overflow:hidden}
 #app .maitre-page .hplay-poster img{display:block!important;width:100%!important;height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;filter:none!important}
 
+/* Both Heritage chooser renderers keep MAÎTRE's burgundy primary action. */
+#app .maitre-page .heritage-dual-row :is(.heritage-online-btn,.btn.primary){
+  background:#6d2723!important;
+  border-color:#6d2723!important;
+  color:#fff8f0!important;
+  box-shadow:none!important;
+}
+#app .maitre-page .heritage-dual-row :is(.heritage-online-btn,.btn.primary):hover:not(:disabled){background:#7b302b!important;border-color:#7b302b!important}
+#app .maitre-page .heritage-dual-row :is(.heritage-online-btn,.btn.primary):focus-visible{outline:2px solid #6d2723!important;outline-offset:3px}
+
 @media(max-width:900px),(max-height:500px){
   body.home-locked .app-home-locked .home-v10-13{grid-template-columns:minmax(0,1fr)}
   body.home-locked .hero-image-home-v10-13{display:none!important}
