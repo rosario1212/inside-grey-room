@@ -6,6 +6,7 @@ import {chromium} from 'playwright';
 import {runFluidityChecks} from './runtime-fluidity-check.mjs';
 import {runMaitrePosterChecks} from './maitre-poster-layout-check.mjs';
 import {runAuditGameplayChecks} from './audit-gameplay-check.mjs';
+import {runDesktopChecks} from './desktop-layout-check.mjs';
 
 // Offline layout checks: no accounts, live rooms or backend requests are used.
 const root=process.cwd(),target=path.join(root,'dist');
@@ -59,6 +60,7 @@ async function check(name,run){
 try{
   await runFluidityChecks({page,css,app,read,check,report});
   await runAuditGameplayChecks({page,read,check});
+  await runDesktopChecks({page,css,app,read,check,report});
   await runMaitrePosterChecks({page,css,read,check,report,target});
   await check('entrance-stylesheet-bootstrap',async()=>{
     await page.setContent(`<!doctype html><html><head>${startupLink}</head><body></body></html>`);
@@ -69,7 +71,7 @@ try{
   const presets=[
     ['phone',390,844,0,0],['safe-area',393,852,44,34],['small-phone',320,568,0,0],
     ['browser-toolbar',390,664,0,0],['small-safe-area',375,667,44,34],
-    ['landscape',844,390,0,21],['short-landscape',667,320,0,0],['narrow-landscape',568,320,0,0],['desktop',1280,800,0,0]
+    ['landscape',844,390,0,21],['short-landscape',667,320,0,0],['narrow-landscape',568,320,0,0],['desktop',1280,800,0,0],['laptop',1366,768,0,0],['desktop-large',1920,1080,0,0],['desktop-qhd',2560,1440,0,0],['ultrawide',3440,1440,0,0]
   ];
   for(const [name,width,height,top,bottom] of presets)for(const locale of ['fr','en']){
     await check('entrance-'+name+'-'+locale,async()=>{
@@ -100,13 +102,13 @@ try{
       assert(layout.button.height>=44,'Entrance action needs a usable touch target');
       assert(layout.hint.height<=layout.hintLine*1.1,'The entrance hint must remain on one line');
       assert(layout.art.width/layout.art.height<=941/1672+.001,'Wide viewports must retain the full height of the doorway');
-      if(width/height>=4/3&&height<=600)assert(layout.title.right+16<=layout.art.left&&layout.button.right+16<=layout.art.left,'Landscape identity and action must leave the door unobstructed');
+      if((width/height>=4/3&&height<=600)||(width>=1100&&height>=601))assert(layout.title.right+16<=layout.art.left&&layout.button.right+16<=layout.art.left,'Landscape identity and action must leave the door unobstructed');
       else {
         assert(layout.title.bottom+12<=layout.art.top+layout.art.height*.233,'Wordmark must leave space above the doorway');
         assert(layout.art.top+layout.art.height*.86+20<=layout.button.top,'The door threshold must remain visible above the entrance button');
       }
       assert.equal(await page.evaluate(()=>{scrollTo(0,500);return scrollY}),0,'Entrance must remain fixed without scrolling');
-      if(locale==='fr'&&['phone','safe-area','landscape','desktop'].includes(name))await page.screenshot({path:path.join(report,'entrance-'+name+'.png')});
+      if(locale==='fr'&&['phone','safe-area','landscape','desktop','desktop-large'].includes(name))await page.screenshot({path:path.join(report,'entrance-'+name+'.png')});
       await page.keyboard.press('Tab');
       assert.equal(await page.evaluate(()=>document.activeElement?.id),'introEnterBtn','Entrance must remain keyboard accessible');
       await page.emulateMedia({reducedMotion:'reduce'});
@@ -119,7 +121,7 @@ try{
     await check(name+(resume?'-resume':''),async()=>{
       await page.setViewportSize({width,height});
       const safeCss=css.replace(/env\(safe-area-inset-(top|bottom)(?:,\s*0px)?\)/g,(_,side)=>`${side==='top'?top:bottom}px`);
-      await page.setContent(`<!doctype html><html class="home-locked"><head><style>${safeCss}</style></head><body class="home-locked"><div id="app">${homeHtml(resume)}</div><footer class="igr-beta-footer"><a href="support.html">Signaler un problème</a></footer></body></html>`);
+      await page.setContent(`<!doctype html><html class="home-locked"><head><style>${safeCss}</style></head><body class="home-locked"><div id="app">${homeHtml(resume).replace('srcset="assets/intro-v10-14.webp"',`srcset="data:image/webp;base64,${introArt.toString('base64')}"`)}</div><footer class="igr-beta-footer"><a href="support.html">Signaler un problème</a></footer></body></html>`);
       await page.addScriptTag({content:'var STATE={view:"home"};'});
       await page.addScriptTag({content:polishController});
       await page.addScriptTag({content:`(()=>{
@@ -130,6 +132,10 @@ try{
         renderCard(card,{active:true,level:'tester'});
         document.querySelector('.home-actions .primary').insertAdjacentElement('afterend',card);
       })();`});
+      if(width>900&&height>500){
+        await page.locator('.hero-image-home picture img').evaluate(img=>img.decode());
+        assert(await page.locator('.hero-image-home picture img').evaluate(img=>img.naturalWidth>0&&img.currentSrc.startsWith('data:image/webp;')),'Desktop must display the doorway rather than the old image of a menu');
+      }
       const heritage=await page.evaluate(()=>{
         const icon=document.querySelector('.heritage-premium-icon'),copy=document.querySelector('.heritage-premium-copy'),side=document.querySelector('.heritage-premium-side');
         const i=icon.getBoundingClientRect(),c=copy.getBoundingClientRect(),s=side.getBoundingClientRect();

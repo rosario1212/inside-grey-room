@@ -509,7 +509,7 @@ function renderHome(){
  byId('app').innerHTML=shell(`
   <div class="home home-v10-13">
     <section class="hero-image hero-image-home hero-image-home-v10-13">
-      <img src="${HOME_ART}" alt="Scénographie Inside Grey Room">
+      <picture><source media="(min-width:901px)" srcset="assets/intro-v10-14.webp"><img src="${HOME_ART}" alt="Scénographie Inside Grey Room"></picture>
     </section>
     <section class="home-card home-card-v10-13">
       <div class="home-title-spaced">INSIDE<br>GREY ROOM</div>
@@ -1072,14 +1072,18 @@ async function ackRole(){
  try{await rpc('igr_v4_ack_role',{p_code:STATE.room,p_player_token:STATE.token});STATE.view='game';STATE.tab='investigation';await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de valider la carte.')}
 }
 function setTab(t){
- const left=document.querySelector('#app .tabs-v11')?.scrollLeft||0;
+ const previous=document.querySelector('#app .tabs-v11');
+ const left=previous?.scrollLeft||0,top=previous?.scrollTop||0,focused=previous?.contains(document.activeElement);
  STATE.tab=t;saveSession();renderGame();
  const tabs=document.querySelector('#app .tabs-v11');if(!tabs)return;
- tabs.scrollLeft=left;
+ tabs.scrollLeft=left;tabs.scrollTop=top;
  const active=tabs.querySelector('.tab.active');if(!active)return;
  const box=tabs.getBoundingClientRect(),target=active.getBoundingClientRect();
  if(target.left<box.left)tabs.scrollLeft-=box.left-target.left;
  else if(target.right>box.right)tabs.scrollLeft+=target.right-box.right;
+ if(target.top<box.top)tabs.scrollTop-=box.top-target.top;
+ else if(target.bottom>box.bottom)tabs.scrollTop+=target.bottom-box.bottom;
+ if(focused)active.focus({preventScroll:true});
 }
 function appConfirm({title='Confirmer',text='',confirmLabel='Continuer',danger=false}={}){
  return new Promise(resolve=>{
