@@ -4,6 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import {chromium} from 'playwright';
 import {runFluidityChecks} from './runtime-fluidity-check.mjs';
+import {runMaitrePosterChecks} from './maitre-poster-layout-check.mjs';
 
 // Offline layout checks: no accounts, live rooms or backend requests are used.
 const root=process.cwd(),target=path.join(root,'dist');
@@ -30,6 +31,10 @@ function homeHtml(resume){
   return output.innerHTML;
 }
 const polishController=await read('interface-polish-v14.js');
+const premiumSource=await read('heritage-premium-v13-6.js');
+const cardStart=premiumSource.indexOf('function renderCard('),cardEnd=premiumSource.indexOf('function equalize(',cardStart);
+assert(cardStart>=0&&cardEnd>cardStart,'Canonical HÉRITAGE card renderer must exist');
+const premiumCardRenderer=premiumSource.slice(cardStart,cardEnd);
 const choiceSource=await read('omerta-v12-39.js');
 const choiceStart=choiceSource.indexOf('function ensureChoiceStatusCard(){');
 const choiceEnd=choiceSource.indexOf('function markOmertaCells(',choiceStart);
@@ -52,6 +57,7 @@ async function check(name,run){
 }
 try{
   await runFluidityChecks({page,css,app,read,check,report});
+  await runMaitrePosterChecks({page,css,read,check,report,target});
   await check('entrance-stylesheet-bootstrap',async()=>{
     await page.setContent(`<!doctype html><html><head>${startupLink}</head><body></body></html>`);
     await page.addScriptTag({content:`const head=document.head;${bootstrap.match(/const BUILD='[^']+';/)[0]}${bootstrap.slice(loadStyleStart,loadStyleEnd)}${bootstrap.match(/loadStyle\('igr-startup-stability-v13-3-css',[^\n]+/)[0]}`});
@@ -114,12 +120,21 @@ try{
       await page.setContent(`<!doctype html><html class="home-locked"><head><style>${safeCss}</style></head><body class="home-locked"><div id="app">${homeHtml(resume)}</div><footer class="igr-beta-footer"><a href="support.html">Signaler un problème</a></footer></body></html>`);
       await page.addScriptTag({content:'var STATE={view:"home"};'});
       await page.addScriptTag({content:polishController});
-      await page.evaluate(()=>{
+      await page.addScriptTag({content:`(()=>{
+        const copy=()=>({title:'MODE HÉRITAGE',subtitle:'Campagnes persistantes · accès premium',premium:'PREMIUM',tester:'TESTEURS'});
+        ${premiumCardRenderer}
         const card=document.createElement('div');
         card.className='home-action heritage-premium-home-action';card.setAttribute('role','button');card.tabIndex=0;
-        card.innerHTML='<div class="icon heritage-premium-icon"><span>H</span></div><div class="heritage-premium-copy"><h3>MODE HÉRITAGE</h3><p>Campagnes persistantes · accès premium</p></div><div class="heritage-premium-side"><span class="heritage-premium-badge">PREMIUM</span><span class="heritage-premium-state">ACCÈS LIMITÉ</span></div>';
+        renderCard(card,{active:true,level:'tester'});
         document.querySelector('.home-actions .primary').insertAdjacentElement('afterend',card);
+      })();`});
+      const heritage=await page.evaluate(()=>{
+        const icon=document.querySelector('.heritage-premium-icon'),copy=document.querySelector('.heritage-premium-copy'),side=document.querySelector('.heritage-premium-side');
+        const i=icon.getBoundingClientRect(),c=copy.getBoundingClientRect(),s=side.getBoundingClientRect();
+        return {iconVisible:getComputedStyle(icon).display!=='none',iconGap:c.left-i.right,badgeGap:s.left-c.right};
       });
+      if(heritage.iconVisible)assert(heritage.iconGap>=13.5,'The H icon must keep at least 14px clear of the title');
+      assert(heritage.badgeGap>=13.5,'The premium badge must stay separated from the title and subtitle');
       const bounds=await page.evaluate(()=>{
         const app=document.querySelector('.home-card').getBoundingClientRect();
         return [...document.querySelectorAll('.home-action,.home-actions>.btn,.home-settings-link,.igr-beta-footer a')].map(el=>{
