@@ -56,11 +56,13 @@ function enhanceUtilityExit(){
 
   const close=view==='rules';
   if(close){
-    button.innerHTML=isFr()?'<span aria-hidden="true">×</span><b>Fermer</b>':'<span aria-hidden="true">×</span><b>Close</b>';
+    const html=isFr()?'<span aria-hidden="true">×</span><b>Fermer</b>':'<span aria-hidden="true">×</span><b>Close</b>';
+    if(button.innerHTML!==html)button.innerHTML=html;
     button.setAttribute('aria-label',isFr()?'Fermer les règles et revenir à l’accueil':'Close rules and return home');
     button.setAttribute('title',isFr()?'Fermer':'Close');
   }else{
-    button.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
+    const html=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
+    if(button.innerHTML!==html)button.innerHTML=html;
     button.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');
     button.setAttribute('title',isFr()?'Accueil':'Home');
   }
@@ -81,7 +83,8 @@ function normalizeChoiceStatus(){
     card.dataset.igrChoiceState=empty?'empty':'chosen';
     card.classList.toggle('has-choice',!empty);
     if(button){
-      button.textContent=isFr()?'Retirer':'Remove';
+      const text=isFr()?'Retirer':'Remove';
+      if(button.textContent!==text)button.textContent=text;
       button.setAttribute('aria-label',isFr()?'Retirer ce choix de rôle':'Remove this role choice');
       button.setAttribute('title',isFr()?'Retirer':'Remove');
     }
@@ -173,7 +176,6 @@ function apply(){
   enhanceUtilityExit();
   normalizeChoiceStatus();
   installFixedFilters();
-  clearLegacyFilterPosition();
 }
 function schedule(){
   if(queued)return;
@@ -181,6 +183,7 @@ function schedule(){
   requestAnimationFrame(()=>{queued=false;apply()});
 }
 function boot(){
+  clearLegacyFilterPosition();
   apply();
   const root=document.getElementById('app');
   if(root&&window.MutationObserver)new MutationObserver(schedule).observe(root,{childList:true,subtree:true});

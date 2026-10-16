@@ -8,6 +8,7 @@ let applying=false,queued=false;
 
 const isFr=()=>window.IGR_LOCALE!=='en';
 const store=()=>{try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}};
+function setMarkup(node,html){if(node&&node.innerHTML!==html)node.innerHTML=html}
 function readLocal(){try{return JSON.parse(store().getItem(LOCAL_KEY)||'null')}catch{return null}}
 function selectedScenario(){try{return String(STATE?.selectedScenario||STATE?.sync?.room?.scenario_id||'')}catch{return''}}
 function currentView(){try{return String(STATE?.view||'')}catch{return''}}
@@ -56,7 +57,7 @@ function ensureTopHome(){
     btn.addEventListener('click',goHomeSafe);
   }
   btn.className='pill-btn igr-global-home igr-top-home';
-  btn.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
+  setMarkup(btn,isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>');
   btn.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');
   btn.setAttribute('title',isFr()?'Accueil':'Home');
   if(btn.parentElement!==actions)actions.prepend(btn);
@@ -86,9 +87,9 @@ function ensureDock(){
     dock.append(filters,home);document.body.appendChild(dock);
   }
   const home=dock.querySelector('#igrDockHome'),filters=dock.querySelector('#igrDockFilters');
-  if(home){home.innerHTML=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';home.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');home.hidden=false}
+  if(home){setMarkup(home,isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>');home.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');home.hidden=false}
   const filterNav=isScenarioBrowser()?document.querySelector('#app .igr-scenario-filters'):null;
-  if(filters){filters.innerHTML=isFr()?'<span aria-hidden="true">☷</span><b>Filtres</b>':'<span aria-hidden="true">☷</span><b>Filters</b>';filters.setAttribute('aria-label',isFr()?'Ouvrir les filtres':'Open filters');filters.hidden=!filterNav}
+  if(filters){setMarkup(filters,isFr()?'<span aria-hidden="true">☷</span><b>Filtres</b>':'<span aria-hidden="true">☷</span><b>Filters</b>');filters.setAttribute('aria-label',isFr()?'Ouvrir les filtres':'Open filters');filters.hidden=!filterNav}
   if(filterNav)filterNav.classList.add('igr-filter-dock-panel');
   document.body.classList.add('igr-global-dock-active');
   if(!filterNav)closeFilters();

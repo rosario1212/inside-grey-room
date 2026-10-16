@@ -7,7 +7,12 @@ on:
       - 'startup-stability-v13-3.css'
       - 'app-v11.js'
       - 'omerta-v12-39.js'
+      - 'mobile-ui-v28.js'
+      - 'interface-polish-v14.js'
+      - 'navigation-theme-v18.js'
+      - 'authoritative-runtime-v41.js'
       - 'scripts/screen-layout-check.mjs'
+      - 'scripts/runtime-fluidity-check.mjs'
       - 'scripts/apply-lobby-display-v72.mjs'
       - '.github/workflows/screen-layout-check.yml'
   workflow_dispatch:
@@ -19,6 +24,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -30,6 +37,8 @@ jobs:
       - name: Install test browser
         run: npx playwright install --with-deps chromium
       - name: Verify screen layouts
+        env:
+          IGR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: node scripts/screen-layout-check.mjs
       - uses: actions/upload-artifact@v4
         if: always()

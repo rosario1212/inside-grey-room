@@ -1,4 +1,16 @@
 /* Home fills the available screen; other pages and modal sheets retain scrolling. */
+/* Stable game navigation: one horizontal strip keeps every tab reachable. */
+#app .game-v11 .tabs-v11{
+  flex-wrap:nowrap;
+  min-width:0;max-width:100%;
+  overflow-x:auto;overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  padding:4px 2px 8px;
+  -webkit-overflow-scrolling:touch;
+}
+#app .game-v11 .tabs-v11 .tab{flex:0 0 auto;min-height:44px;white-space:nowrap}
+#app .game-v11 .phase-clock{font-variant-numeric:tabular-nums;min-width:5ch;text-align:right}
+#app .game-v11 .game-panel-v11{min-width:0;overflow-wrap:anywhere}
 html.home-locked{
   height:100%!important;
   min-height:0!important;
