@@ -4,7 +4,7 @@ import path from 'node:path';
 const root=process.cwd();
 const out=path.resolve(root,process.argv[2]||'dist');
 const runtime=['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-judicial-v34.css','heritage-maitre-polish-v34.css','heritage-maitre-v34.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-mobile-v34-5.js'];
-const posters=['heritage-maitre-01-le-client-final.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp'];
+const posters=['heritage-maitre-01-le-client-final.webp','heritage-maitre-01-le-client-hd-v77.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp'];
 async function exists(file){try{await stat(file);return true}catch{return false}}
 if(!(await exists(out)))throw new Error(`MAÎTRE target does not exist: ${out}`);
 for(const name of runtime){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing MAÎTRE runtime: ${name}`);await cp(src,path.join(out,name));}

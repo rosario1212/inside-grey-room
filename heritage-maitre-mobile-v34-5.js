@@ -1,7 +1,7 @@
 /* Inside Grey Room v34.9 — MAÎTRE mobile visual recovery */
 (()=>{'use strict';
 const posters={
-  'LE CLIENT':'/assets/heritage-maitre-01-le-client-final.webp?v=v34.9-maitre-theme-posters',
+  'LE CLIENT':'/assets/heritage-maitre-01-le-client-hd-v77.webp?v=v77-heritage-clarity',
   'LE DEAL':'/assets/heritage-maitre-02-le-deal-final.webp?v=v34.9-maitre-theme-posters',
   'DEUX CHOIX':'/assets/heritage-maitre-03-deux-choix-final.webp?v=v34.9-maitre-theme-posters',
   'LE PROCÈS':'/assets/heritage-maitre-04-le-proces-final.webp?v=v34.9-maitre-theme-posters',
