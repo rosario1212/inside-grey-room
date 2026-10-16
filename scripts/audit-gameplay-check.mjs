@@ -10,8 +10,9 @@ export async function runAuditGameplayChecks({page,read,check}){
   const flow=await read('gameplay-flow-v13.js');
   const controls=extract(flow,'function renderJournalistInvestigation(){','window.renderInvestigationTab=');
   const modern=await read('natural-role-gameplay-v50.js');
-  const journalistRpc=modern.split('\n').find(line=>line.startsWith('function rpc('));
+  const journalistRpc=modern.split('\n').find(line=>/^(?:async )?function rpc\(/.test(line));
   const journalistHandler=modern.split('\n').find(line=>line.startsWith('window.igr50JournalistInvestigate='));
+  assert(journalistRpc&&journalistHandler,'Use the shipped Press RPC wrapper and investigation handler');
   for(const locale of ['fr','en'])await check('journalist-press-'+locale,async()=>{
     await page.setContent('<div id="app"></div>');
     await page.addScriptTag({content:`
