@@ -22,6 +22,7 @@ on:
       - 'assets/heritage-maitre-*'
       - 'scripts/screen-layout-check.mjs'
       - 'scripts/maitre-poster-layout-check.mjs'
+      - 'scripts/desktop-layout-check.mjs'
       - 'scripts/runtime-fluidity-check.mjs'
       - 'scripts/audit-gameplay-check.mjs'
       - 'scripts/apply-lobby-display-v72.mjs'
