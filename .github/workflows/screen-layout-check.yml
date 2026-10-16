@@ -11,6 +11,10 @@ on:
       - 'interface-polish-v14.js'
       - 'navigation-theme-v18.js'
       - 'authoritative-runtime-v41.js'
+      - 'gameplay-flow-v13.js'
+      - 'play-modes-v13-8.js'
+      - 'heritage-maitre-polish-v34.js'
+      - 'heritage-maitre-online-v34-4.js'
       - 'heritage-maitre-assets-v34.js'
       - 'heritage-maitre-mobile-v34-5.js'
       - 'heritage-maitre-v34.js'
@@ -19,6 +23,7 @@ on:
       - 'scripts/screen-layout-check.mjs'
       - 'scripts/maitre-poster-layout-check.mjs'
       - 'scripts/runtime-fluidity-check.mjs'
+      - 'scripts/audit-gameplay-check.mjs'
       - 'scripts/apply-lobby-display-v72.mjs'
       - '.github/workflows/screen-layout-check.yml'
   workflow_dispatch:

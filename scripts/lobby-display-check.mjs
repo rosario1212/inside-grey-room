@@ -4,8 +4,8 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v78-maitre-burgundy';
-const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','screen-polish-v73.css'];
+const VERSION='v79-audit-fixes';
+const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','screen-polish-v73.css'];
 const read=name=>readFile(path.join(target,name),'utf8');
 const app=await read('app-v11.js');
 const output={innerHTML:''};
@@ -76,11 +76,13 @@ try{
   const scope={};
   vm.runInNewContext(sw.slice(0,sw.indexOf('];')+2)+';globalThis.shell=SHELL;globalThis.cache=CACHE;',scope);
   shell=scope.shell;
-  const poster='assets/heritage-maitre-01-le-client-hd-v77.webp';
-  const posterUrl='/'+poster+'?v=v77-heritage-clarity';
-  await stat(path.join(target,poster));
-  assert(shell.includes(posterUrl),'Restored MAÎTRE artwork must be precached for offline use');
-  for(const script of ['heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js'])assert((await read(script)).includes(posterUrl),script+': keep the restored poster through every renderer');
+  const data={window:{}};
+  vm.runInNewContext(await read('heritage-maitre-data-v34.js'),data);
+  vm.runInNewContext(await read('heritage-maitre-assets-v34.js'),data);
+  for(const chapter of data.window.IGR_HERITAGE_MAITRE_DATA.META.chapters){
+    await stat(path.join(target,chapter.poster.split('?')[0].slice(1)));
+    assert(shell.includes(chapter.poster),'Every restored MAÎTRE poster must be precached');
+  }
   assert.equal(scope.cache,'igr-'+VERSION,'PWA cache must use the new lobby release');
   assert(app.includes('/service-worker.js?v='+VERSION),'App must register the same service worker version');
 }catch(error){if(error.code!=='ENOENT')throw error}

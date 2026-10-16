@@ -115,6 +115,7 @@ body.home-locked .heritage-premium-side{min-width:0!important;max-width:none!imp
 #app .maitre-hub-card>img{object-position:center top!important}
 #app .maitre-page .hplay-poster{aspect-ratio:941/1672!important;overflow:hidden}
 #app .maitre-page .hplay-poster img{display:block!important;width:100%!important;height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;filter:none!important}
+#app .maitre-page .hplay-launch-box>p{color:#51463f!important}
 
 /* Both Heritage chooser renderers keep MAÎTRE's burgundy primary action. */
 #app .maitre-page .heritage-dual-row :is(.heritage-online-btn,.btn.primary){

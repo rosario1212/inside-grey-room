@@ -103,12 +103,10 @@ window.igr13StartAssembly=function(){const ids=[...document.querySelectorAll('[d
 
 function renderJournalistInvestigation(){
  if(role()!=='journaliste')return'';
- const done=typeof myAction==='function'?myAction('journalist_investigation'):null;
- if(done){const lead=done.payload?.lead||{};return `<div class="action-section"><h3>ENQUÊTE JOURNALISTIQUE</h3><div class="v13-cold-banner"><strong>${esc(lead.title||'RÉSULTAT')}</strong>${esc(lead.text||'Aucun élément supplémentaire vérifiable.')}</div></div>`}
- const targets=(STATE.sync?.players||[]).filter(p=>p.id!==STATE.playerId);
- return `<div class="action-section"><h3>ENQUÊTER SUR UNE PERSONNE</h3><p class="choice-helper">Le résultat reste canonique et incomplet. Il ne révèle jamais directement un objectif privé.</p><select id="v13JournalTarget">${targets.map(p=>`<option value="${esc(p.id)}">${esc(p.pseudo)} · ${esc(p.public_role)}</option>`).join('')}</select><select id="v13JournalAngle"><option value="relations">Relations</option><option value="interets">Intérêts</option><option value="incoherences">Incohérences</option><option value="passe">Passé</option><option value="contacts">Contacts</option><option value="conflit">Conflit d’intérêts</option></select><button class="btn primary block" onclick="igr13JournalistInvestigate()">Enquêter</button></div>`;
+ const en=window.IGR_LOCALE==='en';
+ return `<div class="action-section"><h3>${en?'JOURNALISTIC INVESTIGATION':'ENQUÊTE JOURNALISTIQUE'}</h3><p class="choice-helper">${en?'Choose a lead and review your findings in the Press tab.':'Choisis une piste et retrouve tes résultats dans l’onglet Presse.'}</p><button class="btn primary block" onclick="igr13JournalistInvestigate()">${en?'Open Press':'Ouvrir la Presse'}</button></div>`;
 }
-window.igr13JournalistInvestigate=async function(){try{const res=await rpc('igr_v13_journalist_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_target:byId('v13JournalTarget').value,p_angle:byId('v13JournalAngle').value});if(res?.lead?.title)toast(res.lead.title);await syncNow(true)}catch(e){console.error(e);toast(e?.message||'Enquête impossible.')}};
+window.igr13JournalistInvestigate=function(){if(role()==='journaliste'&&typeof setTab==='function')setTab('press50')};
 
 function renderJudicialOutcome(ph,r){
  const allowed=(ph==='event_negociation'&&r==='procureur')||(['event_requete','event_saisine'].includes(ph)&&r==='juge');if(!allowed)return'';

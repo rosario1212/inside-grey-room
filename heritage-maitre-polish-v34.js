@@ -1,17 +1,9 @@
 /* Inside Grey Room v34.9 — MAÎTRE final poster + multiplayer bridge */
 (()=>{
 'use strict';
-const POSTER_VERSION='v34.9-maitre-theme-posters';
-const posterMap={
-  '01-le-client':'/assets/heritage-maitre-01-le-client-final.webp',
-  '02-le-deal':'/assets/heritage-maitre-02-le-deal-final.webp',
-  '03-deux-choix':'/assets/heritage-maitre-03-deux-choix-final.webp',
-  '04-le-proces':'/assets/heritage-maitre-04-le-proces-final.webp',
-  '05-l-honneur':'/assets/heritage-maitre-05-l-honneur-final.webp'
-};
 function absolutePoster(src=''){
-  const hit=Object.entries(posterMap).find(([key])=>String(src).includes(`heritage-maitre-${key}`));
-  return hit?`${hit[1]}?v=${POSTER_VERSION}`:src;
+  const number=Number(String(src).match(/heritage-maitre-(\d{2})-/)?.[1]);
+  return window.IGR_HERITAGE_MAITRE_DATA?.META?.chapters?.find(ch=>ch.n===number)?.poster||src;
 }
 function repairPosters(root=document){
   root.querySelectorAll('img').forEach(img=>{
