@@ -117,6 +117,10 @@ assert(unknown.includes('À quelle heure ?'),'Open-ended conversation prompts mu
 assert(!unknown.includes('Vous avez déjà été en contact.'),'Unknown persons must not inherit a fictional encounter');
 const colleagues=renderRel('Ton point de départ — Vous travaillez dans la même structure, sans relation personnelle connue.');
 assert(colleagues.includes('Même structure : vous avez pu vous croiser.'),'Shared workplace must preserve only plausible contact');
+const family=renderRel('Ton point de départ — Elena est ta sœur, extérieure au groupe.');
+assert(family.includes('C’est ta sœur.'),'Family relationship must retain its explicit kinship');
+const friend=renderRel('Ton point de départ — C’est ton ami le plus proche ; tu lui fais confiance.');
+assert(friend.includes('C’est ton ami le plus proche.'),'Explicit friendship must not become an unknown link');
 const uncertain=renderRel('Ton point de départ — Une première dispute a précédé ton arrivée.');
 assert(uncertain.includes('Lien personnel non précisé dans ton dossier.'),'Missing relational evidence must not invent a bond');
 const escaped=roleContext.valueBlock('TES RELATIONS',[{pseudo:'<script>',text:'Ton point de départ — Rien de certain.'}]);
