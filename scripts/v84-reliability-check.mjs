@@ -23,7 +23,7 @@ assert(live.includes('syncSoon(16,true,realtimeRevision(record))'),'Server revis
 assert(live.includes('return room?.status===\'finished\' ? 3500 : 1600'),'Live socket watchdog must repair missed notifications');
 
 const sandbox={
-  window:{IGR_LOCALE:'fr'},
+  window:{IGR_LOCALE:'fr',addEventListener(){}},
   document:{getElementById(){return null}},
   requestAnimationFrame(){},
   console,
