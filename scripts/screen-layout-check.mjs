@@ -192,7 +192,7 @@ try{
     await check('exit-controls-'+width,async()=>{
       await page.setViewportSize({width,height:740});
       await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body><div id="app"><div class="app"><main class="page game-v11"><div class="phase-strip"><div><small>PHASE</small><strong>LECTURE PRIVÉE</strong></div><div class="server-authority">MJ</div><div class="phase-timer-box"><div class="phase-host-actions"><button type="button" class="phase-exit-btn" onclick="window.igrExitClicks++">✕ Quitter</button></div></div></div><section class="panel"><div class="private-card-v11"><p>Carte secrète</p><div style="height:1100px">Récit long</div></div></section><div class="live-session-controls"><button type="button" class="live-exit-btn" onclick="window.igrExitClicks++">✕ Quitter</button><button type="button" class="live-advance-btn">Étape suivante →</button></div></main></div></div></body></html>`);
-      await page.evaluate(()=>{window.igrExitClicks=0});
+      await page.evaluate(()=>{window.igrExitClicks=0;document.body.appendChild(document.querySelector('#app .live-session-controls'))});
       const top=page.locator('.phase-exit-btn');
       assert(await top.isVisible(),'Top exit must remain visible on phone and desktop');
       const buttonBox=await top.boundingBox();
@@ -201,7 +201,7 @@ try{
       assert.equal(await page.evaluate(()=>window.igrExitClicks),1,'Top exit must receive the tap');
       await page.evaluate(()=>scrollTo(0,650));
       const bottom=page.locator('.live-exit-btn');
-      await bottom.click();
+      await bottom.click({timeout:5000});
       assert.equal(await page.evaluate(()=>window.igrExitClicks),2,'Bottom exit must receive the tap while scrolled');
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'In-game controls must not overflow horizontally');
     });
