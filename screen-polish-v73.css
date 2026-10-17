@@ -553,3 +553,64 @@ body > .live-session-controls button{
 }
 /* The footer actions never share a clickable area with the settings control. */
 body > .live-session-controls{max-width:100%;isolation:isolate}
+
+
+/* v87 — dossier evolving within Enquête; no new top-level destination. */
+#app .igr87-dossier{
+ display:grid;gap:12px;min-width:0;max-width:100%;margin:0 0 25px;
+ padding:clamp(15px,2vw,23px);border:1px solid rgba(134,152,168,.25);
+ border-radius:22px;background:linear-gradient(142deg,rgba(14,19,25,.99),rgba(7,10,14,.96));
+ color:#e1e7eb;
+}
+#app .igr87-dossier *{box-sizing:border-box;min-width:0}
+#app .igr87-title{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+#app .igr87-title small{display:block;font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.15em;color:#adbcc7}
+#app .igr87-title h2{font-size:clamp(20px,3vw,26px);line-height:1.2;letter-spacing:-.025em;margin:8px 0 0}
+#app .igr87-title>span{border:1px solid #48525c;border-radius:999px;padding:7px 10px;font-size:11px;color:#becbd4}
+#app .igr87-people{display:grid;gap:9px}
+#app .igr87-person,#app .igr87-common{border:1px solid rgba(156,173,186,.22);border-radius:14px;background:rgba(255,255,255,.017);overflow:hidden}
+#app .igr87-person:nth-child(even){border-color:rgba(143,85,92,.33)}
+#app .igr87-person summary,#app .igr87-common summary{display:flex;align-items:center;justify-content:space-between;gap:11px;padding:14px 15px;cursor:pointer;list-style:none;min-height:52px}
+#app .igr87-person summary::-webkit-details-marker,#app .igr87-common summary::-webkit-details-marker{display:none}
+#app .igr87-person summary:after,#app .igr87-common summary:after{content:'⌄';color:#a9b8c3;font-size:22px;transition:transform .15s}
+#app .igr87-person[open] summary:after,#app .igr87-common[open] summary:after{transform:rotate(180deg)}
+#app .igr87-person summary strong{font-size:16px;color:#f5f7f8;overflow-wrap:anywhere}
+#app .igr87-person summary small{color:#99a9b6;font-size:11px;line-height:1.35;margin-left:auto;max-width:44%;text-align:right}
+#app .igr87-person-body{display:grid;gap:12px;padding:13px 16px 17px;border-top:1px solid rgba(155,174,190,.13)}
+#app .igr87-person-body p{font-size:13px;color:#bfcbd4;line-height:1.58;margin:0;overflow-wrap:break-word}
+#app .igr87-premise{border-left:2px solid rgba(145,168,185,.5);padding-left:12px}
+#app .igr87-person-body>h4,#app .igr87-general-notes>h4{margin:5px 0 0;color:#e5eaf0;font-size:13px}
+#app .igr87-evidence{padding:13px 14px;border:1px solid rgba(145,170,192,.19);border-radius:12px;background:rgba(53,73,88,.12)}
+#app .igr87-evidence small{color:#97b1c6;font:750 9px 'IBM Plex Mono',monospace;letter-spacing:.12em}
+#app .igr87-evidence h4{font-size:13px;line-height:1.4;margin:6px 0 5px;color:#f0f2f3}
+#app .igr87-evidence p{margin:0;font-size:13px;line-height:1.5}
+#app .igr87-empty{color:#8e9da9!important;font-size:12px!important}
+#app .igr87-note-form{display:grid;gap:8px;margin-top:6px;padding:15px;border:1px solid rgba(180,105,110,.32);border-radius:14px;background:linear-gradient(115deg,rgba(49,17,24,.29),transparent)}
+#app .igr87-note-form h3{font-size:16px;margin:0}
+#app .igr87-note-form>p{font-size:12px;color:#b4bec6;line-height:1.5;margin:0 0 6px}
+#app .igr87-note-form label{color:#c7d4dc;font-size:12px;font-weight:700;margin-top:5px}
+#app .igr87-note-form select,#app .igr87-note-form textarea{
+ width:100%;background:#0a1016;border:1px solid rgba(168,189,201,.33);
+ color:#f0f2f5;padding:12px;border-radius:11px;font-size:14px;
+}
+#app .igr87-note-form textarea{resize:vertical;min-height:86px;max-height:250px}
+#app .igr87-note-form button{min-height:44px;justify-self:start;white-space:normal}
+#app .igr87-note-form button:disabled{opacity:.5;cursor:wait}
+#app .igr87-note-form .igr87-status{color:#9aa8b3;font-size:11px}
+#app .igr87-notes{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+#app .igr87-note{padding:11px 13px;border:1px solid rgba(165,181,194,.17);border-radius:12px;background:rgba(19,26,32,.56)}
+#app .igr87-note>div{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;color:#d5e0e6;font-size:12px}
+#app .igr87-note>div small{color:#91a0ad;font-size:10px}
+#app .igr87-note p{white-space:pre-wrap;margin:8px 0 0;font-size:13px;line-height:1.53;overflow-wrap:anywhere}
+#app .igr87-general-notes{border-top:1px solid rgba(156,173,190,.17);padding-top:14px;display:grid;gap:10px}
+@media(max-width:600px){
+ #app .igr87-dossier{padding:14px 12px;border-radius:17px}
+ #app .igr87-person summary{align-items:start;flex-wrap:wrap;gap:5px}
+ #app .igr87-person summary small{max-width:100%;margin:0;text-align:left;order:3;flex:1 0 100%}
+ #app .igr87-person summary:after{margin-left:auto}
+ #app .igr87-note-form{padding:13px}
+ #app .igr87-note-form button{justify-self:stretch}
+}
+@media(prefers-reduced-motion:reduce){
+ #app .igr87-person summary:after,#app .igr87-common summary:after{transition:none}
+}
