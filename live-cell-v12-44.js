@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const V = 'v81-multiplayer-sync';
+  const V = 'v84-multiplayer-dossier';
   const OMERTA_IDS = new Set(['021','022','023','024','025']);
   const RT = {
     room:null, playerToken:null, signalToken:null, ws:null, topic:null, ready:false, joining:false,
@@ -129,7 +129,7 @@
     let failed = false;
 
     Promise.resolve()
-      .then(() => current() ? syncNow(force,true) : null)
+      .then(() => current() ? syncNow(force || targetRevision > RT.syncedRevision,true) : null)
       .then(data => {
         if(!current()) return;
         // performSync returns null on network errors. Never acknowledge a
@@ -274,7 +274,8 @@
         remoteRoomClosed();
         return;
       }
-      syncSoon(16,false,realtimeRevision(record));
+      // The room revision makes this a mandatory authoritative read, never a UI-only notice.
+      syncSoon(16,true,realtimeRevision(record));
       return;
     }
 
@@ -403,7 +404,7 @@
   function pollDelay(){
     const hidden = document.visibilityState==='hidden';
     const healthy = RT.ready && RT.ws?.readyState===WebSocket.OPEN;
-    if(!healthy) return hidden ? 3000 : 900;
+    if(!healthy) return hidden ? 5000 : 850;
     if(hidden) return 30000;
 
     const room = STATE?.sync?.room;
@@ -415,7 +416,9 @@
       if(remaining <= 10000) return Math.min(2200,Math.max(700,remaining-700));
       return 2500;
     }
-    return room?.status==='finished' ? 5000 : 2500;
+    // Revisions normally arrive immediately; this remains an independent safety net
+    // for devices losing Postgres Changes while their WebSocket still looks healthy.
+    return room?.status==='finished' ? 3500 : 1600;
   }
 
   function schedulePoll(delay=pollDelay()){
@@ -718,7 +721,7 @@
   try{
     Object.defineProperty(window,'__IGR_REALTIME__',{configurable:true,value:{
       snapshot:()=>({state:document.documentElement.dataset.igrRealtime||'off',room:RT.room,ready:RT.ready,joining:RT.joining,revision:RT.revision,syncedRevision:RT.syncedRevision,reconnectAttempt:RT.reconnectAttempt,lastMessageAt:RT.lastMessageAt}),
-      reconcile:()=>syncSoon(0,false)
+      reconcile:()=>syncSoon(0,true)
     }});
   }catch{}
 
