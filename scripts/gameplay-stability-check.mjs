@@ -123,7 +123,8 @@ try{
   ok(distIndex.includes(navigationThemeUrl),'dist/index.html has stale navigation-theme asset');
   ok(distIndex.includes('navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/index.html has stale navigation behavior');
   ok(distIndex.includes('navigation-heritage-v19.css?v=v27-role-choice-nav'),'dist/index.html has stale navigation CSS');
-  ok(distIndex.includes('cell-controls-stability-v23.js?v=v24-gameplay-stability'),'dist/index.html has stale cell stability asset');
+  const cellVersion=presentationFinalized?presentationVersion:'v24-gameplay-stability';
+  ok(distIndex.includes('cell-controls-stability-v23.js?v='+cellVersion),'dist/index.html has stale cell stability asset');
   ok(distIndex.includes('role-tree-polish-v12-29.js?v=v25-role-fluidity'),'dist/index.html has stale role-selection runtime');
   ok(distIndex.includes('role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/index.html has stale role-selection CSS');
   ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the play-mode theme CSS');
