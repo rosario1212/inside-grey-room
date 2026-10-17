@@ -4,6 +4,7 @@
 - 44 packs de scénarios (001–044) avec vérité canonique et informations asymétriques.
 - 332 liens dirigés, tous avec une cible valide et une description non vide.
 - Les 332 textes sont encore structurés autour des anciennes rubriques « Ton point de départ » et « À mettre sur la table ».
+- 38 des 332 liens sont à sens unique (dossiers 021–025 et 044). Cela peut refléter une connaissance asymétrique voulue ; chacun demande une relecture canonique, et non une création automatique de réciprocité.
 - Zéro pack contient des variantes canoniques A/B/C actives. Les contrats de rejouabilité du dépôt décrivent des variantes à écrire, pas des vérités déjà disponibles.
 - Le debrief du client simplifié envoyait auparavant un axe d’enquête vide. La v87 restaure cet axe pour le directeur des trames.
 
