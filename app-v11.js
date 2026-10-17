@@ -943,6 +943,8 @@ async function performSync(force=false){
   const sig=syncSignature(d),changed=force||sig!==STATE.syncSig;
   const draft=changed?captureDrafts():null;
   STATE.sync=d;STATE.syncSig=sig;
+  // Only a completed authoritative RPC can reset the independent stale-client watchdog.
+  STATE.lastSuccessfulSyncAt=Date.now();
   STATE.scenarioId=d.room.scenario_id;STATE.playerId=d.player.id;STATE.playerPseudo=d.player.pseudo;STATE.role=d.player.public_role||STATE.role;STATE.players=d.players||[];STATE.cycle=d.room.cycle||0;
   saveSession();
   markGameStarted(d);markGameCompleted(d);

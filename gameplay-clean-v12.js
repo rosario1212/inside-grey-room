@@ -18,7 +18,19 @@
     if(syncBusy||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
     // The live-cell scheduler owns polling, reconnects and phase deadlines.
     // Legacy heartbeats must not race its invalidations or reset its server clock.
-    if(window.__IGR_REALTIME__){if(force)window.__IGR_REALTIME__.reconcile();return}
+    if(window.__IGR_REALTIME__){
+      if(force){window.__IGR_REALTIME__.reconcile();return}
+      // The socket can say "live" while its poll timeout has silently stopped.
+      // Use a separate, bounded rescue path; never require a manual page refresh.
+      const now=Date.now(),last=Number(STATE.lastSuccessfulSyncAt)||0;
+      const retry=Number(STATE.lastWatchdogAttemptAt)||0;
+      if(document.hidden||navigator.onLine===false||!last||now-last<4500||now-retry<2500)return;
+      STATE.lastWatchdogAttemptAt=now;
+      syncBusy=true;
+      try{await syncNow(false,true)}catch(error){console.warn('multiplayer watchdog',error)}
+      finally{syncBusy=false}
+      return;
+    }
     syncBusy=true;
     try{
       await syncNow(!!force);
