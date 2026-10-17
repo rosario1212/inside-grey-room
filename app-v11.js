@@ -1082,9 +1082,15 @@ function displayRole(r,p){if(r==='suspect')return`Suspect · ${p}`;if(r==='maitr
 function igr82RelationLink(entry,fact) {
   const fr=typeof window==='undefined'||window.IGR_LOCALE!=='en';
   const tr=(a,b)=>fr?a:b;
-  const explicit=String(entry?.link_fr || entry?.link || (fr?'':entry?.link_en) || '').trim();
+  const explicit=String((fr?entry?.link_fr:entry?.link_en) || entry?.link || '').trim();
   if(explicit)return explicit;
   const s=String(fact||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/’/g,"'").toLowerCase();
+  
+  if(/(?:est|c'est) ta soeur|ta soeur(?:,| ;|\b)/.test(s))return tr('C’est ta sœur.','She is your sister.');
+  if(/(?:est|c'est) ton frere|ton frere(?:,| ;|\b)/.test(s))return tr('C’est ton frère.','He is your brother.');
+  if(/c'est ton ami le plus proche|c'est ta meilleure amie|c'est ton meilleur ami/.test(s))return tr('C’est ton ami le plus proche.','This is your closest friend.');
+  if(/vous vous etes rencontres|tu l'as rencontre(?:e)?/.test(s))return tr('Vous vous êtes déjà rencontrés.','You have met before.');
+  if(/vous vous opposez sur l'heritage/.test(s))return tr('Vous vous opposez sur l’héritage.','You are opposed over the inheritance.');
   if(/tu ne (?:le|la|les) connais pas|vous ne vous connaissez pas/.test(s))return tr('Vous ne vous connaissez pas.','You do not know each other.');
   if(/tu (?:le|la) connais (?:peu|a peine)|tu (?:le|la) connais tres peu/.test(s))return tr('Vous vous connaissez peu.','You barely know each other.');
   if(/tu n'as aucun lien|aucun lien personnel|sans lien personnel/.test(s))return tr('Aucun lien personnel établi.','No established personal connection.');
