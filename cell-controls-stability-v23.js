@@ -119,16 +119,23 @@
 
     const wrapped=function(force,...rest){
       const forced=force===true;
+      // The second argument means “fetch an authoritative snapshot now”.
+      // Realtime invalidations and the anti-desync watchdog MUST NOT be served
+      // a cached STATE.sync simply because another poll finished <1s ago.
+      const fresh=rest[0]===true;
+      const urgent=forced||fresh;
       if(!inRoom())return Promise.resolve(base.call(this,force,...rest)).finally(syncGameUiState);
 
       const now=performance.now();
-      if(!forced&&!running&&now-lastCompletedAt<1000){
+      if(!urgent&&!running&&now-lastCompletedAt<1000){
         syncGameUiState();
         return Promise.resolve(currentState());
       }
       if(running){
-        if(!forced)return currentPromise.then(()=>currentState());
-        queuedForce=true;queuedCtx=this;queuedRest=rest;
+        if(!urgent)return currentPromise.then(()=>currentState());
+        // At least one complete read must happen after the in-flight read.
+        // Without this, an event arriving DURING a request can be lost.
+        queuedForce=true;queuedCtx=this;queuedRest=[true,...rest.slice(1)];
         return new Promise((resolve,reject)=>queuedWaiters.push({resolve,reject}));
       }
       return startRun(forced,this,rest);
