@@ -9,14 +9,15 @@ const guard=await read(path.join(target,'cell-controls-stability-v23.js'));
 const live=await read(path.join(target,'live-cell-v12-44.js'));
 const index=await read(path.join(target,'index.html'));
 const css=await read(path.join(target,'dossier-reliability-v84.css'));
-const sw=await read(path.join(target,'service-worker.js'));
+let sw='';
+try{sw=await read(path.join(target,'service-worker.js'))}catch(error){if(error.code!=='ENOENT'||path.basename(target)!=='www')throw error}
 assert.match(index,/dossier-reliability-v84\.js\?v=v84-multiplayer-dossier/);
 assert.match(index,/dossier-reliability-v84\.css\?v=v84-multiplayer-dossier/);
 assert.match(index,/cell-controls-stability-v23\.js\?v=v84-multiplayer-dossier/);
 assert(index.lastIndexOf('dossier-reliability-v84.js')>index.lastIndexOf('authoritative-runtime-v41.js'),'The canonical card parser must be loaded last');
-assert.match(sw,/const CACHE='igr-v84-multiplayer-dossier'/);
+if(sw)assert.match(sw,/const CACHE='igr-v84-multiplayer-dossier'/);
 for(const name of ['dossier-reliability-v84.js','dossier-reliability-v84.css','cell-controls-stability-v23.js','live-cell-v12-44.js']){
-  assert(sw.includes('/'+name+'?v=v84-multiplayer-dossier'),name+' must be precached');
+  if(sw)assert(sw.includes('/'+name+'?v=v84-multiplayer-dossier'),name+' must be precached');
 }
 assert(css.includes('safe-area-inset-top')&&css.includes('igr84-relation-card'),'Mobile safe areas and relation cards must be styled');
 assert(live.includes('syncSoon(16,true,realtimeRevision(record))'),'Server revision must request an authoritative read');
