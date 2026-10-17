@@ -113,8 +113,8 @@ const renderRel=text=>roleContext.valueBlock('TES RELATIONS',[{pseudo:'ipad',tex
 const unknown=renderRel('Ton point de départ — Tu ne le connais pas. Tu ignores ce qu’il a pu voir.\n\nÀ mettre sur la table — À quelle heure ?');
 assert(unknown.includes('Tu ne le connais pas.'),'Unknown persons must remain unknown');
 assert(unknown.includes('Tu ignores ce qu’il a pu voir.'),'Canonical factual details must remain visible');
-assert(unknown.includes('CE QUE TU SAIS DE CETTE PERSONNE'),'A clear factual label is required');
-assert(unknown.includes('CE QUE TU PEUX LUI DEMANDER'),'A clear, optional conversation label is required');
+assert(unknown.includes('CE QUE TU SAIS DE LUI'),'A clear factual label is required');
+assert(unknown.includes('À ÉCLAIRCIR ENTRE VOUS'),'A clear, optional conversation label is required');
 assert(!unknown.includes('Ton point de départ')&&!unknown.includes('À mettre sur la table'),'Old opaque markers must not leak into the role UI');
 assert(unknown.includes('À quelle heure ?'),'Open-ended conversation prompts must remain visible');
 assert(!unknown.includes('Vous avez déjà été en contact.'),'Unknown persons must not inherit a fictional encounter');
@@ -125,7 +125,8 @@ assert(family.includes('C’est ta sœur.'),'Family relationship must retain its
 const friend=renderRel('Ton point de départ — C’est ton ami le plus proche ; tu lui fais confiance.');
 assert(friend.includes('C’est ton ami le plus proche.'),'Explicit friendship must not become an unknown link');
 const uncertain=renderRel('Ton point de départ — Une première dispute a précédé ton arrivée.');
-assert(uncertain.includes('Tu ne le connais pas personnellement.'),'Missing relational evidence must not invent a bond');
+assert(!uncertain.includes('Tu ne le connais pas personnellement.'),'Missing relational evidence must not falsely assert unfamiliarity');
+assert(uncertain.includes('Une première dispute'),'Existing story information must remain intact');
 const doubled=roleContext.valueBlock('TES RELATIONS',[{pseudo:'Samir',text:'Ton point de départ — Tu as reçu son appel.'},{pseudo:'Samir',text:'Ton point de départ — Tu as reçu son appel.'}]);
 assert.equal((doubled.match(/igr82-relation-person/g)||[]).length,1,'A duplicate relation cannot create two repeated cards');
 const escaped=roleContext.valueBlock('TES RELATIONS',[{pseudo:'<script>',text:'Ton point de départ — Rien de certain.'}]);
@@ -133,7 +134,7 @@ assert(!escaped.includes('<script>')&&escaped.includes('&lt;script&gt;'),'Player
 roleContext.window.IGR_LOCALE='en';
 assert(renderRel('Ton point de départ — Tu ne le connais pas.').includes('You do not know this person.'),'English relation label must be available');
 assert((await read('screen-polish-v73.css')).includes('.igr82-relation-list'),'Responsive role styling must be shipped');
-assert(unknown.includes('ENTRE VOUS'),'Relationships must be written as human connections rather than legal dossiers');
+assert(unknown.includes('VOTRE LIEN'),'Relationships must be written as human connections rather than legal dossiers');
 assert(!uncertain.includes('Lien personnel non précisé'),'Do not expose bureaucratic missing-link placeholders to suspects');
 const quitStart=app.indexOf('function liveSessionControls()'),quitEnd=app.indexOf('let ADVANCE_BUSY=',quitStart);
 assert(quitStart>=0&&quitEnd>quitStart,'Persistent exit renderer must be present');
