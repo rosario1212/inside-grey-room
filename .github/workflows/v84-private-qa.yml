@@ -1,0 +1,36 @@
+name: V84 Private Gameplay QA
+on:
+  push:
+    branches:
+      - 'fix/v84-multiplayer-dossier-audit'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web-and-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install without invoking implicit postinstall
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Full web build and regression checks
+        run: npm run build
+      - name: Full mobile bundle and regression checks
+        run: npm run mobile:build
+      - name: Install browser test dependency
+        run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright@1.62.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Responsive browser checks
+        run: node scripts/screen-layout-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v84-qa-screenshots
+          path: layout-check-results
+          if-no-files-found: ignore
