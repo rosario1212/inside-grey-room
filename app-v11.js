@@ -875,7 +875,13 @@ async function createRoom(){
  STORAGE.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
  Object.assign(STATE,{view:'lobby',scenarioId:sc.id,room:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
  saveSession();
- await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+ // The room must open even if optional profile/avatar RPCs fail on desktop.
+ // Start the room watchdog before cosmetic work instead of serializing them.
+ startRoomWatcher();
+ const fresh=await syncNow(true);
+ if(fresh?.room?.status==='lobby')renderLobby(fresh);
+ void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
+ void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
 }
 async function joinRoom(){
  primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
@@ -885,7 +891,11 @@ async function joinRoom(){
   const out=await rpc('igr_v4_join_room',{p_code:code,p_pseudo:pseudo});
   STORAGE.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
   Object.assign(STATE,{view:'lobby',room:out.room_code||code,token:out.player_token,hostToken:null,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
-  saveSession();await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+  saveSession();startRoomWatcher();
+  const fresh=await syncNow(true);
+  if(fresh?.room?.status==='lobby')renderLobby(fresh);
+  void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
+  void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
  }catch(e){console.error(e);toast('Cellule introuvable, pleine ou déjà lancée.');}
 }
 function syncSignature(d){
@@ -940,26 +950,53 @@ async function performSync(force=false){
   const d=await rpc('igr_v4_sync',{p_code:STATE.room,p_player_token:STATE.token});
   if(STATE.room!==room||STATE.token!==token)return null;
   connectionStatus(false);
-  const sig=syncSignature(d),changed=force||sig!==STATE.syncSig;
+  const sig=syncSignature(d);
+  // An authoritative snapshot and a successfully rendered screen are different
+  // things. Recover even if the server data has already reached notifications.
+  const root=document.getElementById('app');
+  const screenMatches=()=>{
+   if(!root)return true;
+   if(d.room.status==='lobby')return !!root.querySelector('.lobby-v11');
+   if(d.room.phase==='briefing')return !!root.querySelector('.briefing-page');
+   if(d.room.phase==='role_reading'&&!d.player.ready)return !!root.querySelector('.role-card-v11');
+   return !!root.querySelector('.game-v11');
+  };
+  const changed=force||sig!==STATE.syncSig||!screenMatches();
   const draft=changed?captureDrafts():null;
-  STATE.sync=d;STATE.syncSig=sig;
-  // Only a completed authoritative RPC can reset the independent stale-client watchdog.
-  STATE.lastSuccessfulSyncAt=Date.now();
+  STATE.sync=d;
   STATE.scenarioId=d.room.scenario_id;STATE.playerId=d.player.id;STATE.playerPseudo=d.player.pseudo;STATE.role=d.player.public_role||STATE.role;STATE.players=d.players||[];STATE.cycle=d.room.cycle||0;
   saveSession();
   markGameStarted(d);markGameCompleted(d);
+  let rendered=true;
   if(changed){
-   const last=(d.events||[]).at(-1);if(last&&last.id>STATE.lastEventId){if(STATE.lastEventId&&['trame','breaking_news','reveal'].includes(last.event_type))playCue(last.event_type==='breaking_news'?'news':last.event_type==='reveal'?'finale':'trame');STATE.lastEventId=last.id}
-   routeFromServer();restoreDrafts(draft);
-   setTimeout(()=>maybeShowRoleNotice(d),60);
+   try{
+    routeFromServer();
+    if(!screenMatches())throw new Error('room_screen_not_mounted');
+    restoreDrafts(draft);
+    STATE.syncSig=sig;STATE.uiRenderFailed=false;
+    const last=(d.events||[]).at(-1);
+    if(last&&last.id>STATE.lastEventId){
+     if(STATE.lastEventId&&['trame','breaking_news','reveal'].includes(last.event_type))playCue(last.event_type==='breaking_news'?'news':last.event_type==='reveal'?'finale':'trame');
+     STATE.lastEventId=last.id;
+    }
+    setTimeout(()=>maybeShowRoleNotice(d),60);
+   }catch(error){
+    rendered=false;
+    STATE.uiRenderFailed=true;
+    // Keep the previous acknowledged signature. The next server poll MUST
+    // attempt rendering again even if there are no further phase events.
+    console.error('Room UI failed to render; retrying automatically',error);
+   }
   }
-  manageVideoState();
+  if(rendered)STATE.lastSuccessfulSyncAt=Date.now();
+  // Cosmetics/media are not allowed to invalidate an otherwise good room view.
+  try{manageVideoState()}catch(error){console.warn('video state',error)}
   // Avatars are cosmetic: a slow image RPC must never hold a phase change or
   // prevent a newer gameplay snapshot from being fetched.
   void refreshAvatars(d,false).then(changed=>{
    if(changed&&STATE.room===room&&STATE.token===token&&STATE.sync===d){const draft=captureDrafts();routeFromServer();restoreDrafts(draft)}
   }).catch(e=>console.warn('avatars',e));
-  return d;
+  return rendered?d:null;
  }catch(e){if(STATE.room===room&&STATE.token===token){connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
 }
 function routeFromServer(){
