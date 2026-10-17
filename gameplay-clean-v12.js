@@ -16,6 +16,9 @@
 
   async function cleanSync(force=false){
     if(syncBusy||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
+    // The live-cell scheduler owns polling, reconnects and phase deadlines.
+    // Legacy heartbeats must not race its invalidations or reset its server clock.
+    if(window.__IGR_REALTIME__){if(force)window.__IGR_REALTIME__.reconcile();return}
     syncBusy=true;
     try{
       await syncNow(!!force);

@@ -663,7 +663,17 @@ async function pushProfileCosmetics(){
 
 async function refreshAvatars(d,force=false){
  if(!STATE.room||!STATE.token||!d)return;const sig=(d.players||[]).map(p=>`${p.id}:${p.avatar_rev||0}`).join('|');if(!force&&sig===AVATARS.sig)return;
- try{const arr=await rpc('igr_v4_get_avatars',{p_code:STATE.room,p_player_token:STATE.token});AVATARS.map=new Map((arr||[]).filter(x=>x.avatar).map(x=>[x.id,x.avatar]));AVATARS.sig=sig}catch(e){console.warn('avatars',e)}
+ const room=STATE.room,token=STATE.token;
+ if(AVATARS.pending?.room===room&&AVATARS.pending?.token===token&&AVATARS.pending?.sig===sig)return AVATARS.pending.promise;
+ const pending={room,token,sig,promise:null};AVATARS.pending=pending;
+ pending.promise=(async()=>{
+  try{
+   const arr=await rpc('igr_v4_get_avatars',{p_code:room,p_player_token:token});
+   if(STATE.room!==room||STATE.token!==token||AVATARS.pending!==pending)return false;
+   AVATARS.map=new Map((arr||[]).filter(x=>x.avatar).map(x=>[x.id,x.avatar]));AVATARS.sig=sig;return true;
+  }catch(e){console.warn('avatars',e);return false}finally{if(AVATARS.pending===pending)AVATARS.pending=null}
+ })();
+ return pending.promise;
 }
 function matchNumber(d){return Math.max(1,Number(d?.room?.state?.match_no||1))}
 function markGameStarted(d){
@@ -880,8 +890,9 @@ async function joinRoom(){
 }
 function syncSignature(d){
  if(!d)return'';
- const r=d.room||{},p=d.player||{},ev=d.events||[],acts=d.my_actions||[];
- return JSON.stringify([r.status,r.cycle,r.phase,r.phase_ends_at,r.state,p.public_role,p.secret_role,p.ready,p.audio_ready,p.private_state,(d.players||[]).map(x=>[x.id,x.pseudo,x.public_role,x.preferred_role,x.ready,x.avatar_rev,x.audio_ready,x.equipped_title,x.equipped_badge]),ev.length,(ev.length?ev[ev.length-1].id:0),acts,(d.pending_requests||[])]);
+ // Ignore the moving server clock, but include edits to existing events and
+ // scenario/role data even when event counts and the last event ID stay equal.
+ return JSON.stringify([d.room,d.player,d.players,d.events,d.my_actions,d.pending_requests,d.scenario,d.suspects]);
 }
 function draftScope(){return [STATE.sync?.room?.code,STATE.sync?.room?.state?.match_no,STATE.sync?.player?.id,STATE.view,STATE.tab,STATE.sync?.room?.phase].join(':')}
 function captureDrafts(){
@@ -903,9 +914,23 @@ function connectionStatus(failed){
  if(!el){el=document.createElement('div');el.id='connectionStatus';el.className='connection-status';el.setAttribute('role','status');document.body.appendChild(el)}
  el.textContent='Connexion interrompue · reconnexion automatique…';
 }
-async function syncNow(force=false){
- if(STATE.syncPromise){await STATE.syncPromise;if(!force)return STATE.sync;}
- const pending=performSync(force);STATE.syncPromise=pending;
+async function syncNow(force=false,fresh=false){
+ if(!STATE.room||!STATE.token)return null;
+ if(STATE.syncPromise){
+  // A mutation or invalidation received after a fetch began needs another snapshot.
+  // Merge concurrent requests without forcing unchanged screens to render again.
+  if(force||fresh||STATE.syncRoom!==STATE.room||STATE.syncToken!==STATE.token){STATE.syncQueued=true;STATE.syncForce=STATE.syncForce||force}
+  return STATE.syncPromise;
+ }
+ const pending=(async()=>{
+  let render=force,result=null;
+  do{
+   STATE.syncQueued=false;STATE.syncForce=false;STATE.syncRoom=STATE.room;STATE.syncToken=STATE.token;
+   result=await performSync(render);
+   render=STATE.syncForce;
+  }while(STATE.syncQueued&&STATE.room&&STATE.token);
+  return result;
+ })();STATE.syncPromise=pending;
  try{return await pending}finally{if(STATE.syncPromise===pending)STATE.syncPromise=null}
 }
 async function performSync(force=false){
@@ -920,13 +945,18 @@ async function performSync(force=false){
   STATE.sync=d;STATE.syncSig=sig;
   STATE.scenarioId=d.room.scenario_id;STATE.playerId=d.player.id;STATE.playerPseudo=d.player.pseudo;STATE.role=d.player.public_role||STATE.role;STATE.players=d.players||[];STATE.cycle=d.room.cycle||0;
   saveSession();
-  await refreshAvatars(d,false);markGameStarted(d);markGameCompleted(d);
+  markGameStarted(d);markGameCompleted(d);
   if(changed){
    const last=(d.events||[]).at(-1);if(last&&last.id>STATE.lastEventId){if(STATE.lastEventId&&['trame','breaking_news','reveal'].includes(last.event_type))playCue(last.event_type==='breaking_news'?'news':last.event_type==='reveal'?'finale':'trame');STATE.lastEventId=last.id}
    routeFromServer();restoreDrafts(draft);
    setTimeout(()=>maybeShowRoleNotice(d),60);
   }
   manageVideoState();
+  // Avatars are cosmetic: a slow image RPC must never hold a phase change or
+  // prevent a newer gameplay snapshot from being fetched.
+  void refreshAvatars(d,false).then(changed=>{
+   if(changed&&STATE.room===room&&STATE.token===token&&STATE.sync===d){const draft=captureDrafts();routeFromServer();restoreDrafts(draft)}
+  }).catch(e=>console.warn('avatars',e));
   return d;
  }catch(e){if(STATE.room===room&&STATE.token===token){connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
 }

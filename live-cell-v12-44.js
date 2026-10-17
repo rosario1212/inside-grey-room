@@ -5,14 +5,14 @@
 (() => {
   'use strict';
 
-  const V = 'v36-realtime-multiplayer';
+  const V = 'v81-multiplayer-sync';
   const OMERTA_IDS = new Set(['021','022','023','024','025']);
   const RT = {
-    room:null, signalToken:null, ws:null, topic:null, ready:false, joining:false,
+    room:null, playerToken:null, signalToken:null, ws:null, topic:null, ready:false, joining:false,
     ref:0, joinRef:null, heartbeatRef:null,
     heartbeat:null, joinWatchdog:null, reconnect:null, reconnectAttempt:0,
-    pollTimer:null, syncTimer:null, syncDue:0, syncRunning:false, syncDirty:false,
-    syncForce:false, revision:0, syncedRevision:0,
+    pollTimer:null, pollGeneration:0, syncTimer:null, syncDue:0, syncRunning:false, syncDirty:false,
+    syncForce:false, syncRunId:0, revision:0, syncedRevision:0,
     lastMessageAt:0, serverEpoch:0, clientEpoch:0,
     closedByUs:false, generation:0
   };
@@ -49,7 +49,9 @@
   function recordServerClock(data){
     const parsed = Date.parse(data?.server_now || '');
     if(Number.isFinite(parsed)){
-      RT.serverEpoch = parsed;
+      // rpc() measures the clock offset at the request midpoint. Reusing a
+      // coalesced snapshot must not restart the clock at its old server_now.
+      RT.serverEpoch = Number.isFinite(STATE.serverOffset) ? Date.now()+STATE.serverOffset : parsed;
       RT.clientEpoch = Date.now();
     }
   }
@@ -58,7 +60,7 @@
   if(coreSyncNow){
     syncNow = async function(){
       const data = await coreSyncNow.apply(this,arguments);
-      recordServerClock(data || STATE?.sync);
+      recordServerClock(data);
       return data;
     };
   }
@@ -69,6 +71,7 @@
   }
 
   function clearSyncScheduler(){
+    RT.syncRunId++;
     clearTimer('syncTimer');
     RT.syncDue=0;
     RT.syncDirty=false;
@@ -88,6 +91,7 @@
     RT.ready = false;
     RT.joining = false;
     RT.room = null;
+    RT.playerToken = null;
     RT.signalToken = null;
     RT.topic = null;
     RT.joinRef = null;
@@ -117,18 +121,26 @@
 
     const force = RT.syncForce;
     const targetRevision = RT.revision;
+    const runId = ++RT.syncRunId, room = STATE.room, token = STATE.token;
+    const current = () => runId===RT.syncRunId && STATE.room===room && STATE.token===token;
     RT.syncDirty = false;
     RT.syncForce = false;
     RT.syncRunning = true;
     let failed = false;
 
     Promise.resolve()
-      .then(() => syncNow(force))
+      .then(() => current() ? syncNow(force,true) : null)
       .then(data => {
-        recordServerClock(data || STATE?.sync);
+        if(!current()) return;
+        // performSync returns null on network errors. Never acknowledge a
+        // revision until its authoritative snapshot was actually fetched.
+        if(!data?.room || !data?.player) throw new Error('sync_unavailable');
+        recordServerClock(data);
         if(targetRevision) RT.syncedRevision = Math.max(RT.syncedRevision,targetRevision);
+        schedulePoll();
       })
       .catch(error => {
+        if(!current()) return;
         failed = true;
         if(isTerminalSessionError(error)){
           recoverStaleSession('Cette cellule n’est plus disponible.');
@@ -138,6 +150,7 @@
         RT.syncDirty = true;
       })
       .finally(() => {
+        if(!current()) return;
         RT.syncRunning = false;
         if(!inRoom()) return;
         if(RT.syncDirty || RT.revision > RT.syncedRevision){
@@ -178,6 +191,7 @@
       RT.closedByUs=false;
     }
     scheduleReconnect();
+    schedulePoll(0);
   }
 
   function startHeartbeat(){
@@ -230,7 +244,8 @@
         RT.lastMessageAt=Date.now();
         setRealtimeState('live');
         startHeartbeat();
-        syncSoon(0,false,RT.revision);
+        // Rejoin can miss notifications even when the last revision is known.
+        syncSoon(0,false);
       }else{
         console.warn('Realtime join rejected',msg.payload);
         failRealtime('join-rejected');
@@ -275,8 +290,9 @@
       return;
     }
 
-    const room = String(STATE.room || '').toUpperCase();
-    const currentUsable = RT.room===room && (RT.ready || RT.joining || RT.ws?.readyState===WebSocket.CONNECTING);
+    const room = String(STATE.room || '').toUpperCase(), playerToken = STATE.token;
+    if(RT.room && (RT.room!==room || RT.playerToken!==playerToken)) closeRealtime('session-changed',true);
+    const currentUsable = RT.room===room && RT.playerToken===playerToken && (RT.ready || RT.joining || RT.ws?.readyState===WebSocket.CONNECTING);
     if(!force && currentUsable) return;
 
     const generation = ++RT.generation;
@@ -289,15 +305,17 @@
     clearTimer('heartbeat');
     clearTimer('joinWatchdog');
     clearTimer('reconnect');
+    RT.closedByUs=false;
     RT.ws=null;
     RT.ready=false;
     RT.joining=true;
     RT.room=room;
+    RT.playerToken=playerToken;
     setRealtimeState('connecting');
 
     let signalToken;
     try{
-      signalToken = await rpc('igr_v4_realtime_token',{p_code:room,p_player_token:STATE.token});
+      signalToken = await rpc('igr_v4_realtime_token',{p_code:room,p_player_token:playerToken});
     }catch(error){
       if(generation!==RT.generation) return;
       RT.joining=false;
@@ -310,7 +328,7 @@
       scheduleReconnect();
       return;
     }
-    if(generation!==RT.generation || !signalToken || !inRoom() || String(STATE.room).toUpperCase()!==room) return;
+    if(generation!==RT.generation || !signalToken || !inRoom() || String(STATE.room).toUpperCase()!==room || STATE.token!==playerToken) return;
 
     RT.signalToken=String(signalToken);
     RT.topic=`realtime:igr-room-${RT.signalToken}`;
@@ -345,7 +363,10 @@
         if(generation===RT.generation && RT.ws===ws && !RT.ready) failRealtime('join-timeout');
       },6000);
     });
-    ws.addEventListener('message',handleRealtimeMessage);
+    ws.addEventListener('message',event => {
+      if(generation!==RT.generation || RT.ws!==ws || STATE.token!==playerToken) return;
+      handleRealtimeMessage(event);
+    });
     ws.addEventListener('error',() => {
       if(generation!==RT.generation || RT.ws!==ws) return;
       setRealtimeState('fallback');
@@ -363,6 +384,7 @@
       if(!RT.closedByUs && inRoom()){
         setRealtimeState(isOnline()?'fallback':'offline');
         scheduleReconnect();
+        schedulePoll(0);
       }
     });
   }
@@ -371,6 +393,7 @@
   try{baseStopRoomWatcher?.()}catch{}
 
   function clearAdaptivePoll(){
+    RT.pollGeneration++;
     if(RT.pollTimer){clearTimeout(RT.pollTimer);RT.pollTimer=null}
     try{
       if(STATE?.watcher){clearInterval(STATE.watcher);clearTimeout(STATE.watcher);STATE.watcher=null}
@@ -385,33 +408,36 @@
 
     const room = STATE?.sync?.room;
     const end = Date.parse(room?.phase_ends_at || '');
-    if(room?.status==='playing' && Number.isFinite(end)){
+    if(room?.status==='playing' && !room.state?.timer_paused && Number.isFinite(end)){
       const remaining = end-estimatedServerNow();
       if(remaining <= 300) return 350;
       if(remaining <= 2200) return Math.max(350,remaining+120);
       if(remaining <= 10000) return Math.min(2200,Math.max(700,remaining-700));
-      return Math.min(12000,Math.max(2500,remaining-1500));
+      return 2500;
     }
-    return 12000;
+    return room?.status==='finished' ? 5000 : 2500;
   }
 
   function schedulePoll(delay=pollDelay()){
     clearAdaptivePoll();
     if(!inRoom()) return;
+    const room=STATE.room,token=STATE.token,generation=RT.pollGeneration;
     RT.pollTimer=setTimeout(async () => {
       RT.pollTimer=null;
       STATE.watcher=null;
-      if(!inRoom()) return;
+      if(generation!==RT.pollGeneration || !inRoom() || STATE.room!==room || STATE.token!==token) return;
       try{
-        const data=await syncNow(false);
-        recordServerClock(data || STATE?.sync);
+        const data=await syncNow(false,true);
+        if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
+        recordServerClock(data);
       }catch(error){
+        if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
         if(isTerminalSessionError(error)){
           recoverStaleSession('Cette cellule n’est plus disponible.');
           return;
         }
       }
-      if(inRoom()) schedulePoll();
+      if(generation===RT.pollGeneration && inRoom() && STATE.room===room && STATE.token===token) schedulePoll();
     },Math.max(250,delay));
     STATE.watcher=RT.pollTimer;
   }
