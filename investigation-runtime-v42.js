@@ -106,8 +106,10 @@ function chronologyRows(text){
   const raw=String(text||'').trim();if(!raw)return'';
   const parts=raw.split(/(?<=[.!?])\s+/).map(clean).filter(Boolean);
   return parts.map((line,i)=>{
-    const m=line.match(/^(?:À|A|Vers|Environ|Around|At)?\s*(\d{1,2}\s*(?:h|:|H)\s*\d{0,2}|\d{1,2}:\d{2})\b/i);
-    const when=m?m[1].replace(/\s+/g,' ').trim():String(i+1).padStart(2,'0');
+    // Preserve time qualifiers ('Vers', 'Environ', ...) and never treat a
+    // numbered sentence as an invented time on the player's timeline.
+    const m=line.match(/^(?:(?:À|A|Vers|Environ|Around|At)\s+)?(?:\d{1,2}\s*(?:h|:|H)\s*\d{1,2}|\d{1,2}:\d{2})\b/i);
+    const when=m?clean(m[0]):copy('ÉTAPE '+(i+1),'STEP '+(i+1));
     const body=m?clean(line.slice(m[0].length).replace(/^\s*[,·:;-]?\s*/,'')):line;
     return `<div class="v42-chrono-row"><div class="v42-chrono-dot"></div><time>${esc(when)}</time><p>${esc(body||line)}</p></div>`;
   }).join('');
@@ -115,13 +117,13 @@ function chronologyRows(text){
 function renderSuspectChronology(){
   const ps=me()?.private_state||{};
   const chronology=clean(ps.chronology);
-  const maintain=clean(ps.position||ps.anchors||ps.objective_main);
+  const maintain=clean(ps.position||ps.objective_main);
   const anchors=clean(ps.anchors);
   return `<section class="v42-chronology">
     <div class="v42-elements-head"><div><span>${esc(copy('OUTIL PRIVÉ','PRIVATE TOOL'))}</span><h2>${esc(copy('Chronologie','Timeline'))}</h2></div><small>${esc(copy('Ta version canonique','Your canonical version'))}</small></div>
     <div class="v42-chrono-card"><div class="v42-chrono-list">${chronology?chronologyRows(chronology):`<div class="v42-empty">${esc(copy('Aucune chronologie détaillée sur cette carte.','No detailed timeline on this card.'))}</div>`}</div></div>
     ${anchors?`<article class="v42-version-card"><small>${esc(copy('REPÈRES SÛRS','SAFE ANCHORS'))}</small><p>${esc(anchors)}</p></article>`:''}
-    ${maintain?`<article class="v42-version-card strong"><small>${esc(copy('VERSION À TENIR','VERSION TO MAINTAIN'))}</small><p>${esc(maintain)}</p></article>`:''}
+    ${maintain&&normalized(maintain)!==normalized(anchors)?`<article class="v42-version-card strong"><small>${esc(copy('VERSION À TENIR','VERSION TO MAINTAIN'))}</small><p>${esc(maintain)}</p></article>`:''}
     <div class="v42-private-note">${esc(copy('Privé : cet écran n’ajoute aucun fait. Il réorganise uniquement les informations déjà présentes sur ta carte de rôle.','Private: this screen adds no facts. It only reorganizes information already present on your role card.'))}</div>
   </section>`;
 }
