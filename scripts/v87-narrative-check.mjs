@@ -22,7 +22,10 @@ const sample={
  player:{id:'enq',pseudo:'Investigator',public_role:'enqueteur'},
  suspects:[{id:'sus1',pseudo:'Suspect A'},{id:'sus2',pseudo:'Suspect B'}],
  scenario:{context:'Shared public case description'},
- events:[{event_type:'trame',target_player_id:'sus1',payload:{title:'AUTHORIZED CLUE',text:'Officially released clue'}}],
+ events:[
+  {event_type:'trame',payload:{title:'GENERAL CLUE',text:'Officially released without person attribution'}},
+  {event_type:'trame',payload:{title:'AUTHORIZED CLUE',text:'Officially released clue',suspect_id:'sus1'}}
+ ],
  my_actions:[]
 };
 const state={room:'ABCDE',token:'demo-token',tab:'investigation',sync:sample};
@@ -35,6 +38,13 @@ vm.runInNewContext(source,context);
 const investigatorHtml=context.renderInvestigationTab();
 assert(investigatorHtml.includes('Suspect A')&&investigatorHtml.includes('Suspect B'),'One dossier per assigned suspect');
 assert(investigatorHtml.includes('AUTHORIZED CLUE'),'Authorized evidence should enrich a dossier');
+const splitAt=investigatorHtml.indexOf('<div class="igr87-people">');
+assert(splitAt>0,'Suspect dossiers must render after general known elements');
+assert(investigatorHtml.indexOf('GENERAL CLUE')<splitAt,
+ 'Unassigned evidence must remain in the general case file');
+assert(investigatorHtml.indexOf('AUTHORIZED CLUE')>splitAt,
+ 'Only explicit payload.suspect_id may associate evidence with a suspect');
+
 assert(investigatorHtml.includes('Shared public case description'),'Initial dossier uses public case context');
 assert(investigatorHtml.includes('Existing phase controls stay'),'Existing gameplay remains');
 assert(investigatorHtml.includes('Consigner une information'),'Investigator can take notes in Enquête');
