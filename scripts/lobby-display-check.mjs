@@ -4,7 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v81-multiplayer-sync';
+const VERSION='v82-role-relations';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','screen-polish-v73.css'];
 const read=name=>readFile(path.join(target,name),'utf8');
 const app=await read('app-v11.js');
@@ -102,4 +102,27 @@ for(const page of ['index.html','en.html']){
   assert.equal([...html.matchAll(/<link[^>]+href=["']lobby-ui-fix-v13\.css/g)].length,1,`${page}: load the lobby stylesheet once`);
   assert.equal([...html.matchAll(/<link[^>]+id="igr-startup-stability-v13-3-css"/g)].length,1,`${page}: the startup bootstrap must reuse the current entrance stylesheet`);
 }
-console.log('Lobby v72: 34 first-render palettes, chosen/full/available states, text contrast and web/mobile cache propagation OK');
+
+// Role dossier v82: scenario facts stay separate from short, conservative identity context.
+const roleStart=app.indexOf('function igr82RelationLink(');
+const roleEnd=app.indexOf('function privateCardHtml(){',roleStart);
+assert(roleStart>=0&&roleEnd>roleStart,'Context-aware relationship renderer must be bundled');
+const roleContext={h:context.h,window:{IGR_LOCALE:'fr'}};
+vm.runInNewContext(app.slice(roleStart,roleEnd),roleContext);
+const renderRel=text=>roleContext.valueBlock('TES RELATIONS',[{pseudo:'ipad',text}]);
+const unknown=renderRel('Ton point de départ — Tu ne le connais pas. Tu ignores ce qu’il a pu voir.\n\nÀ mettre sur la table — À quelle heure ?');
+assert(unknown.includes('Vous ne vous connaissez pas.'),'Unknown persons must remain unknown');
+assert(unknown.includes('Tu ignores ce qu’il a pu voir.'),'Canonical factual details must remain visible');
+assert(unknown.includes('À quelle heure ?'),'Open-ended conversation prompts must remain visible');
+assert(!unknown.includes('Vous avez déjà été en contact.'),'Unknown persons must not inherit a fictional encounter');
+const colleagues=renderRel('Ton point de départ — Vous travaillez dans la même structure, sans relation personnelle connue.');
+assert(colleagues.includes('Même structure : vous avez pu vous croiser.'),'Shared workplace must preserve only plausible contact');
+const uncertain=renderRel('Ton point de départ — Une première dispute a précédé ton arrivée.');
+assert(uncertain.includes('Lien personnel non précisé dans ton dossier.'),'Missing relational evidence must not invent a bond');
+const escaped=roleContext.valueBlock('TES RELATIONS',[{pseudo:'<script>',text:'Ton point de départ — Rien de certain.'}]);
+assert(!escaped.includes('<script>')&&escaped.includes('&lt;script&gt;'),'Player names must be escaped');
+roleContext.window.IGR_LOCALE='en';
+assert(renderRel('Ton point de départ — Tu ne le connais pas.').includes('You do not know each other.'),'English relation label must be available');
+assert((await read('screen-polish-v73.css')).includes('.igr82-relation-list'),'Responsive role styling must be shipped');
+
+console.log('Lobby v82: 34 first-render palettes, chosen/full/available states, text contrast and web/mobile cache propagation OK');
