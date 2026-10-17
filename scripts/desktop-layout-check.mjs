@@ -65,7 +65,7 @@ export async function runDesktopChecks({page,css,app,read,check,report}){
       await page.addScriptTag({content:`
         var STATE={room:'AUDIT',tab:'card',sync:{room:{scenario_id:'020',cycle:2,phase:'event_select'},player:{id:'one',pseudo:'Participant',public_role:'journaliste'}}};
         var VERSION='desktop-test',SOUND={enabled:false},h=v=>String(v??''),byId=id=>document.getElementById(id),saveSession=()=>{},updatePhaseClock=()=>{};
-        var scenario=()=>({id:'020',title:'LA DERNIÈRE AUDIENCE'}),displayRole=()=> 'Journaliste',avatarHtml=()=>'',phaseLabel=()=> 'CHOIX D’UNE ACTION',fmtSeconds=()=> '04:00',phaseSeconds=()=>240,phaseTimerControl=()=>'',liveSessionControls=()=>'';
+        var scenario=()=>({id:'020',title:'LA DERNIÈRE AUDIENCE'}),displayRole=()=> 'Journaliste',avatarHtml=()=>'',phaseLabel=()=> 'CHOIX D’UNE ACTION',fmtSeconds=()=> '04:00',phaseSeconds=()=>240,phaseTimerControl=()=>'',liveSessionControls=()=>'',mountLiveSessionControls=()=>{};
         var fixtureTabs=['Ma carte','Enquête','Messages','Fil des événements','Règles du jeu','Presse','Salle d’attente','Expertises','Cabinet','Déclarations','Conduite','Informations complémentaires'];
         var gameTabs=()=>fixtureTabs.map((label,i)=>({id:i===0?'card':'tab-'+i,label}));
         var renderGameTab=()=> '<div class="private-card-v11"><h2>Dossier privé</h2><p>'+('Recoupez les faits, écoutez les autres joueurs et préparez votre intervention. '.repeat(45))+'</p></div><div class="private-notes"><label for="desktopNotes">Notes personnelles</label><textarea id="desktopNotes"></textarea></div>';
