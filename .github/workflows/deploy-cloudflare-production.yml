@@ -30,6 +30,10 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build web app
         run: npm run build
+      - name: Verify private access before any production deployment
+        run: |
+          node --check cloudflare-worker.mjs
+          node scripts/private-access-check.mjs
       - name: Gameplay stability regression guard
         run: node scripts/gameplay-stability-check.mjs
       - name: Upload deployable bundle
@@ -62,6 +66,16 @@ jobs:
             exit 1
           fi
           npx --yes wrangler@4.102.0 deploy --config wrangler.jsonc
+      - name: Verify public URLs are gated by the private access screen
+        shell: bash
+        run: |
+          set -euo pipefail
+          ORIGIN='https://inside-grey-room-last.alial-khafaji2002.workers.dev'
+          HOME="$(curl --retry 5 --retry-all-errors --retry-delay 2 -sS -o /dev/null -w '%{http_code}' "$ORIGIN/")"
+          JS="$(curl --retry 5 --retry-all-errors --retry-delay 2 -sS -o /dev/null -w '%{http_code}' "$ORIGIN/app-v11.js")"
+          GATE="$(curl --retry 5 --retry-all-errors --retry-delay 2 -sS -o /dev/null -w '%{http_code}' "$ORIGIN/__igr-private")"
+          test "$HOME" = '302' && test "$JS" = '403' && test "$GATE" = '200' || { echo "Private gate smoke test failed: home=$HOME assets=$JS gate=$GATE"; exit 1; }
+          echo 'Cloudflare private gate verified on production URLs.'
       - name: Ensure managed TURN credentials
         shell: bash
         run: |

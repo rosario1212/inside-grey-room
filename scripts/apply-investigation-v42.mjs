@@ -96,7 +96,7 @@ runtime=replaceRequired(
 runtime=replaceRequired(
   runtime,
   ".v42-settings span{font-size:18px;line-height:1}.v41-event-panel>.v41-event-head{display:none!important}",
-  ".v42-settings span{font-size:18px;line-height:1}.v42-lie-note-bottom{order:100;margin-top:15px!important;padding-top:14px!important;border-top:1px solid rgba(255,255,255,.10)!important;color:#7e8993!important}.modal:has(.settings-grid){z-index:520!important}body:has(.modal .settings-grid) #igrUniversalDock{display:none!important;pointer-events:none!important}body:has(.live-session-controls) #igrTopSettings{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 64px)!important;right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;bottom:auto!important;z-index:336!important;margin:0!important}@media(max-width:390px){body:has(.live-session-controls) #igrTopSettings{top:calc(env(safe-area-inset-top,0px) + 58px)!important;right:max(9px,env(safe-area-inset-right,0px))!important}}.v41-event-panel>.v41-event-head{display:none!important}",
+  ".v42-settings span{font-size:18px;line-height:1}.v42-lie-note-bottom{order:100;margin-top:15px!important;padding-top:14px!important;border-top:1px solid rgba(255,255,255,.10)!important;color:#7e8993!important}.modal:has(.settings-grid){z-index:520!important}body:has(.modal .settings-grid) #igrUniversalDock{display:none!important;pointer-events:none!important}body:has(.live-session-controls) #app .topbar #igrTopSettings{position:relative!important;inset:auto!important;margin:0!important}.v41-event-panel>.v41-event-head{display:none!important}",
   'settings modal and live gear chrome'
 );
 if(!runtime.includes('IGR_V42_2_CELL_STABILITY'))runtime=`/* IGR_V42_2_CELL_STABILITY */\n${runtime}`;

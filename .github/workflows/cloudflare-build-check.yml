@@ -84,5 +84,9 @@ jobs:
         run: npm run build
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
+      - name: Validate private access before Cloudflare packaging
+        run: |
+          node --check cloudflare-worker.mjs
+          node scripts/private-access-check.mjs
       - name: Validate Cloudflare Worker package
         run: npx --yes wrangler@4.102.0 deploy --dry-run --outdir .wrangler-dry-run

@@ -206,6 +206,40 @@ try{
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'In-game controls must not overflow horizontally');
     });
   }
+
+  // v86: the dynamic guidance card must never become a third, narrow grid cell.
+  // Settings stays in the page toolbar; both exit controls remain operable.
+  for(const [name,width,height] of [['iphone',390,844],['ipad',768,1024],['desktop',1366,768],['wide',1920,1080]]){
+    await check('game-guidance-controls-'+name,async()=>{
+      await page.setViewportSize({width,height});
+      await page.setContent('<!doctype html><html lang="fr"><head><style>'+css+'</style></head><body><div id="app"><div class="app"><header class="topbar"><div class="brand">Inside Grey Room</div><div class="top-actions"><button id="igrTopSettings" class="pill-btn igr-top-settings" onclick="window.igrSettingClicks++" aria-label="Paramètres">⚙</button></div></header><main class="page game-v11"><div class="page-head game-head-v11"><h1>Le Masque Blanc</h1></div><div class="phase-strip"><div><small>PHASE</small><strong>ASSEMBLÉE D’ENQUÊTE</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock">02:17</div><div class="phase-host-actions"><button class="phase-timer-toggle">Pause</button><button class="phase-exit-btn" onclick="window.igrExitClicks++" aria-label="Quitter la partie">✕ Quitter</button></div></div></div><section class="igr51-now" id="igr51Now"><div><small>QUE FAIRE MAINTENANT ?</small><h3>Assemblée 1 · obligatoire</h3></div><p>Rejoins physiquement le camp Enquête. Partagez les premières informations et fixez les priorités.</p></section><div class="tabs tabs-v11"><button class="tab">Ma carte</button><button class="tab active">Enquête</button><button class="tab">Canal</button><button class="tab">Notes</button><button class="tab">Éléments d’enquête</button><button class="tab">Partie</button></div><section class="panel game-panel-v11"><div class="phase-explain"><h2>Assemblée d’enquête</h2><p>La partie continue.</p></div></section><div class="live-session-controls"><button class="live-exit-btn" onclick="window.igrExitClicks++">✕ Quitter</button><button class="live-advance-btn">Étape suivante →</button></div></main></div></div></body></html>');
+      await page.evaluate(()=>{window.igrExitClicks=0;window.igrSettingClicks=0;document.body.appendChild(document.querySelector('.live-session-controls'))});
+      const layout=await page.evaluate(()=>{
+        const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return{x:r.left,right:r.right,y:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+        const a=rect('#igrTopSettings'),b=rect('.phase-exit-btn');
+        return{help:rect('#igr51Now'),phase:rect('.phase-strip'),nav:rect('.tabs-v11'),panel:rect('.game-panel-v11'),
+          settings:a,quit:b,overlap:a.x<b.right&&a.right>b.x&&a.y<b.bottom&&a.bottom>b.y,scrollWidth:document.documentElement.scrollWidth};
+      });
+      assert(!layout.overlap,'Settings must not overlap the phase exit');
+      assert(layout.scrollWidth<=width+1,'Gameplay must fit viewport width');
+      assert(layout.help.width>=Math.min(layout.phase.width,layout.panel.width)-2,'Instructions must not collapse into a narrow side column');
+      if(width>=1100){
+        assert(layout.help.x<=layout.nav.x+1 && layout.help.right>=layout.panel.right-1,'Desktop guidance should span both columns');
+        assert(layout.nav.y>=layout.help.bottom+12 && layout.panel.y>=layout.help.bottom+12,'The navigation and reading panel follow the guidance');
+        assert(Math.abs(layout.nav.y-layout.panel.y)<1,'Desktop navigation aligns with content');
+      }else{
+        assert(layout.nav.y>=layout.help.bottom-2,'Compact navigation follows guidance');
+        assert(layout.panel.y>=layout.nav.bottom-1,'The reading panel comes after tabs');
+      }
+      assert(layout.panel.height<360,'A short assembly description should not leave a huge empty panel');
+      await page.getByRole('button',{name:'Paramètres'}).click();
+      await page.locator('.phase-exit-btn').click();
+      await page.locator('.live-exit-btn').click();
+      assert.equal(await page.evaluate(()=>window.igrSettingClicks),1,'Settings must remain clickable');
+      assert.equal(await page.evaluate(()=>window.igrExitClicks),2,'Both exit buttons must remain clickable');
+      if(name==='desktop'||name==='iphone')await page.screenshot({path:path.join(report,'game-guidance-'+name+'.png'),fullPage:true});
+    });
+  }
 }finally{await browser.close()}
 assert.equal(failures.length,0,failures.join('\n'));
 console.log('Entrance, home viewport and role hierarchy checks passed.');
