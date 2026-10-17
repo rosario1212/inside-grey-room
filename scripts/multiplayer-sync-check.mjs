@@ -117,16 +117,23 @@ await check('switching player identity in the same room replaces the subscriptio
   assert.equal(c.scope.__IGR_REALTIME__.snapshot().syncedRevision,0);
 });
 await check('legacy foreground heartbeat yields to the realtime scheduler',async()=>{
-  const c=client();c.scope.syncBusy=false;c.scope.decorateLobbyRole=()=>{};c.scope.removeInvestigationFocus=()=>{};c.scope.scanEvidenceNotifications=()=>{};
+  const c=client();let notices=0;c.scope.syncBusy=false;c.scope.decorateLobbyRole=()=>{};c.scope.removeInvestigationFocus=()=>{};c.scope.scanEvidenceNotifications=()=>{notices++};
   const clean=await read('gameplay-clean-v12.js');vm.runInContext(extract(clean,'  async function cleanSync(','  setInterval('),c.scope);
   let reconciles=0;c.scope.__IGR_REALTIME__={reconcile:()=>reconciles++};
   await c.scope.cleanSync(false);assert.equal(c.requests.length,0);
   await c.scope.cleanSync(true);assert.equal(reconciles,1);
+  c.listeners['igr:sync'][0]();assert.equal(notices,1,'Evidence notices must still scan each new authoritative snapshot');
 });
 await check('stopping a watcher during a pending poll cannot resurrect it',async()=>{
   const c=client();c.loadLive();await flush();
   await c.runTimer(1000,500);assert.equal(c.requests.length,1);
   c.scope.stopRoomWatcher();c.requests[0].resolve(data());await flush();
   assert(![...c.timers.values()].some(t=>t.delay>=250),'Stopped polling must remain stopped after its HTTP response returns');
+});
+await check('going offline cancels pending retries until the network returns',async()=>{
+  const c=client();c.loadLive();await flush();c.Socket.sockets[0].open();await c.runTimer();
+  c.scope.navigator.onLine=false;c.listeners.offline.at(-1)();c.requests[0].reject(new Error('offline'));await flush();
+  assert.equal(c.timers.size,0,'An offline client must not restart a retry loop');
+  c.scope.navigator.onLine=true;c.listeners.online.at(-1)();await flush();assert.equal(c.Socket.sockets.length,2);
 });
 console.log(`Multiplayer synchronization: ${checks.length} behavioral checks passed (${target}).`);

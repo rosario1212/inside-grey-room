@@ -28,6 +28,13 @@
     }catch(_){}finally{syncBusy=false}
   }
 
+  // Keep the existing role polish and evidence notices after every actual
+  // snapshot, without scheduling a second stream of gameplay RPCs.
+  window.addEventListener('igr:sync',()=>{
+    if(!window.__IGR_REALTIME__||!STATE?.room)return;
+    decorateLobbyRole();removeInvestigationFocus();scanEvidenceNotifications();
+  });
+
   setInterval(()=>{
     if(document.hidden||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
     void cleanSync(false);

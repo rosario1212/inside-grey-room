@@ -696,6 +696,8 @@
   },{passive:true});
   window.addEventListener('offline',()=>{
     if(!inRoom())return;
+    RT.generation++;
+    clearSyncScheduler();
     const ws=RT.ws;
     RT.ready=false;RT.joining=false;RT.ws=null;
     clearTimer('heartbeat');clearTimer('joinWatchdog');clearTimer('reconnect');
