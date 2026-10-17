@@ -4,7 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v82-role-relations';
+const VERSION='v83-private-role-dossier';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','screen-polish-v73.css'];
 const read=name=>readFile(path.join(target,name),'utf8');
 const app=await read('app-v11.js');
@@ -113,6 +113,9 @@ const renderRel=text=>roleContext.valueBlock('TES RELATIONS',[{pseudo:'ipad',tex
 const unknown=renderRel('Ton point de départ — Tu ne le connais pas. Tu ignores ce qu’il a pu voir.\n\nÀ mettre sur la table — À quelle heure ?');
 assert(unknown.includes('Vous ne vous connaissez pas.'),'Unknown persons must remain unknown');
 assert(unknown.includes('Tu ignores ce qu’il a pu voir.'),'Canonical factual details must remain visible');
+assert(unknown.includes('CE QUE TU SAIS DE CETTE PERSONNE'),'A clear factual label is required');
+assert(unknown.includes('CE QUE TU PEUX LUI DEMANDER'),'A clear, optional conversation label is required');
+assert(!unknown.includes('Ton point de départ')&&!unknown.includes('À mettre sur la table'),'Old opaque markers must not leak into the role UI');
 assert(unknown.includes('À quelle heure ?'),'Open-ended conversation prompts must remain visible');
 assert(!unknown.includes('Vous avez déjà été en contact.'),'Unknown persons must not inherit a fictional encounter');
 const colleagues=renderRel('Ton point de départ — Vous travaillez dans la même structure, sans relation personnelle connue.');
@@ -129,4 +132,4 @@ roleContext.window.IGR_LOCALE='en';
 assert(renderRel('Ton point de départ — Tu ne le connais pas.').includes('You do not know each other.'),'English relation label must be available');
 assert((await read('screen-polish-v73.css')).includes('.igr82-relation-list'),'Responsive role styling must be shipped');
 
-console.log('Lobby v82: 34 first-render palettes, chosen/full/available states, text contrast and web/mobile cache propagation OK');
+console.log('Lobby v83: 34 first-render palettes, chosen/full/available states, text contrast and web/mobile cache propagation OK');
