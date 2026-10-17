@@ -93,12 +93,12 @@ if(!v41.includes('IGR_V41_SETTINGS_SINGLE_OWNER'))throw new Error('v41 single Se
 if(!v41.includes("btn.id='igrTopSettings'"))throw new Error('v41 top Settings control missing');
 
 // v42.3: the Settings dialog owns the viewport while open; its scenario-browser
-// dock disappears, the live gear is stacked below Quitter, and the short lie
+// dock disappears, the gear remains in its toolbar, and the short lie
 // sentence is the final private-card child.
 for(const marker of [
   '.modal:has(.settings-grid){z-index:520!important}',
   'body:has(.modal .settings-grid) #igrUniversalDock{display:none!important;pointer-events:none!important}',
-  'body:has(.live-session-controls) #igrTopSettings{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 64px)!important',
+  'body:has(.live-session-controls) #app .topbar #igrTopSettings{position:relative!important;inset:auto!important;margin:0!important}',
   "foot.textContent=copy('Mentir est possible.','Lying is possible.')",
   'card.appendChild(summary)',
   'card.appendChild(foot)'
