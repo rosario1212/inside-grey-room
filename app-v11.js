@@ -1079,13 +1079,49 @@ function renderBriefing(){
 }
 
 function displayRole(r,p){if(r==='suspect')return`Suspect · ${p}`;if(r==='maitre')return`Maître · ${p}`;return`${roleInfo(r).label} · ${p}`}
+function igr82RelationLink(entry,fact) {
+  const fr=typeof window==='undefined'||window.IGR_LOCALE!=='en';
+  const tr=(a,b)=>fr?a:b;
+  const explicit=String(entry?.link_fr || entry?.link || (fr?'':entry?.link_en) || '').trim();
+  if(explicit)return explicit;
+  const s=String(fact||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/’/g,"'").toLowerCase();
+  if(/tu ne (?:le|la|les) connais pas|vous ne vous connaissez pas/.test(s))return tr('Vous ne vous connaissez pas.','You do not know each other.');
+  if(/tu (?:le|la) connais (?:peu|a peine)|tu (?:le|la) connais tres peu/.test(s))return tr('Vous vous connaissez peu.','You barely know each other.');
+  if(/tu n'as aucun lien|aucun lien personnel|sans lien personnel/.test(s))return tr('Aucun lien personnel établi.','No established personal connection.');
+  if(/(?:tu n'as|vous n'avez) jamais rencontre|tu ne l'as pas rencontre|pas rencontre personnellement/.test(s))return tr('Vous ne vous êtes pas rencontrés personnellement.','You have not met in person.');
+  if(/tu ne peux (?:pas )?l'identifier|sans identification certaine|tu ignores son identite|pas avec certitude l'identite/.test(s))return tr('Tu ne peux pas l’identifier avec certitude.','You cannot identify this person with certainty.');
+  if(/(?:vous (?:travaillez|evoluez|exercez) (?:dans|au sein de)|vous etes (?:dans|issus de)) (?:la )?meme (?:structure|equipe|institution|entreprise|service|etablissement)|(?:ton|ta) collegue/.test(s))return tr('Même structure : vous avez pu vous croiser.','Same organization: you may have crossed paths.');
+  if(/tu lui as demande|il t'a confirme|elle t'a confirme|tu lui as confie|tu as negocie avec|vous avez echange/.test(s))return tr('Vous avez déjà été en contact.','You have been in contact before.');
+  if(/tu (?:l'as|le|la) (?:apercu|observe)|tu as observe (?:ses|leurs)/.test(s))return tr('Tu l’as observé, sans lien personnel établi.','You have observed them; no personal link is established.');
+  if(/tu reconnais (?:un|le) circuit|fonds (?:qu'il|qu'elle) met|operations (?:qu'il|qu'elle) validait/.test(s))return tr('Vos activités se recoupent ; votre proximité reste inconnue.','Your activities overlap; your familiarity is unknown.');
+  return tr('Lien personnel non précisé dans ton dossier.','No personal connection specified in your file.');
+}
+
+function igr82RelationsHtml(value) {
+  const fr=typeof window==='undefined'||window.IGR_LOCALE!=='en', tr=(a,b)=>fr?a:b;
+  const entries=value.map((entry,index)=>{
+    if(typeof entry==='string')return `<div class="igr82-relation igr82-relation-plain"><p>${h(entry)}</p></div>`;
+    const person=String(entry?.pseudo||entry?.label||tr('Personne '+(index+1),'Person '+(index+1)));
+    const original=String(entry?.text||'').trim();
+    const split=original.split(/À mettre sur la table\s*[—–:-]\s*/i);
+    const fact=String(split.shift()||'').replace(/^\s*Ton point de départ\s*[—–:-]\s*/i,'').trim();
+    const opening=split.join(' ').trim();
+    const link=igr82RelationLink(entry,fact);
+    const initial=person.trim().slice(0,1).toUpperCase()||'?';
+    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b><small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p></div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS','WHAT YOU KNOW')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('À ÉCLAIRCIR','TO CLARIFY')}</span>${h(opening)}</p>`:''}</div></article>`;
+  });
+  return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><div class="igr82-relation-list">${entries.join('')}</div></section>`;
+}
+
 function valueBlock(title,value,cls=''){
  if(value==null||value===''||(Array.isArray(value)&&!value.length))return'';
+ if(title==='TES RELATIONS'&&Array.isArray(value))return igr82RelationsHtml(value);
  let body='';
  if(Array.isArray(value))body=value.map(v=>typeof v==='string'?`<div class="relation-line"><span>${h(v)}</span></div>`:`<div class="relation-line"><b>${h(v.pseudo||v.label||'')}</b><span>${h(v.text||JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='object')body=Object.entries(value).map(([k,v])=>`<div class="relation-line"><b>${h(k)}</b><span>${h(typeof v==='string'?v:JSON.stringify(v))}</span></div>`).join('');
  else body=`<p>${h(value)}</p>`;
- return `<div class="private-block ${cls}"><h4>${h(title)}</h4>${body}</div>`;
+ const tone=title==='CE QUE TU CACHES'?'igr82-hidden':title==='TES REPÈRES'?'igr82-known':title==='TA POSITION'?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
+ return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${body}</div>`;
 }
 function privateCardHtml(){
  const d=STATE.sync,p=d?.player,ps=p?.private_state||{},pub=p?.public_role||STATE.role,secret=p?.secret_role;
