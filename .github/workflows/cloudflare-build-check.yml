@@ -82,5 +82,7 @@ jobs:
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: npm run build
+      - name: Verify multiplayer synchronization
+        run: node scripts/multiplayer-sync-check.mjs dist
       - name: Validate Cloudflare Worker package
         run: npx --yes wrangler@4.102.0 deploy --dry-run --outdir .wrangler-dry-run

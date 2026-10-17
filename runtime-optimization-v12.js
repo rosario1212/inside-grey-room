@@ -38,8 +38,8 @@
 
   const baseSync = typeof syncNow === 'function' ? syncNow : null;
   if(baseSync){
-    syncNow = async function(force=false){
-      const result = await baseSync.call(this, force);
+    syncNow = async function(force=false,fresh=false){
+      const result = await baseSync.call(this, force, fresh);
       try{
         window.dispatchEvent(new CustomEvent('igr:sync',{detail:{force:!!force,room:STATE?.room||null,at:Date.now()}}));
       }catch{}

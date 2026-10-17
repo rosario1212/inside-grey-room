@@ -16,6 +16,9 @@
 
   async function cleanSync(force=false){
     if(syncBusy||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
+    // The live-cell scheduler owns polling, reconnects and phase deadlines.
+    // Legacy heartbeats must not race its invalidations or reset its server clock.
+    if(window.__IGR_REALTIME__){if(force)window.__IGR_REALTIME__.reconcile();return}
     syncBusy=true;
     try{
       await syncNow(!!force);
@@ -24,6 +27,13 @@
       scanEvidenceNotifications();
     }catch(_){}finally{syncBusy=false}
   }
+
+  // Keep the existing role polish and evidence notices after every actual
+  // snapshot, without scheduling a second stream of gameplay RPCs.
+  window.addEventListener('igr:sync',()=>{
+    if(!window.__IGR_REALTIME__||!STATE?.room)return;
+    decorateLobbyRole();removeInvestigationFocus();scanEvidenceNotifications();
+  });
 
   setInterval(()=>{
     if(document.hidden||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
