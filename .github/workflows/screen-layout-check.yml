@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'screen-polish-v73.css'
+      - 'narrative-dossier-v87.js'
+      - 'scripts/v87-narrative-check.mjs'
       - 'startup-stability-v13-3.css'
       - 'app-v11.js'
       - 'omerta-v12-39.js'

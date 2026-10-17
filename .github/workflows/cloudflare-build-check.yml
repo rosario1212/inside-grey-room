@@ -82,6 +82,8 @@ jobs:
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: npm run build
+      - name: Audit narrative role separation and code syntax
+        run: node scripts/v87-narrative-check.mjs
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
       - name: Validate private access before Cloudflare packaging
