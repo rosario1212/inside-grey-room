@@ -11,7 +11,7 @@ const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 // Finalize the synchronization assets as well as the presentation assets so
 // installed PWAs and new tabs receive the same multiplayer implementation.
-assets.push('live-cell-v12-44.js','gameplay-clean-v12.js','runtime-optimization-v12.js','cell-controls-stability-v23.js');
+assets.push('live-cell-v12-44.js','gameplay-clean-v12.js','runtime-optimization-v12.js','cell-controls-stability-v23.js','investigation-runtime-v42.js');
 const finalCss='dossier-reliability-v84.css',finalJs='dossier-reliability-v84.js';
 const parsed=spawnSync(process.execPath,['--check',path.resolve(finalJs)],{encoding:'utf8'});
 if(parsed.status!==0)throw new Error('Invalid v84 runtime: '+(parsed.stderr||parsed.stdout));
