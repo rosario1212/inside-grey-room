@@ -1159,7 +1159,7 @@ function igr82RelationsHtml(value) {
     const opening=split.join(' ').trim();
     const link=igr82RelationLink(entry,fact);
     // A repeated piece of the dossier must not create a second suspect card.
-    const key=[person,fact,opening,link].map(x=>x.toLocaleLowerCase().replace(/\\s+/g,' ').trim()).join('|');
+    const key=[person,fact,opening,link].map(x=>x.toLocaleLowerCase().replace(/\s+/g,' ').trim()).join('|');
     if(seen.has(key))return'';
     seen.add(key);
     const initial=person.trim().slice(0,1).toUpperCase()||'?';
