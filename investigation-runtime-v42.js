@@ -281,10 +281,10 @@ function ensureSettings(){
   const root=document.getElementById('app');if(!root)return;
   let btn=root.querySelector('#igrTopSettings')||root.querySelector('#igrTopSettingsV42');
   const quit=[...root.querySelectorAll('button,a,[role="button"]')].find(el=>/quitter|leave/i.test(clean(el.textContent)));
-  const actions=quit?.parentElement||root.querySelector('.top-actions')||root.querySelector('.topbar');
+  const actions=root.querySelector('.topbar .top-actions')||root.querySelector('.topbar');
   if(!actions)return;
   if(!btn){btn=document.createElement('button');btn.id='igrTopSettingsV42';btn.type='button'}
-  if(quit&&btn.parentElement!==actions)actions.insertBefore(btn,quit);else if(!btn.parentElement)actions.prepend(btn);
+  if(btn.parentElement!==actions)actions.prepend(btn); // Never insert settings into the phase exit / pause controls.
   btn.className='pill-btn igr-top-settings v42-settings';btn.innerHTML='<span aria-hidden="true">⚙</span>';
   btn.setAttribute('aria-label',copy('Paramètres','Settings'));btn.setAttribute('title',copy('Paramètres','Settings'));
   btn.onclick=()=>{try{if(typeof openSettings==='function')openSettings();else if(typeof window.openSettings==='function')window.openSettings()}catch(e){console.error('[IGR v42] settings',e)}};
