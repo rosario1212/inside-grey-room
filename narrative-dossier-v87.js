@@ -61,7 +61,7 @@ function dossierHtml(){
  '<p>'+esc(publicContext||tr('Le dossier public sera précisé par l’enquête.','Public context will become clearer during the investigation.'))+'</p>'+
  common.slice(-18).map(evidenceHtml).join('')+'</div></details>'+
  '<div class="igr87-people">'+people.map(p=>personSection(p,ev.filter(e=>association(e,validIds)===String(p.id)))).join('')+'</div>'+
- '<form class="igr87-note-form" onsubmit="return igr87SaveNote(event)"><h3>'+tr('Consigner une information','Record information')+'</h3>'+
+ '<form class="igr87-note-form" onsubmit="event.preventDefault();igr87SaveNote(event)"><h3>'+tr('Consigner une information','Record information')+'</h3>'+
  '<p>'+tr('Une déclaration, une hypothèse ou une question n’est jamais automatiquement transformée en preuve.',
  'A statement, hypothesis or question is never automatically turned into evidence.')+'</p>'+
  '<label for="igr87Target">'+tr('À propos de','About')+'</label><select id="igr87Target"><option value="">'+
