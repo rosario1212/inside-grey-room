@@ -424,21 +424,21 @@ body:has(#app .private-card-v11) #igrNotifyBell:not([hidden]){
   touch-action:manipulation;
 }
 #app .phase-host-actions .phase-exit-btn:focus-visible,
-#app .live-session-controls .live-exit-btn:focus-visible {
+body > .live-session-controls .live-exit-btn:focus-visible {
   outline:2px solid #f0f3f6;
   outline-offset:3px;
 }
-#app .live-session-controls {
+body > .live-session-controls {
   max-width:100vw;
   box-sizing:border-box;
 }
-#app .live-session-controls .live-exit-btn {
+body > .live-session-controls .live-exit-btn {
   flex:0 0 auto;
   min-width:84px;
   min-height:44px;
   pointer-events:auto!important;
 }
-#app .live-session-controls .live-advance-btn {
+body > .live-session-controls .live-advance-btn {
   min-width:0;
   white-space:normal;
   max-width:calc(100vw - 134px);
@@ -457,4 +457,21 @@ body:has(#app .private-card-v11) #igrNotifyBell:not([hidden]){
     min-height:44px;
     font-size:10px;
   }
+}
+
+/* Top-level floating controls avoid sticky header stacking contexts entirely. */
+body > .live-session-controls{
+  position:fixed!important;
+  top:auto!important;
+  left:max(12px,env(safe-area-inset-left,0px))!important;
+  right:max(12px,env(safe-area-inset-right,0px))!important;
+  bottom:max(12px,env(safe-area-inset-bottom,0px))!important;
+  z-index:500;
+  box-sizing:border-box;
+  pointer-events:none;
+}
+body > .live-session-controls button{
+  position:relative;
+  min-height:44px!important;
+  pointer-events:auto!important;
 }
