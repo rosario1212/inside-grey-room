@@ -1114,7 +1114,7 @@ function igr82RelationsHtml(value) {
     const opening=split.join(' ').trim();
     const link=igr82RelationLink(entry,fact);
     const initial=person.trim().slice(0,1).toUpperCase()||'?';
-    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b><small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p></div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS','WHAT YOU KNOW')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('À ÉCLAIRCIR','TO CLARIFY')}</span>${h(opening)}</p>`:''}</div></article>`;
+    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b><small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p></div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE CETTE PERSONNE','WHAT YOU KNOW ABOUT THIS PERSON')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('CE QUE TU PEUX LUI DEMANDER','WHAT YOU CAN ASK')}</span>${h(opening)}</p>`:''}</div></article>`;
   });
   return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
@@ -1126,7 +1126,7 @@ function valueBlock(title,value,cls=''){
  if(Array.isArray(value))body=value.map(v=>typeof v==='string'?`<div class="relation-line"><span>${h(v)}</span></div>`:`<div class="relation-line"><b>${h(v.pseudo||v.label||'')}</b><span>${h(v.text||JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='object')body=Object.entries(value).map(([k,v])=>`<div class="relation-line"><b>${h(k)}</b><span>${h(typeof v==='string'?v:JSON.stringify(v))}</span></div>`).join('');
  else body=`<p>${h(value)}</p>`;
- const tone=title==='CE QUE TU CACHES'?'igr82-hidden':title==='TES REPÈRES'?'igr82-known':title==='TA POSITION'?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
+ const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
  return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${body}</div>`;
 }
 function privateCardHtml(){
