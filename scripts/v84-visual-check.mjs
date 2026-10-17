@@ -30,6 +30,26 @@ try{
    const overlap=geometry.bell.x<geometry.exit.right&&geometry.bell.right>geometry.exit.x&&geometry.bell.y<geometry.exit.bottom&&geometry.bell.bottom>geometry.exit.y;
    assert(!overlap,name+': floating notification overlaps exit');
    await page.screenshot({path:path.join(out,'v84-dossier-'+name+'.png'),fullPage:true});
+
+   // The newer v82 relation structure must not retrigger its own DOM observer.
+   await page.evaluate(()=>{
+     const block=document.createElement('section');
+     block.className='private-block igr82-relations';
+     block.innerHTML='<h4>TES RELATIONS</h4><article class="igr82-relation"><small class="igr82-relation-eyebrow">CE QUE TU SAIS</small><p class="igr82-relation-question"><span>À ÉCLAIRCIR</span> À quelle heure ?</p></article>';
+     document.querySelector('.private-card-v11').appendChild(block);
+   });
+   await page.waitForFunction(()=>document.querySelector('.igr82-relation-eyebrow')?.textContent==='CE QUE TU SAIS DE CETTE PERSONNE');
+   const mutations=await page.evaluate(async()=>{
+     const block=document.querySelector('.igr82-relations');
+     let count=0;
+     const observer=new MutationObserver(records=>{count+=records.length});
+     observer.observe(block,{childList:true,subtree:true});
+     await new Promise(resolve=>setTimeout(resolve,280));
+     observer.disconnect();
+     return count;
+   });
+   assert(mutations<=1,name+': self-triggering relations observer loop: '+mutations);
+
    await page.evaluate(()=>{
      STATE.tab='timeline';
      document.querySelector('.game-panel-v11').innerHTML='<section class="timeline"><h2>Chronologie</h2><ul><li><small>02 h 50</small> Tu passes devant la chambre.</li><li><small>02</small> Tu entends du bruit.</li><li><small>03</small> Tu retournes dans ta chambre.</li></ul></section>';
