@@ -136,6 +136,59 @@ await check('going offline cancels pending retries until the network returns',as
   assert.equal(c.timers.size,0,'An offline client must not restart a retry loop');
   c.scope.navigator.onLine=true;c.listeners.online.at(-1)();await flush();assert.equal(c.Socket.sockets.length,2);
 });
+await check('notifications may arrive but a failed render is retried on the next snapshot',async()=>{
+  const c=client();let tries=0;
+  c.scope.routeFromServer=()=>{tries++;if(tries===1)throw new Error('transient renderer failure');c.renders.push(c.scope.STATE.sync.room.phase)};
+  const first=c.scope.syncNow(false);await flush();
+  c.requests[0].resolve(data('new-phase'));await first;
+  assert.equal(c.scope.STATE.sync.room.phase,'new-phase','The notification data is authoritative');
+  assert.equal(c.scope.STATE.syncSig,'','A broken screen must never acknowledge the signature');
+  assert.equal(c.scope.STATE.uiRenderFailed,true);
+  const second=c.scope.syncNow(false);await flush();
+  c.requests[1].resolve(data('new-phase'));await second;
+  assert.deepEqual(c.renders,['new-phase'],'An identical snapshot must get a second render attempt');
+  assert.equal(c.scope.STATE.uiRenderFailed,false);
+  assert.notEqual(c.scope.STATE.syncSig,'');
+});
+await check('a missing lobby DOM triggers repaint even when the snapshot is unchanged',async()=>{
+  const c=client();let mounted=false;
+  const root={querySelector:selector=>(mounted&&selector==='.lobby-v11'?{}:null)};
+  c.scope.document.getElementById=id=>id==='app'?root:null;
+  c.scope.routeFromServer=()=>{mounted=true;c.renders.push(c.scope.STATE.sync.room.status)};
+  const first=c.scope.syncNow(false);await flush();
+  const lobby=data('waiting');lobby.room.status='lobby';
+  c.requests[0].resolve(lobby);await first;
+  assert.equal(c.renders.length,1);
+  mounted=false;
+  const second=c.scope.syncNow(false);await flush();
+  c.requests[1].resolve(lobby);await second;
+  assert.equal(c.renders.length,2,'An externally removed lobby must be recreated from server state');
+});
+await check('desktop room creation proceeds when optional profile uploads fail',async()=>{
+  const c=client(),events=[];
+  Object.assign(c.scope,{
+    primeNarrationFromGesture(){},
+    wakeAudioFromGesture:()=>Promise.resolve(true),
+    byId:id=>id==='createPseudo'?{value:'Desktop test'}:null,
+    scenario:()=>({id:'001'}),
+    newCode:()=> 'ABCDE',
+    STORAGE:{setItem(){}},
+    saveProfileData(){},
+    saveSession(){events.push('session')},
+    pushProfileAvatar:()=>Promise.reject(new Error('cosmetic optional')),
+    pushProfileCosmetics:()=>Promise.reject(new Error('cosmetic optional')),
+    startRoomWatcher(){events.push('watcher')},
+    renderLobby(){events.push('lobby')},
+    syncNow:async()=>lobby,
+    rpc:async()=>({room_code:'ABCDE',player_token:'player-token',host_token:'host-token',player_id:'host-id'})
+  });
+  const lobby=data('waiting');lobby.room.status='lobby';
+  vm.runInContext(extract(app,'async function createRoom(){','async function joinRoom(){'),c.scope);
+  await c.scope.createRoom();await flush();
+  assert(events.includes('watcher')&&events.includes('lobby'),'Desktop must reach lobby independent of avatar uploads');
+  assert(events.indexOf('watcher')<events.indexOf('lobby'));
+});
+
 await check('stale realtime clients self-heal without a manual refresh',async()=>{
   const c=client();
   c.scope.syncBusy=false;
