@@ -4,7 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const target=path.resolve(process.argv[2]||'dist');
-const VERSION='v83-private-role-dossier';
+const VERSION='v84-unified-relations-sync';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','screen-polish-v73.css'];
 const read=name=>readFile(path.join(target,name),'utf8');
 const app=await read('app-v11.js');
@@ -126,6 +126,8 @@ const friend=renderRel('Ton point de départ — C’est ton ami le plus proche 
 assert(friend.includes('C’est ton ami le plus proche.'),'Explicit friendship must not become an unknown link');
 const uncertain=renderRel('Ton point de départ — Une première dispute a précédé ton arrivée.');
 assert(uncertain.includes('Lien personnel non précisé dans ton dossier.'),'Missing relational evidence must not invent a bond');
+const doubled=roleContext.valueBlock('TES RELATIONS',[{pseudo:'Samir',text:'Ton point de départ — Tu as reçu son appel.'},{pseudo:'Samir',text:'Ton point de départ — Tu as reçu son appel.'}]);
+assert.equal((doubled.match(/igr82-relation-person/g)||[]).length,1,'A duplicate relation cannot create two repeated cards');
 const escaped=roleContext.valueBlock('TES RELATIONS',[{pseudo:'<script>',text:'Ton point de départ — Rien de certain.'}]);
 assert(!escaped.includes('<script>')&&escaped.includes('&lt;script&gt;'),'Player names must be escaped');
 roleContext.window.IGR_LOCALE='en';
