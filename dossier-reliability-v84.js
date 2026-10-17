@@ -86,10 +86,11 @@
           const fact=card.querySelector('.igr82-relation-fact');
           const prompt=card.querySelector('.igr82-relation-question span');
           const factTitle=card.querySelector('.igr82-relation-eyebrow');
-          if(factTitle)factTitle.textContent=copy('CE QUE TU SAIS DE CETTE PERSONNE','WHAT YOU KNOW ABOUT THIS PERSON');
-          if(prompt)prompt.textContent=copy('CE QUE TU PEUX LUI DEMANDER','WHAT YOU CAN ASK');
+          const factualLabel=copy('CE QUE TU SAIS DE CETTE PERSONNE','WHAT YOU KNOW ABOUT THIS PERSON');
+          const questionLabel=copy('CE QUE TU PEUX LUI DEMANDER','WHAT YOU CAN ASK');
+          if(factTitle && factTitle.textContent!==factualLabel){factTitle.textContent=factualLabel;changed=true}
+          if(prompt && prompt.textContent!==questionLabel){prompt.textContent=questionLabel;changed=true}
         });
-        changed=true;
       }
     }
     return changed;
