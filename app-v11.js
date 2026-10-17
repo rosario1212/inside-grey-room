@@ -500,6 +500,8 @@ async function rpc(name,payload){
 }
 
 function shell(content,homeLocked=false){
+ // A floating control must not survive switching screens or rooms.
+ document.querySelector('body > .live-session-controls')?.remove();
  document.documentElement.classList.toggle('home-locked',homeLocked);
  document.body.classList.toggle('home-locked',homeLocked);
  return`<div class="app ${homeLocked?'app-home-locked':''}"><div class="topbar"><div class="brand"><img src="assets/apple-touch-icon-v9.png?v=${VERSION}" alt="logo"><div><div class="brand-title">Inside Grey Room</div><div class="brand-sub">thriller psychologique</div></div></div>${homeLocked?'':`<div class="top-actions"><button class="pill-btn" onclick="openSettings()">Paramètres</button></div>`}</div>${content}</div>`
@@ -1114,7 +1116,7 @@ function renderBriefing(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),briefKey=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey!==briefKey)stopAmbient();
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
  byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier accompagne l’ouverture, puis les cartes privées s’ouvrent.</small></div></section>${liveSessionControls()}</main>`);
- runCanonicalBriefing();updatePhaseClock();
+ mountLiveSessionControls();runCanonicalBriefing();updatePhaseClock();
 }
 
 function displayRole(r,p){if(r==='suspect')return`Suspect · ${p}`;if(r==='maitre')return`Maître · ${p}`;return`${roleInfo(r).label} · ${p}`}
@@ -1187,6 +1189,7 @@ function renderRole(){
  const d=STATE.sync;if(!d)return;
  const me=(d.players||[]).find(x=>x.id===d.player.id),ready=!!me?.ready;
  byId('app').innerHTML=shell(`<main class="page"><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section>${liveSessionControls()}</main>`);
+ mountLiveSessionControls();
  if(SOUND.enabled)ensureAmbient(currentScenario().sound);
 }
 async function ackRole(){
@@ -1294,6 +1297,12 @@ function hostPhaseControls(){
  if(!phaseCanAdvance())return'';
  return `<button class="phase-next-btn" id="phaseNextBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`;
 }
+function mountLiveSessionControls(){
+ // Keep the controls outside #app: the game header has sticky/stacking contexts
+ // which otherwise intercept clicks on some iPhone and tablet viewports.
+ const controls=document.querySelector('#app .live-session-controls');
+ if(controls)document.body.appendChild(controls);
+}
 function liveSessionControls(){
  if(!STATE.room)return'';
  return `<div class="live-session-controls"><button type="button" class="live-exit-btn" onclick="confirmLeaveGame(event)" aria-label="Quitter la partie">✕ Quitter</button>${phaseCanAdvance()?`<button class="live-advance-btn" id="liveAdvanceBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`:''}</div>`;
@@ -1331,6 +1340,7 @@ function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
  byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}<button type="button" class="phase-exit-btn" onclick="confirmLeaveGame(event)" aria-label="Quitter la partie">✕ Quitter</button></div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
+ mountLiveSessionControls();
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
