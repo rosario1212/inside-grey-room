@@ -108,7 +108,7 @@ function chronologyRows(text){
   // Keep paragraphs intact unless a later sentence explicitly starts a new
   // temporal step. Never assign an invented clock time or reverse the story.
   const parts=raw.replace(/\r\n?/g,'\n').split(/\n\s*\n+/).flatMap(paragraph=>
-    paragraph.trim().split(/(?<=[.!?])\s+(?=(?:Vers|Environ|À|Ensuite|Puis|Après|Around|Then|At|Afterwards)\s)/i)
+    paragraph.trim().split(/(?<=[.!?])\s+(?=(?:Vers|Environ|À|Ensuite|Puis|Après|Around|Then|At|Afterwards)(?:\s|[,;:]))/i)
   ).map(clean).filter(Boolean);
   const seen=new Set();
   const rows=parts.filter(line=>{
@@ -125,7 +125,7 @@ function chronologyRows(text){
     const body=clean(remaining)||line;
     const marker=timed?'time':'span';
     const markerClass=timed?'':' class="v42-chrono-marker"';
-    return \`<div class="v42-chrono-row"><div class="v42-chrono-dot"></div><\${marker}\${markerClass}>\${esc(when)}</\${marker}><p>\${esc(body)}</p></div>\`;
+    return `<div class="v42-chrono-row"><div class="v42-chrono-dot"></div><${marker}${markerClass}>${esc(when)}</${marker}><p>${esc(body)}</p></div>`;
   }).join('');
 }
 function renderSuspectChronology(){
