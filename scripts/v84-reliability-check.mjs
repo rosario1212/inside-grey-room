@@ -7,6 +7,8 @@ const read=path=>readFile(path,'utf8');
 const runtime=await read(path.join(target,'dossier-reliability-v84.js'));
 const guard=await read(path.join(target,'cell-controls-stability-v23.js'));
 const live=await read(path.join(target,'live-cell-v12-44.js'));
+const chrono=await read(path.join(target,'investigation-runtime-v42.js'));
+
 const index=await read(path.join(target,'index.html'));
 const css=await read(path.join(target,'dossier-reliability-v84.css'));
 let sw='';
@@ -16,7 +18,7 @@ assert.match(index,/dossier-reliability-v84\.css\?v=v84-multiplayer-dossier/);
 assert.match(index,/cell-controls-stability-v23\.js\?v=v84-multiplayer-dossier/);
 assert(index.lastIndexOf('dossier-reliability-v84.js')>index.lastIndexOf('authoritative-runtime-v41.js'),'The canonical card parser must be loaded last');
 if(sw)assert.match(sw,/const CACHE='igr-v84-multiplayer-dossier'/);
-for(const name of ['dossier-reliability-v84.js','dossier-reliability-v84.css','cell-controls-stability-v23.js','live-cell-v12-44.js']){
+for(const name of ['dossier-reliability-v84.js','dossier-reliability-v84.css','cell-controls-stability-v23.js','live-cell-v12-44.js','investigation-runtime-v42.js']){
   if(sw)assert(sw.includes('/'+name+'?v=v84-multiplayer-dossier'),name+' must be precached');
 }
 assert(css.includes('safe-area-inset-top')&&css.includes('igr84-relation-card'),'Mobile safe areas and relation cards must be styled');
@@ -46,6 +48,20 @@ assert.match(api.linkFromFact('Une dispute a eu lieu avant ton arrivée.'),/Lien
 assert.equal(api.readablePhase('investigation_assembly'),'ASSEMBLÉE DU CAMP ENQUÊTE');
 sandbox.window.IGR_LOCALE='en';
 assert.equal(api.readablePhase('investigation_assembly'),'INVESTIGATION ASSEMBLY');
+
+
+const chronoStart=chrono.indexOf('function chronologyRows('),chronoEnd=chrono.indexOf('function renderSuspectChronology(',chronoStart);
+assert(chronoStart>=0&&chronoEnd>chronoStart,'Canonical chronology renderer must be present');
+const chronologyFixture={
+  clean:v=>String(v??'').replace(/\s+/g,' ').trim(),
+  copy:(fr,en)=>fr,
+  esc:v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+};
+vm.runInNewContext(chrono.slice(chronoStart,chronoEnd),chronologyFixture);
+const chronologyHtml=chronologyFixture.chronologyRows('Vers 02 h 50, tu passes devant la chambre 222. Tu entends du bruit. Ensuite, tu retournes à ta chambre.');
+assert(chronologyHtml.includes('<time>Vers 02 h 50</time>'),'Approximate hours must remain approximate');
+assert(chronologyHtml.includes('<time>ÉTAPE 2</time>')&&chronologyHtml.includes('<time>ÉTAPE 3</time>'),'Ordinal steps must never look like hours');
+assert(!chronologyHtml.includes('<time>02</time>'),'Fake second hour detected');
 
 const start=guard.indexOf('  let installed=false;'),end=guard.indexOf('  /* The legacy launcher',start);
 assert(start>=0&&end>start,'Guard regression fixture missing');
