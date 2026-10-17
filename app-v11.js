@@ -1084,10 +1084,10 @@ function igr82RelationLink(entry,fact) {
   const tr=(a,b)=>fr?a:b;
   const explicit=String((fr?entry?.link_fr:entry?.link_en) || entry?.link || '').trim();
   if(explicit)return explicit;
-  const s=String(fact||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/’/g,"'").toLowerCase();
+  const s=String(fact||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/œ/g,'oe').replace(/æ/g,'ae').replace(/’/g,"'").toLowerCase();
   
-  if(/(?:est|c'est) ta soeur|ta soeur(?:,| ;|\b)/.test(s))return tr('C’est ta sœur.','She is your sister.');
-  if(/(?:est|c'est) ton frere|ton frere(?:,| ;|\b)/.test(s))return tr('C’est ton frère.','He is your brother.');
+  if(/(?:est|c'est) ta soeur\b/.test(s))return tr('C’est ta sœur.','She is your sister.');
+  if(/(?:est|c'est) ton frere\b/.test(s))return tr('C’est ton frère.','He is your brother.');
   if(/c'est ton ami le plus proche|c'est ta meilleure amie|c'est ton meilleur ami/.test(s))return tr('C’est ton ami le plus proche.','This is your closest friend.');
   if(/vous vous etes rencontres|tu l'as rencontre(?:e)?/.test(s))return tr('Vous vous êtes déjà rencontrés.','You have met before.');
   if(/vous vous opposez sur l'heritage/.test(s))return tr('Vous vous opposez sur l’héritage.','You are opposed over the inheritance.');
