@@ -500,6 +500,8 @@ async function rpc(name,payload){
 }
 
 function shell(content,homeLocked=false){
+ // A floating control must not survive switching screens or rooms.
+ document.querySelector?.('body > .live-session-controls')?.remove();
  document.documentElement.classList.toggle('home-locked',homeLocked);
  document.body.classList.toggle('home-locked',homeLocked);
  return`<div class="app ${homeLocked?'app-home-locked':''}"><div class="topbar"><div class="brand"><img src="assets/apple-touch-icon-v9.png?v=${VERSION}" alt="logo"><div><div class="brand-title">Inside Grey Room</div><div class="brand-sub">thriller psychologique</div></div></div>${homeLocked?'':`<div class="top-actions"><button class="pill-btn" onclick="openSettings()">Paramètres</button></div>`}</div>${content}</div>`
@@ -1114,7 +1116,7 @@ function renderBriefing(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),briefKey=`${d.room.code}:${d.room.phase_started_at||''}`;if(BRIEFING.spokenKey!==briefKey)stopAmbient();
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
  byId('app').innerHTML=shell(`<main class="page briefing-page"><section class="briefing-cinematic"><div class="briefing-poster"><img src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"><div class="briefing-poster-shade"></div><div class="briefing-stamp">DOSSIER ${h(sc.id)}</div></div><div class="briefing-card"><div class="briefing-eyebrow">MJ AUTOMATIQUE · OUVERTURE DU DOSSIER</div><h1>${h(sc.title)}</h1><div class="briefing-line"></div><p>${h(canonicalBriefingText(sc.id))}</p><div class="briefing-meta"><span>BRIEFING PUBLIC · CANONIQUE</span><b id="phaseClock">${fmtSeconds(phaseSeconds())}</b></div><small>Aucune information secrète n’est révélée. La bande-son du dossier accompagne l’ouverture, puis les cartes privées s’ouvrent.</small></div></section>${liveSessionControls()}</main>`);
- runCanonicalBriefing();updatePhaseClock();
+ mountLiveSessionControls();runCanonicalBriefing();updatePhaseClock();
 }
 
 function displayRole(r,p){if(r==='suspect')return`Suspect · ${p}`;if(r==='maitre')return`Maître · ${p}`;return`${roleInfo(r).label} · ${p}`}
@@ -1130,16 +1132,16 @@ function igr82RelationLink(entry,fact) {
   if(/c'est ton ami le plus proche|c'est ta meilleure amie|c'est ton meilleur ami/.test(s))return tr('C’est ton ami le plus proche.','This is your closest friend.');
   if(/vous vous etes rencontres|tu l'as rencontre(?:e)?/.test(s))return tr('Vous vous êtes déjà rencontrés.','You have met before.');
   if(/vous vous opposez sur l'heritage/.test(s))return tr('Vous vous opposez sur l’héritage.','You are opposed over the inheritance.');
-  if(/tu ne (?:le|la|les) connais pas|vous ne vous connaissez pas/.test(s))return tr('Vous ne vous connaissez pas.','You do not know each other.');
-  if(/tu (?:le|la) connais (?:peu|a peine)|tu (?:le|la) connais tres peu/.test(s))return tr('Vous vous connaissez peu.','You barely know each other.');
-  if(/tu n'as aucun lien|aucun lien personnel|sans lien personnel/.test(s))return tr('Aucun lien personnel établi.','No established personal connection.');
-  if(/(?:tu n'as|vous n'avez) jamais rencontre|tu ne l'as pas rencontre|pas rencontre personnellement/.test(s))return tr('Vous ne vous êtes pas rencontrés personnellement.','You have not met in person.');
+  if(/tu ne (?:le|la|les) connais pas|vous ne vous connaissez pas/.test(s))return tr('Tu ne le connais pas.','You do not know this person.');
+  if(/tu (?:le|la) connais (?:peu|a peine)|tu (?:le|la) connais tres peu/.test(s))return tr('Tu le connais à peine.','You barely know this person.');
+  if(/tu n'as aucun lien|aucun lien personnel|sans lien personnel/.test(s))return tr('Tu ne le connais pas personnellement.','You do not know this person personally.');
+  if(/(?:tu n'as|vous n'avez) jamais rencontre|tu ne l'as pas rencontre|pas rencontre personnellement/.test(s))return tr('Tu ne l’as jamais rencontré.','You have never met this person.');
   if(/tu ne peux (?:pas )?l'identifier|sans identification certaine|tu ignores son identite|pas avec certitude l'identite/.test(s))return tr('Tu ne peux pas l’identifier avec certitude.','You cannot identify this person with certainty.');
-  if(/(?:vous (?:travaillez|evoluez|exercez) (?:dans|au sein de)|vous etes (?:dans|issus de)) (?:la )?meme (?:structure|equipe|institution|entreprise|service|etablissement)|(?:ton|ta) collegue/.test(s))return tr('Même structure : vous avez pu vous croiser.','Same organization: you may have crossed paths.');
-  if(/tu lui as demande|il t'a confirme|elle t'a confirme|tu lui as confie|tu as negocie avec|vous avez echange/.test(s))return tr('Vous avez déjà été en contact.','You have been in contact before.');
-  if(/tu (?:l'as|le|la) (?:apercu|observe)|tu as observe (?:ses|leurs)/.test(s))return tr('Tu l’as observé, sans lien personnel établi.','You have observed them; no personal link is established.');
-  if(/tu reconnais (?:un|le) circuit|fonds (?:qu'il|qu'elle) met|operations (?:qu'il|qu'elle) validait/.test(s))return tr('Vos activités se recoupent ; votre proximité reste inconnue.','Your activities overlap; your familiarity is unknown.');
-  return tr('Lien personnel non précisé dans ton dossier.','No personal connection specified in your file.');
+  if(/(?:vous (?:travaillez|evoluez|exercez) (?:dans|au sein de)|vous etes (?:dans|issus de)) (?:la )?meme (?:structure|equipe|institution|entreprise|service|etablissement)|(?:ton|ta) collegue/.test(s))return tr('Vous travaillez dans la même structure, sans forcément vous connaître.','You work in the same organization, but may not know each other.');
+  if(/tu lui as demande|il t'a confirme|elle t'a confirme|tu lui as confie|tu as negocie avec|vous avez echange/.test(s))return tr('Vous avez déjà échangé.','You have spoken before.');
+  if(/tu (?:l'as|le|la) (?:apercu|observe)|tu as observe (?:ses|leurs)/.test(s))return tr('Tu l’as déjà aperçu, mais tu ne le connais pas personnellement.','You have seen this person, but do not know them personally.');
+  if(/tu reconnais (?:un|le) circuit|fonds (?:qu'il|qu'elle) met|operations (?:qu'il|qu'elle) validait/.test(s))return tr('Vos affaires se croisent, mais tu ne sais pas vraiment qui il est.','Your activities overlap, but you do not really know this person.');
+  return tr('Tu ne le connais pas personnellement.','You do not know this person personally.');
 }
 
 function igr82RelationsHtml(value) {
@@ -1163,7 +1165,7 @@ function igr82RelationsHtml(value) {
     if(seen.has(key))return'';
     seen.add(key);
     const initial=person.trim().slice(0,1).toUpperCase()||'?';
-    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b><small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p></div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE CETTE PERSONNE','WHAT YOU KNOW ABOUT THIS PERSON')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('CE QUE TU PEUX LUI DEMANDER','WHAT YOU CAN ASK')}</span>${h(opening)}</p>`:''}</div></article>`;
+    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b><small>${tr('ENTRE VOUS','BETWEEN YOU')}</small><p class="igr82-relation-link">${h(link)}</p></div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE CETTE PERSONNE','WHAT YOU KNOW ABOUT THIS PERSON')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('CE QUE TU PEUX LUI DEMANDER','WHAT YOU CAN ASK')}</span>${h(opening)}</p>`:''}</div></article>`;
   });
   return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
@@ -1187,6 +1189,7 @@ function renderRole(){
  const d=STATE.sync;if(!d)return;
  const me=(d.players||[]).find(x=>x.id===d.player.id),ready=!!me?.ready;
  byId('app').innerHTML=shell(`<main class="page"><section class="role-card role-card-v11">${privateCardHtml()}${ready?`<div class="waiting-pulse">Carte validée. En attente des autres joueurs…</div>`:`<button class="btn primary block" onclick="ackRole()">J’ai compris · verrouiller ma carte</button>`}</section>${liveSessionControls()}</main>`);
+ mountLiveSessionControls();
  if(SOUND.enabled)ensureAmbient(currentScenario().sound);
 }
 async function ackRole(){
@@ -1209,7 +1212,7 @@ function setTab(t){
 function appConfirm({title='Confirmer',text='',confirmLabel='Continuer',danger=false}={}){
  return new Promise(resolve=>{
   if(byId('actionConfirmModal')){resolve(false);return}
-  const modal=document.createElement('div');modal.id='actionConfirmModal';modal.className='modal action-confirm-modal';
+  const modal=document.createElement('div');modal.id='actionConfirmModal';modal.className='modal action-confirm-modal';modal.style.zIndex='2000';
   modal.innerHTML=`<div class="modal-box action-confirm-box" role="dialog" aria-modal="true" aria-label="${h(title)}" tabindex="-1"><div class="kicker">ACTION DE PARTIE</div><h2>${h(title)}</h2><p>${h(text)}</p><div class="modal-actions"><button class="btn ghost" data-choice="cancel">Annuler</button><button class="btn ${danger?'danger':'primary'}" data-choice="ok">${h(confirmLabel)}</button></div></div>`;
   const finish=v=>{modal.remove();releaseDialogFocus();resolve(v)};modal.cancelDialog=()=>finish(false);
   modal.addEventListener('click',e=>{if(e.target===modal)finish(false);const c=e.target?.dataset?.choice;if(c==='cancel')finish(false);if(c==='ok')finish(true)});
@@ -1294,9 +1297,15 @@ function hostPhaseControls(){
  if(!phaseCanAdvance())return'';
  return `<button class="phase-next-btn" id="phaseNextBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`;
 }
+function mountLiveSessionControls(){
+ // Keep the controls outside #app: the game header has sticky/stacking contexts
+ // which otherwise intercept clicks on some iPhone and tablet viewports.
+ const controls=document.querySelector('#app .live-session-controls');
+ if(controls)document.body.appendChild(controls);
+}
 function liveSessionControls(){
  if(!STATE.room)return'';
- return `<div class="live-session-controls"><button class="live-exit-btn" onclick="confirmLeaveGame(event)">✕ Quitter</button>${phaseCanAdvance()?`<button class="live-advance-btn" id="liveAdvanceBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`:''}</div>`;
+ return `<div class="live-session-controls"><button type="button" class="live-exit-btn" onclick="confirmLeaveGame(event)" aria-label="Quitter la partie">✕ Quitter</button>${phaseCanAdvance()?`<button class="live-advance-btn" id="liveAdvanceBtn" onclick="advancePhaseNow(event)">Étape suivante →</button>`:''}</div>`;
 }
 let ADVANCE_BUSY=false;
 async function advancePhaseNow(ev){
@@ -1330,7 +1339,8 @@ function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;retur
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}</div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}<button type="button" class="phase-exit-btn" onclick="confirmLeaveGame(event)" aria-label="Quitter la partie">✕ Quitter</button></div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
+ mountLiveSessionControls();
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
 function renderGameTab(){
@@ -1604,7 +1614,7 @@ async function handleSignal(s){
  }else if(type==='hangup')closePeer(from);
 }
 function leaveRoom(){
- stopRoomWatcher();connectionStatus(false);VIDEO.lastSignalId=0;cancelBriefingVoice();AVATARS.map.clear();AVATARS.sig='';if(VIDEO.poller){clearInterval(VIDEO.poller);VIDEO.poller=null}VIDEO.localStream?.getTracks().forEach(t=>t.stop());VIDEO.localStream=null;closeAllPeers();Object.assign(STATE,{view:'home',scenarioId:STATE.selectedScenario,room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],tab:'card',sync:null,syncSig:'',cycle:0});renderHome();
+ stopRoomWatcher();clearSession();connectionStatus(false);VIDEO.lastSignalId=0;cancelBriefingVoice();AVATARS.map.clear();AVATARS.sig='';if(VIDEO.poller){clearInterval(VIDEO.poller);VIDEO.poller=null}VIDEO.localStream?.getTracks().forEach(t=>t.stop());VIDEO.localStream=null;closeAllPeers();Object.assign(STATE,{view:'home',scenarioId:STATE.selectedScenario,room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],tab:'card',sync:null,syncSig:'',cycle:0});renderHome();
 }
 
 function initAudio(){
