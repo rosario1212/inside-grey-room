@@ -123,7 +123,7 @@ function renderSuspectChronology(){
     <div class="v42-elements-head"><div><span>${esc(copy('OUTIL PRIVÉ','PRIVATE TOOL'))}</span><h2>${esc(copy('Chronologie','Timeline'))}</h2></div><small>${esc(copy('Ta version canonique','Your canonical version'))}</small></div>
     <div class="v42-chrono-card"><div class="v42-chrono-list">${chronology?chronologyRows(chronology):`<div class="v42-empty">${esc(copy('Aucune chronologie détaillée sur cette carte.','No detailed timeline on this card.'))}</div>`}</div></div>
     ${anchors?`<article class="v42-version-card"><small>${esc(copy('REPÈRES SÛRS','SAFE ANCHORS'))}</small><p>${esc(anchors)}</p></article>`:''}
-    ${maintain&&normalized(maintain)!==normalized(anchors)?`<article class="v42-version-card strong"><small>${esc(copy('VERSION À TENIR','VERSION TO MAINTAIN'))}</small><p>${esc(maintain)}</p></article>`:''}
+    ${maintain&&clean(maintain).toLowerCase()!==clean(anchors).toLowerCase()?`<article class="v42-version-card strong"><small>${esc(copy('VERSION À TENIR','VERSION TO MAINTAIN'))}</small><p>${esc(maintain)}</p></article>`:''}
     <div class="v42-private-note">${esc(copy('Privé : cet écran n’ajoute aucun fait. Il réorganise uniquement les informations déjà présentes sur ta carte de rôle.','Private: this screen adds no facts. It only reorganizes information already present on your role card.'))}</div>
   </section>`;
 }
