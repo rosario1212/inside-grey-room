@@ -68,7 +68,7 @@ function dossierHtml(){
  tr('Affaire générale','General case')+'</option>'+people.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.pseudo)+'</option>').join('')+'</select>'+
  '<label for="igr87Kind">'+tr('Nature de la note','Type of note')+'</label><select id="igr87Kind">'+
  '<option value="declaration">'+tr('Déclaration entendue','Statement heard')+'</option>'+
- '<option value="hypothese">'+tr('Hypothèse (non prouvée)','Hypothesis (unproven)+'</option>'+
+ '<option value="hypothese">'+tr('Hypothèse (non prouvée)','Hypothesis (unproven)')+'</option>'+
  '<option value="question">'+tr('Point à vérifier','Point to verify')+'</option></select>'+
  '<label for="igr87Text">'+tr('Contenu','Content')+'</label><textarea id="igr87Text" maxlength="800" required rows="3" placeholder="'+
  tr('Ce que la personne a déclaré, ce qui reste incertain…','What the person said, what remains uncertain…')+'"></textarea>'+
