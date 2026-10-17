@@ -141,5 +141,6 @@ assert(app.slice(quitStart,quitEnd).includes('confirmLeaveGame(event)'),'Bottom 
 assert(app.includes('class="phase-exit-btn"')&&app.includes('aria-label="Quitter la partie"'),'Phase header must expose an accessible exit');
 assert(/function leaveRoom\(\)\{\s*stopRoomWatcher\(\);clearSession\(\)/.test(app),'Leaving a room must erase its persisted resume token');
 assert((await read('screen-polish-v73.css')).includes('phase-exit-btn'),'Top exit must have a touch-sized hit area');
+assert(app.includes('function mountLiveSessionControls()')&&app.includes('document.body.appendChild(controls)'),'Viewport session controls must escape sticky header stacking contexts');
 
 console.log('Lobby v85: 34 first-render palettes, chosen/full/available states, text contrast and web/mobile cache propagation OK');
