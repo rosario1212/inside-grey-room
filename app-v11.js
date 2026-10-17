@@ -953,7 +953,7 @@ async function performSync(force=false){
   const sig=syncSignature(d);
   // An authoritative snapshot and a successfully rendered screen are different
   // things. Recover even if the server data has already reached notifications.
-  const root=document.getElementById('app');
+  const root=typeof document==='undefined'?null:document.getElementById?.('app');
   const screenMatches=()=>{
    if(!root)return true;
    if(d.room.status==='lobby')return !!root.querySelector('.lobby-v11');
