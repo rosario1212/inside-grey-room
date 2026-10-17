@@ -316,3 +316,79 @@ body.home-locked .heritage-premium-side{min-width:0!important;max-width:none!imp
  #app .private-card-v11 .igr82-relation{padding:13px}
 }
 @media(prefers-reduced-motion:reduce){#app .private-card-v11 *{transition:none!important}}
+
+
+/* v83 dossier refinement: precise labels and fixed-button non-overlap. */
+#app .private-card-v11 .igr82-relation-body .igr82-relation-eyebrow{
+ color:#aec7d8;
+ font-size:10px;
+ letter-spacing:.10em;
+ line-height:1.45;
+}
+#app .private-card-v11 .igr82-relation-question span{
+ color:#df9a9d;
+ font-size:10px;
+ letter-spacing:.09em;
+ line-height:1.45;
+}
+#app .private-card-v11 .igr82-relation-body .igr82-relation-fact{
+ color:#e2e7eb;
+ font-size:clamp(14px,1.55vw,16px);
+}
+#app .private-card-v11 .igr82-relation-question{
+ font-size:clamp(13px,1.4vw,15px);
+ color:#bdc8d1!important;
+}
+#app .private-card-v11 .igr82-relation-id .igr82-relation-link{
+ color:#d0d7dd;
+ font-size:13px;
+}
+#app .private-card-v11 .igr82-relation-person{
+ align-self:start;
+}
+#app .private-card-v11 .igr82-relation-id b{
+ color:#f5f6f7;
+}
+#app .private-card-v11>.private-block.igr82-relations{
+ padding-bottom:26px;
+}
+#app .private-card-v11>.private-block.igr82-relations .igr82-relation-plain{
+ grid-template-columns:1fr;
+}
+@media(max-width:720px){
+  #app .private-card-v11{gap:14px}
+  #app .private-card-v11 .igr82-relation-list{gap:14px}
+  #app .private-card-v11 .igr82-relation{gap:12px}
+  #app .private-card-v11 .igr82-relation-body .igr82-relation-eyebrow{margin-bottom:8px}
+}
+/* The top-floating exit was obscuring the secret role dossier.
+   Its full, functional counterpart remains in .live-session-controls. */
+body:has(#app .private-card-v11) .floating-leave-btn{
+ display:none!important;
+}
+body:has(#app .private-card-v11) .live-session-controls{
+ position:fixed!important;
+ top:auto!important;
+ bottom:max(12px,env(safe-area-inset-bottom,0px))!important;
+ z-index:400;
+}
+body:has(#app .private-card-v11) #igrNotifyBell:not([hidden]){
+ left:max(10px,env(safe-area-inset-left,0px))!important;
+ right:auto!important;
+ top:auto!important;
+ bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 60px)!important;
+}
+/* Keep a safe reading area around the bottom actions on narrow screens. */
+#app .role-card-v11{padding-bottom:clamp(18px,4vw,28px)}
+@media(max-width:600px){
+ body:has(#app .private-card-v11) .live-session-controls{
+   left:max(12px,env(safe-area-inset-left,0px))!important;
+   right:max(12px,env(safe-area-inset-right,0px))!important;
+ }
+ body:has(#app .private-card-v11) .live-session-controls .live-exit-btn{
+   min-height:44px!important;
+   padding-inline:14px!important;
+ }
+ #app .private-card-v11 .igr82-relation-body .igr82-relation-fact{font-size:14px}
+ #app .private-card-v11 .igr82-relation-question{font-size:13px}
+}
