@@ -392,3 +392,69 @@ body:has(#app .private-card-v11) #igrNotifyBell:not([hidden]){
  #app .private-card-v11 .igr82-relation-body .igr82-relation-fact{font-size:14px}
  #app .private-card-v11 .igr82-relation-question{font-size:13px}
 }
+
+/* v85 — A visible, accessible way out of an active room.
+   Keep the phase controls below the iOS safe area; never cover the role dossier. */
+#app .game-v11 > .phase-strip {
+  top:calc(max(8px,env(safe-area-inset-top,0px)) + 4px);
+}
+#app .phase-host-actions {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  align-items:center;
+  gap:6px;
+}
+#app .phase-host-actions .phase-exit-btn {
+  appearance:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:8px 11px;
+  border-radius:999px;
+  border:1px solid rgba(209,91,96,.53);
+  background:rgba(48,13,19,.88);
+  color:#f4e8e9;
+  font:750 10px 'IBM Plex Mono',monospace;
+  letter-spacing:.035em;
+  white-space:nowrap;
+  cursor:pointer;
+  pointer-events:auto;
+  touch-action:manipulation;
+}
+#app .phase-host-actions .phase-exit-btn:focus-visible,
+#app .live-session-controls .live-exit-btn:focus-visible {
+  outline:2px solid #f0f3f6;
+  outline-offset:3px;
+}
+#app .live-session-controls {
+  max-width:100vw;
+  box-sizing:border-box;
+}
+#app .live-session-controls .live-exit-btn {
+  flex:0 0 auto;
+  min-width:84px;
+  min-height:44px;
+  pointer-events:auto!important;
+}
+#app .live-session-controls .live-advance-btn {
+  min-width:0;
+  white-space:normal;
+  max-width:calc(100vw - 134px);
+}
+@media(max-width:600px) {
+  #app .game-v11 > .phase-strip {
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:6px 8px;
+    padding:10px 12px;
+  }
+  #app .phase-strip .phase-timer-box {
+    min-width:0;
+    max-width:180px;
+  }
+  #app .phase-host-actions .phase-exit-btn {
+    min-height:44px;
+    font-size:10px;
+  }
+}
