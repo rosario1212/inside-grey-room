@@ -38,7 +38,7 @@ function evidenceHtml(ev){
   '<p>'+esc(p.text||p.summary||'')+'</p></article>';
 }
 function association(e,ids){
- const p=e.payload||{},target=p.suspect_id||e.target_player_id||p.target_player_id;
+ const p=e.payload||{},target=p.suspect_id||p.target_player_id; // Top-level target_player_id is not included in igr_v4_visible_events.
  return target&&ids.has(String(target))?String(target):null;
 }
 function personSection(person,linked){
