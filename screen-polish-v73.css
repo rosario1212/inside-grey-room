@@ -475,3 +475,81 @@ body > .live-session-controls button{
   min-height:44px!important;
   pointer-events:auto!important;
 }
+
+/* v86 — stable gameplay layout at phone, tablet and desktop widths.
+   Guidance is inserted by self-guided-rules-v51.js as a sibling of the tabs/panel.
+   Reserve a full-width row for it: never allow implicit grid placement to squeeze it. */
+#app .game-v11 > #igr51Now{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:clamp(16px,2vw,22px);
+  display:grid;
+  grid-template-columns:minmax(185px,.38fr) minmax(0,1fr);
+  gap:12px clamp(16px,2.4vw,28px);
+  align-items:start;
+  overflow-wrap:break-word;
+}
+#app .game-v11 > #igr51Now > *{min-width:0;max-width:100%}
+#app .game-v11 > #igr51Now h3{line-height:1.3;font-size:clamp(17px,1.9vw,22px)}
+#app .game-v11 > #igr51Now p{font-size:clamp(14px,1.3vw,16px);line-height:1.6}
+#app .game-v11 > .game-panel-v11{
+  box-sizing:border-box;
+  min-width:0;
+  min-height:0!important;
+  align-self:start;
+}
+#app .game-v11 > .game-panel-v11 .phase-explain{min-width:0;max-width:100%;box-sizing:border-box}
+#app .game-v11 > .game-panel-v11 .phase-explain h2{overflow-wrap:break-word;line-height:1.25}
+#app .game-v11 > .phase-strip{min-width:0}
+#app .game-v11 > .phase-strip .phase-host-actions{min-width:0;max-width:100%;gap:7px}
+#app .game-v11 > .phase-strip .phase-timer-box{min-width:0;max-width:100%}
+#app .topbar .top-actions{position:relative;min-width:44px;flex-shrink:0}
+#app .topbar .top-actions .igr-top-settings{position:relative!important;inset:auto!important;margin:0!important}
+#app .game-v11 > .tabs-v11 .tab{scroll-margin:8px}
+@media (min-width:1100px){
+  #app .game-v11 > .game-head-v11{grid-column:1/-1;grid-row:1}
+  #app .game-v11 > .phase-strip{grid-column:1/-1;grid-row:2}
+  #app .game-v11 > #igr51Now{grid-column:1/-1;grid-row:3}
+  #app .game-v11 > .tabs-v11{grid-column:1;grid-row:4;top:112px}
+  #app .game-v11 > .game-panel-v11{grid-column:2;grid-row:4;min-width:0}
+  #app .game-v11:not(:has(> #igr51Now)) > .tabs-v11,
+  #app .game-v11:not(:has(> #igr51Now)) > .game-panel-v11{grid-row:3}
+  #app .game-v11 > .game-panel-v11:has(> .phase-explain){padding:clamp(20px,2vw,28px)}
+}
+@media (max-width:1099px){
+  #app .game-v11 > #igr51Now{grid-template-columns:minmax(0,1fr);gap:8px;margin:12px 0 14px}
+}
+@media (max-width:600px){
+  #app .game-v11 > .phase-strip{
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:start;
+    overflow:visible;
+  }
+  #app .game-v11 > .phase-strip strong{
+    display:block;
+    max-width:100%;
+    overflow-wrap:break-word;
+    line-height:1.35;
+  }
+  #app .game-v11 > .phase-strip .phase-timer-box{
+    grid-column:2;
+    grid-row:1;
+    display:grid;
+    justify-items:end;
+    gap:5px;
+  }
+  #app .game-v11 > .phase-strip .phase-host-actions{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:5px;
+  }
+  #app .game-v11 > #igr51Now{padding:15px 16px}
+  #app .game-v11 > .game-panel-v11{padding:14px}
+  #app .game-v11 > .game-panel-v11 .phase-explain h2{font-size:clamp(19px,5vw,25px)}
+  #app .game-v11{padding-bottom:calc(118px + env(safe-area-inset-bottom,0px))!important}
+}
+/* The footer actions never share a clickable area with the settings control. */
+body > .live-session-controls{max-width:100%;isolation:isolate}
