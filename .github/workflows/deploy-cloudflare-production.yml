@@ -33,7 +33,7 @@ jobs:
       - name: Gameplay stability regression guard
         run: node scripts/gameplay-stability-check.mjs
       - name: Upload deployable bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: inside-grey-room-web
           path: dist
