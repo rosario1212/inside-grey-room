@@ -23,6 +23,7 @@ assert(introMatch,'Canonical entrance markup must exist');
 const introArt=await readFile(path.join(target,'assets/intro-v10-14.webp'));
 const introHtml=introMatch[0].replace(/src="[^"]+"/,`src="data:image/webp;base64,${introArt.toString('base64')}"`);
 const app=await read('app-v11.js');
+const playModes=await read('play-modes-v13-8.js');
 const homeStart=app.indexOf('function shell('),homeEnd=app.indexOf('function goHome(',homeStart);
 assert(homeStart>=0&&homeEnd>homeStart,'Canonical home renderer must exist');
 function homeHtml(resume){
@@ -61,6 +62,16 @@ try{
   await runFluidityChecks({page,css,app,read,check,report});
   await runAuditGameplayChecks({page,read,check});
   await runDesktopChecks({page,css,app,read,check,report});
+  await check('desktop-standard-multiplayer-button-launch',async()=>{
+    await page.setViewportSize({width:1366,height:768});
+    await page.setContent('<!doctype html><html><head><style>'+css+'</style></head><body><div id="app"><main class="page page-confirm-v10-13"><section class="panel confirm-panel-v10-13"><div class="confirm"><label>Ton pseudo<input id="createPseudo" value="Test Desktop"></label><button class="btn primary block" type="button">Ouvrir la cellule</button></div></section></main></div></body></html>');
+    await page.addScriptTag({content:`window.STATE={view:'create-confirm',selectedScenario:'001'};window.IGR_LOCALE='fr';function scenario(id){return{id}};function createRoom(){window.__igrRoomLaunches=(window.__igrRoomLaunches||0)+1};function renderCreateConfirm(){};function joinRoom(){};`});
+    await page.addScriptTag({content:playModes});
+    await page.locator('.dual-mode-card.is-online').waitFor();
+    await page.locator('.dual-mode-card.is-online').click();
+    assert.equal(await page.evaluate(()=>window.__igrRoomLaunches),1,'The desktop online mode button must enter the actual room-creation path');
+    assert.equal(await page.locator('#createPseudo').inputValue(),'Test Desktop','Desktop mode switching must preserve the nickname field');
+  });
   await runMaitrePosterChecks({page,css,read,check,report,target});
   await check('entrance-stylesheet-bootstrap',async()=>{
     await page.setContent(`<!doctype html><html><head>${startupLink}</head><body></body></html>`);

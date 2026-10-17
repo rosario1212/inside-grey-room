@@ -875,7 +875,13 @@ async function createRoom(){
  STORAGE.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
  Object.assign(STATE,{view:'lobby',scenarioId:sc.id,room:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
  saveSession();
- await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+ // The room must open even if optional profile/avatar RPCs fail on desktop.
+ // Start the room watchdog before cosmetic work instead of serializing them.
+ startRoomWatcher();
+ const fresh=await syncNow(true);
+ if(fresh?.room?.status==='lobby')renderLobby(fresh);
+ void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
+ void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
 }
 async function joinRoom(){
  primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
@@ -885,7 +891,11 @@ async function joinRoom(){
   const out=await rpc('igr_v4_join_room',{p_code:code,p_pseudo:pseudo});
   STORAGE.setItem('igr_v9_last_pseudo',pseudo);saveProfileData({pseudo});
   Object.assign(STATE,{view:'lobby',room:out.room_code||code,token:out.player_token,hostToken:null,playerId:out.player_id,playerPseudo:pseudo,role:'en_attente',tab:'card',sync:null,syncSig:''});
-  saveSession();await pushProfileAvatar();await pushProfileCosmetics();await syncNow(true);startRoomWatcher();renderLobby();
+  saveSession();startRoomWatcher();
+  const fresh=await syncNow(true);
+  if(fresh?.room?.status==='lobby')renderLobby(fresh);
+  void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
+  void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
  }catch(e){console.error(e);toast('Cellule introuvable, pleine ou déjà lancée.');}
 }
 function syncSignature(d){
@@ -940,24 +950,53 @@ async function performSync(force=false){
   const d=await rpc('igr_v4_sync',{p_code:STATE.room,p_player_token:STATE.token});
   if(STATE.room!==room||STATE.token!==token)return null;
   connectionStatus(false);
-  const sig=syncSignature(d),changed=force||sig!==STATE.syncSig;
+  const sig=syncSignature(d);
+  // An authoritative snapshot and a successfully rendered screen are different
+  // things. Recover even if the server data has already reached notifications.
+  const root=typeof document==='undefined'?null:document.getElementById?.('app');
+  const screenMatches=()=>{
+   if(!root)return true;
+   if(d.room.status==='lobby')return !!root.querySelector('.lobby-v11');
+   if(d.room.phase==='briefing')return !!root.querySelector('.briefing-page');
+   if(d.room.phase==='role_reading'&&!d.player.ready)return !!root.querySelector('.role-card-v11');
+   return !!root.querySelector('.game-v11');
+  };
+  const changed=force||sig!==STATE.syncSig||!screenMatches();
   const draft=changed?captureDrafts():null;
-  STATE.sync=d;STATE.syncSig=sig;
+  STATE.sync=d;
   STATE.scenarioId=d.room.scenario_id;STATE.playerId=d.player.id;STATE.playerPseudo=d.player.pseudo;STATE.role=d.player.public_role||STATE.role;STATE.players=d.players||[];STATE.cycle=d.room.cycle||0;
   saveSession();
   markGameStarted(d);markGameCompleted(d);
+  let rendered=true;
   if(changed){
-   const last=(d.events||[]).at(-1);if(last&&last.id>STATE.lastEventId){if(STATE.lastEventId&&['trame','breaking_news','reveal'].includes(last.event_type))playCue(last.event_type==='breaking_news'?'news':last.event_type==='reveal'?'finale':'trame');STATE.lastEventId=last.id}
-   routeFromServer();restoreDrafts(draft);
-   setTimeout(()=>maybeShowRoleNotice(d),60);
+   try{
+    routeFromServer();
+    if(!screenMatches())throw new Error('room_screen_not_mounted');
+    restoreDrafts(draft);
+    STATE.syncSig=sig;STATE.uiRenderFailed=false;
+    const last=(d.events||[]).at(-1);
+    if(last&&last.id>STATE.lastEventId){
+     if(STATE.lastEventId&&['trame','breaking_news','reveal'].includes(last.event_type))playCue(last.event_type==='breaking_news'?'news':last.event_type==='reveal'?'finale':'trame');
+     STATE.lastEventId=last.id;
+    }
+    setTimeout(()=>maybeShowRoleNotice(d),60);
+   }catch(error){
+    rendered=false;
+    STATE.uiRenderFailed=true;
+    // Keep the previous acknowledged signature. The next server poll MUST
+    // attempt rendering again even if there are no further phase events.
+    console.error('Room UI failed to render; retrying automatically',error);
+   }
   }
-  manageVideoState();
+  if(rendered)STATE.lastSuccessfulSyncAt=Date.now();
+  // Cosmetics/media are not allowed to invalidate an otherwise good room view.
+  try{manageVideoState()}catch(error){console.warn('video state',error)}
   // Avatars are cosmetic: a slow image RPC must never hold a phase change or
   // prevent a newer gameplay snapshot from being fetched.
   void refreshAvatars(d,false).then(changed=>{
    if(changed&&STATE.room===room&&STATE.token===token&&STATE.sync===d){const draft=captureDrafts();routeFromServer();restoreDrafts(draft)}
   }).catch(e=>console.warn('avatars',e));
-  return d;
+  return rendered?d:null;
  }catch(e){if(STATE.room===room&&STATE.token===token){connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
 }
 function routeFromServer(){
@@ -1079,18 +1118,70 @@ function renderBriefing(){
 }
 
 function displayRole(r,p){if(r==='suspect')return`Suspect · ${p}`;if(r==='maitre')return`Maître · ${p}`;return`${roleInfo(r).label} · ${p}`}
+function igr82RelationLink(entry,fact) {
+  const fr=typeof window==='undefined'||window.IGR_LOCALE!=='en';
+  const tr=(a,b)=>fr?a:b;
+  const explicit=String((fr?entry?.link_fr:entry?.link_en) || entry?.link || '').trim();
+  if(explicit)return explicit;
+  const s=String(fact||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/œ/g,'oe').replace(/æ/g,'ae').replace(/’/g,"'").toLowerCase();
+  
+  if(/(?:est|c'est) ta soeur\b/.test(s))return tr('C’est ta sœur.','She is your sister.');
+  if(/(?:est|c'est) ton frere\b/.test(s))return tr('C’est ton frère.','He is your brother.');
+  if(/c'est ton ami le plus proche|c'est ta meilleure amie|c'est ton meilleur ami/.test(s))return tr('C’est ton ami le plus proche.','This is your closest friend.');
+  if(/vous vous etes rencontres|tu l'as rencontre(?:e)?/.test(s))return tr('Vous vous êtes déjà rencontrés.','You have met before.');
+  if(/vous vous opposez sur l'heritage/.test(s))return tr('Vous vous opposez sur l’héritage.','You are opposed over the inheritance.');
+  if(/tu ne (?:le|la|les) connais pas|vous ne vous connaissez pas/.test(s))return tr('Vous ne vous connaissez pas.','You do not know each other.');
+  if(/tu (?:le|la) connais (?:peu|a peine)|tu (?:le|la) connais tres peu/.test(s))return tr('Vous vous connaissez peu.','You barely know each other.');
+  if(/tu n'as aucun lien|aucun lien personnel|sans lien personnel/.test(s))return tr('Aucun lien personnel établi.','No established personal connection.');
+  if(/(?:tu n'as|vous n'avez) jamais rencontre|tu ne l'as pas rencontre|pas rencontre personnellement/.test(s))return tr('Vous ne vous êtes pas rencontrés personnellement.','You have not met in person.');
+  if(/tu ne peux (?:pas )?l'identifier|sans identification certaine|tu ignores son identite|pas avec certitude l'identite/.test(s))return tr('Tu ne peux pas l’identifier avec certitude.','You cannot identify this person with certainty.');
+  if(/(?:vous (?:travaillez|evoluez|exercez) (?:dans|au sein de)|vous etes (?:dans|issus de)) (?:la )?meme (?:structure|equipe|institution|entreprise|service|etablissement)|(?:ton|ta) collegue/.test(s))return tr('Même structure : vous avez pu vous croiser.','Same organization: you may have crossed paths.');
+  if(/tu lui as demande|il t'a confirme|elle t'a confirme|tu lui as confie|tu as negocie avec|vous avez echange/.test(s))return tr('Vous avez déjà été en contact.','You have been in contact before.');
+  if(/tu (?:l'as|le|la) (?:apercu|observe)|tu as observe (?:ses|leurs)/.test(s))return tr('Tu l’as observé, sans lien personnel établi.','You have observed them; no personal link is established.');
+  if(/tu reconnais (?:un|le) circuit|fonds (?:qu'il|qu'elle) met|operations (?:qu'il|qu'elle) validait/.test(s))return tr('Vos activités se recoupent ; votre proximité reste inconnue.','Your activities overlap; your familiarity is unknown.');
+  return tr('Lien personnel non précisé dans ton dossier.','No personal connection specified in your file.');
+}
+
+function igr82RelationsHtml(value) {
+  const fr=typeof window==='undefined'||window.IGR_LOCALE!=='en', tr=(a,b)=>fr?a:b;
+  const seen=new Set();
+  const entries=value.map((entry,index)=>{
+    if(typeof entry==='string'){
+      const text=entry.trim(),key='plain:'+text.toLocaleLowerCase();
+      if(!text||seen.has(key))return'';
+      seen.add(key);
+      return `<div class="igr82-relation igr82-relation-plain"><p>${h(text)}</p></div>`;
+    }
+    const person=String(entry?.pseudo||entry?.label||tr('Personne '+(index+1),'Person '+(index+1)));
+    const original=String(entry?.text||'').trim();
+    const split=original.split(/À mettre sur la table\s*[—–:-]\s*/i);
+    const fact=String(split.shift()||'').replace(/^\s*Ton point de départ\s*[—–:-]\s*/i,'').trim();
+    const opening=split.join(' ').trim();
+    const link=igr82RelationLink(entry,fact);
+    // A repeated piece of the dossier must not create a second suspect card.
+    const key=[person,fact,opening,link].map(x=>x.toLocaleLowerCase().replace(/\s+/g,' ').trim()).join('|');
+    if(seen.has(key))return'';
+    seen.add(key);
+    const initial=person.trim().slice(0,1).toUpperCase()||'?';
+    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b><small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p></div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE CETTE PERSONNE','WHAT YOU KNOW ABOUT THIS PERSON')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('CE QUE TU PEUX LUI DEMANDER','WHAT YOU CAN ASK')}</span>${h(opening)}</p>`:''}</div></article>`;
+  });
+  return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><div class="igr82-relation-list">${entries.join('')}</div></section>`;
+}
+
 function valueBlock(title,value,cls=''){
  if(value==null||value===''||(Array.isArray(value)&&!value.length))return'';
+ if(title==='TES RELATIONS'&&Array.isArray(value))return igr82RelationsHtml(value);
  let body='';
  if(Array.isArray(value))body=value.map(v=>typeof v==='string'?`<div class="relation-line"><span>${h(v)}</span></div>`:`<div class="relation-line"><b>${h(v.pseudo||v.label||'')}</b><span>${h(v.text||JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='object')body=Object.entries(value).map(([k,v])=>`<div class="relation-line"><b>${h(k)}</b><span>${h(typeof v==='string'?v:JSON.stringify(v))}</span></div>`).join('');
  else body=`<p>${h(value)}</p>`;
- return `<div class="private-block ${cls}"><h4>${h(title)}</h4>${body}</div>`;
+ const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
+ return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${body}</div>`;
 }
 function privateCardHtml(){
  const d=STATE.sync,p=d?.player,ps=p?.private_state||{},pub=p?.public_role||STATE.role,secret=p?.secret_role;
  const secretInfo=secret==='espion'?valueBlock('MISSION SECRÈTE',ps.secret_mission||'Ta couverture publique reste Suspect.','secret-alert'):'';
- return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><h2>${h(displayRole(pub,p?.pseudo||STATE.playerPseudo))}</h2><div class="role-summary"><b>COMMENT TU GAGNES</b><span>${h(roleInfo(secret==='espion'?'espion':pub).win)}</span></div>${valueBlock('TA PLACE',ps.place)}${valueBlock('TA CHRONOLOGIE',ps.chronology)}${valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')}${valueBlock('TES REPÈRES',ps.anchors)}${valueBlock('TES RELATIONS',ps.relations)}${valueBlock('TES CLIENTS',ps.clients)}${valueBlock('TA POSITION',ps.position)}${secretInfo}<div class="private-foot">Les faits de cette carte sont canoniques. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne modifies jamais la chronologie, les preuves ou les lieux.</div></div>`;
+ return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><h2>${h(displayRole(pub,p?.pseudo||STATE.playerPseudo))}</h2><div class="role-summary"><b>COMMENT TU GAGNES</b><span>${h(roleInfo(secret==='espion'?'espion':pub).win)}</span></div>${valueBlock('TA PLACE',ps.place)}${valueBlock('TA CHRONOLOGIE',ps.chronology)}${valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')}${valueBlock('TES REPÈRES',ps.anchors)}${valueBlock('TES RELATIONS',ps.relations)}${valueBlock('TES CLIENTS',ps.clients)}${valueBlock('TA POSITION',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)}${secretInfo}<div class="private-foot">Les faits de cette carte sont canoniques. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne modifies jamais la chronologie, les preuves ou les lieux.</div></div>`;
 }
 function renderRole(){
  const d=STATE.sync;if(!d)return;
