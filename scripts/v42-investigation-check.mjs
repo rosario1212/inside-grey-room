@@ -1,5 +1,6 @@
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
+import vm from 'node:vm';
 
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
@@ -17,6 +18,23 @@ const js=await readFile(runtime,'utf8');
 const auditJs=await readFile(audit,'utf8');
 const v41=await readFile(authoritative,'utf8');
 const sql=await readFile(migration,'utf8');
+// The suspect timeline must preserve real times and never turn sequence numbers
+// into fake clocks. Only explicit time cues or paragraph boundaries make rows.
+const chronologyStart=js.indexOf('function chronologyRows(');
+const chronologyEnd=js.indexOf('function renderSuspectChronology()',chronologyStart);
+if(chronologyStart<0||chronologyEnd<=chronologyStart)throw new Error('Missing chronology renderer');
+const chronologyScope={clean:v=>String(v||'').trim(),esc:v=>String(v),copy:(fr,en)=>fr};
+vm.runInNewContext(js.slice(chronologyStart,chronologyEnd)+';globalThis.igrTestChronology=chronologyRows;',chronologyScope);
+const renderChronology=chronologyScope.igrTestChronology;
+const precise=renderChronology('Vers 02 h 50, tu arrives au quai. Ensuite, tu retrouves Léa.');
+if(!precise.includes('<time>Vers 02 h 50</time>')||!precise.includes('tu arrives au quai.')||!precise.includes('Ensuite</span>')||!precise.includes('tu retrouves Léa.'))throw new Error('Timeline must retain the precise time and explicit narrative step');
+if(/<time>0[1-9]<\/time>/.test(precise)||precise.includes('02 h 00'))throw new Error('Timeline must not invent times from row positions');
+const sentence=renderChronology('Tu attends. Tu regardes ton téléphone.');
+if((sentence.match(/v42-chrono-row/g)||[]).length!==1)throw new Error('Generic sentences must not generate artificial timeline entries');
+const paragraphs=renderChronology('Tu attends.\n\nTu quittes la pièce.\n\nTu quittes la pièce.');
+if((paragraphs.match(/v42-chrono-row/g)||[]).length!==2||!paragraphs.includes('À ce moment-là</span>')||!paragraphs.includes('Ensuite</span>'))throw new Error('Chronology paragraphs must preserve order without duplicating facts');
+if(!js.includes("const candidate=clean(ps.position||ps.objective_main);"))throw new Error('Duplicate version and anchor text must be consolidated');
+
 const coreIds=Array.from({length:34},(_,i)=>String(i+1).padStart(3,'0'));
 const dlcIds=Array.from({length:14},(_,i)=>String(i+21).padStart(3,'0'));
 const hasKey=(block,id)=>new RegExp(`['"]${id}['"]\\s*:`).test(block);

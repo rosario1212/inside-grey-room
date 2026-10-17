@@ -10,6 +10,8 @@
 - La réconciliation dispose d'un contrôle de secours borné; pas de seconde boucle continue inutile.
 - Les rubriques « Ce que tu sais de cette personne » et « Ce que tu peux lui demander » remplacent les anciens marqueurs dans l'affichage des relations.
 - Les entrées de relation strictement identiques ne sont affichées qu'une fois. Une position identique mot pour mot aux repères n'est pas répétée.
+- La chronologie privée distingue heures attestées et simples étapes narratives : « Vers 02 h 50 », « À ce moment-là », « Ensuite ». Les numéros de lignes ne sont plus assimilés à des heures ; les paragraphes répétés sont supprimés à l'affichage sans modifier le scénario.
+- L'onglet Chronologie n'affiche plus deux fois des repères identiques à la position. La présentation reste responsive.
 - Cache PWA/web renommé en **v84-unified-relations-sync** pour que les clients récupèrent le même bundle.
 
 ## À valider avant toute publication

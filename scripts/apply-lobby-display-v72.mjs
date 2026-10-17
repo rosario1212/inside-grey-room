@@ -10,7 +10,7 @@ const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 // Finalize the synchronization assets as well as the presentation assets so
 // installed PWAs and new tabs receive the same multiplayer implementation.
-assets.push('live-cell-v12-44.js','gameplay-clean-v12.js','runtime-optimization-v12.js');
+assets.push('live-cell-v12-44.js','gameplay-clean-v12.js','runtime-optimization-v12.js','investigation-runtime-v42.js');
 
 // Run after the existing gameplay/HÉRITAGE layers. Keep their generated code;
 // only finalize the URLs and cache for the changed presentation and rules assets.
