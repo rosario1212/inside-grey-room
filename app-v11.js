@@ -501,7 +501,7 @@ async function rpc(name,payload){
 
 function shell(content,homeLocked=false){
  // A floating control must not survive switching screens or rooms.
- document.querySelector('body > .live-session-controls')?.remove();
+ document.querySelector?.('body > .live-session-controls')?.remove();
  document.documentElement.classList.toggle('home-locked',homeLocked);
  document.body.classList.toggle('home-locked',homeLocked);
  return`<div class="app ${homeLocked?'app-home-locked':''}"><div class="topbar"><div class="brand"><img src="assets/apple-touch-icon-v9.png?v=${VERSION}" alt="logo"><div><div class="brand-title">Inside Grey Room</div><div class="brand-sub">thriller psychologique</div></div></div>${homeLocked?'':`<div class="top-actions"><button class="pill-btn" onclick="openSettings()">Paramètres</button></div>`}</div>${content}</div>`
