@@ -1,6 +1,6 @@
 # Campagne Casino — fondation technique (historique)
 
-> **Historique de la première architecture.** Le socle ci-dessous a été complété en v105 : service Edge, sauvegarde transactionnelle Supabase, jeux et client multijoueur. Voir [le relevé actuel](CASINO_V105_VALIDATION.md). La campagne reste verrouillée jusqu’à la validation des canons privés et des essais de bout en bout. Les limitations décrites comme futures ci-dessous concernent uniquement le prototype initial.
+> **Historique de la première architecture.** Le socle ci-dessous a été complété en v105 : service Edge, sauvegarde transactionnelle Supabase, jeux et client multijoueur. Voir [le relevé actuel](CASINO_V105_VALIDATION.md). Les canons Casino ont été approuvés pour intégration ; le lancement passe exclusivement par le service autoritaire. Les limitations décrites comme futures ci-dessous concernent uniquement le prototype initial.
 
 ## Objectif
 

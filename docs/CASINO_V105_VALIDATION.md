@@ -1,58 +1,37 @@
-# CASINO v105 — relevé de validation du 18 octobre 2026
+# CASINO v105.1 — validation du 18 octobre 2026
 
 ## Intégration
 
-Branche de la PR #254 réconciliée avec `main`, y compris les verrous privés des PR #259 et #261 et les dernières affiches Cartel. Les anciennes PR ouvertes ont été inspectées ; elles ne sont pas fusionnées automatiquement. Le script d'ignorance de l'ancien hébergement annule ses builds automatiques.
+CASINO rejoint Cendres, Kuroi et Maître dans HÉRITAGE. Ses trois scénarios se jouent dans une même partie de huit phases (3/3/2). Le catalogue permet de jouer ou de reprendre la campagne ; après le dénouement, une nouvelle partie est possible. Les quatre affiches Casino approuvées sont conservées. Les dernières corrections de main, dont les affiches Cartel des PR #265/#267 et les verrous narratifs des PR #259/#261, sont intégrées.
 
-Pendant cette tâche, la PR #263 a supprimé le code d'accès sur main. La branche Casino conserve le Worker privé et son contrôle CI, conformément à la demande de cette tâche. Le nouveau workflow de déploiement est conservé en lancement manuel et vérifie aussi l'accès privé pour éviter deux déploiements automatiques concurrents.
+L’utilisateur a demandé l’intégration des trois packs privés le 18 octobre 2026, après livraison de leur dossier de relecture. Ils sont approuvés et sélectionnables dans `igr_casino_private`. Leur contenu reste absent du dépôt public. Cette approbation ne concerne aucun canon privé des autres campagnes, notamment les variantes 028 toujours soumises à leurs propres verrous.
 
-## Architecture
+Le site reste accessible sans code, conformément à la consigne récente de l’utilisateur et aux PR #263/#264. Les parties nécessitent leurs propres invitations et clés personnelles. Un seul workflow publie automatiquement sur Cloudflare ; l’ancien workflow avec entretien TURN reste manuel. Aucun déploiement sur Vercel.
 
-Le navigateur transmet son jeton personnel, une commande, une révision attendue et un UUID à `/api/casino`. Le Worker vérifie son accès privé et l'origine ; l'Edge Function vérifie indépendamment l'invitation et détermine l'acteur à partir du hash du jeton. Les tirages sont calculés côté serveur. Une transaction verrouille la salle, contrôle révision et idempotence, ajoute la commande au journal et remplace la sauvegarde avant de confirmer la décision.
+## Sauvegarde et confidentialité
 
-Le schéma non exposé `igr_casino_private` contient les versions éditoriales, les sauvegardes et le journal append-only. RLS est activé et aucun droit n'est accordé à `anon` ou `authenticated`. Les RPC sont `SECURITY INVOKER`, réservés au rôle serveur. Les permissions narratives existantes restent inchangées. Le profil hôte peut être supprimé sans blocage par les nouvelles clés étrangères.
+Le client envoie une commande, sa clé personnelle, un UUID et la révision attendue. L’Edge Function détermine l’acteur depuis le hash de cette clé, vérifie ses autorisations et calcule les tirages. Une transaction verrouille la salle, contrôle révision et idempotence, ajoute la commande au journal puis remplace la sauvegarde avant confirmation.
 
-Les autres écrans récupèrent automatiquement leur propre projection ; les canons, cartes des adversaires, réponses et identités infiltrées ne sont pas diffusés. La sauvegarde initiale et le journal permettent une reconstruction exacte ; la commande de lancement conserve le canon privé immuable et ses tirages. Le client conserve seulement les identifiants de reprise.
+Le schéma privé conserve les versions narratives immuables, les salles, leur état initial et leur journal. Les RPC `SECURITY INVOKER` sont réservés au rôle serveur. RLS et révocation des droits clients protègent les trois tables. Les droits narratifs existants ne sont pas élargis. La clé privilégiée reste dans l’environnement du serveur.
 
-Les modules `casino/*.mjs` ne sont pas copiés dans les distributions. Les clés privilégiées restent dans l'environnement de l'Edge Function.
+Les autres écrans récupèrent leur projection toutes les 1,2 seconde et au retour réseau ou premier plan. Aucun canon, secret adverse, réponse d’énigme ou nombre d’infiltrés n’est diffusé. Les cartes de poker restent privées jusqu’à l’abattage. Le canon tiré au lancement reste fixé durant les trois chapitres et dans le journal de reprise.
 
-## Fonctions exercées
+Le stockage du navigateur conserve uniquement les identifiants de reprise. Même la première création ou arrivée peut être reprise après perte de sa réponse et fermeture du navigateur. Une réponse incertaine conserve le même UUID de commande pour la nouvelle tentative. La clé personnelle permet de reprendre sur un autre appareil ; il faut la conserver avant de changer de table.
 
-- Progression 3/3/2, noms des participants dans les biographies et relations, 4–7 personnes au casino, trois fonctions d'enquête séparées et magistrats facultatifs.
-- Poker fermé de cinq cartes : une donne collective obligatoire, échange de trois cartes maximum (deux à sept personnes), un tour de mise plafonné à 20, sans relance ou pots secondaires. Les autres mains sont facultatives. Les personnages sans jetons conservent leurs autres actions.
-- Machine à sous avec banque virtuelle : mise 1–20 ; triple Dragon ×30, autre triple ×8, paire ×1, autre tirage ×0 ; aucun paiement ou retrait.
-- Accords publics ou privés, signatures, ruptures et réputation ; soutiens et territoires ; offres PNJ consenties et scénarisées ; prétentions sans seuil, droits engageables, nomination contestable, déchéance et branches létales préalablement annoncées.
-- Influence recalculée depuis les territoires et alliances actives ; légitimité depuis les soutiens, territoires et nomination reconnue. Ces scores ne créent aucun seuil pour déclarer une prétention. Leur équilibrage reste à éprouver en groupe.
-- Pièces indépendantes, organigramme, demandes personnelles d'interpellation, exécution par l'Agent, défense et détention distinctes du jugement, procédure scénarisée sans magistrat.
-- Contacts, coopération, alliés et contestations pour les détenus ; fonction de témoin après une mort ; corruption traçable sans effacement de pièces.
+## Vérifications
 
-## Vérifié
+- Build web et mobile ; contrôles des campagnes et DLC existants ; absence de modules serveur, manuscrits et références à une clé privilégiée dans les distributions.
+- Fondation : 26+ invariants. Serveur : 15 groupes comportementaux, 4–7 personnages du casino, magistrats facultatifs, 0–2 infiltrés selon l’effectif, PNJ, corruption, prison, succession et reconstruction exacte du journal.
+- Poker : les 2 598 960 combinaisons possibles correspondent au dénombrement indépendant des catégories. Jetons exclusivement virtuels.
+- Douze parcours locaux des vrais packs privés : trois variantes × quatre effectifs, jusqu’au verdict, avec défenses des joueurs et PNJ.
+- PostgreSQL réel : accès directs clients interdits, idempotence, refus d’une ancienne révision, verrouillage concurrent et journal cohérent. Fixtures isolées et nettoyées.
+- Dix groupes navigateur : sept sessions, poker, phases, changement d’appareil, retour réseau, saisie conservée, réponse perdue sans duplication, création/arrivée interrompues et nouvelle partie après finale.
+- Affichage : 390×844, 820×1180 et 1440×900, quatre compositions préservées sans débordement ; 126 contrôles d’affichage existants et 18 de synchronisation existants.
+- Accès web public, contrôle des origines, authentification personnelle du service et limites de corps JSON, y compris sans Content-Length.
+- Parcours navigateur → Worker exécuté localement → Edge déployée → Supabase : salon réel à sept sessions, distribution privée, poker, reprise sur autre navigateur, accord signé, jetons et refus des doublons vérifiés. Parcours complet jusqu’au verdict : interpellation par l’Agent, audition, défense, détention et dénouement affichés sur les sept écrans ; 48 révisions et 48 écritures de journal.
 
-- Fondation : 26+ invariants existants.
-- Serveur : 15 groupes comportementaux, configurations 4–7 personnes au casino, 0–2 informateurs selon effectif, rôles facultatifs, huit phases, verdicts, offres PNJ, cloisonnement et reconstruction exacte du journal.
-- Poker : les 2 598 960 combinaisons de cinq cartes correspondent aux dénombrements combinatoires indépendants.
-- Supabase : migrations additives appliquées ; droits clients refusés ; révision périmée et doublon divergent refusés ; deux transactions concurrentes ne produisent qu'une sauvegarde. Les données de test sont supprimées ou annulées.
-- Navigateur : sept sessions indépendantes, changements de salon et de phases sans actualisation, poker, reprise sur un autre contexte, retour réseau, conservation des saisies et absence de duplication après perte d'une réponse.
-- Présentation : formats 390×844, 820×1180 et 1440×900 ; affiches existantes, aucun débordement horizontal.
-- Régressions : 126 contrôles d'affichage existants et 18 contrôles de synchronisation existants réussis ; build web et contrôles de confidentialité réussis.
-- Bundle complet : entrée, ouverture et fermeture du salon vérifiées avec tous les runtimes existants. Le relais historique `Storage.setItem` a été corrigé pour conserver la valeur des clés non redirigées ; session privée, profils et PWA sont couverts par un contrôle dédié.
-- Éditorial privé : trois packs en brouillon, structure et 12 parcours locaux complets vérifiés (trois variantes × quatre effectifs). Aucun manuscrit privé n'est dans GitHub.
+## Limites
 
-## Limites et blocage
+Les contrôles navigateur utilisent Chromium aux formats téléphone, tablette et ordinateur. Safari et les iPhone/iPad physiques restent à vérifier, ainsi que l’équilibrage narratif lors d’une véritable partie de groupe. Les tests techniques ne certifient pas la difficulté des énigmes ni toutes les interprétations orales d’un accord.
 
-Les tests des formats d'écran utilisent Chromium ; ils ne remplacent pas une partie sur iPhone/iPad physiques ni la vérification de Safari. Les tests multiécrans utilisent un service local autoritaire avec un stockage de test ; le stockage PostgreSQL est testé séparément. Le parcours navigateur → Worker privé → Edge Function → Supabase n'a pas encore été exécuté avec de vraies sessions de participants.
-
-Les trois intrigues structurées sont des brouillons, avec des compléments éditoriaux à relire. Zéro version narrative est approuvée ou sélectionnable. Le service de sauvegarde est installé mais aucune salle CASINO de production n'est active.
-
-La PR #254 reste en préparation. Aucune fusion Casino dans main ni mise en ligne Cloudflare de cette campagne n'est justifiée par ces seuls tests. L'URL Cloudflare existante renvoie désormais HTTP 200 pour la page et un asset sans code d'accès, après la PR #263 ; elle ne peut donc pas être présentée comme privée. Cette tâche n'a pas publié Casino sur cette URL.
-
-## Reproduction
-
-```sh
-node scripts/casino-foundation-check.mjs
-node scripts/casino-runtime-check.mjs
-node scripts/casino-release-check.mjs dist
-node scripts/casino-browser-check.mjs
-```
-
-`scripts/casino-storage-check.sql` vérifie le stockage dans une transaction intégralement annulée. Le test navigateur accepte `IGR_CHROMIUM_PATH` pour un binaire de test installé séparément.
+Le lien de production, le commit servi et le résultat du contrôle après déploiement sont consignés dans la PR #254. `scripts/casino-deployment-check.mjs` vérifie le catalogue jouable, les quatre images, le service authentifié et le commit du bundle effectivement servi.

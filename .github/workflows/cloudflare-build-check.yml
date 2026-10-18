@@ -88,6 +88,8 @@ jobs:
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: npm run build
+      - name: Validate generated CARTEL posters
+        run: node scripts/cartel-posters-check.mjs dist
       - name: Audit narrative role separation and code syntax
         run: node scripts/v87-narrative-check.mjs
       - name: Validate canonical variants and saga locks
@@ -113,9 +115,9 @@ jobs:
           node scripts/casino-poker-exhaustive-check.mjs
           node scripts/casino-release-check.mjs dist
           node scripts/storage-persistence-check.mjs
-      - name: Validate private access before Cloudflare packaging
+      - name: Validate public access before Cloudflare packaging
         run: |
           node --check cloudflare-worker.mjs
-          node scripts/private-access-check.mjs
+          node scripts/public-access-check.mjs
       - name: Validate Cloudflare Worker package
         run: npx --yes wrangler@4.102.0 deploy --dry-run --outdir .wrangler-dry-run

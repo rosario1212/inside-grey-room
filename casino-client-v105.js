@@ -1,43 +1,52 @@
 /* CASINO client: projections only. The server owns all state and random draws. */
 (()=>{'use strict';
 const KEY='igr_casino_identity_v1',ROOT='casino-live-v105';
+const API=window.Capacitor?.isNativePlatform?.()?'https://inside-grey-room-last.alial-khafaji2002.workers.dev/api/casino':'/api/casino';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const roles={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
 const statuses={guest:'Invité',free:'Libre',interpellated:'Interpellé',detained:'Détenu',dead:'Décédé',deposed:'Déchu'};
 let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,generation=0,active=false,pending=null,problem='',syncedAt=0;
 const freshToken=()=>[...crypto.getRandomValues(new Uint8Array(32))].map(n=>n.toString(16).padStart(2,'0')).join('');
-function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'null');return v?.roomId&&v?.sessionToken?v:null}catch{return null}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(credentials))}catch{}}
-function message(error){const map={revision_conflict:'La table a évolué. Relis le nouvel état avant de confirmer ton choix.',casino_editorial_release_required:'Le lancement attend la validation des trois intrigues privées.',session_not_authorized:'Cette clé ne permet pas de reprendre ce personnage.',private_access_required:'L’accès privé a expiré. Rouvre le lien du jeu et saisis le code de l’hôte.',minimum_social_time:'Laisse encore du temps aux échanges avant de poursuivre.',agent_must_locate_room:'L’Agent doit d’abord localiser la salle.',finish_poker_first:'La main de poker doit être terminée.',players_not_ready:'Chaque participant doit confirmer sa présence.',incomplete_lobby_roles:'Il faut 4 à 7 joueurs au casino, un Agent, un Enquêteur et un Analyste.',name_already_in_use:'Ce prénom est déjà utilisé. Une reprise demande la clé personnelle.',role_already_taken:'Ce rôle vient d’être choisi par une autre personne.',storage_unavailable:'La sauvegarde serveur est momentanément indisponible.',casino_service_unavailable:'Le service Casino est momentanément indisponible.',network_uncertain:'La réponse n’est pas arrivée. Réessaie la même action pour vérifier son enregistrement.'};return map[error]||'Action refusée : '+String(error).replaceAll('_',' ')}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY+'_pending')||localStorage.getItem(KEY)||'null');return (v?.roomId||v?.inviteCode)&&v?.sessionToken?v:null}catch{return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(credentials));localStorage.removeItem(KEY+'_pending')}catch{}}
+function message(error){const map={revision_conflict:'La table a évolué. Relis le nouvel état avant de confirmer ton choix.',casino_editorial_release_required:'Le lancement attend la validation des trois intrigues privées.',session_not_authorized:'Cette clé ne permet pas de reprendre ce personnage.',minimum_social_time:'Laisse encore du temps aux échanges avant de poursuivre.',agent_must_locate_room:'L’Agent doit d’abord localiser la salle.',finish_poker_first:'La main de poker doit être terminée.',players_not_ready:'Chaque participant doit confirmer sa présence.',incomplete_lobby_roles:'Il faut 4 à 7 joueurs au casino, un Agent, un Enquêteur et un Analyste.',name_already_in_use:'Ce prénom est déjà utilisé. Une reprise demande la clé personnelle.',role_already_taken:'Ce rôle vient d’être choisi par une autre personne.',storage_unavailable:'La sauvegarde serveur est momentanément indisponible.',casino_service_unavailable:'Le service Casino est momentanément indisponible.',network_uncertain:'La réponse n’est pas arrivée. Réessaie la même action pour vérifier son enregistrement.'};return map[error]||'Action refusée : '+String(error).replaceAll('_',' ')}
 async function request(body){
- const response=await fetch('/api/casino',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify(body),signal:AbortSignal.timeout(12000)});
- const data=await response.json().catch(()=>({error:'private_access_required'}));
- if(!response.ok)throw Error(data.error||'request_failed');return data;
+ const controller=new AbortController(),deadline=setTimeout(()=>controller.abort(),12000);
+ try{
+  const response=await fetch(API,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify(body),signal:controller.signal});
+  const data=await response.json().catch(()=>{throw Error('network_uncertain')});
+  if(!response.ok||data?.error)throw Error(data.error||'request_failed');
+  if(!data?.roomId||!Number.isSafeInteger(data.revision)||!['lobby','playing','finished'].includes(data.status))throw Error('network_uncertain');return data;
+ }finally{clearTimeout(deadline)}
 }
 function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data.roomId===state.roomId&&data.revision<state.revision)return;
  const changed=!state||state.roomId!==data.roomId||state.revision!==data.revision;
  state=data;syncedAt=Date.now();if(changed)render();else connection();
 }
-function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):syncedAt?'Synchronisé · état serveur '+state.revision:'Connexion…'}
+function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Synchronisé · état serveur '+state.revision:credentials?'Connexion…':''}
 async function sync(){
  if(!credentials||!active||busy)return;if(polling)return polling;
  const epoch=generation;
- polling=(async()=>{try{accept(await request({...credentials,op:'sync'}),epoch);if(epoch===generation){if(!pending)problem='';connection()}}
- catch(e){if(epoch===generation){problem=e.message==='private_access_required'?e.message:'network_uncertain';connection()}}
+ polling=(async()=>{try{const data=await request({...credentials,op:credentials.op==='create'?'create':credentials.roomId?'sync':'join',...(credentials.op==='create'?{profileId:JSON.parse(localStorage.getItem('igr_social_identity_v1')||'null')?.id,profileToken:JSON.parse(localStorage.getItem('igr_social_identity_v1')||'null')?.token}:{})});if(epoch===generation){credentials={roomId:data.roomId,sessionToken:credentials.sessionToken};save()}accept(data,epoch);if(epoch===generation){if(!pending)problem='';connection()}}
+ catch(e){if(epoch===generation){problem=e.message==='session_not_authorized'?e.message:'network_uncertain';connection()}}
  finally{polling=null}})();return polling;
 }
 async function mutate(body,retry=false){
  if(busy)return;if(pending&&!retry)return;
  busy=true;problem='';const epoch=generation;
- const full=retry?pending:{...credentials,...body,expectedRevision:state?.revision,requestId:crypto.randomUUID()};pending=full;render();
+ const full=retry?pending:{...credentials,...body,expectedRevision:state?.revision,requestId:crypto.randomUUID()};pending=full;
+ // Persist a newly issued recovery secret before sending it, including a join
+ // whose response may be lost. No decisions or character state are stored here.
+ if(full.op==='create'||full.op==='join'){credentials={roomId:full.roomId,inviteCode:full.inviteCode,sessionToken:full.sessionToken,name:full.name,requestId:full.requestId,op:full.op};try{localStorage.setItem(KEY+'_pending',JSON.stringify(credentials))}catch{}}
+ render();
  try{
   const data=await request(full);if(epoch!==generation)return;
   credentials={roomId:data.roomId,sessionToken:full.sessionToken};save();pending=null;accept(data,epoch);
  }catch(e){if(epoch!==generation)return;
-  const uncertain=['TypeError','TimeoutError','AbortError'].includes(e.name)||e.message==='Failed to fetch';
+  const uncertain=['TypeError','TimeoutError','AbortError'].includes(e.name)||['Failed to fetch','network_uncertain','casino_service_unavailable','storage_unavailable'].includes(e.message);
   problem=uncertain?'network_uncertain':e.message;
-  if(!uncertain)pending=null;
+  if(!uncertain){pending=null;if(full.op==='create'||full.op==='join'){try{localStorage.removeItem(KEY+'_pending')}catch{}credentials=load()}}
  }finally{if(epoch===generation){busy=false;render();if(problem==='revision_conflict')await sync()}}
 }
 const button=(label,type,payload={},disabled=false)=>`<button type="button" class="casino-action" data-casino-command="${esc(type)}" data-payload="${esc(JSON.stringify(payload))}" ${disabled?'disabled':''}>${esc(label)}</button>`;
@@ -51,7 +60,7 @@ const section=(title,body)=>`<section class="casino-box"><h2>${esc(title)}</h2>$
 function welcome(){return `<h1>Une table à Macao</h1><p>Un écran par participant. Le casino et le bureau d’enquête jouent dans deux espaces séparés.</p>
  ${form('create',field('Ton prénom','name','text','maxlength="22" required autocomplete="given-name"'),'Créer une table privée')}
  ${form('join',field('Code de la table','inviteCode','text','maxlength="10" required autocapitalize="characters"')+field('Ton prénom','name','text','maxlength="22" required'),'Rejoindre')}
- ${credentials?'<button class="casino-action" data-casino-action="resume">Reprendre mon personnage</button>':''}
+ ${load()?'<button class="casino-action" data-casino-action="resume">Reprendre mon personnage</button>':''}
  <details><summary>Reprendre sur un autre appareil</summary>${form('recover',area('Ta clé personnelle','recovery',110),'Reprendre ma partie')}</details>`}
 function lobby(){const own=state.members.find(m=>m.id===state.viewer);return `<h1>Table ${esc(state.inviteCode)}</h1><p>4 à 7 personnages au casino, 3 enquêteurs et jusqu’à 2 magistrats supplémentaires.</p>
  <ul class="casino-members">${state.members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'Prêt':'En préparation'}</span></li>`).join('')}</ul>
@@ -112,7 +121,7 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  ${problem?`<p class="casino-error" role="alert">${esc(message(problem))}</p>`:''}${pending&&!busy?'<button class="casino-action" data-casino-action="retry">Réessayer la même action</button>':''}
  <fieldset class="casino-content" ${busy||pending?'disabled':''}>${body}</fieldset>
  ${state?.isHost&&state.status==='playing'?button(state.chapter===3&&state.phase===2?'Clore la campagne':'Passer à la phase suivante',state.chapter===3&&state.phase===2?'FINISH_CAMPAIGN':'ADVANCE_PHASE'):''}
- ${state?'<details class="casino-recovery"><summary>Ma clé de reprise personnelle</summary><p>Cette clé ouvre ton personnage sur un autre appareil. Garde-la pour toi.</p><button class="casino-action" data-casino-action="copy">Copier ma clé personnelle</button><output data-casino-key></output></details>':''}</main>`;
+ ${state?'<details class="casino-recovery"><summary>Ma clé de reprise personnelle</summary><p>Cette clé ouvre ton personnage sur un autre appareil. Garde-la pour toi et conserve-la avant de changer de table.</p><button class="casino-action" data-casino-action="copy">Copier ma clé personnelle</button><output data-casino-key></output></details><button class="casino-action" data-casino-action="switch" '+(busy||pending?'disabled':'')+'>'+(state.status==='finished'?'Nouvelle partie':'Changer de table')+'</button>':''}</main>`;
  for(const d of drafts){const el=$$('[data-casino-draft]',root).find(e=>e.name===d.name&&e.closest('form')?.dataset.casinoForm===d.form);if(el)el.value=d.value}
  if(focused){const el=$$('[data-casino-draft]',root).find(e=>e.name===focused.name&&e.closest('form')?.dataset.casinoForm===focused.form);if(el){el.focus({preventScroll:true});if(el.setSelectionRange&&typeof focused.start==='number')try{el.setSelectionRange(focused.start,focused.end)}catch{}}}
  connection();
@@ -126,7 +135,8 @@ document.addEventListener('click',async event=>{
  if(el.dataset.casinoTab){tab=el.dataset.casinoTab;render();return}
  if(el.dataset.casinoCommand){if(!busy&&!pending)await mutate({op:'command',type:el.dataset.casinoCommand,payload:JSON.parse(el.dataset.payload||'{}')});return}
  switch(el.dataset.casinoAction){
-  case 'close':close();break;case 'resume':await sync();break;case 'retry':await mutate({},true);break;
+  case 'close':close();break;case 'resume':credentials=load();await sync();break;case 'retry':await mutate({},true);break;
+  case 'switch':if(busy||pending)break;generation++;state=null;credentials=null;problem='';tab='card';render();break;
   case 'ready':await mutate({op:'ready',ready:!state.members.find(m=>m.id===state.viewer).ready});break;
   case 'start':await mutate({op:'start'});break;
   case 'draw':await mutate({op:'command',type:'POKER_ACTION',payload:{action:'draw',discard:$$('input[name="discard"]:checked').map(e=>Number(e.value))}});break;
@@ -154,5 +164,5 @@ document.addEventListener('submit',async event=>{
  await mutate({op:'command',type:commands[kind],payload:p});
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.0',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.1',open,close,sync});
 })();

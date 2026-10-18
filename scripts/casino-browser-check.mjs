@@ -138,6 +138,10 @@ try{
  await Promise.all(people.map(p=>p.page.getByRole('heading',{name:'Le dénouement',exact:true}).waitFor()));
  for(const [i,label]of [[0,'iphone'],[1,'ipad'],[2,'desktop']])await layout(people[i].page,'finale-'+label);
  checks.push('Transitions des trois scénarios et des huit phases jusqu’au dénouement sur tous les écrans');
+ await hostPage.locator('[data-casino-action=switch]').click();await hostPage.locator('[data-casino-form=create]').waitFor();
+ await hostPage.waitForTimeout(1400);assert.equal(await hostPage.locator('[data-casino-form=create]').count(),1);
+ await hostPage.locator('[data-casino-action=resume]').click();await hostPage.getByRole('heading',{name:'Le dénouement',exact:true}).waitFor();
+ checks.push('Nouvelle partie accessible après le dénouement et ancienne partie encore reprenable');
  const integrated=await browser.newContext({viewport:{width:1440,height:900},serviceWorkers:'block'});contexts.push(integrated);
  await integrated.route('https://jtasbdiguhiswoyvobkn.supabase.co/**',r=>r.fulfill({status:200,contentType:'application/json',body:'null'}));
  const full=await integrated.newPage();full.on('pageerror',e=>errors.push(e.message));await full.goto(origin+'/full',{waitUntil:'domcontentloaded'});
@@ -148,6 +152,33 @@ try{
  await full.locator('[data-casino-form=create] input[name=name]').fill('Intégration');await full.locator('[data-casino-form=create] button').click();await full.locator('.casino-members').waitFor();
  await full.waitForTimeout(2600);assert.equal(await full.locator('.casino-members').count(),1,'Existing runtimes must not replace the Casino screen');
  await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
+ // Closing the page after a committed creation must retain its new recovery
+ // secret even when the very first response never reached the browser.
+ const interrupted=await context({width:390,height:844});
+ await interrupted.page.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
+ let droppedCreate=false;
+ await interrupted.page.route('**/api/casino',async route=>{
+  if(route.request().postDataJSON()?.op==='create'&&!droppedCreate){droppedCreate=true;await route.fetch();await route.abort('failed')}
+  else await route.continue();
+ });
+ await interrupted.page.locator('[data-casino-form=create] input').fill('Reprise création');
+ await interrupted.page.locator('[data-casino-form=create] button').click();await interrupted.page.locator('[data-casino-action=retry]').waitFor();
+ const candidate=await interrupted.page.evaluate(()=>JSON.parse(localStorage.getItem('igr_casino_identity_v1_pending')));
+ const committed=await storage.read(candidate.roomId);assert(committed);
+ await interrupted.page.unroute('**/api/casino');await interrupted.page.reload();await interrupted.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());
+ await interrupted.page.locator('.casino-members').waitFor();const recoveredCreation=await storageIdentity(interrupted.page);
+ assert.equal(recoveredCreation.roomId,candidate.roomId);assert.equal((await storage.read(recoveredCreation.roomId)).state.members.length,1);
+ const interruptedJoin=await context({width:820,height:1180});await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());let droppedJoin=false;
+ await interruptedJoin.page.route('**/api/casino',async route=>{
+  if(route.request().postDataJSON()?.op==='join'&&!droppedJoin){droppedJoin=true;await route.fetch();await route.abort('failed')}
+  else await route.continue();
+ });
+ await interruptedJoin.page.locator('[name=inviteCode]').fill(committed.inviteCode);
+ await interruptedJoin.page.locator('[data-casino-form=join] [name=name]').fill('Reprise arrivée');await interruptedJoin.page.locator('[data-casino-form=join] button').click();
+ await interruptedJoin.page.locator('[data-casino-action=retry]').waitFor();await interruptedJoin.page.unroute('**/api/casino');
+ await interruptedJoin.page.reload();await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await interruptedJoin.page.locator('.casino-members').waitFor();
+ assert.equal((await storage.read(recoveredCreation.roomId)).state.members.length,2);
+ checks.push('Création et arrivée reprises après perte de leur première réponse et fermeture, sans nouvelle identité');
  assert.deepEqual(errors,[],'No browser runtime errors');
  await writeFile(join(resultDir,'results.json'),JSON.stringify({checks,browser:await browser.version(),errors},null,2));
  console.log(checks.map(s=>'PASS Casino browser: '+s).join('\n'));

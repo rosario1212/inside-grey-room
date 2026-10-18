@@ -2,11 +2,11 @@
 
 ## Statut
 
-PR de préparation, enrichie par le service et le client v105. Les migrations de sauvegarde et l’Edge Function sont installées ; les trois canons restent en brouillon et ne sont pas sélectionnables. Aucun lancement Casino, aucune fusion dans main ni déploiement Cloudflare de la campagne. Le code serveur et les manuscrits privés ne doivent **jamais** être inclus dans le JavaScript public. Voir [le relevé actuel](CASINO_V105_VALIDATION.md).
+Campagne reliée au service et au client v105.1. Les trois intrigues privées ont été approuvées pour intégration par l’utilisateur le 18 octobre 2026 et sont sélectionnables côté serveur. Les trois chapitres partagent la même sauvegarde et la même intrigue. Le code serveur et les manuscrits privés ne doivent **jamais** être inclus dans le JavaScript public. Voir [le relevé actuel](CASINO_V105_VALIDATION.md).
 
 ## Navigation
 
-La campagne Casino apparaît comme troisième campagne dans le hub HÉRITAGE. Elle présente trois chapitres (3/3/2 phases), sans interrompre CENDRES, KUROI, MAÎTRE ni les DLC. Couvertures provisoires remplaçables par les quatre affiches validées. Pas de phrases d’accroche sur les affiches. L’accès premium existant conserve la maîtrise de l’ouverture du hub.
+La campagne Casino apparaît comme quatrième campagne dans le hub HÉRITAGE. Elle présente trois chapitres (3/3/2 phases), sans interrompre CENDRES, KUROI, MAÎTRE ni les DLC. Les quatre affiches validées sont conservées. Pas de phrases d’accroche sur les affiches. L’accès premium existant conserve la maîtrise de l’ouverture du hub.
 
 ## Casting
 
@@ -18,7 +18,7 @@ Les humains incarnent leurs propres personnages : si Ali est attribué à une fo
 2. **La Chute de l’Impérial** : intervention physique et narrative de l’Agent, demandes d’interpellation motivées et corroborées ; entretiens, dossiers, cartographie des organisations et détention avec action continue pour les détenus.
 3. **Le Dernier Dragon** : audience, corruption détectable, successions sans seuil automatique, nomination possible par un Dragon encore crédible, scission éventuelle, conséquences judiciaires et individuelles.
 
-## Prérequis bloquants pour activer « Jouer »
+## Garanties du lancement serveur
 
 - Session serveur durable, atomique et idempotente, restaurable après connexion interrompue, y compris sur des appareils distincts.
 - Contrôles d’autorisation côté serveur empêchant tout joueur du casino d’accéder aux informations du bureau ou aux secrets des autres, et vice-versa ; épreuve explicite de non-fuite.

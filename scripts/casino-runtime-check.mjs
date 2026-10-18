@@ -4,7 +4,7 @@ import {fixtureRelease,MemoryStorage} from './casino-fixtures.mjs';
 import {casinoService,sha256,replayCasinoJournal} from '../casino/service.mjs';
 import {startRuntime,applyRuntime,viewRuntime,tickRuntime} from '../casino/runtime.mjs';
 import {evaluateHand,compareHands,pokerAction,spinSlot,shuffledDeck,startPoker,pokerView} from '../casino/games.mjs';
-import {edgeHandler} from '../casino/edge.mjs';
+import {edgeHandler,createStorage} from '../casino/edge.mjs';
 const checks=[];
 async function test(name,fn){await fn();checks.push(name);console.log('PASS Casino: '+name)}
 const token=()=>randomBytes(32).toString('hex');
@@ -219,12 +219,28 @@ await test('real service API: recovery, concurrent actions, idempotent retries, 
  await assert.rejects(()=>service.process({op:'sync',roomId,sessionToken:token()}),/session_not_authorized/);
  assert(!JSON.stringify(first).includes(hostToken));assert(!JSON.stringify(first).includes('tokenHash'));
 });
-await test('Edge HTTP gate, hostile origins, bounded bodies and no SQL leakage',async()=>{
- const code='test-only-private-invitation-123456789012345',handler=edgeHandler(new MemoryStorage(),{verifier:await sha256(code)});
+await test('Edge personal authentication, hostile origins, bounded bodies and no SQL leakage',async()=>{
+ const store=new MemoryStorage(),handler=edgeHandler(store);
  const req=(headers,body='{}')=>new Request('https://example.test',{method:'POST',headers:{'Content-Type':'application/json',...headers},body});
- assert.equal((await handler(req({}))).status,401);
- assert.equal((await handler(req({'X-IGR-Private-Code':code,Origin:'https://hostile.test'}))).status,403);
- assert.equal((await handler(req({'X-IGR-Private-Code':code},' '.repeat(17000)))).status,413);
- const r=await handler(req({'X-IGR-Private-Code':code},'broken json'));assert.equal(r.status,400);assert.deepEqual(await r.json(),{error:'invalid_request'});
+ assert.deepEqual(await (await handler(req({},'{"op":"sync"}'))).json(),{error:'invalid_session_token'});
+ assert.equal((await handler(req({Origin:'https://hostile.test'}))).status,403);
+ assert.equal((await handler(req({},' '.repeat(17000)))).status,413);
+ const r=await handler(req({},'broken json'));assert.equal(r.status,400);assert.deepEqual(await r.json(),{error:'invalid_request'});
+ const roomId=randomUUID(),hostToken=token();
+ const created=await handler(req({},JSON.stringify({op:'create',roomId,sessionToken:hostToken,name:'Ali',profileId:randomUUID(),profileToken:'fixture'})));
+ assert.equal(created.status,200);
+ const wrong=await handler(req({},JSON.stringify({op:'sync',roomId,sessionToken:token()})));
+ assert.equal(wrong.status,403);assert.deepEqual(await wrong.json(),{error:'session_not_authorized'});
+ const own=await handler(req({},JSON.stringify({op:'sync',roomId,sessionToken:hostToken})));
+ assert.equal(own.status,200);assert(!JSON.stringify(await own.json()).includes(hostToken));
+ const failed=edgeHandler({read:async()=>{throw Error('SQL select * from private_table; internal details')}});
+ const unavailable=await failed(req({},JSON.stringify({op:'sync',roomId,sessionToken:hostToken})));
+ assert.deepEqual(await unavailable.json(),{error:'invalid_request'});
+ for(const fetcher of [async()=>{throw Error('upstream network details')},async()=>new Response('truncated JSON')]){
+  const brokenStorage=createStorage({url:'https://fixture.test',key:'fixture-only',fetcher});
+  const broken=edgeHandler(brokenStorage);
+  const response=await broken(req({},JSON.stringify({op:'sync',roomId,sessionToken:hostToken})));
+  assert.equal(response.status,503);assert.deepEqual(await response.json(),{error:'storage_unavailable'});
+ }
 });
 console.log(`Casino runtime: ${checks.length} behavioral groups passed.`);

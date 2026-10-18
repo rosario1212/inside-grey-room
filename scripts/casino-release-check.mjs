@@ -9,7 +9,8 @@ assert.equal((migration.match(/enable row level security/gi)||[]).length,3);
 assert.equal((migration.match(/revoke all on function/g)||[]).length,5);
 assert.doesNotMatch(migration,/grant (?:select|execute|usage).* to (?:public|anon|authenticated)/i);
 const worker=await readFile('cloudflare-worker.mjs','utf8'),edge=await readFile('casino/edge.mjs','utf8');
-assert.equal(worker.match(/ACCESS_VERIFIER\s*=\s*'([^']+)'/)?.[1],edge.match(/ACCESS_VERIFIER\s*=\s*'([^']+)'/)?.[1]);
+assert.doesNotMatch(worker+edge,/ACCESS_VERIFIER|X-IGR-Private-Code/,'Room capabilities authenticate Casino without restoring the website passcode');
+assert.match(edge,/casinoService\(storage,options\)/);
 for(const dir of process.argv.slice(2).length?process.argv.slice(2):['dist']){
  let names;try{names=await readdir(dir,{recursive:true})}catch{continue}
  for(const file of names){
@@ -21,8 +22,8 @@ for(const dir of process.argv.slice(2).length?process.argv.slice(2):['dist']){
  }
  for(const page of ['index.html','en.html']){
   const html=await readFile(join(dir,page),'utf8');
-  assert.equal((html.match(/src="casino-client-v105.js\?v=105.0"/g)||[]).length,1);
-  assert.equal((html.match(/href="casino-client-v105.css\?v=105.0"/g)||[]).length,1);
+  assert.equal((html.match(/src="casino-client-v105.js\?v=105.1"/g)||[]).length,1);
+  assert.equal((html.match(/href="casino-client-v105.css\?v=105.1"/g)||[]).length,1);
  }
 }
 console.log('Casino release: server modules excluded, privileged keys absent, RPCs service-only, existing narrative permissions preserved.');

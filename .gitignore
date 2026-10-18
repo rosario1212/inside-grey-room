@@ -17,3 +17,8 @@ dist/
 layout-check-results/
 casino-qa-results/
 supabase/.temp/
+
+# Generated from approved original CARTEL artwork at build time
+assets/cartel-029-poster-v2.svg
+assets/cartel-030-poster-v2.svg
+assets/cartel-031-poster-v2.svg
