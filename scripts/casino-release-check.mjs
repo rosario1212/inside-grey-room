@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
 import {join} from 'node:path';
+import {spawnSync} from 'node:child_process';
 const migration=await readFile('supabase/migrations/20261018044050_casino_durable_sessions.sql','utf8');
 assert.match(migration,/create schema if not exists igr_casino_private/);
 assert.doesNotMatch(migration,/grant usage on schema igr_private/i,'Casino must not open the existing narrative schema to a new role');
@@ -20,10 +21,14 @@ for(const dir of process.argv.slice(2).length?process.argv.slice(2):['dist']){
    assert(!/SUPABASE_SERVICE_ROLE_KEY|sb_secret_/.test(source),'Privileged key reference in browser asset '+file);
   }
  }
+ for(const client of ['casino-client-v105.js','heritage-casino-v91.js']){
+  const syntax=spawnSync(process.execPath,['--check',join(dir,client)],{encoding:'utf8'});
+  assert.equal(syntax.status,0,'Invalid Casino runtime '+client+': '+syntax.stderr);
+ }
  for(const page of ['index.html','en.html']){
   const html=await readFile(join(dir,page),'utf8');
-  assert.equal((html.match(/src="casino-client-v105.js\?v=105.2"/g)||[]).length,1);
-  assert.equal((html.match(/href="casino-client-v105.css\?v=105.2"/g)||[]).length,1);
+  assert.equal((html.match(/src="casino-client-v105.js\?v=105.3"/g)||[]).length,1);
+  assert.equal((html.match(/href="casino-client-v105.css\?v=105.3"/g)||[]).length,1);
  }
 }
 console.log('Casino release: server modules excluded, privileged keys absent, RPCs service-only, existing narrative permissions preserved.');

@@ -60,6 +60,23 @@ await test('server-only entropy, deck and private cards excluded from every othe
  assert(viewRuntime(s,'p0').ownCard.brief.includes('Joueur 0'));
  assert(viewRuntime(s,'p0').ownCard.relations[0].text.includes('Joueur 1'));
 });
+await test('infiltration reports are playable only by real undercover roles, never leak to suspects, and pending succession stakes stay private',()=>{
+ let s=initial({undercoverIds:['p3']});
+ assert.throws(()=>command(s,'p0','REPORT_INTEL',{subjectId:'p1',text:'Observation fictive.'}),/not_undercover/);
+ assert.throws(()=>command(s,'p3','REPORT_INTEL',{subjectId:'unknown',text:'Observation fictive.'}),/invalid_intelligence/);
+ assert.throws(()=>command(s,'p3','REPORT_INTEL',{subjectId:'p3',text:'Observation fictive.'}),/invalid_intelligence/);
+ s=command(s,'p3','REPORT_INTEL',{subjectId:'p1',text:'Observation fictive vérifiable.'});
+ assert.equal(viewRuntime(s,'agent').intel[0].subjectId,'p1');
+ assert.equal(viewRuntime(s,'investigator').intel[0].text,'Observation fictive vérifiable.');
+ assert.equal(viewRuntime(s,'p3').intel,undefined);
+ assert(!JSON.stringify(viewRuntime(s,'p0')).includes('Observation fictive vérifiable.'));
+ s.successionWagers={p1:{to:'p2',status:'pending'},p0:{to:'p3',status:'signed'}};
+ assert.equal(viewRuntime(s,'p0').successionWagers.p1,undefined);
+ assert.equal(viewRuntime(s,'p3').successionWagers.p1,undefined);
+ assert.equal(viewRuntime(s,'p1').successionWagers.p1.to,'p2');
+ assert.equal(viewRuntime(s,'p2').successionWagers.p1.to,'p2');
+ assert.equal(viewRuntime(s,'p3').successionWagers.p0.status,'signed');
+});
 await test('slot paytable, bank escrow and no duplicate/client-forged payout',()=>{
  let s=finishPoker(initial());s=command(s,'p0','ADVANCE_PHASE',{},60000);
  const total=s.casinoBank+players.reduce((n,p)=>n+s.roster[p].chips,0);

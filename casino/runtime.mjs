@@ -343,7 +343,7 @@ export function viewRuntime(state,viewer){
     phaseTitle:state.privateCanon.phases[p-1].title,poker:pokerView(state,viewer),
     slotRules:SLOT_RULES,ownSlotResult:player?state.slotResults[viewer]||null:undefined,
     territories:Object.values(state.territories),loyalty:player?state.loyalty:undefined,
-    successionWagers:state.successionWagers,openingPokerComplete:state.openingPokerComplete,
+    successionWagers:Object.fromEntries(Object.entries(state.successionWagers).filter(([from,w])=>from===viewer||w.to===viewer||w.status==='signed')),openingPokerComplete:state.openingPokerComplete,
     publicEvents:state.publicEvents,npcEvents:state.npcEvents.filter(e=>!e.to||e.to===viewer),
     messages:state.messages.filter(m=>m.from===viewer||m.to===viewer||role&&m.to==='bureau'),
     hearings:state.hearings.filter(h=>role||h.subjectId===viewer),rulings:state.rulings,
