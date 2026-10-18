@@ -311,6 +311,16 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       s.publicEvents.push({id:command.id,text:'Après une attente prolongée, une voie secondaire publique permet de poursuivre sans divulguer la mission de l’Agent.',phase:numberPhase(s)});
       break;
     }
+    case 'HOST_CLOSE_ABSENT_HEARING':{
+      check(actor===s.hostId&&s.chapter===3&&s.phase===2,'defence_continuity_unavailable');
+      check(now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs*5,'defence_continuity_unavailable');
+      const h=s.hearings.find(v=>v.id===payload.hearingId&&v.defence===null);
+      check(h,'defence_continuity_unavailable');
+      h.defence='Aucune défense soumise durant le délai exceptionnel.';
+      h.absentDefence=true;
+      s.publicEvents.push({id:command.id,text:'Une audience sans réponse a été close. La procédure de continuité impose la présomption d’innocence.',phase:numberPhase(s)});
+      break;
+    }
     case 'HOST_COURT_CONTINUITY':{
       check(actor===s.hostId&&s.chapter===3&&s.phase===2&&s.bureau.judge,'judicial_continuity_not_available');
       check(now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs*3,'judicial_continuity_not_available');
