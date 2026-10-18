@@ -28,7 +28,7 @@ assert(!/cartel_pressure\s*:\s*[1-4]/.test(src),'No fake reactive pressure value
 assert(!/Corona de Sal|Valcárcel/.test(src),'Deprecated cartel branding found in public runtime');
 for(const name of ['Ismael','Isabel','Ramiro','Jesús','Vicente','Rogelio','Saúl','Damián','Nicolás','Alberto'])assert(canon.includes(name),'Missing canonical family member '+name);
 assert(canon.includes('**53 ans**')||canon.includes('**53**'),'Ismael must be 53');
-assert(canon.includes('**Chuy**'),'Jesus must keep his nickname');
+assert(canon.includes('« Chuy »'),'Jesus must keep his nickname');
 assert(canon.includes('**029 — LE CYCLE MORT**')&&canon.includes('**031 — LA DETTE**'),'Fear escalation across dossier trilogy missing');
 assert(/peur/i.test(cartel),'Fear must be explicit in public CARTEL premise');
 console.log('CARTEL Los Salcedo canon validated: 029–031 public copy, family, fear progression, no secret leak or fake pressure');
