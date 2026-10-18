@@ -12,3 +12,4 @@ assert.doesNotMatch(sql,/\bgrant\s+execute\b/i);
 assert.doesNotMatch(sql,/\bupdate\s+igr_private\.igr_v99_variant_manuscripts\b/i);
 assert.doesNotMatch(sql,/\b(public\.igr_v4_start_game|public\.igr_v4_build_private_card)\b/i);
 console.log('v104: approved and source-verified private canons only; no gameplay activation');
+await import('./v105-omerta-room-pin-check.mjs');
