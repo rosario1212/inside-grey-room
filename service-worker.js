@@ -1,4 +1,4 @@
-const CACHE='igr-v38-0-intro-cinematic-v16';
+const CACHE='igr-v38-1-casino-proportions-v91-4';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',

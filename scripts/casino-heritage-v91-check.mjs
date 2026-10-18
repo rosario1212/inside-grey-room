@@ -15,6 +15,10 @@ assert.match(j,/class="casino-launch casino-chapter-launch"/,'Chapter launch nee
 assert.match(j,/class="casino-action casino-launch-button" type="button" data-casino-live/,'Both launch CTAs must share the premium style');
 assert.doesNotMatch(j,/class="btn primary casino-action"/,'The generic white primary button must not override Casino');
 assert.match(c,/CASINO cinematic poster finish v91\.3/);
+assert.ok(c.includes('CASINO poster dimensions v91.4'),'Version marker missing');
+assert.ok(c.includes('grid-template-rows:auto auto'),'Mobile card needs separate poster/title rows');
+assert.ok(c.includes('width:clamp(140px,39vw,166px)'),'Mobile poster dimensions must be responsive');
+assert.ok(c.includes('aspect-ratio:var(--poster-width) / 1024'),'Poster artwork proportions must be preserved');
 assert.match(c,/--casino-burgundy:#651d29/);
 assert.match(c,/--casino-ivory:#f7ecdc/);
 assert.match(c,/--casino-metal:#bc965a/);
@@ -30,8 +34,8 @@ for(const name of ['campagne','scenario-1','scenario-2','scenario-3']){
 }
 for(const p of ['index.html','en.html']){
   const html=await readFile(path.join(dir,p),'utf8');
-  assert.equal(html.split('heritage-casino-v91.js?v=v91.3-casino-cinema').length-1,1,`duplicate Casino runtime in ${p}`);
-  assert.equal(html.split('heritage-casino-v91.css?v=v91.3-casino-cinema').length-1,1,`duplicate Casino style in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.js?v=v91.4-casino-proportions').length-1,1,`duplicate Casino runtime in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.css?v=v91.4-casino-proportions').length-1,1,`duplicate Casino style in ${p}`);
   assert.ok(html.indexOf('heritage-play-v13-7.js')<html.indexOf('heritage-casino-v91.js'),`Casino script before Heritage in ${p}`);
 }
 console.log('CASINO v91 checks passed — artwork, isolated navigation, no secret stories, server-backed campaign launch');

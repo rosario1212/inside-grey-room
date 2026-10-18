@@ -238,3 +238,92 @@
   .casino-page .casino-dossier,.casino-page .casino-launch .casino-launch-button{transition:none}
   .casino-page .casino-dossier:hover,.casino-page .casino-launch .casino-launch-button:active{transform:none}
 }
+
+/* CASINO poster dimensions v91.4 — balanced card geometry without cropping art. */
+.hplay-hub-grid .casino-entry,
+.heritage-campaign-grid .casino-entry{
+  grid-template-columns:minmax(0,43%) minmax(0,1fr);
+  gap:clamp(17px,2.6vw,26px);
+  min-height:480px;
+  align-items:center;
+}
+.casino-entry .casino-poster{
+  display:block;
+  width:100%;
+  max-width:210px;
+  height:auto;
+  aspect-ratio:var(--poster-width) / 1024;
+  align-self:center;
+  justify-self:center;
+  flex-shrink:0;
+}
+.casino-entry .hplay-campaign-body{
+  width:100%;
+  min-width:0;
+  align-content:center;
+}
+.casino-entry .hplay-campaign-body>strong{
+  margin:0;
+  overflow-wrap:normal;
+  line-height:1.12;
+}
+@media (min-width:761px) and (max-width:1050px){
+  .hplay-hub-grid .casino-entry,
+  .heritage-campaign-grid .casino-entry{
+    grid-template-columns:minmax(0,38%) minmax(0,1fr);
+    gap:12px;
+    padding:16px;
+    min-height:430px;
+  }
+  .casino-entry .casino-poster{max-width:155px}
+  .casino-entry .hplay-campaign-body>strong{font-size:clamp(26px,3vw,38px)}
+}
+@media (max-width:650px){
+  .hplay-hub-grid .casino-entry,
+  .heritage-campaign-grid .casino-entry{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:auto auto;
+    align-items:start;
+    align-content:start;
+    justify-items:center;
+    gap:clamp(18px,5vw,24px);
+    min-height:0;
+    padding:22px clamp(17px,5vw,24px) 24px;
+  }
+  .casino-entry .casino-poster{
+    width:clamp(140px,39vw,166px);
+    max-width:100%;
+    height:auto;
+    margin:0 auto;
+    align-self:center;
+    justify-self:center;
+  }
+  .casino-entry .hplay-campaign-body{
+    position:static!important;
+    display:grid;
+    gap:11px;
+    width:100%;
+    min-width:0;
+    margin:0;
+    padding:0;
+    text-align:center;
+    justify-items:center;
+    align-content:start;
+  }
+  .casino-entry .hplay-campaign-body>strong{
+    font-size:clamp(30px,7.8vw,38px);
+    line-height:1.16;
+  }
+  .casino-entry .hplay-campaign-body>em{line-height:1.5}
+  .casino-entry .hplay-campaign-body>small{
+    max-width:32ch;
+    font-size:13px;
+    line-height:1.55;
+  }
+  .casino-entry .hplay-campaign-foot{
+    width:100%;
+    margin-top:7px;
+    padding-top:15px;
+    align-items:center;
+  }
+}
