@@ -45,6 +45,17 @@
     '034':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Témoin','Journaliste']}
   });
   Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries([...CARTEL,...REGIME].map(sc=>[sc.id,sc.short])));
+  // The English edition loads before this DLC; keep the public Mexican canon bilingual.
+  if(window.IGR_LOCALE==='en'){
+    const englishCartel={
+      '029':{short:'Mexico, Sinaloa. In Puerto Ceniza, a killing exposes the shadow of La Corona de Sal. The investigation cell realizes it is being watched.',context:'Puerto Ceniza is a fictional port city in Sinaloa, Mexico. A killing points the investigation cell toward La Corona de Sal, a cartel whose influence appears to reach local businesses and institutions. Three suspects offer irreconcilable accounts. As the team reconstructs who unleashed the violence, a warning suggests the network knows its investigators.',mood:'Mexico · surveillance · reprisals.',mechanics:['Intimidation','Pressure on the investigation','Network violence']},
+      '030':{short:'In Puerto Ceniza, a court ruling undermines the evidence. La Corona de Sal seems to know the cell’s next move before it happens.',context:'Sinaloa, Mexico. An unexpected court ruling shakes the case against La Corona de Sal. Confidential information appears to have escaped the investigation cell. Investigators must distinguish compromised evidence from a manipulated procedure and ask who benefits from distrust. A disputed ruling alone does not prove a judge was bribed.',mood:'Mexico · justice under pressure · leaks.',mechanics:['Judicial corruption','Conditional protection','Compromised evidence']},
+      '031':{short:'In Puerto Ceniza, the threat turns personal. La Corona de Sal knows the cell’s loved ones; protecting someone may cost crucial evidence.',context:'On the Sinaloa coast in Mexico, La Corona de Sal goes beyond obstructing the investigation: someone close to the cell receives a personal warning. With threatened loved ones, old debts and divided loyalties, each suspect must explain what they knew, accepted and actually did. The warning’s origin remains unproven.',mood:'Mexico · debt · personal pressure.',mechanics:['Personal pressure','Negotiation','Indirect responsibility']}
+    };
+    for(const sc of CARTEL)Object.assign(sc,englishCartel[sc.id]);
+    Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries(CARTEL.map(sc=>[sc.id,sc.short])));
+  }
+
 
   const META={};
   for(let i=1;i<=8;i++)META[String(i).padStart(3,'0')]={origin:'base',collection:'original'};
@@ -225,7 +236,7 @@
 
   function decorateCreateList(){
     const root=document.querySelector('.page-create-v10-13');if(!root)return;
-    appendCollection(root,{collection:'cartel',title:'CARTEL',eyebrow:'DLC · PRESSION',copy:'Mexique · Puerto Ceniza, Sinaloa. Trois dossiers liés face à La Corona de Sal : surveillance de la cellule, justice sous pression, menace contre les proches.',ids:CARTEL_IDS,label:'CARTEL',tag:'PRESSION'});
+    appendCollection(root,{collection:'cartel',title:'CARTEL',eyebrow:'DLC · PRESSION',copy:window.IGR_LOCALE==='en'?'Mexico · Puerto Ceniza, Sinaloa. Three linked cases against La Corona de Sal: surveillance of the cell, pressure on justice and threats to loved ones.':'Mexique · Puerto Ceniza, Sinaloa. Trois dossiers liés face à La Corona de Sal : surveillance de la cellule, justice sous pression, menace contre les proches.',ids:CARTEL_IDS,label:'CARTEL',tag:'PRESSION'});
     appendCollection(root,{collection:'regime',title:'LE RÉGIME',eyebrow:'DLC · APRÈS LA CHUTE',copy:'3 dossiers sur crimes d’État, délation intéressée, oligarchie familiale et reconstruction du pouvoir réel.',ids:REGIME_IDS,label:'LE RÉGIME',tag:'ARCHIVES'});
     renderTerrorAccess(root);
     markExistingCards(root);ensureFilters(root);applyFilters(root);
