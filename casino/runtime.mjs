@@ -426,6 +426,7 @@ export function viewRuntime(state,viewer){
     hostCanLocate:viewer===state.hostId&&state.chapter===1&&state.phase===3&&state.fallbackReady&&
       Date.now()-state.phaseStartedAt>=state.privateCanon.minimumSocialMs*3,
     hostCanCloseDefence:viewer===state.hostId&&state.chapter===3&&state.phase===2&&state.hearings.some(h=>h.defence===null),
+    hostPendingHearings:viewer===state.hostId&&state.chapter===3&&state.phase===2?state.hearings.filter(h=>h.defence===null).map(h=>({id:h.id,subjectId:h.subjectId})):[],
     hostCanCloseCourt:viewer===state.hostId&&state.chapter===3&&state.phase===2&&!!state.bureau.judge&&
       state.hearings.some(h=>h.defence!==null&&!state.rulings.some(r=>r.hearingId===h.id)),
     finale:state.finale?{...state.finale,organigram:role?state.finale.organigram:undefined,
