@@ -10,7 +10,7 @@ const cartel=src.slice(start,end);
 const entries=[...cartel.matchAll(/\{id:'(\d{3})',title:'([^']+)',short:'([^']+)',context:'([^']+)'/g)];
 assert.deepEqual(entries.map(x=>x[1]),['029','030','031'],'Only the three CARTEL dossiers should change');
 for(const [,id,title,short,context] of entries){
-  assert(/Puerto Ceniza/.test(short+' '+context),'Fictional Mexican location missing for '+id);
+  assert((id==='029'?/Santa Ceniza/:/Puerto Ceniza/).test(short+' '+context),'Fictional Mexican location missing for '+id);
   assert(/Sinaloa|Mexique/.test(short+' '+context),'Mexican context missing for '+id);
   assert(/Los Salcedo/.test(short+' '+context),'Salcedo identity missing for '+id);
   assert(short.length<220,'Lobby synopsis is too long for '+id);
