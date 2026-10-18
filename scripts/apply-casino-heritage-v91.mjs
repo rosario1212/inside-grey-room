@@ -2,7 +2,7 @@ import {copyFile,mkdir,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 const root=process.cwd(),dest=path.resolve(root,process.argv[2]||'dist');
-const JS='heritage-casino-v91.js',CSS='heritage-casino-v91.css',VERSION='v91.2-casino-heritage';
+const JS='heritage-casino-v91.js',CSS='heritage-casino-v91.css',VERSION='v91.3-casino-heritage';
 const images=['campagne.webp','scenario-1.webp','scenario-2.webp','scenario-3.webp'];
 for(const file of [JS,CSS,'casino-client-v105.js','casino-client-v105.css']){
   await stat(path.join(root,file));
@@ -27,10 +27,10 @@ for(const page of ['index.html','en.html']){
   if(!html.includes(`src="${JS}?v=${VERSION}"`)){
     html=html.replace('</body>',`  <script src="${JS}?v=${VERSION}"></script>\n</body>`);
   }
-  if(!html.includes('casino-client-v105.js?v=105.2'))html=html.replace('</body>','  <script src="casino-client-v105.js?v=105.2"></script>\n</body>');
-  if(!html.includes('casino-client-v105.css?v=105.2'))html=html.replace('</head>','  <link rel="stylesheet" href="casino-client-v105.css?v=105.2">\n</head>');
+  if(!html.includes('casino-client-v105.js?v=105.3'))html=html.replace('</body>','  <script src="casino-client-v105.js?v=105.3"></script>\n</body>');
+  if(!html.includes('casino-client-v105.css?v=105.3'))html=html.replace('</head>','  <link rel="stylesheet" href="casino-client-v105.css?v=105.3">\n</head>');
   await writeFile(name,html,'utf8');
 }
 const commit=process.env.GITHUB_SHA||execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
-await writeFile(path.join(dest,'casino-release.json'),JSON.stringify({version:'105.2',commit,campaign:'casino',chapters:3,phases:8}));
+await writeFile(path.join(dest,'casino-release.json'),JSON.stringify({version:'105.3',commit,campaign:'casino',chapters:3,phases:8}));
 console.log('HÉRITAGE / CASINO: trois scénarios et reprise serveur intégrés');

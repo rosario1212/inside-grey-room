@@ -3,7 +3,7 @@
  * Private stories are selected and retained exclusively by the server.
  */
 (()=>{'use strict';
-const VERSION='91.2-casino-heritage';
+const VERSION='91.3-casino-heritage';
 const ROOT='casino-heritage-v91';
 const POSTER_BASE='assets/casino/';
 const CHAPTERS=Object.freeze([
@@ -38,7 +38,7 @@ function renderChapter(n){const ch=CHAPTERS.find(x=>x.number===n);if(!ch)return 
  <figure class="casino-chapter-cover">${artwork(ch.image,'Affiche de '+ch.title)}</figure>
  <section class="casino-public-note"><strong>PRÉPARATION CONFIDENTIELLE</strong><span>Les identités criminelles et les dossiers d’enquête seront attribués à partir des noms des joueurs. Aucun prénom imposé ne remplace celui d’un participant. Les informations du bureau et du casino resteront séparées côté serveur.</span></section>
  <section class="casino-phases"><h2>Progression · ${ch.phases.length} phases</h2>${phases}</section>
- <button class="btn primary casino-action" type="button" data-casino-live>JOUER LA CAMPAGNE</button><p>Les trois scénarios se suivent dans l’ordre. Une partie en cours reprend automatiquement au bon chapitre.</p>
+ <div class="casino-launch casino-chapter-launch"><button class="casino-action" type="button" data-casino-live>JOUER LA CAMPAGNE</button><p>Les trois scénarios se suivent dans l’ordre. Une partie en cours reprend automatiquement au bon chapitre.</p></div>
  </main>`)}
 function patchHub(){const hub=$('.hplay-hub-grid')||$('.heritage-campaign-grid');if(!hub||hub.querySelector('[data-casino-nav="campaign"]'))return;
  const card=document.createElement('button');card.type='button';card.className='hplay-campaign-card casino-entry';card.dataset.casinoNav='campaign';card.innerHTML=`${artwork('campagne.webp')}<span class="hplay-campaign-body"><em>MACAO · TRIADES · PÈGRE INTERNATIONALE</em><strong>CASINO</strong><small>Guerre de succession, jeux, accords et enquête internationale.</small><span class="hplay-campaign-foot"><b>3 SCÉNARIOS</b><i>EXPLORER →</i></span></span>`;

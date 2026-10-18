@@ -22,8 +22,8 @@ for(const dir of process.argv.slice(2).length?process.argv.slice(2):['dist']){
  }
  for(const page of ['index.html','en.html']){
   const html=await readFile(join(dir,page),'utf8');
-  assert.equal((html.match(/src="casino-client-v105.js\?v=105.2"/g)||[]).length,1);
-  assert.equal((html.match(/href="casino-client-v105.css\?v=105.2"/g)||[]).length,1);
+  assert.equal((html.match(/src="casino-client-v105.js\?v=105.3"/g)||[]).length,1);
+  assert.equal((html.match(/href="casino-client-v105.css\?v=105.3"/g)||[]).length,1);
  }
 }
 console.log('Casino release: server modules excluded, privileged keys absent, RPCs service-only, existing narrative permissions preserved.');

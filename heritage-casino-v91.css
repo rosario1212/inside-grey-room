@@ -1,6 +1,6 @@
 /* CASINO — scoped entirely to the Heritage add-on; no changes to previous campaigns. */
-.hplay-hub-grid .casino-entry,.heritage-campaign-grid .casino-entry{background:#090504;border-color:rgba(181,49,30,.3);display:grid;grid-template-columns:minmax(110px,42%) minmax(0,1fr);align-items:center;gap:18px;padding:18px;min-height:360px}
-.casino-entry .casino-poster{width:100%;max-width:200px;justify-self:center}
+.hplay-hub-grid .casino-entry,.heritage-campaign-grid .casino-entry{background:#090504;border-color:rgba(181,49,30,.3);display:grid;grid-template-columns:minmax(0,53%) minmax(0,1fr);align-items:center;gap:12px;padding:12px;min-height:360px}
+.casino-entry .casino-poster{width:100%;max-width:260px;justify-self:center;box-shadow:0 14px 38px rgba(0,0,0,.5),0 0 22px rgba(145,58,26,.14)}
 .casino-entry .hplay-campaign-body{position:static;padding:0;min-width:0}
 .casino-entry .hplay-campaign-body>strong{font-size:clamp(28px,4vw,45px);letter-spacing:0;line-height:1}
 .casino-entry .hplay-campaign-foot{flex-wrap:wrap}
@@ -11,17 +11,17 @@
 .casino-entry .hplay-campaign-body strong{color:#f6e5d0;letter-spacing:.075em}
 .casino-page{--casino-gold:#d9ac79;--casino-red:#aa2722;color:#efe7df;padding-bottom:24px}
 .casino-page h1,.casino-page h2{color:#f0e5d8}
-.casino-intro{display:grid;grid-template-columns:clamp(112px,23vw,170px) minmax(0,1fr);align-items:center;gap:clamp(16px,4vw,36px);max-width:850px;margin:0 auto 22px}.casino-intro .casino-heading{margin:0;text-align:left}.casino-heading{max-width:880px;margin:18px auto 20px;text-align:center;display:grid;gap:12px;min-width:0}
+.casino-intro{display:grid;grid-template-columns:clamp(144px,28vw,210px) minmax(0,1fr);align-items:center;gap:clamp(16px,4vw,36px);max-width:850px;margin:0 auto 22px}.casino-intro .casino-heading{margin:0;text-align:left}.casino-heading{max-width:880px;margin:18px auto 20px;text-align:center;display:grid;gap:12px;min-width:0}
 .casino-heading span{font:700 10px ui-monospace,monospace;letter-spacing:.22em}
 .casino-heading h1{font:900 clamp(40px,9vw,76px)/.95 Georgia,serif;margin:0;letter-spacing:.025em;text-transform:uppercase}
 .casino-heading p{font-size:14px;color:#cbb9aa;line-height:1.6;margin:4px auto;max-width:66ch}
-.casino-hero{width:100%;max-width:170px;margin:0;border:1px solid #543b2a;border-radius:14px;overflow:hidden}
+.casino-hero{width:100%;max-width:210px;margin:0;border:1px solid #543b2a;border-radius:14px;overflow:hidden}
 .casino-hero img{display:block;width:100%;height:auto;object-fit:contain}
 .casino-public-note{display:grid;gap:8px;padding:16px;margin:18px auto 24px;border:1px solid #5b382d;border-left:3px solid #af4138;border-radius:9px;background:#160e0f;max-width:850px}
 .casino-public-note strong{font-size:11px;letter-spacing:.12em;color:#e7bba3}
 .casino-public-note span{font-size:13px;line-height:1.55;color:#d2bab3}
 .casino-chapters{display:grid;gap:12px;max-width:950px;margin:0 auto}
-.casino-dossier{appearance:none;display:grid;grid-template-columns:96px minmax(0,1fr);gap:17px;text-align:left;width:100%;padding:12px;background:linear-gradient(115deg,#211314,#0b0b0d);border:1px solid #423030;border-radius:13px;color:#eee6de;cursor:pointer}
+.casino-dossier{appearance:none;display:grid;grid-template-columns:112px minmax(0,1fr);gap:17px;text-align:left;width:100%;padding:12px;background:linear-gradient(115deg,#211314,#0b0b0d);border:1px solid #423030;border-radius:13px;color:#eee6de;cursor:pointer}
 .casino-dossier:focus-visible,.casino-entry:focus-visible{outline:2px solid #f6d6a5;outline-offset:3px}
 .casino-dossier:hover{border-color:#94654d}.casino-dossier-poster{align-self:center;overflow:hidden;border-radius:7px}
 
@@ -33,7 +33,7 @@
 .casino-pillars{max-width:950px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px auto}
 .casino-pillars>div,.casino-phases{border:1px solid #3c2a24;border-radius:10px;padding:15px;background:#110c0b}
 .casino-pillars b{font-size:11px;color:#d5a482}.casino-pillars p{font-size:12px;color:#bdaea8;line-height:1.5}
-.casino-chapter-cover{max-width:160px;margin:20px auto;border-radius:11px;overflow:hidden;border:1px solid #453026}
+.casino-chapter-cover{width:min(72%,300px);max-width:300px;margin:28px auto 32px;box-shadow:0 16px 48px rgba(0,0,0,.6),0 0 32px rgba(153,69,34,.12);border-radius:11px;overflow:hidden;border:1px solid #453026}
 .casino-chapter-cover img{display:block;width:100%;height:auto;object-fit:contain}
 .casino-phases{max-width:760px;margin:auto}.casino-phases h2{font-size:17px;margin:0 0 16px}
 .casino-phase{display:flex;gap:12px;align-items:center;padding:13px 0;border-top:1px solid #382621}
@@ -43,8 +43,19 @@
 .casino-launch .casino-action{width:100%;margin:0;min-height:52px;font-weight:750;font-size:16px}
 .casino-launch p{margin:0;color:#bdaea8;font-size:12px;line-height:1.5;text-align:center}
 .casino-chapters+.casino-pillars{margin-top:24px}
-@media(max-width:650px){.casino-pillars{grid-template-columns:1fr}.casino-dossier{grid-template-columns:86px minmax(0,1fr);gap:14px;padding:12px}.casino-dossier-content strong{font-size:19px;line-height:1.15}.casino-dossier-content small,.casino-dossier-content em{font-size:10px;line-height:1.5}.casino-heading h1{font-size:clamp(30px,8vw,43px)}.casino-heading>span{font-size:9px;line-height:1.5;letter-spacing:.12em}.casino-heading p{font-size:13px}.casino-page .casino-top{margin-bottom:20px;gap:10px}.casino-top .hplay-back{font-size:12px}.casino-entry .hplay-campaign-body>strong{font-size:30px}}
-@media(max-width:360px){.casino-intro{grid-template-columns:96px minmax(0,1fr);gap:14px}.casino-dossier{grid-template-columns:74px minmax(0,1fr)}.casino-dossier-content strong{font-size:17px}.hplay-hub-grid .casino-entry{gap:12px;padding:12px}.casino-entry .hplay-campaign-body>strong{font-size:26px}}
-@media(min-width:1000px){.casino-chapters{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}.casino-dossier{grid-template-columns:76px minmax(0,1fr);gap:12px}.casino-dossier-content strong{font-size:19px}.casino-entry .hplay-campaign-body>small{font-size:13px}}
+@media(max-width:650px){.casino-pillars{grid-template-columns:1fr}.casino-dossier{grid-template-columns:104px minmax(0,1fr);gap:14px;padding:12px}.casino-dossier-content strong{font-size:19px;line-height:1.15}.casino-dossier-content small,.casino-dossier-content em{font-size:10px;line-height:1.5}.casino-heading h1{font-size:clamp(30px,8vw,43px)}.casino-heading>span{font-size:9px;line-height:1.5;letter-spacing:.12em}.casino-heading p{font-size:13px}.casino-page .casino-top{margin-bottom:20px;gap:10px}.casino-top .hplay-back{font-size:12px}.casino-entry .hplay-campaign-body>strong{font-size:30px}}
+@media(max-width:360px){.casino-intro{grid-template-columns:112px minmax(0,1fr);gap:14px}.casino-dossier{grid-template-columns:86px minmax(0,1fr)}.casino-dossier-content strong{font-size:17px}.hplay-hub-grid .casino-entry{gap:12px;padding:12px}.casino-entry .hplay-campaign-body>strong{font-size:26px}}
+@media(min-width:1000px){.casino-chapters{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}.casino-dossier{grid-template-columns:96px minmax(0,1fr);gap:12px}.casino-dossier-content strong{font-size:19px}.casino-entry .hplay-campaign-body>small{font-size:13px}}
 
 .casino-top .hplay-back{min-height:44px;padding:10px 14px;border:1px solid #79513e;border-radius:8px;background:#211215;color:#f1deca;cursor:pointer}
+
+/* Campaign launch uses its own specificity: generic .btn.primary stays scoped
+   to other modes and can no longer turn the chapter action white. */
+.casino-page [data-casino-live]{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:15px 24px;border:1px solid #b78b50;border-radius:10px;background:linear-gradient(160deg,#702630,#3e161e);color:#fff0d9;font:750 15px/1.4 system-ui,sans-serif;letter-spacing:.025em;text-align:center;box-shadow:inset 0 1px 0 rgba(255,226,174,.12),0 8px 22px rgba(0,0,0,.25);cursor:pointer;transition:background .15s,border-color .15s}
+.casino-page [data-casino-live]:hover{background:linear-gradient(160deg,#84313b,#501c27);border-color:#dfb574}
+.casino-page [data-casino-live]:focus-visible{outline:2px solid #f3cf97;outline-offset:4px}
+.casino-page .casino-chapter-launch{max-width:760px;margin:28px auto 32px;gap:16px}
+.casino-page .casino-chapter-launch [data-casino-live]{width:100%;margin:0}
+.casino-page .casino-chapter-launch p{max-width:60ch;margin:0 auto;color:#c9b8a9;font-size:13px;line-height:1.65}
+@media(max-width:360px){.casino-entry .hplay-campaign-body>strong{font-size:24px}.casino-intro{grid-template-columns:120px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.casino-page [data-casino-live]{transition:none}}

@@ -16,8 +16,8 @@ for(const name of ['campagne','scenario-1','scenario-2','scenario-3']){
 }
 for(const p of ['index.html','en.html']){
   const html=await readFile(path.join(dir,p),'utf8');
-  assert.equal(html.split('heritage-casino-v91.js?v=v91.2-casino-heritage').length-1,1,`duplicate Casino runtime in ${p}`);
-  assert.equal(html.split('heritage-casino-v91.css?v=v91.2-casino-heritage').length-1,1,`duplicate Casino style in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.js?v=v91.3-casino-heritage').length-1,1,`duplicate Casino runtime in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.css?v=v91.3-casino-heritage').length-1,1,`duplicate Casino style in ${p}`);
   assert.ok(html.indexOf('heritage-play-v13-7.js')<html.indexOf('heritage-casino-v91.js'),`Casino script before Heritage in ${p}`);
 }
 console.log('CASINO v91 checks passed — artwork, isolated navigation, no secret stories, server-backed campaign launch');
