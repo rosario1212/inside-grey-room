@@ -1,0 +1,41 @@
+name: Publish CARTEL Mexico canon
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-cartel-mexico-canon-once.yml'
+permissions:
+  contents: read
+concurrency:
+  group: cloudflare-cartel-mexico-canon-20261018
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'ops/deploy-cartel-mexico-canon-20261018'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Verify Cloudflare token
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: test -n "$CF_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN"; exit 1; }
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Build and validate CARTEL Mexican narrative
+        run: |
+          npm run build
+          node scripts/cartel-mexico-world-check.mjs
+          node scripts/cartel-posters-check.mjs dist
+          node scripts/public-access-check.mjs
+      - name: Deploy current main to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx --yes wrangler@4.102.0 deploy
