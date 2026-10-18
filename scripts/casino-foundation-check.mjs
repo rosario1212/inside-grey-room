@@ -23,7 +23,7 @@ assert.strictEqual(applyCasinoCommand(s,hand),s);
 reject({...hand,payload:{handId:'hand-1',net:{mei:-50,gao:50}}},'idempotency_key_conflict');
 reject({id:'poker-bad',actor:'system',type:'SETTLE_POKER',payload:{handId:'hand-2',net:{mei:-2000,gao:2000}}},'insufficient_chips');
 // Accord oral followed by signed entry in the register, then betrayal
-const contract={recordId:'contract-1',participants:['mei','gao'],kind:'territory',visibility:'private',terms:'Droit de revendication sur une concession, sans transfert immédiat.'};
+const contract={recordId:'contract-1',participants:['mei','gao'],kind:'alliance',visibility:'private',terms:'Convention entre les deux parties.'};
 doIt('agreement','mei','PROPOSE_AGREEMENT',contract);
 assert.equal(casinoView(s,'zhou').agreements.length,0);
 assert.equal(casinoView(s,'gao').agreements.length,1);

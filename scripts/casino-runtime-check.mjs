@@ -77,6 +77,49 @@ await test('infiltration reports are playable only by real undercover roles, nev
  assert.equal(viewRuntime(s,'p2').successionWagers.p1.to,'p2');
  assert.equal(viewRuntime(s,'p3').successionWagers.p0.status,'signed');
 });
+await test('succession requires independent supporters, self-loyalty is rejected and a lone faction is not a split',()=>{
+ let s=initial();s=command(s,'p0','CLAIM_SUCCESSION');
+ assert.throws(()=>command(s,'p0','PLEDGE_LOYALTY',{to:'p0'}),/invalid_loyalty/);
+ s=command(s,'p0','SPLIT_FACTION',{name:'Branche contestée'});
+ s=chapterTwo(s);
+ for(let i=0;i<4;i++)s=command(s,'p0','ADVANCE_PHASE');
+ s=command(s,'p0','FINISH_CAMPAIGN');
+ assert.equal(s.finale.successor,null);assert.equal(s.finale.split,null);
+ assert.equal(s.finale.political,'dragon_retained');
+ let t=initial();t=command(t,'p0','CLAIM_SUCCESSION');t=command(t,'p1','PLEDGE_LOYALTY',{to:'p0'});
+ t=chapterTwo(t);for(let i=0;i<4;i++)t=command(t,'p0','ADVANCE_PHASE');
+ t=command(t,'p0','FINISH_CAMPAIGN');assert.equal(t.finale.successor,'p0');
+});
+await test('analyst evaluates existing documents without manufacturing court evidence',()=>{
+ let s=initial({undercoverIds:['p3']});s=command(s,'p3','REPORT_INTEL',{subjectId:'p1',text:'Observation fictive.'});
+ const id=s.intel[0].id,before=s.evidence.length;
+ assert.throws(()=>command(s,'p0','REVIEW_INTEL',{reportId:id,evidenceIds:['proof0'],confirmed:true,reasoning:'Concordance.'}),/unauthorized_role/);
+ s=command(s,'analyst','REVIEW_INTEL',{reportId:id,evidenceIds:['proof0'],confirmed:true,reasoning:'Pièce d’archive vérifiée.'});
+ assert.equal(s.evidence.length,before);assert.equal(viewRuntime(s,'agent').intel[0].checked,true);
+ assert.equal(viewRuntime(s,'p0').intel,undefined);
+ assert.throws(()=>command(s,'analyst','REVIEW_INTEL',{reportId:id,evidenceIds:['proof0'],confirmed:true,reasoning:'Encore.'}),/intel_already_reviewed/);
+});
+await test('host recovery only after extraordinary deadline without borrowing a missing role',()=>{
+ let s=finishPoker(initial());s=command(s,'p0','ADVANCE_PHASE',{},60000);s=command(s,'p0','ADVANCE_PHASE',{},120000);
+ assert.throws(()=>command(s,'p0','HOST_AUTHORIZE_CONTINUITY',{},240000),/continuity_not_available/);
+ s=tickRuntime(s,240000);assert(s.fallbackReady);
+ s=command(s,'p0','HOST_AUTHORIZE_CONTINUITY',{},300000);
+ assert(s.roomLocated);s=command(s,'p0','ADVANCE_PHASE',{},300000);assert.equal(s.chapter,2);
+});
+await test('court continuity respects independent evidence and unanswered defence presumption',()=>{
+ let s=chapterTwo(initial({judge:true}));
+ s.evidence[0].facts=['act'];s.evidence[1].facts=['act'];
+ s=command(s,'investigator','OPEN_HEARING',{subjectId:'p1',evidenceIds:['proof0','proof1'],offence:'infraction fictive',accusation:'Contradiction à examiner.'});
+ const hearingId=s.hearings[0].id;
+ for(let i=0;i<4;i++)s=command(s,'p0','ADVANCE_PHASE');
+ const at=s.phaseStartedAt;
+ assert.throws(()=>command(s,'p0','HOST_CLOSE_ABSENT_HEARING',{hearingId},at+240000),/defence_continuity_unavailable/);
+ s=command(s,'p0','HOST_CLOSE_ABSENT_HEARING',{hearingId},at+300000);
+ assert.throws(()=>command(s,'judge','RULING',{hearingId,decision:'convict',reasoning:'Non recevable.'}),/judicial_elements_not_established/);
+ s=command(s,'p0','HOST_COURT_CONTINUITY',{},at+300000);
+ assert.equal(s.rulings.at(-1).decision,'acquit');
+ s=command(s,'p0','FINISH_CAMPAIGN');assert.equal(s.status,'finished');
+});
 await test('slot paytable, bank escrow and no duplicate/client-forged payout',()=>{
  let s=finishPoker(initial());s=command(s,'p0','ADVANCE_PHASE',{},60000);
  const total=s.casinoBank+players.reduce((n,p)=>n+s.roster[p].chips,0);
@@ -89,7 +132,7 @@ await test('slot paytable, bank escrow and no duplicate/client-forged payout',()
 await test('private signatures, betrayal penalty, threshold-free claim and territory transfer',()=>{
  let s=finishPoker(initial());s.roster.p0.legitimacy=0;s.roster.p0.reputation=0;
  s=command(s,'p0','CLAIM_SUCCESSION');assert.equal(s.claims[0].id,'p0');
- s=command(s,'p0','PROPOSE_AGREEMENT',{recordId:'contract',participants:['p0','p1'],kind:'territory',visibility:'private',terms:'Convention fictive.'});
+ s=command(s,'p0','PROPOSE_AGREEMENT',{recordId:'contract',participants:['p0','p1'],kind:'territory',territoryId:'t1',visibility:'private',terms:'Convention fictive.'});
  assert.equal(viewRuntime(s,'p2').agreements.length,0);
  s=command(s,'p1','SIGN_AGREEMENT',{recordId:'contract'});
  s=command(s,'p1','CLAIM_TERRITORY',{territoryId:'t1'});

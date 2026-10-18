@@ -105,12 +105,13 @@ export function applyCasinoCommand(current, command) {
     case 'PROPOSE_AGREEMENT': {
       requireActive(s, actor);
       requireChapter(s, 1);
-      const { recordId, participants, kind, visibility, terms } = payload;
+      const { recordId, participants, kind, visibility, terms, territoryId } = payload;
       validateRecordId(s, recordId, id, type);
       ensure(Array.isArray(participants) && participants.length >= 2 && unique(participants) && participants.includes(actor) && participants.every(p => s.players.includes(p)), 'invalid_agreement_parties');
       ensure(AGREEMENT_KINDS.has(kind) && ['public','private'].includes(visibility) && compact(terms, 1000), 'invalid_agreement');
       ensure(!s.agreements[recordId], 'agreement_exists');
-      s.agreements[recordId] = { id: recordId, participants, kind, visibility, terms, signatures: [actor], status:'pending', breachedBy:[] };
+      if(kind==='territory')ensure(typeof territoryId==='string'&&!!s.territories?.[territoryId],'territory_agreement_requires_asset');
+      s.agreements[recordId] = { id: recordId, participants, kind, visibility, terms, ...(kind==='territory'?{territoryId}:{}), signatures: [actor], status:'pending', breachedBy:[] };
       break;
     }
     case 'SIGN_AGREEMENT': {
@@ -160,7 +161,7 @@ export function applyCasinoCommand(current, command) {
     }
     case 'JOIN_SPLIT': {
       requireActive(s, actor);
-      ensure(s.splitClaim && actor !== s.splitClaim.founder && !s.splitClaim.acceptedSupporters.includes(actor), 'not_joinable');
+      ensure(s.splitClaim && s.roster[actor]?.status==='free' && actor !== s.splitClaim.founder && !s.splitClaim.acceptedSupporters.includes(actor), 'not_joinable');
       s.splitClaim.acceptedSupporters.push(actor);
       break;
     }
@@ -169,7 +170,7 @@ export function applyCasinoCommand(current, command) {
       requireChapter(s, 1);
       ensure(s.undercoverIds.includes(actor), 'not_undercover');
       ensure(compact(payload.text, 1000) && compact(payload.subjectId, 80) && s.roster[payload.subjectId] && payload.subjectId !== actor, 'invalid_intelligence');
-      s.intel.push({ id, from:actor, text:payload.text, subjectId:payload.subjectId, checked:false });
+      s.intel.push({ id, from:actor, text:payload.text, subjectId:payload.subjectId, checked:false, reviewedBy:null, evidenceIds:[], reasoning:null });
       break;
     }
     case 'AGENT_DECISION': {
@@ -267,7 +268,7 @@ export function casinoView(state, viewer) {
     agreements:deepCopy(agreements), claims:deepCopy(state.claims), namedSuccessor:state.namedSuccessor, splitClaim:deepCopy(state.splitClaim) };
   if (casino) return { ...shared, camp:'casino', ownUndercoverBrief:state.undercoverIds.includes(viewer) ? { mission:'observer_rapporter' } : undefined,
     ownPrisonMessages:deepCopy(state.captured.filter(m=>m.from===viewer)) };
-  return { ...shared, camp:'bureau', role, intel:deepCopy(state.intel.map(({id,text,subjectId,checked})=>({id,text,subjectId,checked}))),
+  return { ...shared, camp:'bureau', role, intel:deepCopy(state.intel.map(({id,text,subjectId,checked,reviewedBy,evidenceIds,reasoning})=>({id,text,subjectId,checked,reviewedBy,evidenceIds,reasoning}))),
     evidence:deepCopy(state.evidence), requests:deepCopy(state.interpellationRequests), agentProgress:state.agentDecisions.map(d=>({index:d.index,correct:d.correct})), roomLocated:state.roomLocated };
 }
 
