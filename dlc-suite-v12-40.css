@@ -204,13 +204,13 @@ body.igr-theme-regime .confirm-panel-v10-13 input{background:#091016!important;c
   .cartel-scenario .scenario-body.compact h3{font-size:1rem!important}
 }
 
-/* CARTEL 029–031: show the square original poster without the 9:16 black
+/* CARTEL 029–031: 3:4 full-bleed poster crop, avoiding the 9:16 black
    letterboxing inherited from the portrait TERREUR confirmation layout. */
 body.igr-theme-cartel .confirm-panel-v10-13 .confirm-art img{
   display:block!important;
   width:100%!important;
   height:auto!important;
-  aspect-ratio:1 / 1!important;
+  aspect-ratio:3 / 4!important;
   max-height:none!important;
   object-fit:cover!important;
   object-position:center!important;
