@@ -4,16 +4,21 @@ import path from 'node:path';
 
 const dir=path.resolve(process.argv[2]||'dist');
 const posters=[
- ['029','LE CYCLE MORT'],
- ['030','LA COUR ACHETÉE'],
- ['031','LA DETTE']
+ ['029','LE CYCLE MORT',115],
+ ['030','LA COUR ACHETÉE',90],
+ ['031','LA DETTE',115]
 ];
-for(const [id,title] of posters){
+for(const [id,title,cropTop] of posters){
  const file=path.join(dir,'assets',`cartel-${id}-poster-v2.svg`);
  const svg=await readFile(file,'utf8');
  assert(svg.startsWith('<svg '),`Poster ${id} must be an SVG`);
  assert(svg.includes('width="724" height="960"'),`Poster ${id} must have the 3:4 portrait ratio`);
  assert(svg.includes('data:image/webp;base64,'),`Poster ${id} is missing the approved illustration`);
+ assert(svg.includes(`viewBox="0 ${cropTop} 724 ${560-cropTop}"`),`Poster ${id} must use a text-free source crop`);
+ assert(svg.includes('preserveAspectRatio="xMidYMid slice"'),`Poster ${id} must crop away original embedded lettering`);
+ assert(svg.includes('<rect width="724" height="210" fill="#080503"/>'),`Poster ${id} lacks opaque masthead backdrop`);
+ assert(svg.includes('<rect y="585" width="724" height="375" fill="url(#bottomShade)"/>'),`Poster ${id} lacks continuous lower photo fade`);
+ assert(!svg.includes('<image x="0" y="0" width="724" height="724" href="data:image/webp;base64,'),`Poster ${id} exposes old uncropped source typography`);
  assert(svg.includes('>INSIDE GREY ROOM</text>'),`Poster ${id} missing aligned masthead`);
  assert(svg.includes('>CARTEL</text>'),`Poster ${id} missing collection title`);
  assert(svg.includes('>DOSSIER</text>'),`Poster ${id} missing single dossier label`);
@@ -28,6 +33,6 @@ for(const [id,title] of posters){
 const runtime=await readFile(path.join(dir,'dlc-suite-v12-37.js'),'utf8');
 assert(!runtime.includes('igr-cartel-poster-index'),'Obsolete HTML number overlay remains');
 for(const [id] of posters){
- assert(runtime.includes(`assets/cartel-${id}-poster-v2.svg?v=v20261018-cartel-gilded-v5`),`Poster ${id} has stale asset URL`);
+ assert(runtime.includes(`assets/cartel-${id}-poster-v2.svg?v=v20261018-cartel-clean-scene-v6`),`Poster ${id} has stale asset URL`);
 }
 console.log('CARTEL luxury poster assets validated: 029, 030, 031');
