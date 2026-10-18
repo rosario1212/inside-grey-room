@@ -121,3 +121,5 @@ jobs:
           node scripts/public-access-check.mjs
       - name: Validate Cloudflare Worker package
         run: npx --yes wrangler@4.102.0 deploy --dry-run --outdir .wrangler-dry-run
+      - name: Exercise actual Cloudflare request semantics
+        run: npx --yes --package=wrangler@4.102.0 -c 'node scripts/casino-worker-runtime-check.mjs'

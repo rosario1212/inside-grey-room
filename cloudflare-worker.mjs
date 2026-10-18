@@ -45,7 +45,10 @@ async function casino(req){
    if(bytes>16384){await reader.cancel();return error('request_too_large',413)}body+=decoder.decode(part.value,{stream:true});}
   body+=decoder.decode();
   const upstream=await fetch('https://jtasbdiguhiswoyvobkn.supabase.co/functions/v1/casino-runtime',{
-   method:'POST',headers:{'Content-Type':'application/json'},body,redirect:'error'});
+   method:'POST',headers:{'Content-Type':'application/json'},body,redirect:'manual'});
+  // Workerd accepts manual/follow. Never follow a redirect carrying a player's
+  // capability to a different origin, or forward its Location to the browser.
+  if(upstream.status>=300&&upstream.status<400)return error('casino_service_unavailable',503);
   return new Response(upstream.body,{status:upstream.status,headers});
  }catch{return error('casino_service_unavailable',503)}
 }
