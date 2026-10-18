@@ -24,9 +24,9 @@
   ];
 
   const ART=Object.freeze({
-    '029':'assets/cartel-029-le-cycle-mort.webp?v=12.37-final',
-    '030':'assets/cartel-030-la-cour-achetee.webp?v=12.37-final',
-    '031':'assets/cartel-031-la-dette.webp?v=12.37-final',
+    '029':'assets/cartel-029-le-cycle-mort.webp?v=v20261018-cartel-approved',
+    '030':'assets/cartel-030-la-cour-achetee.webp?v=v20261018-cartel-approved',
+    '031':'assets/cartel-031-la-dette.webp?v=v20261018-cartel-approved',
     '032':'assets/regime-032-les-archives-du-palais.webp?v=12.37-final',
     '033':'assets/regime-033-la-dynastie.webp?v=12.37-final',
     '034':'assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
