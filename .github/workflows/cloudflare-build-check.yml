@@ -96,6 +96,8 @@ jobs:
         run: node scripts/v101-omerta-branch-check.mjs
       - name: Audit v102 private role-specific clue visibility
         run: node scripts/v102-role-simulator-check.mjs
+      - name: Reject unverified variant proof sources
+        run: node scripts/v103-proof-release-check.mjs
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
       - name: Validate private access before Cloudflare packaging
