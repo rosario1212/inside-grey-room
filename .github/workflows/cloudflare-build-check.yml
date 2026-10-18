@@ -90,6 +90,8 @@ jobs:
         run: node scripts/v90-private-variant-check.mjs --self-test
       - name: Verify confidential variant staging and bundle exclusion
         run: node scripts/v99-private-release-check.mjs
+      - name: Audit v100 private variant preview release barriers
+        run: node scripts/v100-private-preview-check.mjs
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
       - name: Validate private access before Cloudflare packaging
