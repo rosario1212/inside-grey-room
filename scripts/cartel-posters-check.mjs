@@ -7,7 +7,7 @@ for(const id of ['029','030','031']){
  const svg=await readFile(file,'utf8');
  assert(svg.startsWith('<svg '),`Poster ${id} is not an SVG`);
  assert(svg.includes('data:image/webp;base64,'),`Poster ${id} missing approved embedded artwork`);
- assert(svg.includes('>${id}</text>'),`Poster ${id} missing visible gold number`);
+ assert(svg.includes(`>${id}</text>`),`Poster ${id} missing visible gold number`);
  assert(svg.includes('>DOSSIER</text>'),`Poster ${id} missing dossier label`);
  assert((await stat(file)).size>60000,`Poster ${id} is incomplete`);
 }
