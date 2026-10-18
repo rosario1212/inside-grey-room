@@ -18,6 +18,8 @@ for(const [,id,title,short,context] of entries){
   assert(title.length>0);
 }
 assert(src.includes("Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries([...CARTEL,...REGIME].map(sc=>[sc.id,sc.short])))"),'Lobby must receive the public CARTEL summary');
+assert(src.includes("if(window.IGR_LOCALE==='en')"),'English edition must carry the Mexico narrative');
+for(const id of ['029','030','031'])assert(src.includes("'"+id+"':{short:'"),'English synopsis missing for '+id);
 assert(lore.includes('**entièrement au Mexique**'),'Mexico-only canon missing');
 assert(lore.includes('**future**'),'Pressure mechanic must be explicitly non-active');
 assert(lore.includes('Zéro fuite'),'Variant secrecy policy missing');
