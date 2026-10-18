@@ -391,7 +391,7 @@ export function viewRuntime(state,viewer){
     const phase=i<2?1:i<4?2:3;
     return state.chapter===1&&state.phase===phase&&i===state.agentDecisions.length?[{index:i+1,question:q.question,options:q.options}]:[];
   }):[];
-  const corruption=state.corruption.filter(o=>o.from===viewer||o.to===viewer);
+  const corruption=state.corruption.filter(o=>o.from===viewer||o.to===viewer||o.disclosed);
   return {...base,status:state.status,viewer:viewer,isHost:viewer===state.hostId,name:member.name,
     ...(role?{evidence:state.evidence.map(({id,subjectId,sourceId,description,offence,independenceGroup})=>({id,subjectId,sourceId,description,offence,independenceGroup})),
       dossiers:(state.privateCanon.publicDossiers||[]).map(d=>({subjectId:resolveId(state,d.subjectId),title:d.title,context:render(state,d.context)}))}:{}),
@@ -417,5 +417,24 @@ export function viewRuntime(state,viewer){
       Date.now()-state.phaseStartedAt>=state.privateCanon.minimumSocialMs*3,
     hostCanCloseCourt:viewer===state.hostId&&state.chapter===3&&state.phase===2&&!!state.bureau.judge&&
       state.hearings.some(h=>h.defence!==null&&!state.rulings.some(r=>r.hearingId===h.id)),
-    finale:state.finale?{...state.finale,organigram:role?state.finale.organigram:undefined}:null};
+    finale:state.finale?{...state.finale,organigram:role?state.finale.organigram:undefined,
+      personalOutcome:player?{
+        status:state.roster[viewer].status,
+        reputation:state.roster[viewer].reputation,
+        influence:state.roster[viewer].influence,
+        legitimacy:state.roster[viewer].legitimacy,
+        chips:state.roster[viewer].chips,
+        territories:territoryCount(state,viewer),
+        allies:independentSupporters(state,viewer),
+        claimant:state.claims.some(c=>c.id===viewer),
+        successor:state.finale.successor===viewer,
+        dissident:state.splitClaim?.founder===viewer||state.splitClaim?.acceptedSupporters?.includes(viewer),
+        undercover:state.undercoverIds.includes(viewer)
+      }:{
+        role,verifiedReports:state.intel.filter(i=>i.reviewedBy===viewer).length,
+        mappedRelations:state.organigram.length,
+        totalHearings:state.hearings.length,
+        rulings:state.rulings.length
+      }
+    }:null};
 }
