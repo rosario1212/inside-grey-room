@@ -24,9 +24,9 @@
   ];
 
   const ART=Object.freeze({
-    '029':'assets/cartel-029-poster-v2.svg?v=v20261018-cartel-poster-v2',
-    '030':'assets/cartel-030-poster-v2.svg?v=v20261018-cartel-poster-v2',
-    '031':'assets/cartel-031-poster-v2.svg?v=v20261018-cartel-poster-v2',
+    '029':'assets/cartel-029-poster-v2.svg?v=v20261018-cartel-crisp-v3',
+    '030':'assets/cartel-030-poster-v2.svg?v=v20261018-cartel-crisp-v3',
+    '031':'assets/cartel-031-poster-v2.svg?v=v20261018-cartel-crisp-v3',
     '032':'assets/regime-032-les-archives-du-palais.webp?v=12.37-final',
     '033':'assets/regime-033-la-dynastie.webp?v=12.37-final',
     '034':'assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'

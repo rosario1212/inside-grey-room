@@ -9,6 +9,8 @@ for(const id of ['029','030','031']){
  assert(svg.includes('data:image/webp;base64,'),`Poster ${id} missing approved embedded artwork`);
  assert(svg.includes(`>${id}</text>`),`Poster ${id} missing visible gold number`);
  assert(svg.includes('>DOSSIER</text>'),`Poster ${id} missing dossier label`);
+ assert(svg.includes('font-size="52"'),`Poster ${id} lacks crisp large numerals`);
+ assert(!svg.includes('filter="url(#shadow)"'),`Poster ${id} still blurs text with a shadow filter`);
  assert((await stat(file)).size>60000,`Poster ${id} is incomplete`);
 }
 const runtime=await readFile(path.join(dir,'dlc-suite-v12-37.js'),'utf8');
