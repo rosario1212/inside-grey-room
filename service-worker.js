@@ -1,9 +1,9 @@
-const CACHE='igr-v36-8-cartel-clean-scene-v6';
+const CACHE='igr-v36-9-entry-monochrome';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
   '/gameplay-flow-v13.css?v=v13.2-final','/dlc-experience-v13.css?v=v13.2-final','/lobby-ui-fix-v13.css?v=v13.2-lobby-fix',
-  '/startup-stability-v13-3.css?v=v13.8-dual-play','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
+  '/startup-stability-v13-3.css?v=20261018-neutral-entry-v2','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
   '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=v12.28-omerta','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
   '/omerta-v12-40.css?v=v12.41-uniform-dlc','/terror-v12-40.css?v=v12.41-uniform-dlc','/dlc-suite-v12-40.css?v=v20261018-cartel-clean-scene-v6','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
