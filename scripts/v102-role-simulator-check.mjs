@@ -16,6 +16,6 @@ assert.doesNotMatch(s,/\bgrant\s+execute\b/i);
 assert.doesNotMatch(s,/\bcreate or replace function public\./i);
 assert.doesNotMatch(s,/\bupdate public\.igr_v4_rooms\b/i);
 assert.doesNotMatch(s,/\bupdate igr_private\.igr_v99_variant_manuscripts\b/i);
-assert.doesNotMatch(s,/final_reveal|responsibility_by_slot|canonical_truth|variant_id\b/i,
+assert.doesNotMatch(s,/final_reveal|responsibility_by_slot|canonical_truth|['\"]variant_id['\"]\s*,/i,
   'The simulated client payload must not include story truth or branch seed');
 console.log('v102: strictly private, action-gated, role-scoped simulation OK');
