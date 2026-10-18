@@ -18,7 +18,7 @@ for(const [id,title,cropTop] of posters){
  assert(svg.includes('preserveAspectRatio="xMidYMid slice"'),`Poster ${id} must crop away original embedded lettering`);
  assert(svg.includes('<rect width="724" height="210" fill="#080503"/>'),`Poster ${id} lacks opaque masthead backdrop`);
  assert(svg.includes('<rect y="585" width="724" height="375" fill="url(#bottomShade)"/>'),`Poster ${id} lacks continuous lower photo fade`);
- assert(!svg.includes('<image x="0" y="0" width="724" height="724" href="data:image/webp;base64,'),`Poster ${id} exposes old uncropped source typography`);
+ assert(svg.includes('<svg x="0" y="180" width="724" height="575"'),`Poster ${id} lacks cropped scene viewport`);
  assert(svg.includes('>INSIDE GREY ROOM</text>'),`Poster ${id} missing aligned masthead`);
  assert(svg.includes('>CARTEL</text>'),`Poster ${id} missing collection title`);
  assert(svg.includes('>DOSSIER</text>'),`Poster ${id} missing single dossier label`);
