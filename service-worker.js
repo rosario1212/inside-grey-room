@@ -1,9 +1,9 @@
-const CACHE='igr-v37-1-cartel-mexico-canon-v1';
+const CACHE='igr-v38-0-intro-cinematic-v16';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
   '/gameplay-flow-v13.css?v=v13.2-final','/dlc-experience-v13.css?v=v13.2-final','/lobby-ui-fix-v13.css?v=v13.2-lobby-fix',
-  '/startup-stability-v13-3.css?v=20261018-approved-scene-v15','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
+  '/startup-stability-v13-3.css?v=20261018-cinematic-v16','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
   '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=v12.28-omerta','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
   '/omerta-v12-40.css?v=v12.41-uniform-dlc','/terror-v12-40.css?v=v12.41-uniform-dlc','/dlc-suite-v12-40.css?v=v20261018-cartel-cell-gold-v7','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
@@ -19,7 +19,7 @@ const SHELL=[
   '/omerta-v12.js?v=v12.24-omerta','/omerta-polish-v12.js?v=v12.28-omerta','/omerta-hotfix-v12.js?v=v12.28-omerta','/role-tree-polish-v12-29.js?v=v12.29-role-tree','/omerta-v12-30.js?v=v12.32-omerta-final',
   '/omerta-v12-39.js?v=v12.45-choice-copy','/terror-v12-37.js?v=v56-dlc-posters','/dlc-suite-v12-37.js?v=v20261018-cartel-mexico-canon-v1','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=v12.46-copy',
   '/manifest.webmanifest','/privacy.html','/terms.html','/delete-account.html','/support.html',
-  '/assets/intro-v10-15.webp?v=20261018-intro-v15','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png',
+  '/assets/intro-v10-16.webp?v=20261018-intro-v16','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png',
   '/assets/heritage-cendres-01-personne-n-existe.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-02-04-17.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-03-la-chambre.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-04-cendres.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-05-point-zero.webp?v=v13.6-heritage-premium',
   '/assets/heritage-kuroi-01-l-oyabun.webp?v=v13.6-heritage-premium','/assets/heritage-kuroi-02-giri.webp?v=v13.6-heritage-premium','/assets/heritage-kuroi-03-les-mains-sales.webp?v=v13.6-heritage-premium','/assets/heritage-kuroi-04-la-dette.webp?v=v13.6-heritage-premium','/assets/heritage-kuroi-05-le-conseil.webp?v=v13.6-heritage-premium',
   '/assets/heritage-maitre-01-le-client-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-02-le-deal-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-03-deux-choix-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-04-le-proces-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-05-l-honneur-final.webp?v=v34.9-maitre-theme-posters',
