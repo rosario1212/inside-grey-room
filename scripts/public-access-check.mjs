@@ -27,7 +27,7 @@ const realFetch=globalThis.fetch;let casinoCalls=0;
 try{
  globalThis.fetch=async(endpoint,init)=>{
   casinoCalls++;assert.equal(endpoint,'https://jtasbdiguhiswoyvobkn.supabase.co/functions/v1/casino-runtime');
-  assert(!('X-IGR-Private-Code' in init.headers));assert.equal(init.redirect,'error');
+  assert(!('X-IGR-Private-Code' in init.headers));assert.equal(init.redirect,'manual');
   assert.equal(await new Response(init.body).text(),'{"op":"sync"}');
   return new Response('{"error":"invalid_session_token"}',{status:403});
  };
