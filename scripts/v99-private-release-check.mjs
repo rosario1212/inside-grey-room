@@ -9,6 +9,13 @@ assert.match(sql,/enable row level security/i);
 assert.match(sql,/revoke all on table igr_private\.igr_v99_variant_manuscripts from public,anon,authenticated/i);
 assert(!/\bgrant\s+(select|execute|usage)\s+on[\s\S]+?\bto\s+(anon|authenticated|public)\b/i.test(sql),
   'No public access to author manuscripts');
+const pinSql=await readFile('supabase/migrations/20261018043500_v99_private_room_canon_pin.sql','utf8');
+assert.match(pinSql,/create table if not exists igr_private\.igr_v99_room_canons/i);
+assert.match(pinSql,/enable row level security/i);
+assert.match(pinSql,/revoke all on table igr_private\.igr_v99_room_canons from public, anon, authenticated/i);
+assert.match(pinSql,/revoke all on function igr_private\.igr_v99_pin_room_canon\(text\) from public,anon,authenticated/i);
+assert.match(pinSql,/revoke all on function igr_private\.igr_v99_pinned_room_canon\(text\) from public,anon,authenticated/i);
+assert(!/\bgrant\s+execute\s+on\s+function\s+igr_private\.igr_v99_pin_room_canon/i.test(pinSql),'Room canon pin must never be granted to clients');
 assert(!sql.match(/\b(update|insert)\s+(?:into\s+)?public\.igr_v4_scenario_packs\b/i),
   'An editorial schema migration may not replace production packs');
 const dist='dist';
