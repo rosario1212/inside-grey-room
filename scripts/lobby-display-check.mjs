@@ -76,7 +76,7 @@ try{
   const scope={};
   vm.runInNewContext(sw.slice(0,sw.indexOf('];')+2)+';globalThis.shell=SHELL;globalThis.cache=CACHE;',scope);
   shell=scope.shell;
-  assert(shell.some(url=>url.startsWith('/assets/intro-v10-15.webp')),'The approved v15 doorway must be available offline before the first home visit');
+  assert(shell.some(url=>url.startsWith('/assets/intro-v10-16.webp')),'The approved v16 doorway must be available offline before the first home visit');
   const data={window:{}};
   vm.runInNewContext(await read('heritage-maitre-data-v34.js'),data);
   vm.runInNewContext(await read('heritage-maitre-assets-v34.js'),data);
