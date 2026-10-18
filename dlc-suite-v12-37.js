@@ -37,12 +37,12 @@
 
   for(const sc of [...CARTEL,...REGIME])if(!SCENARIOS.some(x=>x.id===sc.id))SCENARIOS.push(sc);
   Object.assign(SCENARIO_ROLES,{
-    '029':{required:['Enquêteur','Analyste','3 suspects’],optional:['Avocat','Procureur','2e Avocat']},
-    '030':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects’],optional:['Avocat','Journaliste']},
-    '031':{required:['Enquêteur','Analyste','3 suspects’,'Avocat'],optional:['Procureur','Témoin']},
-    '032':{required:['Enquêteur','Analyste','Procureur','3 suspects’],optional:['Juge','Témoin']},
-    '033':{required:['Enquêteur','Analyste','Juge','3 suspects’],optional:['Procureur','Témoin']},
-    '034':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects’],optional:['Témoin','Journaliste']}
+    '029':{required:['Enquêteur','Analyste','3 suspects'],optional:['Avocat','Procureur','2e Avocat']},
+    '030':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Avocat','Journaliste']},
+    '031':{required:['Enquêteur','Analyste','3 suspects','Avocat'],optional:['Procureur','Témoin']},
+    '032':{required:['Enquêteur','Analyste','Procureur','3 suspects'],optional:['Juge','Témoin']},
+    '033':{required:['Enquêteur','Analyste','Juge','3 suspects'],optional:['Procureur','Témoin']},
+    '034':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Témoin','Journaliste']}
   });
   Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries([...CARTEL,...REGIME].map(sc=>[sc.id,sc.short])));
   // The English edition loads before this DLC; keep the public Mexican canon bilingual.
