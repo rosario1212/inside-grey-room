@@ -36,6 +36,8 @@ jobs:
           node scripts/private-access-check.mjs
       - name: Validate narrative permissions before release
         run: node scripts/v87-narrative-check.mjs
+      - name: Guard private narrative manuscripts before release
+        run: node scripts/v99-private-release-check.mjs
       - name: Gameplay stability regression guard
         run: node scripts/gameplay-stability-check.mjs
       - name: Upload deployable bundle
