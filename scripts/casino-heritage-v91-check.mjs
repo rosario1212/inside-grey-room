@@ -10,14 +10,28 @@ assert.match(j,/launchReady:true/);assert.match(j,/data-casino-live>JOUER LA CAM
 assert.match(j,/data-casino-nav/);assert.match(j,/hplay-hub-grid/);
 assert.doesNotMatch(j,/18[,.]4|Sang du Dragon|Double Livre|Pacte Brisé|answerKey|CREATE\s+POLICY/);
 assert.match(c,/\.casino-page/);
+assert.match(j,/class="casino-chapter-stage"/,'Chapter posters must sit alongside the narrative');
+assert.match(j,/class="casino-launch casino-chapter-launch"/,'Chapter launch needs an isolated spaced container');
+assert.match(j,/class="casino-action casino-launch-button" type="button" data-casino-live/,'Both launch CTAs must share the premium style');
+assert.doesNotMatch(j,/class="btn primary casino-action"/,'The generic white primary button must not override Casino');
+assert.match(c,/CASINO cinematic poster finish v91\.3/);
+assert.match(c,/--casino-burgundy:#651d29/);
+assert.match(c,/--casino-ivory:#f7ecdc/);
+assert.match(c,/--casino-metal:#bc965a/);
+assert.match(c,/\.casino-page \.casino-chapter-stage/);
+assert.match(c,/\.casino-page \.casino-launch \.casino-launch-button/);
+assert.match(c,/\.casino-page \.casino-dossier-poster/);
+assert.match(c,/@media\(max-width:650px\)/);
+assert.doesNotMatch(c,/object-fit:\s*cover\s*!important/,'Artwork must never be cropped');
+
 for(const name of ['campagne','scenario-1','scenario-2','scenario-3']){
   const p=path.join(dir,'assets/casino',name+'.webp'),buf=await readFile(p);
   assert.equal(buf.toString('ascii',0,4),'RIFF');assert.equal(buf.toString('ascii',8,12),'WEBP');
 }
 for(const p of ['index.html','en.html']){
   const html=await readFile(path.join(dir,p),'utf8');
-  assert.equal(html.split('heritage-casino-v91.js?v=v91.2-casino-heritage').length-1,1,`duplicate Casino runtime in ${p}`);
-  assert.equal(html.split('heritage-casino-v91.css?v=v91.2-casino-heritage').length-1,1,`duplicate Casino style in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.js?v=v91.3-casino-cinema').length-1,1,`duplicate Casino runtime in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.css?v=v91.3-casino-cinema').length-1,1,`duplicate Casino style in ${p}`);
   assert.ok(html.indexOf('heritage-play-v13-7.js')<html.indexOf('heritage-casino-v91.js'),`Casino script before Heritage in ${p}`);
 }
 console.log('CASINO v91 checks passed — artwork, isolated navigation, no secret stories, server-backed campaign launch');

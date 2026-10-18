@@ -2,7 +2,7 @@ import {copyFile,mkdir,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 const root=process.cwd(),dest=path.resolve(root,process.argv[2]||'dist');
-const JS='heritage-casino-v91.js',CSS='heritage-casino-v91.css',VERSION='v91.2-casino-heritage';
+const JS='heritage-casino-v91.js',CSS='heritage-casino-v91.css',VERSION='v91.3-casino-cinema';
 const images=['campagne.webp','scenario-1.webp','scenario-2.webp','scenario-3.webp'];
 for(const file of [JS,CSS,'casino-client-v105.js','casino-client-v105.css']){
   await stat(path.join(root,file));
