@@ -1,5 +1,6 @@
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import {buildCartelPosterAssets} from './build-cartel-posters.mjs';
 const root=process.cwd(),out=path.join(root,'dist');
 const runtimeFiles=[
  'index.html','en.html','styles-v11.css','polish-v12.css','ui-polish-v12.css','gameplay-flow-v13.css','dlc-experience-v13.css','lobby-ui-fix-v13.css','gameplay-clarity-v32.css','duration-modes-v35.css','startup-stability-v13-3.css','release-polish-v68.css','heritage-v13-5.css','heritage-premium-v13-6.css','heritage-play-v13-7.css','play-modes-v13-8.css','omerta-v12.css','omerta-polish-v12.css','role-tree-polish-v12-29.css','omerta-v12-30.css','omerta-v12-40.css','terror-v12-40.css','dlc-suite-v12-40.css','live-cell-v12-44.css','dlc-profile-ui-v12-44.css','dlc-invites-v12-45.css','dlc-copy-v12-46.css','premium-access-sync-v17.css',
@@ -9,6 +10,7 @@ const runtimeFiles=[
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
 async function exists(file){try{await stat(file);return true}catch{return false}}
+await buildCartelPosterAssets(root);
 await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});const searchableText=[];
 for(const name of runtimeFiles){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing web runtime file: ${name}`);const dst=path.join(out,name);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst,{recursive:true});searchableText.push(await readFile(src,'utf8'))}
 
