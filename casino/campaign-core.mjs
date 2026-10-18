@@ -170,7 +170,7 @@ export function applyCasinoCommand(current, command) {
       requireChapter(s, 1);
       ensure(s.undercoverIds.includes(actor), 'not_undercover');
       ensure(compact(payload.text, 1000) && compact(payload.subjectId, 80) && s.roster[payload.subjectId] && payload.subjectId !== actor, 'invalid_intelligence');
-      s.intel.push({ id, from:actor, text:payload.text, subjectId:payload.subjectId, checked:false });
+      s.intel.push({ id, from:actor, text:payload.text, subjectId:payload.subjectId, checked:false, reviewedBy:null, evidenceIds:[], reasoning:null });
       break;
     }
     case 'AGENT_DECISION': {
@@ -268,7 +268,7 @@ export function casinoView(state, viewer) {
     agreements:deepCopy(agreements), claims:deepCopy(state.claims), namedSuccessor:state.namedSuccessor, splitClaim:deepCopy(state.splitClaim) };
   if (casino) return { ...shared, camp:'casino', ownUndercoverBrief:state.undercoverIds.includes(viewer) ? { mission:'observer_rapporter' } : undefined,
     ownPrisonMessages:deepCopy(state.captured.filter(m=>m.from===viewer)) };
-  return { ...shared, camp:'bureau', role, intel:deepCopy(state.intel.map(({id,text,subjectId,checked})=>({id,text,subjectId,checked}))),
+  return { ...shared, camp:'bureau', role, intel:deepCopy(state.intel.map(({id,text,subjectId,checked,reviewedBy,evidenceIds,reasoning})=>({id,text,subjectId,checked,reviewedBy,evidenceIds,reasoning}))),
     evidence:deepCopy(state.evidence), requests:deepCopy(state.interpellationRequests), agentProgress:state.agentDecisions.map(d=>({index:d.index,correct:d.correct})), roomLocated:state.roomLocated };
 }
 
