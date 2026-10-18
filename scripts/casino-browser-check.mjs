@@ -152,6 +152,14 @@ try{
  await full.locator('[data-casino-form=create] input[name=name]').fill('Intégration');await full.locator('[data-casino-form=create] button').click();await full.locator('.casino-members').waitFor();
  await full.waitForTimeout(2600);assert.equal(await full.locator('.casino-members').count(),1,'Existing runtimes must not replace the Casino screen');
  await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
+ const integratedRoom=await api(full,{op:'sync'});
+ await full.evaluate(()=>{localStorage.removeItem('igr_casino_identity_v1');localStorage.removeItem('igr_social_identity_v1');goJoin()});
+ await full.locator('[data-casino-join]').waitFor();await full.locator('#joinPseudo').fill('Invité sans licence');await full.locator('#joinCode').fill(integratedRoom.inviteCode);
+ await full.locator('button[onclick*="joinRoom("]').click();await full.locator('[data-casino-form=join]').waitFor();
+ assert.equal(await full.locator('[data-casino-form=join] [name=inviteCode]').inputValue(),integratedRoom.inviteCode);
+ await full.locator('[data-casino-form=join] button').click();await full.locator('.casino-members').waitFor();
+ assert.equal(await full.locator('.casino-members li').count(),2);
+ checks.push('Accueil → Rejoindre : invitation Casino accessible à un invité sans licence Héritage');
  // Closing the page after a committed creation must retain its new recovery
  // secret even when the very first response never reached the browser.
  const interrupted=await context({width:390,height:844});

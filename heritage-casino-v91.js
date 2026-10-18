@@ -41,12 +41,17 @@ function patchHub(){const hub=$('.hplay-hub-grid')||$('.heritage-campaign-grid')
  const card=document.createElement('button');card.type='button';card.className='hplay-campaign-card casino-entry';card.dataset.casinoNav='campaign';card.innerHTML=`<img src="${poster('campagne.webp')}" alt="" loading="lazy" decoding="async"><span class="hplay-campaign-shade"></span><span class="hplay-campaign-body"><em>MACAO · TRIADES · PÈGRE INTERNATIONALE</em><strong>CASINO</strong><small>Guerre de succession, jeux, accords et enquête internationale.</small><span class="hplay-campaign-foot"><b>3 SCÉNARIOS</b><i>EXPLORER →</i></span></span>`;
  hub.appendChild(card);
 }
+function patchJoin(){const input=$('#joinCode');if(!input)return;input.maxLength=10;
+ if($('#casino-guest-entry'))return;
+ const entry=document.createElement('button');entry.id='casino-guest-entry';entry.type='button';entry.className='btn ghost block';entry.dataset.casinoLive='';entry.dataset.casinoJoin='';entry.textContent='Rejoindre une table CASINO';
+ input.closest('.panel')?.appendChild(entry);
+}
 function handleClick(event){const target=event.target.closest?.('[data-casino-nav],[data-casino-chapter]');if(!target)return;event.preventDefault();event.stopImmediatePropagation();
  if(target.dataset.casinoChapter){renderChapter(Number(target.dataset.casinoChapter));return}
  if(target.dataset.casinoNav==='hub'){if(window.IGR_HERITAGE_PLAY?.open)window.IGR_HERITAGE_PLAY.open();else window.IGR_HERITAGE?.open?.();return}
  renderCampaign();}
-let scheduled=false;function schedule(){if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;patchHub()})}
-function boot(){document.addEventListener('click',handleClick,true);const mo=new MutationObserver(schedule);mo.observe(document.documentElement,{childList:true,subtree:true});patchHub();window.addEventListener('pageshow',schedule,{passive:true})}
+let scheduled=false;function schedule(){if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;patchHub();patchJoin()})}
+function boot(){document.addEventListener('click',handleClick,true);const mo=new MutationObserver(schedule);mo.observe(document.documentElement,{childList:true,subtree:true});patchHub();patchJoin();window.addEventListener('pageshow',schedule,{passive:true})}
 window.IGR_CASINO_HERITAGE=Object.freeze({version:VERSION,launchReady:true,chapters:clone(CHAPTERS),open:renderCampaign,openChapter:renderChapter});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
