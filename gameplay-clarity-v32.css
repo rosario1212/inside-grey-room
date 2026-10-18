@@ -31,3 +31,9 @@
 @media(max-width:390px){
   .omerta-dlc-section .omerta-list .omerta-scenario.scenario--compact{grid-template-columns:126px minmax(0,1fr)!important;column-gap:12px!important}
 }
+
+/* Briefing: discreet institutional protocol, after the public scenario text. */
+.briefing-card .igr-briefing-protocol{margin:12px 0 8px;padding:10px 12px;border-left:2px solid rgba(180,155,105,.5);background:rgba(255,255,255,.035);border-radius:0 7px 7px 0;max-width:100%;box-sizing:border-box}
+.briefing-card .igr-briefing-protocol-title{display:block;margin-bottom:4px;color:rgba(222,200,160,.85);font-size:10px;line-height:1.25;font-weight:700;letter-spacing:.11em}
+.briefing-card .igr-briefing-protocol p{margin:0!important;color:rgba(232,232,232,.76);font-size:12px;line-height:1.42;overflow-wrap:anywhere}
+@media(max-width:560px){.briefing-card .igr-briefing-protocol{margin:9px 0 6px;padding:8px 10px}.briefing-card .igr-briefing-protocol p{font-size:11px;line-height:1.4}}
