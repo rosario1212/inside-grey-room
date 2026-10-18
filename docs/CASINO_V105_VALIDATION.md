@@ -2,7 +2,7 @@
 
 ## Intégration
 
-CASINO rejoint Cendres, Kuroi et Maître dans HÉRITAGE. Ses trois scénarios se jouent dans une même partie de huit phases (3/3/2). Le catalogue permet de jouer ou de reprendre la campagne ; après le dénouement, une nouvelle partie est possible. Les quatre affiches Casino approuvées sont conservées. Les dernières corrections de main, dont les affiches Cartel des PR #265/#267 et les verrous narratifs des PR #259/#261, sont intégrées.
+CASINO rejoint Cendres, Kuroi et Maître dans HÉRITAGE. Ses trois scénarios se jouent dans une même partie de huit phases (3/3/2). Le catalogue permet de jouer ou de reprendre la campagne ; après le dénouement, une nouvelle partie est possible. Les quatre affiches Casino approuvées sont conservées. Les dernières corrections de main, dont les affiches Cartel des PR #265/#267/#269 et les verrous narratifs des PR #259/#261, sont intégrées.
 
 L’utilisateur a demandé l’intégration des trois packs privés le 18 octobre 2026, après livraison de leur dossier de relecture. Ils sont approuvés et sélectionnables dans `igr_casino_private`. Leur contenu reste absent du dépôt public. Cette approbation ne concerne aucun canon privé des autres campagnes, notamment les variantes 028 toujours soumises à leurs propres verrous.
 
