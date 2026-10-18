@@ -4,6 +4,7 @@ on:
   pull_request:
     branches: [main, 'feature/v87-canonical-narrative-investigator-dossier']
     paths: &runtime_paths
+      - 'cloudflare-worker.mjs'
       - 'wrangler.jsonc'
       - '.assetsignore'
       - '_headers'
@@ -49,6 +50,7 @@ on:
       - 'omerta-v12-30.js'
       - 'assets/**'
       - '.github/workflows/cloudflare-build-check.yml'
+      - '.github/workflows/cloudflare-production-deploy.yml'
   push:
     branches: [main]
     paths: *runtime_paths
@@ -100,9 +102,9 @@ jobs:
         run: node scripts/v103-proof-release-check.mjs
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
-      - name: Validate private access before Cloudflare packaging
+      - name: Validate public access before Cloudflare packaging
         run: |
           node --check cloudflare-worker.mjs
-          node scripts/private-access-check.mjs
+          node scripts/public-access-check.mjs
       - name: Validate Cloudflare Worker package
         run: npx --yes wrangler@4.102.0 deploy --dry-run --outdir .wrangler-dry-run
