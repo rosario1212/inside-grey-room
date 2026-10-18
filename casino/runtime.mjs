@@ -8,6 +8,15 @@ const uniq=a=>Array.isArray(a)&&new Set(a).size===a.length;
 const bureauRole=(s,id)=>Object.keys(s.bureau).find(k=>s.bureau[k]===id);
 const active=(s,id)=>s.players.includes(id)&&s.roster[id].status==='free';
 const numberPhase=s=>s.chapter===1?s.phase:s.chapter===2?3+s.phase:6+s.phase;
+const corroboratedFacts=(s,hearing)=>{
+  const sources=corroborated(s,hearing.subjectId,hearing.evidenceIds,hearing.offence);
+  const rule=s.privateCanon.judicialRules.find(r=>r.offence===hearing.offence);
+  check(rule,'judicial_rule_missing');
+  return {sources,rule,established:rule.requiredFacts.every(f=>sources.some(e=>e.admissible===true&&e.facts?.includes(f)))};
+};
+const factualRuling=(s,hearing)=>{const {rule,established}=corroboratedFacts(s,hearing);return {id:'system-'+hearing.id,hearingId:hearing.id,subjectId:hearing.subjectId,decision:established?'convict':'acquit',reasoning:render(s,established?rule.convictionText:rule.acquittalText)};};
+const independentSupporters=(s,candidate)=>Object.entries(s.support).filter(([id,to])=>id!==candidate&&to===candidate&&s.roster[id]?.status==='free').length;
+const territoryCount=(s,candidate)=>Object.values(s.territories).filter(t=>t.controller===candidate).length;
 const identity=(s,id)=>s.roster[id]?.name||s.members?.find(m=>m.id===id)?.name||id;
 const resolveId=(s,id)=>s.cast[id]||id;
 function render(s,value){
@@ -147,7 +156,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       s.roster[actor].reputation=Math.max(0,s.roster[actor].reputation-2);
       s.publicEvents.push({id:command.id,text:`${identity(s,actor)} revendique la succession. Les soutiens restent à négocier.`,phase:numberPhase(s)});break;
     case 'PLEDGE_LOYALTY':
-      check(free&&s.roster[payload.to]&&s.roster[payload.to].status!=='dead','invalid_loyalty');
+      check(free&&s.roster[payload.to]&&s.roster[payload.to].status==='free'&&payload.to!==actor,'invalid_loyalty');
       s.loyalty[actor]=payload.to;s.support[actor]=payload.to;break;
     case 'CLAIM_TERRITORY':{
       check(free,'free_character_required');const t=s.territories[payload.territoryId];check(t,'unknown_territory');
@@ -156,7 +165,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
     case 'TRANSFER_TERRITORY':{
       check(free,'free_character_required');const t=s.territories[payload.territoryId];check(t?.controller===actor,'territory_controller_required');
       const a=s.agreements[payload.agreementId];
-      check(a?.kind==='territory'&&a.status==='signed'&&a.breachedBy.length===0&&a.participants.includes(actor)&&a.participants.includes(payload.to),'signed_territory_agreement_required');
+      check(a?.kind==='territory'&&a.territoryId===t.id&&a.status==='signed'&&a.breachedBy.length===0&&a.participants.includes(actor)&&a.participants.includes(payload.to),'signed_territory_agreement_required');
       check(active(s,payload.to)&&t.claims.includes(payload.to),'claiming_recipient_required');t.controller=payload.to;break;
     }
     case 'MESSAGE':{
@@ -172,6 +181,19 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       s.messages.push({id:command.id,from:actor,to:payload.to,kind:'bureau',text:payload.text,phase:numberPhase(s),verified:false});break;
     case 'NOTE':
       privileged(['agent','analyst','investigator','prosecutor','judge']);check(text(payload.text,3000),'invalid_note');s.privateNotes[actor]=payload.text;break;
+    case 'REVIEW_INTEL':{
+      privileged(['analyst','investigator']);
+      const report=s.intel.find(i=>i.id===payload.reportId);
+      check(report&&!report.reviewedBy,'intel_already_reviewed');
+      check(typeof payload.confirmed==='boolean'&&text(payload.reasoning,500),'invalid_intel_review');
+      const sources=s.evidence.filter(e=>e.subjectId===report.subjectId&&e.validated&&
+        Array.isArray(payload.evidenceIds)&&payload.evidenceIds.includes(e.id));
+      check(sources.length>=1&&sources.length===payload.evidenceIds.length,'intel_requires_documentary_source');
+      report.reviewedBy=actor;report.checked=payload.confirmed;report.review='documentary_assessment';
+      report.evidenceIds=sources.map(e=>e.id);report.reasoning=payload.reasoning;
+      s.publicEvents.push({id:command.id,text:'Le bureau a consigné une vérification documentaire. La confidentialité des informateurs est maintenue.',phase:numberPhase(s)});
+      break;
+    }
     case 'MAP_RELATION':
       privileged(['analyst','investigator']);
       check(s.roster[payload.subject]&&s.roster[payload.target]&&payload.subject!==payload.target&&text(payload.relation,100),'invalid_organigram_relation');
@@ -199,20 +221,34 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       const h=s.hearings.find(h=>h.id===payload.hearingId);check(h&&h.defence!==null,'defence_required');
       check(['acquit','convict','release'].includes(payload.decision)&&text(payload.reasoning,1500),'invalid_ruling');
       check(!s.rulings.some(r=>r.hearingId===h.id),'ruling_already_recorded');
-      if(payload.decision==='convict')corroborated(s,h.subjectId,h.evidenceIds,h.offence);
+      if(payload.decision==='convict')check(corroboratedFacts(s,h).established,'judicial_elements_not_established');
       s.rulings.push({id:command.id,hearingId:h.id,subjectId:h.subjectId,decision:payload.decision,reasoning:payload.reasoning});
       s.roster[h.subjectId].status=payload.decision==='convict'?'detained':'free';break;
     }
     case 'OFFER_CORRUPTION':{
       pcheck();check(s.members.some(m=>m.id===payload.to&&m.role!=='casino')&&text(payload.terms,1000),'invalid_corruption_offer');
       check(Number.isSafeInteger(payload.amount)&&payload.amount>0&&payload.amount<=s.roster[actor].chips,'insufficient_chips');
-      s.roster[actor].chips-=payload.amount;s.corruption.push({id:command.id,from:actor,to:payload.to,amount:payload.amount,terms:payload.terms,status:'offered',phase:numberPhase(s)});break;
+      check(!s.corruption.some(o=>o.from===actor&&o.to===payload.to&&o.status==='offered'),'corruption_offer_pending');s.roster[actor].chips-=payload.amount;s.corruption.push({id:command.id,from:actor,to:payload.to,amount:payload.amount,terms:payload.terms,status:'offered',phase:numberPhase(s),disclosed:false});break;
     }
     case 'ANSWER_CORRUPTION':{
       check(role,'bureau_required');const offer=s.corruption.find(o=>o.id===payload.offerId);check(offer?.to===actor&&offer.status==='offered','invalid_corruption_offer');
       check(typeof payload.accept==='boolean','invalid_corruption_answer');offer.status=payload.accept?'accepted':'refused';
       if(!payload.accept)s.roster[offer.from].chips+=offer.amount;
+      else{
+        // Virtual escrow is spent on a network of favours, never on a judicial outcome.
+        s.casinoBank+=offer.amount;
+        s.roster[offer.from].reputation=Math.max(0,s.roster[offer.from].reputation-3);
+        s.politicalBase[offer.from].influence=Math.min(100,s.politicalBase[offer.from].influence+Math.min(4,Math.floor(offer.amount/25)));
+      }
       // Accepting never deletes evidence, grants powers, or dictates a verdict.
+      break;
+    }
+    case 'DISCLOSE_CORRUPTION':{
+      const offer=s.corruption.find(o=>o.id===payload.offerId);
+      check(offer&&(offer.from===actor||offer.to===actor)&&!offer.disclosed,'corruption_not_disclosable');
+      offer.disclosed=true;
+      s.roster[offer.from].reputation=Math.max(0,s.roster[offer.from].reputation-5);
+      s.publicEvents.push({id:command.id,text:'Une tentative de corruption a été rendue publique. Le bureau peut en examiner les détails.',phase:numberPhase(s)});
       break;
     }
     case 'ASK_NPC':
@@ -268,6 +304,26 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       }
       return next;
     }
+    case 'HOST_AUTHORIZE_CONTINUITY':{
+      check(actor===s.hostId,'host_required');
+      check(s.chapter===1&&s.phase===3&&s.fallbackReady&&now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs*3,'continuity_not_available');
+      check(!s.roomLocated,'room_already_located');s.roomLocated=true;
+      s.publicEvents.push({id:command.id,text:'Après une attente prolongée, une voie secondaire publique permet de poursuivre sans divulguer la mission de l’Agent.',phase:numberPhase(s)});
+      break;
+    }
+    case 'HOST_COURT_CONTINUITY':{
+      check(actor===s.hostId&&s.chapter===3&&s.phase===2&&s.bureau.judge,'judicial_continuity_not_available');
+      check(now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs*3,'judicial_continuity_not_available');
+      check(s.hearings.every(h=>h.defence!==null),'pending_defence');
+      const pending=s.hearings.filter(h=>!s.rulings.some(r=>r.hearingId===h.id));
+      check(pending.length>0,'judicial_continuity_not_available');
+      for(const h of pending){
+        const ruling=factualRuling(s,h);s.rulings.push(ruling);
+        s.roster[h.subjectId].status=ruling.decision==='convict'?'detained':'free';
+      }
+      s.publicEvents.push({id:command.id,text:'Une décision de continuité motivée par les pièces authentifiées a clos les audiences restées sans jugement.',phase:numberPhase(s)});
+      break;
+    }
     case 'LOCATE_ROOM':
       check(now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs,'minimum_social_time');
       return applyCasinoCommand(current,command);
@@ -276,21 +332,24 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       check(!s.hearings.some(h=>h.defence===null),'pending_defence');
       if(s.bureau.judge)check(s.hearings.every(h=>s.rulings.some(r=>r.hearingId===h.id)),'pending_judicial_ruling');
       else for(const h of s.hearings){
-        const sources=corroborated(s,h.subjectId,h.evidenceIds,h.offence),rule=s.privateCanon.judicialRules.find(r=>r.offence===h.offence);
-        check(rule,'judicial_rule_missing');
-        const convict=rule.requiredFacts.every(fact=>sources.some(e=>e.admissible===true&&e.facts?.includes(fact)));
-        s.rulings.push({id:`system-${h.id}`,hearingId:h.id,subjectId:h.subjectId,decision:convict?'convict':'acquit',reasoning:render(s,convict?rule.convictionText:rule.acquittalText)});
-        s.roster[h.subjectId].status=convict?'detained':'free';
+        const ruling=factualRuling(s,h);
+        s.rulings.push(ruling);
+        s.roster[h.subjectId].status=ruling.decision==='convict'?'detained':'free';
       }
-      const supporters=id=>Object.values(s.support).filter(v=>v===id).length;
-      const controllers=id=>Object.values(s.territories).filter(t=>t.controller===id).length;
-      const candidates=s.claims.filter(c=>s.roster[c.id].status==='free'&&supporters(c.id)>0&&controllers(c.id)>0);
-      candidates.sort((a,b)=>supporters(b.id)-supporters(a.id)||controllers(b.id)-controllers(a.id));
-      const contested=candidates.length>1&&supporters(candidates[0].id)===supporters(candidates[1].id)&&controllers(candidates[0].id)===controllers(candidates[1].id);
+      const contenders=s.claims.filter(c=>s.roster[c.id].status==='free'&&independentSupporters(s,c.id)>0&&territoryCount(s,c.id)>0)
+        .map(c=>({...c,supporters:independentSupporters(s,c.id),territories:territoryCount(s,c.id),
+          score:independentSupporters(s,c.id)*20+territoryCount(s,c.id)*12+
+            Math.round(s.roster[c.id].legitimacy/5)+Math.round(s.roster[c.id].influence/10)+
+            Math.round(s.roster[c.id].reputation/10)+(s.namedSuccessor===c.id&&s.dragonAuthority?10:0)}));
+      contenders.sort((a,b)=>b.score-a.score||b.supporters-a.supporters||b.territories-a.territories);
+      const contested=contenders.length>1&&contenders[0].score===contenders[1].score;
       const dragon=s.roster.dragon;
-      const winner=!contested&&candidates[0]?.id||null;
-      s.finale={political:s.splitClaim?'split':winner?'recognised_claim':dragon.status==='free'&&s.dragonAuthority?'dragon_retained':'collapse',
-        successor:winner,contested,split:s.splitClaim,judicial:s.rulings,organigram:s.organigram.map(e=>({...e,
+      const winner=!contested&&contenders[0]?.id||null;
+      const split=s.splitClaim&&s.roster[s.splitClaim.founder]?.status==='free'&&
+        new Set(s.splitClaim.acceptedSupporters.filter(id=>id!==s.splitClaim.founder&&s.roster[id]?.status==='free')).size>=1&&
+        [s.splitClaim.founder,...s.splitClaim.acceptedSupporters].some(id=>territoryCount(s,id)>0);
+      s.finale={political:split?'split':winner?'recognised_claim':dragon.status==='free'&&s.dragonAuthority?'dragon_retained':'collapse',
+        successor:winner,contested,split:split?s.splitClaim:null,judicial:s.rulings,organigram:s.organigram.map(e=>({...e,
           corroborated:s.privateCanon.organigram.some(c=>resolveId(s,c.subject)===e.subject&&resolveId(s,c.target)===e.target&&c.relation===e.relation)}))};
       s.status='finished';break;
     }
@@ -354,5 +413,9 @@ export function viewRuntime(state,viewer){
     npcOffers:player?(state.privateCanon.npcOffers||[]).filter(o=>offerAllowed(state,o,viewer)).map(o=>({id:o.id,label:render(state,o.label),terms:render(state,o.terms),price:o.price||0})):[],
     continuityRole:player&&state.roster[viewer].status==='dead'?'witness':undefined,
     minimumSocialUntil:state.phaseStartedAt+state.privateCanon.minimumSocialMs,
+    hostCanLocate:viewer===state.hostId&&state.chapter===1&&state.phase===3&&state.fallbackReady&&
+      Date.now()-state.phaseStartedAt>=state.privateCanon.minimumSocialMs*3,
+    hostCanCloseCourt:viewer===state.hostId&&state.chapter===3&&state.phase===2&&!!state.bureau.judge&&
+      state.hearings.some(h=>h.defence!==null&&!state.rulings.some(r=>r.hearingId===h.id)),
     finale:state.finale?{...state.finale,organigram:role?state.finale.organigram:undefined}:null};
 }
