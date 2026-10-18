@@ -6,6 +6,14 @@ body.igr-at-home #igrUniversalDock{display:none!important}
 body.igr-at-home{--igr-dock-visible:0}
 body:not(.igr-scenario-browser):not(.igr-profile-view) #igrUniversalDock{display:none!important}
 
+/* Modal dialogs own the screen. Hide the underlying navigation and filter
+   panel so they cannot cover Settings' Done button or receive focus/clicks.
+   DOM presence restores both automatically on every close path. */
+body:has(.modal) #igrUniversalDock,
+body:has(.modal) #app .igr-filter-dock-panel{
+  display:none!important;
+}
+
 /* Top bar: Settings stays at the top-right. Scenario browsing also keeps one
    explicit Accueil action beside it; unlike the bottom dock it never collapses. */
 #app .topbar,#app .igr-utility-topbar{position:relative!important;top:auto!important;z-index:40!important;margin-bottom:18px!important;padding:0!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
