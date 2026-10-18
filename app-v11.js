@@ -196,7 +196,10 @@ const PUBLIC_LOBBY_SUMMARIES = {
 };
 const CANONICAL_BRIEFINGS = Object.freeze({...PUBLIC_LOBBY_SUMMARIES});
 function publicScenarioSummary(id){return PUBLIC_LOBBY_SUMMARIES[id]||scenario(id).short}
-function canonicalBriefingText(id){return CANONICAL_BRIEFINGS[id]||publicScenarioSummary(id)}
+function canonicalBriefingText(id){
+ if(String(id)==='029')return window.IGR_LOCALE==='en'?'Sinaloa, Mexico. In Santa Ceniza, thirty men and women were forced to work for Los Salcedo in a clandestine cocaine-production village. Seven were killed. Twenty-three remain captive. An informant who exposed the village has been found murdered; his severed tongue was sent to the Grey Room. Your mission: establish responsibility and help protect the survivors.':'Sinaloa, Mexique. À Santa Ceniza, trente hommes et femmes ont été contraints de travailler pour Los Salcedo dans un village clandestin de production de cocaïne. Sept ont été tués. Vingt-trois sont encore captifs. L’informateur qui a dénoncé le village a été retrouvé assassiné ; sa langue sectionnée a été envoyée à la Grey Room. Votre mission : établir les responsabilités et contribuer à protéger les survivants.';
+ return CANONICAL_BRIEFINGS[id]||publicScenarioSummary(id);
+}
 
 const STATE={view:'home',selectedScenario:'001',scenarioId:'001',room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],cycle:0,tab:'card',createListScrollY:0,sync:null,syncSig:'',syncBusy:false,watcher:null,lastEventId:0,lastRoleNoticeKey:'',syncPromise:null,serverOffset:0};
 const VIDEO={pcs:new Map(),localStream:null,remoteStream:null,lastSignalId:0,poller:null,starting:false,lastViewerReadyAt:0};
