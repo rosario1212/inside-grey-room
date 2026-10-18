@@ -16,7 +16,7 @@ const clone=value=>JSON.parse(JSON.stringify(value));
 const $=(s,r=document)=>r.querySelector(s);
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const poster=(file)=>POSTER_BASE+file;
-function shellPut(html){const root=$('#app');if(!root)return false;root.innerHTML=typeof shell==='function'?shell(html,false):'<div class="app">'+html+'</div>';try{window.scrollTo({top:0,behavior:'instant'})}catch{}return true}
+function shellPut(html){const root=$('#app');if(!root)return false;root.innerHTML=typeof shell==='function'?shell(html,false):'<div class="app">'+html+'</div>';try{window.scrollTo({top:0,behavior:'auto'})}catch{}return true}
 function top(back){return `<header class="hplay-top casino-top"><button class="hplay-back" data-casino-nav="${back}">← <span>${back==='hub'?'MODE HÉRITAGE':'CASINO'}</span></button><div class="hplay-mode">HÉRITAGE · CASINO</div></header>`}
 function isOwnPage(){return !!$('.casino-page[data-casino-page]')}
 function renderCampaign(){const chapters=CHAPTERS.map(c=>`<button type="button" class="casino-dossier" data-casino-chapter="${c.number}">
