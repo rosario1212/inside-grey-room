@@ -15,10 +15,10 @@ assert.match(j,/class="casino-launch casino-chapter-launch"/,'Chapter launch nee
 assert.match(j,/class="casino-action casino-launch-button" type="button" data-casino-live/,'Both launch CTAs must share the premium style');
 assert.doesNotMatch(j,/class="btn primary casino-action"/,'The generic white primary button must not override Casino');
 assert.match(c,/CASINO cinematic poster finish v91\.3/);
-assert.match(c,/CASINO poster dimensions v91\\.4/);
-assert.match(c,/grid-template-rows:auto auto/,'Mobile campaign card must separate poster from title');
-assert.match(c,/width:clamp\\(140px,39vw,166px\\)/,'Mobile poster must scale');
-assert.match(c,/aspect-ratio:var\\(--poster-width\\) \\/ 1024/,'Maintain full poster proportions');
+assert.ok(c.includes('CASINO poster dimensions v91.4'),'Version marker missing');
+assert.ok(c.includes('grid-template-rows:auto auto'),'Mobile card needs separate poster/title rows');
+assert.ok(c.includes('width:clamp(140px,39vw,166px)'),'Mobile poster dimensions must be responsive');
+assert.ok(c.includes('aspect-ratio:var(--poster-width) / 1024'),'Poster artwork proportions must be preserved');
 assert.match(c,/--casino-burgundy:#651d29/);
 assert.match(c,/--casino-ivory:#f7ecdc/);
 assert.match(c,/--casino-metal:#bc965a/);
