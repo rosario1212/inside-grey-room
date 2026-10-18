@@ -20,7 +20,7 @@ const server=createServer(async(req,res)=>{
   }
   if(req.url==='/qa'){
    res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});
-   res.end('<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/styles-v11.css"><link rel="stylesheet" href="/heritage-casino-v91.css"><link rel="stylesheet" href="/casino-client-v105.css"><body><div id="app"></div><script src="/heritage-casino-v91.js"></script><script src="/casino-client-v105.js"></script></body></html>');return;
+   res.end('<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="stylesheet" href="/styles-v11.css"><link rel="stylesheet" href="/heritage-casino-v91.css"><link rel="stylesheet" href="/casino-client-v105.css"><body><div id="app"></div><script src="/heritage-casino-v91.js"></script><script src="/casino-client-v105.js"></script></body></html>');return;
   }
   if(req.url==='/full'){
    const html=await readFile(join(root,'dist/index.html'),'utf8');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});res.end(html.replace('<head>','<head><base href="/built/">'));return;
@@ -49,16 +49,31 @@ async function layout(page,label){
 try{
  // Full validated poster compositions are checked at each viewport, using the
  // shipped catalog rather than a mock-up or a newly generated image.
- for(const [label,viewport]of [['iphone',{width:390,height:844}],['ipad',{width:820,height:1180}],['desktop',{width:1440,height:900}]]){
+ for(const [label,viewport]of [['small-phone',{width:320,height:740}],['iphone',{width:390,height:844}],['landscape',{width:844,height:390}],['ipad',{width:820,height:1180}],['desktop',{width:1440,height:900}]]){
   const {page}=await context(viewport);await page.evaluate(()=>window.IGR_CASINO_HERITAGE.open());await page.locator('.casino-hero img').waitFor();
   await page.locator('.casino-hero img').evaluate(e=>e.decode());
-  await page.locator('img').evaluateAll(images=>Promise.all(images.map(async e=>{e.loading='eager';await e.decode()})));await layout(page,'posters-'+label);
+  await page.locator('img').evaluateAll(images=>Promise.all(images.map(async e=>{e.loading='eager';await e.decode()})));await page.locator('.casino-dossier').last().scrollIntoViewIfNeeded();await page.evaluate(()=>scrollTo(0,0));await layout(page,'posters-'+label);
+  const launch=await page.locator('.casino-launch').boundingBox();assert(launch.y<Math.max(viewport.height,740)+180,'Campaign launch should not be buried below a giant cover');
   for(const chapter of [1,2,3]){await page.evaluate(n=>window.IGR_CASINO_HERITAGE.openChapter(n),chapter);await page.locator('.casino-chapter-cover img').evaluate(e=>e.decode());
    const image=await page.locator('.casino-chapter-cover img').evaluate(e=>({fit:getComputedStyle(e).objectFit,width:e.naturalWidth,height:e.naturalHeight}));
-   // Contain preserves the bitmap even if the layout box adds letterboxing.
-   assert.equal(image.fit,'contain');assert(image.width>0&&image.height>0);
+   assert.equal(await page.locator('.casino-poster img').first().evaluate(e=>getComputedStyle(e).contentVisibility),'visible');
+   assert.equal(image.fit,'fill');assert.equal(image.width,1536);assert.equal(image.height,1024);
+   const crop=await page.locator('.casino-chapter-cover .casino-poster').evaluate(e=>{const b=e.getBoundingClientRect(),i=e.querySelector('img').getBoundingClientRect(),s=getComputedStyle(e);return {ratio:b.width/b.height,width:Number(s.getPropertyValue('--poster-width')),x:Number(s.getPropertyValue('--poster-x')),left:(b.left-i.left)/i.width,right:(b.right-i.left)/i.width}});
+   assert(Math.abs(crop.ratio-crop.width/1024)<.002,'poster aspect ratio');
+   assert(Math.abs(crop.left-crop.x/1536)<.002,'poster left boundary');
+   assert(Math.abs(crop.right-(crop.x+crop.width)/1536)<.002,'poster right boundary');
   }
   await page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await layout(page,'welcome-'+label);
+  assert.equal(await page.getByRole('region',{name:'Organiser une partie'}).count(),1);
+  assert.equal(await page.getByRole('region',{name:'Rejoindre des amis'}).count(),1);
+  if(label==='iphone'){
+   // This browser lacks native inset emulation: evaluate the shipped padding
+   // formula with a 59px status area and 34px home-indicator area.
+   const css=await readFile(join(root,'casino-client-v105.css'),'utf8');
+   const safe=await page.addStyleTag({content:css.replaceAll('env(safe-area-inset-top,0px)','59px').replaceAll('env(safe-area-inset-bottom)','34px')});
+   const back=await page.locator('[data-casino-action=close]').boundingBox();assert(back.y>=59,'Back button must clear the status area');
+   await layout(page,'welcome-safe-iphone');await safe.evaluate(e=>e.remove());
+  }
  }
  checks.push('Affiches et formulaires sans débordement aux formats iPhone, iPad et ordinateur');
  const host=await context({width:390,height:844}),hostPage=host.page;
@@ -151,7 +166,12 @@ try{
  await full.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
  await full.locator('[data-casino-form=create] input[name=name]').fill('Intégration');await full.locator('[data-casino-form=create] button').click();await full.locator('.casino-members').waitFor();
  await full.waitForTimeout(2600);assert.equal(await full.locator('.casino-members').count(),1,'Existing runtimes must not replace the Casino screen');
- await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
+ await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();
+ await full.evaluate(()=>window.IGR_HERITAGE_PLAY.open());await full.locator('.casino-entry').waitFor();
+ await layout(full,'hub-full-desktop');await full.setViewportSize({width:390,height:844});await layout(full,'hub-full-iphone');
+ await full.locator('.casino-entry').click();await layout(full,'campaign-full-iphone');
+ await full.locator('[data-casino-live]').click();await full.locator('[data-casino-action=switch]').click();await layout(full,'entry-full-iphone');
+ await full.locator('[data-casino-action=close]').click();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
  const integratedRoom=await api(full,{op:'sync'});
  await full.evaluate(()=>{localStorage.removeItem('igr_casino_identity_v1');localStorage.removeItem('igr_social_identity_v1');goJoin()});
  await full.locator('[data-casino-join]').waitFor();await full.locator('#joinPseudo').fill('Invité sans licence');await full.locator('#joinCode').fill(integratedRoom.inviteCode);
