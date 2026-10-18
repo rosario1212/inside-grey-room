@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
 import {join} from 'node:path';
-const migration=await readFile('supabase/migrations/20261018043425_casino_durable_sessions.sql','utf8');
+const migration=await readFile('supabase/migrations/20261018044050_casino_durable_sessions.sql','utf8');
 assert.match(migration,/create schema if not exists igr_casino_private/);
 assert.doesNotMatch(migration,/grant usage on schema igr_private/i,'Casino must not open the existing narrative schema to a new role');
 assert.doesNotMatch(migration,/security definer/i);
