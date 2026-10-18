@@ -105,12 +105,13 @@ export function applyCasinoCommand(current, command) {
     case 'PROPOSE_AGREEMENT': {
       requireActive(s, actor);
       requireChapter(s, 1);
-      const { recordId, participants, kind, visibility, terms } = payload;
+      const { recordId, participants, kind, visibility, terms, territoryId } = payload;
       validateRecordId(s, recordId, id, type);
       ensure(Array.isArray(participants) && participants.length >= 2 && unique(participants) && participants.includes(actor) && participants.every(p => s.players.includes(p)), 'invalid_agreement_parties');
       ensure(AGREEMENT_KINDS.has(kind) && ['public','private'].includes(visibility) && compact(terms, 1000), 'invalid_agreement');
       ensure(!s.agreements[recordId], 'agreement_exists');
-      s.agreements[recordId] = { id: recordId, participants, kind, visibility, terms, signatures: [actor], status:'pending', breachedBy:[] };
+      if(kind==='territory')ensure(typeof territoryId==='string'&&!!s.territories?.[territoryId],'territory_agreement_requires_asset');
+      s.agreements[recordId] = { id: recordId, participants, kind, visibility, terms, ...(kind==='territory'?{territoryId}:{}), signatures: [actor], status:'pending', breachedBy:[] };
       break;
     }
     case 'SIGN_AGREEMENT': {
@@ -160,7 +161,7 @@ export function applyCasinoCommand(current, command) {
     }
     case 'JOIN_SPLIT': {
       requireActive(s, actor);
-      ensure(s.splitClaim && actor !== s.splitClaim.founder && !s.splitClaim.acceptedSupporters.includes(actor), 'not_joinable');
+      ensure(s.splitClaim && s.roster[actor]?.status==='free' && actor !== s.splitClaim.founder && !s.splitClaim.acceptedSupporters.includes(actor), 'not_joinable');
       s.splitClaim.acceptedSupporters.push(actor);
       break;
     }
