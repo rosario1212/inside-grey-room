@@ -1,7 +1,6 @@
 /* Inside Grey Room — HÉRITAGE / CASINO v91
- * Public-facing editorial integration only. No secrets, solutions, private cards,
- * poker outcomes or privileged game commands are shipped to clients.
- * The campaign launch remains LOCKED until role-isolated Supabase RPCs exist.
+ * Public campaign catalog. The separate client receives server projections.
+ * The campaign launch remains LOCKED until the private canons are approved.
  */
 (()=>{'use strict';
 const VERSION='91.0-casino-heritage';
@@ -25,8 +24,9 @@ function renderCampaign(){const chapters=CHAPTERS.map(c=>`<button type="button" 
  return shellPut(`<main class="page hplay casino-page" data-casino-page="campaign">${top('hub')}
    <header class="casino-heading"><span>MACAO · SYNDICAT YONGHE</span><h1>CASINO</h1><p>Trois scénarios liés. Le casino, la guerre de succession et l’enquête évoluent au gré des alliances et des décisions.</p></header>
    <figure class="casino-hero"><img src="${poster('campagne.webp')}" alt="Affiche de la campagne Casino" loading="eager"></figure>
-   <section class="casino-public-note"><strong>INTÉGRATION EN COURS</strong><span>Les trois dossiers sont présentés ici. Les parties restent indisponibles tant que la synchronisation serveur, les rôles secrets et les sauvegardes n’ont pas été validés.</span></section>
+   <section class="casino-public-note"><strong>INTRIGUES EN VALIDATION</strong><span>Prépare ta table privée. Le lancement de la campagne attend la validation des trois intrigues confidentielles.</span></section>
    <section class="casino-chapters" aria-label="Scénarios de la campagne Casino">${chapters}</section>
+   <button class="casino-action" type="button" data-casino-live>Ouvrir le salon privé</button>
    <section class="casino-pillars"><div><b>LA PAROLE</b><p>Alliances et accords oraux ou signés, consignés dans le Registre.</p></div><div><b>LE RISQUE</b><p>Poker au premier cycle ; ensuite, jeux et négociations au choix.</p></div><div><b>LES CONSÉQUENCES</b><p>Réputation, territoires, témoignages, arrestations et succession.</p></div></section>
  </main>`)}
 function renderChapter(n){const ch=CHAPTERS.find(x=>x.number===n);if(!ch)return renderCampaign();const phases=ch.phases.map((name,i)=>`<div class="casino-phase"><b>${i+1}</b><strong>${safe(name)}</strong></div>`).join('');

@@ -64,6 +64,17 @@ async function turn(req,env){
   return json(req,{iceServers:payload.iceServers,ttl:10800});
  }catch(_){return json(req,{error:'turn_unavailable'},502)}
 }
+async function casino(req){
+ if(req.method!=='POST')return new Response('{"error":"method_not_allowed"}',{status:405,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
+ const origin=req.headers.get('Origin');
+ if(origin&&origin!==new URL(req.url).origin)return new Response('{"error":"origin_forbidden"}',{status:403,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
+ if(+(req.headers.get('Content-Length')||0)>16384)return new Response('{"error":"request_too_large"}',{status:413});
+ try{
+  const upstream=await fetch('https://jtasbdiguhiswoyvobkn.supabase.co/functions/v1/casino-runtime',{
+   method:'POST',headers:{'Content-Type':'application/json','X-IGR-Private-Code':fromCookie(req)},body:req.body,redirect:'error'});
+  return new Response(upstream.body,{status:upstream.status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'private, no-store','Vary':'Cookie','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff'}});
+ }catch{return new Response('{"error":"casino_service_unavailable"}',{status:503,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}})}
+}
 export default {
  async fetch(req,env){
   const url=new URL(req.url);
@@ -73,6 +84,7 @@ export default {
    const navigation=(req.method==='GET'||req.method==='HEAD')&&(req.headers.get('Sec-Fetch-Mode')==='navigate'||(req.headers.get('Accept')||'').includes('text/html')||url.pathname==='/');
    return navigation?Response.redirect(new URL(GATE,url),302):new Response('Private access required',{status:403,headers:PRIVATE_HEADERS});
   }
+  if(url.pathname==='/api/casino')return casino(req);
   const asset=await env.ASSETS.fetch(req);
   const headers=new Headers(asset.headers);
   headers.set('Cache-Control','private, no-store, max-age=0');

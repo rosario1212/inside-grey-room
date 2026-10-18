@@ -12,3 +12,8 @@ build/
 *.mobileprovision
 *.p12
 .DS_Store
+node_modules
+dist/
+layout-check-results/
+casino-qa-results/
+supabase/.temp/

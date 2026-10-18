@@ -2,7 +2,7 @@
 
 ## Statut
 
-PR de préparation uniquement, non jouable. Pas d’activation, pas de migration, pas de fusion, pas de déploiement. Le noyau de règles serveur isolé de la PR initiale ne doit **jamais** être inclus dans le JavaScript public. Aucun dévoilement canonique ou fiche privée ne peut être enregistré dans le dépôt public.
+PR de préparation, enrichie par le service et le client v105. Les migrations de sauvegarde et l’Edge Function sont installées ; les trois canons restent en brouillon et ne sont pas sélectionnables. Aucun lancement Casino, aucune fusion dans main ni déploiement Cloudflare de la campagne. Le code serveur et les manuscrits privés ne doivent **jamais** être inclus dans le JavaScript public. Voir [le relevé actuel](CASINO_V105_VALIDATION.md).
 
 ## Navigation
 
@@ -30,4 +30,4 @@ Les humains incarnent leurs propres personnages : si Ali est attribué à une fo
 
 ## Affiches
 
-Quatre compositions approuvées par l’utilisateur ont été préparées localement à partir du montage validé. Les ressources SVG présentes dans cette branche ne sont que des réserves d’emplacement **et doivent être remplacées par ces quatre affiches avant activation**.
+Les quatre compositions WebP approuvées de la branche sont conservées. Catalogue, vignettes et chapitres utilisent `object-fit: contain` pour préserver leurs compositions. Aucun visage ou slogan n’est ajouté.

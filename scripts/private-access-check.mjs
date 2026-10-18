@@ -22,7 +22,7 @@ const req=(path,init={})=>new Request(url+path,init);
 let res=await worker.fetch(req('/'),env);
 assert.equal(res.status,302,'Anonymous home should redirect to a private access screen');
 assert.equal(new URL(res.headers.get('Location')).pathname,'/__igr-private');
-for(const path of ['/app-v11.js','/assets/intro-v10-14.webp','/index.html','/service-worker.js']){
+for(const path of ['/app-v11.js','/assets/intro-v10-14.webp','/index.html','/service-worker.js','/api/casino']){
  res=await worker.fetch(req(path),env);
  assert.equal(res.status,403,'Anonymous asset must be denied: '+path);
 }
@@ -49,4 +49,17 @@ res=await worker.fetch(req('/api/turn',{headers:{...headers,Origin:url}}),env);
 assert.equal(res.status,503,'Authenticated browser TURN passes gate (test has no TURN secrets)');
 res=await worker.fetch(req('/api/turn',{headers:{Origin:'capacitor://localhost'}}),env);
 assert.equal(res.status,503,'Native TURN clients must remain compatible');
+const realFetch=globalThis.fetch;let casinoCalls=0;
+try{
+ globalThis.fetch=async(url,init)=>{
+  casinoCalls++;assert.equal(url,'https://jtasbdiguhiswoyvobkn.supabase.co/functions/v1/casino-runtime');
+  assert.equal(init.headers['X-IGR-Private-Code'],fixture,'Only the gated HttpOnly invitation may authenticate the backend');
+  assert.equal(init.redirect,'error');assert.equal(await new Response(init.body).text(),'{"op":"sync"}');
+  return new Response('{"revision":1}',{headers:{'Content-Type':'application/json'}});
+ };
+ res=await worker.fetch(req('/api/casino',{method:'POST',headers:{...headers,Origin:url,'Content-Type':'application/json'},body:'{"op":"sync"}'}),env);
+ assert.equal(res.status,200);assert.match(res.headers.get('Cache-Control'),/no-store/);assert.equal(casinoCalls,1);
+ res=await worker.fetch(req('/api/casino',{method:'POST',headers:{...headers,Origin:'https://hostile.test','Content-Type':'application/json'},body:'{}'}),env);
+ assert.equal(res.status,403);assert.equal(casinoCalls,1,'Cross-origin mutations must not reach the backend');
+}finally{globalThis.fetch=realFetch}
 console.log('Private access verified: anonymous routes and assets blocked, valid login, secure cookies, private caching, native TURN preserved.');

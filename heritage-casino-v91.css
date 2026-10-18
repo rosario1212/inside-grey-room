@@ -1,6 +1,6 @@
 /* CASINO — scoped entirely to the Heritage add-on; no changes to previous campaigns. */
 .hplay-hub-grid .casino-entry{background:#090504;border-color:rgba(181,49,30,.3)}
-.hplay-hub-grid .casino-entry img,.heritage-campaign-grid .casino-entry img{filter:saturate(.88) contrast(1.05) brightness(.65)}
+.hplay-hub-grid .casino-entry img,.heritage-campaign-grid .casino-entry img{filter:saturate(.88) contrast(1.05) brightness(.65);object-fit:contain!important;background:#090504}
 .casino-entry .hplay-campaign-body em,.casino-heading>span{color:#d4a981}
 .casino-entry .hplay-campaign-body strong{color:#f6e5d0;letter-spacing:.075em}
 .casino-page{--casino-gold:#d9ac79;--casino-red:#aa2722;color:#efe7df;padding-bottom:5rem}
@@ -18,7 +18,7 @@
 .casino-dossier{appearance:none;display:grid;grid-template-columns:92px minmax(0,1fr);gap:17px;text-align:left;width:100%;padding:12px;background:linear-gradient(115deg,#211314,#0b0b0d);border:1px solid #423030;border-radius:13px;color:#eee6de;cursor:pointer}
 .casino-dossier:focus-visible,.casino-entry:focus-visible{outline:2px solid #f6d6a5;outline-offset:3px}
 .casino-dossier:hover{border-color:#94654d}.casino-dossier-poster{height:136px;overflow:hidden;border-radius:8px;background:#100b0a}
-.casino-dossier-poster img{width:100%;height:100%;object-fit:cover}
+.casino-dossier-poster img{width:100%;height:100%;object-fit:contain}
 .casino-dossier-content{display:grid;align-content:center;gap:7px}
 .casino-dossier-content small,.casino-dossier-content em{font:700 10px ui-monospace,monospace;letter-spacing:.1em;color:#c39374}
 .casino-dossier-content strong{font:800 clamp(18px,4vw,25px)/1.05 Georgia,serif}
@@ -34,3 +34,4 @@
 .casino-phase b{color:#dc6659;min-width:18px}.casino-phase strong{font-size:13px}
 .casino-unavailable{display:block;margin:22px auto;max-width:580px;opacity:.6!important;cursor:not-allowed!important}
 @media(max-width:650px){.casino-pillars{grid-template-columns:1fr}.casino-dossier{grid-template-columns:65px minmax(0,1fr);gap:11px}.casino-dossier-poster{height:105px}.casino-dossier-content strong{font-size:18px}.casino-heading h1{font-size:43px}}
+.casino-top .hplay-back{min-height:44px;padding:10px 14px;border:1px solid #79513e;border-radius:8px;background:#211215;color:#f1deca;cursor:pointer}

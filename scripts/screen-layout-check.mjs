@@ -50,7 +50,7 @@ const startupLink=index.match(/<link\b[^>]+href="startup-stability-v13-3\.css[^>
 assert(startupLink,'Canonical entrance stylesheet must exist');
 const report=path.join(root,'layout-check-results');
 await mkdir(report,{recursive:true});
-const browser=await chromium.launch({headless:true});
+const browser=await chromium.launch({headless:true,...(process.env.IGR_CHROMIUM_PATH?{executablePath:process.env.IGR_CHROMIUM_PATH,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader']}:{} )});
 const page=await browser.newPage();
 await page.route('**/*',route=>route.abort());
 const failures=[];

@@ -27,6 +27,10 @@ on:
       - 'scripts/desktop-layout-check.mjs'
       - 'scripts/runtime-fluidity-check.mjs'
       - 'scripts/audit-gameplay-check.mjs'
+      - 'casino/**'
+      - 'casino-client-v105.*'
+      - 'heritage-casino-v91.*'
+      - 'scripts/casino-*'
       - 'scripts/apply-lobby-display-v72.mjs'
       - '.github/workflows/screen-layout-check.yml'
   workflow_dispatch:
@@ -54,9 +58,13 @@ jobs:
         env:
           IGR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: node scripts/screen-layout-check.mjs
+      - name: Verify Casino across independent browser sessions
+        run: node scripts/casino-browser-check.mjs
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: screen-layout-results
-          path: layout-check-results
+          path: |
+            layout-check-results
+            casino-qa-results
           if-no-files-found: ignore

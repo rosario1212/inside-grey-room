@@ -24,9 +24,9 @@
   ];
 
   const ART=Object.freeze({
-    '029':'assets/cartel-029-le-cycle-mort.webp?v=12.37-final',
-    '030':'assets/cartel-030-la-cour-achetee.webp?v=12.37-final',
-    '031':'assets/cartel-031-la-dette.webp?v=12.37-final',
+    '029':'assets/cartel-029-le-cycle-mort.webp?v=v20261018-cartel-approved',
+    '030':'assets/cartel-030-la-cour-achetee.webp?v=v20261018-cartel-approved',
+    '031':'assets/cartel-031-la-dette.webp?v=v20261018-cartel-approved',
     '032':'assets/regime-032-les-archives-du-palais.webp?v=12.37-final',
     '033':'assets/regime-033-la-dynastie.webp?v=12.37-final',
     '034':'assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
@@ -135,7 +135,7 @@
   }
   function lockedBlock(collection){return `<div class="dlc-owner-lock"><strong>DLC NON DÉTENU</strong><p>Ce profil ne possède pas encore ce contenu.</p>${accessBadge(collection)}</div>`}
   function card(sc,collection,label,tag){
-    return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span>${typeof scenarioDifficultyTag==='function'?scenarioDifficultyTag(sc):''}</div></div></article>`;
+    return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}">${collection==='cartel'?`<span class="igr-cartel-poster-index" aria-hidden="true"><strong>${h(sc.id)}</strong><small>DOSSIER</small></span>`:''}</div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span>${typeof scenarioDifficultyTag==='function'?scenarioDifficultyTag(sc):''}</div></div></article>`;
   }
   function accessRow(collection){return `<div class="dlc-access-row dlc-access-row--top">${accessBadge(collection)}</div>`}
   function appendCollection(root,{collection,title,eyebrow,copy,ids,label,tag}){

@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+const sql=await readFile('supabase/migrations/20261018090000_v105_omerta_room_canon_continuity.sql','utf8');
+assert.match(sql,/igr_private\.igr_v100_preflight\(r\.scenario_id\)/i);
+assert.match(sql,/igr_private\.igr_v101_pin_omerta_branch\(campaign_uuid\)/i);
+assert.match(sql,/public\.igr_omerta_room_campaigns/i);
+assert.match(sql,/m\.variant_id=campaign_branch/i);
+assert.match(sql,/campaign_branch=pinned\.variant_id/i);
+assert.match(sql,/if not found or campaign_uuid is null then return false/i);
+assert.match(sql,/r\.status <> 'lobby'/i);
+assert.match(sql,/from public,anon,authenticated/i);
+assert.doesNotMatch(sql,/\bgrant\s+execute\b/i);
+assert.doesNotMatch(sql,/public\.igr_v4_start_game\s*\(/i);
+assert.doesNotMatch(sql,/\bupdate\s+igr_private\.igr_v99_variant_manuscripts\b/i);
+console.log('v105: OMERTA room canon agrees with immutable private campaign branch');

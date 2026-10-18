@@ -4,6 +4,7 @@ on:
   pull_request:
     branches: [main, 'feature/v87-canonical-narrative-investigator-dossier']
     paths: &runtime_paths
+      - 'cloudflare-worker.mjs'
       - 'wrangler.jsonc'
       - '.assetsignore'
       - '_headers'
@@ -48,7 +49,12 @@ on:
       - 'role-tree-polish-v12-29.js'
       - 'omerta-v12-30.js'
       - 'assets/**'
+      - 'casino/**'
+      - 'casino-client-v105.*'
+      - 'heritage-casino-v91.*'
+      - 'cloudflare-worker.mjs'
       - '.github/workflows/cloudflare-build-check.yml'
+      - '.github/workflows/cloudflare-production-deploy.yml'
   push:
     branches: [main]
     paths: *runtime_paths
@@ -88,8 +94,25 @@ jobs:
         run: node scripts/v88-narrative-variant-check.mjs
       - name: Audit private manuscript tooling without story spoilers
         run: node scripts/v90-private-variant-check.mjs --self-test
+      - name: Verify confidential variant staging and bundle exclusion
+        run: node scripts/v99-private-release-check.mjs
+      - name: Audit v100 private variant preview release barriers
+        run: node scripts/v100-private-preview-check.mjs
+      - name: Validate v101 campaign continuity
+        run: node scripts/v101-omerta-branch-check.mjs
+      - name: Audit v102 private role-specific clue visibility
+        run: node scripts/v102-role-simulator-check.mjs
+      - name: Reject unverified variant proof sources
+        run: node scripts/v103-proof-release-check.mjs
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
+      - name: Verify Casino authority, privacy, games and durable storage boundaries
+        run: |
+          node scripts/casino-foundation-check.mjs
+          node scripts/casino-runtime-check.mjs
+          node scripts/casino-poker-exhaustive-check.mjs
+          node scripts/casino-release-check.mjs dist
+          node scripts/storage-persistence-check.mjs
       - name: Validate private access before Cloudflare packaging
         run: |
           node --check cloudflare-worker.mjs

@@ -1,6 +1,6 @@
-# Campagne Casino — fondation technique (proposition de PR)
+# Campagne Casino — fondation technique (historique)
 
-> **État : prototype serveur autonome, désactivé en production.** Le code de cette PR n’est appelé par aucun runtime, aucune migration Supabase, aucun script de build ni aucune route du Cloudflare Worker. Aucune partie de poker ou machine à sous n’est encore accessible depuis l’interface. Aucune sauvegarde distante n’est mise en place.
+> **Historique de la première architecture.** Le socle ci-dessous a été complété en v105 : service Edge, sauvegarde transactionnelle Supabase, jeux et client multijoueur. Voir [le relevé actuel](CASINO_V105_VALIDATION.md). La campagne reste verrouillée jusqu’à la validation des canons privés et des essais de bout en bout. Les limitations décrites comme futures ci-dessous concernent uniquement le prototype initial.
 
 ## Objectif
 
