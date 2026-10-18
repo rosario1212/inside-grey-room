@@ -39,8 +39,8 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v27-role-choice-nav"></script>\n</body>');
   else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v27-role-choice-nav');
 
-  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v27-role-choice-nav">\n</head>');
-  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v27-role-choice-nav');
+  if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v27-modal-navigation">\n</head>');
+  else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v27-modal-navigation');
   if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v27-role-choice-nav"></script>\n</body>');
   else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v27-role-choice-nav');
 
@@ -97,9 +97,9 @@ try{
     sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v27-role-choice-nav');
   }
   if(!sw.includes('/navigation-heritage-v19.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v27-role-choice-nav','/navigation-heritage-v19.js?v=v27-role-choice-nav',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v27-modal-navigation','/navigation-heritage-v19.js?v=v27-role-choice-nav',");
   }else{
-    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v27-role-choice-nav');
+    sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v27-modal-navigation');
     sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v27-role-choice-nav');
   }
   if(!sw.includes('/cell-controls-stability-v23.js')){

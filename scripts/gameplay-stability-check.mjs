@@ -106,7 +106,7 @@ ok(files.finalize.includes("const CACHE='igr-v36-1-parasite-fix'"),'Finalizer mu
 ok(files.finalize.includes('final runtime integrity verified'),'Final runtime integrity verifier marker missing');
 ok(files.apply.includes("navigation-theme-v18.js?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation-theme runtime');
 ok(files.apply.includes("navigation-heritage-v19.js?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation behavior');
-ok(files.apply.includes("navigation-heritage-v19.css?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation CSS');
+ok(files.apply.includes("navigation-heritage-v19.css?v=v27-modal-navigation"),'Built HTML must load the v27 navigation CSS');
 ok(files.apply.includes("role-tree-polish-v12-29.css?v=v27-role-choice-nav"),'Built HTML must load the restored TON CHOIX CSS');
 ok(files.apply.includes("role-tree-polish-v12-29.js?v=v25-role-fluidity"),'Built HTML must retain the v25 role-selection runtime');
 ok(files.apply.includes("local-mode-theme-v25.css?v=v25-role-fluidity"),'Built HTML must load the v25 play-mode theme asset');
@@ -122,7 +122,7 @@ try{
   const navigationThemeUrl='navigation-theme-v18.js?v='+(presentationFinalized?presentationVersion:'v27-role-choice-nav');
   ok(distIndex.includes(navigationThemeUrl),'dist/index.html has stale navigation-theme asset');
   ok(distIndex.includes('navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/index.html has stale navigation behavior');
-  ok(distIndex.includes('navigation-heritage-v19.css?v=v27-role-choice-nav'),'dist/index.html has stale navigation CSS');
+  ok(distIndex.includes('navigation-heritage-v19.css?v=v27-modal-navigation'),'dist/index.html has stale navigation CSS');
   ok(distIndex.includes('cell-controls-stability-v23.js?v=v24-gameplay-stability'),'dist/index.html has stale cell stability asset');
   ok(distIndex.includes('role-tree-polish-v12-29.js?v=v25-role-fluidity'),'dist/index.html has stale role-selection runtime');
   ok(distIndex.includes('role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/index.html has stale role-selection CSS');
