@@ -1,42 +1,26 @@
-// Generate self-contained CARTEL posters from the approved original artwork.
-// Embedded WebP keeps the approved images intact; the single enlarged lower dossier label stays sharp SVG vector text.
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+// CARTEL 029–031: full 3:4 luxury noir-gold posters.
+// The original approved WebPs remain the illustrated backgrounds; their old
+// raster text is masked and replaced with sharp vector typography and ornaments.
+// The same asset is used in list thumbnails and scenario detail.
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const POSTERS=[
-  ['029','cartel-029-le-cycle-mort.webp'],
-  ['030','cartel-030-la-cour-achetee.webp'],
-  ['031','cartel-031-la-dette.webp']
+ {id:'029',file:'cartel-029-le-cycle-mort.webp',title:'LE CYCLE MORT',size:66},
+ {id:'030',file:'cartel-030-la-cour-achetee.webp',title:'LA COUR ACHETÉE',size:57},
+ {id:'031',file:'cartel-031-la-dette.webp',title:'LA DETTE',size:83}
 ];
-
+const TEMPLATE="<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"724\" height=\"960\" viewBox=\"0 0 724 960\" role=\"img\" aria-label=\"Inside Grey Room CARTEL — dossier @@ID@@ — @@TITLE@@\">\n<defs>\n<linearGradient id=\"gold\" x1=\"0\" y1=\"0\" x2=\".12\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff2b7\"/><stop offset=\".14\" stop-color=\"#b7772b\"/><stop offset=\".32\" stop-color=\"#fff3bd\"/><stop offset=\".49\" stop-color=\"#e6ad4d\"/><stop offset=\".72\" stop-color=\"#8b4b17\"/><stop offset=\".88\" stop-color=\"#f5ca71\"/><stop offset=\"1\" stop-color=\"#874818\"/></linearGradient>\n<linearGradient id=\"topShade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#090604\"/><stop offset=\".63\" stop-color=\"#090604\" stop-opacity=\".98\"/><stop offset=\"1\" stop-color=\"#090604\" stop-opacity=\"0\"/></linearGradient>\n<linearGradient id=\"bottomShade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#070504\" stop-opacity=\"0\"/><stop offset=\".32\" stop-color=\"#070504\" stop-opacity=\".98\"/><stop offset=\".54\" stop-color=\"#070504\"/><stop offset=\"1\" stop-color=\"#070504\"/></linearGradient>\n<radialGradient id=\"vignette\"><stop offset=\".43\" stop-color=\"#000\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".5\"/></radialGradient>\n<linearGradient id=\"goldLine\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#bd7828\" stop-opacity=\"0\"/><stop offset=\".22\" stop-color=\"#c99444\"/><stop offset=\".5\" stop-color=\"#ffedab\"/><stop offset=\".78\" stop-color=\"#c99444\"/><stop offset=\"1\" stop-color=\"#bd7828\" stop-opacity=\"0\"/></linearGradient>\n</defs>\n<rect width=\"724\" height=\"960\" fill=\"#080503\"/>\n<image x=\"0\" y=\"0\" width=\"724\" height=\"724\" href=\"data:image/webp;base64,@@IMAGE@@\"/>\n<!-- Old raster logo and old lower lettering are completely covered. -->\n<rect width=\"724\" height=\"198\" fill=\"url(#topShade)\"/>\n<rect y=\"506\" width=\"724\" height=\"454\" fill=\"url(#bottomShade)\"/>\n<rect width=\"724\" height=\"960\" fill=\"url(#vignette)\"/>\n<rect x=\"7\" y=\"7\" width=\"710\" height=\"946\" rx=\"9\" fill=\"none\" stroke=\"#b67c33\" stroke-opacity=\".55\" stroke-width=\"2\"/>\n<rect x=\"15\" y=\"15\" width=\"694\" height=\"930\" rx=\"5\" fill=\"none\" stroke=\"#d5a357\" stroke-opacity=\".24\"/>\n<g fill=\"none\" stroke=\"url(#gold)\" stroke-width=\"2\" stroke-linecap=\"round\" opacity=\".84\">\n<path d=\"M25 97V45Q25 25 45 25H125 M699 97V45Q699 25 679 25H599\"/>\n<path d=\"M25 865V915Q25 935 45 935H125 M699 865V915Q699 935 679 935H599\"/>\n<path d=\"M40 65Q44 40 72 41 M684 65Q680 40 652 41 M40 895Q44 920 72 919 M684 895Q680 920 652 919\"/>\n<path d=\"M112 25q-20 0-20 18q0 14 13 14q9 0 9-8 M612 25q20 0 20 18q0 14-13 14q-9 0-9-8\"/>\n</g>\n<!-- The same balanced masthead on 029, 030 and 031. -->\n<text x=\"362\" y=\"83\" text-anchor=\"middle\" fill=\"url(#gold)\" font-family=\"Baskerville,Georgia,serif\" font-size=\"38\" font-weight=\"700\" letter-spacing=\"5.1\" text-rendering=\"geometricPrecision\" stroke=\"#150904\" stroke-width=\".75\" paint-order=\"stroke fill\">INSIDE GREY ROOM</text>\n<path d=\"M115 119H250 M474 119H609\" stroke=\"url(#goldLine)\" stroke-width=\"1.8\"/>\n<text x=\"362\" y=\"129\" text-anchor=\"middle\" fill=\"#eec87c\" font-family=\"Georgia,serif\" font-size=\"22\" font-weight=\"700\" letter-spacing=\"13\" text-rendering=\"geometricPrecision\">CARTEL</text>\n<path d=\"M362 145l5 6-5 6-5-6z\" fill=\"#e2ae54\"/>\n<!-- One dossier identifier at the bottom, luxurious and legible. -->\n<text x=\"362\" y=\"688\" text-anchor=\"middle\" fill=\"#edc879\" font-family=\"Georgia,serif\" font-size=\"24\" font-weight=\"700\" letter-spacing=\"7\" text-rendering=\"geometricPrecision\">DOSSIER</text>\n<g fill=\"none\" stroke=\"url(#goldLine)\" stroke-width=\"2.5\" opacity=\".91\">\n<path d=\"M53 780h120q29 0 42-17q-30 6-29-12q1-14 15-11q9 2 6 10\"/>\n<path d=\"M671 780H551q-29 0-42-17q30 6 29-12q-1-14-15-11q-9 2-6 10\"/>\n<path d=\"M67 794q42-2 66 20q24-14 48-13 M657 794q-42-2-66 20q-24-14-48-13\"/>\n</g>\n<text x=\"362\" y=\"798\" text-anchor=\"middle\" fill=\"url(#gold)\" font-family=\"Baskerville,Georgia,serif\" font-size=\"114\" font-weight=\"700\" letter-spacing=\"3\" text-rendering=\"geometricPrecision\" stroke=\"#180903\" stroke-width=\"2\" paint-order=\"stroke fill\">@@ID@@</text>\n<path d=\"M48 817H279 M445 817H676\" stroke=\"url(#goldLine)\" stroke-width=\"2\"/>\n<text x=\"362\" y=\"882\" text-anchor=\"middle\" fill=\"url(#gold)\" font-family=\"Baskerville,Georgia,serif\" font-size=\"@@SIZE@@\" font-weight=\"700\" letter-spacing=\"1.1\" text-rendering=\"geometricPrecision\" stroke=\"#170903\" stroke-width=\"2\" paint-order=\"stroke fill\">@@TITLE@@</text>\n<path d=\"M74 901H325 M399 901H650\" stroke=\"url(#goldLine)\" stroke-width=\"2\"/>\n<g transform=\"translate(347 890)\" fill=\"url(#gold)\" stroke=\"#201006\" stroke-width=\"1\">\n<path d=\"M15 0C6 0 0 7 0 15c0 6 3 10 7 12v7l4 3h8l4-3v-7c4-2 7-6 7-12C30 7 24 0 15 0z\"/>\n<ellipse cx=\"9\" cy=\"17\" rx=\"4\" ry=\"3.5\" fill=\"#180e08\"/><ellipse cx=\"21\" cy=\"17\" rx=\"4\" ry=\"3.5\" fill=\"#180e08\"/>\n<path d=\"M15 21l-3 5h6z\" fill=\"#180e08\"/><path d=\"M12 29v5m6-5v5\" stroke=\"#180e08\" stroke-width=\"1.5\"/>\n</g>\n<g fill=\"#f9dc8d\" opacity=\".5\"><circle cx=\"80\" cy=\"170\" r=\"1.2\"/><circle cx=\"634\" cy=\"204\" r=\"1\"/><circle cx=\"72\" cy=\"472\" r=\".9\"/><circle cx=\"653\" cy=\"540\" r=\"1.4\"/></g>\n</svg>";
 export async function buildCartelPosterAssets(root=process.cwd()){
-  const folder=path.join(root,'assets');
-  await mkdir(folder,{recursive:true});
-  for(const [id,original] of POSTERS){
-    const image=(await readFile(path.join(folder,original))).toString('base64');
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="724" height="724" viewBox="0 0 724 724" role="img" aria-label="Inside Grey Room CARTEL dossier ${id}">
-<defs>
-<linearGradient id="dossierBackdrop" x1="0" y1="0" x2="1" y2="0">
-<stop offset="0" stop-color="#100b07" stop-opacity="0"/>
-<stop offset=".13" stop-color="#100b07" stop-opacity="1"/>
-<stop offset=".87" stop-color="#100b07" stop-opacity="1"/>
-<stop offset="1" stop-color="#100b07" stop-opacity="0"/>
-</linearGradient>
-</defs>
-<image width="724" height="724" href="data:image/webp;base64,${image}"/>
-<!-- Only one dossier label, enlarged directly above the poster title.
-     No number or dossier caption below the CARTEL masthead. -->
-<rect x="205" y="565" width="314" height="44" fill="url(#dossierBackdrop)"/>
-<text x="362" y="601" text-anchor="middle" fill="#e9c56e"
- font-family="Georgia,Times New Roman,serif" font-size="36" font-weight="700"
- letter-spacing="1.6" text-rendering="geometricPrecision"
- stroke="#0b0805" stroke-width="1" paint-order="stroke fill">DOSSIER ${id}</text>
-</svg>`;
-    await writeFile(path.join(folder,`cartel-${id}-poster-v2.svg`),svg,'utf8');
-  }
+ const folder=path.join(root,'assets');
+ await mkdir(folder,{recursive:true});
+ for(const p of POSTERS){
+   const image=(await readFile(path.join(folder,p.file))).toString('base64');
+   const output=TEMPLATE.replaceAll('@@ID@@',p.id).replaceAll('@@IMAGE@@',image).replaceAll('@@TITLE@@',p.title).replaceAll('@@SIZE@@',String(p.size));
+   await writeFile(path.join(folder,'cartel-'+p.id+'-poster-v2.svg'),output,'utf8');
+ }
 }
-
 if(process.argv[1]&&path.resolve(process.argv[1])===new URL(import.meta.url).pathname){
-  await buildCartelPosterAssets();
-  console.log('CARTEL 029–031 posters generated');
+ await buildCartelPosterAssets();
+ console.log('CARTEL luxury posters generated');
 }
