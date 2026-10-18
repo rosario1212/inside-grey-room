@@ -15,3 +15,6 @@ assert.doesNotMatch(sql,/\bupdate public\.igr_v4_/i);
 assert.doesNotMatch(sql,/\bupdate igr_private\.igr_v99_variant_manuscripts\b/i);
 assert.doesNotMatch(sql,/public\.igr_v4_start_game\s*\(/i);
 console.log('v103: unverified editorial recoupments cannot open private release gates');
+
+// v104 extends the existing release check without changing active game code.
+await import('./v104-strict-private-pin-check.mjs');
