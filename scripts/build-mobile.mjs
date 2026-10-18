@@ -1,5 +1,6 @@
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import {buildCartelPosterAssets} from './build-cartel-posters.mjs';
 const root=process.cwd(),out=path.join(root,'www');
 
 const legacyStoreExcluded=new Set(['dlc-invites-v12-45.js','dlc-invites-v12-45.css']);
@@ -18,6 +19,7 @@ for(const match of indexHtml.matchAll(/(?:src|href)=["']([^"']+)["']/g)){
  if(!relative||relative.startsWith('assets/')||legacyStoreExcluded.has(relative))continue;
  if(!declared.has(relative))throw new Error(`Mobile runtime list is out of sync with index.html: ${relative}`)
 }
+await buildCartelPosterAssets(root);
 await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});const runtimeText=[];
 for(const name of files){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing mobile runtime file: ${name}`);await cp(src,path.join(out,name),{recursive:true});runtimeText.push(await readFile(src,'utf8'))}
 

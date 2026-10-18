@@ -12,3 +12,8 @@ build/
 *.mobileprovision
 *.p12
 .DS_Store
+
+# Generated from approved original CARTEL artwork at build time
+assets/cartel-029-poster-v2.svg
+assets/cartel-030-poster-v2.svg
+assets/cartel-031-poster-v2.svg

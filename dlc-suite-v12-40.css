@@ -195,28 +195,11 @@ body.igr-theme-regime .confirm-panel-v10-13 input{background:#091016!important;c
   .terror-scenario .scenario-body p,.cartel-scenario .scenario-body p,.regime-scenario .scenario-body p{font-size:.88rem!important;line-height:1.32!important}
 }
 
-/* CARTEL 029–031: compact dossier numerals, harmonised with LE RÉGIME. */
-.cartel-scenario .scenario-thumb.compact{position:relative;isolation:isolate}
-.cartel-scenario .igr-cartel-poster-index{
-  position:absolute;z-index:3;left:50%;top:15.2%;transform:translateX(-50%);
-  width:82%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  color:#e8c677;pointer-events:none;text-align:center;line-height:1;
-  text-shadow:0 2px 5px #070503,0 0 12px rgba(0,0,0,.94);
-}
-.cartel-scenario .igr-cartel-poster-index strong{
-  display:block;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.35rem,2.8vw,1.95rem);
-  font-weight:900;letter-spacing:.015em;line-height:.95;
-}
-.cartel-scenario .igr-cartel-poster-index small{
-  display:block;margin-top:3px;font:700 clamp(.39rem,.65vw,.51rem) 'IBM Plex Mono',monospace;
-  letter-spacing:.16em;color:#f0d996;
-}
+/* CARTEL posters now contain their own dossier typography; no HTML overlay. */
 .cartel-scenario .scenario-body.compact h3{
   font-size:clamp(1rem,2vw,1.16rem)!important;line-height:1.12!important;
   letter-spacing:-.012em!important;overflow-wrap:normal;text-wrap:balance;
 }
 @media(max-width:430px){
-  .cartel-scenario .igr-cartel-poster-index strong{font-size:1.48rem}
-  .cartel-scenario .igr-cartel-poster-index small{font-size:.4rem}
   .cartel-scenario .scenario-body.compact h3{font-size:1rem!important}
 }
