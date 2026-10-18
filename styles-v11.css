@@ -155,10 +155,12 @@ button:focus-visible,.tab:focus-visible,.pill-btn:focus-visible,.home-action:foc
   display:grid;place-items:center;gap:7px;
   padding:17px 20px;
   border-radius:24px;
-  border:1px solid rgba(255,255,255,.68);
-  background:linear-gradient(180deg,rgba(11,14,18,.95),rgba(3,5,7,.98));
-  color:#f7f8f9;
-  box-shadow:0 15px 46px rgba(0,0,0,.54),inset 0 0 0 1px rgba(255,255,255,.05);
+  border:1px solid rgba(212,215,218,.57);
+  /* Brushed graphite with a restrained steel highlight, matching the door. */
+  background:linear-gradient(135deg,rgba(255,255,255,.09) 0%,transparent 32%,rgba(0,0,0,.12) 100%),
+             linear-gradient(180deg,#343638 0%,#232527 48%,#101113 100%);
+  color:#f7f7f7;
+  box-shadow:0 16px 42px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.46);
   cursor:pointer;appearance:none;touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
   transition:opacity .2s ease,transform .12s ease,border-color .2s ease,background .2s ease;
@@ -169,7 +171,7 @@ button:focus-visible,.tab:focus-visible,.pill-btn:focus-visible,.home-action:foc
 }
 .intro-enter small{
   font:600 8px 'IBM Plex Mono',monospace;
-  letter-spacing:.17em;color:#a1aab3;text-transform:uppercase;
+  letter-spacing:.17em;color:#cbd0d4;text-transform:uppercase;
 }
 .intro-enter:active{transform:translateX(-50%) scale(.985);border-color:#fff}
 .intro-enter:disabled{opacity:.55;cursor:default}
@@ -203,8 +205,12 @@ button:focus-visible,.tab:focus-visible,.pill-btn:focus-visible,.home-action:foc
   transition:opacity .34s ease,visibility 0s linear .34s;
 }
 .intro-gate.audio-error .intro-enter{
-  border-color:rgba(255,255,255,.88);
-  background:rgba(18,22,27,.97);
+  border-color:rgba(230,232,234,.85);
+  background:linear-gradient(180deg,#343638,#17191b);
+}
+.intro-enter:focus-visible{
+  outline:2px solid #e7e9ea;
+  outline-offset:3px;
 }
 
 /* Very tall phones: leave more breathing room around the CTA. */
