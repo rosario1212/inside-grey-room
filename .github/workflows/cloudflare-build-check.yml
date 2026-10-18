@@ -90,6 +90,10 @@ jobs:
         run: npm run build
       - name: Validate generated CARTEL posters
         run: node scripts/cartel-posters-check.mjs dist
+      - name: Validate Los Salcedo canon and public fear arc
+        run: |
+          node --check dlc-suite-v12-37.js
+          node scripts/cartel-mexico-world-check.mjs
       - name: Audit narrative role separation and code syntax
         run: node scripts/v87-narrative-check.mjs
       - name: Validate canonical variants and saga locks
