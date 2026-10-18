@@ -49,6 +49,10 @@ on:
       - 'role-tree-polish-v12-29.js'
       - 'omerta-v12-30.js'
       - 'assets/**'
+      - 'casino/**'
+      - 'casino-client-v105.*'
+      - 'heritage-casino-v91.*'
+      - 'cloudflare-worker.mjs'
       - '.github/workflows/cloudflare-build-check.yml'
       - '.github/workflows/cloudflare-production-deploy.yml'
   push:
@@ -104,6 +108,13 @@ jobs:
         run: node scripts/v103-proof-release-check.mjs
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
+      - name: Verify Casino authority, privacy, games and durable storage boundaries
+        run: |
+          node scripts/casino-foundation-check.mjs
+          node scripts/casino-runtime-check.mjs
+          node scripts/casino-poker-exhaustive-check.mjs
+          node scripts/casino-release-check.mjs dist
+          node scripts/storage-persistence-check.mjs
       - name: Validate public access before Cloudflare packaging
         run: |
           node --check cloudflare-worker.mjs

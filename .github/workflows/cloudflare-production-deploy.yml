@@ -2,16 +2,8 @@ name: Cloudflare Production Deploy
 on:
   push:
     branches: [main]
-    paths:
-      - 'cloudflare-worker.mjs'
-      - 'wrangler.jsonc'
-      - 'index.html'
-      - 'en.html'
-      - 'assets/**'
-      - '*.css'
-      - '*.js'
-      - 'scripts/**'
-      - '.github/workflows/cloudflare-production-deploy.yml'
+    paths-ignore:
+      - '**.md'
   workflow_dispatch:
 permissions:
   contents: read
@@ -35,13 +27,21 @@ jobs:
           test -n "$CF_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN repository secret"; exit 1; }
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
-      - name: Verify public access and build
+      - name: Verify public access and private room sessions and build
         run: |
           node --check cloudflare-worker.mjs
           node scripts/public-access-check.mjs
           npm run build
+          node scripts/v87-narrative-check.mjs
+          node scripts/v99-private-release-check.mjs
+          node scripts/casino-runtime-check.mjs
+          node scripts/casino-release-check.mjs dist
           node scripts/cartel-posters-check.mjs dist
       - name: Deploy Inside Grey Room to Cloudflare Workers
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: npx --yes wrangler@4.102.0 deploy
+      - name: Verify deployed game and commit
+        env:
+          IGR_EXPECTED_COMMIT: ${{ github.sha }}
+        run: node scripts/casino-deployment-check.mjs

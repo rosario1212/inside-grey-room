@@ -24,14 +24,41 @@ async function turn(req,env){
   return json(req,{iceServers:payload.iceServers,ttl:10800});
  }catch(_){return json(req,{error:'turn_unavailable'},502)}
 }
+// The proxy is public; room membership and host entitlements are checked by
+// the authoritative service. No shared website passcode is sent upstream.
+async function casino(req){
+ const origin=req.headers.get('Origin');
+ const allowed=!origin||origin===new URL(req.url).origin||NATIVE.has(origin);
+ const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'private, no-store',
+  'Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff','Vary':'Origin'};
+ if(allowed&&origin)Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'});
+ const error=(code,status)=>new Response(JSON.stringify({error:code}),{status,headers});
+ if(!allowed)return error('origin_forbidden',403);
+ if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
+ if(req.method!=='POST')return error('method_not_allowed',405);
+ if(!(req.headers.get('Content-Type')||'').startsWith('application/json'))return error('json_required',415);
+ if(+(req.headers.get('Content-Length')||0)>16384)return error('request_too_large',413);
+ try{
+  const reader=req.body?.getReader();if(!reader)return error('invalid_request',400);
+  const decoder=new TextDecoder();let body='',bytes=0;
+  while(true){const part=await reader.read();if(part.done)break;bytes+=part.value.length;
+   if(bytes>16384){await reader.cancel();return error('request_too_large',413)}body+=decoder.decode(part.value,{stream:true});}
+  body+=decoder.decode();
+  const upstream=await fetch('https://jtasbdiguhiswoyvobkn.supabase.co/functions/v1/casino-runtime',{
+   method:'POST',headers:{'Content-Type':'application/json'},body,redirect:'error'});
+  return new Response(upstream.body,{status:upstream.status,headers});
+ }catch{return error('casino_service_unavailable',503)}
+}
 export default {
  async fetch(req,env){
   const url=new URL(req.url);
   if(url.pathname==='/api/turn')return turn(req,env);
+  if(url.pathname==='/api/casino')return casino(req);
   // Existing bookmarks for the old private gate now lead straight to the game.
   if(url.pathname==='/__igr-private')return Response.redirect(new URL('/',url),302);
   const asset=await env.ASSETS.fetch(req);
   const headers=new Headers(asset.headers);
+  if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
   headers.set('X-Content-Type-Options','nosniff');
   headers.set('Referrer-Policy','no-referrer');
   // Public URL, but do not index the unfinished beta in search engines.
