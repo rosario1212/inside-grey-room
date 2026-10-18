@@ -22,3 +22,42 @@
 .casino-entry-options~details{margin-top:24px}
 .casino-live-top [data-casino-connection]:empty{display:none}
 @media(min-width:760px){.casino-entry-options{grid-template-columns:1fr 1fr;align-items:start}}
+
+
+/* CASINO v107: precise evidence selection, informed chapter transitions. */
+.casino-live [data-casino-proof-label][hidden]{display:none!important}
+.casino-live [data-casino-proof-notice]{font-size:12px;color:#d6b78d;line-height:1.55}
+.casino-live select option:disabled{color:#817675}
+.casino-live .casino-phase-controls{
+ margin:30px 0 38px;
+ padding:19px clamp(16px,3vw,26px);
+ border:1px solid rgba(176,132,76,.38);
+ background:linear-gradient(140deg,#261317,#140d10);
+ border-radius:14px;
+ box-shadow:0 16px 35px rgba(0,0,0,.22)
+}
+.casino-live .casino-phase-controls .casino-action{
+ min-height:52px;
+ border-color:#bf995e;
+ background:linear-gradient(135deg,#782938,#4a151f);
+ color:#fff0da;
+ margin:0 8px 0 0
+}
+.casino-live .casino-phase-controls .casino-phase-warning{
+ padding:12px 16px;
+ margin:0 0 17px;
+ border-left:3px solid #d0aa70;
+ background:#372025;
+ color:#f5e5d2
+}
+.casino-live .casino-secret{
+ margin:18px 0;
+ border-color:#c39b62;
+ background:linear-gradient(145deg,#351b25,#1b1117);
+ border-radius:10px
+}
+.casino-live .casino-secret>strong{color:#f5d9a8}
+.casino-live .casino-secret form{border-top-color:#77543f}
+@media(max-width:560px){
+ .casino-live .casino-phase-controls .casino-action{display:block;width:100%;margin:10px 0 0}
+}
