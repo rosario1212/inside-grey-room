@@ -15,7 +15,7 @@ const corroboratedFacts=(s,hearing)=>{
   return {sources,rule,established:rule.requiredFacts.every(f=>sources.some(e=>e.admissible===true&&e.facts?.includes(f)))};
 };
 const factualRuling=(s,hearing)=>{const {rule,established}=corroboratedFacts(s,hearing);const convict=established&&!hearing.absentDefence;return {id:'system-'+hearing.id,hearingId:hearing.id,subjectId:hearing.subjectId,decision:convict?'convict':'acquit',reasoning:hearing.absentDefence?'Aucune condamnation automatique n’est permise sans défense enregistrée.':render(s,convict?rule.convictionText:rule.acquittalText)};};
-const independentSupporters=(s,candidate)=>Object.entries(s.support).filter(([id,to])=>id!==candidate&&to===candidate&&s.roster[id]?.status==='free').length;
+const independentSupporters=(s,candidate)=>Object.entries(s.support).filter(([id,to])=>id!==candidate&&to===candidate&&s.roster[id]?.status!=='dead').length;
 const territoryCount=(s,candidate)=>Object.values(s.territories).filter(t=>t.controller===candidate).length;
 const identity=(s,id)=>s.roster[id]?.name||s.members?.find(m=>m.id===id)?.name||id;
 const resolveId=(s,id)=>s.cast[id]||id;
