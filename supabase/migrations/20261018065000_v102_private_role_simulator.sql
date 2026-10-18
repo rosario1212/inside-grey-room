@@ -48,9 +48,9 @@ begin
   end if;
 
   if role_is_private then
-    select item into card from pg_catalog.jsonb_array_elements(
-         coalesce(v->'private_cards','[]'::jsonb)) item
-    where (item->>'slot')::int=p_slot
+    select z.value into card from pg_catalog.jsonb_array_elements(
+         coalesce(v->'private_cards','[]'::jsonb)) as z(value)
+    where (z.value->>'slot')::int=p_slot
     limit 1;
   end if;
 
