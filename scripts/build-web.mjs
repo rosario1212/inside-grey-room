@@ -15,7 +15,7 @@ await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});cons
 for(const name of runtimeFiles){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing web runtime file: ${name}`);const dst=path.join(out,name);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst,{recursive:true});searchableText.push(await readFile(src,'utf8'))}
 
 const premiumHead=[
- '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=20261018-neutral-entry-v2">',
+ '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=20261018-approved-scene-v15">',
  '  <link rel="stylesheet" href="heritage-v13-5.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-premium-v13-6.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-play-v13-7.css?v=v13.8-dual-play">',

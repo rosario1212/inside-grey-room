@@ -6,7 +6,7 @@ const VERSION='v87-canonical-narrative';
 const polish='screen-polish-v73.css';
 const narrativeRuntime='narrative-dossier-v87.js';
 const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','language-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js',polish];
-const posterUrls=['/assets/intro-v10-14.webp','/assets/heritage-maitre-01-le-client-hd-v77.webp?v=v77-heritage-clarity','/assets/heritage-maitre-02-le-deal-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-03-deux-choix-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-04-le-proces-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-05-l-honneur-hd-v79.webp?v=v79-audit-fixes'];
+const posterUrls=['/assets/intro-v10-15.webp','/assets/heritage-maitre-01-le-client-hd-v77.webp?v=v77-heritage-clarity','/assets/heritage-maitre-02-le-deal-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-03-deux-choix-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-04-le-proces-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-05-l-honneur-hd-v79.webp?v=v79-audit-fixes'];
 const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
 // Finalize the synchronization assets as well as the presentation assets so
