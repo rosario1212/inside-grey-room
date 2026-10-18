@@ -62,6 +62,12 @@ try{
    assert(Math.abs(crop.ratio-crop.width/1024)<.002,'poster aspect ratio');
    assert(Math.abs(crop.left-crop.x/1536)<.002,'poster left boundary');
    assert(Math.abs(crop.right-(crop.x+crop.width)/1536)<.002,'poster right boundary');
+   const cover=await page.locator('.casino-chapter-cover').boundingBox();assert(cover.width>=Math.min(230,viewport.width*.55),'Chapter artwork should have a prominent size');
+   const phases=await page.locator('.casino-phases').boundingBox(),launch=await page.locator('.casino-chapter-launch [data-casino-live]').boundingBox();
+   assert(launch.y-phases.y-phases.height>=24,'Launch must be separated from the phases card');
+   const paint=await page.locator('.casino-chapter-launch [data-casino-live]').evaluate(e=>({background:getComputedStyle(e).backgroundImage,color:getComputedStyle(e).color}));
+   assert(paint.background.includes('112, 38, 48'),'Burgundy launch background');assert.equal(paint.color,'rgb(255, 240, 217)');
+   if(chapter===2)await layout(page,'chapter-prominent-'+label);
   }
   await page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await layout(page,'welcome-'+label);
   assert.equal(await page.getByRole('region',{name:'Organiser une partie'}).count(),1);
@@ -169,7 +175,10 @@ try{
  await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();
  await full.evaluate(()=>window.IGR_HERITAGE_PLAY.open());await full.locator('.casino-entry').waitFor();
  await layout(full,'hub-full-desktop');await full.setViewportSize({width:390,height:844});await layout(full,'hub-full-iphone');
+ const hubCover=await full.locator('.casino-entry .casino-poster').boundingBox(),hubCard=await full.locator('.casino-entry').boundingBox();assert(hubCover.width/hubCard.width>=.48,'Hub artwork should occupy more than the old narrow column');
  await full.locator('.casino-entry').click();await layout(full,'campaign-full-iphone');
+ await full.locator('[data-casino-chapter="2"]').click();await layout(full,'chapter-prominent-full-iphone');
+ const fullPaint=await full.locator('.casino-chapter-launch [data-casino-live]').evaluate(e=>getComputedStyle(e).backgroundImage);assert(fullPaint.includes('112, 38, 48'),'Full app must not override the launch color');
  await full.locator('[data-casino-live]').click();await full.locator('[data-casino-action=switch]').click();await layout(full,'entry-full-iphone');
  await full.locator('[data-casino-action=close]').click();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
  const integratedRoom=await api(full,{op:'sync'});
