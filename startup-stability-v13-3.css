@@ -30,6 +30,35 @@
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 90%,transparent 100%);
   mask-image:linear-gradient(to bottom,transparent 0%,transparent 20%,#000 23%,#000 90%,transparent 100%);
 }
+/* Mask the hairline-bright vertical seam in the LEFT wall of the poster.
+   Attached to the photo's responsive footprint rather than the viewport:
+   no replacement of the art, caption, or interactive entrance element. */
+#introGate .intro-wall-seam-cleanup{
+  position:absolute;
+  z-index:2;
+  top:var(--intro-scene-top);
+  left:50%;
+  transform:translateX(-50%);
+  width:min(100%,calc(var(--intro-scene-height)*.5628));
+  height:var(--intro-scene-height);
+  pointer-events:none;
+  user-select:none;
+}
+#introGate .intro-wall-seam-cleanup::before{
+  content:"";
+  position:absolute;
+  left:8.1%;
+  top:23%;
+  width:2.1%;
+  height:63%;
+  background:linear-gradient(90deg,rgba(5,5,5,.4),rgba(8,8,8,.93) 45%,rgba(7,7,7,.9) 65%,rgba(7,7,7,.3));
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 6%,#000 94%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 6%,#000 94%,transparent 100%);
+}
+#introGate.opening .intro-wall-seam-cleanup,
+#introGate.done .intro-wall-seam-cleanup{opacity:0;transition:opacity .12s ease}
 #introGate .intro-cinema-shade{
   background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 30%,transparent 70%,rgba(0,0,0,.35));
 }
@@ -44,10 +73,12 @@
   bottom:calc(env(safe-area-inset-bottom,0px) + clamp(28px,6svh,64px))!important;
   width:min(calc(100% - 48px),340px)!important;min-height:72px!important;
   padding:16px 20px!important;gap:7px;border-radius:20px;
-  border:1px solid #70767d!important;
-  background:rgba(13,17,22,.94)!important;color:#f2f4f6!important;
-  box-shadow:0 12px 32px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(205,205,205,.68)!important;
+  /* Neutral steel / charcoal: no blue cast, matching the real door. */
+  background:linear-gradient(160deg,#383838 0%,#292929 42%,#171717 100%)!important;
+  color:#f4f4f4!important;
+  box-shadow:0 15px 36px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.35);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
 }
 #introGate #introEnterBtn span{
   color:inherit!important;text-shadow:none;
@@ -55,10 +86,10 @@
   letter-spacing:.14em!important;padding-left:.14em;
 }
 #introGate #introEnterBtn small{
-  color:#b7bec6!important;margin:0!important;
+  color:#c8c8c8!important;margin:0!important;
   font-size:9px;line-height:1.4;letter-spacing:.08em;
 }
-@media(hover:hover){#introGate #introEnterBtn:hover{border-color:#c3c9cf!important;background:#151b22!important}}
+@media(hover:hover){#introGate #introEnterBtn:hover{border-color:#e0e0e0!important;background:linear-gradient(160deg,#424242,#202020)!important}}
 #introGate #introEnterBtn:active{border-color:#e6e9ec!important}
 #introGate.opening .intro-title,#introGate.boot-waiting .intro-title{opacity:0}
 /* A compact two-column composition keeps the full doorway visible in landscape. */
@@ -72,6 +103,10 @@
   }
   #introGate .intro-art{
     left:auto;right:calc(env(safe-area-inset-right,0px) + 6vw);margin:0;
+  }
+  #introGate .intro-wall-seam-cleanup{
+    left:auto;right:calc(env(safe-area-inset-right,0px) + 6vw);
+    transform:none;
   }
   #introGate .intro-light-slit,#introGate .intro-pulse{left:calc(94vw - env(safe-area-inset-right,0px) - 34.05svh)}
   #introGate #introEnterBtn{
