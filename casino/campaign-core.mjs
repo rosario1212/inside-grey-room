@@ -168,7 +168,7 @@ export function applyCasinoCommand(current, command) {
       requireActive(s, actor);
       requireChapter(s, 1);
       ensure(s.undercoverIds.includes(actor), 'not_undercover');
-      ensure(compact(payload.text, 1000) && compact(payload.subjectId, 80), 'invalid_intelligence');
+      ensure(compact(payload.text, 1000) && compact(payload.subjectId, 80) && s.roster[payload.subjectId] && payload.subjectId !== actor, 'invalid_intelligence');
       s.intel.push({ id, from:actor, text:payload.text, subjectId:payload.subjectId, checked:false });
       break;
     }
