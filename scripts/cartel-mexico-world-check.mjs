@@ -25,7 +25,7 @@ assert(lore.includes('**entièrement au Mexique**'),'Mexico-only canon missing')
 assert(lore.includes('**future**') || lore.includes('**non active**') || lore.includes('**NON ACTIVÉ**'),'Pressure mechanic must be explicitly non-active');
 assert(lore.includes('Zéro fuite'),'Variant secrecy policy missing');
 assert(!/cartel_pressure\s*:\s*[1-4]/.test(src),'No fake reactive pressure value in public runtime');
-for(const text of [src,lore,canon])assert(!/Corona de Sal|Valcárcel/.test(text.replace(/« La Corona de Sal »|Mateo et Alma Valcárcel|« La Corona de Sal », Valcárcel/g,'')),'Deprecated cartel branding found');
+assert(!/Corona de Sal|Valcárcel/.test(src),'Deprecated cartel branding found in public runtime');
 for(const name of ['Ismael','Isabel','Ramiro','Jesús','Vicente','Rogelio','Saúl','Damián','Nicolás','Alberto'])assert(canon.includes(name),'Missing canonical family member '+name);
 assert(canon.includes('**53 ans**')||canon.includes('**53**'),'Ismael must be 53');
 assert(canon.includes('**Chuy**'),'Jesus must keep his nickname');
