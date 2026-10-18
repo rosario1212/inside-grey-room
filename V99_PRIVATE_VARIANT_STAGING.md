@@ -10,6 +10,7 @@ This repository is **public**. It MUST NOT contain spoiler-bearing storyline man
 - There are zero author-approved or production-enabled variants.
 
 ## What this PR does
+- Adds an **internal-only, dormant room-canon snapshot function** in the private schema. It pins only when all three variants are separately marked ready and approved. It is not called by the game yet; current production behavior remains unchanged.
 - Adds a repeatable **private schema migration** (already applied to the Supabase project).
 - Adds strict private-manuscript checks to the Cloudflare test and deployment workflows.
 - Does not read or distribute secret manuscripts, and does not alter game startup, role secrets, case selection, scoring or verdict.
