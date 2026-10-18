@@ -6,7 +6,7 @@ const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.2
 const catalog=await get('/heritage-casino-v91.js');assert.equal(catalog.status,200);
 assert.match(await catalog.text(),/launchReady:true/);
 const release=await get('/casino-release.json');assert.equal(release.status,200);
-const meta=await release.json();assert.equal(meta.version,'105.2');
+const meta=await release.json();assert.equal(meta.version,'105.3');
 if(process.env.IGR_EXPECTED_COMMIT)assert.equal(meta.commit,process.env.IGR_EXPECTED_COMMIT,'The deployed assets must match this commit');
 for(const poster of ['campagne','scenario-1','scenario-2','scenario-3']){
  const response=await get('/assets/casino/'+poster+'.webp');assert.equal(response.status,200);
