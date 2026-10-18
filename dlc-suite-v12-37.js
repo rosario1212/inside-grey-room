@@ -37,12 +37,12 @@
 
   for(const sc of [...CARTEL,...REGIME])if(!SCENARIOS.some(x=>x.id===sc.id))SCENARIOS.push(sc);
   Object.assign(SCENARIO_ROLES,{
-    '029':{required:['Enquêteur','Analyste','3 suspects'],optional:['Avocat','Procureur','2e Avocat']},
-    '030':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Avocat','Journaliste']},
-    '031':{required:['Enquêteur','Analyste','3 suspects','Avocat'],optional:['Procureur','Témoin']},
-    '032':{required:['Enquêteur','Analyste','Procureur','3 suspects'],optional:['Juge','Témoin']},
-    '033':{required:['Enquêteur','Analyste','Juge','3 suspects'],optional:['Procureur','Témoin']},
-    '034':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Témoin','Journaliste']}
+    '029':{required:['Enquêteur','Analyste','3 suspects’],optional:['Avocat','Procureur','2e Avocat']},
+    '030':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects’],optional:['Avocat','Journaliste']},
+    '031':{required:['Enquêteur','Analyste','3 suspects’,'Avocat'],optional:['Procureur','Témoin']},
+    '032':{required:['Enquêteur','Analyste','Procureur','3 suspects’],optional:['Juge','Témoin']},
+    '033':{required:['Enquêteur','Analyste','Juge','3 suspects’],optional:['Procureur','Témoin']},
+    '034':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects’],optional:['Témoin','Journaliste']}
   });
   Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries([...CARTEL,...REGIME].map(sc=>[sc.id,sc.short])));
   // The English edition loads before this DLC; keep the public Mexican canon bilingual.
@@ -50,7 +50,7 @@
     const englishCartel={
       '029':{short:'Mexico, Sinaloa. A killing reveals the grip of Los Salcedo. Suspects fear the cartel; soon the investigators feel that fear too.',context:'In fictional Puerto Ceniza, Sinaloa, a killing points toward Los Salcedo, a criminal dynasty led by Don Ismael, revered and feared in equal measure. Suspects both inside and outside the family are reluctant to speak: some depend on the clan, others dread retaliation. Three accounts conflict. The fear first heard in interviews begins to spread through the investigative cell.',mood:'Mexico · surveillance · reprisals.',mechanics:['Intimidation','Pressure on the investigation','Network violence']},
       '030':{short:'In Puerto Ceniza, fear of Los Salcedo spreads from witnesses into the courts. A disputed ruling shakes confidence in the case.',context:'Sinaloa, Mexico. An unexpected court ruling undermines a case involving Los Salcedo. Suspects fear speaking; confidential information may have leaked. Anxiety spreads from those questioned to investigators and institutions. The cell must establish the source of any leak and protect the evidence. A disputed ruling alone does not establish judicial corruption.',mood:'Mexico · justice under pressure · leaks.',mechanics:['Judicial corruption','Conditional protection','Compromised evidence']},
-      '031':{short:'In Puerto Ceniza, Los Salcedo cast a shadow over the cell's loved ones. Fear turns personal, but evidence still matters.',context:'On Mexico's Sinaloa coast, suspects' silences and fractures within the Salcedo family intersect with a warning involving someone close to the investigative cell. Don Ismael's paranoia and rivalries among his sons, brothers and nephews raise suspicion without proving responsibility. Protecting a person, pursuing a lead or disclosing a fact may carry a cost. The origin of each threat must be established.',mood:'Mexico · debt · personal pressure.',mechanics:['Personal pressure','Negotiation','Indirect responsibility']}
+      '031':{short:'In Puerto Ceniza, Los Salcedo cast a shadow over the cell’s loved ones. Fear turns personal, but evidence still matters.',context:'On Mexico’s Sinaloa coast, suspects’ silences and fractures within the Salcedo family intersect with a warning involving someone close to the investigative cell. Don Ismael’s paranoia and rivalries among his sons, brothers and nephews raise suspicion without proving responsibility. Protecting a person, pursuing a lead or disclosing a fact may carry a cost. The origin of each threat must be established.',mood:'Mexico · debt · personal pressure.',mechanics:['Personal pressure','Negotiation','Indirect responsibility']}
     };
     for(const sc of CARTEL)Object.assign(sc,englishCartel[sc.id]);
     Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries(CARTEL.map(sc=>[sc.id,sc.short])));
