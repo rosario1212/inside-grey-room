@@ -1,4 +1,4 @@
-const CACHE='igr-v38-1-los-salcedo-canon-v2';
+const CACHE='igr-v38-2-grey-room-protocol';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
@@ -15,7 +15,7 @@ const SHELL=[
   '/startup-stability-v13-3.js?v=v13.8-dual-play','/heritage-v13-5.js?v=v13.8-dual-play','/heritage-premium-v13-6.js?v=v13.8-dual-play','/heritage-play-v13-7.js?v=v13.8-dual-play','/play-modes-v13-8.js?v=v13.8-dual-play',
   '/heritage-maitre-data-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-assets-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-online-v34-4.js?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-mobile-v34-5.js?v=v34.9-maitre-theme-posters',
   '/language-v12.js?v=v12.22-mobile-ui','/i18n-en-v12.js?v=v12.22-mobile-ui',
-  '/rules-v12.js?v=v12.22-mobile-ui','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui','/locale-runtime-v12-23.js?v=v12.23-locale-home',
+  '/rules-v12.js?v=20261018-grey-room-protocol','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui','/locale-runtime-v12-23.js?v=v12.23-locale-home',
   '/omerta-v12.js?v=v12.24-omerta','/omerta-polish-v12.js?v=v12.28-omerta','/omerta-hotfix-v12.js?v=v12.28-omerta','/role-tree-polish-v12-29.js?v=v12.29-role-tree','/omerta-v12-30.js?v=v12.32-omerta-final',
   '/omerta-v12-39.js?v=v12.45-choice-copy','/terror-v12-37.js?v=v56-dlc-posters','/dlc-suite-v12-37.js?v=v20261018-los-salcedo-canon-v2','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=v12.46-copy',
   '/manifest.webmanifest','/privacy.html','/terms.html','/delete-account.html','/support.html',
