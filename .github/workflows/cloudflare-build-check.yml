@@ -86,6 +86,8 @@ jobs:
         run: node scripts/v87-narrative-check.mjs
       - name: Validate canonical variants and saga locks
         run: node scripts/v88-narrative-variant-check.mjs
+      - name: Audit private manuscript tooling without story spoilers
+        run: node scripts/v90-private-variant-check.mjs --self-test
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
       - name: Validate private access before Cloudflare packaging
