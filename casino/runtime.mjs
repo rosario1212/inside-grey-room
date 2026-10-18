@@ -14,7 +14,7 @@ const corroboratedFacts=(s,hearing)=>{
   check(rule,'judicial_rule_missing');
   return {sources,rule,established:rule.requiredFacts.every(f=>sources.some(e=>e.admissible===true&&e.facts?.includes(f)))};
 };
-const factualRuling=(s,hearing)=>{const {rule,established}=corroboratedFacts(s,hearing);return {id:'system-'+hearing.id,hearingId:hearing.id,subjectId:hearing.subjectId,decision:established?'convict':'acquit',reasoning:render(s,established?rule.convictionText:rule.acquittalText)};};
+const factualRuling=(s,hearing)=>{const {rule,established}=corroboratedFacts(s,hearing);const convict=established&&!hearing.absentDefence;return {id:'system-'+hearing.id,hearingId:hearing.id,subjectId:hearing.subjectId,decision:convict?'convict':'acquit',reasoning:hearing.absentDefence?'Aucune condamnation automatique n’est permise sans défense enregistrée.':render(s,convict?rule.convictionText:rule.acquittalText)};};
 const independentSupporters=(s,candidate)=>Object.entries(s.support).filter(([id,to])=>id!==candidate&&to===candidate&&s.roster[id]?.status==='free').length;
 const territoryCount=(s,candidate)=>Object.values(s.territories).filter(t=>t.controller===candidate).length;
 const identity=(s,id)=>s.roster[id]?.name||s.members?.find(m=>m.id===id)?.name||id;
@@ -221,7 +221,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       const h=s.hearings.find(h=>h.id===payload.hearingId);check(h&&h.defence!==null,'defence_required');
       check(['acquit','convict','release'].includes(payload.decision)&&text(payload.reasoning,1500),'invalid_ruling');
       check(!s.rulings.some(r=>r.hearingId===h.id),'ruling_already_recorded');
-      if(payload.decision==='convict')check(corroboratedFacts(s,h).established,'judicial_elements_not_established');
+      if(payload.decision==='convict')check(!h.absentDefence&&corroboratedFacts(s,h).established,'judicial_elements_not_established');
       s.rulings.push({id:command.id,hearingId:h.id,subjectId:h.subjectId,decision:payload.decision,reasoning:payload.reasoning});
       s.roster[h.subjectId].status=payload.decision==='convict'?'detained':'free';break;
     }
@@ -425,6 +425,7 @@ export function viewRuntime(state,viewer){
     minimumSocialUntil:state.phaseStartedAt+state.privateCanon.minimumSocialMs,
     hostCanLocate:viewer===state.hostId&&state.chapter===1&&state.phase===3&&state.fallbackReady&&
       Date.now()-state.phaseStartedAt>=state.privateCanon.minimumSocialMs*3,
+    hostCanCloseDefence:viewer===state.hostId&&state.chapter===3&&state.phase===2&&state.hearings.some(h=>h.defence===null),
     hostCanCloseCourt:viewer===state.hostId&&state.chapter===3&&state.phase===2&&!!state.bureau.judge&&
       state.hearings.some(h=>h.defence!==null&&!state.rulings.some(r=>r.hearingId===h.id)),
     finale:state.finale?{...state.finale,organigram:role?state.finale.organigram:undefined,
