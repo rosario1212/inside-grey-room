@@ -203,3 +203,21 @@ body.igr-theme-regime .confirm-panel-v10-13 input{background:#091016!important;c
 @media(max-width:430px){
   .cartel-scenario .scenario-body.compact h3{font-size:1rem!important}
 }
+
+/* CARTEL 029–031: show the square original poster without the 9:16 black
+   letterboxing inherited from the portrait TERREUR confirmation layout. */
+body.igr-theme-cartel .confirm-panel-v10-13 .confirm-art img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:1 / 1!important;
+  max-height:none!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  filter:none!important;
+}
+/* The 029 header is slightly right-weighted in the original art. Keep it
+   inside the narrow 3:4 card crop rather than clipping its final letters. */
+.cartel-scenario[data-igr-scenario-id="029"] .scenario-thumb img{
+  object-position:72% 50%!important;
+}
