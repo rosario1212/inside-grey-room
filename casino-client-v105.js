@@ -195,5 +195,5 @@ document.addEventListener('submit',async event=>{
  await mutate({op:'command',type:commands[kind],payload:p});
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.1',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.3',open,close,sync});
 })();
