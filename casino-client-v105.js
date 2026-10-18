@@ -6,7 +6,7 @@ const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelecto
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const roles={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
 const statuses={guest:'Invité',free:'Libre',interpellated:'Interpellé',detained:'Détenu',dead:'Décédé',deposed:'Déchu'};
-let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,generation=0,active=false,pending=null,problem='',syncedAt=0,joinDraft=null;
+let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,generation=0,active=false,pending=null,problem='',syncedAt=0,joinDraft=null,advanceConfirm=false;
 const freshToken=()=>[...crypto.getRandomValues(new Uint8Array(32))].map(n=>n.toString(16).padStart(2,'0')).join('');
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY+'_pending')||localStorage.getItem(KEY)||'null');return (v?.roomId||v?.inviteCode)&&v?.sessionToken?v:null}catch{return null}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(credentials));localStorage.removeItem(KEY+'_pending')}catch{}}
@@ -22,7 +22,7 @@ async function request(body){
 }
 function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data.roomId===state.roomId&&data.revision<state.revision)return;
  const changed=!state||state.roomId!==data.roomId||state.revision!==data.revision;
- state=data;syncedAt=Date.now();if(changed)render();else connection();
+ state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
 function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Synchronisé · état serveur '+state.revision:credentials?'Connexion…':''}
 async function sync(){
@@ -70,7 +70,7 @@ function lobby(){const own=state.members.find(m=>m.id===state.viewer);return `<h
  <p>Les personnages et les éventuelles missions d’infiltration sont attribués au lancement.</p>`}
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${(c.relations||[]).map(r=>`<article><h3>${esc(name(r.target))}</h3><p>${esc(r.text)}</p></article>`).join('')}
- ${state.ownUndercoverBrief?'<p class="casino-secret">Mission confidentielle : transmets tes observations au bureau. Une déclaration reste à vérifier.</p>':''}
+ ${state.ownUndercoverBrief?`<div class="casino-secret"><strong>Mission confidentielle</strong><p>Seul ton personnage voit cette mission. Les observations reçues par le bureau restent non confirmées tant qu'elles ne sont pas recoupées.</p>${state.chapter===1?form('intel',people('subjectId',c=>c.id!==state.viewer)+area('Renseignement à transmettre discrètement','text',1000),'Transmettre au bureau'):''}</div>`:''}
  ${state.continuityRole?'<p>Tu poursuis comme témoin de continuité : rapporte des observations publiques au bureau.</p>':''}`)+
  section('Ce qui se passe',state.publicEvents.map(e=>`<p>${esc(e.text)}</p>`).join(''))+
  section('Rencontres',(state.npcEvents||[]).map(e=>`<p><b>${esc(name(e.npcId))}</b> · ${esc(e.text)}</p>`).join('')+(state.npcMoves||[]).map(m=>button(m.label,'NPC_MOVE',{moveId:m.id})).join('')+(state.npcOffers||[]).map(o=>`<article><p>${esc(o.terms)} · ${o.price} jetons virtuels</p>${button(o.label,'ACCEPT_NPC_OFFER',{offerId:o.id})}</article>`).join(''))}
@@ -90,17 +90,18 @@ function network(){return section('Réputations et positions',`<div class="casin
  ${Object.entries(state.successionWagers||{}).filter(([,w])=>w.to===state.viewer&&w.status==='pending').map(([from])=>button('Accepter le droit engagé par '+name(from),'ACCEPT_SUCCESSION_WAGER',{from})).join('')}`)+
  section('Territoires',(state.territories||[]).map(t=>`<article><h3>${esc(t.name)}</h3><p>Contrôle : ${esc(name(t.controller))}</p>${state.camp==='casino'?button('Revendiquer','CLAIM_TERRITORY',{territoryId:t.id}):''}${t.controller===state.viewer?form('territory',`<input type="hidden" name="territoryId" value="${esc(t.id)}">${people('to',c=>!c.npc&&c.id!==state.viewer)}<label>Accord signé<select name="agreementId">${state.agreements.filter(a=>a.kind==='territory'&&a.status==='signed').map(a=>option(a.id,a.terms)).join('')}</select></label>`,'Transférer selon l’accord'):''}</article>`).join(''))+
  (state.camp==='casino'?section('Négocier',form('transfer',people('to',c=>!c.npc&&c.id!==state.viewer)+field('Jetons à transmettre','amount','number','min="1" required'),'Transmettre les jetons')+form('npc',people('npcId',c=>c.npc)+area('Ta demande au personnage','text',700),'Prendre contact')):'')}
-function evidencePicker(){return `<fieldset><legend>Sources à joindre</legend>${(state.evidence||[]).map(e=>`<label class="casino-inline"><input type="checkbox" name="evidenceIds" value="${esc(e.id)}">${esc(name(e.subjectId))} · ${esc(e.description)}</label>`).join('')}</fieldset>`}
+function evidencePicker(){return `<fieldset><legend>Sources à joindre</legend>${(state.evidence||[]).map(e=>`<label class="casino-inline" data-casino-proof-label><input type="checkbox" name="evidenceIds" value="${esc(e.id)}" data-subject="${esc(e.subjectId)}" data-offence="${esc(e.offence)}">${esc(name(e.subjectId))} · ${esc(e.description)}</label>`).join('')}</fieldset>`}
+const offencePicker=field=>`<label>Infraction fondée sur les preuves<select name="${esc(field)}" data-casino-offence required>${[...new Set((state.evidence||[]).map(e=>e.offence))].map(id=>option(id,id)).join('')}</select></label>`;
 function bureau(){return section('Bureau d’enquête',`<p>Les déclarations restent distinctes des pièces corroborées. Une arrestation n’équivaut pas à une condamnation.</p>
  ${(state.dossiers||[]).map(d=>`<article><h3>${esc(name(d.subjectId))} · ${esc(d.title)}</h3><p>${esc(d.context)}</p></article>`).join('')}
- ${(state.intel||[]).map(i=>`<p>Renseignement non confirmé : ${esc(i.text)}</p>`).join('')}
+ ${(state.intel||[]).map(i=>`<p>Renseignement non confirmé concernant <b>${esc(name(i.subjectId))}</b> : ${esc(i.text)}</p>`).join('')}
  ${(state.evidence||[]).map(e=>`<article><h3>${esc(name(e.subjectId))}</h3><p>${esc(e.description)}</p><small>${esc(e.offence)} · source ${esc(e.sourceId)}</small></article>`).join('')}
  ${state.role==='agent'?(state.agentPuzzles||[]).map(q=>form('deduction',`<p>${esc(q.question)}</p><label>Ta déduction<select name="answer">${q.options.map(o=>option(o.id,o.label)).join('')}</select></label>`,'Valider ma déduction')).join('')+(state.chapter===1&&state.phase===3?button('Localiser la salle','LOCATE_ROOM'):'')+(state.fallbackHint?`<p>${esc(state.fallbackHint)}</p>`:''):''}
- ${['investigator','prosecutor'].includes(state.role)&&state.chapter>=2?form('interpellation',people('subjectId')+field('Infraction soutenue par les pièces','allegedOffence','text','maxlength="120" required')+area('Motivation personnelle de la demande','reasoning',700)+evidencePicker(),'Demander une interpellation'):''}
+ ${['investigator','prosecutor'].includes(state.role)&&state.chapter>=2?form('interpellation',people('subjectId')+offencePicker('allegedOffence')+area('Motivation personnelle de la demande','reasoning',700)+evidencePicker(),'Demander une interpellation'):''}
  ${(state.requests||[]).map(r=>`<article><p>Demande : ${esc(name(r.subjectId))} · ${esc(r.reasoning)}</p>${state.role==='agent'&&!r.executed?button('Procéder personnellement à l’interpellation','INTERPELLATE',{requestId:r.id}):''}</article>`).join('')}
- ${['analyst','investigator'].includes(state.role)?form('map',people('subject')+people('target')+field('Relation étayée','relation','text','maxlength="100" required')+field('Infraction liée aux sources','offence','text','maxlength="120" required')+evidencePicker(),'Inscrire au schéma criminel'):''}
+ ${['analyst','investigator'].includes(state.role)?form('map',people('subject')+people('target')+field('Relation étayée','relation','text','maxlength="100" required')+offencePicker('offence')+evidencePicker(),'Inscrire au schéma criminel'):''}
  ${(state.organigram||[]).map(e=>`<p>${esc(name(e.subject))} → ${esc(e.relation)} → ${esc(name(e.target))}</p>`).join('')}
- ${['investigator','prosecutor'].includes(state.role)&&state.chapter>=2?form('hearing',people('subjectId')+field('Infraction','offence','text','maxlength="120" required')+area('Accusation à discuter','accusation')+evidencePicker(),'Ouvrir une audition contradictoire'):''}
+ ${['investigator','prosecutor'].includes(state.role)&&state.chapter>=2?form('hearing',people('subjectId')+offencePicker('offence')+area('Accusation à discuter','accusation')+evidencePicker(),'Ouvrir une audition contradictoire'):''}
  ${form('note',`<label>Tes notes privées<textarea name="text" maxlength="3000" data-casino-draft>${esc(state.ownNote)}</textarea></label>`,'Enregistrer mes notes')}`)}
 function justice(){return section(state.camp==='casino'?'Messages et espace Prison':'Auditions et messages',`
  ${(state.messages||[]).map(m=>`<article><b>${esc(name(m.from))}</b><p>${esc(m.text)}</p><small>Déclaration à vérifier</small></article>`).join('')}
@@ -162,7 +163,7 @@ document.addEventListener('submit',async event=>{
   generation++;state=null;credentials={roomId,sessionToken};save();await sync();return;
  }
  if(kind==='role'){await mutate({op:'role',role:p.role});return}
- const commands={bet:'POKER_ACTION',slot:'SLOT_SPIN',agreement:'PROPOSE_AGREEMENT',loyalty:'PLEDGE_LOYALTY',split:'SPLIT_FACTION',wager:'PLEDGE_SUCCESSION',territory:'TRANSFER_TERRITORY',transfer:'TRANSFER_CHIPS',npc:'ASK_NPC',deduction:'AGENT_DECISION',interpellation:'REQUEST_INTERPELLATION',map:'MAP_RELATION',hearing:'OPEN_HEARING',note:'NOTE',message:'MESSAGE','bureau-message':'BUREAU_MESSAGE',defence:'DEFENCE',ruling:'RULING',detain:'DETAIN',corruption:'OFFER_CORRUPTION'};
+ const commands={intel:'REPORT_INTEL',bet:'POKER_ACTION',slot:'SLOT_SPIN',agreement:'PROPOSE_AGREEMENT',loyalty:'PLEDGE_LOYALTY',split:'SPLIT_FACTION',wager:'PLEDGE_SUCCESSION',territory:'TRANSFER_TERRITORY',transfer:'TRANSFER_CHIPS',npc:'ASK_NPC',deduction:'AGENT_DECISION',interpellation:'REQUEST_INTERPELLATION',map:'MAP_RELATION',hearing:'OPEN_HEARING',note:'NOTE',message:'MESSAGE','bureau-message':'BUREAU_MESSAGE',defence:'DEFENCE',ruling:'RULING',detain:'DETAIN',corruption:'OFFER_CORRUPTION'};
  if(kind==='agreement'){p.recordId=crypto.randomUUID();p.participants=[state.viewer,...data.getAll('participants')]}
  if(['interpellation','map','hearing'].includes(kind))p.evidenceIds=data.getAll('evidenceIds');
  if(kind==='bet')p.action='bet';for(const k of ['amount','wager'])if(k in p)p[k]=Number(p[k]);
