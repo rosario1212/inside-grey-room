@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: cloudflare-production
+  group: cloudflare-cartel-cell-gold-20261018
   cancel-in-progress: false
 jobs:
   publish:
