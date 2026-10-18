@@ -311,3 +311,51 @@ body.igr-theme-cartel .confirm-panel-v10-13 .confirm-art img{
   .cartel-scenario .scenario-id{font-size:.6rem!important;letter-spacing:.11em!important}
   .cartel-scenario .scenario-thumb{border-radius:15px 0 0 15px!important}
 }
+
+/* CARTEL 029–031: keep the dossier-detail gold title through multiplayer.
+   Scope to the actual CARTEL body theme; other DLCs retain their own identity. */
+body.igr-theme-cartel #app .page-head.lobby-head h1,
+body.igr-theme-cartel #app .page-head.game-head-v11 h1,
+body.igr-theme-cartel #app .briefing-page .briefing-card h1{
+  font-family:Baskerville,Georgia,'Times New Roman',serif!important;
+  font-weight:700!important;
+  font-style:normal!important;
+  font-size:clamp(1.75rem,7vw,3.3rem)!important;
+  line-height:1.08!important;
+  letter-spacing:.01em!important;
+  color:#f5ce83!important;
+  background:linear-gradient(180deg,#fff1ba,#c38a3b 72%,#e9b966)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  text-shadow:none!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:auto;
+  max-width:100%;
+}
+/* Match the dossier number's gold accent without changing controls or roles. */
+body.igr-theme-cartel #app .page-head.lobby-head .kicker,
+body.igr-theme-cartel #app .page-head.game-head-v11 .kicker,
+body.igr-theme-cartel #app .briefing-page .briefing-eyebrow{
+  color:#d9ad62!important;
+  letter-spacing:.19em!important;
+}
+/* Narrow screens: allow long scenario names to wrap without clipping buttons. */
+@media(max-width:430px){
+  body.igr-theme-cartel #app .page-head.lobby-head h1,
+  body.igr-theme-cartel #app .page-head.game-head-v11 h1,
+  body.igr-theme-cartel #app .briefing-page .briefing-card h1{
+    font-size:clamp(1.65rem,7vw,2.25rem)!important;
+    line-height:1.12!important;
+  }
+}
+@media(forced-colors:active){
+  body.igr-theme-cartel #app .page-head.lobby-head h1,
+  body.igr-theme-cartel #app .page-head.game-head-v11 h1,
+  body.igr-theme-cartel #app .briefing-page .briefing-card h1{
+    background:none!important;
+    color:CanvasText!important;
+    -webkit-text-fill-color:CanvasText!important;
+  }
+}
