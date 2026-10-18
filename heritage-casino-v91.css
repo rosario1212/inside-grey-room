@@ -10,7 +10,7 @@
 .casino-heading h1{font:900 clamp(40px,9vw,76px)/.95 Georgia,serif;margin:0;letter-spacing:.025em;text-transform:uppercase}
 .casino-heading p{font-size:14px;color:#cbb9aa;line-height:1.6;margin:4px auto;max-width:66ch}
 .casino-hero{max-width:330px;min-height:120px;margin:0 auto 22px;border:1px solid #543b2a;border-radius:14px;overflow:hidden}
-.casino-hero img{display:block;width:100%;height:auto;aspect-ratio:3/5;object-fit:cover}
+.casino-hero img{display:block;width:100%;height:auto;object-fit:contain}
 .casino-public-note{display:grid;gap:8px;padding:16px;margin:18px auto 24px;border:1px solid #5b382d;border-left:3px solid #af4138;border-radius:9px;background:#160e0f;max-width:850px}
 .casino-public-note strong{font-size:11px;letter-spacing:.12em;color:#e7bba3}
 .casino-public-note span{font-size:13px;line-height:1.55;color:#d2bab3}
@@ -28,7 +28,7 @@
 .casino-pillars>div,.casino-phases{border:1px solid #3c2a24;border-radius:10px;padding:15px;background:#110c0b}
 .casino-pillars b{font-size:11px;color:#d5a482}.casino-pillars p{font-size:12px;color:#bdaea8;line-height:1.5}
 .casino-chapter-cover{max-width:280px;margin:20px auto;border-radius:11px;overflow:hidden;border:1px solid #453026}
-.casino-chapter-cover img{display:block;width:100%;height:auto;aspect-ratio:3/5;object-fit:cover}
+.casino-chapter-cover img{display:block;width:100%;height:auto;object-fit:contain}
 .casino-phases{max-width:760px;margin:auto}.casino-phases h2{font-size:17px;margin:0 0 16px}
 .casino-phase{display:flex;gap:12px;align-items:center;padding:13px 0;border-top:1px solid #382621}
 .casino-phase b{color:#dc6659;min-width:18px}.casino-phase strong{font-size:13px}
