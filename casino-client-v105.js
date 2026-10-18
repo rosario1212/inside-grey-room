@@ -162,7 +162,7 @@ document.addEventListener('click',async event=>{
  if(el.dataset.casinoTab){tab=el.dataset.casinoTab;render();return}
  if(el.dataset.casinoCommand){if(!busy&&!pending){
    if(['ADVANCE_PHASE','FINISH_CAMPAIGN'].includes(el.dataset.casinoCommand)&&!advanceConfirm){advanceConfirm=true;render();return}
-   advanceConfirm=false;await mutate({op:'command',type:el.dataset.casinoCommand,payload:JSON.parse(el.dataset.payload||'{}'})
+   advanceConfirm=false;await mutate({op:'command',type:el.dataset.casinoCommand,payload:JSON.parse(el.dataset.payload||'{}')})
   }return}
  switch(el.dataset.casinoAction){
   case 'close':close();break;case 'cancel-advance':advanceConfirm=false;render();break;case 'resume':credentials=load();await sync();break;case 'retry':await mutate({},true);break;
