@@ -12,10 +12,12 @@
   const DLC_IDS=new Set(['021','022','023','024','025','026','027','028','029','030','031','032','033','034']);
   const DLC_ACCESS={loaded:false,items:{},loading:null};
 
+  // Shared public canon only: all places and characters are fictional.
+  // Never encode A/B/C culprit, secret loyalties or evidence outcomes here.
   const CARTEL=[
-    {id:'029',title:'LE CYCLE MORT',short:'L’enquête touche un réseau qui ne se contente plus de cacher ses crimes : il commence à frapper ceux qui posent les questions.',context:'Le dossier s’ouvre sur un premier homicide destiné à neutraliser la dynamique de l’enquête. Les trois suspects ne se valent pas : l’un profite, l’autre couvre, le troisième lance la spirale.',mood:'Pression · réseau · représailles.',min:5,max:8,sound:'threat',mechanics:['Intimidation','Érosion de l’enquête','Violence réseau']},
-    {id:'030',title:'LA COUR ACHETÉE',short:'Les preuves existent. Le problème est de savoir ce qu’elles valent encore quand ceux qui doivent les porter ont eux-mêmes un prix.',context:'L’enquête remonte vers un réseau d’influence qui corrompt ceux censés protéger la procédure. Les joueurs doivent distinguer preuve vraie, preuve compromise et acteur déjà acheté.',mood:'Corruption · procédure · prix du silence.',min:7,max:9,sound:'court',mechanics:['Corruption judiciaire','Protection intéressée','Preuves fragilisées']},
-    {id:'031',title:'LA DETTE',short:'Cette fois, le réseau ne menace plus le dossier. Il entre dans la vie de ceux qui le mènent.',context:'Le réseau passe du dossier aux proches. Les suspects savent comment la pression personnelle a été utilisée et doivent répondre de ce qu’ils ont décidé, accepté ou laissé faire.',mood:'Dette · pression intime · enlèvement moral.',min:6,max:8,sound:'debt',mechanics:['Pression privée','Négociation','Responsabilité indirecte']}
+    {id:'029',title:'LE CYCLE MORT',short:'Mexique, Sinaloa. À Puerto Ceniza, un homicide révèle l’ombre de La Corona de Sal. La cellule découvre qu’elle est elle-même surveillée.',context:'Puerto Ceniza, ville portuaire fictive de Sinaloa, au Mexique. Un homicide met la cellule sur la piste de La Corona de Sal, un cartel dont les relais semblent toucher les entreprises et les institutions locales. Trois suspects racontent des versions inconciliables. Pendant que l’enquête cherche qui a déclenché la violence, un avertissement laisse entendre que le réseau connaît les enquêteurs.',mood:'Mexique · surveillance · représailles.',min:5,max:8,sound:'threat',mechanics:['Intimidation','Érosion de l’enquête','Violence réseau']},
+    {id:'030',title:'LA COUR ACHETÉE',short:'À Puerto Ceniza, une décision judiciaire fragilise les preuves. La Corona de Sal paraît connaître les démarches de la cellule avant même qu’elles aboutissent.',context:'Mexique, État de Sinaloa. Une décision de justice inattendue ébranle le dossier contre La Corona de Sal. Des informations confidentielles semblent avoir circulé hors de la cellule. Les enquêteurs doivent déterminer si les preuves ont été compromises, si la procédure a été manipulée et qui tire profit de la défiance. Une décision contestée ne suffit pas à prouver la corruption d’un magistrat.',mood:'Mexique · justice sous pression · fuite.',min:7,max:9,sound:'court',mechanics:['Corruption judiciaire','Protection intéressée','Preuves fragilisées']},
+    {id:'031',title:'LA DETTE',short:'À Puerto Ceniza, la menace devient personnelle. La Corona de Sal connaît les proches de la cellule ; protéger quelqu’un pourrait coûter une preuve décisive.',context:'Mexique, sur la côte de Sinaloa. La Corona de Sal ne se contente plus de perturber l’enquête : une personne liée à la cellule reçoit un avertissement personnel. Entre proches menacés, dettes anciennes et loyautés contradictoires, chaque suspect doit expliquer ce qu’il savait, ce qu’il a accepté et ce qu’il a réellement fait. La provenance de la menace reste à établir.',mood:'Mexique · dette · pression intime.',min:6,max:8,sound:'debt',mechanics:['Pression privée','Négociation','Responsabilité indirecte']}
   ];
   const REGIME=[
     {id:'032',title:'LES ARCHIVES DU PALAIS',short:'Un régime est tombé. Les archives restent. Chacun affirme n’avoir été qu’un rouage.',context:'Les archives dévoilent arrestations arbitraires, disparitions et chaînes de signatures. Les suspects peuvent se renvoyer la faute, mais les documents forcent à reconstruire la responsabilité réelle.',mood:'Archives · chute du pouvoir · responsabilité.',min:6,max:8,sound:'archives',mechanics:['Chaîne d’ordre','Documents','Déni hiérarchique']},
@@ -43,6 +45,17 @@
     '034':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Témoin','Journaliste']}
   });
   Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries([...CARTEL,...REGIME].map(sc=>[sc.id,sc.short])));
+  // The English edition loads before this DLC; keep the public Mexican canon bilingual.
+  if(window.IGR_LOCALE==='en'){
+    const englishCartel={
+      '029':{short:'Mexico, Sinaloa. In Puerto Ceniza, a killing exposes the shadow of La Corona de Sal. The investigation cell realizes it is being watched.',context:'Puerto Ceniza is a fictional port city in Sinaloa, Mexico. A killing points the investigation cell toward La Corona de Sal, a cartel whose influence appears to reach local businesses and institutions. Three suspects offer irreconcilable accounts. As the team reconstructs who unleashed the violence, a warning suggests the network knows its investigators.',mood:'Mexico · surveillance · reprisals.',mechanics:['Intimidation','Pressure on the investigation','Network violence']},
+      '030':{short:'In Puerto Ceniza, a court ruling undermines the evidence. La Corona de Sal seems to know the cell’s next move before it happens.',context:'Sinaloa, Mexico. An unexpected court ruling shakes the case against La Corona de Sal. Confidential information appears to have escaped the investigation cell. Investigators must distinguish compromised evidence from a manipulated procedure and ask who benefits from distrust. A disputed ruling alone does not prove a judge was bribed.',mood:'Mexico · justice under pressure · leaks.',mechanics:['Judicial corruption','Conditional protection','Compromised evidence']},
+      '031':{short:'In Puerto Ceniza, the threat turns personal. La Corona de Sal knows the cell’s loved ones; protecting someone may cost crucial evidence.',context:'On the Sinaloa coast in Mexico, La Corona de Sal goes beyond obstructing the investigation: someone close to the cell receives a personal warning. With threatened loved ones, old debts and divided loyalties, each suspect must explain what they knew, accepted and actually did. The warning’s origin remains unproven.',mood:'Mexico · debt · personal pressure.',mechanics:['Personal pressure','Negotiation','Indirect responsibility']}
+    };
+    for(const sc of CARTEL)Object.assign(sc,englishCartel[sc.id]);
+    Object.assign(PUBLIC_LOBBY_SUMMARIES,Object.fromEntries(CARTEL.map(sc=>[sc.id,sc.short])));
+  }
+
 
   const META={};
   for(let i=1;i<=8;i++)META[String(i).padStart(3,'0')]={origin:'base',collection:'original'};
@@ -223,7 +236,7 @@
 
   function decorateCreateList(){
     const root=document.querySelector('.page-create-v10-13');if(!root)return;
-    appendCollection(root,{collection:'cartel',title:'CARTEL',eyebrow:'DLC · PRESSION',copy:'3 dossiers liés : le réseau attaque d’abord l’enquête, puis le système, puis la vie privée.',ids:CARTEL_IDS,label:'CARTEL',tag:'PRESSION'});
+    appendCollection(root,{collection:'cartel',title:'CARTEL',eyebrow:'DLC · PRESSION',copy:window.IGR_LOCALE==='en'?'Mexico · Puerto Ceniza, Sinaloa. Three linked cases against La Corona de Sal: surveillance of the cell, pressure on justice and threats to loved ones.':'Mexique · Puerto Ceniza, Sinaloa. Trois dossiers liés face à La Corona de Sal : surveillance de la cellule, justice sous pression, menace contre les proches.',ids:CARTEL_IDS,label:'CARTEL',tag:'PRESSION'});
     appendCollection(root,{collection:'regime',title:'LE RÉGIME',eyebrow:'DLC · APRÈS LA CHUTE',copy:'3 dossiers sur crimes d’État, délation intéressée, oligarchie familiale et reconstruction du pouvoir réel.',ids:REGIME_IDS,label:'LE RÉGIME',tag:'ARCHIVES'});
     renderTerrorAccess(root);
     markExistingCards(root);ensureFilters(root);applyFilters(root);
