@@ -19,6 +19,7 @@ for(const page of [html,en]){
  assert(page.indexOf('common-dossier-v106.js')<page.indexOf('cartel029-v107.js'));
 }
 assert.match(source,/room\?\.scenario_id==='029'/);
+assert.match(source,/cartel029_ready===true/,'new-story UI must stay off until backend confirms readiness');
 assert.match(source,/\['enqueteur','analyste'\]/);
 assert.match(source,/igr_v107_029_report/);
 assert.match(source,/if\(state\(\)\?\.tab==='timeline'\)/);
@@ -41,4 +42,19 @@ assert.match(sql,/MESSAGE DE LOS SALCEDO · LES VINGT CAPTIFS/);
 assert.doesNotMatch(sql,/\bGRANT SELECT\b/i);
 let sw=null;try{sw=await readFile(path.join(dest,'service-worker.js'),'utf8')}catch(e){if(e.code!=='ENOENT'||!dest.endsWith('/www'))throw e}
 if(sw!==null)assert.match(sw,/cartel029-v107\.js\?v=v107-cartel029/);
+const [gateSql,safetySql,readySql]=await Promise.all([
+ readFile('supabase/migrations/20261019032000_v108_cartel029_private_four_witness_gate.sql','utf8'),
+ readFile('supabase/migrations/20261019034500_v109_cartel029_no_half_live_release.sql','utf8'),
+ readFile('supabase/migrations/20261019035500_v110_cartel029_public_ready_handshake.sql','utf8')
+]);
+assert.match(gateSql,/passed_end_to_end_testing/);
+assert.match(gateSql,/manually_activated/);
+assert.match(gateSql,/where editorial_status='approved' and approved_at is not null/);
+assert.match(gateSql,/return 4; end if;/);
+assert.match(gateSql,/igr_v108_029_room_variants/);
+assert.match(gateSql,/not igr_private\.igr_v108_029_is_enabled\(\)/);
+assert.match(safetySql,/igr_v108_029_is_enabled/);
+assert.match(readySql,/cartel029_ready/);
+assert.doesNotMatch(source,/Óscar Beltrán|León Trejo|Lorena Cruz|Efraín Montes/);
+
 console.log('029 v107: no private leaks, role-gated report, cycle messages and web/mobile assets PASS');
