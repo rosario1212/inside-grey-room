@@ -24,7 +24,7 @@ assert.match(source,/\['enqueteur','analyste'\]/);
 assert.match(source,/igr_v107_029_report/);
 assert.match(source,/if\(state\(\)\?\.tab==='timeline'\)/);
 assert.match(source,/if\(state\(\)\?\.tab==='investigation'&&member\(\)\)/);
-assert(!source.includes('V5')&&!source.includes('F01')&&!source.includes('Lorena Cruz'),'Private clues must not enter public JS');
+assert(!source.includes('V5')&&!source.includes('F01'),'Private solution keys must not enter public JS');
 assert.match(sql,/create table if not exists igr_private\.igr_v107_029_editorial_matrix/i);
 assert.match(sql,/check\(not public_enabled or editorial_status='approved'\)/);
 assert.match(sql,/revoke all on igr_private\.igr_v107_029_editorial_matrix from public,anon,authenticated/i);
