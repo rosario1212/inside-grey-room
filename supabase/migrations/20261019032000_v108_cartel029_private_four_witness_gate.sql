@@ -1,11 +1,21 @@
 -- v108: fully OFF until all 15 private authoring combinations and A/B/C
 -- manuscripts receive explicit approval. No plot truth is stored in the repo.
+create table if not exists igr_private.igr_v108_029_release_control(
+  only_row boolean primary key default true check(only_row),
+  passed_end_to_end_testing boolean not null default false,
+  manually_activated boolean not null default false);
+alter table igr_private.igr_v108_029_release_control enable row level security;
+revoke all on igr_private.igr_v108_029_release_control from public,anon,authenticated;
+insert into igr_private.igr_v108_029_release_control(only_row,passed_end_to_end_testing,manually_activated)
+ values(true,false,false) on conflict(only_row) do nothing;
+
 create or replace function igr_private.igr_v108_029_is_enabled() returns boolean
 language sql stable security definer set search_path='' as $$
  select (select count(*) from igr_private.igr_v107_029_editorial_matrix
          where editorial_status='approved' and public_enabled)=15
    and (select count(*) from igr_private.igr_v99_variant_manuscripts
         where scenario_id='029' and editorial_status='approved' and approved_at is not null)=3
+   and (select passed_end_to_end_testing and manually_activated from igr_private.igr_v108_029_release_control where only_row=true) is true
 $$;
 revoke all on function igr_private.igr_v108_029_is_enabled() from public,anon,authenticated;
 
