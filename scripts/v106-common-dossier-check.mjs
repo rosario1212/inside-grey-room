@@ -17,6 +17,7 @@ for(const f of ['common-dossier-v106.js','notifications-v12.js','scripts/apply-c
 }
 assert.match(runtime,/const AUTH=new Set\(\['enqueteur','analyste','procureur','juge','inspecteur','expert'\]\)/);
 assert.match(runtime,/if\(id==='investigation'\)return isInquiry\(\)/);
+assert.match(runtime,/if\(!tabs\.some\(t=>t\?\.id==='timeline'\)\)/,'shared dossier must be reinserted for suspects/witnesses');
 assert.match(runtime,/if\(S\(\)\?\.tab==='timeline'\)return publicHtml\(\)/);
 assert.match(runtime,/igr_v106_common_dossier/);
 assert.match(runtime,/const origCard/);
