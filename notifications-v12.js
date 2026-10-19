@@ -10,7 +10,7 @@
   const DEFAULTS={inApp:true,system:false,sound:true,vibrate:true};
   const MAX_ITEMS=60;
   const state={roomKey:'',cursor:0,items:[],bannerQueue:[],pumping:false,native:null,nativeListener:false,lastSoundAt:0,bannerTimer:null,bannerStart:null};
-  let focusRequest=null;const viewedSince=new Map();
+  let focusRequest=null;const viewedSince=new Map(),tabDrafts=new Map();
   const tr=(fr,en)=>window.IGR_LOCALE==='en'?en:fr;
   const resolvedRoute=route=>{const allowed=['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(STATE?.sync?.player?.public_role);return route==='investigation'&&!allowed?'timeline':route;};
 
@@ -24,7 +24,7 @@
   function itemsKey(key){return ITEMS_PREFIX+key}
   function ensureRoom(){
     const key=roomKey();
-    if(!key){clearBanners();viewedSince.clear();focusRequest=null;state.roomKey='';state.cursor=0;state.items=[];renderBell();return false}
+    if(!key){clearBanners();viewedSince.clear();tabDrafts.clear();focusRequest=null;state.roomKey='';state.cursor=0;state.items=[];renderBell();return false}
     if(state.roomKey===key)return true;
     try{
       const prefixRoom=String(STATE?.sync?.room?.code||'')+'_';
@@ -35,7 +35,7 @@
         if(base&&name.startsWith(base+prefixRoom)&&name!==base+key)localStorage.removeItem(name);
       }
     }catch(_){}
-    clearBanners();viewedSince.clear();focusRequest=null;
+    clearBanners();viewedSince.clear();tabDrafts.clear();focusRequest=null;
     state.roomKey=key;
     state.cursor=Math.max(0,Number(STORAGE.getItem(cursorKey(key))||0));
     state.items=readJson(itemsKey(key),[]).filter(x=>x&&Number.isFinite(+x.id)).map(x=>{
@@ -61,6 +61,7 @@
     .igr-event-alert[data-kind="breaking_news"]{border-color:rgba(220,190,135,.3)}
     .igr-event-alert[data-kind="reveal"]{border-color:rgba(224,224,224,.38)}
     .igr-alert-open{display:grid;grid-template-columns:auto 1fr;gap:10px;border:0;padding:0;background:transparent;color:inherit;text-align:left;min-height:44px;cursor:pointer}.igr-event-alert{grid-template-columns:1fr auto}.igr-alert-close{min-width:44px;min-height:44px;padding:8px}.igr-tab-unread{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;margin-left:6px;padding:0 5px;border-radius:9px;background:#dce3e7;color:#080a0c;font:700 10px system-ui}.igr-notification-row[aria-pressed="false"]{border-left:3px solid #c89f64}.igr-notification-row{display:block;width:100%;text-align:left;color:inherit;font:inherit;min-height:44px}.igr-notification-target{outline:2px solid #c89f64;outline-offset:4px;scroll-margin:110px 0 90px}.igr-notify-bell{position:relative!important;inset:auto!important;flex-shrink:0;width:44px!important;height:44px!important}.igr-notify-bell.igr-bell-floating{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 12px)!important;right:12px!important}
+    .igr-alert-stack{top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}.igr-alert-copy b{font-size:13px}.igr-alert-copy span{font-size:12px}
     .igr-alert-icon{font:800 10px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#9ba8b1;min-width:48px;padding-top:2px}.igr-alert-copy{min-width:0}.igr-alert-copy b{display:block;font-size:11px;letter-spacing:.035em;text-transform:uppercase}.igr-alert-copy span{display:block;margin-top:4px;color:#aeb8bf;font-size:10px;line-height:1.42;white-space:normal}.igr-alert-close{border:0;background:transparent;color:#65727b;font-size:17px;line-height:1;cursor:pointer;padding:0 0 8px 8px}
     .igr-notify-bell{position:fixed;z-index:335;right:12px;top:calc(env(safe-area-inset-top,0px) + 12px);width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(6,9,11,.9);color:#dce3e7;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.26);backdrop-filter:blur(12px);cursor:pointer}.igr-notify-bell[hidden]{display:none}.igr-notify-bell svg{width:17px;height:17px}.igr-notify-count{position:absolute;right:-4px;top:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:10px;background:#d8e0e5;color:#07090b;font:900 9px/17px system-ui;text-align:center;box-sizing:border-box}.igr-notify-count:empty{display:none}
     .igr-notification-list{display:grid;gap:8px;max-height:52vh;overflow:auto;padding-right:2px}.igr-notification-row{border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:10px 11px;background:rgba(255,255,255,.018);cursor:pointer}.igr-notification-row b{display:block;font-size:11px;color:#e6ebee}.igr-notification-row p{margin:4px 0 0;color:#98a4ac;font-size:10px;line-height:1.45}.igr-notification-row small{display:block;margin-top:5px;color:#59656d;font:700 8px 'IBM Plex Mono',monospace;letter-spacing:.05em}.igr-notification-empty{padding:18px;text-align:center;color:#65727b;font-size:10px}.igr-notify-setting{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px;border:1px solid rgba(255,255,255,.08);border-radius:11px;margin:8px 0}.igr-notify-setting span b{display:block;font-size:11px}.igr-notify-setting span small{display:block;margin-top:3px;color:#71808a;font-size:9px;line-height:1.4}.igr-notify-setting input{width:20px;height:20px;accent-color:#dce3e7}
@@ -164,6 +165,7 @@
   function scan(){
     try{
       if(!ensureRoom())return;
+      if(!['game','role','briefing'].includes(STATE?.view))clearBanners();
       const d=STATE.sync,events=(d?.events||[]).filter(e=>Number.isFinite(+e.id)).sort((a,b)=>(+a.id)-(+b.id));
       if(!events.length){renderBell();trackVisible();return}
       const existingCursor=state.cursor;
@@ -178,6 +180,13 @@
     }catch(e){console.warn('notification scan',e)}
   }
 
+  const originalSetTab=typeof setTab==='function'?setTab:null;
+  if(originalSetTab){const withDrafts=function(){
+    if(typeof captureDrafts==='function'){try{const draft=captureDrafts();tabDrafts.set(draft.scope,draft);if(tabDrafts.size>24)tabDrafts.delete(tabDrafts.keys().next().value)}catch{}}
+    const result=originalSetTab.apply(this,arguments);
+    if(typeof draftScope==='function'&&typeof restoreDrafts==='function'){const saved=tabDrafts.get(draftScope());if(saved)restoreDrafts(saved)}
+    return result;
+  };try{setTab=withDrafts}catch{}window.setTab=withDrafts;}
   function decorateTabs(){
     for(const button of document.querySelectorAll('#app .tabs-v11 .tab')){
       const id=button.getAttribute('onclick')?.match(/setTab\(['"]([^'"]+)['"]/ )?.[1];if(!id)continue;
