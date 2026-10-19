@@ -169,5 +169,9 @@ if(originalSubmit){
  try{submitDebrief=wrapped}catch(_){}
  window.submitDebrief=wrapped;
 }
+const dossierStyle=document.createElement('style');
+dossierStyle.id='igr87-witness-029';
+dossierStyle.textContent='.igr87-first-brief{border:1px solid rgba(196,166,133,.24);border-radius:10px;padding:12px 14px;margin:10px 0;background:rgba(127,89,67,.08)}.igr87-first-brief small{display:block;color:#c9aa8a;font-size:10px;letter-spacing:.06em}.igr87-first-brief p{font-size:13px;line-height:1.5;margin:8px 0}.igr87-first-brief strong{font-size:12px;color:#ebe1d5}';
+document.head.appendChild(dossierStyle);
 window.IGR_NARRATIVE_V87=Object.freeze({version:VERSION,render:dossierHtml,notes:()=>notes.slice(),releasedEvents});
 })();
