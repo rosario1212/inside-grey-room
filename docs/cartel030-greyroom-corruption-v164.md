@@ -94,6 +94,58 @@ Ces titres sont des **directions de conception**, pas une résolution. Les auteu
 
 Les manuscrits privés précédents sont historiques et restent en statut `review`. Aucun écrasement, aucune promotion en `approved`, aucun lancement tant que la nouvelle version n'a pas été revue.
 
+## Décisions de mise en scène validées — Q12 / Q13 / Q14
+
+Ce chapitre enregistre les choix créatifs du 19 octobre 2026. **C'est un contrat d'écriture et de gameplay à développer** : aucun événement serveur, aucun verdict et aucun message de Don Ismael ne devient fonctionnel à la seule lecture de ce document.
+
+### Q12 = C : Soupçon → audit → suspension provisoire → verdict
+
+- **Dès le cycle 1**, un joueur peut signaler une anomalie ou un soupçon motivé ; une accusation sans éléments ne déclenche pas d'exclusion.
+- **Audit interne** : une décision est remise en cause à partir d'une contradiction spécifique, d'une pièce d'origine contrôlable ou d'un motif écrit ; aucun effet ne révèle automatiquement la présence d'un traître.
+- **Suspension provisoire** : en présence d'éléments sérieux corroborés, une décision croisée peut suspendre **certains pouvoirs officiels**, jamais la parole ni le droit de se défendre ; le membre peut contester et présenter des pièces.
+- **Protection contre la capture de la procédure** : ni le membre dénoncé ni un seul autre rôle ne peut bloquer l'audit, confisquer la pièce unique, imposer sa propre innocence ou priver toute l'équipe de la possibilité de conclure.
+- **Cycle 3** : le verdict définitif exige une imputation individualisée et des preuves indépendantes. Une suspicion non corroborée ne suffit pas. En cas de deux corrompus (seulement à 9 joueurs en mode long, sous réserve d'équilibrage), les deux doivent être traités par des voies de preuve distinctes.
+- **Corrompu démasqué** : il perd l'accès institutionnel suspendu mais continue à participer comme interlocuteur ; il peut négocier, se défendre et éventuellement coopérer contre le cartel. Cela n'efface pas sa responsabilité passée.
+- **Faux coup monté** : possible dans une variante, mais l'audit doit laisser au moins un chemin de réfutation objectif contre une accusation injuste.
+
+### Q13 = B : Don Ismael agit dans l'ombre
+
+Don Ismael Salcedo reste **hors de la Grey Room**. Ses interventions passent par des **messages narratifs autorisés** et des **menaces ou ultimatums indirects** dont l'origine doit pouvoir être mise en doute ou vérifiée. Il ne connaît pas magiquement l'identité des infiltrés, ne possède pas une vision complète de la cellule et ne décide jamais arbitrairement du résultat d'un vote.
+
+- **C1 — Ombre** : une allusion ou une marque d'influence Los Salcedo peut apparaître dans un indice non décisif. Des institutions locales déjà compromises brouillent la provenance.
+- **C2 — Pression** : un message **attribué** à Don Ismael est reçu ou rapporté par un relais. Le contenu menace les intérêts ou la sécurité de personnes impliquées sans fournir d'instructions opérationnelles de violence. La Grey Room doit vérifier l'origine et discuter des conséquences.
+- **C3 — Dernier message** : l'entourage du Don tente d'influencer le jugement ou la coopération d'un suspect. L'influence agit sur les enjeux et les discussions, **pas** sur les preuves déjà validées ni sur le droit de déposer les conclusions.
+- **Règle de fair-play** : rien d'essentiel à la victoire n'est détruit par un ordre extérieur ; la menace crée un dilemme humain, jamais une case « ne plus jouer ».
+- **Règle de monde** : la corruption dans le Sinaloa fictif touche certaines institutions, pas toute la population ni tous les représentants de l'État ; il reste des alliés intègres et des confirmations indépendantes.
+
+### Q14 = C : Verdict, révélations, dernier retournement
+
+La conclusion est un **final en trois temps**, sans nouveau mini-jeu et sans écran surchargeant :
+
+1. **Verrouillage des positions**. Chaque personnage autorisé peut soutenir ou contester les trois accusations contre les suspects et les dénonciations des membres compromis. Les décisions institutionnelles requièrent validation croisée et motifs écrits. Une personne accusée peut s'exprimer, mais ne possède pas un veto.
+2. **Révélation raisonnée**. Le dénouement expose la responsabilité propre de chaque homme du cartel, la chaîne de la fuite interne, les faux soupçons, les rôles compromis, les choix de suspension et les accords officiels ou clandestins. Le récit explique *pourquoi* chaque preuve comptait ou non et ce qu'ignorait chacun.
+3. **Dernier retournement**. Une conséquence crédible d'un choix antérieur apparaît : la valeur réelle d'un accord, une tentative de coopération, une information que les joueurs avaient sous-estimée ou une nouvelle pression du clan. **Ce retournement ne modifie pas rétroactivement les coupables ni les règles de victoire**, et n'ajoute pas une preuve indispensable après le verdict. Il peut ouvrir le dossier 031 « La Dette » sans rendre le 030 incomplet.
+
+Le final doit permettre de regarder les autres joueurs et dire « nous avions les éléments, mais nous avons cru la mauvaise personne » plutôt que « le moteur a changé la vérité après notre vote ».
+
+### Cohérence avec les décisions Q1–Q11
+
+- Découverte de la compromission **progressive** : des anomalies visibles avant toute révélation forcée.
+- Le Lieutenant et les autres suspects possèdent une connaissance **partielle** ; personne ne sait systématiquement qui est le traître.
+- Le compromis peut manipuler par la parole et intervenir dans des actions secrètes limitées **et traçables**.
+- **Un corrompu à 7 joueurs** ; **deux possibles à 9 joueurs en long** après équilibrage ; les deux peuvent se découvrir **par indices ou échanges**, non via annonce systématique.
+- Les trois suspects peuvent négocier, trahir et coopérer ; **discussions privées**, mais les concessions institutionnelles sont enregistrées, soumises à validation croisée, contestables et non monopolisées par un rôle.
+- Faux témoignages et tentatives de piéger un innocent sont possibles, **à condition d'offrir une contre-vérification**.
+- Le rôle suspendu ou démasqué continue à jouer : retrait de prérogatives `≠` élimination humaine.
+
+### Acceptation indispensable avant implémentation
+
+- Parcours indépendant des rôles compromis possibles, y compris lorsque l'Enquêteur ou le Juge est corrompu.
+- Audit et suspension **impossibles à déclencher uniquement par des votes arbitraires** ; mesure proportionnelle, durée définie et recours exploitable par l'accusé.
+- Trois modes de révélation (suspects, traître, conséquences) testés pour les variantes A/B/C, sans divulgation anticipée via notifications, dossier commun, export ou synchronisation.
+- Si la conclusion influence 031, état de campagne serveur scellé et conforme aux droits d'accès. Aucun contenu canonique sensible ou identité privée ne doit figurer dans ce document public.
+
+
 ## Contrat technique de sécurité et de fluidité
 
 - **Serveur autoritaire** pour scénario, rôle caché, variabilité, objets de preuve, décision, chronologie et verdict ; le client n'a que les données autorisées.
