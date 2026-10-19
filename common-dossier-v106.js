@@ -24,7 +24,9 @@ async function syncPublic(force=false){
   const result=await rpc('igr_v106_common_dossier',{p_code:d.room.code,p_player_token:S().token});
   if(k!==key())return;
   if(!result||result.room_code!==d.room.code||!Array.isArray(result.events))throw Error('Invalid public dossier response');
-  const changed=JSON.stringify(cache.data)!==JSON.stringify(result);
+  const previous=cache.data;
+  const changed=JSON.stringify(previous)!==JSON.stringify(result);
+  if(previous){const ids=new Set(previous.events.map(e=>String(e.id)));window.IGR_NOTIFICATIONS?.publicUpdates?.({roomCode:d.room.code,playerId:d.player.id,events:result.events.filter(e=>!ids.has(String(e.id)))});}
   cache.data=result;cache.err=false;
   if(changed&&S()?.view==='game'&&S()?.tab==='timeline'){
    const root=document.querySelector('#app .game-panel-v11');
@@ -41,7 +43,7 @@ function publicHtml(){
  const history=events.map(e=>{
   const c=safeCycle(e.cycle),press=e.event_type==='breaking_news'||e.press_claim;
   const type=press?tr('PUBLICATION DU JOURNALISTE','PRESS PUBLICATION'):e.verified?tr('FAIT CONFIRMÉ','VERIFIED FACT'):tr('INFORMATION PUBLIQUE','PUBLIC INFORMATION');
-  return '<article class="igr106-event" data-cycle="'+(c||0)+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON CLASSÉE','CYCLE UNKNOWN'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4><p>'+esc(e.text||'')+'</p>'+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
+  return '<article class="igr106-event" data-igr-event-id="'+esc(e.id)+'" data-cycle="'+(c||0)+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON CLASSÉE','CYCLE UNKNOWN'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4><p>'+esc(e.text||'')+'</p>'+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
  }).join('');
  return '<section class="igr106-common" aria-label="'+esc(tr('Dossier commun','Shared case file'))+'"><header><small>'+esc(tr('ACCESSIBLE À TOUS LES RÔLES','VISIBLE TO ALL ROLES'))+'</small><h2>'+esc(tr('Dossier commun','Shared case file'))+'</h2></header><article class="igr106-premise"><h3>'+esc(tr('Situation connue de tous','Shared starting situation'))+'</h3><p>'+esc(context||tr('Le dossier sera présenté au lancement de la partie.','The case will be introduced when play begins.'))+'</p></article><div class="igr106-events"><h3>'+esc(tr('Publications et faits partagés','Shared news and events'))+'</h3>'+(cache.err&&!a?'<p class="igr106-muted">'+esc(tr('Connexion au dossier commun indisponible. Réessai automatique.','Shared case file temporarily unavailable. Retrying.'))+'</p>':!a?'<p class="igr106-muted">'+esc(tr('Synchronisation des informations publiques…','Loading public updates…'))+'</p>':history||'<p class="igr106-muted">'+esc(tr('Aucune nouvelle information publique pour le moment.','No new shared update yet.'))+'</p>')+'</div></section>';
 }

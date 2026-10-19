@@ -19,6 +19,9 @@
       visibility:visible!important;
       pointer-events:auto!important;
     }
+    body.${CLASS} #app .topbar .top-actions > #igrNotifyBell.igr-notify-bell:not([hidden]){
+      position:relative!important;inset:auto!important;width:44px!important;height:44px!important;min-width:44px!important;opacity:1!important;transform:none!important;
+    }
     body.home-locked #igrNotifyBell.igr-notify-bell{
       display:none!important;
       visibility:hidden!important;
@@ -28,7 +31,7 @@
   document.head.appendChild(style);
 
   function hasLiveMatchDom(){
-    return !!document.querySelector('#app .live-session-controls');
+    return !!document.querySelector('#app .live-session-controls, body > .live-session-controls, #app .game-v11');
   }
 
   function shouldShowBell(){

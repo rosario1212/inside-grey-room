@@ -1,7 +1,7 @@
 import {copyFile,readFile,writeFile,stat} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import path from 'node:path';
-const target=path.resolve(process.argv[2]||'dist'),src='cartel029-v107.js',v='v107-cartel029';
+const target=path.resolve(process.argv[2]||'dist'),src='cartel029-v107.js',v='v107-cartel029-attention2';
 await stat(target);const file=path.join(process.cwd(),src);
 const parsed=spawnSync(process.execPath,['--check',file],{encoding:'utf8'});
 if(parsed.status)throw Error('029 runtime JS invalid: '+parsed.stderr);
