@@ -18,7 +18,7 @@ const report=contents['supabase/migrations/20261019073000_v121_cartel029_report_
 const intro=contents['supabase/migrations/20261019032000_v108_cartel029_private_four_witness_gate.sql'];
 const client=contents['cartel029-v121.js'];
 
-assert.match(memory,/declare[^;]*v_profile_key text/i);
+assert.match(memory,/\bv_profile_key text;/i);
 assert.match(memory,/counter=4 and v_profile_key in \('V3','V4','V5'\)/);
 assert.doesNotMatch(memory,/\bprofile_id\s+text/);
 assert.match(review,/primary key\(branch,profile\)/);
