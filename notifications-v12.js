@@ -81,11 +81,11 @@
     if(type==='expert')return{kind:'expert',label:'EXPERT',title:'Résultat d’expertise',body:'Consulte les informations autorisées pendant la partie.',route:'investigation',priority:2};
     if(type==='judge')return{kind:'judge',label:'JUGE',title:'Information judiciaire',body:'Consulte les informations autorisées pendant la partie.',route:'investigation',priority:2};
     if(type==='reveal')return{kind:'reveal',label:'FINAL',title:'Révélation finale',body:'La fin du dossier est disponible dans le jeu.',route:'timeline',priority:4};
-    if(type==='cycle')return{kind:'cycle',label:'CYCLE',title:p.title||`Cycle ${d?.room?.cycle||''}`,body:text||'Un nouveau cycle commence.',route:'investigation',priority:2};
+    if(type==='cycle')return{kind:'cycle',label:'CYCLE',title:`Cycle ${d?.room?.cycle||''}`,body:'Un nouveau cycle commence.',route:'timeline',priority:2};
     if(type==='roles_distributed')return{kind:'phase',label:'DOSSIER',title:p.title||'Ouverture du dossier',body:text||'Les cartes privées sont disponibles.',route:'card',priority:2};
     if(type==='context')return{kind:'phase',label:'DOSSIER',title:p.title||'Contexte',body:text||'Le dossier vient de s’ouvrir.',route:'investigation',priority:1};
-    if(type==='phase')return{kind:'phase',label:'PHASE',title:p.title||'Nouvelle phase',body:text||'La partie change de phase.',route:'investigation',priority:2};
-    return{kind:type,label:'INFO',title:p.title||'Mise à jour du dossier',body:text||'Un nouvel élément est disponible.',route:'timeline',priority:1};
+    if(type==='phase')return{kind:'phase',label:'PHASE',title:'Nouvelle phase',body:'La partie change de phase.',route:'timeline',priority:2};
+    return{kind:type,label:'INFO',title:'Mise à jour de la partie',body:'Consulte tes informations autorisées dans le jeu.',route:'timeline',priority:1};
   }
   function shouldIgnore(e,d){
     if(!e||!Number.isFinite(+e.id))return true;
