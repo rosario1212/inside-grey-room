@@ -124,7 +124,7 @@ La conclusion est un **final en trois temps**, sans nouveau mini-jeu et sans éc
 
 1. **Verrouillage des positions**. Chaque personnage autorisé peut soutenir ou contester les trois accusations contre les suspects et les dénonciations des membres compromis. Les décisions institutionnelles requièrent validation croisée et motifs écrits. Une personne accusée peut s'exprimer, mais ne possède pas un veto.
 2. **Révélation raisonnée**. Le dénouement expose la responsabilité propre de chaque homme du cartel, la chaîne de la fuite interne, les faux soupçons, les rôles compromis, les choix de suspension et les accords officiels ou clandestins. Le récit explique *pourquoi* chaque preuve comptait ou non et ce qu'ignorait chacun.
-3. **Dernier retournement**. Une conséquence crédible d'un choix antérieur apparaît : la valeur réelle d'un accord, une tentative de coopération, une information que les joueurs avaient sous-estimée ou une nouvelle pression du clan. **Ce retournement ne modifie pas rétroactivement les coupables ni les règles de victoire**, et n'ajoute pas une preuve indispensable après le verdict. Il peut ouvrir le dossier 031 « La Dette » sans rendre le 030 incomplet.
+3. **Dernier retournement**. Une conséquence crédible d'un choix antérieur apparaît : la valeur réelle d'un accord, une tentative de coopération, une information que les joueurs avaient sous-estimée ou une nouvelle pression du clan. **Ce retournement ne modifie pas rétroactivement les coupables ni les règles de victoire**, et n'ajoute pas une preuve indispensable après le verdict. Ce dernier retournement doit être entièrement résolu dans le dossier 030, sans préparer obligatoirement le 031.
 
 Le final doit permettre de regarder les autres joueurs et dire « nous avions les éléments, mais nous avons cru la mauvaise personne » plutôt que « le moteur a changé la vérité après notre vote ».
 
@@ -143,8 +143,44 @@ Le final doit permettre de regarder les autres joueurs et dire « nous avions le
 - Parcours indépendant des rôles compromis possibles, y compris lorsque l'Enquêteur ou le Juge est corrompu.
 - Audit et suspension **impossibles à déclencher uniquement par des votes arbitraires** ; mesure proportionnelle, durée définie et recours exploitable par l'accusé.
 - Trois modes de révélation (suspects, traître, conséquences) testés pour les variantes A/B/C, sans divulgation anticipée via notifications, dossier commun, export ou synchronisation.
-- Si la conclusion influence 031, état de campagne serveur scellé et conforme aux droits d'accès. Aucun contenu canonique sensible ou identité privée ne doit figurer dans ce document public.
+- La conclusion est fermée dans le 030 et n'influence pas mécaniquement le 031. Aucun contenu canonique sensible ou identité privée ne doit figurer dans ce document public.
 
+
+## Décisions de direction validées — Q15 / Q16 / Q17
+
+Décisions du 19 octobre 2026. Ce chapitre est un **contrat de conception**, pas la preuve que le nouveau gameplay est déjà activé.
+
+### Q15 = C : Thriller psychologique et violence du cartel
+
+Le dossier doit juxtaposer **l'influence brutale de Los Salcedo** et **la méfiance qui déchire la Grey Room**. La violence des trois suspects est établie par des conséquences humaines, des témoignages distincts et des contradictions ; elle ne devient ni un spectacle gratuit ni une mécanique de cruauté.
+
+- Le **Lieutenant** effraie par sa réputation, son pouvoir et sa maîtrise des conversations ; il peut essayer de diviser les enquêteurs.
+- L'**Exécuteur** est rattaché à des actes de violence précis, avec preuves et contestations individualisées. Il peut user de la peur pour faire porter un acte à un autre.
+- Le **Traqueur** possède des informations inquiétantes d'origine contestée ; leur circulation fait soupçonner les collègues sans divulguer automatiquement un coupable.
+- **Don Ismael** intervient indirectement : un message attribué au Don peut intensifier la pression, mais sa provenance doit être vérifiable et sa menace ne donne pas accès à la vérité du bureau.
+- Chaque cycle met les joueurs devant une contradiction orale crédible, pas devant une liste mécanique de documents à consommer.
+
+### Q16 = C : Deux dilemmes moraux simultanés et conséquents
+
+**Dilemme A : les méthodes d'enquête.** Obtenir rapidement une pièce peut impliquer une procédure contestable, la mise sous pression d'une source ou une négociation critiquable. Le jeu doit laisser une **voie légitime, plus coûteuse en temps ou en choix**, pour ne jamais forcer un joueur à agir illégalement afin de gagner. L'action risquée produit des traces, des contestations et éventuellement une fragilisation probatoire ; aucune culpabilité automatique sur la base d'une seule décision.
+
+**Dilemme B : accuser son collègue.** Un audit peut limiter provisoirement les pouvoirs d'un membre, mais une décision prématurée peut affaiblir la cellule, laisser passer une piste ou atteindre un innocent. Le soupçon public et la validation finale sont distincts. Une accusation fausse est contestable et ses conséquences sont proportionnées, tandis que le véritable compromis peut exploiter cette division sans contrôler tout le bureau.
+
+**Dilemme croisé :** pendant qu'un témoignage se fragilise, l'équipe choisit de poursuivre une vérification liée à un suspect ou de consacrer une démarche à vérifier une fuite interne. Chacun des deux objectifs doit rester atteignable ultérieurement via un chemin de preuve indépendant : **aucun faux choix sans retour qui rend la victoire impossible**.
+
+Conditions de rejouabilité : les variantes A/B/C différencient les motivations et les responsabilités réelles, pas simplement les dialogues ; la combinaison des deux dilemmes ne doit pas automatiquement indiquer l'identité du traître.
+
+### Q17 = A : Dossier 030 intégralement autonome
+
+**Décision ferme : le 030 se suffit à lui-même.** Les trois accusations, l'identité du ou des corrompus, les accords, les possibles erreurs judiciaires et les conséquences de la trahison reçoivent une **conclusion complète dans le 030**.
+
+- **Aucun mystère indispensable** à la compréhension ou à la victoire du 030 n'est reporté au dossier 031.
+- **Aucune obligation de posséder, lancer ou réussir le 031** pour comprendre la fin du 030.
+- **Aucun transfert automatique d'état, de punition, de dette ou de réputation** du 030 vers le 031. Les deux dossiers partagent un univers et une famille canonique, pas une dépendance mécanique.
+- Le **dernier retournement de la finale Q14C** doit être résolu **avant le générique de fin** : il révèle la portée humaine d'un acte, renverse l'interprétation d'une parole ou confirme un prix payé par un personnage, sans modifier les coupables après le jugement et sans teaser obligatoire.
+- Les trois variantes A/B/C doivent chacune posséder leur propre fin fermée (victoire totale, partielle, échec) et un épilogue qui n'exige aucun autre épisode.
+
+**Contrôle d'acceptation :** une partie 030 lancée seule, sans historique 029 ni accès 031, doit rester totalement cohérente et satisfaisante. Aucun appel de synchronisation, scoring, jugement ou révélation du 030 ne dépend d'un état de campagne du 031.
 
 ## Contrat technique de sécurité et de fluidité
 
@@ -164,7 +200,7 @@ Le final doit permettre de regarder les autres joueurs et dire « nous avions le
 4. Parcours heureux ; investigation totalement erronée ; soupçon injuste ; coupable se tait ; traître tente le sabotage maximal ; indices manqués ; joueur déconnecté à chaque phase ; reprise d'une partie.
 5. Pas d'impasse si Enquêteur, Analyste, Procureur ou Juge est compromis ; aucune action monotone gagnante pour le traître.
 6. Les variantes secrètes et les relations cachées ne sortent pas dans `sync`, le `Dossier commun`, les notifications, les URLs, les assets ni le profil social.
-7. Dossier 029 inchangé, continuité 029→030→031 conditionnée à un état de campagne scellé, sans spoiler ni réécriture rétroactive.
+7. Dossiers 029 et 031 inchangés ; vérifier que le 030 fonctionne isolément, sans état requis d'une partie antérieure ou ultérieure et sans spoiler les autres dossiers.
 8. Relecture humaine des 3 directions/12 familles, véritables parties complètes multi-appareils, validation éditoriale et activation explicitement autorisée.
 
 ## Limite de ce chantier
