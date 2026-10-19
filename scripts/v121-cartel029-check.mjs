@@ -7,11 +7,11 @@ const x=spawnSync(process.execPath,['--check','cartel029-v121.js'],{encoding:'ut
 assert.equal(x.status,0,x.stderr);
 const [s,b,h,english]=await Promise.all([readFile('cartel029-v121.js','utf8'),readFile(path.join(d,'cartel029-v121.js'),'utf8'),readFile(path.join(d,'index.html'),'utf8'),readFile(path.join(d,'en.html'),'utf8')]);
 assert.equal(s,b);
-assert(h.includes('cartel029-v121.js?v=v144-cartel029'));
-assert(english.includes('cartel029-v121.js?v=v144-cartel029'));
+assert(h.includes('cartel029-v121.js?v=v145-cartel029-role-selection'));
+assert(english.includes('cartel029-v121.js?v=v145-cartel029-role-selection'));
 assert(h.indexOf('cartel029-v107.js')<h.indexOf('cartel029-v121.js'));
 assert(s.includes('function cartelWire()')&&s.includes('function protectHtml()'));
-assert(s.includes('029_can_decide')&&s.includes('lobbyRoleSlots'));
+assert(s.includes('029_can_decide')&&!s.includes("wrap('lobbyRoleSlots'"),'029 must use the single canonical lobby role allocation');
 assert(!s.includes('Array.isArray(x.relations)'), '029 must not show legacy suspect relations');
 assert(s.includes('Vous vous connaissez et vous avez fui ensemble.'),'Missing witness relationship context');
 console.log('CARTEL 029 v121: role UI and assets OK');
