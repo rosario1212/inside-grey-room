@@ -2,8 +2,8 @@ import {copyFile,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 const target=path.resolve(process.argv[2]||'dist');
-const root=process.cwd(),script='common-dossier-v106.js',version='v106-common-dossier-ui1';
-const refreshedAssets=['screen-polish-v73.css','heritage-casino-v91.js'];
+const root=process.cwd(),script='common-dossier-v106.js',version='v106-common-dossier-attention2';
+const refreshedAssets=['screen-polish-v73.css','heritage-casino-v91.js','notification-bell-visibility-v31.js','play-modes-v13-8.js','narrative-dossier-v87.js','investigation-runtime-v42.js'];
 const refreshAssets=text=>refreshedAssets.reduce((s,asset)=>s.replaceAll(new RegExp(asset.replaceAll('.', '\\.')+'\\?v=[^\"\']+', 'g'),`${asset}?v=${version}`),text);
 const exists=async x=>{try{await stat(x);return true}catch{return false}};
 if(!(await exists(target)))throw Error('Missing built target '+target);
@@ -32,6 +32,7 @@ if(await exists(worker)){
 const app=path.join(target,'app-v11.js');
 if(await exists(app)){
  let s=await readFile(app,'utf8');
+ s=s.replace('slice(-12).map(e=>`<div class=\"msg\">', 'slice(-60).map(e=>`<div class=\"msg\" data-igr-event-id=\"${h(e.id)}\">');
  s=s.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,`/service-worker.js?v=${version}`);
  await writeFile(app,s,'utf8');
 }

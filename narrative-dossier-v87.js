@@ -34,7 +34,7 @@ function releasedEvents(){
 function evidenceHtml(ev){
  const p=ev.payload||{},kind=ev.event_type==='breaking_news'?tr('Publication','Publication'):
    ev.event_type==='trame'?tr('Élément révélé','Revealed element'):tr('Élément de procédure','Procedural element');
- return '<article class="igr87-evidence"><small>'+esc(kind)+'</small><h4>'+esc(p.title||tr('Nouvel élément','New element'))+'</h4>'+
+ return '<article class="igr87-evidence" data-igr-event-id="'+esc(ev.id)+'"><small>'+esc(kind)+'</small><h4>'+esc(p.title||tr('Nouvel élément','New element'))+'</h4>'+
   '<p>'+esc(p.text||p.summary||'')+'</p></article>';
 }
 function association(e,ids){

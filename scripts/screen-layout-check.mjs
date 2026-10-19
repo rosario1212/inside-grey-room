@@ -6,6 +6,7 @@ import {chromium} from 'playwright';
 import {runFluidityChecks} from './runtime-fluidity-check.mjs';
 import {runMaitrePosterChecks} from './maitre-poster-layout-check.mjs';
 import {runAuditGameplayChecks} from './audit-gameplay-check.mjs';
+import {runNotificationChecks} from './notification-attention-check.mjs';
 import {runDesktopChecks} from './desktop-layout-check.mjs';
 
 // Offline layout checks: no accounts, live rooms or backend requests are used.
@@ -61,6 +62,7 @@ async function check(name,run){
 try{
   await runFluidityChecks({page,css,app,read,check,report});
   await runAuditGameplayChecks({page,read,check});
+  await runNotificationChecks({page,read,check,css});
   await runDesktopChecks({page,css,app,read,check,report});
   await check('desktop-standard-multiplayer-button-launch',async()=>{
     await page.setViewportSize({width:1366,height:768});

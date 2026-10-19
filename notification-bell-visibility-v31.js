@@ -28,7 +28,7 @@
   document.head.appendChild(style);
 
   function hasLiveMatchDom(){
-    return !!document.querySelector('#app .live-session-controls');
+    return !!document.querySelector('#app .live-session-controls, body > .live-session-controls, #app .game-v11');
   }
 
   function shouldShowBell(){
