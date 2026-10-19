@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {randomUUID,randomBytes} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
 import {fixtureRelease,MemoryStorage} from './casino-fixtures.mjs';
 import {casinoService,sha256,replayCasinoJournal} from '../casino/service.mjs';
 import {startRuntime,applyRuntime,viewRuntime,tickRuntime} from '../casino/runtime.mjs';
@@ -240,6 +241,29 @@ await test('succession stake, single split and traceable personal or collective 
  const id=s.corruption[0].id;assert.equal(s.roster.p2.chips,before-10);assert.equal(viewRuntime(s,'p0').corruption.length,0);
  s=command(s,'agent','ANSWER_CORRUPTION',{offerId:id,accept:false});assert.equal(s.roster.p2.chips,before);
  assert.throws(()=>command(s,'agent','ANSWER_CORRUPTION',{offerId:id,accept:true}),/invalid_corruption_offer/);
+});
+await test('continuity buttons respect actual server eligibility and refresh without a new revision',async()=>{
+ const s=initial({judge:true}),originalNow=Date.now,ms=s.privateCanon.minimumSocialMs;
+ s.phaseStartedAt=1000;s.chapter=3;s.phase=2;
+ s.hearings=[{id:'hearing-fixture',subjectId:'p1',defence:null}];
+ try{
+  Date.now=()=>1000+ms*3-1;
+  assert.equal(viewRuntime(s,'p0').hostCanCloseDefence,false);
+  assert.equal(viewRuntime(s,'p0').hostCanCloseCourt,false);
+  Date.now=()=>1000+ms*5;
+  assert.equal(viewRuntime(s,'p0').hostCanCloseDefence,true);
+  assert.equal(viewRuntime(s,'p0').hostCanCloseCourt,false,'No judicial shortcut without a defence');
+  s.hearings[0].defence='Défense consignée';
+  Date.now=()=>1000+ms*3-1;assert.equal(viewRuntime(s,'p0').hostCanCloseCourt,false);
+  Date.now=()=>1000+ms*3;assert.equal(viewRuntime(s,'p0').hostCanCloseCourt,true);
+  assert.equal(viewRuntime(s,'p1').hostCanCloseCourt,false,'Only the host sees a continuity option');
+  s.chapter=1;s.phase=3;s.fallbackReady=true;s.roomLocated=false;
+  Date.now=()=>1000+ms*3-1;assert.equal(viewRuntime(s,'p0').hostCanLocate,false);
+  Date.now=()=>1000+ms*3;assert.equal(viewRuntime(s,'p0').hostCanLocate,true);
+ }finally{Date.now=originalNow}
+ const client=await readFile('casino-client-v105.js','utf8');
+ assert.match(client,/timedControls\.some\(key=>Boolean\(state\[key\]\)!==Boolean\(data\[key\]\)\)/,
+  'Polling must repaint time-sensitive host controls at the same saved revision');
 });
 await test('real service API: recovery, concurrent actions, idempotent retries, stale responses and approval lock',async()=>{
  const store=new MemoryStorage();let now=0;const service=casinoService(store,{clock:()=>now});
