@@ -39,12 +39,12 @@ for(const action of ['protectionPending','messagePending','positionPending']){
  assert.match(choices,new RegExp('if\\('+action+'\\|\\|!active\\(\\)'),'Repeated 029 commands must be blocked while a request is pending');
  assert.match(choices,new RegExp('finally\\{'+action+'=false\\}'),'029 action lock must always reset');
 }
-assert.match(build,/v147-cartel029-client-guards/);
-assert.match(html,/cartel029-v121\.js\?v=v147-cartel029-client-guards/);
-assert.match(htmlEn,/cartel029-v121\.js\?v=v147-cartel029-client-guards/);
-assert.match(html,/app-v11\.js\?v=v147-cartel029-client-guards/,'Canonical lobby app must get a new cache version');
+assert.match(build,/v158-cartel029-consolidation/);
+assert.match(html,/cartel029-v121\.js\?v=v158-cartel029-consolidation/);
+assert.match(htmlEn,/cartel029-v121\.js\?v=v158-cartel029-consolidation/);
+assert.match(html,/app-v11\.js\?v=v158-cartel029-consolidation/,'Canonical lobby app must get a new cache version');
 assert.doesNotMatch(htmlEn,/src=["']app-v11\.js/,'English page redirects to canonical lobby and does not load a second core app');
-assert.match(html,/cartel029-v107\.js\?v=v147-cartel029-client-guards/,'Report UI must invalidate its old cached script');
+assert.match(html,/cartel029-v107\.js\?v=v158-cartel029-consolidation/,'Report UI must invalidate its old cached script');
 assert.match(choices,/function permitted029Phase\(\)/);
 assert.match(choices,/protectionPending\|\|!active\(\)\|\|!permitted029Phase\(\)/);
 assert.match(choices,/messagePending\|\|!active\(\)\|\|!\['don','bras_droit'\]/);
@@ -53,4 +53,6 @@ assert.match(reportUi,/room\?\.status==='finished'/,'Reports should be read-only
 assert.match(reportUi,/responsibility_choice/);
 const lobbyQa=spawnSync(process.execPath,['scripts/cartel029-multiplayer-check.mjs'],{encoding:'utf8'});
 assert.equal(lobbyQa.status,0,'029 6–11 players role-choice regression failed: '+lobbyQa.stdout+'\n'+lobbyQa.stderr);
-console.log('029 audit v145 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
+const roleQa=spawnSync(process.execPath,['scripts/cartel029-consolidation-check.mjs'],{encoding:'utf8'});
+assert.equal(roleQa.status,0,'029 consolidation 6–11 roles failed: '+roleQa.stdout+'\n'+roleQa.stderr);
+console.log('029 audit v158 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
