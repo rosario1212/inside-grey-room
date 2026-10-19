@@ -129,6 +129,10 @@ window.igr029Protect=async target=>{
 };
 function cartelWire(){
  if(!active()||!['don','bras_droit'].includes(me().public_role)||d()?.room?.status!=='playing')return '';
+ // The 10-player configuration contains the Don but no right hand.
+ // Never offer a chat composing box without an actual receiving role.
+ const partner=me().public_role==='don'?'bras_droit':'don';
+ if(!(d()?.players||[]).some(player=>player.public_role===partner))return '';
  const msgs=observed('cartel029_chat').slice(-12);
  return '<section class="igr029-extras"><h3>Liaison avec '+(me().public_role==='don'?'ton bras droit':'le Don')+'</h3>'+
  '<p>Messages de jeu privés au duo. Ce que tu écris ne déclenche aucune violence automatique.</p>'+
