@@ -13,6 +13,18 @@ const fr=()=>window.IGR_LOCALE!=='en';
 const tr=(a,b)=>fr()?a:b;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const suspects=()=>Array.isArray(sync()?.suspects)?sync().suspects:[];
+const cartel029=()=>room()?.scenario_id==='029';
+const briefing029=[
+  {fr:'Rescapé de Santa Ceniza, évadé avec les deux autres survivants. Il peut témoigner des conditions de captivité et de certaines violences.',en:'Santa Ceniza survivor who escaped with the two other survivors; can describe captivity and some violence.',qFr:'Quels faits as-tu vus toi-même, et lesquels t’ont été rapportés ?',qEn:'Which events did you personally see, and which did you hear about?'},
+  {fr:'Rescapé de Santa Ceniza. Il affirme avoir dû tenir des registres de transferts de prisonniers. Leur destination et leur fiabilité restent à vérifier.',en:'Santa Ceniza survivor who says they were forced to maintain prisoner transfer logs; their accuracy and destinations need checking.',qFr:'Quels transferts as-tu consignés, et qui te donnait les instructions ?',qEn:'Which transfers did you record, and who gave instructions?'},
+  {fr:'Rescapé de Santa Ceniza. Il affirme avoir entendu des ordres et des surnoms sans toujours voir leurs auteurs.',en:'Santa Ceniza survivor who reports hearing orders and nicknames without necessarily seeing who spoke.',qFr:'Qu’as-tu entendu exactement et peux-tu identifier la personne ?',qEn:'What exactly did you hear, and can you identify the speaker?'},
+  {fr:'Témoin venu volontairement. Il affirme connaître La Noria, un autre site du cartel. Il ne faisait pas partie des quatre fugitifs de Santa Ceniza.',en:'Voluntary witness claiming knowledge of La Noria, another cartel site. Not one of the four Santa Ceniza escapees.',qFr:'Comment connais-tu cet autre site, et quels faits peuvent confirmer ton récit ?',qEn:'How do you know the other site, and what evidence supports your account?'}
+];
+function publicBrief029(index){
+ const b=briefing029[index];if(!b)return '';
+ return '<div class="igr87-first-brief" style="border:1px solid rgba(196,166,133,.24);border-radius:10px;padding:12px 14px;margin:10px 0;background:rgba(127,89,67,.08)"><small>'+tr('DÉCLARATION DE DÉPART · À VÉRIFIER','INITIAL ACCOUNT · TO VERIFY')+'</small><p>'+esc(tr(b.fr,b.en))+'</p><strong>'+tr('Point utile à éclaircir','Point to clarify')+'</strong><p>'+esc(tr(b.qFr,b.qEn))+'</p></div>';
+}
+
 const key=()=>String(room()?.code||'')+':'+String(me()?.id||'');
 let keySeen='',notes=[],loading=false,lastFetch=0,loadError='';
 function currentNotes(id){
@@ -41,13 +53,14 @@ function association(e,ids){
  const p=e.payload||{},target=p.suspect_id||p.target_player_id; // Top-level target_player_id is not included in igr_v4_visible_events.
  return target&&ids.has(String(target))?String(target):null;
 }
-function personSection(person,linked){
- const name=esc(person.pseudo||tr('Suspect','Suspect')),id=esc(person.id);
+function personSection(person,linked,index){
+ const name=esc(person.pseudo||tr(cartel029()?'Témoin':'Suspect',cartel029()?'Witness':'Suspect')),id=esc(person.id);
  return '<details class="igr87-person"><summary><strong>'+name+'</strong><small>'+
   tr('Identité connue · relation avec les faits à établir','Identity known · connection to the events to be established')+
   '</small></summary><div class="igr87-person-body">'+
   '<p class="igr87-premise">'+tr('Les déclarations sont à confronter aux éléments officiellement révélés. Aucun secret personnel n’est présumé connu.',
   'Statements must be compared to officially revealed elements. No private secret is presumed known.')+'</p>'+
+  (cartel029()?publicBrief029(index):'')+
   (linked.length?linked.map(evidenceHtml).join(''):'<p class="igr87-empty">'+tr('Aucun élément officiel attribué à cette personne.','No official element assigned to this person.')+'</p>')+
   '<h4>'+tr('Tes annotations','Your annotations')+'</h4><div data-igr87-notes="'+id+'">'+notesBlock(person.id)+'</div></div></details>';
 }
@@ -55,12 +68,12 @@ function dossierHtml(){
  const d=sync(),publicContext=d?.scenario?.context||'',people=suspects(),validIds=new Set(people.map(p=>String(p.id)));
  const ev=releasedEvents(),common=ev.filter(e=>!association(e,validIds));
  return '<section class="igr87-dossier" aria-label="'+tr('Dossier évolutif de l’enquêteur','Investigator evolving case file')+'">'+
- '<div class="igr87-title"><div><small>'+tr('CARNET D’ENQUÊTE','INVESTIGATION NOTEBOOK')+'</small><h2>'+tr('Personnes et découvertes','People and discoveries')+'</h2></div><span>'+esc(people.length)+' '+tr('suspects','suspects')+'</span></div>'+
+ '<div class="igr87-title"><div><small>'+tr('CARNET D’ENQUÊTE','INVESTIGATION NOTEBOOK')+'</small><h2>'+tr('Personnes et découvertes','People and discoveries')+'</h2></div><span>'+esc(people.length)+' '+(cartel029()?tr('témoins','witnesses'):tr('suspects','suspects'))+'</span></div>'+
  '<details class="igr87-common"><summary>'+tr('Situation connue et éléments communs','Known situation and shared discoveries')+
  ' <small>'+esc(common.length)+'</small></summary><div class="igr87-person-body">'+
  '<p>'+esc(publicContext||tr('Le dossier public sera précisé par l’enquête.','Public context will become clearer during the investigation.'))+'</p>'+
  common.slice(-18).map(evidenceHtml).join('')+'</div></details>'+
- '<div class="igr87-people">'+people.map(p=>personSection(p,ev.filter(e=>association(e,validIds)===String(p.id)))).join('')+'</div>'+
+ '<div class="igr87-people">'+people.map((p,i)=>personSection(p,ev.filter(e=>association(e,validIds)===String(p.id)),i)).join('')+'</div>'+
  '<form class="igr87-note-form" onsubmit="event.preventDefault();igr87SaveNote(event)"><h3>'+tr('Consigner une information','Record information')+'</h3>'+
  '<p>'+tr('Une déclaration, une hypothèse ou une question n’est jamais automatiquement transformée en preuve.',
  'A statement, hypothesis or question is never automatically turned into evidence.')+'</p>'+

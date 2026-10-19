@@ -1,7 +1,7 @@
 import {copyFile,readFile,writeFile,stat} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import path from 'node:path';
-const target=path.resolve(process.argv[2]||'dist'),src='cartel029-v121.js',v='v141-cartel029';
+const target=path.resolve(process.argv[2]||'dist'),src='cartel029-v121.js',v='v144-cartel029';
 await stat(target);
 const check=spawnSync(process.execPath,['--check',src],{encoding:'utf8'});
 if(check.status)throw Error('CARTEL029 v121 syntax: '+check.stderr);

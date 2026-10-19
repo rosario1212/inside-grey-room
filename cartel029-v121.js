@@ -100,13 +100,25 @@ const protect=[
  ['relatives','Protéger leurs familles'],
  ['captives','Demander la libération des vingt captifs']
 ];
+function protectionProgress(){
+ const notices=(d()?.events||[]).filter(e=>e.event_type==='public_notice' && e.payload?.title==='PROTECTION');
+ return {
+   used:new Set(notices.map(e=>e.payload?.target).filter(Boolean)),
+   thisCycle:notices.some(e=>+e.cycle===+d()?.room?.cycle)
+ };
+}
 function protectHtml(){
  if(!active()||!['enqueteur','analyste'].includes(me().public_role)||d()?.room?.status!=='playing')return '';
  const cycle=+d().room.cycle;
  if(cycle<1||cycle>3)return '';
+ const status=protectionProgress();
  return '<section class="igr029-extras"><h3>Protection des personnes</h3>'+
-  '<p>Une décision maximum par cycle. Une menace ne prouve pas que quelqu’un a été blessé.</p>'+
-  '<div class="igr029-actions">'+protect.map(([id,label])=>'<button class="btn ghost small" type="button" onclick="igr029Protect(\''+id+'\')">'+esc(label)+'</button>').join('')+'</div></section>';
+  '<p>Une mesure maximum par cycle. '+status.used.size+' protection(s) enregistrée(s). Une menace ne prouve pas que quelqu’un a été blessé.</p>'+
+  '<div class="igr029-actions">'+protect.map(([id,label])=>{
+   const done=status.used.has(id),disabled=done||status.thisCycle;
+   return '<button class="btn ghost small" type="button" '+(disabled?'disabled aria-disabled="true" ':'')+
+     'onclick="igr029Protect(&quot;'+id+'&quot;)">'+esc(label)+(done?' · enregistrée':'')+'</button>';
+  }).join('')+'</div></section>';
 }
 window.igr029Protect=async target=>{
  try{await rpc('igr_v118_029_protection',{p_code:d().room.code,p_token:s().token,p_target:target});
