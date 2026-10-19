@@ -1,0 +1,6 @@
+-- CARTEL 029 v116 — narration publique uniquement.
+-- Ne change aucun rôle, aucune vérité cachée ni aucune variante en revue.
+update public.igr_v4_scenario_packs
+set pack=jsonb_set(pack,'{context}',
+to_jsonb('Au Sinaloa, le cartel Los Salcedo retenait trente personnes dans le village clandestin de Santa Ceniza et les forçait à participer à la production de cocaïne. Six sont mortes pendant leur captivité. Quatre prisonniers ont tenté de fuir ensemble : trois ont réussi, le quatrième a été repris puis assassiné. Après leur demande de protection, la Grey Room a reçu sa langue sectionnée et une menace du cartel. Vingt captifs sont toujours prisonniers. Un autre témoin affirme venir d’une installation différente et se présente volontairement. Votre mission : comprendre les crimes commis, identifier l’organisation et les responsables de Los Salcedo, protéger les survivants et contribuer à libérer les vingt captifs. Les menaces ne constituent pas des preuves.'::text),true)
+where scenario_id='029';
