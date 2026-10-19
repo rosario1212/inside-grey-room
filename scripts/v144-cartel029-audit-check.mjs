@@ -55,4 +55,6 @@ const lobbyQa=spawnSync(process.execPath,['scripts/cartel029-multiplayer-check.m
 assert.equal(lobbyQa.status,0,'029 6–11 players role-choice regression failed: '+lobbyQa.stdout+'\n'+lobbyQa.stderr);
 const roleQa=spawnSync(process.execPath,['scripts/cartel029-consolidation-check.mjs'],{encoding:'utf8'});
 assert.equal(roleQa.status,0,'029 consolidation 6–11 roles failed: '+roleQa.stdout+'\n'+roleQa.stderr);
-console.log('029 audit v158 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
+const replayQa=spawnSync(process.execPath,['scripts/cartel029-rematch-privacy-check.mjs'],{encoding:'utf8'});
+assert.equal(replayQa.status,0,'029 rematch and access isolation: '+replayQa.stdout+'\n'+replayQa.stderr);
+console.log('029 audit v161 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
