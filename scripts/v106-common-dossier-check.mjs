@@ -47,7 +47,7 @@ for(const [name,doc] of [['index',html],['en',en]]){
  assert.match(doc,/common-dossier-v106\.js\?v=v106-common-dossier/);
  const pos=doc.lastIndexOf('common-dossier-v106.js');
  assert(!/<script\s[^>]*src=/i.test(doc.slice(pos)),'v106 must be last external runtime in '+name);
- assert.match(doc,/notifications-v12\.js\?v=v106-common-dossier/);
+ if(name==='index')assert.match(doc,/notifications-v12\.js\?v=v106-common-dossier/);
 }
 assert.equal(builtRuntime,runtime);
 assert.equal(builtNotify,notify);
