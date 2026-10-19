@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
-const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.4/);
+const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.5/);
 const catalog=await get('/heritage-casino-v91.js');assert.equal(catalog.status,200);
 assert.match(await catalog.text(),/launchReady:true/);
 const expected=process.env.IGR_EXPECTED_COMMIT||'';
