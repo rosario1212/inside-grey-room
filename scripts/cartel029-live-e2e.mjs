@@ -75,8 +75,7 @@ try{
  // Register isolated test identities through the official social service.
  // The owner/admin can grant a short-lived TESTER entitlement in the database;
  // no sales or DLC licensing guards are disabled.
- for(let i=0;i<count;i++){
-  const profile=await players[i].page.evaluate(async pseudo=>{
+ const profile=await players[0].page.evaluate(async pseudo=>{
     const response=await fetch(SUPABASE_URL+'/functions/v1/igr-social',{
       method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
       body:JSON.stringify({action:'create',profile:{pseudo,avatar:'',
@@ -86,12 +85,11 @@ try{
     });
     const data=await response.json();
     if(!response.ok||!data.identity?.id||!data.identity?.token)
-      throw Error('QA social identity registration failed');
+      throw Error('QA social identity registration failed: HTTP '+response.status+' '+String(data.error||'unknown').slice(0,50));
     return data.identity;
-  },players[i].pseudo);
-  players[i].profile=profile;
- }
- console.log('LIVE QA identities registered via the real social service; waiting for a temporary tester entitlement');
+  },players[0].pseudo);
+ for(const p of players)p.profile=profile;
+ console.log('LIVE QA tester identity registered via the official social service; waiting for temporary entitlement');
  let licensed=false;
  for(let attempt=0;attempt<60;attempt++){
   const status=await rpc(0,'igr_dlc_access_status',{
