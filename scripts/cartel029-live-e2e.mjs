@@ -111,6 +111,9 @@ try{
    assert.equal(s.role,expectedRoles[i],'Role assigned to wrong player');
  }
  console.log('LIVE started game on production backend; independent cards/roles confirmed');
+ await hostAdvance();
+ assert.equal((await record('roles')).phase,'role_reading',
+   'Host must transition from briefing to private role reading');
  const witnesses=[];
  for(let i=0;i<count;i++){
    if(players[i].role!=='suspect')continue;
