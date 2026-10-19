@@ -3,6 +3,7 @@ import {readFile} from 'node:fs/promises';
 
 const replaySql=await readFile('supabase/migrations/20261019200000_v160_cartel029_rematch_isolation.sql','utf8');
 const matrixSql=await readFile('supabase/migrations/20261019201000_v161_cartel029_private_structural_audit.sql','utf8');
+const commonSql=await readFile('supabase/migrations/20261019202000_v162_cartel029_common_dossier_isolation.sql','utf8');
 
 for(const name of ['cartel029_protection','cartel029_position','cartel029_leadership',
  'breaking_news','breaking_news_manual','final_lock','provisional']){
@@ -20,6 +21,10 @@ assert.match(replaySql,/REVOKE ALL ON FUNCTION public\.igr_v4_visible_events/);
 assert.match(matrixSql,/igr_private\.igr_v161_029_machine_audit/);
 assert.match(matrixSql,/REVOKE ALL ON FUNCTION igr_private\.igr_v161_029_machine_audit/);
 assert.match(matrixSql,/human_story_review_unchanged/);
+assert.match(commonSql,/current_room\.scenario_id<>'029'/);
+assert.match(commonSql,/start_event\.event_type='context'/);
+assert.match(commonSql,/e\.visibility='public'/);
+
 
 const events=[
  {id:1,type:'context',visibility:'public',payload:{title:'previous context'}},
