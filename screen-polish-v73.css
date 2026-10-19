@@ -614,3 +614,17 @@ body > .live-session-controls{max-width:100%;isolation:isolate}
 @media(prefers-reduced-motion:reduce){
  #app .igr87-person summary:after,#app .igr87-common summary:after{transition:none}
 }
+
+/* Compact mobile phase controls: phase and clock, then one touch-sized action row. */
+@media(max-width:600px){
+  #app .game-v11 > .phase-strip{align-items:center;gap:6px 10px;padding:10px 12px}
+  #app .game-v11 > .phase-strip .phase-timer-box{display:contents}
+  #app .game-v11 > .phase-strip .phase-clock{grid-column:2;grid-row:1;justify-self:end;align-self:center}
+  #app .game-v11 > .phase-strip .phase-host-actions{grid-column:1/-1;grid-row:2;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px}
+  #app .game-v11 > .phase-strip .phase-host-actions:empty{display:none}
+  #app .game-v11 > .phase-strip .phase-host-actions button{min-height:44px;padding:8px 12px;font-size:10px}
+}
+/* Keep support close to this short form instead of after a second empty screen. */
+#app:has(#joinCode){min-height:0!important}
+#app:has(#joinCode) .app{padding-bottom:0}
+body:has(#joinCode) > .igr-beta-footer{margin-top:12px;padding-top:8px}
