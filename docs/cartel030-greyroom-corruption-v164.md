@@ -11,6 +11,26 @@ Questions jouées : quels actes peut-on prouver individuellement contre les troi
 
 Préserver l'univers de Puerto Ceniza (Sinaloa), Los Salcedo et Ismael « Maelo » Salcedo conformément à `docs/cartel-los-salcedo-canon-v1.md`. Ne pas attribuer de nouvelles responsabilités criminelles précises aux membres nommés de la famille sans validation du canon privé. Ne pas résoudre par accident les dossiers 029 ou 031.
 
+## Contexte : deux institutions contaminées
+
+**À Puerto Ceniza, au Mexique, la corruption est profondément installée dans plusieurs rouages de la fiction** : policiers, services administratifs, relais judiciaires ou collaborateurs peuvent céder à l'argent, à la peur et aux menaces de Los Salcedo. Cette représentation concerne les institutions et personnages de notre univers fictif, **pas l'ensemble du Mexique ni l'ensemble de ses habitants**. Des agents et magistrats intègres continuent à résister et leurs témoignages peuvent constituer des appuis déterminants.
+
+La Grey Room est supposée représenter le dernier bureau d'enquête capable de travailler indépendamment des réseaux locaux. **Mais cette fois, elle-même est infiltrée : au moins un de ses quatre membres enquêteurs actifs a volontairement servi le cartel.** La corruption du Mexique fictif et la compromission de la Grey Room doivent se répondre sans se confondre. Des dossiers locaux déjà altérés peuvent entrer dans la cellule, mais **la fuite décisive doit provenir de la Grey Room elle-même**, à la faveur d'une décision observable et contestable d'un personnage joueur.
+
+### Accroche publique sans révélation
+
+> À Puerto Ceniza, presque chaque dossier a son prix, chaque témoin sa peur, chaque responsable sa version. Depuis des années, Los Salcedo profitent de failles dans la police, la justice et l'administration. La Grey Room pensait pouvoir enquêter hors de cette influence. Pourtant, trois hommes du cartel ont été amenés devant elle, et une information qui n'aurait jamais dû quitter le bureau est déjà connue de l'ennemi. Qui a trahi ? Et quelles preuves méritent encore d'être crues ?
+
+Ce texte est une **nouvelle proposition de briefing**, pas un asset activé ni une description déjà déployée.
+
+### Conséquences de gameplay
+
+1. La corruption extérieure fournit **bruit, documents contradictoires et témoins intimidés**, mais pas des étiquettes de culpabilité.
+2. La corruption **interne** donne aux joueurs un adversaire identifiable par les décisions prises dans la salle : elle ne doit pas pouvoir être rejetée exclusivement sur un PNJ mexicain extérieur.
+3. Les soupçons de corruption n'autorisent ni la découverte automatique de la vérité d'un personnage, ni la consultation libre de sa carte secrète.
+4. L'enquête distingue la **provenance des preuves** (bureau / institution extérieure / témoin / cartel), la **fiabilité des faits** et les **intentions des acteurs**.
+5. Même quand le bureau est infiltré, les membres intègres disposent de recours documentés sans mini-jeu artificiel ni obligation de lire dix onglets.
+
 ## Distribution et expérience
 
 - **7 joueurs obligatoires** : Enquêteur, Analyste, Procureur, Juge et trois hommes de main suspects. Les quatre rôles institutionnels font partie de la Grey Room ; **exactement un** d'entre eux est compromis dans la configuration initiale équilibrée.
