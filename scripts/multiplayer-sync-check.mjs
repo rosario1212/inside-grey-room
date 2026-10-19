@@ -214,4 +214,37 @@ await check('stale realtime clients self-heal without a manual refresh',async()=
   assert.equal(c.requests.length,1,'A fresh snapshot must suppress needless rescue requests');
 });
 
+await check('CARTEL 029: 6–11 independent devices follow host phase changes without a manual refresh',async()=>{
+ const phases=['lobby','briefing','role_reading','interrogation_select','cycle_debrief','reveal'];
+ const roleOrder=['enqueteur','analyste','suspect','suspect','suspect','suspect','procureur','juge','journaliste','don','bras_droit'];
+ for(let count=6;count<=11;count++){
+  const clients=Array.from({length:count},(_,i)=>{const c=client();c.scope.STATE.playerId='player-'+i;return c});
+  const snapshot=(phase,viewer)=>({
+   room:{code:'CHECK',scenario_id:'029',min_players:6,max_players:11,
+    status:phase==='lobby'?'lobby':phase==='reveal'?'finished':'playing',phase,cycle:phase==='cycle_debrief'?2:1,state:{match_no:1,cartel029_ready:true}},
+   player:{id:'player-'+viewer,pseudo:'Player '+viewer,public_role:roleOrder[viewer]},
+   players:roleOrder.slice(0,count).map((role,i)=>({id:'player-'+i,public_role:role,pseudo:'Player '+i})),
+   events:[{id:phases.indexOf(phase)+1,event_type:'phase',payload:{phase}}]
+  });
+  for(const c of clients){c.loadLive();await flush();c.Socket.sockets[0].open();await c.runTimer();assert.equal(c.requests.length,1)}
+  for(const [i,c] of clients.entries())c.requests[0].resolve(snapshot('lobby',i));
+  await flush();
+  for(let step=1;step<phases.length;step++){
+   for(const c of clients)c.Socket.sockets[0].update(step+1);
+   for(const c of clients)await c.runTimer();
+   for(const [i,c] of clients.entries()){
+    const req=c.requests[step];
+    assert(req,'Every 029 player must fetch a new authoritative phase: '+count+' seats, step '+step);
+    req.resolve(snapshot(phases[step],i));
+   }
+   await flush();
+   for(const [i,c] of clients.entries()){
+    assert.equal(c.scope.STATE.sync.room.phase,phases[step],count+' participants: player '+i+' failed to catch up');
+    assert.equal(c.scope.STATE.sync.player.id,'player-'+i,'Another player session was substituted');
+    assert(c.renders.includes(phases[step]),'Missing screen transition at '+phases[step]);
+   }
+  }
+ }
+});
+
 console.log(`Multiplayer synchronization: ${checks.length} behavioral checks passed (${target}).`);
