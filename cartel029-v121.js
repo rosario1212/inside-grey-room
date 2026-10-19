@@ -30,9 +30,10 @@ function wrap(name,fn){
   } }catch(_){}
 }
 const roles={
- don:{label:'Le Don',win:'Protège ta position et fais face aux accusations.',body:'Tu diriges Los Salcedo. Tu peux communiquer par écrit avec ton bras droit, sans déclencher de violence automatique.'},
- bras_droit:{label:'Bras droit',win:'Préserve ta place auprès du Don, ou choisis de coopérer.',body:'Tu coordonnes une partie du réseau. Écris au Don et défends tes décisions.'},
- suspect:{label:'Témoin',win:'Contribue à l’enquête, protège tes proches et reste fidèle aux faits de ta fiche.',body:'Tu peux parler librement, mentir ou te taire. Tu n’as rien à apprendre par cœur.'}
+ don:{label:'Le Don',win:'Choisis entre garder le secret et coopérer sans violence automatique.',body:'Tu diriges Los Salcedo. Tu peux écrire à ton bras droit et décider de ta stratégie privée une fois par cycle.'},
+ bras_droit:{label:'Bras droit',win:'Reste loyal ou coopère : ta décision oriente ton objectif final.',body:'Tu peux écrire au Don et décider de ta stratégie privée une fois par cycle.'},
+ suspect:{label:'Témoin',win:'Contribue à l’enquête, protège tes proches et reste fidèle aux faits de ta fiche.',body:'Tu peux parler librement, mentir ou te taire. Tu n’as rien à apprendre par cœur.'},
+ journaliste:{label:'Journaliste',win:'Publie une information avec une source déclarée, puis défends ton angle final.',body:'Publication libre de 40 caractères minimum avec une source déclarée ; angle final de 24 caractères minimum. Aucun article n’est déclaré vrai automatiquement.'}
 };
 wrap('roleInfo',(orig,role)=>upcoming()&&roles[role]?roles[role]:orig(role));
 wrap('displayRole',(orig,role,pseudo)=>{
@@ -143,6 +144,41 @@ window.igr029Send=async ()=>{
  catch(e){console.warn('[029 cartel]',e?.message);toast('Message non envoyé.')}
  finally{messagePending=false}
 };
+function leadershipHtml(){
+ if(!active()||!['don','bras_droit'].includes(me().public_role)||d()?.room?.status!=='playing'||!permitted029Phase())return '';
+ const cycle=+d()?.room?.cycle;
+ if(cycle<1||cycle>3)return '';
+ const found=(d()?.my_actions||[]).some(a=>a.action_type==='cartel029_leadership'&&+a.cycle===cycle);
+ if(found)return '<section class="igr029-extras"><h3>Stratégie · cycle '+cycle+'</h3><p>Ta décision privée est enregistrée pour ce cycle.</p></section>';
+ const don=me().public_role==='don';
+ return '<section class="igr029-extras"><h3>Stratégie · cycle '+cycle+'</h3>'+
+ '<p>'+esc(don?'Préserve le secret du réseau ou privilégie une coopération limitée, sans violence automatique.':'Reste loyal au Don ou coopère. Ton choix demeure confidentiel jusqu’à la révélation.')+'</p>'+
+ '<div class="igr029-actions">'+(don?
+ '<button class="btn ghost" onclick="igr029LeaderDecision(&quot;contain&quot;)">Préserver le secret</button>'+
+ '<button class="btn ghost" onclick="igr029LeaderDecision(&quot;cooperate&quot;)">Coopérer</button>':
+ '<button class="btn ghost" onclick="igr029LeaderDecision(&quot;loyal&quot;)">Rester loyal</button>'+
+ '<button class="btn ghost" onclick="igr029LeaderDecision(&quot;cooperate&quot;)">Coopérer</button>')+
+ '</div><p class="igr029-hint">Une décision par cycle. Le dernier choix enregistré détermine ta stratégie finale.</p></section>';
+}
+let leadershipPending=false;
+window.igr029LeaderDecision=async choice=>{
+ if(leadershipPending||!active()||!permitted029Phase()||d()?.room?.status!=='playing')return;
+ const role=me().public_role;
+ if(!((role==='don'&&['contain','cooperate'].includes(choice))||
+       (role==='bras_droit'&&['loyal','cooperate'].includes(choice))))return;
+ if((d()?.my_actions||[]).some(a=>a.action_type==='cartel029_leadership'&&+a.cycle===+d().room.cycle))return;
+ leadershipPending=true;
+ try{await rpc('igr_v155_029_leadership_decision',{p_code:d().room.code,p_token:s().token,p_choice:choice});
+ toast('Ta stratégie a été enregistrée.');await syncNow(true)}
+ catch(e){console.warn('[029 leadership]',e?.message);toast('Stratégie non disponible.')}
+ finally{leadershipPending=false}
+};
+function journalistGuideHtml(){
+ if(!active()||me().public_role!=='journaliste'||d()?.room?.status!=='playing')return '';
+ return '<section class="igr029-extras"><h3>Ton objectif journalistique</h3>'+
+ '<p>Publie au moins 40 caractères avec une source déclarée (document, observation, déclaration, information publique ou enquête). Conclus par un angle final d’au moins 24 caractères.</p>'+
+ '<p class="igr029-hint">Une source déclarée n’est pas une preuve vérifiée. Présente tes informations non confirmées comme telles.</p></section>';
+}
 function choiceHtml(){
  const x=me().private_state||{};
  if(!active()||+x['029_witness_index']!==4||x['029_can_decide']!==true||+d()?.room?.cycle<2||!permitted029Phase()||d()?.room?.status!=='playing')return '';
@@ -163,8 +199,8 @@ window.igr029Position=async c=>{
 wrap('renderGameTab',(orig)=>{
  const result=orig();
  if(!active())return result;
- if(s()?.tab==='investigation')return String(result||'')+protectHtml();
- if(s()?.tab==='card')return String(result||'')+cartelWire()+choiceHtml();
+ if(s()?.tab==='investigation')return String(result||'')+protectHtml()+journalistGuideHtml();
+ if(s()?.tab==='card')return String(result||'')+cartelWire()+leadershipHtml()+choiceHtml();
  return result;
 });
 wrap('renderReveal',(orig)=>{
