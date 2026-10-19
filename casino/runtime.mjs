@@ -394,6 +394,8 @@ export function tickRuntime(current,now){
 export function viewRuntime(state,viewer){
   const base=casinoView(state,viewer),role=bureauRole(state,viewer),player=state.players.includes(viewer);
   const member=state.members.find(m=>m.id===viewer),p=numberPhase(state);
+  // These flags are advisory: the server still validates every deadline.
+  const elapsed=Math.max(0,Date.now()-state.phaseStartedAt);
   const brief=player?state.privateCanon.characters.find(c=>state.cast[c.id]===viewer):null;
   const ownCard=brief?{name:member.name,title:brief.title,brief:brief.brief,objective:brief.objective,
     relations:brief.relations.map(r=>({target:resolveId(state,r.target),text:r.text}))}:{name:member.name,title:role,brief:state.privateCanon.bureau[role]};
@@ -424,11 +426,12 @@ export function viewRuntime(state,viewer){
     continuityRole:player&&state.roster[viewer].status==='dead'?'witness':undefined,
     minimumSocialUntil:state.phaseStartedAt+state.privateCanon.minimumSocialMs,
     hostCanLocate:viewer===state.hostId&&state.chapter===1&&state.phase===3&&state.fallbackReady&&
-      Date.now()-state.phaseStartedAt>=state.privateCanon.minimumSocialMs*3,
-    hostCanCloseDefence:viewer===state.hostId&&state.chapter===3&&state.phase===2&&state.hearings.some(h=>h.defence===null),
+      elapsed>=state.privateCanon.minimumSocialMs*3,
+    hostCanCloseDefence:viewer===state.hostId&&state.chapter===3&&state.phase===2&&elapsed>=state.privateCanon.minimumSocialMs*5&&state.hearings.some(h=>h.defence===null),
     hostPendingHearings:viewer===state.hostId&&state.chapter===3&&state.phase===2?state.hearings.filter(h=>h.defence===null).map(h=>({id:h.id,subjectId:h.subjectId})):[],
     hostCanCloseCourt:viewer===state.hostId&&state.chapter===3&&state.phase===2&&!!state.bureau.judge&&
-      state.hearings.some(h=>h.defence!==null&&!state.rulings.some(r=>r.hearingId===h.id)),
+      elapsed>=state.privateCanon.minimumSocialMs*3&&state.hearings.every(h=>h.defence!==null)&&
+      state.hearings.some(h=>!state.rulings.some(r=>r.hearingId===h.id)),
     finale:state.finale?{...state.finale,organigram:role?state.finale.organigram:undefined,
       personalOutcome:player?{
         status:state.roster[viewer].status,
