@@ -71,12 +71,43 @@ try{
    await page.waitForFunction(()=>typeof rpc==='function'&&typeof STATE!=='undefined',{timeout:25000});
    players.push({page,context,pseudo:qaTag+'-'+i});
  }
+
+ // Register isolated test identities through the official social service.
+ // The owner/admin can grant a short-lived TESTER entitlement in the database;
+ // no sales or DLC licensing guards are disabled.
+ for(let i=0;i<count;i++){
+  const profile=await players[i].page.evaluate(async pseudo=>{
+    const response=await fetch(SUPABASE_URL+'/functions/v1/igr-social',{
+      method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({action:'create',profile:{pseudo,avatar:'',
+       stats:{games:0,completed:0,wins:0,history:[]},equippedTitle:'none',
+       equippedBadge:'none',visibility:'players_and_friends',
+       allowFriendRequests:false}})
+    });
+    const data=await response.json();
+    if(!response.ok||!data.identity?.id||!data.identity?.token)
+      throw Error('QA social identity registration failed');
+    return data.identity;
+  },players[i].pseudo);
+  players[i].profile=profile;
+ }
+ console.log('LIVE QA identities registered via the real social service; waiting for a temporary tester entitlement');
+ let licensed=false;
+ for(let attempt=0;attempt<60;attempt++){
+  const status=await rpc(0,'igr_dlc_access_status',{
+   p_profile_id:players[0].profile.id,p_profile_token:players[0].profile.token});
+  if(status.cartel?.active&&status.cartel?.level==='tester'){licensed=true;break}
+  await new Promise(resolve=>setTimeout(resolve,3000));
+ }
+ assert(licensed,'QA owner profile did not receive a temporary official tester entitlement');
+ console.log('LIVE temporary DLC entitlement verified through official access-status RPC');
  let out;
  for(let tries=0;tries<4;tries++){
    roomCode=code();
    try{out=await players[0].page.evaluate(({roomCode,pseudo})=>
-    rpc('igr_v4_create_room',{p_code:roomCode,p_scenario_id:'029',p_pseudo:pseudo}),
-    {roomCode,pseudo:players[0].pseudo});break}
+    rpc('igr_dlc_create_room',{p_code:roomCode,p_scenario_id:'029',p_pseudo:pseudo,
+     p_profile_id:profile.id,p_profile_token:profile.token}),
+    {roomCode,pseudo:players[0].pseudo,profile:players[0].profile});break}
    catch(e){if(tries===3)throw e}
  }
  players[0].out=out;
@@ -86,8 +117,9 @@ try{
  console.log('LIVE host created actual Supabase room; role picker visible');
  for(let i=1;i<count;i++){
    const out=await players[i].page.evaluate(({roomCode,pseudo})=>
-     rpc('igr_v4_join_room',{p_code:roomCode,p_pseudo:pseudo}),
-     {roomCode,pseudo:players[i].pseudo});
+     rpc('igr_dlc_join_room',{p_code:roomCode,p_pseudo:pseudo,
+       p_profile_id:profile.id,p_profile_token:profile.token}),
+     {roomCode,pseudo:players[i].pseudo,profile:players[i].profile});
    players[i].out=out;
    await exec(i,'setup',{out,host:false,pseudo:players[i].pseudo});
  }
