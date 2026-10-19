@@ -54,5 +54,5 @@ assert.equal(builtNotify,notify);
 assert.match(sw,/igr-v106-common-dossier/);
 assert.match(sw,/common-dossier-v106\.js\?v=v106-common-dossier/);
 assert.match(sw,/notifications-v12\.js\?v=v106-common-dossier/);
-assert.match(build,/apply/);
+assert.match(build,/copyFile\(source/);
 console.log('v106: public dossier, role gating, notification privacy, cycle provenance and web/mobile bundle PASS');
