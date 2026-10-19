@@ -27,6 +27,8 @@ function wrap(name,fn){
   case 'levelsForm':levelsForm=newer;break;
   case 'collectLevels':collectLevels=newer;break;
   case 'renderReveal':renderReveal=newer;break;
+  case 'renderFinalLockForm':renderFinalLockForm=newer;break;
+  case 'phaseLabel':phaseLabel=newer;break;
   } }catch(_){}
 }
 const roles={
@@ -202,6 +204,28 @@ wrap('renderGameTab',(orig)=>{
  if(s()?.tab==='investigation')return String(result||'')+protectHtml()+journalistGuideHtml();
  if(s()?.tab==='card')return String(result||'')+cartelWire()+leadershipHtml()+choiceHtml();
  return result;
+});
+wrap('phaseLabel',(orig,phase)=>{
+ if(!active())return orig(phase);
+ if(phase==='final_suspect_defenses')return 'PAROLE FINALE DES TÉMOINS';
+ if(phase==='locking')return 'CONCLUSIONS DU DOSSIER 029';
+ if(phase==='final_audience')return 'AUDIENCE DU DOSSIER';
+ return orig(phase);
+});
+wrap('renderFinalLockForm',(orig)=>{
+ if(!active())return orig();
+ if((d()?.my_actions||[]).some(a=>a.action_type==='final_lock'))return '<div class="locked-state">Ta conclusion est enregistrée.</div>';
+ const role=me().public_role;
+ if(role==='journaliste')return '<div class="final-form"><h3>Ton angle journalistique</h3>'+
+ '<p>Défends ton angle à partir de ce que tu as réellement publié. 24 caractères minimum. Les sources déclarées ne sont pas certifiées automatiquement.</p>'+
+ '<textarea id="finalText" maxlength="300" minlength="24" rows="4" placeholder="Quelle information peux-tu soutenir et quelles limites reconnais-tu ?"></textarea>'+
+ '<button class="btn primary block" onclick="lockFinal()">Remettre ton angle</button></div>';
+ if(['enqueteur','analyste','procureur','juge'].includes(role))return '<div class="final-form"><h3>Clôturer ta participation</h3>'+
+ '<p>Les quatre témoins ne sont pas notés sur une échelle de culpabilité. Le rapport d’enquête sert de base au dénouement.</p>'+
+ '<label for="finalText">Observation de clôture (facultative)</label>'+
+ '<textarea id="finalText" maxlength="300" rows="3" placeholder="Que retiens-tu de l’enquête ?"></textarea>'+
+ '<button class="btn primary block" onclick="lockFinal()">Confirmer ma conclusion</button></div>';
+ return orig();
 });
 wrap('renderReveal',(orig)=>{
  if(!active()||d()?.room?.status!=='finished')return orig();
