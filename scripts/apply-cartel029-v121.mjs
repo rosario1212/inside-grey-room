@@ -9,6 +9,9 @@ await copyFile(src,path.join(target,src));
 for(const name of ['index.html','en.html']){
  const file=path.join(target,name);let html=await readFile(file,'utf8');
  html=html.replace(/\s*<script[^>]*src=["']cartel029-v121\.js[^"']*["'][^>]*><\/script>/g,'');
+ // Bust the core application bundle too: the mandatory-role fix lives in
+ // app-v11.js, not in the CARTEL add-on loaded afterwards.
+ html=html.replace(/(src=["']app-v11\.js\?v=)[^"']+/g,(_full,prefix)=>prefix+v);
  html=html.replace('</body>',`<script src="${src}?v=${v}"></script>\n</body>`);
  await writeFile(file,html,'utf8');
 }
