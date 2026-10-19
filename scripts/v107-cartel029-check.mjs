@@ -55,6 +55,19 @@ assert.match(gateSql,/igr_v108_029_room_variants/);
 assert.match(gateSql,/not igr_private\.igr_v108_029_is_enabled\(\)/);
 assert.match(safetySql,/igr_v108_029_is_enabled/);
 assert.match(readySql,/cartel029_ready/);
+const [releaseSql,interviewSql]=await Promise.all([
+ readFile('supabase/migrations/20261019042000_v111_cartel029_private_revelations.sql','utf8'),
+ readFile('supabase/migrations/20261019043800_v112_cartel029_first_interviews.sql','utf8')
+]);
+assert.match(releaseSql,/igr_v108_029_is_enabled/);
+assert.match(releaseSql,/audience_roles,cycle,payload/);
+assert.match(releaseSql,/\('P11','P12','P13','P14','P15','P16'\)/);
+assert.match(releaseSql,/target_player_id,cycle,payload/);
+assert.match(interviewSql,/old\.phase<>'interrogation'/);
+assert.match(interviewSql,/new\.cycle<>1/);
+assert.match(interviewSql,/igr_v108_029_is_enabled/);
+assert.match(interviewSql,/\('interrogation_select','cycle_debrief'\)/);
+assert.match(interviewSql,/PIÈCE P02 · LE COLIS/);
 assert.doesNotMatch(source,/Óscar Beltrán|León Trejo|Lorena Cruz|Efraín Montes/);
 
 console.log('029 v107: no private leaks, role-gated report, cycle messages and web/mobile assets PASS');
