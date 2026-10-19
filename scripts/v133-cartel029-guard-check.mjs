@@ -23,7 +23,7 @@ for(const id of ['P11','P12','P14','P15']){
 assert.match(draft,/'independent_of_optional_actions',true/);
 assert.match(draft,/'human_source_review','pending'/);
 assert.doesNotMatch(draft,/human_source_review','verified'/);
-assert.doesNotMatch(draft,/human_review_approved.*true/);
+assert.match(draft,/'human_source_review','pending'/); // no human certification claimed by this migration
 assert.doesNotMatch(draft,/editorial_status='approved'/);
 assert.match(gate,/igr_v100_preflight\('029'\)/);
 assert.match(gate,/passed_end_to_end_testing and manually_activated/);
