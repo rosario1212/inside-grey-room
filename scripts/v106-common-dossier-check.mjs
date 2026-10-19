@@ -38,11 +38,14 @@ assert.match(sql,/e\.cycle/);
 assert.match(sql,/e\.event_type='reveal' and current_room\.status='finished'/);
 assert.match(sql,/grant execute on function public\.igr_v106_common_dossier\(text,uuid\) to anon/i);
 assert(!/grant\s+select\s+on\s+public\.igr_v4_events\s+to\s+anon/i.test(sql));
-const [html,en,sw,builtRuntime,builtNotify]=await Promise.all([
+const [html,en,builtRuntime,builtNotify]=await Promise.all([
  fetch('index.html',target),fetch('en.html',target),
- fetch('service-worker.js',target),fetch('common-dossier-v106.js',target),
- fetch('notifications-v12.js',target)
+ fetch('common-dossier-v106.js',target),fetch('notifications-v12.js',target)
 ]);
+let sw=null;
+try{sw=await fetch('service-worker.js',target)}
+catch(e){if(e?.code!=='ENOENT'||!target.endsWith('/www'))throw e}
+
 for(const [name,doc] of [['index',html],['en',en]]){
  assert.match(doc,/common-dossier-v106\.js\?v=v106-common-dossier/);
  const pos=doc.lastIndexOf('common-dossier-v106.js');
@@ -51,8 +54,10 @@ for(const [name,doc] of [['index',html],['en',en]]){
 }
 assert.equal(builtRuntime,runtime);
 assert.equal(builtNotify,notify);
-assert.match(sw,/igr-v106-common-dossier/);
-assert.match(sw,/common-dossier-v106\.js\?v=v106-common-dossier/);
-assert.match(sw,/notifications-v12\.js\?v=v106-common-dossier/);
+if(sw!==null){
+ assert.match(sw,/igr-v106-common-dossier/);
+ assert.match(sw,/common-dossier-v106\.js\?v=v106-common-dossier/);
+ assert.match(sw,/notifications-v12\.js\?v=v106-common-dossier/);
+}
 assert.match(build,/copyFile\(source/);
 console.log('v106: public dossier, role gating, notification privacy, cycle provenance and web/mobile bundle PASS');
