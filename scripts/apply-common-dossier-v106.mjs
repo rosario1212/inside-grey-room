@@ -2,7 +2,9 @@ import {copyFile,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 const target=path.resolve(process.argv[2]||'dist');
-const root=process.cwd(),script='common-dossier-v106.js',version='v106-common-dossier';
+const root=process.cwd(),script='common-dossier-v106.js',version='v106-common-dossier-ui1';
+const refreshedAssets=['screen-polish-v73.css','heritage-casino-v91.js'];
+const refreshAssets=text=>refreshedAssets.reduce((s,asset)=>s.replaceAll(new RegExp(asset.replaceAll('.', '\\.')+'\\?v=[^\"\']+', 'g'),`${asset}?v=${version}`),text);
 const exists=async x=>{try{await stat(x);return true}catch{return false}};
 if(!(await exists(target)))throw Error('Missing built target '+target);
 const source=path.join(root,script);
@@ -12,6 +14,7 @@ await copyFile(source,path.join(target,script));
 for(const name of ['index.html','en.html']){
  const file=path.join(target,name);let html=await readFile(file,'utf8');
  html=html.replace(/\s*<script\b[^>]+src=["']common-dossier-v106\.js[^"']*["'][^>]*><\/script>/gi,'');
+ html=refreshAssets(html);
  html=html.replace(/notifications-v12\.js\?v=[^"']+/g,`notifications-v12.js?v=${version}`);
  html=html.replace('</body>',`  <script src="${script}?v=${version}"></script>\n</body>`);
  if(!html.includes('common-dossier-v106.js?v=v106-common-dossier'))throw Error('v106 runtime missing from '+name);
@@ -19,7 +22,7 @@ for(const name of ['index.html','en.html']){
 }
 const worker=path.join(target,'service-worker.js');
 if(await exists(worker)){
- let sw=await readFile(worker,'utf8');
+ let sw=refreshAssets(await readFile(worker,'utf8'));
  sw=sw.replace(/const CACHE='[^']*';/,`const CACHE='igr-${version}';`);
  sw=sw.replace(/\/notifications-v12\.js\?v=[^'"]+/g,`/notifications-v12.js?v=${version}`);
  sw=sw.replace(/\s*['"]\/common-dossier-v106\.js\?v=[^'"]+['"],?\s*/g,'\n');

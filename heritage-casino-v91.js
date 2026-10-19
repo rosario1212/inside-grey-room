@@ -44,11 +44,8 @@ function patchHub(){const hub=$('.hplay-hub-grid')||$('.heritage-campaign-grid')
  const card=document.createElement('button');card.type='button';card.className='hplay-campaign-card casino-entry';card.dataset.casinoNav='campaign';card.innerHTML=`${artwork('campagne.webp')}<span class="hplay-campaign-body"><em>MACAO · TRIADES · PÈGRE INTERNATIONALE</em><strong>CASINO</strong><small>Guerre de succession, jeux, accords et enquête internationale.</small><span class="hplay-campaign-foot"><b>3 SCÉNARIOS</b><i>EXPLORER →</i></span></span>`;
  hub.appendChild(card);
 }
-function patchJoin(){const input=$('#joinCode');if(!input)return;input.maxLength=10;
- if($('#casino-guest-entry'))return;
- const entry=document.createElement('button');entry.id='casino-guest-entry';entry.type='button';entry.className='btn ghost block';entry.dataset.casinoLive='';entry.dataset.casinoJoin='';entry.textContent='Rejoindre une table CASINO';
- input.closest('.panel')?.appendChild(entry);
-}
+// The standard Join button already detects Casino invitation codes.
+function patchJoin(){const input=$('#joinCode');if(input)input.maxLength=10;}
 function handleClick(event){const target=event.target.closest?.('[data-casino-nav],[data-casino-chapter]');if(!target)return;event.preventDefault();event.stopImmediatePropagation();
  if(target.dataset.casinoChapter){renderChapter(Number(target.dataset.casinoChapter));return}
  if(target.dataset.casinoNav==='hub'){if(window.IGR_HERITAGE_PLAY?.open)window.IGR_HERITAGE_PLAY.open();else window.IGR_HERITAGE?.open?.();return}
