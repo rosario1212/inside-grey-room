@@ -3,8 +3,8 @@ import {readFile} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 
 const contents=Object.fromEntries(await Promise.all([
- 'supabase/migrations/20261019050500_v135_cartel029_fix_witness_profile_collision.sql',
- 'supabase/migrations/20261019052600_v136_cartel029_current-story-release-review.sql',
+ 'supabase/migrations/20261019113000_v135_cartel029_fix_witness_profile_collision.sql',
+ 'supabase/migrations/20261019113100_v136_cartel029_current-story-release-review.sql',
  'supabase/migrations/20261019061000_v116_cartel029_distinct_leadership.sql',
  'supabase/migrations/20261019073000_v121_cartel029_report_conclusions.sql',
  'supabase/migrations/20261019032000_v108_cartel029_private_four_witness_gate.sql',
@@ -12,8 +12,7 @@ const contents=Object.fromEntries(await Promise.all([
 ].map(async file=>[file,await readFile(file,'utf8')])));
 
 const memory=contents['supabase/migrations/20261019050500_v135_cartel029_fix_witness_profile_collision.sql'];
-const review=contents['supabase/migrations/20261019052600_v136_cartel029_current-story-release_review.sql']||
- contents['supabase/migrations/20261019052600_v136_cartel029_current-story-release-review.sql'];
+const review=contents['supabase/migrations/20261019113100_v136_cartel029_current-story-release-review.sql'];
 const roles=contents['supabase/migrations/20261019061000_v116_cartel029_distinct_leadership.sql'];
 const report=contents['supabase/migrations/20261019073000_v121_cartel029_report_conclusions.sql'];
 const intro=contents['supabase/migrations/20261019032000_v108_cartel029_private_four_witness_gate.sql'];
