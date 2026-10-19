@@ -65,6 +65,13 @@ for(let size=6;size<=11;size++){
       assert(html.includes('Stratégie · cycle 2'));
       assert(html.includes('igr029LeaderDecision'));
       assert(html.includes(role==='don'?'Préserver le secret':'Rester loyal'));
+      if(role==='don'&&size===10)assert(!html.includes('igr029-compose'),
+        'Do not show a leader-to-leader composer with no right-hand player');
+      if(role==='don'&&size===11){
+        s.STATE.sync.players=[{public_role:'bras_droit'}];
+        assert(s.renderGameTab().includes('igr029-compose'),
+          'Don/right-hand chat must appear when both roles are present');
+      }
       const locked=mk(role,size,'interrogation_select',2,[{action_type:'cartel029_leadership',cycle:2}]);
       assert(locked.renderGameTab().includes('décision privée est enregistrée'));
       locked.STATE.sync.room.phase='locking';
