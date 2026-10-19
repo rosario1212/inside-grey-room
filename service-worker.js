@@ -1,4 +1,4 @@
-const CACHE='igr-v38-3-cartel-029-briefing-protocol';
+const CACHE='igr-v38-4-casino-105-5-cartel029-audit';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
