@@ -84,6 +84,7 @@ if(origTab){const wrapper=function(){
 function actionHtml(){
  const d=game();if(!d||d.room.status!=='playing'||d.room.phase==='role_reading')return '';
  if(isInquiry())return '<button class="btn ghost small igr106-go-enquiry" type="button" onclick="setTab(\'investigation\')">'+esc(tr('Ouvrir les actions d’enquête','Open investigation actions'))+'</button>';
+ if(role()==='journaliste'&&d.room.phase==='locking')return typeof renderInvestigationTab==='function'?String(renderInvestigationTab()||''):'';
  if(role()==='journaliste'){
   return '<button class="btn ghost small" type="button" onclick="setTab(\'press50\')">'+esc(tr('Ouvrir Presse et publier','Open Press and publish'))+'</button>';
  }
