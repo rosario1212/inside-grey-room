@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import {readFile,stat} from 'node:fs/promises';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const root=process.cwd(),dest=path.resolve(process.argv[2]||'dist');
+const [source,sql,html,en,built]=await Promise.all([
+ readFile('cartel029-v107.js','utf8'),
+ readFile('supabase/migrations/20261019023000_v107_cartel029_report_and_public_pressure.sql','utf8'),
+ readFile(path.join(dest,'index.html'),'utf8'),readFile(path.join(dest,'en.html'),'utf8'),
+ readFile(path.join(dest,'cartel029-v107.js'),'utf8')
+]);
+for(const file of ['cartel029-v107.js','scripts/apply-cartel029-v107.mjs']){
+ const check=spawnSync(process.execPath,['--check',file],{encoding:'utf8'});
+ assert.equal(check.status,0,file+': '+check.stderr);
+}
+assert.equal(source,built);
+for(const page of [html,en]){
+ assert.match(page,/cartel029-v107\.js\?v=v107-cartel029/);
+ assert(page.indexOf('common-dossier-v106.js')<page.indexOf('cartel029-v107.js'));
+}
+assert.match(source,/room\?\.scenario_id==='029'/);
+assert.match(source,/\['enqueteur','analyste'\]/);
+assert.match(source,/igr_v107_029_report/);
+assert.match(source,/if\(state\(\)\?\.tab==='timeline'\)/);
+assert.match(source,/if\(state\(\)\?\.tab==='investigation'&&member\(\)\)/);
+assert(!source.includes('V5')&&!source.includes('F01')&&!source.includes('Lorena Cruz'),'Private clues must not enter public JS');
+assert.match(sql,/create table if not exists igr_private\.igr_v107_029_editorial_matrix/i);
+assert.match(sql,/check\(not public_enabled or editorial_status='approved'\)/);
+assert.match(sql,/revoke all on igr_private\.igr_v107_029_editorial_matrix from public,anon,authenticated/i);
+assert.match(sql,/alter table public\.igr_v107_029_reports enable row level security/i);
+assert.match(sql,/actor\.public_role not in \('enqueteur','analyste'\)/);
+assert.match(sql,/actor\.public_role<>'enqueteur'/);
+assert.match(sql,/room\.cycle<>3/);
+assert.match(sql,/new\.scenario_id<>'029'/);
+assert.match(sql,/old\.cycle is distinct from 2/);
+assert.match(sql,/old\.cycle is distinct from 3/);
+assert.match(sql,/threat_not_confirmed/);
+assert.match(sql,/MESSAGE DE LOS SALCEDO · OUVERTURE/);
+assert.match(sql,/MESSAGE DE LOS SALCEDO · LA FUITE/);
+assert.match(sql,/MESSAGE DE LOS SALCEDO · LES VINGT CAPTIFS/);
+assert.doesNotMatch(sql,/\bGRANT SELECT\b/i);
+let sw=null;try{sw=await readFile(path.join(dest,'service-worker.js'),'utf8')}catch(e){if(e.code!=='ENOENT'||!dest.endsWith('/www'))throw e}
+if(sw!==null)assert.match(sw,/cartel029-v107\.js\?v=v107-cartel029/);
+console.log('029 v107: no private leaks, role-gated report, cycle messages and web/mobile assets PASS');
