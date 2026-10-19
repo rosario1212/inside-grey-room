@@ -63,6 +63,11 @@ const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
 function scenarioDifficultyTag(sc){const id=String(sc?.id||sc||'');return ADVANCED_SCENARIO_IDS.has(id)?`<span class="tag advanced-tag">${window.IGR_LOCALE==='en'?'ADVANCED':'AVANCÉ'}</span>`:''}
 
 function rolesBlock(sc){
+ if(sc?.id==='029'){
+   const en=window.IGR_LOCALE==='en';
+   return '<div class="roles-availability"><div class="roles-row"><span>'+(en?'Required':'Obligatoires')+'</span><p>'+(en?'Investigator · Analyst · 4 witnesses':'Enquêteur · Analyste · 4 témoins')+'</p></div>'+
+   '<div class="roles-row optional"><span>'+(en?'Optional':'Facultatifs')+'</span><p>'+(en?'Prosecutor · Judge · Journalist · Don · Right hand':'Procureur · Juge · Journaliste · Don · Bras droit')+'</p></div></div>';
+ }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]};
  return `<div class="roles-availability"><div class="roles-row"><span>Obligatoires</span><p>${cfg.required.map(h).join(' · ')}</p></div>${cfg.optional.length?`<div class="roles-row optional"><span>Facultatifs</span><p>${cfg.optional.map(h).join(' · ')}</p></div>`:''}</div>`;
 }
