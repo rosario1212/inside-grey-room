@@ -22,11 +22,24 @@ function mission(){
  return '<section class="igr029-mission"><small>029 · LE CYCLE MORT</small><h3>'+esc(tr('Trois questions à résoudre','Three questions to resolve'))+'</h3><ol>'+
  fields.slice(0,3).map(f=>'<li>'+esc(tr(f[1],f[2]))+'</li>').join('')+'</ol><p>'+esc(tr('En parallèle : protéger les rescapés, leurs familles et les vingt captifs. Une menace ne prouve pas qu’elle a été exécutée.','Also: protect the survivors, their families and the twenty captives. A threat is not evidence that harm has occurred.'))+'</p></section>';
 }
+function finalChoice(key,label,options){
+ const disabled=record?.status==='submitted';
+ const previous=record?.fields?.[key]||'unknown';
+ return '<label class="igr029-field"><b>'+esc(label)+'</b><select data-igr029-field="'+key+'" '+(disabled?'disabled':'')+' onchange="igr029MarkDirty()">'+options.map(([v,t])=>'<option value="'+v+'" '+(v===previous?'selected':'')+'>'+esc(t)+'</option>').join('')+'</select></label>';
+}
 function reportBody(){
  if(!record)return '<p class="igr029-note">'+esc(message||tr('Chargement du rapport…','Loading report…'))+'</p>';
  const disabled=record.status==='submitted';
  return '<p class="igr029-note">'+esc(tr('Répondez simplement aux trois questions. Enregistrez à tout moment ; l’enquêteur et l’analyste partagent ce brouillon.','Answer the three questions. Save any time; the investigator and analyst share the draft.'))+'</p>'+
  fields.map((f,i)=>'<label class="igr029-field"><b>'+(i<3?i+1+'. ':'')+esc(tr(f[1],f[2]))+'</b><small>'+esc(f[3])+'</small><textarea data-igr029-field="'+f[0]+'" maxlength="1200" rows="3" '+(disabled?'readonly':'')+' oninput="igr029MarkDirty()">'+esc(record.fields?.[f[0]]||'')+'</textarea></label>').join('')+
+ (Number(sync()?.room?.cycle)===3?'<div class="igr029-final-choices"><h4>'+esc(tr('Deux conclusions finales','Two final conclusions'))+'</h4>'+
+ finalChoice('responsibility_choice',tr('Qui a décidé la représaille ?','Who ordered the reprisal?'),[
+ ['unknown',tr('Preuves insuffisantes','Insufficient evidence')],['local',tr('Direction locale','Local leadership')],
+ ['execution',tr('Exécutant sur le terrain','Field operative')],['finance',tr('Responsable financier','Financial controller')]])+
+ finalChoice('witness4_assessment',tr('Que concluez-vous sur le quatrième témoin ?','What do you conclude about the fourth witness?'),[
+ ['unknown',tr('Impossible à établir','Not established')],['innocent',tr('Témoin innocent','Innocent witness')],
+ ['coerced',tr('Coopération sous contrainte','Coerced cooperation')],['voluntary',tr('Complicité volontaire','Voluntary involvement')],
+ ['operative',tr('Agent du cartel infiltré','Cartel operative')]])+'</div>':'')+
  '<div class="igr029-buttons"><button class="btn ghost" type="button" onclick="igr029SaveReport()" '+(disabled?'disabled':'')+'>'+esc(tr('Enregistrer','Save'))+'</button>'+
  (lead()?'<button class="btn primary" type="button" onclick="igr029SubmitReport()" '+(disabled||Number(sync()?.room?.cycle)!==3?'disabled':'')+'>'+esc(tr('Remettre le rapport','Submit report'))+'</button>':'')+
  '</div><p class="igr029-note" role="status">'+esc(disabled?tr('Rapport remis.','Report submitted.'):message||tr('Brouillon confidentiel.','Confidential draft.'))+'</p>';
@@ -74,7 +87,7 @@ const style=document.createElement('style');style.id='igr029-v107-style';style.t
 .igr029-mission ol{padding-left:18px;margin:10px 0;display:grid;gap:8px}.igr029-mission li{font-size:13px;line-height:1.5}.igr029-mission p,.igr029-note{font-size:12px;line-height:1.5;color:#c9c1b8}
 .igr029-field{display:grid;gap:6px;margin:13px 0;font-size:13px}.igr029-field small{color:#aba29a}
 .igr029-field textarea{min-height:85px;width:100%;box-sizing:border-box;border:1px solid #544943;border-radius:8px;background:#171616;color:#f2eae3;font:inherit;padding:11px;resize:vertical;line-height:1.45}
-.igr029-field textarea:focus{outline:2px solid #b99375}.igr029-buttons{display:flex;flex-wrap:wrap;gap:9px}
+.igr029-field textarea:focus{outline:2px solid #b99375} .igr029-field select{width:100%;padding:10px;border-radius:8px;background:#171616;color:#f2eae3;border:1px solid #544943}.igr029-final-choices{border-top:1px solid #544943;margin:18px 0;padding-top:12px}.igr029-final-choices h4{font-size:14px;color:#dcc3a5}.igr029-buttons{display:flex;flex-wrap:wrap;gap:9px}
 @media(max-width:600px){.igr029-mission,.igr029-report{padding:12px}.igr029-buttons .btn{flex:1}}
 `;document.head.appendChild(style);
 // The four playable witnesses continue using the legacy suspect protocol
