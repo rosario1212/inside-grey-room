@@ -77,5 +77,32 @@ const style=document.createElement('style');style.id='igr029-v107-style';style.t
 .igr029-field textarea:focus{outline:2px solid #b99375}.igr029-buttons{display:flex;flex-wrap:wrap;gap:9px}
 @media(max-width:600px){.igr029-mission,.igr029-report{padding:12px}.igr029-buttons .btn{flex:1}}
 `;document.head.appendChild(style);
+// The four playable witnesses continue using the legacy suspect protocol
+// internally until the investigation engine is fully replaced. Only neutral
+// role labels change, and only for the server-certified 6–11 player roster.
+const futureRoster=()=>sync()?.room?.scenario_id==='029' &&
+  ((Number(sync()?.room?.min_players)===6&&Number(sync()?.room?.max_players)===11) ||
+   sync()?.room?.state?.cartel029_ready===true);
+const roleLabel0=typeof displayRole==='function'?displayRole:null;
+if(roleLabel0){const f=function(r,...args){
+  if(futureRoster()&&r==='suspect')return tr('Témoin','Witness');
+  return roleLabel0.call(this,r,...args);
+};try{displayRole=f}catch{}window.displayRole=f;}
+const roleInfo0=typeof roleInfo==='function'?roleInfo:null;
+if(roleInfo0){const f=function(r,...args){
+  const existing=roleInfo0.call(this,r,...args);
+  if(futureRoster()&&r==='suspect')return {...existing,
+     label:tr('Témoin','Witness'),
+     body:tr('Tu connais une partie de l’affaire. Dis ce que tu sais, cache ou révèle ton secret, mais ne fabrique pas de preuve.','You know part of the case. Share what you choose, keep or disclose your secret, but do not invent evidence.'),
+     win:tr('Poursuis ton objectif personnel. Tu peux consulter ta fiche à tout moment pendant la partie.','Pursue your private objective; your role card remains accessible throughout play.')};
+  return existing;
+};try{roleInfo=f}catch{}window.roleInfo=f;}
+const interrogation0=typeof renderInterrogationSelect==='function'?renderInterrogationSelect:null;
+if(interrogation0){const f=function(...args){
+  const html=String(interrogation0.apply(this,args)||'');
+  if(!futureRoster())return html;
+  return html.replace('Suspects restant à entendre',tr('Témoins restant à entendre','Witnesses awaiting questioning'))
+      .replace('Tous les suspects ont été entendus.',tr('Les quatre témoins ont été entendus.','All four witnesses have been questioned.'));
+};try{renderInterrogationSelect=f}catch{}window.renderInterrogationSelect=f;}
 window.IGR_CARTEL_029_V107=Object.freeze({version:'v107',mission,controls});
 })();
