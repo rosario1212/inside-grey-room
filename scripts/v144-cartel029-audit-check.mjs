@@ -39,12 +39,12 @@ for(const action of ['protectionPending','messagePending','positionPending']){
  assert.match(choices,new RegExp('if\\('+action+'\\|\\|!active\\(\\)'),'Repeated 029 commands must be blocked while a request is pending');
  assert.match(choices,new RegExp('finally\\{'+action+'=false\\}'),'029 action lock must always reset');
 }
-assert.match(build,/v158-cartel029-consolidation/);
-assert.match(html,/cartel029-v121\.js\?v=v158-cartel029-consolidation/);
-assert.match(htmlEn,/cartel029-v121\.js\?v=v158-cartel029-consolidation/);
-assert.match(html,/app-v11\.js\?v=v158-cartel029-consolidation/,'Canonical lobby app must get a new cache version');
+assert.match(build,/v164-cartel029-final-lock/);
+assert.match(html,/cartel029-v121\.js\?v=v164-cartel029-final-lock/);
+assert.match(htmlEn,/cartel029-v121\.js\?v=v164-cartel029-final-lock/);
+assert.match(html,/app-v11\.js\?v=v164-cartel029-final-lock/,'Canonical lobby app must get a new cache version');
 assert.doesNotMatch(htmlEn,/src=["']app-v11\.js/,'English page redirects to canonical lobby and does not load a second core app');
-assert.match(html,/cartel029-v107\.js\?v=v158-cartel029-consolidation/,'Report UI must invalidate its old cached script');
+assert.match(html,/cartel029-v107\.js\?v=v164-cartel029-final-lock/,'Report UI must invalidate its old cached script');
 assert.match(choices,/function permitted029Phase\(\)/);
 assert.match(choices,/protectionPending\|\|!active\(\)\|\|!permitted029Phase\(\)/);
 assert.match(choices,/messagePending\|\|!active\(\)\|\|!\['don','bras_droit'\]/);
@@ -57,4 +57,11 @@ const roleQa=spawnSync(process.execPath,['scripts/cartel029-consolidation-check.
 assert.equal(roleQa.status,0,'029 consolidation 6–11 roles failed: '+roleQa.stdout+'\n'+roleQa.stderr);
 const replayQa=spawnSync(process.execPath,['scripts/cartel029-rematch-privacy-check.mjs'],{encoding:'utf8'});
 assert.equal(replayQa.status,0,'029 rematch and access isolation: '+replayQa.stdout+'\n'+replayQa.stderr);
-console.log('029 audit v161 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
+const finalSql=await read('supabase/migrations/20261019210000_v163_cartel029_final_gamepath.sql');
+assert.match(finalSql,/r\.scenario_id<>'029' and stage='audience'/,'Journalist must not be locked early on 029');
+assert.match(finalSql,/me\.public_role='juge' and r\.scenario_id<>'029'/,'Judge may skip on 029');
+assert.match(finalSql,/r\.phase='locking' and r\.scenario_id='029'/,'Host advance must use dossier-specific conclusion');
+assert.match(finalSql,/igr_v52_maybe_finish\(r\.code\)/);
+assert.match(roles,/role!=='journaliste'&&STATE\.sync\?\.room\?\.scenario_id!=='029'/,
+ '029 final-lock UI must not look up nonexistent guilt selectors');
+console.log('029 audit v164 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
