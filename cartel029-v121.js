@@ -101,8 +101,9 @@ function protectionProgress(){
    thisCycle:notices.some(e=>+e.cycle===+d()?.room?.cycle)
  };
 }
+function permitted029Phase(){return ['investigation_assembly','interrogation_select','interrogation','cycle_debrief','trame'].includes(d()?.room?.phase)||/^(event_|annex_)/.test(d()?.room?.phase||'')}
 function protectHtml(){
- if(!active()||!['enqueteur','analyste'].includes(me().public_role)||d()?.room?.status!=='playing')return '';
+ if(!active()||!['enqueteur','analyste'].includes(me().public_role)||d()?.room?.status!=='playing'||!permitted029Phase())return '';
  const cycle=+d().room.cycle;
  if(cycle<1||cycle>3)return '';
  const status=protectionProgress();
