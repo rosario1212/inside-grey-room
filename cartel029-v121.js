@@ -67,7 +67,11 @@ wrap('privateCardHtml',(orig)=>{
    part('Ce que tu ignores',x.unknown)+
    part('Tes repères pour répondre',x['029_qprompts'])+
    part('Ta chronologie',x.chronology)+
-   part('Tes relations',Array.isArray(x.relations)?x.relations.map(t=>t.text||'').join(' · '):x.relations)+
+   part('Tes relations',r==='suspect'?(Number(x['029_witness_index'])===4?
+   'Tu ne connaissais pas les trois personnes évadées de Santa Ceniza avant de venir à la Grey Room. Tu affirmes venir d’une autre installation.':
+   'Tu étais prisonnier à Santa Ceniza avec les deux autres rescapés. Vous vous connaissez et vous avez fui ensemble. Le quatrième fugitif a été repris.'):
+   r==='don'?'Ton bras droit coordonne des responsables de Los Salcedo. Il connaît des circuits que tu ne surveilles pas tous personnellement.':
+   'Tu travailles pour le Don, mais tes décisions et les siennes ne doivent pas être confondues.')+
    '</div><p class="igr029-hint">Tu peux te tromper, mentir ou garder le silence, mais les faits du scénario ne changent pas.</p></div>';
 });
 wrap('renderInterrogationSelect',(orig)=>{
