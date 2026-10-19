@@ -7,8 +7,8 @@ const x=spawnSync(process.execPath,['--check','cartel029-v121.js'],{encoding:'ut
 assert.equal(x.status,0,x.stderr);
 const [s,b,h,english]=await Promise.all([readFile('cartel029-v121.js','utf8'),readFile(path.join(d,'cartel029-v121.js'),'utf8'),readFile(path.join(d,'index.html'),'utf8'),readFile(path.join(d,'en.html'),'utf8')]);
 assert.equal(s,b);
-assert(h.includes('cartel029-v121.js?v=v121-cartel029'));
-assert(english.includes('cartel029-v121.js?v=v121-cartel029'));
+assert(h.includes('cartel029-v121.js?v=v141-cartel029'));
+assert(english.includes('cartel029-v121.js?v=v141-cartel029'));
 assert(h.indexOf('cartel029-v107.js')<h.indexOf('cartel029-v121.js'));
 assert(s.includes('function cartelWire()')&&s.includes('function protectHtml()'));
 assert(s.includes('029_can_decide')&&s.includes('lobbyRoleSlots'));
