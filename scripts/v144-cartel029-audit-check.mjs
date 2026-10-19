@@ -42,7 +42,8 @@ for(const action of ['protectionPending','messagePending','positionPending']){
 assert.match(build,/v145-cartel029-role-selection/);
 assert.match(html,/cartel029-v121\.js\?v=v145-cartel029-role-selection/);
 assert.match(htmlEn,/cartel029-v121\.js\?v=v145-cartel029-role-selection/);
-for(const page of [html,htmlEn])assert.match(page,/app-v11\.js\?v=v145-cartel029-role-selection/,'Core lobby app must get a new cache version');
+assert.match(html,/app-v11\.js\?v=v145-cartel029-role-selection/,'Canonical lobby app must get a new cache version');
+assert.doesNotMatch(htmlEn,/src=["']app-v11\.js/,'English page redirects to canonical lobby and does not load a second core app');
 assert.match(reportUi,/responsibility_choice/);
 const lobbyQa=spawnSync(process.execPath,['scripts/cartel029-multiplayer-check.mjs'],{encoding:'utf8'});
 assert.equal(lobbyQa.status,0,'029 6–11 players role-choice regression failed: '+lobbyQa.stdout+'\n'+lobbyQa.stderr);
