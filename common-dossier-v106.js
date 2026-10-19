@@ -75,7 +75,7 @@ if(origTab){const wrapper=function(){
  sanitizeTab();
  if(S()?.tab==='timeline')return publicHtml();
  const result=origTab.apply(this,arguments);
- if(S()?.tab==='investigation'&&isInquiry()){
+ if(S()?.tab==='investigation'&&isInquiry()&&role()!=='enqueteur'){
   const extra=window.IGR_INVESTIGATION_V42?.renderElementsTab?.()||'';
   return extra?'<section class="igr106-inquiry-evidence"><h3>'+esc(tr('Preuves et éléments reçus','Evidence and findings'))+'</h3>'+extra+'</section>'+result:result;
  }
