@@ -87,6 +87,14 @@ function expandRoleLabel(label){
  return [ROLE_LABEL_TO_ID[x]||ROLE_LABEL_TO_ID[x.toLowerCase()]||x.toLowerCase()];
 }
 function lobbyRoleSlots(sc,count){
+ // 029: a room starts with one member, but all SIX mandatory seats must be
+ // selectable immediately. Optional seats unlock only as players 7–11 join.
+ // Restrict this to the actual four-witness server roster: legacy rooms differ.
+ if(sc?.id==='029'&&Number(STATE?.sync?.room?.min_players)===6&&Number(STATE?.sync?.room?.max_players)===11){
+  const roster=['enqueteur','analyste','suspect','suspect','suspect','suspect',
+    'procureur','juge','journaliste','don','bras_droit'];
+  return roster.slice(0,Math.min(11,Math.max(6,count)));
+ }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]},slots=[];
  cfg.required.forEach(x=>slots.push(...expandRoleLabel(x)));
  const extras=Math.max(0,count-slots.length);
