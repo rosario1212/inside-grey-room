@@ -190,7 +190,7 @@ begin
   if p_cycle=3 then return 1; end if;
   return 0;
 end
-$function$
+$function$;
 
 
 create table if not exists igr_private.igr_v108_029_room_variants(
