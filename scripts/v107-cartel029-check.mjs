@@ -75,6 +75,6 @@ const [reportIsolation,legacyTrames]=await Promise.all([
 assert.match(reportIsolation,/primary key\(room_code,match_no\)/i);
 assert.match(reportIsolation,/where room_code=room\.code and match_no=v_match/);
 assert.match(legacyTrames,/v_room\.scenario_id='029' and igr_private\.igr_v108_029_is_enabled\(\)/);
-assert.doesNotMatch(source,/Óscar Beltrán|León Trejo|Lorena Cruz|Efraín Montes/);
+assert.doesNotMatch(source,/canonical_truth|private_exhibits|responsibility_by_slot|final_reveal/,'No private resolution keys in public runtime');
 
 console.log('029 v107: no private leaks, role-gated report, cycle messages and web/mobile assets PASS');
