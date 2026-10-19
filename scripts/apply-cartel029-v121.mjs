@@ -1,7 +1,7 @@
 import {copyFile,readFile,writeFile,stat} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import path from 'node:path';
-const target=path.resolve(process.argv[2]||'dist'),src='cartel029-v121.js',v='v145-cartel029-role-selection';
+const target=path.resolve(process.argv[2]||'dist'),src='cartel029-v121.js',v='v147-cartel029-client-guards';
 await stat(target);
 const check=spawnSync(process.execPath,['--check',src],{encoding:'utf8'});
 if(check.status)throw Error('CARTEL029 v121 syntax: '+check.stderr);
@@ -12,6 +12,7 @@ for(const name of ['index.html','en.html']){
  // Bust the core application bundle too: the mandatory-role fix lives in
  // app-v11.js, not in the CARTEL add-on loaded afterwards.
  html=html.replace(/(src=["']app-v11\.js\?v=)[^"']+/g,(_full,prefix)=>prefix+v);
+ html=html.replace(/(src=["']cartel029-v107\.js\?v=)[^"']+/g,(_full,prefix)=>prefix+v);
  html=html.replace('</body>',`<script src="${src}?v=${v}"></script>\n</body>`);
  await writeFile(file,html,'utf8');
 }
