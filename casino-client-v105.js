@@ -21,7 +21,9 @@ async function request(body){
  }finally{clearTimeout(deadline)}
 }
 function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data.roomId===state.roomId&&data.revision<state.revision)return;
- const changed=!state||state.roomId!==data.roomId||state.revision!==data.revision;
+ const timedControls=['hostCanLocate','hostCanCloseDefence','hostCanCloseCourt'];
+ const changed=!state||state.roomId!==data.roomId||state.revision!==data.revision||
+   timedControls.some(key=>Boolean(state[key])!==Boolean(data[key]));
  state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
 function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Synchronisé · état serveur '+state.revision:credentials?'Connexion…':''}
