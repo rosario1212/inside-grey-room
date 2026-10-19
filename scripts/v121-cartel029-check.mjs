@@ -12,4 +12,6 @@ assert(english.includes('cartel029-v121.js?v=v121-cartel029'));
 assert(h.indexOf('cartel029-v107.js')<h.indexOf('cartel029-v121.js'));
 assert(s.includes('function cartelWire()')&&s.includes('function protectHtml()'));
 assert(s.includes('029_can_decide')&&s.includes('lobbyRoleSlots'));
+assert(!s.includes('Array.isArray(x.relations)'), '029 must not show legacy suspect relations');
+assert(s.includes('Vous vous connaissez et vous avez fui ensemble.'),'Missing witness relationship context');
 console.log('CARTEL 029 v121: role UI and assets OK');
