@@ -16,16 +16,29 @@
   function writeJson(key,value){try{STORAGE.setItem(key,JSON.stringify(value))}catch{}}
   function prefs(){return Object.assign({},DEFAULTS,readJson(PREF_KEY,{}))}
   function savePrefs(patch){const next=Object.assign({},prefs(),patch);writeJson(PREF_KEY,next);return next}
-  function roomKey(){const d=typeof STATE!=='undefined'?STATE.sync:null;if(!d?.room?.code)return'';const match=Math.max(1,Number(d.room.state?.match_no||1));return `${d.room.code}_${match}`}
+  function roomKey(){const d=typeof STATE!=='undefined'?STATE.sync:null;if(!d?.room?.code)return'';const match=Math.max(1,Number(d.room.state?.match_no||1));return `${d.room.code}_${match}_${d.player?.id||'unbound'}`}
   function cursorKey(key){return CURSOR_PREFIX+key}
   function itemsKey(key){return ITEMS_PREFIX+key}
   function ensureRoom(){
     const key=roomKey();
     if(!key){state.roomKey='';state.cursor=0;state.items=[];renderBell();return false}
     if(state.roomKey===key)return true;
+    try{
+      const prefixRoom=String(STATE?.sync?.room?.code||'')+'_';
+      for(let i=localStorage.length-1;i>=0;i--){
+        const name=localStorage.key(i);
+        if(!name)continue;
+        const base=name.startsWith(ITEMS_PREFIX)?ITEMS_PREFIX:name.startsWith(CURSOR_PREFIX)?CURSOR_PREFIX:null;
+        if(base&&name.startsWith(base+prefixRoom)&&name!==base+key)localStorage.removeItem(name);
+      }
+    }catch(_){}
     state.roomKey=key;
     state.cursor=Math.max(0,Number(STORAGE.getItem(cursorKey(key))||0));
-    state.items=readJson(itemsKey(key),[]).filter(x=>x&&Number.isFinite(+x.id)).slice(0,MAX_ITEMS);
+    state.items=readJson(itemsKey(key),[]).filter(x=>x&&Number.isFinite(+x.id)).map(x=>{
+      if(['message','trame','field','expert','judge','reveal'].includes(x.eventType))
+        return {...x,title:'Information de partie',body:'Consulte la rubrique autorisée dans la partie.'};
+      return x;
+    }).slice(0,MAX_ITEMS);
     renderBell();
     return true;
   }
@@ -38,6 +51,9 @@
     .igr-event-alert{pointer-events:auto;width:100%;border:1px solid rgba(255,255,255,.13);border-radius:13px;padding:11px 13px;background:rgba(7,10,12,.96);color:#eef2f4;box-shadow:0 14px 40px rgba(0,0,0,.38);backdrop-filter:blur(14px);text-align:left;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;animation:igrAlertIn .22s ease-out}
     .igr-event-alert[data-kind="trame"]{border-color:rgba(207,220,229,.3);background:linear-gradient(135deg,rgba(19,25,29,.98),rgba(5,7,9,.98))}
     .igr-event-alert[data-kind="message"]{border-color:rgba(160,188,207,.28)}
+    .igr-event-alert[data-cycle="1"]{border-left:3px solid #a8a49c}
+    .igr-event-alert[data-cycle="2"]{border-left:3px solid #c89f64}
+    .igr-event-alert[data-cycle="3"]{border-left:3px solid #b96565}
     .igr-event-alert[data-kind="breaking_news"]{border-color:rgba(220,190,135,.3)}
     .igr-event-alert[data-kind="reveal"]{border-color:rgba(224,224,224,.38)}
     .igr-alert-icon{font:800 10px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#9ba8b1;min-width:48px;padding-top:2px}.igr-alert-copy{min-width:0}.igr-alert-copy b{display:block;font-size:11px;letter-spacing:.035em;text-transform:uppercase}.igr-alert-copy span{display:block;margin-top:4px;color:#aeb8bf;font-size:10px;line-height:1.42;white-space:normal}.igr-alert-close{border:0;background:transparent;color:#65727b;font-size:17px;line-height:1;cursor:pointer;padding:0 0 8px 8px}
@@ -56,27 +72,27 @@
     const p=e?.payload||{},type=String(e?.event_type||'event');
     const text=String(p.text||p.summary||'').trim();
     if(type==='message'){
-      const channel=p.channel==='private'?'privé':'enquête';
-      return{kind:'message',label:channel==='privé'?'PRIVÉ':'CANAL',title:`${channel==='privé'?'Message privé':'Canal Enquête'} · ${p.author||'Joueur'}`,body:text||'Nouveau message reçu.',route:'channel',priority:3};
+      const personal=p.channel==='private';
+      return{kind:'message',label:personal?'PRIVÉ':'CANAL',title:personal?'Message confidentiel':'Nouveau message du canal',body:'Consulte le canal dans la partie.',route:'channel',priority:3};
     }
-    if(type==='trame')return{kind:'trame',label:'TRAME',title:p.title||'Nouvelle trame',body:text||'Un nouvel élément est versé au dossier.',route:'timeline',priority:3};
+    if(type==='trame')return{kind:'trame',label:'TRAME',title:'Nouvel élément confidentiel',body:'Consulte les éléments autorisés dans Enquête.',route:'investigation',priority:3};
     if(type==='breaking_news')return{kind:'breaking_news',label:'NEWS',title:p.title||'Breaking News',body:text||'Une publication vient de tomber.',route:'timeline',priority:3};
-    if(type==='field')return{kind:'field',label:'TERRAIN',title:p.title||'Retour terrain',body:text||'Une action de terrain vient de produire un résultat.',route:'timeline',priority:2};
-    if(type==='expert')return{kind:'expert',label:'EXPERT',title:p.title||'Résultat d’expertise',body:text||'Une analyse technique est disponible.',route:'timeline',priority:2};
-    if(type==='judge')return{kind:'judge',label:'JUGE',title:p.title||'Information protégée',body:text||'Une information judiciaire est disponible.',route:'timeline',priority:2};
-    if(type==='reveal')return{kind:'reveal',label:'FINAL',title:p.title||'Révélation',body:String(p.summary||text||'Le dossier est révélé.'),route:'investigation',priority:4};
-    if(type==='cycle')return{kind:'cycle',label:'CYCLE',title:p.title||`Cycle ${d?.room?.cycle||''}`,body:text||'Un nouveau cycle commence.',route:'investigation',priority:2};
+    if(type==='field')return{kind:'field',label:'TERRAIN',title:'Retour du terrain',body:'Consulte les informations autorisées pendant la partie.',route:'investigation',priority:2};
+    if(type==='expert')return{kind:'expert',label:'EXPERT',title:'Résultat d’expertise',body:'Consulte les informations autorisées pendant la partie.',route:'investigation',priority:2};
+    if(type==='judge')return{kind:'judge',label:'JUGE',title:'Information judiciaire',body:'Consulte les informations autorisées pendant la partie.',route:'investigation',priority:2};
+    if(type==='reveal')return{kind:'reveal',label:'FINAL',title:'Révélation finale',body:'La fin du dossier est disponible dans le jeu.',route:'timeline',priority:4};
+    if(type==='cycle')return{kind:'cycle',label:'CYCLE',title:`Cycle ${d?.room?.cycle||''}`,body:'Un nouveau cycle commence.',route:'timeline',priority:2};
     if(type==='roles_distributed')return{kind:'phase',label:'DOSSIER',title:p.title||'Ouverture du dossier',body:text||'Les cartes privées sont disponibles.',route:'card',priority:2};
     if(type==='context')return{kind:'phase',label:'DOSSIER',title:p.title||'Contexte',body:text||'Le dossier vient de s’ouvrir.',route:'investigation',priority:1};
-    if(type==='phase')return{kind:'phase',label:'PHASE',title:p.title||'Nouvelle phase',body:text||'La partie change de phase.',route:'investigation',priority:2};
-    return{kind:type,label:'INFO',title:p.title||'Mise à jour du dossier',body:text||'Un nouvel élément est disponible.',route:'timeline',priority:1};
+    if(type==='phase')return{kind:'phase',label:'PHASE',title:'Nouvelle phase',body:'La partie change de phase.',route:'timeline',priority:2};
+    return{kind:type,label:'INFO',title:'Mise à jour de la partie',body:'Consulte tes informations autorisées dans le jeu.',route:'timeline',priority:1};
   }
   function shouldIgnore(e,d){
     if(!e||!Number.isFinite(+e.id))return true;
     if(e.event_type==='message'&&String(e.payload?.author_id||'')===String(d?.player?.id||''))return true;
     return false;
   }
-  function makeItem(e,d){const m=eventMeta(e,d);return{id:+e.id,eventType:String(e.event_type||'event'),kind:m.kind,label:m.label,title:String(m.title||'').slice(0,100),body:String(m.body||'').slice(0,260),route:m.route,priority:m.priority,createdAt:e.created_at||new Date().toISOString(),unread:true}}
+  function makeItem(e,d){const m=eventMeta(e,d);return{id:+e.id,eventType:String(e.event_type||'event'),kind:m.kind,label:m.label,title:String(m.title||'').slice(0,100),body:String(m.body||'').slice(0,260),route:m.route,priority:m.priority,cycle:[1,2,3].includes(+e.cycle)?+e.cycle:null,createdAt:e.created_at||new Date().toISOString(),unread:true}}
 
   function playAlert(item){
     const p=prefs();if(!p.sound)return;
@@ -94,7 +110,7 @@
     if(state.pumping||!state.bannerQueue.length)return;state.pumping=true;
     const item=state.bannerQueue.shift(),host=stack();
     while(host.children.length>=3)host.firstElementChild?.remove();
-    const el=document.createElement('button');el.type='button';el.className='igr-event-alert';el.dataset.kind=item.kind;el.innerHTML=`<span class="igr-alert-icon">${esc(item.label)}</span><span class="igr-alert-copy"><b>${esc(item.title)}</b><span>${esc(item.body)}</span></span><span class="igr-alert-close" aria-hidden="true">×</span>`;
+    const el=document.createElement('button');el.type='button';el.className='igr-event-alert';el.dataset.kind=item.kind;el.dataset.cycle=String(item.cycle||0);el.innerHTML=`<span class="igr-alert-icon">${esc(item.label)}</span><span class="igr-alert-copy"><b>${esc(item.title)}</b><span>${esc(item.body)}</span></span><span class="igr-alert-close" aria-hidden="true">×</span>`;
     el.onclick=()=>openNotification(item.id);
     host.appendChild(el);
     const life=item.priority>=3?8500:6000;
@@ -117,9 +133,9 @@
     const p=prefs();if(!p.system||!document.hidden)return;
     const native=nativePlugin();
     if(native){
-      try{await native.schedule({notifications:[{id:nativeId(item),title:item.title,body:item.body||'Inside Grey Room',schedule:{at:new Date(Date.now()+450)},extra:{eventId:item.id,route:item.route,roomKey:state.roomKey}}]});return}catch(e){console.warn('local notification',e)}
+      try{await native.schedule({notifications:[{id:nativeId(item),title:'Inside Grey Room · Nouvelle information',body:'Ouvre la partie pour consulter tes informations.',schedule:{at:new Date(Date.now()+450)},extra:{eventId:item.id,route:item.route,roomKey:state.roomKey}}]});return}catch(e){console.warn('local notification',e)}
     }
-    try{if('Notification'in window&&Notification.permission==='granted')new Notification(item.title,{body:item.body,tag:`igr-${state.roomKey}-${item.id}`,renotify:false})}catch{}
+    try{if('Notification'in window&&Notification.permission==='granted')new Notification('Inside Grey Room · Nouvelle information',{body:'Ouvre la partie pour consulter tes informations.',tag:`igr-${state.roomKey}-${item.id}`,renotify:false})}catch{}
   }
 
   function receive(item){
@@ -135,7 +151,7 @@
       // First contact with an already-running room: do not replay a wall of historical alerts.
       if(existingCursor===0&&!STORAGE.getItem(cursorKey(state.roomKey))&&d.room.status!=='lobby'&&events.length>8){
         state.cursor=+events.at(-1).id;persist();
-        const summary={id:state.cursor,eventType:'sync',kind:'phase',label:'SYNC',title:'Dossier synchronisé',body:`${events.length} éléments antérieurs sont disponibles dans le Fil.`,route:'timeline',priority:1,createdAt:new Date().toISOString(),unread:false};
+        const summary={id:state.cursor,eventType:'sync',kind:'phase',label:'SYNC',title:'Dossier synchronisé',body:'Les éléments partagés restent consultables dans le Dossier commun.',route:'timeline',priority:1,createdAt:new Date().toISOString(),unread:false};
         enqueueBanner(summary);return;
       }
       for(const e of events){if(+e.id<=state.cursor)continue;if(!shouldIgnore(e,d))receive(makeItem(e,d));state.cursor=Math.max(state.cursor,+e.id)}
@@ -146,7 +162,7 @@
   function routeTo(route){
     try{
       if(!STATE?.sync)return;
-      if(['channel','timeline','card','investigation'].includes(route))STATE.tab=route;
+      if(['channel','timeline','card','investigation','press50','field50','expert50'].includes(route)){const r=STATE?.sync?.player?.public_role;const allowed=['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(r);STATE.tab=route==='investigation'&&!allowed?'timeline':route;}
       if(typeof renderGame==='function'&&STATE.sync.room.status!=='lobby'&&STATE.sync.room.phase!=='briefing')renderGame();
     }catch{}
   }
