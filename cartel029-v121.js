@@ -17,7 +17,6 @@ function wrap(name,fn){
  try{window[name]=newer}catch(_){}
  // Most app-v11 functions are classic global declarations in sloppy mode.
  try{switch(name){
-  case 'lobbyRoleSlots':lobbyRoleSlots=newer;break;
   case 'roleInfo':roleInfo=newer;break;
   case 'displayRole':displayRole=newer;break;
   case 'publicRoleLabel':publicRoleLabel=newer;break;
@@ -30,11 +29,6 @@ function wrap(name,fn){
   case 'renderReveal':renderReveal=newer;break;
   } }catch(_){}
 }
-wrap('lobbyRoleSlots',(orig,sc,count)=>{
- if(sc?.id!=='029'||!upcoming())return orig(sc,count);
- return ['enqueteur','analyste','suspect','suspect','suspect','suspect',
-   'procureur','juge','journaliste','don','bras_droit'].slice(0,count);
-});
 const roles={
  don:{label:'Le Don',win:'Protège ta position et fais face aux accusations.',body:'Tu diriges Los Salcedo. Tu peux communiquer par écrit avec ton bras droit, sans déclencher de violence automatique.'},
  bras_droit:{label:'Bras droit',win:'Préserve ta place auprès du Don, ou choisis de coopérer.',body:'Tu coordonnes une partie du réseau. Écris au Don et défends tes décisions.'},

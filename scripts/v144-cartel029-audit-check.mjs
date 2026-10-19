@@ -39,8 +39,12 @@ for(const action of ['protectionPending','messagePending','positionPending']){
  assert.match(choices,new RegExp('if\\('+action+'\\|\\|!active\\(\\)'),'Repeated 029 commands must be blocked while a request is pending');
  assert.match(choices,new RegExp('finally\\{'+action+'=false\\}'),'029 action lock must always reset');
 }
-assert.match(build,/v144-cartel029/);
-assert.match(html,/cartel029-v121\.js\?v=v144-cartel029/);
-assert.match(htmlEn,/cartel029-v121\.js\?v=v144-cartel029/);
+assert.match(build,/v145-cartel029-role-selection/);
+assert.match(html,/cartel029-v121\.js\?v=v145-cartel029-role-selection/);
+assert.match(htmlEn,/cartel029-v121\.js\?v=v145-cartel029-role-selection/);
+assert.match(html,/app-v11\.js\?v=v145-cartel029-role-selection/,'Canonical lobby app must get a new cache version');
+assert.doesNotMatch(htmlEn,/src=["']app-v11\.js/,'English page redirects to canonical lobby and does not load a second core app');
 assert.match(reportUi,/responsibility_choice/);
-console.log('029 audit v144 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
+const lobbyQa=spawnSync(process.execPath,['scripts/cartel029-multiplayer-check.mjs'],{encoding:'utf8'});
+assert.equal(lobbyQa.status,0,'029 6–11 players role-choice regression failed: '+lobbyQa.stdout+'\n'+lobbyQa.stderr);
+console.log('029 audit v145 PASS: immutable final report; recipient-scoped threats; initial witness briefs; role catalog; protection state; cache versions.');
