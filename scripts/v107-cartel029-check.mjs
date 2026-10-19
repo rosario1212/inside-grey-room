@@ -68,6 +68,13 @@ assert.match(interviewSql,/new\.cycle<>1/);
 assert.match(interviewSql,/igr_v108_029_is_enabled/);
 assert.match(interviewSql,/\('interrogation_select','cycle_debrief'\)/);
 assert.match(interviewSql,/PIÈCE P02 · LE COLIS/);
+const [reportIsolation,legacyTrames]=await Promise.all([
+ readFile('supabase/migrations/20261019050500_v114_cartel029_report_match_isolation.sql','utf8'),
+ readFile('supabase/migrations/20261019052200_v115_cartel029_prevent_old_trames.sql','utf8')
+]);
+assert.match(reportIsolation,/primary key\(room_code,match_no\)/i);
+assert.match(reportIsolation,/where room_code=room\.code and match_no=v_match/);
+assert.match(legacyTrames,/v_room\.scenario_id='029' and igr_private\.igr_v108_029_is_enabled\(\)/);
 assert.doesNotMatch(source,/Óscar Beltrán|León Trejo|Lorena Cruz|Efraín Montes/);
 
 console.log('029 v107: no private leaks, role-gated report, cycle messages and web/mobile assets PASS');
