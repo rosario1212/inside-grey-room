@@ -29,7 +29,7 @@ function finalChoice(key,label,options){
 }
 function reportBody(){
  if(!record)return '<p class="igr029-note">'+esc(message||tr('Chargement du rapport…','Loading report…'))+'</p>';
- const disabled=record.status==='submitted';
+ const disabled=record.status==='submitted'||sync()?.room?.status==='finished';
  return '<p class="igr029-note">'+esc(tr('Répondez simplement aux trois questions. Enregistrez à tout moment ; l’enquêteur et l’analyste partagent ce brouillon.','Answer the three questions. Save any time; the investigator and analyst share the draft.'))+'</p>'+
  fields.map((f,i)=>'<label class="igr029-field"><b>'+(i<3?i+1+'. ':'')+esc(tr(f[1],f[2]))+'</b><small>'+esc(f[3])+'</small><textarea data-igr029-field="'+f[0]+'" maxlength="1200" rows="3" '+(disabled?'readonly':'')+' oninput="igr029MarkDirty()">'+esc(record.fields?.[f[0]]||'')+'</textarea></label>').join('')+
  (Number(sync()?.room?.cycle)===3?'<div class="igr029-final-choices"><h4>'+esc(tr('Deux conclusions finales','Two final conclusions'))+'</h4>'+
@@ -42,7 +42,7 @@ function reportBody(){
  ['operative',tr('Agent du cartel infiltré','Cartel operative')]])+'</div>':'')+
  '<div class="igr029-buttons"><button class="btn ghost" type="button" onclick="igr029SaveReport()" '+(disabled?'disabled':'')+'>'+esc(tr('Enregistrer','Save'))+'</button>'+
  (lead()?'<button class="btn primary" type="button" onclick="igr029SubmitReport()" '+(disabled||Number(sync()?.room?.cycle)!==3?'disabled':'')+'>'+esc(tr('Remettre le rapport','Submit report'))+'</button>':'')+
- '</div><p class="igr029-note" role="status">'+esc(disabled?tr('Rapport remis.','Report submitted.'):message||tr('Brouillon confidentiel.','Confidential draft.'))+'</p>';
+ '</div><p class="igr029-note" role="status">'+esc(sync()?.room?.status==='finished'?tr('La partie est terminée : le rapport est clôturé.','The room is finished: the report is now closed.'):disabled?tr('Rapport remis.','Report submitted.'):message||tr('Brouillon confidentiel.','Confidential draft.'))+'</p>';
 }
 function repaint(){if(state()?.tab==='investigation'){const el=document.getElementById('igr029-report-body');if(el)el.innerHTML=reportBody()}}
 async function load(force=false){
@@ -59,7 +59,7 @@ async function load(force=false){
 }
 function controls(){return '<section class="igr029-report"><h3>'+esc(tr('Rapport final · dossier 029','Final report · case 029'))+'</h3><div id="igr029-report-body">'+reportBody()+'</div></section>'}
 async function save(submit){
- if(!active()||!member()||loading||!state()?.token)return;
+ if(!active()||!member()||loading||!state()?.token||sync()?.room?.status!=='playing')return;
  if(submit&&(!lead()||Number(sync()?.room?.cycle)!==3))return;
  const patch={};for(const el of document.querySelectorAll('[data-igr029-field]'))patch[el.dataset.igr029Field]=el.value;
  const k=key();loading=true;message=tr('Enregistrement…','Saving…');
