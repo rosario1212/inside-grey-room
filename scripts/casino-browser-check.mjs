@@ -156,6 +156,7 @@ try{
  assert.equal(await interpellation.locator('input[name=evidenceIds]:enabled').count(),4);
  checks.push('Infraction liée aux preuves et sources sélectionnables par suspect');
  const revisionBefore=(await storage.read(room.id)).revision;
+ await visibleRevision(hostPage,revisionBefore);
  await hostPage.locator('[data-casino-command=ADVANCE_PHASE]').click();
  await hostPage.locator('.casino-phase-warning').waitFor();
  assert.equal((await storage.read(room.id)).revision,revisionBefore,'The first phase control click must not skip a chapter');
