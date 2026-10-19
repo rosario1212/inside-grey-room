@@ -1474,7 +1474,7 @@ function renderFinalLockForm(){
  return `<div class="final-form"><h3>${h(role==='enqueteur'?'Verdict final':role==='analyste'?'Lecture finale':role==='procureur'?'Position finale du Procureur':'Jugement final')}</h3>${levelsForm('final')}${extra}<div class="field"><label for="finalText">Note finale courte</label><textarea id="finalText" maxlength="300"></textarea></div><button class="btn danger block" onclick="lockFinal()">Verrouiller définitivement</button></div>`;
 }
 async function lockFinal(){
- const role=STATE.sync.player.public_role;let payload={note:(byId('finalText')?.value||'').trim()};if(role!=='journaliste')payload.levels=collectLevels('final');if(role==='juge')payload.consequence=byId('finalConsequence')?.value||'';
+ const role=STATE.sync.player.public_role;let payload={note:(byId('finalText')?.value||'').trim()};if(role!=='journaliste'&&STATE.sync?.room?.scenario_id!=='029')payload.levels=collectLevels('final');if(role==='juge')payload.consequence=byId('finalConsequence')?.value||'';
  try{await rpc('igr_v4_lock_final',{p_code:STATE.room,p_player_token:STATE.token,p_payload:payload});await syncNow(true)}catch(e){console.error(e);toast('Choix déjà verrouillé ou phase terminée.')}}
 function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Responsabilité secondaire',2:'Responsabilité principale'})[+level]||'Non renseignée'}
 function revealSummaryWithNames(summary,responsibilities=[]){
