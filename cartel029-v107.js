@@ -4,7 +4,7 @@
 'use strict';
 const state=()=>typeof STATE!=='undefined'?STATE:null;
 const sync=()=>state()?.sync;
-const active=()=>sync()?.room?.scenario_id==='029';
+const active=()=>sync()?.room?.scenario_id==='029' && sync()?.room?.state?.cartel029_ready===true;
 const member=()=>['enqueteur','analyste'].includes(sync()?.player?.public_role);
 const lead=()=>sync()?.player?.public_role==='enqueteur';
 const tr=(f,e)=>window.IGR_LOCALE==='en'?e:f;
