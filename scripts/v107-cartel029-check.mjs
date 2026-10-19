@@ -49,7 +49,7 @@ const [gateSql,safetySql,readySql]=await Promise.all([
 ]);
 assert.match(gateSql,/passed_end_to_end_testing/);
 assert.match(gateSql,/manually_activated/);
-assert.match(gateSql,/where editorial_status='approved' and approved_at is not null/);
+assert.match(gateSql,/scenario_id='029' and editorial_status='approved' and approved_at is not null/);
 assert.match(gateSql,/return 4; end if;/);
 assert.match(gateSql,/igr_v108_029_room_variants/);
 assert.match(gateSql,/not igr_private\.igr_v108_029_is_enabled\(\)/);
