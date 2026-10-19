@@ -117,7 +117,7 @@ function protectHtml(){
 }
 let protectionPending=false;
 window.igr029Protect=async target=>{
- if(protectionPending||!active()||!protect.some(([id])=>id===target))return;
+ if(protectionPending||!active()||!permitted029Phase()||d()?.room?.status!=='playing'||!protect.some(([id])=>id===target))return;
  protectionPending=true;
  try{await rpc('igr_v118_029_protection',{p_code:d().room.code,p_token:s().token,p_target:target});
  toast('Mesure enregistrée.');await syncNow(true)}
@@ -125,7 +125,7 @@ window.igr029Protect=async target=>{
  finally{protectionPending=false}
 };
 function cartelWire(){
- if(!active()||!['don','bras_droit'].includes(me().public_role))return '';
+ if(!active()||!['don','bras_droit'].includes(me().public_role)||d()?.room?.status!=='playing')return '';
  const msgs=observed('cartel029_chat').slice(-12);
  return '<section class="igr029-extras"><h3>Liaison avec '+(me().public_role==='don'?'ton bras droit':'le Don')+'</h3>'+
  '<p>Messages de jeu privés au duo. Ce que tu écris ne déclenche aucune violence automatique.</p>'+
@@ -135,7 +135,7 @@ function cartelWire(){
 }
 let messagePending=false;
 window.igr029Send=async ()=>{
- if(messagePending||!active())return;
+ if(messagePending||!active()||!['don','bras_droit'].includes(me().public_role)||d()?.room?.status!=='playing')return;
  const text=document.getElementById('igr029-msg')?.value?.trim();if(!text)return;
  messagePending=true;
  try{await rpc('igr_v118_029_cartel_message',{p_code:d().room.code,p_token:s().token,p_text:text});
@@ -145,7 +145,7 @@ window.igr029Send=async ()=>{
 };
 function choiceHtml(){
  const x=me().private_state||{};
- if(!active()||+x['029_witness_index']!==4||x['029_can_decide']!==true||+d()?.room?.cycle<2)return '';
+ if(!active()||+x['029_witness_index']!==4||x['029_can_decide']!==true||+d()?.room?.cycle<2||!permitted029Phase()||d()?.room?.status!=='playing')return '';
  const found=(d()?.my_actions||[]).some(a=>a.action_type==='cartel029_position'&&+a.cycle===+d().room.cycle);
  if(found)return '<section class="igr029-extras"><h3>Ton choix personnel</h3><p>Ta décision pour ce cycle est enregistrée.</p></section>';
  return '<section class="igr029-extras"><h3>Ton choix personnel</h3><p>Tu peux rester loyal envers le cartel ou choisir de coopérer. Ce choix reste secret.</p>'+
@@ -154,7 +154,7 @@ function choiceHtml(){
 }
 let positionPending=false;
 window.igr029Position=async c=>{
- if(positionPending||!active()||!['loyal','cooperate'].includes(c))return;
+ if(positionPending||!active()||!permitted029Phase()||d()?.room?.status!=='playing'||+me()?.private_state?.['029_witness_index']!==4||!['loyal','cooperate'].includes(c))return;
  positionPending=true;
  try{await rpc('igr_v119_029_position',{p_code:d().room.code,p_token:s().token,p_choice:c});toast('Décision enregistrée.');await syncNow(true)}
  catch(e){console.warn('[029 choice]',e?.message);toast('Ce choix n’est pas disponible.')}
