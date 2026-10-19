@@ -189,9 +189,22 @@ try{
  await full.locator('[data-casino-action=close]').click();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
  const integratedRoom=await api(full,{op:'sync'});
  await full.evaluate(()=>{localStorage.removeItem('igr_casino_identity_v1');localStorage.removeItem('igr_social_identity_v1');goJoin()});
- await full.locator('[data-casino-join]').waitFor();await full.locator('#joinPseudo').fill('Invité sans licence');await full.locator('#joinCode').fill(integratedRoom.inviteCode);
+ await full.locator('#joinCode').waitFor();
+ assert.equal(await full.locator('#casino-guest-entry').count(),0,'A single Join entry handles every invitation');
+ for(const width of [320,390,768,1366]){
+  await full.setViewportSize({width,height:844});
+  const spacing=await full.evaluate(()=>({
+   gap:document.querySelector('.igr-beta-footer').getBoundingClientRect().top-document.querySelector('#app .panel').getBoundingClientRect().bottom,
+   overflow:document.documentElement.scrollWidth>innerWidth
+  }));
+  assert(spacing.gap>=0&&spacing.gap<60,'Support follows the short join form without a viewport of empty space');
+  assert(!spacing.overflow,'Join form fits the viewport');
+ }
+ await full.setViewportSize({width:390,height:844});await layout(full,'join-unified-iphone');
+ await full.locator('#joinPseudo').fill('Invité sans licence');await full.locator('#joinCode').fill(integratedRoom.inviteCode);
  await full.locator('button[onclick*="joinRoom("]').click();await full.locator('[data-casino-form=join]').waitFor();
  assert.equal(await full.locator('[data-casino-form=join] [name=inviteCode]').inputValue(),integratedRoom.inviteCode);
+ assert.equal(await full.locator('[data-casino-form=join] [name=name]').inputValue(),'Invité sans licence');
  await full.locator('[data-casino-form=join] button').click();await full.locator('.casino-members').waitFor();
  assert.equal(await full.locator('.casino-members li').count(),2);
  checks.push('Accueil → Rejoindre : invitation Casino accessible à un invité sans licence Héritage');
