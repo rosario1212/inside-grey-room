@@ -5,9 +5,21 @@ const home=await get('/');assert.equal(home.status,200);
 const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.4/);
 const catalog=await get('/heritage-casino-v91.js');assert.equal(catalog.status,200);
 assert.match(await catalog.text(),/launchReady:true/);
-const release=await get('/casino-release.json');assert.equal(release.status,200);
-const meta=await release.json();assert.equal(meta.version,'105.4');
-if(process.env.IGR_EXPECTED_COMMIT)assert.equal(meta.commit,process.env.IGR_EXPECTED_COMMIT,'The deployed assets must match this commit');
+const expected=process.env.IGR_EXPECTED_COMMIT||'';
+let meta=null;
+for(let attempt=0;attempt<(expected?12:1);attempt++){
+  // Edge assets can temporarily resolve to the previous Worker version.
+  // Never accept an old commit; use a unique query and retry propagation.
+  const suffix=expected?'?commit='+encodeURIComponent(expected)+'&probe='+attempt:'';
+  const release=await get('/casino-release.json'+suffix);
+  assert.equal(release.status,200);
+  meta=await release.json();
+  assert.equal(meta.version,'105.4');
+  if(!expected||meta.commit===expected)break;
+  console.log('Waiting for deployed assets: expected '+expected.slice(0,9)+' got '+String(meta.commit).slice(0,9));
+  if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
+}
+if(expected)assert.equal(meta.commit,expected,'The deployed assets must match this commit');
 for(const poster of ['campagne','scenario-1','scenario-2','scenario-3']){
  const response=await get('/assets/casino/'+poster+'.webp');assert.equal(response.status,200);
  assert.match(response.headers.get('Content-Type'),/image\/webp/);
