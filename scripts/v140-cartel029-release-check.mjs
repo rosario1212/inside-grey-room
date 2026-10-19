@@ -18,7 +18,7 @@ assert.match(release,/editorial_status='approved',public_enabled=true/);
 assert.match(release,/igr_v135_029_preflight/);
 assert.doesNotMatch(release,/set passed_end_to_end_testing\s*=\s*true/i);
 assert.doesNotMatch(release,/set story_reviewed\s*=\s*true/i);
-assert.match(interview,/\('ÉLÉMENT '|\|'ÉLÉMENT '\)\|\|\(v_piece->>'id'\)/);
+assert(interview.includes("'ÉLÉMENT '||(v_piece->>'id')"));
 assert.match(seed,/missing pinned 029 variant/);
 assert.match(seed,/join igr_private\.igr_v107_029_editorial_matrix/);
 assert.match(seed,/pin\.match_no=n/);
