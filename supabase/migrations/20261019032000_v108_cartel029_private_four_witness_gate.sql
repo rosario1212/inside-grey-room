@@ -39,7 +39,7 @@ AS $function$
  when p_scenario='002' then 5
  when p_scenario in ('007','008','009','010','011','012','013','014','015','016') then 5
  when p_scenario='017' then 7 when p_scenario='018' then 6 when p_scenario='019' then 9 when p_scenario='020' then 13 else 5 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.igr_v4_max_players(p_scenario text)
  RETURNS integer
@@ -60,7 +60,7 @@ AS $function$
  when p_scenario in ('007','008','009','010','011','012') then 5
  when p_scenario in ('013','014') then 6 when p_scenario='015' then 7 when p_scenario='016' then 8
  when p_scenario='017' then 8 when p_scenario='018' then 6 when p_scenario='019' then 9 when p_scenario='020' then 16 else 5 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.igr_v4_role_for_seat(p_scenario text, p_seat integer, p_count integer)
  RETURNS text
@@ -116,7 +116,7 @@ begin
  end if;
  return 'suspect';
 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.igr_v4_role_capacity(p_scenario text, p_count integer, p_role text)
  RETURNS integer
@@ -175,7 +175,7 @@ begin
  end if;
  return 0;
 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.igr_v13_interrogation_limit(p_room text, p_cycle integer)
  RETURNS integer
