@@ -35,6 +35,10 @@ assert.match(choices,/function protectionProgress\(\)/);
 assert.match(choices,/e\.payload\?\.target/);
 assert.match(choices,/disabled aria-disabled="true"/);
 assert.match(choices,/status\.thisCycle/);
+for(const action of ['protectionPending','messagePending','positionPending']){
+ assert.match(choices,new RegExp('if\\('+action+'\\|\\|!active\\(\\)'),'Repeated 029 commands must be blocked while a request is pending');
+ assert.match(choices,new RegExp('finally\\{'+action+'=false\\}'),'029 action lock must always reset');
+}
 assert.match(build,/v144-cartel029/);
 assert.match(html,/cartel029-v121\.js\?v=v144-cartel029/);
 assert.match(htmlEn,/cartel029-v121\.js\?v=v144-cartel029/);

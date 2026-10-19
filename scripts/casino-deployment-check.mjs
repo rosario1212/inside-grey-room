@@ -14,7 +14,7 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   const release=await get('/casino-release.json'+suffix);
   assert.equal(release.status,200);
   meta=await release.json();
-  assert.equal(meta.version,'105.4');
+  assert.equal(meta.version,'105.5');
   if(!expected||meta.commit===expected)break;
   console.log('Waiting for deployed assets: expected '+expected.slice(0,9)+' got '+String(meta.commit).slice(0,9));
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));

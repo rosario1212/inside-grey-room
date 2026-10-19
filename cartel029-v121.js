@@ -120,10 +120,14 @@ function protectHtml(){
      'onclick="igr029Protect(&quot;'+id+'&quot;)">'+esc(label)+(done?' · enregistrée':'')+'</button>';
   }).join('')+'</div></section>';
 }
+let protectionPending=false;
 window.igr029Protect=async target=>{
+ if(protectionPending||!active()||!protect.some(([id])=>id===target))return;
+ protectionPending=true;
  try{await rpc('igr_v118_029_protection',{p_code:d().room.code,p_token:s().token,p_target:target});
  toast('Mesure enregistrée.');await syncNow(true)}
  catch(e){console.warn('[029 protection]',e?.message);toast('Action non disponible ou déjà utilisée.')}
+ finally{protectionPending=false}
 };
 function cartelWire(){
  if(!active()||!['don','bras_droit'].includes(me().public_role))return '';
@@ -134,11 +138,15 @@ function cartelWire(){
  '<div class="igr029-compose"><input id="igr029-msg" maxlength="220" placeholder="Ton message (220 caractères)" aria-label="Message privé au cartel">'+
  '<button class="btn ghost" type="button" onclick="igr029Send()">Envoyer</button></div></section>';
 }
+let messagePending=false;
 window.igr029Send=async ()=>{
+ if(messagePending||!active())return;
  const text=document.getElementById('igr029-msg')?.value?.trim();if(!text)return;
+ messagePending=true;
  try{await rpc('igr_v118_029_cartel_message',{p_code:d().room.code,p_token:s().token,p_text:text});
  toast('Message envoyé.');await syncNow(true)}
  catch(e){console.warn('[029 cartel]',e?.message);toast('Message non envoyé.')}
+ finally{messagePending=false}
 };
 function choiceHtml(){
  const x=me().private_state||{};
@@ -149,9 +157,13 @@ function choiceHtml(){
  '<div class="igr029-actions"><button class="btn ghost" onclick="igr029Position(\'loyal\')">Rester loyal</button>'+
  '<button class="btn ghost" onclick="igr029Position(\'cooperate\')">Coopérer</button></div></section>';
 }
+let positionPending=false;
 window.igr029Position=async c=>{
+ if(positionPending||!active()||!['loyal','cooperate'].includes(c))return;
+ positionPending=true;
  try{await rpc('igr_v119_029_position',{p_code:d().room.code,p_token:s().token,p_choice:c});toast('Décision enregistrée.');await syncNow(true)}
  catch(e){console.warn('[029 choice]',e?.message);toast('Ce choix n’est pas disponible.')}
+ finally{positionPending=false}
 };
 wrap('renderGameTab',(orig)=>{
  const result=orig();

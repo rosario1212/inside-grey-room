@@ -21,7 +21,9 @@ async function request(body){
  }finally{clearTimeout(deadline)}
 }
 function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data.roomId===state.roomId&&data.revision<state.revision)return;
- const changed=!state||state.roomId!==data.roomId||state.revision!==data.revision;
+ const timedControls=['hostCanLocate','hostCanCloseDefence','hostCanCloseCourt'];
+ const changed=!state||state.roomId!==data.roomId||state.revision!==data.revision||
+   timedControls.some(key=>Boolean(state[key])!==Boolean(data[key]));
  state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
 function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Synchronisé · état serveur '+state.revision:credentials?'Connexion…':''}
@@ -198,5 +200,5 @@ document.addEventListener('submit',async event=>{
  await mutate({op:'command',type:commands[kind],payload:p});
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.4',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.5',open,close,sync});
 })();
