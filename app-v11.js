@@ -210,7 +210,7 @@ const PUBLIC_LOBBY_SUMMARIES = {
 const CANONICAL_BRIEFINGS = Object.freeze({...PUBLIC_LOBBY_SUMMARIES});
 function publicScenarioSummary(id){return PUBLIC_LOBBY_SUMMARIES[id]||scenario(id).short}
 function canonicalBriefingText(id){
- if(String(id)==='029')return window.IGR_LOCALE==='en'?'Sinaloa. Three prisoners escaped Santa Ceniza together. Their fourth companion was captured and murdered. After the three requested protection, Los Salcedo sent a severed tongue and a threat to the Grey Room. Twenty people remain imprisoned. Another witness claims to know a different cartel site. Establish the facts, identify the leaders and help protect the survivors.':'Sinaloa. Trois prisonniers ont fui Santa Ceniza ensemble. Leur quatrième compagnon a été repris puis assassiné. Après leur demande de protection, Los Salcedo a envoyé sa langue sectionnée et une menace à la Grey Room. Vingt personnes sont encore prisonnières. Un autre témoin affirme connaître un site différent du cartel. Établissez les faits, identifiez les responsables et protégez les survivants.';
+ if(['029','030'].includes(String(id)))return publicScenarioSummary(id);
  return CANONICAL_BRIEFINGS[id]||publicScenarioSummary(id);
 }
 
