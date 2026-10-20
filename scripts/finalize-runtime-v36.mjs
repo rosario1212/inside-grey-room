@@ -4,7 +4,7 @@ import path from 'node:path';
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
 const VERSION='v36.1-parasite-fix';
-const CACHE='igr-v36-3-cartel030-v27';
+const CACHE='igr-v36-1-parasite-fix';
 
 async function exists(file){try{await stat(file);return true}catch{return false}}
 function cleanRef(value=''){

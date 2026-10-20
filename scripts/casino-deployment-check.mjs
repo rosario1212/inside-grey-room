@@ -20,6 +20,23 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
 }
 if(expected)assert.equal(meta.commit,expected,'The deployed assets must match this commit');
+const cartelResponse=await get('/cartel030-release.json?commit='+encodeURIComponent(expected));
+assert.equal(cartelResponse.status,200);
+const cartel=await cartelResponse.json();
+assert.equal(cartel.scenario,'030');
+assert.equal(cartel.version,'v165-cartel030-release');
+if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deployed commit');
+assert.deepEqual(cartel.moles,{'7':1,'8':1,'9':2});
+assert.deepEqual(cartel.evidence_per_cycle,[6,7,10]);
+const cartelHome=await get('/?release='+encodeURIComponent(cartel.version));
+assert.match(await cartelHome.text(),/app-v11\.js\?v=v165-cartel030-release/);
+const cartelApp=await get('/app-v11.js?v='+cartel.version);
+assert.equal(cartelApp.status,200);
+const cartelSource=await cartelApp.text();
+for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
+assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
+const cartelWorker=await get('/service-worker.js?v='+cartel.version);
+assert((await cartelWorker.text()).includes("const CACHE='igr-v165-cartel030-release';"));
 for(const poster of ['campagne','scenario-1','scenario-2','scenario-3']){
  const response=await get('/assets/casino/'+poster+'.webp');assert.equal(response.status,200);
  assert.match(response.headers.get('Content-Type'),/image\/webp/);
@@ -28,3 +45,4 @@ const sheet=await get('/assets/casino/approved-posters-v105-2.webp');assert.equa
 const anonymous=await fetch(origin+'/api/casino',{method:'POST',headers:{'Content-Type':'application/json'},body:'{"op":"sync"}',signal:AbortSignal.timeout(15000)});
 assert.equal(anonymous.status,400);assert.deepEqual(await anonymous.json(),{error:'invalid_session_token'});
 console.log('Deployed Casino verified: public game, playable catalog, four posters, authenticated service; commit '+meta.commit);
+console.log('Deployed CARTEL 030 verified: current application, private dossiers, evidence view, fresh PWA cache and commit '+cartel.commit);
