@@ -24,19 +24,19 @@ const cartelResponse=await get('/cartel030-release.json?commit='+encodeURICompon
 assert.equal(cartelResponse.status,200);
 const cartel=await cartelResponse.json();
 assert.equal(cartel.scenario,'030');
-assert.equal(cartel.version,'v165-cartel030-release');
+assert.equal(cartel.version,'v166-cartel-concise-descriptions');
 if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deployed commit');
 assert.deepEqual(cartel.moles,{'7':1,'8':1,'9':2});
 assert.deepEqual(cartel.evidence_per_cycle,[6,7,10]);
 const cartelHome=await get('/?release='+encodeURIComponent(cartel.version));
-assert.match(await cartelHome.text(),/app-v11\.js\?v=v165-cartel030-release/);
+assert.match(await cartelHome.text(),/app-v11\.js\?v=v166-cartel-concise-descriptions/);
 const cartelApp=await get('/app-v11.js?v='+cartel.version);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
 for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
 assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
 const cartelWorker=await get('/service-worker.js?v='+cartel.version);
-assert((await cartelWorker.text()).includes("const CACHE='igr-v165-cartel030-release';"));
+assert((await cartelWorker.text()).includes("const CACHE='igr-v166-cartel-concise-descriptions';"));
 for(const poster of ['campagne','scenario-1','scenario-2','scenario-3']){
  const response=await get('/assets/casino/'+poster+'.webp');assert.equal(response.status,200);
  assert.match(response.headers.get('Content-Type'),/image\/webp/);
