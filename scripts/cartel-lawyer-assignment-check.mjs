@@ -60,7 +60,7 @@ for(const scenario of ['030','031','016']){
   assert(start>=0&&end>start);
   vm.runInContext(app.slice(start,end),context);
   const info=vm.runInContext("roleInfo('maitre')",context);
-  if(assigned){assert.match(info.win,/assigné|appointed/);assert.match(info.body,/dès le début|at the start/);}
+  if(scenario==='031')assert.match(info.win,/sortir|alive/);else if(assigned){assert.match(info.win,/assigné|appointed/);assert.match(info.body,/dès le début|at the start/);}
   else assert.equal(info.win,'BASE_WIN');
   checks++;
  }

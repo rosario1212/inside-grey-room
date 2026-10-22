@@ -20,7 +20,7 @@ Le mandat ne révèle aucun secret du client ni aucune intention cachée du cart
 
 Les quatre témoins, leurs cartes et leurs objectifs restent présents dans le 029. L’avocat est retiré du catalogue, du salon, des capacités et de la distribution côté serveur, ainsi que des notes de rôle du dossier. Aucun autre rôle n’est supprimé.
 
-Pour la nouvelle intrigue du 031 en cours d’écriture, le vote pour désigner le membre du bureau à livrer est secret et contraignant à la majorité. Seuls les membres du bureau votent. L’avocat ne vote pas, ignore les intentions cachées d’El Luto et n’a pas de proche parmi les otages du bureau. La menace contre sa famille en cas d’abandon du mandat constitue une sanction distincte. Cette décision d’écriture est distincte des fonctionnalités d’avocat livrées ici.
+Dans la nouvelle intrigue du 031, le vote pour désigner le membre du bureau à livrer est secret et contraignant à la majorité. Seuls les membres du bureau votent. L’avocat ne vote pas, ignore les intentions cachées d’El Luto et n’a pas de proche parmi les otages du bureau. La menace contre sa famille en cas d’abandon du mandat constitue une sanction distincte. Le scénario, ses variantes et les règles de crise sont décrits dans cartel-031-implementation.md.
 
 ## Vérification
 

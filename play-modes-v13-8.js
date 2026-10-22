@@ -163,13 +163,14 @@ function buildLocalPlayers(id,pack,names){
       }
     }
     if(p.secretRole==='espion')card.secret_mission=pack.espion_mission||'Observe et détourne sans inventer de preuve.';
+    if(id==='031'&&pack.cartel031_canon){if(p.role==='suspect'){const original=pack.suspects?.[p.slot-1]||{};card.relations=original.relations||'';card.place=(original.identity||'')+'\n\n'+(original.place||'')}if(p.role==='maitre')card.clients=players.filter(q=>q.role==='suspect'&&q.slot===3).map(q=>q.name)}
     p.card=card;
   }
   return players;
 }
 function pickTrames(pack){const used=new Set(),plan=[];for(let cycle=1;cycle<=3;cycle++){const eligible=(pack.trames||[]).filter((t,i)=>!used.has(i)&&Number(t.min_cycle||1)<=cycle);const exact=eligible.filter(t=>Number(t.min_cycle||1)===cycle);const pool=exact.length?exact:eligible;if(pool.length){const chosen=pool[secureIndex(pool.length)],idx=(pack.trames||[]).indexOf(chosen);used.add(idx);plan.push(chosen)}else plan.push(null)}return plan}
 function startStandardLocal(id,pack,names){
-  const players=buildLocalPlayers(id,pack,names),state={version:1,scenarioId:id,pack,players,revealIndex:0,revealOpen:false,stage:'reveal',cycle:1,trameOpen:false,tramePlan:pickTrames(pack),verdict:{},startedAt:new Date().toISOString()};writeJSON(LOCAL_KEY,state);renderStandardLocal();
+  const players=buildLocalPlayers(id,pack,names),state={version:1,scenarioId:id,pack,players,revealIndex:0,revealOpen:false,stage:'reveal',cycle:1,trameOpen:false,tramePlan:pickTrames(pack),verdict:{},startedAt:new Date().toISOString()};window.IGR_CARTEL031?.initLocal?.(state);writeJSON(LOCAL_KEY,state);renderStandardLocal();
 }
 function readLocal(){return readJSON(LOCAL_KEY)}
 function saveLocal(s){writeJSON(LOCAL_KEY,s)}
@@ -179,6 +180,7 @@ function privateBlocks(card){
 }
 function renderStandardLocal(){
   const s=readLocal();if(!s)return renderHome?.();
+  if(s.scenarioId==='031'&&s.pack?.cartel031_canon&&!['reveal','briefing'].includes(s.stage)&&window.IGR_CARTEL031)return window.IGR_CARTEL031.renderLocal(s,{save:saveLocal,shell:shellPut});
   if(s.stage==='reveal')return renderLocalReveal(s);
   if(s.stage==='briefing')return renderLocalBriefing(s);
   if(s.stage==='cycle')return renderLocalCycle(s);
