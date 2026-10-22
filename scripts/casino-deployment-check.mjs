@@ -20,9 +20,15 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
 }
 if(expected)assert.equal(meta.commit,expected,'The deployed assets must match this commit');
-const cartelResponse=await get('/cartel030-release.json?commit='+encodeURIComponent(expected));
-assert.equal(cartelResponse.status,200);
-const cartel=await cartelResponse.json();
+let cartel=null;
+for(let attempt=0;attempt<(expected?12:1);attempt++){
+  const cartelResponse=await get('/cartel030-release.json?commit='+encodeURIComponent(expected)+'&probe='+attempt);
+  assert.equal(cartelResponse.status,200);
+  cartel=await cartelResponse.json();
+  if(!expected||(cartel.commit===expected&&cartel.version==='v167-cartel-lawyer'))break;
+  console.log('Waiting for CARTEL assets: expected '+expected.slice(0,9)+' got '+String(cartel.commit).slice(0,9));
+  if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
+}
 assert.equal(cartel.scenario,'030');
 assert.equal(cartel.version,'v167-cartel-lawyer');
 if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deployed commit');
@@ -33,6 +39,10 @@ assert.match(await cartelHome.text(),/app-v11\.js\?v=v167-cartel-lawyer/);
 const cartelApp=await get('/app-v11.js?v='+cartel.version);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
+assert(cartelSource.includes('Avocat du cartel · Procureur · Juge · Journaliste · Don · Bras droit'),'CARTEL 029 lawyer missing from role catalog');
+const cartelRoles=await get('/cartel029-v121.js?v='+cartel.version);
+assert.equal(cartelRoles.status,200);
+assert((await cartelRoles.text()).includes("maitre:{label:'Avocat du cartel'"),'CARTEL 029 lawyer runtime missing');
 for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
 assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
 const cartelWorker=await get('/service-worker.js?v='+cartel.version);
