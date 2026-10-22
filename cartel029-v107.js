@@ -92,9 +92,9 @@ const style=document.createElement('style');style.id='igr029-v107-style';style.t
 `;document.head.appendChild(style);
 // The four playable witnesses continue using the legacy suspect protocol
 // internally until the investigation engine is fully replaced. Only neutral
-// role labels change, and only for the server-certified 6–11 player roster.
+// role labels change, and only for the server-certified four-witness roster.
 const futureRoster=()=>sync()?.room?.scenario_id==='029' &&
-  ((Number(sync()?.room?.min_players)===6&&Number(sync()?.room?.max_players)===11) ||
+  ((Number(sync()?.room?.min_players)===6&&[11,12].includes(Number(sync()?.room?.max_players))) ||
    sync()?.room?.state?.cartel029_ready===true);
 const roleLabel0=typeof displayRole==='function'?displayRole:null;
 if(roleLabel0){const f=function(r,...args){

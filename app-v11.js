@@ -66,7 +66,7 @@ function rolesBlock(sc){
  if(sc?.id==='029'){
    const en=window.IGR_LOCALE==='en';
    return '<div class="roles-availability"><div class="roles-row"><span>'+(en?'Required':'Obligatoires')+'</span><p>'+(en?'Investigator · Analyst · 4 witnesses':'Enquêteur · Analyste · 4 témoins')+'</p></div>'+
-   '<div class="roles-row optional"><span>'+(en?'Optional':'Facultatifs')+'</span><p>'+(en?'Prosecutor · Judge · Journalist · Don · Right hand':'Procureur · Juge · Journaliste · Don · Bras droit')+'</p></div></div>';
+   '<div class="roles-row optional"><span>'+(en?'Optional':'Facultatifs')+'</span><p>'+(en?'Cartel lawyer · Prosecutor · Judge · Journalist · Don · Right hand':'Avocat du cartel · Procureur · Juge · Journaliste · Don · Bras droit')+'</p></div></div>';
  }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]};
  return `<div class="roles-availability"><div class="roles-row"><span>Obligatoires</span><p>${cfg.required.map(h).join(' · ')}</p></div>${cfg.optional.length?`<div class="roles-row optional"><span>Facultatifs</span><p>${cfg.optional.map(h).join(' · ')}</p></div>`:''}</div>`;
@@ -88,12 +88,12 @@ function expandRoleLabel(label){
 }
 function lobbyRoleSlots(sc,count){
  // 029: a room starts with one member, but all SIX mandatory seats must be
- // selectable immediately. Optional seats unlock only as players 7–11 join.
+ // selectable immediately. A cartel lawyer joins first, then the existing optional roles.
  // Restrict this to the actual four-witness server roster: legacy rooms differ.
- if(sc?.id==='029'&&Number(STATE?.sync?.room?.min_players)===6&&Number(STATE?.sync?.room?.max_players)===11){
+ if(sc?.id==='029'&&Number(STATE?.sync?.room?.min_players)===6&&[11,12].includes(Number(STATE?.sync?.room?.max_players))){
   const roster=['enqueteur','analyste','suspect','suspect','suspect','suspect',
-    'procureur','juge','journaliste','don','bras_droit'];
-  return roster.slice(0,Math.min(11,Math.max(6,count)));
+    ...(Number(STATE.sync.room.max_players)===12?['maitre']:[]),'procureur','juge','journaliste','don','bras_droit'];
+  return roster.slice(0,Math.min(Number(STATE.sync.room.max_players),Math.max(6,count)));
  }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]},slots=[];
  cfg.required.forEach(x=>slots.push(...expandRoleLabel(x)));
