@@ -69,7 +69,8 @@ function rolesBlock(sc){
    '<div class="roles-row optional"><span>'+(en?'Optional':'Facultatifs')+'</span><p>'+(en?'Cartel lawyer · Prosecutor · Judge · Journalist · Don · Right hand':'Avocat du cartel · Procureur · Juge · Journaliste · Don · Bras droit')+'</p></div></div>';
  }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]};
- return `<div class="roles-availability"><div class="roles-row"><span>Obligatoires</span><p>${cfg.required.map(h).join(' · ')}</p></div>${cfg.optional.length?`<div class="roles-row optional"><span>Facultatifs</span><p>${cfg.optional.map(h).join(' · ')}</p></div>`:''}</div>`;
+ const label=x=>h(x==='Avocat'?(cartelLawyerLabel(sc.id)||x):x);
+ return `<div class="roles-availability"><div class="roles-row"><span>Obligatoires</span><p>${cfg.required.map(label).join(' · ')}</p></div>${cfg.optional.length?`<div class="roles-row optional"><span>Facultatifs</span><p>${cfg.optional.map(label).join(' · ')}</p></div>`:''}</div>`;
 }
 
 const ROLE_LABEL_TO_ID={
@@ -494,7 +495,8 @@ function h(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;'
 function byId(id){return document.getElementById(id)}
 function scenario(id){return SCENARIOS.find(s=>s.id===id)||SCENARIOS[0]}
 function currentScenario(){return scenario(STATE.scenarioId||STATE.selectedScenario)}
-function roleInfo(r){return ROLE_INFO[r]||ROLE_INFO.suspect}
+function cartelLawyerLabel(id=STATE.sync?.room?.scenario_id||STATE.selectedScenario||STATE.scenarioId){return ['029','030','031'].includes(String(id))?(window.IGR_LOCALE==='en'?'Cartel lawyer':'Avocat du cartel'):''}
+function roleInfo(r){const info=ROLE_INFO[r]||ROLE_INFO.suspect,label=r==='maitre'?cartelLawyerLabel():'';return label?{...info,label}:info}
 function toast(msg){const el=byId('toast');if(!el)return;el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
 function sessionKey(){return'igr_v11_session'}
 function storeKey(){return`igr_v11_notes_${STATE.room}`}
@@ -1135,7 +1137,7 @@ function renderBriefing(){
  mountLiveSessionControls();runCanonicalBriefing();updatePhaseClock();
 }
 
-function displayRole(r,p){if(r==='suspect')return`Suspect · ${p}`;if(r==='maitre')return`Maître · ${p}`;return`${roleInfo(r).label} · ${p}`}
+function displayRole(r,p){if(r==='suspect')return`Suspect · ${p}`;if(r==='maitre')return`${cartelLawyerLabel()||'Maître'} · ${p}`;return`${roleInfo(r).label} · ${p}`}
 function igr82RelationLink(entry,fact) {
   const fr=typeof window==='undefined'||window.IGR_LOCALE!=='en';
   const tr=(a,b)=>fr?a:b;
@@ -1542,7 +1544,7 @@ function renderReveal(){
  return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/3 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/3 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–3 correspond exactement au niveau canonique.</small></div>`:''}<div class="result-list">${(p.results||[]).map(x=>{const s=strength(x.player_id);return `<div class="result-line ${x.success?'winner':'loser'}"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><strong>${x.success?'VICTOIRE':'DÉFAITE'}</strong><span>${h(x.text)}</span>${x.success&&s!=null?`<small class="victory-strength">Force de victoire · ${h(s)}/100</small>`:''}</div>`}).join('')}</div>${renderContinuationPanel()}<button class="btn block" onclick="leaveRoom()">Quitter la cellule</button></div>`;
 }
 
-function publicRoleLabel(r){return r==='maitre'?'Avocat / Maître':roleInfo(r).label||r}
+function publicRoleLabel(r){return r==='maitre'?(cartelLawyerLabel()||'Avocat / Maître'):roleInfo(r).label||r}
 function renderChannelTab(){
  const d=STATE.sync,role=d.player.public_role,canInv=canInvestigationChannel(role),enq=d.players.find(p=>p.public_role==='enqueteur'),targets=role==='journaliste'?d.players.filter(p=>p.id!==d.player.id):role==='enqueteur'?d.players.filter(p=>p.id!==d.player.id):(enq?[enq]:[]);
  return `<div class="channel-v11">${canInv?`<div class="channel-box"><div class="section-title"><h2>Canal Enquête 🔒</h2><span>200 caractères</span></div><div class="message-list">${renderMessages('investigation')}</div><div class="message-compose"><input id="invMsg" maxlength="200" placeholder="Observation courte"><button onclick="sendMessage('investigation')">Envoyer</button></div></div>`:''}<div class="channel-box"><div class="section-title"><h2>Messages privés</h2><span>${role==='journaliste'?'libres':'centrés sur l’Enquêteur'}</span></div>${targets.length?`<div class="field"><label for="privateTarget">Destinataire</label><select id="privateTarget">${targets.map(p=>`<option value="${p.id}">${h(p.pseudo)} · ${h(publicRoleLabel(p.public_role))}</option>`).join('')}</select></div><div class="message-list">${renderMessages('private')}</div><div class="message-compose"><input id="privateMsg" maxlength="200" placeholder="Message privé"><button onclick="sendMessage('private')">Envoyer</button></div>`:`<p>Aucun destinataire disponible.</p>`}</div></div>`;

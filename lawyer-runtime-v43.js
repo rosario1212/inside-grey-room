@@ -16,6 +16,7 @@ const players=()=>Array.isArray(sync()?.players)?sync().players:[];
 const suspects=()=>Array.isArray(sync()?.suspects)?sync().suspects:players().filter(p=>p.public_role==='suspect');
 const fr=()=>window.IGR_LOCALE!=='en';
 const copy=(a,b)=>fr()?a:b;
+const lawyerTitle=()=>window.cartelLawyerLabel?.()||copy('Avocat','Lawyer');
 const clean=v=>String(v??'').replace(/\s+/g,' ').trim();
 const norm=v=>clean(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,"'").toLowerCase();
 const esc=v=>typeof window.h==='function'?window.h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -141,7 +142,7 @@ function unofficialRule(forSuspect=false){
 }
 
 function renderSuspectLawyer(){
-  return `<section class="igr43-lawyer-page"><header><small>${esc(copy('DÉFENSE','DEFENCE'))}</small><h2>${esc(copy('Avocat','Lawyer'))}</h2><p>${esc(copy('Une représentation officielle est exclusive. Un refus reste réversible tant qu’aucun client n’a été choisi.','Official representation is exclusive. A refusal remains reversible while no client has been chosen.'))}</p></header>${cache?requestStatus():`<div class="locked-state">${esc(copy('Chargement…','Loading…'))}</div>`}${unofficialRule(true)}</section>`;
+  return `<section class="igr43-lawyer-page"><header><small>${esc(copy('DÉFENSE','DEFENCE'))}</small><h2>${esc(lawyerTitle())}</h2><p>${esc(copy('Une représentation officielle est exclusive. Un refus reste réversible tant qu’aucun client n’a été choisi.','Official representation is exclusive. A refusal remains reversible while no client has been chosen.'))}</p></header>${cache?requestStatus():`<div class="locked-state">${esc(copy('Chargement…','Loading…'))}</div>`}${unofficialRule(true)}</section>`;
 }
 
 function requestCard(q){
@@ -159,7 +160,7 @@ function renderLawyerDesk(){
   if(!cache)return `<section class="igr43-lawyer-page"><div class="locked-state">${esc(copy('Chargement des demandes…','Loading requests…'))}</div></section>`;
   if(cache.has_client){
     const c=cache.client||{};
-    return `<section class="igr43-lawyer-page"><header><small>${esc(copy('REPRÉSENTATION OFFICIELLE','OFFICIAL REPRESENTATION'))}</small><h2>${esc(copy('Avocat','Lawyer'))}</h2></header><article class="igr43-client-card strong"><small>${esc(copy('CLIENT UNIQUE · VERROUILLÉ','ONLY CLIENT · LOCKED'))}</small><h3>${esc(c.pseudo||'')}</h3><p>${esc(c.brief||'')}</p><button class="btn primary block" type="button" onclick="igr43Meet('${esc(c.id)}','${esc(String(c.pseudo||'').replace(/'/g,"\\'"))}',true)">${esc(copy('Se concerter · 1 min','Confer · 1 min'))}</button></article>${unofficialRule(false)}${consultationRoster()}</section>`;
+    return `<section class="igr43-lawyer-page"><header><small>${esc(copy('REPRÉSENTATION OFFICIELLE','OFFICIAL REPRESENTATION'))}</small><h2>${esc(lawyerTitle())}</h2></header><article class="igr43-client-card strong"><small>${esc(copy('CLIENT UNIQUE · VERROUILLÉ','ONLY CLIENT · LOCKED'))}</small><h3>${esc(c.pseudo||'')}</h3><p>${esc(c.brief||'')}</p><button class="btn primary block" type="button" onclick="igr43Meet('${esc(c.id)}','${esc(String(c.pseudo||'').replace(/'/g,"\\'"))}',true)">${esc(copy('Se concerter · 1 min','Confer · 1 min'))}</button></article>${unofficialRule(false)}${consultationRoster()}</section>`;
   }
   const requests=Array.isArray(cache.pending_requests)?cache.pending_requests:[];
   return `<section class="igr43-lawyer-page"><header><small>${esc(copy('REPRÉSENTATION','REPRESENTATION'))}</small><h2>${esc(copy('Choisir un client','Choose a client'))}</h2><p>${esc(copy('Chaque demande peut être examinée après un entretien de 1 minute maximum. L’acceptation est le seul choix irréversible.','Each request can be considered after a meeting of up to one minute. Acceptance is the only irreversible choice.'))}</p></header>${requests.length?`<div class="igr43-request-list">${requests.map(requestCard).join('')}</div>`:`<div class="locked-state">${esc(copy('Aucune demande en attente. Les suspects peuvent redemander après un refus jusqu’au cycle 3.','No pending request. Suspects may ask again after a refusal through cycle 3.'))}</div>`}${unofficialRule(false)}${consultationRoster()}</section>`;
@@ -197,7 +198,7 @@ if(baseTabs){
     const tabs=baseTabs.apply(this,arguments)||[];
     if(lawyerRelevant()&&!tabs.some(t=>t?.id==='lawyer')){
       const idx=tabs.findIndex(t=>t?.id==='card');
-      const item={id:'lawyer',label:role()==='maitre'?copy('Clients','Clients'):copy('Avocat','Lawyer')};
+      const item={id:'lawyer',label:role()==='maitre'?copy('Clients','Clients'):lawyerTitle()};
       if(idx>=0)tabs.splice(idx+1,0,item);else tabs.push(item);
     }
     return tabs;
