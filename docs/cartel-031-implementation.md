@@ -36,3 +36,19 @@ Le départ volontaire de l’avocat garde la sanction personnelle définitive et
 - La compilation et la vérification du commit servi en production complètent ces contrôles. Ils ne remplacent pas une partie physique entre joueurs.
 
 Les métadonnées publiques `cartel031-release.json` identifient le commit, la version, les effectifs et les variantes sans livrer leur solution.
+
+## Audit complémentaire du 22 octobre — v172
+
+La revue de la version publiée a reproduit deux défauts du client multijoueur : des données privées déjà chargées pouvaient persister après un changement de joueur, de salon ou de manche, et une actualisation pouvait effacer des choix non enregistrés.
+
+Le cache est désormais lié au jeton personnel, au joueur, au rôle, au salon et à la manche. Une réponse réseau tardive est ignorée si cette identité a changé ; elle ne bloque pas la récupération du nouvel état. Le message privé est retiré immédiatement à la sortie du salon. Les choix non enregistrés survivent aux actualisations, sans envoi automatique et sans passer à une autre session. Une soumission refusée conserve le brouillon ; une soumission acceptée reprend la confirmation du serveur.
+
+Deux formulations ambiguës des variantes B et C ont aussi été clarifiées dans les manuscrits privés, sans modifier leurs solutions.
+
+Le test `scripts/cartel031-session-check.mjs` reproduit le défaut sur la version précédente et exerce les six familles de cas corrigées. Il est intégré à la compilation, en complément des 24 parcours locaux et 168 rendus. La version des données locales reste inchangée pour préserver les parties déjà sauvegardées ; seule la version des fichiers publiés et du cache PWA passe à v172.
+
+La vérification directe des permissions confirme que ni `anon` ni `authenticated` ne peuvent lire la table privée du 31 ou exécuter ses fonctions de résolution. Les deux RPC publiques vérifient le jeton individuel et le salon ; les alertes génériques du conseiller concernant ces RPC sont attendues pour ce modèle d’authentification.
+
+La cohérence narrative est conservée : A/B changent l’exécution du transfert, C change le donneur de l’ordre immédiat du massacre ; l’identité d’El Luto et la vengeance restent communes. L’identité commune et la résolution collective des proches limitent volontairement la diversité des dénouements. Le rythme, la tension réelle et l’équilibre des échanges restent à évaluer autour d’une table.
+
+Une nouvelle campagne de contrôle serveur a validé 24 démarrages/reprises et 12 dénouements supplémentaires (trois variantes, quatre issues chacune, six joueurs, durée courte), avec annulation de toutes les données de test. Elle complète la matrice initiale de 144 démarrages et 72 dénouements couvrant les autres effectifs et durées.
