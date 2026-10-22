@@ -5,7 +5,7 @@ const d=()=>typeof STATE!=='undefined'?STATE?.sync:null;
 const me=()=>d()?.player||{};
 const s=()=>typeof STATE!=='undefined'?STATE:null;
 const inRoom=()=>d()?.room?.scenario_id==='029';
-const upcoming=()=>inRoom()&&(+d()?.room?.min_players===6&&[11,12].includes(+d()?.room?.max_players));
+const upcoming=()=>inRoom()&&(+d()?.room?.min_players===6&&+d()?.room?.max_players===11);
 const active=()=>upcoming()&&d()?.room?.state?.cartel029_ready===true;
 const tr=(fr,en)=>window.IGR_LOCALE==='en'?en:fr;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
@@ -32,7 +32,6 @@ function wrap(name,fn){
   } }catch(_){}
 }
 const roles={
- maitre:{label:'Avocat du cartel',win:'Obtiens un mandat officiel et empêche l’enquête d’établir la chaîne de responsabilité de Los Salcedo.',body:'Le cartel te mandate et te paie. Tu peux négocier et défendre ton client avec le tempérament de ton choix.'},
  don:{label:'Le Don',win:'Choisis entre garder le secret et coopérer sans violence automatique.',body:'Tu diriges Los Salcedo. Tu peux écrire à ton bras droit et décider de ta stratégie privée une fois par cycle.'},
  bras_droit:{label:'Bras droit',win:'Reste loyal ou coopère : ta décision oriente ton objectif final.',body:'Tu peux écrire au Don et décider de ta stratégie privée une fois par cycle.'},
  suspect:{label:'Témoin',win:'Contribue à l’enquête, protège tes proches et reste fidèle aux faits de ta fiche.',body:'Tu peux parler librement, mentir ou te taire. Tu n’as rien à apprendre par cœur.'},
