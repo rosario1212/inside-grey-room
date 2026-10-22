@@ -5,7 +5,7 @@ import path from 'node:path';
 const target=path.resolve(process.argv[2]||'dist');
 const source=await readFile(path.join(target,'cartel031-v171.js'),'utf8');
 const meta=JSON.parse(await readFile(path.join(target,'cartel031-release.json'),'utf8'));
-assert.equal(meta.version,'v172-cartel031-audit');assert.deepEqual(meta.evidence_per_cycle,[4,5,4]);
+assert.equal(meta.version,'v173-cartel031-negotiation');assert.deepEqual(meta.evidence_per_cycle,[4,5,4]);
 for(const name of ['index.html','en.html'])assert((await readFile(path.join(target,name),'utf8')).includes('cartel031-v171.js?v='+meta.version));
 assert(!source.includes('"canonical_truth":{'));assert(!source.includes('family_proofs:{'));
 const baseCanon={
@@ -95,6 +95,28 @@ for(const locale of ['fr','en'])for(const count of [6,7,8]){
  click('open','e');assert(!html.includes('PRIVATE E'));assert(html.includes('INFORMATIONS SCELLÉES'));
  click('private');assert(html.includes('PRIVATE E'));assert(!html.includes('PRIVATE A'));
  click('hide');assert(!html.includes('PRIVATE E'));
+ // Every role sees its own goal before the crisis, without a premature proof.
+ const opening=make();
+ for(const p of opening.players){
+  const view=api.renderBoard(api.localState(opening,p.id),p);
+  assert.match(view,/<p class="igr031-focus">[^<]+<\/p>/);
+  assert(!view.includes('PRIVATE E'));assert(!view.includes('BUREAU DEMAND'));
+  const heading=view.match(/<h2>([^<]+)<\/h2>/)?.[1];
+  if(p.role==='suspect')assert.match(heading,/prison/);
+  if(p.role==='maitre')assert.match(heading,/client/);
+ }
+ // Signing is never an artificial prerequisite for intervention. A bureau
+ // acting on oral information can rescue the group; silent suspects still
+ // face the final responsibility decision rather than automatic release.
+ if(count===7){
+  const silent=make();silent.cycle=3;
+  api.applyLocal(silent,'e','plan',{mode:'intervene',location:'site-a',approach:'isolate',assault_author:'order-a',acknowledge_risk:true});
+  silent.cartel031.locked=true;silent.stage='verdict';
+  for(const p of silent.players.filter(p=>['enqueteur','analyste','procureur'].includes(p.role)))api.applyLocal(silent,p.id,'levels',{s1:2,s2:2,s3:2});
+  const resolution=api.localOutcome(silent);assert.equal(resolution.outcome,'rescued');
+  assert(resolution.results.filter(p=>p.role==='suspect').every(p=>p.fate==='prison'));
+  assert.deepEqual(Object.keys(silent.cartel031.offers),[]);
+ }
  // Refusing confirmation never produces an actionable payload.
  context.confirm=()=>false;
  assert.equal(api.prepareAction('respond',{revision:1,accept:true,terms:'release'},{}),null);

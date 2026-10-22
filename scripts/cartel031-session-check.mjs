@@ -18,7 +18,8 @@ function harness(){
  const state=(marker='PRIVATE FIRST')=>({enabled:true,role:'enqueteur',open:true,crisis:true,proof:{title:marker,text:marker},crew:[{id:'e',pseudo:'E'},{id:'a',pseudo:'A'}],plan:{mode:'wait'},
   locations:[{id:'x',label:'X'},{id:'y',label:'Y'}],approaches:[{id:'direct',label:'DIRECT'},{id:'isolate',label:'ISOLATE'}],assault_options:[{id:'outside',label:'OUTSIDE'},{id:'chief',label:'CHIEF'}],suspects:[{id:'s1',pseudo:'S1'}]});
  const change=(id,value)=>{elements[id]={value};for(const handler of handlers.change||[])handler({target:{id,value}})};
- set();return {context,api:context.IGR_CARTEL031,set,state,change,nodes};
+ const toggleProof=open=>{const node={id:'c031ProofReview',open};elements[node.id]=node;for(const handler of handlers.toggle||[])handler({target:node})};
+ set();return {context,api:context.IGR_CARTEL031,set,state,change,toggleProof,nodes};
 }
 // Switching roles or players never renders an already fetched private dossier.
 {
@@ -69,5 +70,13 @@ function harness(){
  const h=harness();let acknowledge;h.context.rpc=async name=>name.endsWith('_act')?new Promise(resolve=>{acknowledge=resolve}):({...h.state(),own_ballot:'a'});
  await h.api.refresh();h.change('c031Vote','a');const saving=h.api.act('vote',{});h.change('c031Vote','e');acknowledge({ok:true});await saving;
  assert(h.context.renderGameTab().includes('value="e" selected'),'an older acknowledgement erased a newer draft');
+}
+// Reviewing the private proof remains open when another decision refreshes.
+{
+ const h=harness();let revision=0;h.context.rpc=async()=>({...h.state(),votes_received:revision++});
+ await h.api.refresh();assert.match(h.context.renderGameTab(),/<details id="c031ProofReview"[^>]*>/);
+ assert(!/<details id="c031ProofReview"[^>]* open/.test(h.context.renderGameTab()));
+ h.toggleProof(true);await h.api.refresh();assert.match(h.context.renderGameTab(),/<details id="c031ProofReview"[^>]* open/);
+ h.toggleProof(false);assert(!/<details id="c031ProofReview"[^>]* open/.test(h.context.renderGameTab()));
 }
 console.log('CARTEL 031 session PASS: player changes, late responses, rematches, immediate exit privacy, draft preservation and submission acknowledgement.');
