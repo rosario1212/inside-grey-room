@@ -69,3 +69,10 @@ console.log('Deployed Casino verified: public game, playable catalog, four poste
 console.log('Deployed CARTEL 030 verified: current application, private dossiers, evidence view, fresh PWA cache and commit '+cartel.commit);
 
 const debtMetaResponse=await get('/cartel031-release.json?commit='+encodeURIComponent(expected));assert.equal(debtMetaResponse.status,200);const debtMeta=await debtMetaResponse.json();assert.equal(debtMeta.version,'v171-cartel031-la-dette');if(expected)assert.equal(debtMeta.commit,expected);assert.deepEqual(debtMeta.evidence_per_cycle,[4,5,4]);assert.deepEqual(debtMeta.variants,['A','B','C']);const debtRuntime=await get('/cartel031-v171.js?v='+debtMeta.version);assert.equal(debtRuntime.status,200);const debtSource=await debtRuntime.text();assert(debtSource.includes('igr_v171_031_act'));assert(debtSource.includes('igr_v171_031_state'));assert(debtSource.includes('renderLocal'));assert(!debtSource.includes('"canonical_truth":{'));console.log('Deployed CARTEL 031 verified: matching commit, private decisions and local runtime.');
+
+const apiUrl=cartelSource.match(/const SUPABASE_URL = '([^']+)'/)?.[1];
+const apiKey=cartelSource.match(/const SUPABASE_KEY = '([^']+)'/)?.[1];
+assert(apiUrl&&apiKey);
+const invalidState=await fetch(apiUrl+'/rest/v1/rpc/igr_v171_031_state',{method:'POST',headers:{apikey:apiKey,'Content-Type':'application/json'},body:JSON.stringify({p_code:'ZD999',p_player_token:'00000000-0000-0000-0000-000000000000'}),signal:AbortSignal.timeout(15000)});
+assert.equal(invalidState.status,400);assert.equal((await invalidState.json()).message,'unauthorized');
+console.log('Deployed CARTEL 031 private state RPC verified: invalid player token rejected.');
