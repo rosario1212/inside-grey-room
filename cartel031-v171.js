@@ -11,16 +11,24 @@ const bureau=r=>['enqueteur','analyste','procureur'].includes(r);
 const label=t=>({prison:copy('Prison','Prison'),release:copy('Sortie sans protection','Unprotected release'),protected_release:copy('Sortie protégée','Protected release')})[t]||t;
 const card=(title,body)=>'<article class="igr031-card"><h3>'+esc(title)+'</h3>'+body+'</article>';
 const button=(action,payload,text)=>'<button type="button" class="btn ghost block" data-c031-action="'+action+'" data-c031-payload="'+esc(JSON.stringify(payload))+'">'+esc(text)+'</button>';
-let cache=null,busy=false,loading=false,signature='',localContext=null,localActor=null,localPending=null;
+// Keep the saved local-game schema stable while asset releases change.
+let cache=null,busy=false,loadingKey='',requestSerial=0,cacheKey='',drafts={},signature='',localContext=null,localActor=null,localPending=null;
+const sessionIdentity=()=>active()&&S()?.token?JSON.stringify([S().room,S().token,me()?.id,me()?.public_role,room()?.state?.match_no||1,room()?.status]):'';
+function currentCache(){
+ const key=sessionIdentity();
+ if(key!==cacheKey){cacheKey=key;cache=null;signature='';drafts={};loadingKey='';requestSerial++;document.getElementById('igr031PrivateProof')?.remove();}
+ return cache;
+}
 async function refresh(){
- if(!active()||loading||!S()?.token)return;
- loading=true;
+ currentCache();const key=cacheKey;if(!key||loadingKey===key)return;
+ loadingKey=key;const request=++requestSerial;
  try{const next=await window.rpc('igr_v171_031_state',{p_code:S().room,p_player_token:S().token});
+  if(request!==requestSerial||key!==sessionIdentity()){currentCache();return;}
   const sig=JSON.stringify(next),changed=sig!==signature;cache=next;signature=sig;
   if(changed&&S()?.tab==='cartel031')window.renderGame?.();
   showPrivateProof(next);
- }catch(e){if(S()?.tab==='cartel031')window.toast?.(e.message)}
- finally{loading=false}
+ }catch(e){if(request===requestSerial&&key===sessionIdentity()&&S()?.tab==='cartel031')window.toast?.(e.message)}
+ finally{if(request===requestSerial)loadingKey='';}
 }
 function showPrivateProof(d){
  if(!d?.proof||!document.body||room()?.status!=='playing')return;
@@ -32,24 +40,24 @@ function showPrivateProof(d){
  overlay.querySelector('[data-c031-proof-close]')?.addEventListener('click',()=>{try{window.sessionStorage?.setItem(key,'1')}catch{}overlay.remove()});
  document.body.appendChild(overlay);
 }
-function renderBoard(d,player){
+function renderBoard(d,player,draft={}){
  if(!d?.enabled)return '<div class="locked-state">'+esc(copy('Chargement du dossier…','Loading case…'))+'</div>';
  const r=d.role,open=d.open,crisis=d.crisis;
  let html='<section class="igr031-page"><header><small>CARTEL 031 · LA DETTE</small><h2>'+esc(copy(crisis?'Ramener les proches':'Reconstituer le massacre',crisis?'Bring the families back':'Reconstruct the massacre'))+'</h2><p>'+esc(copy('Les échanges se jouent à l’oral. Ici, vous enregistrez seulement les décisions officielles.','Play the conversations face to face. Record only official decisions here.'))+'</p></header>';
  if(d.proof)html+=card(d.proof.title,'<p class="igr031-private">'+esc(copy('PRIVÉ · POUR TOI UNIQUEMENT','PRIVATE · FOR YOU ONLY'))+'</p><p>'+esc(d.proof.text)+'</p>');
  if(bureau(r)&&crisis){
   html+=card(copy('La demande et le vote secret','The demand and secret ballot'),'<p>'+esc(d.demand)+'</p><p>'+esc(copy('Bulletins reçus : ','Ballots received: '))+Number(d.votes_received||0)+'/'+(d.crew||[]).length+' · '+esc(copy('Majorité requise : ','Majority required: '))+Number(d.majority||0)+'</p>'+
-   (open?'<label>'+esc(copy('Ton bulletin privé','Your private ballot'))+'<select id="c031Vote"><option value="refuse">'+esc(copy('Refuser de livrer un collègue','Refuse to hand over a colleague'))+'</option>'+(d.crew||[]).map(p=>'<option value="'+esc(p.id)+'" '+(d.own_ballot===p.id?'selected':'')+'>'+esc(p.pseudo)+'</option>').join('')+'</select></label>'+button('vote',{},copy('Enregistrer mon bulletin secret','Save my secret ballot'))+'<small>'+esc(copy('Ton bulletin reste modifiable jusqu’à la clôture. Une égalité ou l’absence de majorité ne désigne personne.','You may change your ballot until closure. A tie or lack of majority designates nobody.'))+'</small>':
+   (open?'<label>'+esc(copy('Ton bulletin privé','Your private ballot'))+'<select id="c031Vote"><option value="refuse">'+esc(copy('Refuser de livrer un collègue','Refuse to hand over a colleague'))+'</option>'+(d.crew||[]).map(p=>'<option value="'+esc(p.id)+'" '+((draft.c031Vote??d.own_ballot)===p.id?'selected':'')+'>'+esc(p.pseudo)+'</option>').join('')+'</select></label>'+button('vote',{},copy('Enregistrer mon bulletin secret','Save my secret ballot'))+'<small>'+esc(copy('Ton bulletin reste modifiable jusqu’à la clôture. Une égalité ou l’absence de majorité ne désigne personne.','You may change your ballot until closure. A tie or lack of majority designates nobody.'))+'</small>':
    '<p>'+esc(d.nominee?copy('La majorité a désigné : ','The majority designated: ')+d.nominee.pseudo:copy('Aucune majorité pour livrer un membre du bureau.','No majority to hand over a member of the bureau.'))+'</p>'));
   if(r==='enqueteur'){
-   const plan=d.plan||{};
+   const plan={...(d.plan||{})};for(const [field,id] of Object.entries({mode:'c031Mode',location:'c031Location',approach:'c031Approach',assault_author:'c031Assault'}))if(Object.hasOwn(draft,id))plan[field]=draft[id];
    html+=card(copy('Plan du bureau','Bureau plan'),'<p>'+esc(copy('Ce plan s’applique au dénouement si aucune majorité n’impose la remise d’un collègue. Par défaut, le bureau attend.','This plan applies in the ending unless a majority orders a colleague’s handover. The default is to wait.'))+'</p>'+
     (open?'<label>'+esc(copy('Qui a donné l’ordre de lancer l’assaut ?','Who ordered the assault to begin?'))+'<select id="c031Assault"><option value="">'+esc(copy('Choisir…','Choose…'))+'</option>'+(d.assault_options||[]).map(p=>'<option value="'+esc(p.id)+'" '+(plan.assault_author===p.id?'selected':'')+'>'+esc(p.label)+'</option>').join('')+'</select></label><label>'+esc(copy('Décision','Decision'))+'<select id="c031Mode"><option value="wait">'+esc(copy('Attendre, sans intervention','Wait without intervening'))+'</option><option value="intervene" '+(plan.mode==='intervene'?'selected':'')+'>'+esc(copy('Intervenir','Intervene'))+'</option></select></label><label>'+esc(copy('Lieu','Location'))+'<select id="c031Location">'+(d.locations||[]).map(p=>'<option value="'+esc(p.id)+'" '+(plan.location===p.id?'selected':'')+'>'+esc(p.label)+'</option>').join('')+'</select></label><label>'+esc(copy('Approche','Approach'))+'<select id="c031Approach">'+(d.approaches||[]).map(p=>'<option value="'+esc(p.id)+'" '+(plan.approach===p.id?'selected':'')+'>'+esc(p.label)+'</option>').join('')+'</select></label>'+button('plan',{},copy('Enregistrer le plan','Save plan')):
     '<p>'+esc(copy('Plan verrouillé : ','Locked plan: ')+(plan.mode==='intervene'?copy('intervention','intervention'):copy('attente','waiting')))+'</p>'));
   }
   html+=card(copy('Accords avec les suspects','Agreements with suspects'),'<p>'+esc(copy('Un accord accepté transmet la déposition prévue dans la fiche du suspect et engage sa contrepartie, même si le sauvetage échoue. Une protection ne rend personne innocent.','Acceptance submits the testimony specified on the suspect’s card and binds the promised terms even if the rescue fails. Protection does not make anyone innocent.'))+'</p>'+(d.suspects||[]).map(p=>{
    const o=p.offer;return '<div class="igr031-agreement"><b>'+esc(p.pseudo)+'</b><p>'+esc(o?label(o.terms)+' · '+copy(({pending:'en attente',accepted:'accepté — engageant',refused:'refusé'})[o.status]||o.status,({pending:'pending',accepted:'accepted — binding',refused:'refused'})[o.status]||o.status):copy('Aucun accord : la décision finale sur la responsabilité s’appliquera.','No agreement: the final responsibility decision applies.'))+'</p>'+
-   (open&&['enqueteur','procureur'].includes(r)&&o?.status!=='accepted'?'<select id="c031Terms-'+esc(p.id)+'"><option value="protected_release">'+esc(label('protected_release'))+'</option><option value="prison">'+esc(label('prison'))+'</option><option value="release">'+esc(label('release'))+'</option></select>'+button('offer',{suspect_id:p.id},copy('Proposer cet accord','Offer these terms')):'')+'</div>'}).join(''));
+   (open&&['enqueteur','procureur'].includes(r)&&o?.status!=='accepted'?'<select id="c031Terms-'+esc(p.id)+'">'+['protected_release','prison','release'].map(t=>'<option value="'+t+'" '+(draft['c031Terms-'+p.id]===t?'selected':'')+'>'+esc(label(t))+'</option>').join('')+'</select>'+button('offer',{suspect_id:p.id},copy('Proposer cet accord','Offer these terms')):'')+'</div>'}).join(''));
  }
  if(r==='suspect'&&crisis){
   const o=d.offer;
@@ -92,21 +100,28 @@ function prepareAction(action,payload,d){
 }
 async function act(action,payload={}){
  if(busy)return;
- const d=localContext?localState(localContext.s,localActor):cache;
+ const d=localContext?localState(localContext.s,localActor):currentCache(),key=cacheKey;
+ if(!localContext&&!d?.enabled)return;
  const prepared=prepareAction(action,payload,d);if(!prepared)return;
+ const submittedDraft={...drafts};
  busy=true;
  try{
   if(localContext){applyLocal(localContext.s,localActor,action,prepared);localContext.save(localContext.s);renderLocal(localContext.s,localContext);return;}
   await window.rpc('igr_v171_031_act',{p_code:S().room,p_player_token:S().token,p_action:action,p_payload:prepared});
+  if(key!==sessionIdentity()){currentCache();return;}
+  const ids=action==='vote'?['c031Vote']:action==='plan'?['c031Mode','c031Location','c031Approach','c031Assault']:action==='offer'?['c031Terms-'+prepared.suspect_id]:[];
+  for(const id of ids)if(drafts[id]===submittedDraft[id])delete drafts[id];
   await window.syncNow?.(true);await refresh();window.renderGame?.();
  }catch(e){window.toast?.(e.message)}
  finally{busy=false}
 }
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-c031-action]');if(!b)return;e.preventDefault();act(b.dataset.c031Action,JSON.parse(b.dataset.c031Payload||'{}'));});
+document.addEventListener('change',e=>{if(localContext||!currentCache()?.open)return;const id=e.target?.id;if(/^c031(?:Vote|Mode|Location|Approach|Assault|Terms-.+)$/.test(id||''))drafts[id]=e.target.value;});
 const baseTabs=typeof window.gameTabs==='function'?window.gameTabs:null;
 if(baseTabs){const f=function(){const tabs=baseTabs.apply(this,arguments)||[];if(active()&&!tabs.some(t=>t.id==='cartel031'))tabs.push({id:'cartel031',label:'La Dette'});return tabs};try{gameTabs=f}catch{}window.gameTabs=f;}
 const baseTab=typeof window.renderGameTab==='function'?window.renderGameTab:null;
-if(baseTab){const f=function(){if(active()&&(S()?.tab==='cartel031'||S()?.tab==='prosecutor'&&me()?.public_role==='procureur')){localContext=null;localActor=null;return renderBoard(cache,me());}return baseTab.apply(this,arguments)};try{renderGameTab=f}catch{}window.renderGameTab=f;}
+if(baseTab){const f=function(){const d=currentCache();if(active()&&(S()?.tab==='cartel031'||S()?.tab==='prosecutor'&&me()?.public_role==='procureur')){localContext=null;localActor=null;return renderBoard(d,me(),drafts);}return baseTab.apply(this,arguments)};try{renderGameTab=f}catch{}window.renderGameTab=f;}
+const baseLeave=window.leaveRoom;if(typeof baseLeave==='function')window.leaveRoom=function(){try{return baseLeave.apply(this,arguments)}finally{currentCache();}};
 setInterval(refresh,2200);window.addEventListener('focus',refresh);setTimeout(refresh,400);
 const style=document.createElement('style');style.textContent='.igr031-proof{position:fixed;inset:0;z-index:1100;background:#030608f5;display:grid;align-items:center;padding:20px;overflow:auto}.igr031-proof>.igr031-card{max-width:650px;margin:auto}.igr031-page{display:grid;gap:14px}.igr031-card{padding:16px;border:1px solid #ffffff26;border-radius:16px;background:#ffffff06}.igr031-card p,.igr031-card blockquote{line-height:1.5;white-space:pre-line}.igr031-card label{display:grid;gap:6px;margin:12px 0}.igr031-card select{width:100%;min-height:44px;background:#14191f;color:#f2f4f6;border:1px solid #ffffff40;border-radius:8px;padding:8px}.igr031-card .btn{margin-top:10px;white-space:normal}.igr031-private{color:#dcb177;font-size:12px;font-weight:800}.igr031-agreement{padding:12px 0;border-top:1px solid #ffffff20}';document.head.appendChild(style);
 window.igr031Open=()=>{if(S()){S().tab='cartel031';window.renderGame?.();refresh()}};

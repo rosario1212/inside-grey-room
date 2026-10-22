@@ -5,7 +5,7 @@ import path from 'node:path';
 const target=path.resolve(process.argv[2]||'dist');
 const source=await readFile(path.join(target,'cartel031-v171.js'),'utf8');
 const meta=JSON.parse(await readFile(path.join(target,'cartel031-release.json'),'utf8'));
-assert.equal(meta.version,'v171-cartel031-la-dette');assert.deepEqual(meta.evidence_per_cycle,[4,5,4]);
+assert.equal(meta.version,'v172-cartel031-audit');assert.deepEqual(meta.evidence_per_cycle,[4,5,4]);
 for(const name of ['index.html','en.html'])assert((await readFile(path.join(target,name),'utf8')).includes('cartel031-v171.js?v='+meta.version));
 assert(!source.includes('"canonical_truth":{'));assert(!source.includes('family_proofs:{'));
 const baseCanon={
@@ -101,3 +101,4 @@ for(const locale of ['fr','en'])for(const count of [6,7,8]){
  assert.equal(api.prepareAction('end_rep',{}, {role:'maitre'}),null);
 }
 console.log('CARTEL 031 PASS: '+flows+' local decision flows, '+renders+' FR/EN role renders, private curtain, binding deals and permanent lawyer defeat.');
+await import('./cartel031-session-check.mjs');
