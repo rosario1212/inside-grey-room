@@ -31,7 +31,7 @@ assert(!client.includes('P14-V5')&&!client.includes('La décision locale'),'Publ
 
 const mk = (role,count,phase='interrogation_select',cycle=2,actions=[])=>{
   const sync={room:{code:'TEST029',scenario_id:'029',status:'playing',phase,cycle,
-    min_players:6,max_players:11,state:{cartel029_ready:true}},
+    min_players:6,max_players:12,state:{cartel029_ready:true}},
     player:{public_role:role,private_state:role==='suspect'?{'029_witness_index':4,'029_can_decide':true}:{}},
     players:[],events:[],my_actions:actions,suspects:[]};
   const scope={
@@ -56,8 +56,8 @@ const mk = (role,count,phase='interrogation_select',cycle=2,actions=[])=>{
   return scope;
 };
 let checks=0;
-for(let size=6;size<=11;size++){
-  const roles=['enqueteur','analyste','suspect','procureur','juge','journaliste','don','bras_droit'];
+for(let size=6;size<=12;size++){
+  const roles=['enqueteur','analyste','suspect','maitre','procureur','juge','journaliste','don','bras_droit'];
   for(const role of roles){
     const s=mk(role,size);
     if(['don','bras_droit'].includes(role)){
@@ -65,9 +65,9 @@ for(let size=6;size<=11;size++){
       assert(html.includes('Stratégie · cycle 2'));
       assert(html.includes('igr029LeaderDecision'));
       assert(html.includes(role==='don'?'Préserver le secret':'Rester loyal'));
-      if(role==='don'&&size===10)assert(!html.includes('igr029-compose'),
+      if(role==='don'&&size===11)assert(!html.includes('igr029-compose'),
         'Do not show a leader-to-leader composer with no right-hand player');
-      if(role==='don'&&size===11){
+      if(role==='don'&&size===12){
         s.STATE.sync.players=[{public_role:'bras_droit'}];
         assert(s.renderGameTab().includes('igr029-compose'),
           'Don/right-hand chat must appear when both roles are present');
@@ -94,4 +94,4 @@ const other=mk('journaliste',9);other.STATE.sync.room.scenario_id='028';
 assert(other.renderFinalLockForm().includes('Legacy final'));
 assert(other.phaseLabel('locking').includes('LEGACY locking'));
 checks++;
-console.log('CARTEL 029 consolidation PASS: '+checks+' role/render checks across 6–11 players; protected backend contracts, no private truth in client.');
+console.log('CARTEL 029 consolidation PASS: '+checks+' role/render checks across 6–12 players; protected backend contracts, no private truth in client.');

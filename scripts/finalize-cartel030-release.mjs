@@ -3,7 +3,7 @@ import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
-const version='v166-cartel-concise-descriptions';
+const version='v167-cartel-lawyer';
 const nativeBundle=(await readFile(path.join(target,'index.html'),'utf8')).includes('native-store-boundary-v14.js');
 // Run after all historical patchers: none may restore an older app URL or cache.
 for(const name of ['index.html','en.html',...(!nativeBundle?['service-worker.js']:[]),'app-v11.js']){
@@ -11,6 +11,7 @@ for(const name of ['index.html','en.html',...(!nativeBundle?['service-worker.js'
   let text=await readFile(file,'utf8');
   text=text.replace(/app-v11\.js\?v=[A-Za-z0-9._-]+/g,`app-v11.js?v=${version}`);
   text=text.replace(/dlc-suite-v12-37\.js\?v=[A-Za-z0-9._-]+/g,`dlc-suite-v12-37.js?v=${version}`);
+  text=text.replace(/(cartel029-v(?:107|121)\.js)\?v=[A-Za-z0-9._-]+/g,`$1?v=${version}`);
   if(name==='service-worker.js'){
     text=text.replace(/const CACHE='[^']+';/,`const CACHE='igr-${version}';`);
     if(!text.includes(`/app-v11.js?v=${version}`)){

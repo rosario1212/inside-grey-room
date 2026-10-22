@@ -36,7 +36,7 @@ const events=[
  {id:7,type:'cartel029_chat',visibility:'private',target:9,payload:{title:'private leadership'}},
  {id:8,type:'phase',visibility:'public',payload:{title:'new phase'}}
 ];
-const roles=['enqueteur','analyste','suspect','suspect','suspect','suspect','procureur','juge','journaliste','don','bras_droit'];
+const roles=['enqueteur','analyste','suspect','suspect','suspect','suspect','maitre','procureur','juge','journaliste','don','bras_droit'];
 const visible=(viewer,count,scenario='029')=>{
  const marker=scenario==='029'?events.filter(e=>e.type==='context').at(-1).id:0;
  return events.filter(e=>e.id>=marker&&(
@@ -45,7 +45,7 @@ const visible=(viewer,count,scenario='029')=>{
  )).map(e=>e.id);
 };
 let tested=0;
-for(let players=6;players<=11;players++){
+for(let players=6;players<=12;players++){
  for(let viewer=0;viewer<players;viewer++){
   const v=visible(viewer,players);
   assert(!v.includes(1)&&!v.includes(2)&&!v.includes(3),'Prior match leaked');
@@ -59,5 +59,5 @@ for(let players=6;players<=11;players++){
 }
 assert(visible(0,6,'001').includes(1),'Non-029 scenarios must keep their historical event policy');
 console.log('CARTEL 029 replay/privacy PASS: '+tested+
- ' separate role screens at 6–11 players, no old reveal, isolated evidence and recipient-only messages.');
+ ' separate role screens at 6–12 players, no old reveal, isolated evidence and recipient-only messages.');
 console.log('Note: simulated role/screens test. Real phone/tablet multiplayer not certified.');
