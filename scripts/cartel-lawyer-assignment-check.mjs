@@ -21,7 +21,7 @@ for(const scenario of ['030','031','016']){
   const api=context.IGR_LAWYER_V43;
   assert.equal(typeof api?.renderLawyerTab,'function');
   const assigned=scenario!=='016';
-  response={lawyer_count:1,assignment_mode:assigned?'cartel_priority':'request',mandate_locked:assigned,has_client:false,pending_requests:[],suspects:[]};
+  response={lawyer_count:1,assignment_mode:assigned?'cartel_priority':'request',mandate_locked:false,has_client:false,pending_requests:[],suspects:[]};
   await api.refresh(true);
   let html=api.renderLawyerTab();
   if(assigned)assert(!/Choisir un client|Choose a client/.test(html));

@@ -55,3 +55,4 @@ for(const role of ['enqueteur','analyste','procureur','juge','suspect','maitre',
 }
 console.log('CARTEL 030 PASS: final cache, deployed metadata, three private cards, mole mission, evidence access and escaped content.');
 await import('./cartel-lawyer-assignment-check.mjs');
+await import('./lawyer-mutual-termination-check.mjs');
