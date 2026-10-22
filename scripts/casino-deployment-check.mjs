@@ -25,17 +25,17 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   const cartelResponse=await get('/cartel030-release.json?commit='+encodeURIComponent(expected)+'&probe='+attempt);
   assert.equal(cartelResponse.status,200);
   cartel=await cartelResponse.json();
-  if(!expected||(cartel.commit===expected&&cartel.version==='v167-cartel-lawyer'))break;
+  if(!expected||(cartel.commit===expected&&cartel.version==='v168-cartel-lawyer-labels'))break;
   console.log('Waiting for CARTEL assets: expected '+expected.slice(0,9)+' got '+String(cartel.commit).slice(0,9));
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
 }
 assert.equal(cartel.scenario,'030');
-assert.equal(cartel.version,'v167-cartel-lawyer');
+assert.equal(cartel.version,'v168-cartel-lawyer-labels');
 if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deployed commit');
 assert.deepEqual(cartel.moles,{'7':1,'8':1,'9':2});
 assert.deepEqual(cartel.evidence_per_cycle,[6,7,10]);
 const cartelHome=await get('/?release='+encodeURIComponent(cartel.version));
-assert.match(await cartelHome.text(),/app-v11\.js\?v=v167-cartel-lawyer/);
+assert.match(await cartelHome.text(),/app-v11\.js\?v=v168-cartel-lawyer-labels/);
 const cartelApp=await get('/app-v11.js?v='+cartel.version);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
@@ -46,7 +46,7 @@ assert((await cartelRoles.text()).includes("maitre:{label:'Avocat du cartel'"),'
 for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
 assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
 const cartelWorker=await get('/service-worker.js?v='+cartel.version);
-assert((await cartelWorker.text()).includes("const CACHE='igr-v167-cartel-lawyer';"));
+assert((await cartelWorker.text()).includes("const CACHE='igr-v168-cartel-lawyer-labels';"));
 for(const poster of ['campagne','scenario-1','scenario-2','scenario-3']){
  const response=await get('/assets/casino/'+poster+'.webp');assert.equal(response.status,200);
  assert.match(response.headers.get('Content-Type'),/image\/webp/);
