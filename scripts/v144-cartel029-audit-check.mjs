@@ -52,9 +52,9 @@ assert.match(choices,/positionPending\|\|!active\(\)\|\|!permitted029Phase\(\)/)
 assert.match(reportUi,/room\?\.status==='finished'/,'Reports should be read-only after the reveal');
 assert.match(reportUi,/responsibility_choice/);
 const lobbyQa=spawnSync(process.execPath,['scripts/cartel029-multiplayer-check.mjs'],{encoding:'utf8'});
-assert.equal(lobbyQa.status,0,'029 6–12 players role-choice regression failed: '+lobbyQa.stdout+'\n'+lobbyQa.stderr);
+assert.equal(lobbyQa.status,0,'029 6–11 players role-choice regression failed: '+lobbyQa.stdout+'\n'+lobbyQa.stderr);
 const roleQa=spawnSync(process.execPath,['scripts/cartel029-consolidation-check.mjs'],{encoding:'utf8'});
-assert.equal(roleQa.status,0,'029 consolidation 6–12 roles failed: '+roleQa.stdout+'\n'+roleQa.stderr);
+assert.equal(roleQa.status,0,'029 consolidation 6–11 roles failed: '+roleQa.stdout+'\n'+roleQa.stderr);
 const replayQa=spawnSync(process.execPath,['scripts/cartel029-rematch-privacy-check.mjs'],{encoding:'utf8'});
 assert.equal(replayQa.status,0,'029 rematch and access isolation: '+replayQa.stdout+'\n'+replayQa.stderr);
 const finalSql=await read('supabase/migrations/20261019210000_v163_cartel029_final_gamepath.sql');

@@ -25,6 +25,7 @@ const token=()=>S()?.token||'';
 const lawyerPresent=()=>players().some(p=>p.public_role==='maitre');
 const lawyerRelevant=()=>['maitre','suspect'].includes(role())&&lawyerPresent();
 let cache=null,loading=false,lastSig='',refreshQueued=false;
+const assignedByCartel=()=>cache?.mandate_locked===true||['030','031'].includes(String(room()?.scenario_id||''));
 
 function playerName(id){return players().find(p=>String(p.id)===String(id))?.pseudo||suspects().find(p=>String(p.id)===String(id))?.pseudo||copy('Suspect','Suspect')}
 function phase(){return String(room()?.phase||'')}
@@ -123,9 +124,10 @@ function requestStatus(){
   const req=cache?.request;
   if(cache?.represented){
     const n=cache?.lawyer?.pseudo||copy('l’avocat','the lawyer');
-    return `<article class="igr43-client-card"><small>${esc(copy('REPRÉSENTATION CONFIRMÉE','REPRESENTATION CONFIRMED'))}</small><h3>${esc(n)}</h3><p>${esc(copy('La représentation est officielle jusqu’à la fin de l’affaire.','Representation is official for the rest of the case.'))}</p></article>`;
+    return `<article class="igr43-client-card"><small>${esc(assignedByCartel()?copy('MANDAT DU CARTEL','CARTEL APPOINTMENT'):copy('REPRÉSENTATION CONFIRMÉE','REPRESENTATION CONFIRMED'))}</small><h3>${esc(n)}</h3><p>${esc(assignedByCartel()?copy('Los Salcedo a désigné ton avocat. Ce mandat est fixé pour toute la partie.','Los Salcedo appointed your lawyer. This assignment is fixed for this game.'):copy('La représentation est officielle jusqu’à la fin de l’affaire.','Representation is official for the rest of the case.'))}</p></article>`;
   }
   if(!cache?.lawyer_count)return `<div class="locked-state">${esc(copy('Aucun avocat n’est présent dans cette partie.','No lawyer is present in this game.'))}</div>`;
+  if(assignedByCartel())return `<div class="locked-state">${esc(copy('Le cartel a déjà désigné le client de son avocat. Tu peux lui parler librement, sans devenir son client officiel.','The cartel has already appointed its lawyer’s client. You may speak freely with the lawyer without becoming the official client.'))}</div>`;
   if(req?.status==='pending')return `<article class="igr43-pending"><b>${esc(copy('Demande envoyée','Request sent'))}</b><span>${esc(copy('L’avocat peut recevoir le suspect pendant 1 minute maximum avant de décider. Un refus ne bloque pas une nouvelle demande.','The lawyer may meet the suspect for up to one minute before deciding. A refusal does not block a new request.'))}</span></article>`;
   if(cache?.can_request){
     const again=req?.status==='refused';
@@ -142,7 +144,7 @@ function unofficialRule(forSuspect=false){
 }
 
 function renderSuspectLawyer(){
-  return `<section class="igr43-lawyer-page"><header><small>${esc(copy('DÉFENSE','DEFENCE'))}</small><h2>${esc(lawyerTitle())}</h2><p>${esc(copy('Une représentation officielle est exclusive. Un refus reste réversible tant qu’aucun client n’a été choisi.','Official representation is exclusive. A refusal remains reversible while no client has been chosen.'))}</p></header>${cache?requestStatus():`<div class="locked-state">${esc(copy('Chargement…','Loading…'))}</div>`}${unofficialRule(true)}</section>`;
+  return `<section class="igr43-lawyer-page"><header><small>${esc(copy('DÉFENSE','DEFENCE'))}</small><h2>${esc(lawyerTitle())}</h2><p>${esc(assignedByCartel()?copy('Los Salcedo assigne son avocat à un seul suspect, prioritaire à ses yeux. Le mandat est fixé dès le début.','Los Salcedo assigns its lawyer to one suspect it prioritises. The appointment is fixed at the start.'):copy('Une représentation officielle est exclusive. Un refus reste réversible tant qu’aucun client n’a été choisi.','Official representation is exclusive. A refusal remains reversible while no client has been chosen.'))}</p></header>${cache?requestStatus():`<div class="locked-state">${esc(copy('Chargement…','Loading…'))}</div>`}${unofficialRule(true)}</section>`;
 }
 
 function requestCard(q){
@@ -160,8 +162,9 @@ function renderLawyerDesk(){
   if(!cache)return `<section class="igr43-lawyer-page"><div class="locked-state">${esc(copy('Chargement des demandes…','Loading requests…'))}</div></section>`;
   if(cache.has_client){
     const c=cache.client||{};
-    return `<section class="igr43-lawyer-page"><header><small>${esc(copy('REPRÉSENTATION OFFICIELLE','OFFICIAL REPRESENTATION'))}</small><h2>${esc(lawyerTitle())}</h2></header><article class="igr43-client-card strong"><small>${esc(copy('CLIENT UNIQUE · VERROUILLÉ','ONLY CLIENT · LOCKED'))}</small><h3>${esc(c.pseudo||'')}</h3><p>${esc(c.brief||'')}</p><button class="btn primary block" type="button" onclick="igr43Meet('${esc(c.id)}','${esc(String(c.pseudo||'').replace(/'/g,"\\'"))}',true)">${esc(copy('Se concerter · 1 min','Confer · 1 min'))}</button></article>${unofficialRule(false)}${consultationRoster()}</section>`;
+    return `<section class="igr43-lawyer-page"><header><small>${esc(copy('REPRÉSENTATION OFFICIELLE','OFFICIAL REPRESENTATION'))}</small><h2>${esc(lawyerTitle())}</h2></header><article class="igr43-client-card strong"><small>${esc(assignedByCartel()?copy('CLIENT DÉSIGNÉ PAR LE CARTEL','CARTEL-APPOINTED CLIENT'):copy('CLIENT UNIQUE · VERROUILLÉ','ONLY CLIENT · LOCKED'))}</small><h3>${esc(c.pseudo||'')}</h3><p>${esc(c.brief||'')}</p><button class="btn primary block" type="button" onclick="igr43Meet('${esc(c.id)}','${esc(String(c.pseudo||'').replace(/'/g,"\\'"))}',true)">${esc(copy('Se concerter · 1 min','Confer · 1 min'))}</button></article>${unofficialRule(false)}${consultationRoster()}</section>`;
   }
+  if(assignedByCartel())return `<section class="igr43-lawyer-page"><header><small>${esc(copy('MANDAT DU CARTEL','CARTEL APPOINTMENT'))}</small><h2>${esc(lawyerTitle())}</h2></header><div class="locked-state">${esc(copy('Chargement du client désigné par Los Salcedo…','Loading the client appointed by Los Salcedo…'))}</div>${unofficialRule(false)}</section>`;
   const requests=Array.isArray(cache.pending_requests)?cache.pending_requests:[];
   return `<section class="igr43-lawyer-page"><header><small>${esc(copy('REPRÉSENTATION','REPRESENTATION'))}</small><h2>${esc(copy('Choisir un client','Choose a client'))}</h2><p>${esc(copy('Chaque demande peut être examinée après un entretien de 1 minute maximum. L’acceptation est le seul choix irréversible.','Each request can be considered after a meeting of up to one minute. Acceptance is the only irreversible choice.'))}</p></header>${requests.length?`<div class="igr43-request-list">${requests.map(requestCard).join('')}</div>`:`<div class="locked-state">${esc(copy('Aucune demande en attente. Les suspects peuvent redemander après un refus jusqu’au cycle 3.','No pending request. Suspects may ask again after a refusal through cycle 3.'))}</div>`}${unofficialRule(false)}${consultationRoster()}</section>`;
 }
@@ -235,7 +238,7 @@ if(basePrivate){
         }
       }
       const summary=card.querySelector('.role-summary span');
-      if(summary)summary.textContent=copy('Choisir un seul client officiel et empêcher que sa responsabilité soit surestimée, sans inventer de fait ni de preuve.','Choose one official client and prevent that client’s responsibility from being overstated, without inventing facts or evidence.');
+      if(summary)summary.textContent=assignedByCartel()?copy('Défends le client que Los Salcedo t’a assigné. Obtiens tes informations pendant la partie ; ton mandat ne révèle aucun secret du cartel.','Defend the client appointed by Los Salcedo. Obtain information during play; your appointment reveals no cartel secrets.'):copy('Choisir un seul client officiel et empêcher que sa responsabilité soit surestimée, sans inventer de fait ni de preuve.','Choose one official client and prevent that client’s responsibility from being overstated, without inventing facts or evidence.');
       return t.innerHTML;
     }catch{return html}
   };
@@ -245,7 +248,8 @@ if(basePrivate){
 function roleCardHelperHtml(){
   if(role()==='suspect')return `<div class="igr43-role-helper"><b>⚖ ${esc(copy('AVOCAT','LAWYER'))}</b>${cache?requestStatus():`<span>${esc(copy('Chargement…','Loading…'))}</span>`}<small>${esc(copy('Même sans représentation officielle, l’avocat peut répondre aux questions des suspects et les recevoir officieusement en salle d’attente.','Even without official representation, the lawyer may answer suspects’ questions and meet them unofficially in the waiting room.'))}</small></div>`;
   if(role()==='maitre'){
-    if(cache?.has_client)return `<div class="igr43-role-helper"><b>${esc(copy('CLIENT OFFICIEL','OFFICIAL CLIENT'))}</b><strong>${esc(cache.client?.pseudo||'')}</strong><span>${esc(cache.client?.brief||'')}</span></div>`;
+    if(cache?.has_client)return `<div class="igr43-role-helper"><b>${esc(assignedByCartel()?copy('CLIENT DÉSIGNÉ PAR LE CARTEL','CARTEL-APPOINTED CLIENT'):copy('CLIENT OFFICIEL','OFFICIAL CLIENT'))}</b><strong>${esc(cache.client?.pseudo||'')}</strong><span>${esc(cache.client?.brief||'')}</span></div>`;
+    if(assignedByCartel())return `<div class="igr43-role-helper"><b>${esc(copy('MANDAT DU CARTEL','CARTEL APPOINTMENT'))}</b><span>${esc(copy('Ton client officiel est désigné par Los Salcedo dès le début de la partie.','Los Salcedo appoints your official client at the start of the game.'))}</span></div>`;
     const n=Array.isArray(cache?.pending_requests)?cache.pending_requests.length:0;
     return `<div class="igr43-role-helper"><b>${esc(copy('REPRÉSENTATION','REPRESENTATION'))}</b><span>${esc(copy(`${n} demande${n===1?'':'s'} en attente. Les entretiens durent 1 minute maximum.`,`${n} pending request${n===1?'':'s'}. Meetings last up to one minute.`))}</span><small>${esc(copy('Les demandes sont gérées dans l’onglet Clients une fois la partie ouverte.','Requests are managed in the Clients tab once the game view is open.'))}</small></div>`;
   }

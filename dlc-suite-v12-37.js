@@ -15,7 +15,7 @@
   // Shared public canon only: all places and characters are fictional.
   // Never encode A/B/C culprit, secret loyalties or evidence outcomes here.
   const CARTEL=[
-    {id:'029',title:'LE CYCLE MORT',short:'Trois rescapés demandent protection à la Grey Room. Le cartel a tué leur compagnon et envoyé sa langue en avertissement. Vingt prisonniers restent à sa merci.',context:'Trois rescapés demandent protection à la Grey Room. Le cartel a tué leur compagnon et envoyé sa langue en avertissement. Vingt prisonniers restent à sa merci.',mood:'Sinaloa · témoignages · menaces · survie.',min:6,max:12,sound:'threat',mechanics:['Témoignages contradictoires','Hiérarchie du cartel','Protection des captifs']},
+    {id:'029',title:'LE CYCLE MORT',short:'Trois rescapés demandent protection à la Grey Room. Le cartel a tué leur compagnon et envoyé sa langue en avertissement. Vingt prisonniers restent à sa merci.',context:'Trois rescapés demandent protection à la Grey Room. Le cartel a tué leur compagnon et envoyé sa langue en avertissement. Vingt prisonniers restent à sa merci.',mood:'Sinaloa · témoignages · menaces · survie.',min:6,max:11,sound:'threat',mechanics:['Témoignages contradictoires','Hiérarchie du cartel','Protection des captifs']},
     {id:'030',title:'LA COUR ACHETÉE',short:'Le cartel a massacré un gouverneur et sa famille, puis détruit un registre compromettant. Trois assaillants ont été capturés. La Grey Room doit reconstituer les noms et les crimes que ce registre contenait.',context:'Le cartel a massacré un gouverneur et sa famille, puis détruit un registre compromettant. Trois assaillants ont été capturés. La Grey Room doit reconstituer les noms et les crimes que ce registre contenait.',mood:'Mexique · massacre · registre détruit · corruption institutionnelle.',min:7,max:9,sound:'court',mechanics:['Reconstitution des faits','Trois colonnes du registre','Confrontations et recoupements','Intégrité des preuves']},
     {id:'031',title:'LA DETTE',short:'À Puerto Ceniza, Los Salcedo font peser leur ombre sur les proches de la cellule. La peur devient personnelle, mais les preuves restent décisives.',context:'Mexique, côte du Sinaloa. Les silences des suspects et les fractures de la famille Salcedo se mêlent à une menace visant un proche de la cellule. La paranoïa de Don Ismael et les rivalités entre ses fils, frères et neveux nourrissent les soupçons sans établir les responsabilités. Protéger quelqu’un, poursuivre une piste ou révéler une information peut avoir un coût. La provenance de chaque menace doit être prouvée.',mood:'Mexique · dette · pression intime.',min:6,max:8,sound:'debt',mechanics:['Pression privée','Négociation','Responsabilité indirecte']}
   ];
@@ -37,7 +37,7 @@
 
   for(const sc of [...CARTEL,...REGIME])if(!SCENARIOS.some(x=>x.id===sc.id))SCENARIOS.push(sc);
   Object.assign(SCENARIO_ROLES,{
-    '029':{required:['Enquêteur','Analyste','4 témoins'],optional:['Avocat','Procureur','Juge','Journaliste','Don','Bras droit']},
+    '029':{required:['Enquêteur','Analyste','4 témoins'],optional:['Procureur','Juge','Journaliste','Don','Bras droit']},
     '030':{required:['Enquêteur','Analyste','Procureur','Juge','3 suspects'],optional:['Avocat','Journaliste']},
     '031':{required:['Enquêteur','Analyste','3 suspects','Avocat'],optional:['Procureur','Témoin']},
     '032':{required:['Enquêteur','Analyste','Procureur','3 suspects'],optional:['Juge','Témoin']},

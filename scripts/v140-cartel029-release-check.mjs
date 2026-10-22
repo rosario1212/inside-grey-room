@@ -10,7 +10,7 @@ const [release,interview,seed,catalog]=await Promise.all([
 const from=catalog.indexOf("{id:'029'"),to=catalog.indexOf("{id:'030'",from);
 assert(from>=0&&to>from);
 const item=catalog.slice(from,to);
-assert.match(item,/min:6,max:12/);
+assert.match(item,/min:6,max:11/);
 assert.doesNotMatch(item,/min:5,max:8/);
 assert.match(release,/manually_activated/);
 assert.match(release,/jsonb_array_length/);
@@ -24,5 +24,5 @@ assert.match(seed,/join igr_private\.igr_v107_029_editorial_matrix/);
 assert.match(seed,/pin\.match_no=n/);
 const c=spawnSync(process.execPath,['--check','dlc-suite-v12-37.js'],{encoding:'utf8'});
 assert.equal(c.status,0,'DLC source JavaScript invalid: '+c.stderr);
-console.log('029 v140 release assets PASS: new 6–12 catalog, private matrix gate, pinned variant, four-interview fix.');
+console.log('029 v140 release assets PASS: 6–11 catalog without lawyer, private matrix gate, pinned variant, four-interview fix.');
 console.log('Independent reviewer and device QA flags intentionally untouched.');

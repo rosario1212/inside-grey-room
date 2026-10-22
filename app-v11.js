@@ -66,7 +66,7 @@ function rolesBlock(sc){
  if(sc?.id==='029'){
    const en=window.IGR_LOCALE==='en';
    return '<div class="roles-availability"><div class="roles-row"><span>'+(en?'Required':'Obligatoires')+'</span><p>'+(en?'Investigator · Analyst · 4 witnesses':'Enquêteur · Analyste · 4 témoins')+'</p></div>'+
-   '<div class="roles-row optional"><span>'+(en?'Optional':'Facultatifs')+'</span><p>'+(en?'Cartel lawyer · Prosecutor · Judge · Journalist · Don · Right hand':'Avocat du cartel · Procureur · Juge · Journaliste · Don · Bras droit')+'</p></div></div>';
+   '<div class="roles-row optional"><span>'+(en?'Optional':'Facultatifs')+'</span><p>'+(en?'Prosecutor · Judge · Journalist · Don · Right hand':'Procureur · Juge · Journaliste · Don · Bras droit')+'</p></div></div>';
  }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]};
  const label=x=>h(x==='Avocat'?(cartelLawyerLabel(sc.id)||x):x);
@@ -89,11 +89,10 @@ function expandRoleLabel(label){
 }
 function lobbyRoleSlots(sc,count){
  // 029: a room starts with one member, but all SIX mandatory seats must be
- // selectable immediately. A cartel lawyer joins first, then the existing optional roles.
+ // selectable immediately. The optional roles do not include a lawyer.
  // Restrict this to the actual four-witness server roster: legacy rooms differ.
- if(sc?.id==='029'&&Number(STATE?.sync?.room?.min_players)===6&&[11,12].includes(Number(STATE?.sync?.room?.max_players))){
-  const roster=['enqueteur','analyste','suspect','suspect','suspect','suspect',
-    ...(Number(STATE.sync.room.max_players)===12?['maitre']:[]),'procureur','juge','journaliste','don','bras_droit'];
+ if(sc?.id==='029'&&Number(STATE?.sync?.room?.min_players)===6&&Number(STATE?.sync?.room?.max_players)===11){
+  const roster=['enqueteur','analyste','suspect','suspect','suspect','suspect','procureur','juge','journaliste','don','bras_droit'];
   return roster.slice(0,Math.min(Number(STATE.sync.room.max_players),Math.max(6,count)));
  }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]},slots=[];
@@ -495,8 +494,8 @@ function h(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;'
 function byId(id){return document.getElementById(id)}
 function scenario(id){return SCENARIOS.find(s=>s.id===id)||SCENARIOS[0]}
 function currentScenario(){return scenario(STATE.scenarioId||STATE.selectedScenario)}
-function cartelLawyerLabel(id=STATE.sync?.room?.scenario_id||STATE.selectedScenario||STATE.scenarioId){return ['029','030','031'].includes(String(id))?(window.IGR_LOCALE==='en'?'Cartel lawyer':'Avocat du cartel'):''}
-function roleInfo(r){const info=ROLE_INFO[r]||ROLE_INFO.suspect,label=r==='maitre'?cartelLawyerLabel():'';return label?{...info,label}:info}
+function cartelLawyerLabel(id=STATE.sync?.room?.scenario_id||STATE.selectedScenario||STATE.scenarioId){return ['030','031'].includes(String(id))?(window.IGR_LOCALE==='en'?'Cartel lawyer':'Avocat du cartel'):''}
+function roleInfo(r){const info=ROLE_INFO[r]||ROLE_INFO.suspect,label=r==='maitre'?cartelLawyerLabel():'';return label?{...info,label,win:window.IGR_LOCALE==='en'?'Defend the client appointed by Los Salcedo.':'Défends le client que Los Salcedo t’a assigné.',body:window.IGR_LOCALE==='en'?'The cartel appoints your only official client at the start. You may speak freely with the other suspects. Your appointment reveals no hidden facts.':'Le cartel désigne ton unique client officiel dès le début. Tu peux parler librement avec les autres suspects. Ton mandat ne révèle aucun fait caché.'}:info}
 function toast(msg){const el=byId('toast');if(!el)return;el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
 function sessionKey(){return'igr_v11_session'}
 function storeKey(){return`igr_v11_notes_${STATE.room}`}
