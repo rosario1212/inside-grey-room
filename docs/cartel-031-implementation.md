@@ -52,3 +52,19 @@ La vérification directe des permissions confirme que ni `anon` ni `authenticate
 La cohérence narrative est conservée : A/B changent l’exécution du transfert, C change le donneur de l’ordre immédiat du massacre ; l’identité d’El Luto et la vengeance restent communes. L’identité commune et la résolution collective des proches limitent volontairement la diversité des dénouements. Le rythme, la tension réelle et l’équilibre des échanges restent à évaluer autour d’une table.
 
 Une nouvelle campagne de contrôle serveur a validé 24 démarrages/reprises et 12 dénouements supplémentaires (trois variantes, quatre issues chacune, six joueurs, durée courte), avec annulation de toutes les données de test. Elle complète la matrice initiale de 144 démarrages et 72 dénouements couvrant les autres effectifs et durées.
+
+## Négociation et lisibilité — v173
+
+Les treize pièces et les trois cycles sont conservés. Les pièces distinguent désormais une observation du terrain, un plan prévu et une information d’organisation détenue par un suspect. Elles ne donnent plus à elles seules la combinaison complète du lieu et de l’approche. Les trois suspects disposent de renseignements complémentaires sur les consignes, la réception et le mouvement ; ils ignorent toujours les décisions prises après leur arrestation. Les messages du dernier cycle permettent de confronter le plan à son exécution.
+
+La promesse d’échange d’El Luto est formulée explicitement. Le document du dernier cycle conserve des signes inquiétants vérifiables sans annoncer directement le résultat du choix. L’avocat dispose d’un précédent limité : il connaît un échange que le cartel a respecté, mais n’a jamais négocié avec El Luto. Il ne connaît pas ses intentions cachées et ne peut garantir sa parole.
+
+L’Analyste prend en charge le recoupement, le Procureur les contreparties, l’avocat la négociation pour son client et le Témoin les limites de ses observations. Le panneau affiche un objectif et une courte consigne propres au rôle et au moment de la partie. Après la première ouverture automatique, la preuve de vie privée se consulte dans un bloc replié en multijoueur ; elle reste affichée sur l’écran privé en mode local.
+
+Aucune signature n’est exigée pour lancer un sauvetage. Une information peut être échangée oralement ; signer transmet le renseignement complet affiché et engage les conditions acceptées. Le bureau peut agir même si les suspects se taisent, mais doit alors décider avec davantage d’incertitude. Une coopération n’efface pas la responsabilité et l’absence d’accord ne libère pas automatiquement un suspect.
+
+Le contrôle supplémentaire à sept joueurs vérifie un sauvetage sans déposition signée et l’application de la décision finale aux suspects. Il complète les contrôles des accords, des issues, des rôles et des sessions. Les solutions, votes, fins, proches et règles de victoire sont conservés. Les parties déjà commencées gardent leur manuscrit figé ; la révision éditoriale s’applique aux nouvelles parties.
+
+Le format de sept ou huit joueurs est le plus adapté au vote : trois membres du bureau permettent une majorité de deux contre un. À six joueurs, les deux membres doivent voter pour le même choix. La tension, le rythme des négociations et l’utilité ressentie des rôles demandent encore une partie humaine ; cette révision ne constitue pas sa simulation émotionnelle ni une note définitive de 10/10.
+
+Validation v173 côté serveur : 24 démarrages/reprises et 12 dénouements à sept joueurs sur A/B/C, puis trois parties supplémentaires sans déposition signée, vérifiées par `scripts/cartel031-oral-play-check.sql`. Toutes les données de test sont annulées. Les contrôles du client comprennent aussi deux parcours locaux sans signature (FR/EN), les objectifs propres aux rôles avant la crise et la conservation de l’ouverture de la preuve privée pendant une actualisation.
