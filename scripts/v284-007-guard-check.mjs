@@ -2,10 +2,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 
-const [app, privilegeMigration, contract] = await Promise.all([
+const [app, privilegeMigration, contract, releaseMigration, roomMigration] = await Promise.all([
   readFile('app-v11.js', 'utf8'),
   readFile('supabase/migrations/20261023185000_v284_revoke_007_investigation_until_release.sql', 'utf8'),
-  readFile('SCENARIO_007_RELEASE_GATES.md', 'utf8')
+  readFile('SCENARIO_007_RELEASE_GATES.md', 'utf8'),
+  readFile('supabase/migrations/20261024002000_igr_v291_292_007_release_gates.sql', 'utf8'),
+  readFile('supabase/migrations/20261024004500_igr_v293_007_deny_unreleased_room_insert.sql', 'utf8')
 ]);
 
 // The public app can display only scenario-scoped titles and reports already
@@ -37,6 +39,16 @@ assert.doesNotMatch(app, /scenarioClientIsReleased/);
 assert.match(privilegeMigration, /REVOKE EXECUTE ON FUNCTION public\.igr_v282_007_investigate/);
 assert.match(privilegeMigration, /FROM PUBLIC, anon, authenticated/);
 assert.doesNotMatch(privilegeMigration, /(?:^|\n)\s*GRANT\s+EXECUTE\b/im);
+
+// Publish only after the private gate is true. Never grant direct investigation
+// or manuscript access; old clients are also blocked by the database trigger.
+assert.match(releaseMigration, /igr_v291_007_catalog_enabled/);
+assert.match(releaseMigration, /igr_v292_007_investigate/);
+assert.match(releaseMigration, /igr_v281_007_release_status/);
+assert.match(releaseMigration, /revoke all on function public\.igr_v282_007_investigate/);
+assert.match(roomMigration, /new\.scenario_id='007'/);
+assert.match(roomMigration, /before insert or update of scenario_id on public\.igr_v4_rooms/);
+assert.doesNotMatch(roomMigration, /new\.scenario_id\s*!=?\s*'007'/);
 
 // Keep the specific go/no-go decision explicit and human-verifiable.
 assert.match(contract, /3\/3/);
