@@ -550,13 +550,30 @@ function goJoin(){STATE.view='join';saveSession();renderJoin()}
 function goRules(){STATE.view='rules';saveSession();renderRules()}
 function goProfile(){STATE.view='profile';saveSession();renderProfile()}
 
-// DOSSIER 007 NON PUBLIÉ: les chemins client restent fermés jusqu'à validation
-// éditoriale, QA multijoueur et autorisation serveur. Ne pas supprimer ces gardes isolément.
+// DOSSIER 007 NON PUBLIÉ: le client ne l'ouvre que si le serveur l'autorise.
+// La création/le lancement refont une vérification fraîche; le serveur reste l'autorité. Ne pas supprimer ces gardes isolément.
+// Release discovery is Boolean-only; manuscripts remain in the private schema.
+// Every actual room creation and launch rechecks the server (fail closed).
+const IGR007_PUBLISH={enabled:false,checkedAt:0,checking:false};
+async function refresh007PublishState(force=false){
+ if(IGR007_PUBLISH.checking||(!force&&Date.now()-IGR007_PUBLISH.checkedAt<30000))return;
+ IGR007_PUBLISH.checking=true;
+ try{
+  IGR007_PUBLISH.enabled=(await rpc('igr_v291_007_catalog_enabled',{}))===true;
+ }catch{
+  IGR007_PUBLISH.enabled=false;
+ }finally{
+  IGR007_PUBLISH.checkedAt=Date.now();
+  IGR007_PUBLISH.checking=false;
+ }
+ if(STATE.view==='create-list')renderCreateList();
+}
 function renderCreateList(){
- byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${sc.id!=='007'?'button':'group'}" ${sc.id!=='007'?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${sc.id!=='007'?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||IGR007_PUBLISH.enabled)?'button':'group'}" ${(sc.id!=='007'||IGR007_PUBLISH.enabled)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||IGR007_PUBLISH.enabled)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ void refresh007PublishState();
 }
 function selectScenario(id){
- if(id==='007')return toast('Dossier en préparation : publication non autorisée.');
+ if(id==='007'&&!IGR007_PUBLISH.enabled)return toast('Dossier en préparation : publication non autorisée.');
  STATE.createListScrollY=window.scrollY;
  STATE.selectedScenario=id;
  STATE.view='create-confirm';
@@ -889,7 +906,11 @@ async function createRoom(){
  const pseudo=(byId('createPseudo')?.value||'').trim();
  if(!pseudo)return toast('Entre ton pseudo.');
  const sc=scenario(STATE.selectedScenario);
- if(sc.id==='007')return toast('Dossier 007 en préparation : création suspendue.');
+ if(sc.id==='007'){
+  let released=false;
+  try{released=(await rpc('igr_v291_007_catalog_enabled',{}))===true}catch{}
+  if(!released)return toast('Dossier 007 en préparation : création suspendue.');
+ }
  let out=null,code=null;
  for(let attempt=0;attempt<5;attempt++){
   code=newCode();
@@ -1104,7 +1125,11 @@ async function prepareLobbyAudio(){
 }
 async function startGame(){
  if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
- if(STATE.sync?.room?.scenario_id==='007')return toast('Dossier 007 en préparation : lancement suspendu.');
+ if(STATE.sync?.room?.scenario_id==='007'){
+  let released=false;
+  try{released=(await rpc('igr_v291_007_catalog_enabled',{}))===true}catch{}
+  if(!released)return toast('Dossier 007 en préparation : lancement suspendu.');
+ }
  const d=STATE.sync,autoCount=(d?.players||[]).filter(p=>!p.preferred_role).length;
  cancelBriefingVoice();stopAmbient();
  try{const result=await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs.')}
@@ -1647,7 +1672,7 @@ function myContinuationAction(type){
 }
 function compatibleNextScenarios(d){
  const count=(d.players||[]).length;
- const all=SCENARIOS.filter(s=>s.id!=='007'&&count>=s.min&&count<=s.max);
+ const all=SCENARIOS.filter(s=>(s.id!=='007'||IGR007_PUBLISH.enabled)&&count>=s.min&&count<=s.max);
  const alternatives=all.filter(s=>s.id!==d.room.scenario_id);
  return alternatives.length?alternatives:all;
 }
