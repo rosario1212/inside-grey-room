@@ -20,15 +20,15 @@ for (const axis of ['igr007Cause', 'igr007Actor', 'igr007Decoy']) {
 }
 assert.match(app, /currentCase==='007'\?\['cause','actor','decoy'\]/);
 
-// Until the live 3/3 gate and editorial approvals pass, all client paths are
-// visibly locked: catalogue, selection, creation, launch and post-game vote.
-assert.match(app, /const SCENARIO_007_CLIENT_RELEASED = false;/);
-assert.match(app, /function scenarioClientIsReleased\(id\)/);
-assert.match(app, /if\(!scenarioClientIsReleased\(id\)\)return toast/);
-assert.match(app, /if\(!scenarioClientIsReleased\(sc\.id\)\)return toast/);
-assert.match(app, /SCENARIOS\.filter\(s=>scenarioClientIsReleased\(s\.id\)/);
-assert.match(app, /if\(!scenarioClientIsReleased\(STATE\.sync\?\.room\?\.scenario_id\)\)return toast/);
+// All client paths are closed before editorial release and 5-player QA.
+// VM-isolated tests extract individual functions, so guards remain local.
+assert.match(app, /DOSSIER 007 NON PUBLIÉ/);
+assert.match(app, /if\(id==='007'\)return toast/);
+assert.match(app, /if\(sc\.id==='007'\)return toast/);
+assert.match(app, /SCENARIOS\.filter\(s=>s\.id!=='007'&&/);
+assert.match(app, /if\(STATE\.sync\?\.room\?\.scenario_id==='007'\)return toast/);
 assert.match(app, /EN PRÉPARATION/);
+assert.doesNotMatch(app, /scenarioClientIsReleased/);
 
 // A code deployment cannot silently unlock the privileged RPC.
 assert.match(privilegeMigration, /REVOKE EXECUTE ON FUNCTION public\.igr_v282_007_investigate/);
