@@ -11,7 +11,7 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 ## API sécurisée — préparée côté serveur, mais activation bloquée
 - Le **release gate** privé `igr_v281_007_release_status()` a été installé et vérifie l'intégrité et l'approbation des trois manuscrits, leurs packs valides, leur confidentialité et la présence de trois vérités distinctes. En l'absence d'une seule variante, **ne pas activer de tirage automatique**.
 - `igr_v281_007_pin_room` et `igr_v281_007_pinned_pack` sont installées. Les fonctions de démarrage, reprise, fiches, indices et révélation sont raccordées au snapshot privé. **Le contrôle refuse actuellement tout nouveau démarrage 007 (2/3 packs)**.
-- Les investigations 007 sont accessibles aux seuls Enquêteurs/Analystes via le RPC contrôlé **installé, mais non testé sur une partie 007 complète** : `igr_v282_007_investigate`, avec authentification par token du participant et contrôle atomique d'un seul choix pour tout le camp Enquête par cycle. Les titres et résultats non choisis restent secrets.
+- Les investigations 007 sont accessibles aux seuls Enquêteurs/Analystes via le RPC contrôlé **installé, mais avec accès `anon` et `authenticated` révoqués jusqu'à la libération** : `igr_v282_007_investigate`, avec authentification par token du participant et contrôle atomique d'un seul choix pour tout le camp Enquête par cycle. Les titres et résultats non choisis restent secrets.
 - La synchronisation a été modifiée pour exposer uniquement les trois **titres** des investigations du cycle en cours au camp Enquête et un drapeau d'utilisation ; ne renvoie jamais la solution canonique pendant la partie.
 - `igr_v4_lock_final` a été modifié pour accepter et valide `reconstruction_007` pour Enquêteur et Analyste : `cause`, `actor`, `decoy`. Cette reconstitution est obligatoire et n'est révélée/corrigée qu'à la fin.
 - Les rôles Suspects ne voient jamais les choix ni le contenu privé du camp Enquête.
@@ -28,11 +28,17 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 - CI PR #347 : Cloudflare, iOS, Android, boutique et mise en page réussis. Le build Workers secondaire `inside-grey-room` a échoué ; la PR demeure en brouillon et non publiée.
 
 ## Critères avant fusion
-1. Appliquer C par un chemin de modification **explicitement autorisé** ; ne pas contourner les contrôles de sécurité.
+1. Appliquer C par un chemin de modification **explicitement autorisé** ; ne pas contourner les contrôles de sécurité. La version C validée hors ligne est disponible dans l'archive privée, jamais sur le dépôt.
 2. Valider A/B/C, intégrité, permissions et fail-closed avant d'autoriser le premier nouveau tirage.
 3. Simuler 48 départs multijoueurs à 5 joueurs : aucun doublon de rôle, distribution sur A/B/C et zéro salon de test conservé.
-4. Tester les trois cycles, les enquêtes privées, la reconnexion, le refus d'un second choix et le verdict correct/incorrect/invalide.
+4. Tester les trois cycles, les enquêtes privées, la reconnexion, le refus d'un second choix et le verdict correct/incorrect/invalide. **Réautoriser explicitement `EXECUTE` au rôle de transport uniquement après tests et libération.**
 5. Vérifier les anciens scénarios 001 à 006 (premier contrôle 48/48 effectué ; à refaire après l'intégration finale).
 6. Faire passer la CI Cloudflare, iOS, Android et mise en page, puis fusionner dans main et confirmer le commit publié sur le Worker de production.
 
 **Ne jamais annoncer « 10/10 », « déployé », « sécurisé intégralement » ou « validé » tant que ces critères ne sont pas satisfaits.**
+
+## Audit complémentaire
+- Garde-fous de démarrage : tests réussis du refus de démarrage local **et** multijoueur en l'absence de C, sans salon persistant.
+- Supabase Security Advisor : la route `igr_v282_007_investigate` était signalée comme exécutable depuis `anon` (SECURITY DEFINER). L'accès externe a été révoqué jusqu'à autorisation de publication. Cette alerte concerne aussi des routes existantes ailleurs dans le projet, hors périmètre du présent dossier.
+- Vérifications serveur (48 simulations sur les scénarios 001–006) : **48/48 lancements réussis** et salons annulés.
+- Le garde-fou serveur refuse toujours la libération : **3 manuscrits trouvés, 2 packs validés, 0 variante approuvée**.
