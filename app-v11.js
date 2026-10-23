@@ -1409,12 +1409,14 @@ function renderInvestigationTab(){
   }
  }
  if(r.scenario_id==='006'){
+  const pactThesisLabels={no_strike:'Aucun coup avant la chute',strike:'Un coup a précédé la chute',signs_alive:'Noé a réagi après la chute',help_refused:'Une demande d’aide a été refusée',undetermined:'Je refuse de conclure'};
   const statements=(d.events||[]).filter(e=>e.event_type==='statement_006');
   const statementAllowed=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
-  if(statements.length)body+=`<section class="private-block"><h3>PROCÈS-VERBAUX · DÉCLARATIONS DU PACTE</h3><p class="choice-helper">Ces déclarations sont publiques. Une pièce officielle peut les contredire ; aucune ne devient automatiquement une preuve.</p><div class="timeline">${statements.map(e=>`<details class="event"><summary>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
+  if(statements.length)body+=`<section class="private-block"><h3>PROCÈS-VERBAUX · DÉCLARATIONS DU PACTE</h3><p class="choice-helper">Ces déclarations sont publiques. Une pièce officielle peut les contredire ; aucune ne devient automatiquement une preuve.</p><div class="timeline">${statements.map(e=>`<details class="event"><summary>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</summary><p>${h(e.payload?.text||'')}</p>${e.payload?.pact_thesis?`<p class="choice-helper">POSITION SCELLÉE · ${h(pactThesisLabels[e.payload.pact_thesis]||'Non renseignée')}</p>`:''}</details>`).join('')}</div></section>`;
   const submitted=(d.my_actions||[]).some(a=>a.action_type==='statement_006'&&a.cycle===r.cycle);
+  const thesisField=r.cycle===2?`<div class="field"><label for="igr006PactThesis">POSITION OFFICIELLE SUR LA NUIT · SCELLÉE</label><select id="igr006PactThesis"><option value="">Choisir une affirmation…</option><option value="no_strike">Aucun coup n'a précédé la chute</option><option value="strike">Un coup a précédé la chute</option><option value="signs_alive">Noé a réagi après la chute</option><option value="help_refused">Une demande d'aide a été refusée</option><option value="undetermined">Je refuse de conclure</option></select></div>`:'';
   if(role==='suspect'&&r.status==='playing'&&r.cycle>=1&&r.cycle<=3&&statementAllowed){
-    body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Consigne ce que tu affirmes avoir vu la nuit du chalet. Ton texte restera public et irrévocable. Elle sera visible de tous, verrouillée et opposable à tes paroles. Ne cite que ce que ton personnage peut savoir.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr006Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr006Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div><button class="btn danger block" onclick="submit006Statement()">Consigner définitivement</button>'}</section>`;
+    body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Dépose ta version de la nuit. Au cycle 2, fixe aussi une affirmation scellée : les pièces finales pourront la confirmer, la contredire ou laisser la question ouverte. Ta déclaration sera publique et irrévocable.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr006Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr006Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div>${thesisField}<button class="btn danger block" onclick="submit006Statement()">Consigner définitivement</button>'}</section>`;
   }
  }
  if(['001','002','003','004','005','006'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
@@ -1509,7 +1511,12 @@ async function submit005Statement(){
 async function submit006Statement(){
  const statement=(byId('igr006Statement')?.value||'').trim();
  if(statement.length<20||statement.length>220){toast('Écris entre 20 et 220 caractères.');return;}
- try{await rpc('igr_v263_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement});await syncNow(true)}
+ const isSecond=STATE.sync?.room?.scenario_id==='006'&&STATE.sync?.room?.cycle===2;
+ const thesis=isSecond?(byId('igr006PactThesis')?.value||''):null;
+ if(isSecond&&!thesis){toast('Choisis une position scellée, même si tu refuses de conclure.');return;}
+ try{if(isSecond)await rpc('igr_v270_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement,p_thesis:thesis});
+ else await rpc('igr_v263_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement});
+ await syncNow(true)}
  catch(e){console.error(e);toast('Déclaration indisponible ou déjà enregistrée.')}
 }
 async function investigateByScenario(choice){
