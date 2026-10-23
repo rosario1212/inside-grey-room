@@ -1574,6 +1574,11 @@ async function lockFinal(){
   if(!signal||!decision||!limit){toast('Complète la chronologie avant de verrouiller le verdict.');return;}
   payload.reconstruction_004={signal,decision,limit};
  }
+ if(STATE.sync?.room?.scenario_id==='005'&&['enqueteur','analyste'].includes(role)){
+  const author=byId('igr005Author')?.value||'',mask=byId('igr005Mask')?.value||'',proof=byId('igr005Proof')?.value||'';
+  if(!author||!mask||!proof){toast('Reconstitue le geste, le masque et la preuve avant le verdict.');return;}
+  payload.reconstruction_005={author,mask,proof};
+ }
  try{await rpc('igr_v4_lock_final',{p_code:STATE.room,p_player_token:STATE.token,p_payload:payload});await syncNow(true)}catch(e){console.error(e);toast('Choix déjà verrouillé ou phase terminée.')}}
 function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Responsabilité secondaire',2:'Responsabilité principale'})[+level]||'Non renseignée'}
 function revealSummaryWithNames(summary,responsibilities=[]){
@@ -1637,13 +1642,13 @@ function renderReveal(){
  const responsibilities=p.responsibilities||[],summary=revealSummaryWithNames(p.summary||'Révélation en cours…',responsibilities),cont=STATE.sync?.room?.state?.continuation;
  const strength=id=>(cont?.winners||[]).find(w=>String(w.id)===String(id))?.score;
  const currentCase=STATE.sync?.room?.scenario_id;
- const recName=currentCase==='004'?'reconstruction_004':currentCase==='003'?'reconstruction_003':currentCase==='002'?'reconstruction_002':'reconstruction_001';
+ const recName=currentCase==='005'?'reconstruction_005':currentCase==='004'?'reconstruction_004':currentCase==='003'?'reconstruction_003':currentCase==='002'?'reconstruction_002':'reconstruction_001';
  const myReconstruction=myAction('final_lock',null)?.payload?.[recName];
  const reconstructionKey=STATE.sync?.scenario?.truth?.[recName];
- const recAxes=currentCase==='004'?['signal','decision','limit']:currentCase==='003'?['central','knowledge','reversal']:currentCase==='002'?['central','evidence','boundary']:['moment','gesture','reframe'];
+ const recAxes=currentCase==='005'?['author','mask','proof']:currentCase==='004'?['signal','decision','limit']:currentCase==='003'?['central','knowledge','reversal']:currentCase==='002'?['central','evidence','boundary']:['moment','gesture','reframe'];
  const recScore=myReconstruction&&reconstructionKey?recAxes.filter(k=>myReconstruction[k]===reconstructionKey[k]).length:null;
- const recExplanation=['002','003','004'].includes(currentCase)?(STATE.sync?.scenario?.truth?.cinematic?.final_line||'La chronologie permet de distinguer les actes et les connaissances.'):reconstructionKey?.explanation||'';
- const recHtml=['001','002','003','004'].includes(currentCase)&&reconstructionKey?`<section class="private-block"><h3>RECONSTITUTION DES FAITS</h3><p>${h(recExplanation)}</p><p>${recScore===null?'Pas de reconstitution personnelle enregistrée.':`Ton raisonnement : ${recScore}/3 axes correctement reconstitués.`}</p></section>`:'';
+ const recExplanation=['002','003','004','005'].includes(currentCase)?(STATE.sync?.scenario?.truth?.cinematic?.final_line||'La chronologie permet de distinguer les actes et les connaissances.'):reconstructionKey?.explanation||'';
+ const recHtml=['001','002','003','004','005'].includes(currentCase)&&reconstructionKey?`<section class="private-block"><h3>RECONSTITUTION DES FAITS</h3><p>${h(recExplanation)}</p><p>${recScore===null?'Pas de reconstitution personnelle enregistrée.':`Ton raisonnement : ${recScore}/3 axes correctement reconstitués.`}</p></section>`:'';
 
  return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/2 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/2 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–2 correspond exactement au niveau canonique.</small></div>`:''}<div class="result-list">${(p.results||[]).map(x=>{const s=strength(x.player_id);return `<div class="result-line ${x.success?'winner':'loser'}"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><strong>${x.success?'VICTOIRE':'DÉFAITE'}</strong><span>${h(x.text)}</span>${x.success&&s!=null?`<small class="victory-strength">Force de victoire · ${h(s)}/100</small>`:''}</div>`}).join('')}</div>${recHtml}${renderContinuationPanel()}<button class="btn block" onclick="leaveRoom()">Quitter la cellule</button></div>`;
 }
