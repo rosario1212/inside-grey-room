@@ -62,6 +62,8 @@ export default {
   const asset=await env.ASSETS.fetch(req);
   const headers=new Headers(asset.headers);
   if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
+  // Opaque release marker; narrative and variant IDs remain server-side.
+  headers.set('X-IGR-Release','igr-001-20261023');
   headers.set('X-Content-Type-Options','nosniff');
   headers.set('Referrer-Policy','no-referrer');
   // Public URL, but do not index the unfinished beta in search engines.
