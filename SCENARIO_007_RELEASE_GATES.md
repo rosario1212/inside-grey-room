@@ -60,3 +60,10 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 - Vérification serveur après ces corrections client : `eligible=false`, `found=3`, `valid=2`, `approved=0`, `human_playtest_verified=false`, RPC publique refusée à `anon`. `igr_v283_007_failclosed_smoke()` passe toujours.
 - **Bloqueur externe non levé** : l'intégration du manuscrit C dans Supabase a été refusée auparavant. Ne pas réessayer par un chemin contournant le contrôle. Utiliser seulement une voie d'import explicitement autorisée et auditable, puis refaire la revue éditoriale et les tests réels à cinq joueurs.
 - Le dossier 007 n'est **ni activé ni publié**. La PR #347 doit rester en brouillon tant que tous les contrôles de libération ne sont pas satisfaits.
+
+## Revue éditoriale hors ligne v286 — candidat C renforcé
+
+- Une seconde archive confidentielle C a été préparée **hors GitHub** avec une chronologie explicite, des preuves de provenance distinctes et une séparation entre mobile, mensonge, causalité et intention. Elle conserve les trois rôles Suspects, six relations dirigées, trois révélations garanties et neuf investigations au total (3/cycle).
+- Un audit indépendant hors ligne sur ce **nouveau candidat**, comprenant intégrité SHA-256, unicité, mapping du verdict et cohérence des repères temporels, a passé **17/17 contrôles**. L'audit n'expose pas les solutions et **n'est pas un essai multijoueur**. L'archive originale C demeure inchangée et aucune variante n'a été écrasée dans Supabase.
+- La validation de publication reste **REFUSÉE** côté serveur : 3 manuscrits présents, 2 packs valides, aucune approbation et `human_playtest_verified=false`. La nouvelle archive privée doit être examinée, approuvée et intégrée seulement par une voie d'écriture autorisée, puis vérifiée en conditions de jeu. Aucun contournement de la restriction Supabase n'est tenté.
+- Les cinq contrôles CI du commit `b17cabbb` étaient verts au contrôle du 23 octobre : Cloudflare, Android, iOS, Store Readiness, Screen Layout. La PR conserve son statut DRAFT.
