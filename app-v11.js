@@ -1398,12 +1398,14 @@ function renderInvestigationTab(){
   }
  }
  if(r.scenario_id==='005'){
+  const positions={added_after:'Ajouté après les violences',present_before:'Déjà au studio avant le meurtre',moved_after:'Porté pour intimider puis déplacé',undetermined:'Je ne peux pas dater le masque'};
   const statements=(d.events||[]).filter(e=>e.event_type==='statement_005');
   const statementAllowed=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
-  if(statements.length)body+=`<section class="private-block"><h3>PROCÈS-VERBAUX · DÉPOSITIONS IRRÉVOCABLES</h3><p class="choice-helper">Ces déclarations sont publiques. Une pièce officielle peut les contredire ; aucune ne devient automatiquement une preuve.</p><div class="timeline">${statements.map(e=>`<details class="event"><summary>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
+  if(statements.length)body+=`<section class="private-block"><h3>PROCÈS-VERBAUX · DÉPOSITIONS IRRÉVOCABLES</h3><p class="choice-helper">Ces déclarations sont publiques. Une pièce officielle peut les contredire ; aucune ne devient automatiquement une preuve.</p><div class="timeline">${statements.map(e=>`<details class="event"><summary>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</summary><p>${h(e.payload?.text||'')}</p>${e.payload?.mask_thesis?`<p class="choice-helper">THÈSE SCELLÉE · ${h(positions[e.payload.mask_thesis]||'Sans position')}</p>`:''}</details>`).join('')}</div></section>`;
   const submitted=(d.my_actions||[]).some(a=>a.action_type==='statement_005'&&a.cycle===r.cycle);
+  const positionField=r.cycle===2?`<div class="field"><label for="igr005Position">THÈSE SUR LE MASQUE · choix irrévocable</label><select id="igr005Position"><option value="">Choisir ta version…</option><option value="added_after">Ajouté après les violences</option><option value="present_before">Déjà présent avant le meurtre</option><option value="moved_after">Porté puis déplacé</option><option value="undetermined">Je refuse d'affirmer ce que j'ignore</option></select></div>`:'';
   if(role==='suspect'&&r.status==='playing'&&r.cycle>=1&&r.cycle<=3&&statementAllowed){
-    body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Fixe une affirmation sur le masque, les heures ou une présence au studio. Elle sera visible de tous, verrouillée et opposable à tes paroles. Ne cite que ce que ton personnage peut savoir.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr005Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr005Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div><button class="btn danger block" onclick="submit005Statement()">Consigner définitivement</button>'}</section>`;
+    body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Fixe une affirmation sur le masque, les heures ou une présence au studio. Elle sera visible de tous, verrouillée et opposable à tes paroles. Ne cite que ce que ton personnage peut savoir.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr005Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr005Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div>${positionField}<button class="btn danger block" onclick="submit005Statement()">Consigner définitivement</button>'}</section>`;
   }
  }
  if(['001','002','003','004','005'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
@@ -1490,7 +1492,9 @@ async function submit004Statement(){
 async function submit005Statement(){
  const text=(byId('igr005Statement')?.value||'').trim();
  if(text.length<20||text.length>220){toast('Dépose entre 20 et 220 caractères.');return;}
- try{await rpc('igr_v253_005_statement',{p_code:STATE.room,p_token:STATE.token,p_text:text});await syncNow(true)}
+ const position=STATE.sync?.room?.cycle===2?(byId('igr005Position')?.value||''):'undetermined';
+ if(!position){toast('Choisis une thèse, ou indique que tu ne peux pas conclure.');return;}
+ try{await rpc('igr_v260_005_statement',{p_code:STATE.room,p_token:STATE.token,p_text:text,p_position:position});await syncNow(true)}
  catch(e){console.error(e);toast('Déposition indisponible ou déjà verrouillée.')}
 }
 async function investigateByScenario(choice){
