@@ -119,3 +119,12 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 - **Régression réelle réparée :** le contrôle de mises en page lançait `renderCreateList` dans une VM isolée où l'état de publication n'existait pas ; adaptation locale avec valeur par défaut fermée, sans désactiver ce contrôle. Nouveau test comportemental `scripts/v294-007-release-behavior-check.mjs` exécuté depuis `scripts/v284-007-guard-check.mjs`.
 - **Déploiement reproductible :** `supabase/migrations/20261024002000_igr_v291_292_007_release_gates.sql` et `supabase/migrations/20261024004500_igr_v293_007_deny_unreleased_room_insert.sql` enregistrés sur la branche. Aucun secret de scénario n'est transféré dans GitHub.
 - **Aucune certification falsifiée :** `found=3`, `valid=3`, `truths_distinct=3`, mais `approved=0`, `human_playtest_verified=false` et `eligible=false`. L'outil de diagnostic a utilisé une transaction toujours annulée ; toutes les lignes éditoriales restent en `review`. Le test de jeu humain à cinq joueurs n'a pas eu lieu. Ne pas fusionner la PR en prétendant que le 007 est publié.
+
+
+## Contrôle transactionnel de non-régression v295 — 24 octobre 2026
+
+- Nouveau test versionné : `supabase/tests/v295_007_pre_release_boundary_smoke.sql`.
+- Exécution **sur Supabase** : un appel direct au RPC historique `igr_v4_create_room` avec scénario `007` est refusé par le déclencheur SQL avant toute insertion (`007_denied=true`).
+- Dans le même contrôle, un vrai salon temporaire du scénario **006** a été créé avec cinq joueurs, cinq rôles attribués, puis lancé en état `playing` (`legacy_five_players_ok=true`). Les insertions et leurs actions ont été annulées dans une sous-transaction ; **zéro salon de QA persistant**.
+- Cette vérification confirme l'isolation du verrou 007 et le maintien du parcours multijoueur pour un ancien scénario. Elle n'est pas un test du gameplay 007 en présence de cinq personnes.
+- Le statut éditorial du 007 reste bloquant : `3/3` variantes valides mais `approved=0`, `human_playtest_verified=false`, `eligible=false`. Aucune approbation humaine fictive n'a été inscrite.
