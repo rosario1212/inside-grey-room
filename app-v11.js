@@ -569,11 +569,12 @@ async function refresh007PublishState(force=false){
  if(STATE.view==='create-list')renderCreateList();
 }
 function renderCreateList(){
- byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||IGR007_PUBLISH.enabled)?'button':'group'}" ${(sc.id!=='007'||IGR007_PUBLISH.enabled)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||IGR007_PUBLISH.enabled)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
- void refresh007PublishState();
+ const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
+ byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ if(typeof refresh007PublishState==='function')void refresh007PublishState();
 }
 function selectScenario(id){
- if(id==='007'&&!IGR007_PUBLISH.enabled)return toast('Dossier en préparation : publication non autorisée.');
+ if(id==='007'&&!(typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled))return toast('Dossier en préparation : publication non autorisée.');
  STATE.createListScrollY=window.scrollY;
  STATE.selectedScenario=id;
  STATE.view='create-confirm';
@@ -1672,7 +1673,8 @@ function myContinuationAction(type){
 }
 function compatibleNextScenarios(d){
  const count=(d.players||[]).length;
- const all=SCENARIOS.filter(s=>(s.id!=='007'||IGR007_PUBLISH.enabled)&&count>=s.min&&count<=s.max);
+ const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
+ const all=SCENARIOS.filter(s=>(s.id!=='007'||release007)&&count>=s.min&&count<=s.max);
  const alternatives=all.filter(s=>s.id!==d.room.scenario_id);
  return alternatives.length?alternatives:all;
 }
