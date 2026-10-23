@@ -1406,8 +1406,17 @@ function renderInvestigationTab(){
     body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Fixe une affirmation sur le masque, les heures ou une présence au studio. Elle sera visible de tous, verrouillée et opposable à tes paroles. Ne cite que ce que ton personnage peut savoir.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr005Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr005Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div><button class="btn danger block" onclick="submit005Statement()">Consigner définitivement</button>'}</section>`;
   }
  }
- if(['001','002','003','004','005'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
-  const evidenceTag=r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
+ if(r.scenario_id==='006'){
+  const statements=(d.events||[]).filter(e=>e.event_type==='statement_006');
+  const statementAllowed=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
+  if(statements.length)body+=`<section class="private-block"><h3>PROCÈS-VERBAUX · DÉCLARATIONS DU PACTE</h3><p class="choice-helper">Ces déclarations sont publiques. Une pièce officielle peut les contredire ; aucune ne devient automatiquement une preuve.</p><div class="timeline">${statements.map(e=>`<details class="event"><summary>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
+  const submitted=(d.my_actions||[]).some(a=>a.action_type==='statement_006'&&a.cycle===r.cycle);
+  if(role==='suspect'&&r.status==='playing'&&r.cycle>=1&&r.cycle<=3&&statementAllowed){
+    body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Consigne ce que tu affirmes avoir vu la nuit du chalet. Ton texte restera public et irrévocable. Elle sera visible de tous, verrouillée et opposable à tes paroles. Ne cite que ce que ton personnage peut savoir.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr006Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr006Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div><button class="btn danger block" onclick="submit006Statement()">Consigner définitivement</button>'}</section>`;
+  }
+ }
+ if(['001','002','003','004','005','006'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
+  const evidenceTag=r.scenario_id==='006'?'investigation_006':r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
   if(reports.length)body+=`<section class="private-block igr001-reports"><h3>CONSTATATIONS CIBLÉES · ${reports.length}</h3><div class="timeline">${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Constatation')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
   const eligible=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
   if(eligible){
@@ -1493,8 +1502,14 @@ async function submit005Statement(){
  try{await rpc('igr_v253_005_statement',{p_code:STATE.room,p_token:STATE.token,p_text:text});await syncNow(true)}
  catch(e){console.error(e);toast('Déposition indisponible ou déjà verrouillée.')}
 }
+async function submit006Statement(){
+ const statement=(byId('igr006Statement')?.value||'').trim();
+ if(statement.length<20||statement.length>220){toast('Écris entre 20 et 220 caractères.');return;}
+ try{await rpc('igr_v263_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement});await syncNow(true)}
+ catch(e){console.error(e);toast('Déclaration indisponible ou déjà enregistrée.')}
+}
 async function investigateByScenario(choice){
- try{await rpc(STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
+ try{await rpc(STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
  catch(e){console.error(e);toast('Investigation indisponible, déjà demandée ou phase terminée.')}
 }
 async function specialAction(kind,choice){try{await rpc('igr_v4_special_action',{p_code:STATE.room,p_player_token:STATE.token,p_kind:kind,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Action impossible ou déjà utilisée.')}}
