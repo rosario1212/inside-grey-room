@@ -86,3 +86,12 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 - Audit **limité au manuscrit hors ligne**. Il ne prouve ni son import dans Supabase, ni le fonctionnement à cinq joueurs, ni la validation humaine, ni la publication.
 - Contrôle serveur après correction privée : `found=3`, `valid=2`, `approved=0`, `eligible=false`, `human_playtest_verified=false`. Le test fail-closed réussit toujours et les privilèges du RPC restent révoqués pour `anon` et `authenticated`.
 - **NO-GO strict maintenu.** Exiger une intégration privée explicitement autorisée, 3/3 packs reconnus par le constructeur, une revue éditoriale, des essais réels de synchronisation/rôles/enquête/verdict à cinq personnes, puis 3/3 approbations réelles avant toute fusion ou publication.
+
+
+## Audit hors ligne v289 — couverture du protocole 007
+
+- La variante C privée v288 a été soumise à **48 simulations hors ligne reproductibles**, avec cinq rôles distincts par session et répartition aléatoire déterministe (graine `7007`). Résultat : **720 assertions du modèle réussies** et **40 permutations de rôles distinctes**.
+- Chaque simulation couvre les trois cycles, une révélation garantie par cycle, trois investigations proposées par cycle, une seule sélection facultative par cycle dans le modèle, une séparation modélisée des renseignements Enquête/Suspects et la distinction entre verdict exact, erroné et incomplet.
+- Outil privé exécuté : `007_prepublication_qa.py`. Rapport sans divulgation : `007_prepublication_qa_report.json`. Les deux fichiers sont conservés en dehors du dépôt public avec le manuscrit secret.
+- **Portée :** ce contrôle vérifie les invariants d'un modèle local, **pas** les appels RPC, la concurrence réelle des joueurs, la reprise réseau, le tirage effectif A/B/C ni un playtest humain. Aucun salon Supabase n'a été créé, aucune approbation n'a été enregistrée et aucun chemin de sécurité n'a été contourné.
+- Blocages inchangés : intégration privée de C par accès autorisé, état `valid=3/3`, revue éditoriale effective, tests de jeu réels et validation du `release_status.eligible=true` avant toute fusion.
