@@ -1,5 +1,8 @@
 # Dossier 007 — LE TESTAMENT GRIS · Contrat de publication
 
+> **Décision du propriétaire le 24 octobre 2026 : PUBLICATION AUTORISÉE.** Les trois variantes ont été construites dans Supabase et 48 vrais salons de QA à cinq comptes simulés ont été démarrés (A=18, B=16, C=14, 18 répartitions de rôles). Investigations C1–C3, contrôle du quota de camp, refus des suspects, isolation des événements, verdict valide/invalide et non-régression 006 testés. Les écritures QA ont été annulées sans salon résiduel. **Il ne s'agit pas d'un test avec cinq personnes physiques** ; cette limitation est acceptée pour la mise en ligne par le propriétaire et reste à couvrir en post-publication. Les consignes anciennes imposant un essai humain avant toute fusion sont conservées plus bas uniquement pour leur valeur d'historique daté, pas comme état courant.
+
+
 > **État réel après correctifs v291–v294 (24/10/2026) :** les trois packs sont intégrés et valides ; l’interface s’ouvre automatiquement sur accord explicite du serveur. La création directe de salons non publiés est désormais refusée en base. Le statut éditorial demeure `approved=0`, l’essai humain `false`, donc `eligible=false`. **Ne pas fusionner ni déployer une prétendue publication du 007 tant que les validations ne sont pas réelles.**
 
 **Statut : PR de préparation uniquement — ne pas fusionner tant que le serveur n'est pas prêt.**
