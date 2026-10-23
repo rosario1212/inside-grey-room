@@ -1397,8 +1397,8 @@ function renderInvestigationTab(){
     body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Consigne exactement ce que tu savais d'un appel, d'un message ou d'une décision. Elle sera visible de tous, verrouillée et opposable à tes paroles. Ne cite que ce que ton personnage peut savoir.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr004Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr004Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div><button class="btn danger block" onclick="submit004Statement()">Consigner définitivement</button>'}</section>`;
   }
  }
- if(['001','002','003','004'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
-  const evidenceTag=r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
+ if(['001','002','003','004','005'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
+  const evidenceTag=r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
   if(reports.length)body+=`<section class="private-block igr001-reports"><h3>CONSTATATIONS CIBLÉES · ${reports.length}</h3><div class="timeline">${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Constatation')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
   const eligible=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
   if(eligible){
@@ -1479,7 +1479,7 @@ async function submit004Statement(){
  catch(e){console.error(e);toast('Version indisponible ou déjà verrouillée.')}
 }
 async function investigateByScenario(choice){
- try{await rpc(STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
+ try{await rpc(STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
  catch(e){console.error(e);toast('Investigation indisponible, déjà demandée ou phase terminée.')}
 }
 async function specialAction(kind,choice){try{await rpc('igr_v4_special_action',{p_code:STATE.room,p_player_token:STATE.token,p_kind:kind,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Action impossible ou déjà utilisée.')}}
