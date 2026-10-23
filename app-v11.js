@@ -550,10 +550,31 @@ function goJoin(){STATE.view='join';saveSession();renderJoin()}
 function goRules(){STATE.view='rules';saveSession();renderRules()}
 function goProfile(){STATE.view='profile';saveSession();renderProfile()}
 
+// DOSSIER 007 NON PUBLIÉ: le client ne l'ouvre que si le serveur l'autorise.
+// La création/le lancement refont une vérification fraîche; le serveur reste l'autorité. Ne pas supprimer ces gardes isolément.
+// Release discovery is Boolean-only; manuscripts remain in the private schema.
+// Every actual room creation and launch rechecks the server (fail closed).
+const IGR007_PUBLISH={enabled:false,checkedAt:0,checking:false};
+async function refresh007PublishState(force=false){
+ if(IGR007_PUBLISH.checking||(!force&&Date.now()-IGR007_PUBLISH.checkedAt<30000))return;
+ IGR007_PUBLISH.checking=true;
+ try{
+  IGR007_PUBLISH.enabled=(await rpc('igr_v291_007_catalog_enabled',{}))===true;
+ }catch{
+  IGR007_PUBLISH.enabled=false;
+ }finally{
+  IGR007_PUBLISH.checkedAt=Date.now();
+  IGR007_PUBLISH.checking=false;
+ }
+ if(STATE.view==='create-list')renderCreateList();
+}
 function renderCreateList(){
- byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}</div></div></article>`).join('')}</div></section></main>`)
+ const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
+ byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ if(typeof refresh007PublishState==='function')void refresh007PublishState();
 }
 function selectScenario(id){
+ if(id==='007'&&!(typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled))return toast('Dossier en préparation : publication non autorisée.');
  STATE.createListScrollY=window.scrollY;
  STATE.selectedScenario=id;
  STATE.view='create-confirm';
@@ -886,6 +907,11 @@ async function createRoom(){
  const pseudo=(byId('createPseudo')?.value||'').trim();
  if(!pseudo)return toast('Entre ton pseudo.');
  const sc=scenario(STATE.selectedScenario);
+ if(sc.id==='007'){
+  let released=false;
+  try{released=(await rpc('igr_v291_007_catalog_enabled',{}))===true}catch{}
+  if(!released)return toast('Dossier 007 en préparation : création suspendue.');
+ }
  let out=null,code=null;
  for(let attempt=0;attempt<5;attempt++){
   code=newCode();
@@ -1100,6 +1126,11 @@ async function prepareLobbyAudio(){
 }
 async function startGame(){
  if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
+ if(STATE.sync?.room?.scenario_id==='007'){
+  let released=false;
+  try{released=(await rpc('igr_v291_007_catalog_enabled',{}))===true}catch{}
+  if(!released)return toast('Dossier 007 en préparation : lancement suspendu.');
+ }
  const d=STATE.sync,autoCount=(d?.players||[]).filter(p=>!p.preferred_role).length;
  cancelBriefingVoice();stopAmbient();
  try{const result=await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs.')}
@@ -1419,8 +1450,8 @@ function renderInvestigationTab(){
     body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Dépose ta version de la nuit. Au cycle 2, fixe aussi une affirmation scellée : les pièces finales pourront la confirmer, la contredire ou laisser la question ouverte. Ta déclaration sera publique et irrévocable.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr006Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr006Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div>${thesisField}<button class="btn danger block" onclick="submit006Statement()">Consigner définitivement</button>'}</section>`;
   }
  }
- if(['001','002','003','004','005','006'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
-  const evidenceTag=r.scenario_id==='006'?'investigation_006':r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
+ if(['001','002','003','004','005','006','007'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
+  const evidenceTag=r.scenario_id==='007'?'investigation_007':r.scenario_id==='006'?'investigation_006':r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
   if(reports.length)body+=`<section class="private-block igr001-reports"><h3>CONSTATATIONS CIBLÉES · ${reports.length}</h3><div class="timeline">${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Constatation')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
   const eligible=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
   if(eligible){
@@ -1520,7 +1551,7 @@ async function submit006Statement(){
  catch(e){console.error(e);toast('Déclaration indisponible ou déjà enregistrée.')}
 }
 async function investigateByScenario(choice){
- try{await rpc(STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
+ try{await rpc(STATE.sync?.room?.scenario_id==='007'?'igr_v292_007_investigate':STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
  catch(e){console.error(e);toast('Investigation indisponible, déjà demandée ou phase terminée.')}
 }
 async function specialAction(kind,choice){try{await rpc('igr_v4_special_action',{p_code:STATE.room,p_player_token:STATE.token,p_kind:kind,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Action impossible ou déjà utilisée.')}}
@@ -1579,8 +1610,12 @@ function renderFinalLockForm(){
 <div class="field"><label for="igr006Fall">Qu'est-ce qui a provoqué la chute de Noé ?</label><select id="igr006Fall"><option value="">Choisir…</option><option value="accidental">Une perte d'équilibre sans coup préalable</option><option value="strike">Un coup brusque avant la chute</option></select></div>
 <div class="field"><label for="igr006Response">Quelle réaction a suivi ?</label><select id="igr006Response"><option value="">Choisir…</option><option value="presumed_dead">Les amis ont supposé que Noé était mort, sans vérification suffisante</option><option value="help_blocked">Des signes de vie ont été perçus ; une demande d'aide a été refusée</option></select></div>
 <div class="field"><label for="igr006Lie">Sur quoi portait le pacte ?</label><select id="igr006Lie"><option value="">Choisir…</option><option value="coordinated_presence">Effacer la présence et organiser une version collective</option><option value="concealed_strike">Effacer le coup précédant la chute</option><option value="suppressed_signs">Effacer les signes de vie et le refus d'assistance</option></select></div></section>`:'';
+ const sevenReconstruction=STATE.sync?.room?.scenario_id==='007'&&['enqueteur','analyste'].includes(role)?`<section class="action-section"><h3>RECONSTITUER LA SUCCESSION · DOSSIER 007</h3><p class="choice-helper">Le testament donne des mobiles ; seules les pièces et les heures permettent d'attribuer la chute. Identifie le dernier conflit, l'acte documenté et la fausse piste.</p>
+<div class="field"><label for="igr007Cause">Quel différend a déterminé la dernière confrontation ?</label><select id="igr007Cause"><option value="">Sélectionner…</option><option value="separate_dispute">Une seconde dispute, distincte de la signature</option><option value="debt_confrontation">La récupération de preuves d'une dette</option><option value="lineage_document">La remise d'un document de filiation</option></select></div>
+<div class="field"><label for="igr007Actor">Quel geste est établi lors du dernier affrontement ?</label><select id="igr007Actor"><option value="">Sélectionner…</option><option value="second_confrontation">Le gardien des documents provoque la chute lors d'un second entretien</option><option value="third_file_struggle">Le débiteur provoque la chute dans une lutte pour un dossier</option><option value="second_document_struggle">Le gardien provoque la chute en reprenant un original familial</option></select></div>
+<div class="field"><label for="igr007Decoy">Quelle apparence a faussé les premières accusations ?</label><select id="igr007Decoy"><option value="">Sélectionner…</option><option value="forced_signature">La signature sous pression</option><option value="concealed_debt">Le justificatif de dette disparu</option><option value="hidden_lineage">Le secret de filiation</option></select></div></section>`:'';
  const extra=role==='juge'?`<div class="field"><label for="finalConsequence">Conséquence judiciaire</label><select id="finalConsequence"><option>Responsabilité non établie</option><option>Responsabilité partielle</option><option>Responsabilité majeure</option><option>Responsabilité centrale</option></select></div>`:'';
- return `<div class="final-form"><h3>${h(role==='enqueteur'?'Verdict final':role==='analyste'?'Lecture finale':role==='procureur'?'Position finale du Procureur':'Jugement final')}</h3>${levelsForm('final')}${twoReconstruction}${threeReconstruction}${fourReconstruction}${fiveReconstruction}${sixReconstruction}${role!=='journaliste'&&STATE.sync?.room?.scenario_id==='001'?`<section class="action-section"><h3>Reconstituer les faits · Dossier 001</h3><p class="choice-helper">Réponds aux trois questions après avoir confronté les versions. Les réponses sont corrigées uniquement à la révélation.</p><div class="field"><label for="igr001Moment">Quand la blessure mortelle survient-elle ?</label><select id="igr001Moment"><option value="">Choisir…</option><option value="first">Lors de la première dispute</option><option value="second">Lors de la seconde confrontation</option></select></div><div class="field"><label for="igr001Gesture">Quel geste a causé la blessure ?</label><select id="igr001Gesture"><option value="">Choisir…</option><option value="s1_intentional">Le premier suspect porte volontairement le coup</option><option value="s2_intentional">L'homme rémunéré porte volontairement le coup</option><option value="s3_accident">Le client intervient et provoque un accident mortel</option></select></div><div class="field"><label for="igr001Reframe">Quelle circonstance explique les fausses apparences ?</label><select id="igr001Reframe"><option value="">Choisir…</option><option value="recording">L'enregistrement précipite l'affrontement final</option><option value="evidence_moved">L'arme déplacée masque le moment réel du coup</option><option value="third_intervention">Un tiers intervient et modifie le mouvement de la lame</option></select></div></section>`:''}${extra}<div class="field"><label for="finalText">Note finale courte</label><textarea id="finalText" maxlength="300"></textarea></div><button class="btn danger block" onclick="lockFinal()">Verrouiller définitivement</button></div>`;
+ return `<div class="final-form"><h3>${h(role==='enqueteur'?'Verdict final':role==='analyste'?'Lecture finale':role==='procureur'?'Position finale du Procureur':'Jugement final')}</h3>${levelsForm('final')}${twoReconstruction}${threeReconstruction}${fourReconstruction}${fiveReconstruction}${sixReconstruction}${sevenReconstruction}${role!=='journaliste'&&STATE.sync?.room?.scenario_id==='001'?`<section class="action-section"><h3>Reconstituer les faits · Dossier 001</h3><p class="choice-helper">Réponds aux trois questions après avoir confronté les versions. Les réponses sont corrigées uniquement à la révélation.</p><div class="field"><label for="igr001Moment">Quand la blessure mortelle survient-elle ?</label><select id="igr001Moment"><option value="">Choisir…</option><option value="first">Lors de la première dispute</option><option value="second">Lors de la seconde confrontation</option></select></div><div class="field"><label for="igr001Gesture">Quel geste a causé la blessure ?</label><select id="igr001Gesture"><option value="">Choisir…</option><option value="s1_intentional">Le premier suspect porte volontairement le coup</option><option value="s2_intentional">L'homme rémunéré porte volontairement le coup</option><option value="s3_accident">Le client intervient et provoque un accident mortel</option></select></div><div class="field"><label for="igr001Reframe">Quelle circonstance explique les fausses apparences ?</label><select id="igr001Reframe"><option value="">Choisir…</option><option value="recording">L'enregistrement précipite l'affrontement final</option><option value="evidence_moved">L'arme déplacée masque le moment réel du coup</option><option value="third_intervention">Un tiers intervient et modifie le mouvement de la lame</option></select></div></section>`:''}${extra}<div class="field"><label for="finalText">Note finale courte</label><textarea id="finalText" maxlength="300"></textarea></div><button class="btn danger block" onclick="lockFinal()">Verrouiller définitivement</button></div>`;
 }
 async function lockFinal(){
  const role=STATE.sync.player.public_role;let payload={note:(byId('finalText')?.value||'').trim()};if(role!=='journaliste'&&STATE.sync?.room?.scenario_id!=='029')payload.levels=collectLevels('final');if(role==='juge')payload.consequence=byId('finalConsequence')?.value||'';
@@ -1614,6 +1649,11 @@ async function lockFinal(){
   if(!fall||!response||!lie){toast('Reconstitue la chute, la réaction et le pacte avant le verdict.');return;}
   payload.reconstruction_006={fall,response,lie};
  }
+ if(STATE.sync?.room?.scenario_id==='007'&&['enqueteur','analyste'].includes(role)){
+  const cause=byId('igr007Cause')?.value||'',actor=byId('igr007Actor')?.value||'',decoy=byId('igr007Decoy')?.value||'';
+  if(!cause||!actor||!decoy){toast('Reconstitue les trois actes avant de verrouiller le verdict.');return;}
+  payload.reconstruction_007={cause,actor,decoy};
+ }
  try{await rpc('igr_v4_lock_final',{p_code:STATE.room,p_player_token:STATE.token,p_payload:payload});await syncNow(true)}catch(e){console.error(e);toast('Choix déjà verrouillé ou phase terminée.')}}
 function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Responsabilité secondaire',2:'Responsabilité principale'})[+level]||'Non renseignée'}
 function revealSummaryWithNames(summary,responsibilities=[]){
@@ -1633,7 +1673,8 @@ function myContinuationAction(type){
 }
 function compatibleNextScenarios(d){
  const count=(d.players||[]).length;
- const all=SCENARIOS.filter(s=>count>=s.min&&count<=s.max);
+ const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
+ const all=SCENARIOS.filter(s=>(s.id!=='007'||release007)&&count>=s.min&&count<=s.max);
  const alternatives=all.filter(s=>s.id!==d.room.scenario_id);
  return alternatives.length?alternatives:all;
 }
@@ -1677,13 +1718,13 @@ function renderReveal(){
  const responsibilities=p.responsibilities||[],summary=revealSummaryWithNames(p.summary||'Révélation en cours…',responsibilities),cont=STATE.sync?.room?.state?.continuation;
  const strength=id=>(cont?.winners||[]).find(w=>String(w.id)===String(id))?.score;
  const currentCase=STATE.sync?.room?.scenario_id;
- const recName=currentCase==='006'?'reconstruction_006':currentCase==='005'?'reconstruction_005':currentCase==='004'?'reconstruction_004':currentCase==='003'?'reconstruction_003':currentCase==='002'?'reconstruction_002':'reconstruction_001';
+ const recName=currentCase==='007'?'reconstruction_007':currentCase==='006'?'reconstruction_006':currentCase==='005'?'reconstruction_005':currentCase==='004'?'reconstruction_004':currentCase==='003'?'reconstruction_003':currentCase==='002'?'reconstruction_002':'reconstruction_001';
  const myReconstruction=myAction('final_lock',null)?.payload?.[recName];
  const reconstructionKey=STATE.sync?.scenario?.truth?.[recName];
- const recAxes=currentCase==='006'?['fall','response','lie']:currentCase==='005'?['author','mask','proof']:currentCase==='004'?['signal','decision','limit']:currentCase==='003'?['central','knowledge','reversal']:currentCase==='002'?['central','evidence','boundary']:['moment','gesture','reframe'];
+ const recAxes=currentCase==='007'?['cause','actor','decoy']:currentCase==='006'?['fall','response','lie']:currentCase==='005'?['author','mask','proof']:currentCase==='004'?['signal','decision','limit']:currentCase==='003'?['central','knowledge','reversal']:currentCase==='002'?['central','evidence','boundary']:['moment','gesture','reframe'];
  const recScore=myReconstruction&&reconstructionKey?recAxes.filter(k=>myReconstruction[k]===reconstructionKey[k]).length:null;
- const recExplanation=['002','003','004','005','006'].includes(currentCase)?(STATE.sync?.scenario?.truth?.cinematic?.final_line||'La chronologie permet de distinguer les actes et les connaissances.'):reconstructionKey?.explanation||'';
- const recHtml=['001','002','003','004','005','006'].includes(currentCase)&&reconstructionKey?`<section class="private-block"><h3>RECONSTITUTION DES FAITS</h3><p>${h(recExplanation)}</p><p>${recScore===null?'Pas de reconstitution personnelle enregistrée.':`Ton raisonnement : ${recScore}/3 axes correctement reconstitués.`}</p></section>`:'';
+ const recExplanation=['002','003','004','005','006','007'].includes(currentCase)?(STATE.sync?.scenario?.truth?.cinematic?.final_line||'La chronologie permet de distinguer les actes et les connaissances.'):reconstructionKey?.explanation||'';
+ const recHtml=['001','002','003','004','005','006','007'].includes(currentCase)&&reconstructionKey?`<section class="private-block"><h3>RECONSTITUTION DES FAITS</h3><p>${h(recExplanation)}</p><p>${recScore===null?'Pas de reconstitution personnelle enregistrée.':`Ton raisonnement : ${recScore}/3 axes correctement reconstitués.`}</p></section>`:'';
  const pactAuditHtml=currentCase==='006'&&STATE.sync?.room?.status==='finished'&&STATE.sync?.scenario?.truth?.pact_audit_006?(()=>{
   const audit=STATE.sync.scenario.truth.pact_audit_006;
   const names={no_strike:'Aucun coup avant la chute',strike:'Un coup a précédé la chute',signs_alive:'Noé a réagi après la chute',help_refused:'Une demande d’aide a été refusée',undetermined:'Je refuse de conclure'};

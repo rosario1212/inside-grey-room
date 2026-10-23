@@ -100,6 +100,10 @@ jobs:
         run: node scripts/v88-narrative-variant-check.mjs
       - name: Audit private manuscript tooling without story spoilers
         run: node scripts/v90-private-variant-check.mjs --self-test
+      - name: Verify scenario 007 remains fail-closed until full editorial release
+        run: node scripts/v284-007-guard-check.mjs
+      - name: Verify private 007 audit tool syntax without shipping story data
+        run: python3 -m py_compile scripts/v285-007-private-pack-audit.py
       - name: Verify confidential variant staging and bundle exclusion
         run: node scripts/v99-private-release-check.mjs
       - name: Audit v100 private variant preview release barriers
