@@ -44,5 +44,7 @@ assert.match(contract, /ne pas fusionner/i);
 const parse = spawnSync(process.execPath, ['--check', 'app-v11.js'], { encoding: 'utf8' });
 assert.equal(parse.status, 0, 'app-v11.js syntax error: ' + parse.stderr);
 
+const behavior = spawnSync(process.execPath, ['scripts/v294-007-release-behavior-check.mjs'], { encoding: 'utf8' });
+assert.equal(behavior.status, 0, '007 behavioral regression: ' + behavior.stderr + '\n' + behavior.stdout);
 console.log('007 client contracts and deny-by-default migration: PASS.');
 console.log('Not a publication certificate: server release status and 5-player E2E QA are still mandatory.');
