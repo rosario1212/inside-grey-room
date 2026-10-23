@@ -8,12 +8,12 @@ Cinq joueurs obligatoires : un Enquêteur, un Analyste et trois Suspects. Le pro
 ## Trois récits A/B/C
 Chaque variante doit contenir trois cartes privées, six confrontations dirigées entre les trois suspects, trois révélations obligatoires réparties sur les cycles 1/2/3, neuf investigations facultatives (3 par cycle) et une conclusion propre. Ne pas recopier une solution dans le dépôt public.
 
-## API sécurisée à créer avant activation
-- Un **release gate** privé vérifie l'intégrité et l'approbation des trois manuscrits, leurs packs valides, leur confidentialité et la présence de trois vérités distinctes. En l'absence d'une seule variante, **ne pas activer de tirage automatique**.
-- Tirage A/B/C aléatoire côté serveur au démarrage d'une partie, et snapshot immuable lié au salon ; le même snapshot sert aux cartes, événements, reprise de connexion et verdict.
-- Les investigations 007 sont accessibles aux seuls Enquêteurs/Analystes via un RPC contrôlé **non encore installé** : `igr_v282_007_investigate`, avec authentification par token du participant et contrôle atomique d'un seul choix pour tout le camp Enquête par cycle. Les titres et résultats non choisis restent secrets.
-- La synchronisation expose uniquement les trois **titres** des investigations du cycle en cours au camp Enquête et un drapeau d'utilisation ; ne renvoie jamais la solution canonique pendant la partie.
-- `igr_v4_lock_final` accepte et valide `reconstruction_007` pour Enquêteur et Analyste : `cause`, `actor`, `decoy`. Cette reconstitution est obligatoire et n'est révélée/corrigée qu'à la fin.
+## API sécurisée — préparée côté serveur, mais activation bloquée
+- Le **release gate** privé `igr_v281_007_release_status()` a été installé et vérifie l'intégrité et l'approbation des trois manuscrits, leurs packs valides, leur confidentialité et la présence de trois vérités distinctes. En l'absence d'une seule variante, **ne pas activer de tirage automatique**.
+- `igr_v281_007_pin_room` et `igr_v281_007_pinned_pack` sont installées. Les fonctions de démarrage, reprise, fiches, indices et révélation sont raccordées au snapshot privé. **Le contrôle refuse actuellement tout nouveau démarrage 007 (2/3 packs)**.
+- Les investigations 007 sont accessibles aux seuls Enquêteurs/Analystes via le RPC contrôlé **installé, mais non testé sur une partie 007 complète** : `igr_v282_007_investigate`, avec authentification par token du participant et contrôle atomique d'un seul choix pour tout le camp Enquête par cycle. Les titres et résultats non choisis restent secrets.
+- La synchronisation a été modifiée pour exposer uniquement les trois **titres** des investigations du cycle en cours au camp Enquête et un drapeau d'utilisation ; ne renvoie jamais la solution canonique pendant la partie.
+- `igr_v4_lock_final` a été modifié pour accepter et valide `reconstruction_007` pour Enquêteur et Analyste : `cause`, `actor`, `decoy`. Cette reconstitution est obligatoire et n'est révélée/corrigée qu'à la fin.
 - Les rôles Suspects ne voient jamais les choix ni le contenu privé du camp Enquête.
 - Aucune mécanique d'avocat, juge ou procureur n'est ajoutée : le format à cinq joueurs demeure.
 
@@ -21,14 +21,18 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 - Variantes A et B : 3 indices et 9 investigations chacune, packs valides.
 - Variante C : manuscrit de base présent, mais intégration éditoriale bloquée par les contrôles d'accès ; **pack v280 non valide**.
 - Constructeur privé `igr_v280_007_build_pack` créé et inaccessible directement aux joueurs.
-- Interface de la PR : **préparée, non opérationnelle sans les RPC et le release gate ci-dessus**.
+- Interface de la PR : **préparée et testée en compilation**, mais non fusionnée/non jouable tant que C manque.
+- Contrôle `igr_v281_007_release_status()` : **found 3, valid 2, approved 0, eligible false**, constructeur privé inaccessible à `anon` et `authenticated`.
+- Le démarrage local du 007 a été explicitement refusé dans un test de sécurité ; les chemins locaux et multijoueurs échouent en mode fermé.
+- Non-régression : **48/48 lancements synthétiques réussis sur les scénarios 001 à 006**, avec annulation des salons.
+- CI PR #347 : Cloudflare, iOS, Android, boutique et mise en page réussis. Le build Workers secondaire `inside-grey-room` a échoué ; la PR demeure en brouillon et non publiée.
 
 ## Critères avant fusion
 1. Appliquer C par un chemin de modification **explicitement autorisé** ; ne pas contourner les contrôles de sécurité.
 2. Valider A/B/C, intégrité, permissions et fail-closed avant d'autoriser le premier nouveau tirage.
 3. Simuler 48 départs multijoueurs à 5 joueurs : aucun doublon de rôle, distribution sur A/B/C et zéro salon de test conservé.
 4. Tester les trois cycles, les enquêtes privées, la reconnexion, le refus d'un second choix et le verdict correct/incorrect/invalide.
-5. Vérifier les anciens scénarios 001 à 006.
+5. Vérifier les anciens scénarios 001 à 006 (premier contrôle 48/48 effectué ; à refaire après l'intégration finale).
 6. Faire passer la CI Cloudflare, iOS, Android et mise en page, puis fusionner dans main et confirmer le commit publié sur le Worker de production.
 
 **Ne jamais annoncer « 10/10 », « déployé », « sécurisé intégralement » ou « validé » tant que ces critères ne sont pas satisfaits.**
