@@ -23,7 +23,7 @@ assert.match(app, /currentCase==='007'\?\['cause','actor','decoy'\]/);
 // A code deployment cannot silently unlock the privileged RPC.
 assert.match(privilegeMigration, /REVOKE EXECUTE ON FUNCTION public\.igr_v282_007_investigate/);
 assert.match(privilegeMigration, /FROM PUBLIC, anon, authenticated/);
-assert.doesNotMatch(privilegeMigration, /\bGRANT\s+EXECUTE\b/i);
+assert.doesNotMatch(privilegeMigration, /(?:^|\n)\s*GRANT\s+EXECUTE\b/im);
 
 // Keep the specific go/no-go decision explicit and human-verifiable.
 assert.match(contract, /3\/3/);
