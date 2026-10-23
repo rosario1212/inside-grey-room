@@ -550,16 +550,13 @@ function goJoin(){STATE.view='join';saveSession();renderJoin()}
 function goRules(){STATE.view='rules';saveSession();renderRules()}
 function goProfile(){STATE.view='profile';saveSession();renderProfile()}
 
-// Promotion volontaire et explicite après validation du gate serveur et QA 007.
-// Un simple build ne doit jamais activer un manuscrit privé incomplet.
-const SCENARIO_007_CLIENT_RELEASED = false;
-function scenarioClientIsReleased(id){return String(id)!=='007'||SCENARIO_007_CLIENT_RELEASED;}
-
+// DOSSIER 007 NON PUBLIÉ: les chemins client restent fermés jusqu'à validation
+// éditoriale, QA multijoueur et autorisation serveur. Ne pas supprimer ces gardes isolément.
 function renderCreateList(){
- byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${scenarioClientIsReleased(sc.id)?'button':'group'}" ${scenarioClientIsReleased(sc.id)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${scenarioClientIsReleased(sc.id)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${sc.id!=='007'?'button':'group'}" ${sc.id!=='007'?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${sc.id!=='007'?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
 }
 function selectScenario(id){
- if(!scenarioClientIsReleased(id))return toast('Dossier en préparation : publication non autorisée.');
+ if(id==='007')return toast('Dossier en préparation : publication non autorisée.');
  STATE.createListScrollY=window.scrollY;
  STATE.selectedScenario=id;
  STATE.view='create-confirm';
@@ -892,7 +889,7 @@ async function createRoom(){
  const pseudo=(byId('createPseudo')?.value||'').trim();
  if(!pseudo)return toast('Entre ton pseudo.');
  const sc=scenario(STATE.selectedScenario);
- if(!scenarioClientIsReleased(sc.id))return toast('Dossier 007 en préparation : création suspendue.');
+ if(sc.id==='007')return toast('Dossier 007 en préparation : création suspendue.');
  let out=null,code=null;
  for(let attempt=0;attempt<5;attempt++){
   code=newCode();
@@ -1107,7 +1104,7 @@ async function prepareLobbyAudio(){
 }
 async function startGame(){
  if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
- if(!scenarioClientIsReleased(STATE.sync?.room?.scenario_id))return toast('Dossier 007 en préparation : lancement suspendu.');
+ if(STATE.sync?.room?.scenario_id==='007')return toast('Dossier 007 en préparation : lancement suspendu.');
  const d=STATE.sync,autoCount=(d?.players||[]).filter(p=>!p.preferred_role).length;
  cancelBriefingVoice();stopAmbient();
  try{const result=await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs.')}
@@ -1650,7 +1647,7 @@ function myContinuationAction(type){
 }
 function compatibleNextScenarios(d){
  const count=(d.players||[]).length;
- const all=SCENARIOS.filter(s=>scenarioClientIsReleased(s.id)&&count>=s.min&&count<=s.max);
+ const all=SCENARIOS.filter(s=>s.id!=='007'&&count>=s.min&&count<=s.max);
  const alternatives=all.filter(s=>s.id!==d.room.scenario_id);
  return alternatives.length?alternatives:all;
 }
