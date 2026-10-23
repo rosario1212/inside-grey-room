@@ -12,7 +12,7 @@ const [app, privilegeMigration, contract] = await Promise.all([
 // authorized by the server; private story packs never belong in this source.
 assert.match(app, /\['001','002','003','004','005','006','007'\]/);
 assert.match(app, /r\.scenario_id==='007'\?'investigation_007'/);
-assert.match(app, /igr_v282_007_investigate/);
+assert.match(app, /igr_v292_007_investigate/);
 assert.match(app, /role==='enqueteur'|\['enqueteur','analyste'\]/);
 assert.match(app, /payload\.reconstruction_007=\{cause,actor,decoy\}/);
 for (const axis of ['igr007Cause', 'igr007Actor', 'igr007Decoy']) {
@@ -25,6 +25,7 @@ assert.match(app, /currentCase==='007'\?\['cause','actor','decoy'\]/);
 assert.match(app, /DOSSIER 007 NON PUBLIÉ/);
 assert.match(app, /IGR007_PUBLISH=\{enabled:false/);
 assert.match(app, /igr_v291_007_catalog_enabled/);
+assert.match(app, /igr_v292_007_investigate/);
 assert.match(app, /if\(id==='007'&&!IGR007_PUBLISH.enabled\)return toast/);
 assert.match(app, /if\(sc.id==='007'\)\{/);
 assert.match(app, /if\(STATE.sync\?\.room\?\.scenario_id==='007'\)\{/);
