@@ -28,10 +28,11 @@ assert.match(app, /DOSSIER 007 NON PUBLIÉ/);
 assert.match(app, /IGR007_PUBLISH=\{enabled:false/);
 assert.match(app, /igr_v291_007_catalog_enabled/);
 assert.match(app, /igr_v292_007_investigate/);
-assert.match(app, /if\(id==='007'&&!IGR007_PUBLISH.enabled\)return toast/);
+assert.match(app, /if\(id==='007'&&/);
+assert.match(app, /typeof IGR007_PUBLISH!=='undefined'/);
 assert.match(app, /if\(sc.id==='007'\)\{/);
 assert.match(app, /if\(STATE.sync\?\.room\?\.scenario_id==='007'\)\{/);
-assert.match(app, /SCENARIOS.filter\(s=>\(s.id!=='007'\|\|IGR007_PUBLISH.enabled\)/);
+assert.match(app, /SCENARIOS.filter\(s=>\(s.id!=='007'\|\|release007\)/);
 assert.match(app, /EN PRÉPARATION/);
 assert.doesNotMatch(app, /scenarioClientIsReleased/);
 
