@@ -20,13 +20,15 @@ for (const axis of ['igr007Cause', 'igr007Actor', 'igr007Decoy']) {
 }
 assert.match(app, /currentCase==='007'\?\['cause','actor','decoy'\]/);
 
-// All client paths are closed before editorial release and 5-player QA.
-// VM-isolated tests extract individual functions, so guards remain local.
+// The visible catalog follows a Boolean-only server release gate.
+// Room creation and launch recheck freshly and fail closed on RPC errors.
 assert.match(app, /DOSSIER 007 NON PUBLIÉ/);
-assert.match(app, /if\(id==='007'\)return toast/);
-assert.match(app, /if\(sc\.id==='007'\)return toast/);
-assert.match(app, /SCENARIOS\.filter\(s=>s\.id!=='007'&&/);
-assert.match(app, /if\(STATE\.sync\?\.room\?\.scenario_id==='007'\)return toast/);
+assert.match(app, /IGR007_PUBLISH=\{enabled:false/);
+assert.match(app, /igr_v291_007_catalog_enabled/);
+assert.match(app, /if\(id==='007'&&!IGR007_PUBLISH.enabled\)return toast/);
+assert.match(app, /if\(sc.id==='007'\)\{/);
+assert.match(app, /if\(STATE.sync\?\.room\?\.scenario_id==='007'\)\{/);
+assert.match(app, /SCENARIOS.filter\(s=>\(s.id!=='007'\|\|IGR007_PUBLISH.enabled\)/);
 assert.match(app, /EN PRÉPARATION/);
 assert.doesNotMatch(app, /scenarioClientIsReleased/);
 
