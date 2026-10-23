@@ -1550,7 +1550,7 @@ async function submit006Statement(){
  catch(e){console.error(e);toast('Déclaration indisponible ou déjà enregistrée.')}
 }
 async function investigateByScenario(choice){
- try{await rpc(STATE.sync?.room?.scenario_id==='007'?'igr_v282_007_investigate':STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
+ try{await rpc(STATE.sync?.room?.scenario_id==='007'?'igr_v292_007_investigate':STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
  catch(e){console.error(e);toast('Investigation indisponible, déjà demandée ou phase terminée.')}
 }
 async function specialAction(kind,choice){try{await rpc('igr_v4_special_action',{p_code:STATE.room,p_player_token:STATE.token,p_kind:kind,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Action impossible ou déjà utilisée.')}}
