@@ -1,5 +1,7 @@
 # Dossier 007 — LE TESTAMENT GRIS · Contrat de publication
 
+> **État réel vérifié le 24/10/2026 — L'IMPORT C EST TERMINÉ.** Le contrat ci-dessous contient l'historique des refus précédents, à lire comme des audits datés et non comme l'état actuel. Supabase : `found=3`, `valid=3`, `truths_distinct=3`, `approved=0`, `eligible=false`, `human_playtest_verified=false`. Les trois manuscrits A/B/C construisent un pack v280 valide. **Ne pas fusionner tant que les approbations réelles, le gameplay 5 joueurs et un essai humain ne sont pas vérifiés.**
+
 **Statut : PR de préparation uniquement — ne pas fusionner tant que le serveur n'est pas prêt.**
 
 ## Identité
@@ -95,3 +97,14 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 - Outil privé exécuté : `007_prepublication_qa.py`. Rapport sans divulgation : `007_prepublication_qa_report.json`. Les deux fichiers sont conservés en dehors du dépôt public avec le manuscrit secret.
 - **Portée :** ce contrôle vérifie les invariants d'un modèle local, **pas** les appels RPC, la concurrence réelle des joueurs, la reprise réseau, le tirage effectif A/B/C ni un playtest humain. Aucun salon Supabase n'a été créé, aucune approbation n'a été enregistrée et aucun chemin de sécurité n'a été contourné.
 - Blocages inchangés : intégration privée de C par accès autorisé, état `valid=3/3`, revue éditoriale effective, tests de jeu réels et validation du `release_status.eligible=true` avant toute fusion.
+
+
+## Import confirmé dans Supabase et audit serveur v290 — 24 octobre 2026
+
+- **Mise à jour réelle effectuée :** import des sept champs `v280_*` de la variante C v288 dans la ligne privée existante `igr_private.igr_v99_variant_manuscripts`, scénario `007`, variante `C`. Préservation des clés éditoriales anciennes et du statut `review`. La colonne générée `content_md5` a été laissée sous contrôle de PostgreSQL.
+- **Contrôle après écriture :** 3 manuscrits, 3 packs reconnus comme valides, 3 vérités distinctes ; `content_md5=md5(manuscript::text)` pour A, B et C. A et B sont inchangées.
+- **Vérification sur le constructeur réel :** A, B et C génèrent chacune 3 suspects, 3 trames, 9 investigations, 3 sources de relations dirigées et un verdict à 3 axes. Aucun détail privé imprimé.
+- **48 constructions aléatoires dans Supabase** (répartition observée A=20, B=16, C=12) : 48/48 structures valides. Ce sont des constructions internes avec le vrai constructeur, **pas 48 parties réseau ni 48 tests de distribution des rôles**. SQL reproductible : `supabase/tests/v290_007_private_pack_preflight.sql`.
+- **Confidentialité :** aucun droit `EXECUTE` sur les fonctions privées C pour `anon` / `authenticated`, et `igr_v282_007_investigate` reste inaccessible au public avant libération. Aucun salon 007 persistant. Fail-closed smoke réussi.
+- **Points encore bloquants :** `approved=0`, `eligible=false`, `human_playtest_verified=false`. Les cinq protections de l'interface doivent être levées après validation, de manière coordonnée, puis QA multijoueur 5 joueurs (rôles, tirages réels, reconnexion, cycles, verrouillage du verdict) avant merge/deploy.
+- **Décision :** données privées intégrées et vérifiées ; publication encore interdite. N'attribuer aucune fausse approbation humaine.
