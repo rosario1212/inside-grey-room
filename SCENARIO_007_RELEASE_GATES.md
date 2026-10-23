@@ -42,3 +42,11 @@ Chaque variante doit contenir trois cartes privées, six confrontations dirigée
 - Supabase Security Advisor : la route `igr_v282_007_investigate` était signalée comme exécutable depuis `anon` (SECURITY DEFINER). L'accès externe a été révoqué jusqu'à autorisation de publication. Cette alerte concerne aussi des routes existantes ailleurs dans le projet, hors périmètre du présent dossier.
 - Vérifications serveur (48 simulations sur les scénarios 001–006) : **48/48 lancements réussis** et salons annulés.
 - Le garde-fou serveur refuse toujours la libération : **3 manuscrits trouvés, 2 packs validés, 0 variante approuvée**.
+
+## Correctif de sécurité v284 — 23 octobre 2026
+- **Permission vérifiée avant correction :** la RPC `public.igr_v282_007_investigate(text,uuid,text)` conservait un droit `EXECUTE` pour `anon`, contrairement à l'intention exprimée dans le contrat. Les rôles `PUBLIC` et `authenticated` n'y avaient pas accès.
+- **Correction appliquée en production Supabase :** révocation explicite pour `PUBLIC`, `anon` et `authenticated`. Nouveau contrôle SQL : tous trois sont à `false` ; le `service_role` conserve la maintenance.
+- Migration de réconciliation versionnée : `supabase/migrations/20261023185000_v284_revoke_007_investigation_until_release.sql` ; test statique `scripts/v284-007-guard-check.mjs`.
+- **Contrôle actuel du release gate :** 3 manuscrits trouvés, 2 packs valides, 0 approbations, 2 vérités distinctes, `eligible=false`, `human_playtest_verified=false`. Le test `igr_v283_007_failclosed_smoke()` confirme que les lancements restent refusés, que le statut ne change pas et que les constructeurs privés sont fermés à `anon`.
+- **Seuil impératif : 3/3 packs validés et 3/3 approbations**, vérités différentes, puis contrôles d'accès, gameplay multijoueur et vérification humaine. Aucun changement de statut éditorial n'a été forcé et aucune solution secrète n'a été copiée sur GitHub.
+- **Publication maintenue bloquée** : variante C sans pack d'investigations ni trames exécutables, aucune validation éditoriale, aucun playtest humain 007. Ne pas basculer l'accès public ni fusionner cette PR avant levée de ces bloqueurs.
