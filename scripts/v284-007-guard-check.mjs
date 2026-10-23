@@ -61,5 +61,7 @@ const behavior = spawnSync(process.execPath, ['scripts/v294-007-release-behavior
 assert.equal(behavior.status, 0, '007 behavioral regression: ' + behavior.stderr + '\n' + behavior.stdout);
 const nextCase=spawnSync(process.execPath, ['scripts/v308-008-release-integration-check.mjs'], {encoding:'utf8'});
 assert.equal(nextCase.status,0,'008 runtime integrity: '+nextCase.stderr+'\n'+nextCase.stdout);
+const nineCase=spawnSync(process.execPath, ['scripts/v340-009-release-integration-check.mjs'], {encoding:'utf8'});
+assert.equal(nineCase.status,0,'009 runtime integrity: '+nineCase.stderr+'\n'+nineCase.stdout);
 console.log('007 client contracts and deny-by-default migration: PASS.');
 console.log('Not a publication certificate: server release status and 5-player E2E QA are still mandatory.');
