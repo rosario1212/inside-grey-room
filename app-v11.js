@@ -1409,12 +1409,14 @@ function renderInvestigationTab(){
   }
  }
  if(r.scenario_id==='006'){
+  const pactThesisLabels={no_strike:'Aucun coup avant la chute',strike:'Un coup a précédé la chute',signs_alive:'Noé a réagi après la chute',help_refused:'Une demande d’aide a été refusée',undetermined:'Je refuse de conclure'};
   const statements=(d.events||[]).filter(e=>e.event_type==='statement_006');
   const statementAllowed=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
-  if(statements.length)body+=`<section class="private-block"><h3>PROCÈS-VERBAUX · DÉCLARATIONS DU PACTE</h3><p class="choice-helper">Ces déclarations sont publiques. Une pièce officielle peut les contredire ; aucune ne devient automatiquement une preuve.</p><div class="timeline">${statements.map(e=>`<details class="event"><summary>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
+  if(statements.length)body+=`<section class="private-block"><h3>PROCÈS-VERBAUX · DÉCLARATIONS DU PACTE</h3><p class="choice-helper">Ces déclarations sont publiques. Une pièce officielle peut les contredire ; aucune ne devient automatiquement une preuve.</p><div class="timeline">${statements.map(e=>`<details class="event"><summary>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</summary><p>${h(e.payload?.text||'')}</p>${e.payload?.pact_thesis?`<p class="choice-helper">POSITION SCELLÉE · ${h(pactThesisLabels[e.payload.pact_thesis]||'Non renseignée')}</p>`:''}</details>`).join('')}</div></section>`;
   const submitted=(d.my_actions||[]).some(a=>a.action_type==='statement_006'&&a.cycle===r.cycle);
+  const thesisField=r.cycle===2?`<div class="field"><label for="igr006PactThesis">POSITION OFFICIELLE SUR LA NUIT · SCELLÉE</label><select id="igr006PactThesis"><option value="">Choisir une affirmation…</option><option value="no_strike">Aucun coup n'a précédé la chute</option><option value="strike">Un coup a précédé la chute</option><option value="signs_alive">Noé a réagi après la chute</option><option value="help_refused">Une demande d'aide a été refusée</option><option value="undetermined">Je refuse de conclure</option></select></div>`:'';
   if(role==='suspect'&&r.status==='playing'&&r.cycle>=1&&r.cycle<=3&&statementAllowed){
-    body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Consigne ce que tu affirmes avoir vu la nuit du chalet. Ton texte restera public et irrévocable. Elle sera visible de tous, verrouillée et opposable à tes paroles. Ne cite que ce que ton personnage peut savoir.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr006Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr006Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div><button class="btn danger block" onclick="submit006Statement()">Consigner définitivement</button>'}</section>`;
+    body+=`<section class="action-section"><h3>VERSION OFFICIELLE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Dépose ta version de la nuit. Au cycle 2, fixe aussi une affirmation scellée : les pièces finales pourront la confirmer, la contredire ou laisser la question ouverte. Ta déclaration sera publique et irrévocable.</p>${submitted?'<div class="locked-state">Ta déclaration est enregistrée. Tu ne peux plus la modifier.</div>':'<div class="field"><label for="igr006Statement">Ta version officielle (20 à 220 caractères)</label><textarea id="igr006Statement" maxlength="220" rows="3" placeholder="Je maintiens que..."></textarea></div>${thesisField}<button class="btn danger block" onclick="submit006Statement()">Consigner définitivement</button>'}</section>`;
   }
  }
  if(['001','002','003','004','005','006'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
@@ -1509,7 +1511,12 @@ async function submit005Statement(){
 async function submit006Statement(){
  const statement=(byId('igr006Statement')?.value||'').trim();
  if(statement.length<20||statement.length>220){toast('Écris entre 20 et 220 caractères.');return;}
- try{await rpc('igr_v263_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement});await syncNow(true)}
+ const isSecond=STATE.sync?.room?.scenario_id==='006'&&STATE.sync?.room?.cycle===2;
+ const thesis=isSecond?(byId('igr006PactThesis')?.value||''):null;
+ if(isSecond&&!thesis){toast('Choisis une position scellée, même si tu refuses de conclure.');return;}
+ try{if(isSecond)await rpc('igr_v270_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement,p_thesis:thesis});
+ else await rpc('igr_v263_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement});
+ await syncNow(true)}
  catch(e){console.error(e);toast('Déclaration indisponible ou déjà enregistrée.')}
 }
 async function investigateByScenario(choice){
@@ -1677,6 +1684,18 @@ function renderReveal(){
  const recScore=myReconstruction&&reconstructionKey?recAxes.filter(k=>myReconstruction[k]===reconstructionKey[k]).length:null;
  const recExplanation=['002','003','004','005','006'].includes(currentCase)?(STATE.sync?.scenario?.truth?.cinematic?.final_line||'La chronologie permet de distinguer les actes et les connaissances.'):reconstructionKey?.explanation||'';
  const recHtml=['001','002','003','004','005','006'].includes(currentCase)&&reconstructionKey?`<section class="private-block"><h3>RECONSTITUTION DES FAITS</h3><p>${h(recExplanation)}</p><p>${recScore===null?'Pas de reconstitution personnelle enregistrée.':`Ton raisonnement : ${recScore}/3 axes correctement reconstitués.`}</p></section>`:'';
+ const pactAuditHtml=currentCase==='006'&&STATE.sync?.room?.status==='finished'&&STATE.sync?.scenario?.truth?.pact_audit_006?(()=>{
+  const audit=STATE.sync.scenario.truth.pact_audit_006;
+  const names={no_strike:'Aucun coup avant la chute',strike:'Un coup a précédé la chute',signs_alive:'Noé a réagi après la chute',help_refused:'Une demande d’aide a été refusée',undetermined:'Je refuse de conclure'};
+  const findings={confirmed:'CONFIRMÉE PAR LES PIÈCES',contradicted:'CONTREDITE PAR LES PIÈCES',not_established:'NON ÉTABLIE PAR LE DOSSIER',unasserted:'AUCUNE AFFIRMATION CATÉGORIQUE'};
+  const events=(STATE.sync?.events||[]).filter(e=>e.event_type==='statement_006').slice().sort((a,b)=>(+a.cycle||0)-(+b.cycle||0));
+  const cards=events.map(e=>{
+    const thesis=e.payload?.pact_thesis;
+    const finding=thesis?findings[audit[thesis]]||'NON ÉVALUABLE':'DÉCLARATION LIBRE — AUCUN VERDICT AUTOMATIQUE';
+    return `<div class="event"><div class="section-title"><b>CYCLE ${h(e.cycle)} · ${h(e.payload?.pseudo||'Suspect')}</b></div><p>${h(e.payload?.text||'')}</p>${thesis?`<p class="choice-helper">POSITION SCELLÉE · ${h(names[thesis]||'Non renseignée')}</p>`:''}<strong>${h(finding)}</strong></div>`;
+  }).join('');
+  return `<section class="private-block igr006-pact-audit"><h3>LE PACTE · CINQ ANS DE VERSIONS</h3><p class="choice-helper">Les dépositions sont confrontées aux pièces, sans interpréter automatiquement les phrases libres.</p><p><strong>${h(audit.finding||'')}</strong></p><div class="timeline">${cards||'<p>Aucune déclaration enregistrée.</p>'}</div><p class="choice-helper">${h(audit.boundary||'')}</p></section>`;
+ })():'';
  const maskAuditHtml=currentCase==='005'&&STATE.sync?.room?.status==='finished'&&reconstructionKey?(()=>{
    const labels={added_after:'Ajouté après les violences',present_before:'Déjà présent avant le meurtre',moved_after:'Porté pour intimider puis déplacé',undetermined:'Thèse non affirmée'};
    const finalMask=reconstructionKey.mask,canon=labels[finalMask]||'Chronologie non déterminée';
@@ -1691,7 +1710,7 @@ function renderReveal(){
  })():'';
 
 
- return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/2 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/2 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–2 correspond exactement au niveau canonique.</small></div>`:''}<div class="result-list">${(p.results||[]).map(x=>{const s=strength(x.player_id);return `<div class="result-line ${x.success?'winner':'loser'}"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><strong>${x.success?'VICTOIRE':'DÉFAITE'}</strong><span>${h(x.text)}</span>${x.success&&s!=null?`<small class="victory-strength">Force de victoire · ${h(s)}/100</small>`:''}</div>`}).join('')}</div>${recHtml}${maskAuditHtml}${renderContinuationPanel()}<button class="btn block" onclick="leaveRoom()">Quitter la cellule</button></div>`;
+ return `<div class="reveal-v11"><div class="kicker">RÉVÉLATION</div><h2>La vérité</h2><p class="reveal-summary">${h(summary)}</p><div class="reveal-legend"><b>Lecture des responsabilités</b><span>« Réalité » = niveau canonique du dossier. « Verdict de l’Enquêteur » = niveau attribué lors du verrouillage final.</span></div>${responsibilities.map(x=>`<div class="responsibility responsibility-clear"><div class="responsibility-name">${h(x.pseudo)}</div><div class="responsibility-grid"><span><small>RÉALITÉ CANONIQUE</small><b>${x.truth_level}/2 · ${h(responsibilityLabel(x.truth_level))}</b></span><span><small>VERDICT DE L’ENQUÊTEUR</small><b>${x.enqueteur_level<0?'Non renseigné':`${x.enqueteur_level}/2 · ${h(responsibilityLabel(x.enqueteur_level))}`}</b></span></div><div class="responsibility-delta ${+x.truth_level===+x.enqueteur_level?'exact':''}">${h(responsibilityDelta(x.truth_level,x.enqueteur_level))}</div></div>`).join('')}${p.accuracy?`<div class="accuracy accuracy-clear"><span>Responsabilités évaluées exactement</span><b>${p.accuracy.exact} sur ${p.accuracy.total}</b><small>Une réponse est exacte uniquement si le niveau 0–2 correspond exactement au niveau canonique.</small></div>`:''}<div class="result-list">${(p.results||[]).map(x=>{const s=strength(x.player_id);return `<div class="result-line ${x.success?'winner':'loser'}"><b>${h(x.pseudo)} · ${h(publicRoleLabel(x.role))}</b><strong>${x.success?'VICTOIRE':'DÉFAITE'}</strong><span>${h(x.text)}</span>${x.success&&s!=null?`<small class="victory-strength">Force de victoire · ${h(s)}/100</small>`:''}</div>`}).join('')}</div>${recHtml}${maskAuditHtml}${pactAuditHtml}${renderContinuationPanel()}<button class="btn block" onclick="leaveRoom()">Quitter la cellule</button></div>`;
 }
 
 function publicRoleLabel(r){return r==='maitre'?(cartelLawyerLabel()||'Avocat / Maître'):roleInfo(r).label||r}
