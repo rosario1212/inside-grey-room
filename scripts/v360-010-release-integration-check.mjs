@@ -19,7 +19,7 @@ assert.match(sql,/revoke all on function igr_private\.igr_v351_010_pinned_pack/)
 assert.match(sql,/revoke all on function igr_private\.igr_v350_010_build_pack/);
 assert.match(sql,/before insert or update of scenario_id on public\.igr_v4_rooms/);
 for(const term of ['igr_v355_010_investigate','investigation_010','igr010Origin','igr010Door','igr010Signal','payload.reconstruction_010','reconstruction_010'])assert(app.includes(term),'Missing 010 interface '+term);
-assert.match(app,/currentCase==='010'\?\['withdrawal','decision','decoy'\]/);
+assert.match(app,/currentCase==='010'\?\['origin','door','signal'\]/);
 assert.match(app,/STATE\.sync\?\.room\?\.scenario_id==='010'/);
 assert.doesNotMatch(app,/"v350_verdict"\s*:\s*\{/);
 console.log('010 release integration contracts: PASS (structural; server E2E separately required).');
