@@ -6,7 +6,7 @@ begin
  if r.scenario_id='013' and p.public_role in ('enqueteur','analyste') then
    if jsonb_typeof(p_payload->'reconstruction_013')<>'object'
      or coalesce(p_payload->'reconstruction_013'->>'knowledge','') not in
-        ('logistique_savait_meurtre','logistique_risque_sans_cible','logistique_alerte_et_suspension')
+        ('logistique_savait_violence','logistique_risque_sans_cible','logistique_alerte_et_suspension')
      or coalesce(p_payload->'reconstruction_013'->>'command','') not in
         ('ordre_nominatif_transmis','financeur_nomme_cible_separement','suspension_jamais_confirmee')
      or coalesce(p_payload->'reconstruction_013'->>'security','') not in
