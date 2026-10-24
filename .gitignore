@@ -22,3 +22,12 @@ supabase/.temp/
 assets/cartel-029-poster-v2.svg
 assets/cartel-030-poster-v2.svg
 assets/cartel-031-poster-v2.svg
+
+# Never commit local secrets, logs or one-off scratch files
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+*.tmp[0-9]*
+_tmp_ignore*.txt
