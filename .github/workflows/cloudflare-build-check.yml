@@ -112,6 +112,8 @@ jobs:
         run: node scripts/v400-012-release-integration-check.mjs
       - name: Check 013 security and six-player runtime contracts
         run: node scripts/v420-013-release-integration-check.mjs
+      - name: Audit 014 private dossier runtime and verdict
+        run: node scripts/v440-014-release-integration-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
