@@ -1,4 +1,4 @@
-const CACHE='igr-v40-012-variants';
+const CACHE='igr-v42-013-variants';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
@@ -7,7 +7,7 @@ const SHELL=[
   '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=v12.28-omerta','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
   '/omerta-v12-40.css?v=v12.41-uniform-dlc','/terror-v12-40.css?v=v12.41-uniform-dlc','/dlc-suite-v12-40.css?v=v20261018-cartel-cell-gold-v7','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
-  '/app-v11.js?v=20261024-012-variants','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
+  '/app-v11.js?v=20261024-013-variants','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
   '/turn-v12-4.js?v=v12.22-mobile-ui','/profile-dossier-v12.js?v=v12.22-mobile-ui','/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
   '/notifications-v12.js?v=v12.22-mobile-ui','/native-lifecycle-v12.js?v=v12.22-mobile-ui','/runtime-optimization-v12.js?v=v12.22-mobile-ui','/gameplay-simple-v12.js?v=v12.22-mobile-ui',
   '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v12.22-mobile-ui',
