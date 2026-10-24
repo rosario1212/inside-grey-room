@@ -108,6 +108,8 @@ jobs:
         run: node scripts/v99-private-release-check.mjs
       - name: Check 011 secure runtime contracts
         run: node scripts/v380-011-release-integration-check.mjs
+      - name: Check 012 secure runtime contracts
+        run: node scripts/v400-012-release-integration-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
