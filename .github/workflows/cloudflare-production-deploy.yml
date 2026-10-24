@@ -35,6 +35,7 @@ jobs:
           node scripts/v87-narrative-check.mjs
           node scripts/v99-private-release-check.mjs
           node scripts/v380-011-release-integration-check.mjs
+          node scripts/v400-012-release-integration-check.mjs
           node scripts/casino-runtime-check.mjs
           node scripts/casino-release-check.mjs dist
           node scripts/cartel-posters-check.mjs dist
