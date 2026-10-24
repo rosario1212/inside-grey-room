@@ -114,6 +114,8 @@ jobs:
         run: node scripts/v420-013-release-integration-check.mjs
       - name: Audit 014 private dossier runtime and verdict
         run: node scripts/v440-014-release-integration-check.mjs
+      - name: Verify 015 private variant and client integration
+        run: node scripts/v460-015-release-integration-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
