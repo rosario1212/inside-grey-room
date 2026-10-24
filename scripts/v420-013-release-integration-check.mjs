@@ -27,6 +27,6 @@ for(const term of ['igr_v415_013_investigate','investigation_013','igr013Knowled
 assert.match(app,/currentCase==='013'\?\['knowledge','command','security'\]/);
 assert.match(app,/STATE\.sync\?\.room\?\.scenario_id==='013'/);
 const html=await readFile('index.html','utf8'),sw=await readFile('service-worker.js','utf8');
-assert(html.includes('20261024-013-variants'));
-assert(sw.includes('igr-v42-013-variants'));
+assert(['20261024-013-variants','20261024-014-variants'].some(v=>html.includes(v)));
+assert(['igr-v42-013-variants','igr-v44-014-variants'].some(v=>sw.includes(v)));
 console.log('013 integration contracts: PASS (server smoke tests required separately).');
