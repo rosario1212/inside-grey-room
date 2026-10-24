@@ -12,7 +12,7 @@ const [app, privilegeMigration, contract, releaseMigration, roomMigration] = awa
 
 // The public app can display only scenario-scoped titles and reports already
 // authorized by the server; private story packs never belong in this source.
-assert.match(app, /\['001','002','003','004','005','006','007','008','009','010','011','012','013','014'\]/);
+assert.match(app, /\['001','002','003','004','005','006','007','008','009','010','011','012','013','014','015'\]/);
 assert.match(app, /r\.scenario_id==='007'\?'investigation_007'/);
 assert.match(app, /igr_v292_007_investigate/);
 assert.match(app, /role==='enqueteur'|\['enqueteur','analyste'\]/);
