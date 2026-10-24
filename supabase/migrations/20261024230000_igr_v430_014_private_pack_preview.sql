@@ -14,7 +14,7 @@ begin
  if jsonb_array_length(coalesce(t,'[]'::jsonb))<>3 or
    jsonb_array_length(coalesce(choices,'[]'::jsonb))<>9 or
    jsonb_typeof(m->'v430_verdict')<>'object' or
-   not ((m->'v430_verdict') ?& array['knowledge','command','security']) or
+   not ((m->'v430_verdict') ?& array['source','transmission','concealment']) or
    (select count(*) from jsonb_object_keys(m->'v430_verdict'))<>3
  then raise exception '014 incomplete private evidence pack' using errcode='P0001';end if;
  for num in 1..3 loop
