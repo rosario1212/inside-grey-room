@@ -106,7 +106,8 @@ jobs:
         run: python3 -m py_compile scripts/v285-007-private-pack-audit.py
       - name: Verify confidential variant staging and bundle exclusion
         run: node scripts/v99-private-release-check.mjs
-        node scripts/v380-011-release-integration-check.mjs
+      - name: Check 011 secure runtime contracts
+        run: node scripts/v380-011-release-integration-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
