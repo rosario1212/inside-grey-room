@@ -8,7 +8,7 @@ Refonte éditoriale privée créée dans Supabase, **non publiée**. Les trois m
 - Table privée `igr_private.igr_v371_011_room_snapshots`, fonction d'éligibilité et sélection aléatoire prévues, mais **non raccordées au moteur de jeu**.
 - Trois preuves garanties par variante : une par cycle, sources fictives désignées ; neuf investigations facultatives (3/cycle), IDs uniques ; trois champs de reconstitution `order`, `field`, `halt`.
 - Rôles : Enquêteur, Analyste, trois Suspects à cinq joueurs. Consignes publiques des trois rôles contextualisées, sans divulguer les manuscrits.
-- Tests réels en base : 60/60 constructions valides ; A/B/C présentes ; trois conclusions distinctes ; aucun identifiant facultatif doublonné ; 3/3 preuves garanties ; aucune session de test laissée.
+- Tests réels en base : 60/60 constructions valides ; A/B/C présentes ; trois conclusions distinctes ; aucun identifiant facultatif doublonné ; 3/3 preuves garanties ; aucune session de test laissée. Les preuves ont désormais une chronologie H+00 à H+36, propre à chaque variante.
 - Contrôle de sécurité : exécution privée refusée aux rôles `anon` et `authenticated`.
 
 ## Verrous encore ouverts
@@ -16,7 +16,8 @@ Refonte éditoriale privée créée dans Supabase, **non publiée**. Les trois m
 - Les cartes, la synchronisation, les preuves de chaque cycle et la révélation doivent lire le même instantané privé de salon.
 - La RPC d'investigation 011 doit être réservée à l'Enquêteur/Analyste, avec jeton vérifié et quota collectif de 1/cycle.
 - Le formulaire de reconstitution `order/field/halt` doit être présenté, validé côté serveur et corrigé uniquement à la révélation.
-- Les tests réels de salons, reconnectivité, droits, phases, régression 001–010 et déploiement Cloudflare restent à effectuer.
+- Les contrôles en transaction ont lancé 24 salons de cinq joueurs (3 suspects, 1 Enquêteur, 1 Analyste), avec tirages A/B/C et absence de fuite des vérités avant révélation. Une partie simulée a parcouru les trois cycles : trois trames, investigations, refus du doublon collectif, accès suspect interdit, final exact et révélation validés. Aucune de ces sessions ne persiste après ROLLBACK.
+- Il reste un test humain sur plusieurs appareils et un déploiement en production, à ne réaliser qu'après autorisation de publication.
 - Aucune partie humaine n'a été conduite. Les sources fictionnelles requièrent une validation éditoriale.
 
 ## Interdiction de publication anticipée
