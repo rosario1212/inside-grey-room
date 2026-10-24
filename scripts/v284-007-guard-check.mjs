@@ -12,7 +12,7 @@ const [app, privilegeMigration, contract, releaseMigration, roomMigration] = awa
 
 // The public app can display only scenario-scoped titles and reports already
 // authorized by the server; private story packs never belong in this source.
-assert.match(app, /\['001','002','003','004','005','006','007','008','009'\]/);
+assert.match(app, /\['001','002','003','004','005','006','007','008','009','010'\]/);
 assert.match(app, /r\.scenario_id==='007'\?'investigation_007'/);
 assert.match(app, /igr_v292_007_investigate/);
 assert.match(app, /role==='enqueteur'|\['enqueteur','analyste'\]/);
@@ -63,5 +63,7 @@ const nextCase=spawnSync(process.execPath, ['scripts/v308-008-release-integratio
 assert.equal(nextCase.status,0,'008 runtime integrity: '+nextCase.stderr+'\n'+nextCase.stdout);
 const nineCase=spawnSync(process.execPath, ['scripts/v340-009-release-integration-check.mjs'], {encoding:'utf8'});
 assert.equal(nineCase.status,0,'009 runtime integrity: '+nineCase.stderr+'\n'+nineCase.stdout);
+const tenCase=spawnSync(process.execPath, ['scripts/v360-010-release-integration-check.mjs'], {encoding:'utf8'});
+assert.equal(tenCase.status,0,'010 runtime integrity: '+tenCase.stderr+'\n'+tenCase.stdout);
 console.log('007 client contracts and deny-by-default migration: PASS.');
 console.log('Not a publication certificate: server release status and 5-player E2E QA are still mandatory.');
