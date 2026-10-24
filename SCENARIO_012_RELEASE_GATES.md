@@ -27,4 +27,13 @@
 7. CI web/PWA/iOS/Android et déploiement Cloudflare vérifiés sur le commit exact de main.
 8. Tous les salons de QA sont exécutés avec BEGIN/ROLLBACK. Aucun utilisateur ou salon existant ne doit être effacé pour la préparation.
 
-**État : conception auditée, intégration non commencée ; ne pas fusionner ou déployer cette branche en l'état.**
+**État au 24/10/2026 : intégration complète et validée en QA transactionnelle ; publication conditionnée à la fusion vérifiée et à l'approbation éditoriale en production.**
+
+## Vérifications automatiques réussies le 24 octobre 2026
+- 10 salons fictifs à cinq joueurs, trois variantes A/B/C observées ; cinq fiches privées, trois documents et neuf investigations par variante.
+- Trois cycles simulés : 1 trame par cycle, 3 choix par cycle pour le camp Enquête, 0 pour les Suspects ; accès par jeton et rôle, rejet du doublon.
+- Audience finale : deux verdicts exacts donnent une reconstruction de camp complète ; verdict mal formé refusé ; mauvais verdict de l'Analyste détecté et pénalisé.
+- Aucune donnée ou partie de QA conservée : tests dans BEGIN/ROLLBACK.
+- Sept points d'intégration de pack vérifiés côté serveur et restrictions d'exécution `anon`/`authenticated` des fonctions privées maintenues.
+- Cinq contrôles GitHub (Cloudflare, Android, iOS, Store, Layout) réussis sur le commit de branche avant le dernier changement documentaire.
+- Pas de véritable partie humaine certifiée ; `human_playtest_verified=false`.
