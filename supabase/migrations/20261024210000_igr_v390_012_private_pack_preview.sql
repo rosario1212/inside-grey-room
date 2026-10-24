@@ -14,7 +14,7 @@ begin
  if jsonb_array_length(coalesce(t,'[]'::jsonb))<>3 or
    jsonb_array_length(coalesce(choices,'[]'::jsonb))<>9 or
    jsonb_typeof(m->'v390_verdict')<>'object' or
-   not ((m->'v390_verdict') ?& array['order','field','halt']) or
+   not ((m->'v390_verdict') ?& array['directive','violence','reaction']) or
    (select count(*) from jsonb_object_keys(m->'v390_verdict'))<>3
  then raise exception '012 incomplete private evidence pack' using errcode='P0001';end if;
  for num in 1..3 loop
@@ -29,7 +29,7 @@ begin
  then raise exception '012 duplicate investigation IDs' using errcode='P0001';end if;
  select pack into base from public.igr_v4_scenario_packs where scenario_id='012';
  if base is null or jsonb_array_length(base->'suspects')<>3
- then raise exception '012 orderal pack missing' using errcode='P0001';end if;
+ then raise exception '012 original pack missing' using errcode='P0001';end if;
  select jsonb_agg(jsonb_build_object(
    'place',e->>'identity','chronology',e->>'your_chronology',
    'hide',e->>'what_you_hide','anchors',e->>'what_you_know',
