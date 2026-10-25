@@ -6,6 +6,7 @@ const db=readFileSync('supabase/migrations/20261025040000_igr_optional_roles_003
 const prosecutorVariant=readFileSync('supabase/migrations/20261025041000_igr_011_prosecutor_variant_runtime.sql','utf8');
 const index=readFileSync('index.html','utf8');
 const sw=readFileSync('service-worker.js','utf8');
+const finalizer=readFileSync('scripts/finalize-cartel030-release.mjs','utf8');
 
 const cases=[
   {id:'003',min:4,role:'Expert',key:'expert'},
@@ -33,4 +34,5 @@ assert(prosecutorVariant.includes('igr_private.igr_v371_011_pinned_pack(p_room)'
 assert(index.includes('20261025-optional-roles-003-008-009-011'));
 assert(sw.includes("igr-v47-optional-roles-003-008-009-011"));
 assert(sw.includes('20261025-optional-roles-003-008-009-011'));
+assert(finalizer.includes("const clientVersion='v174-optional-roles-003-008-009-011'"),'Production finalizer would restore stale role cache');
 console.log('Optional-role 003/008/009/011 contract: PASS (4/5-player rosters preserved; 6-player roles, private release guards, action content and PWA checked).');
