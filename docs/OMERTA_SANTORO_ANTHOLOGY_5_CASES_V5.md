@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V5
+
+> **Note de version OMERTÀ :** La référence la plus récente pour les quatre lois et les cinq enquêtes autonomes est [OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md](OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md), avec le contrat de publication vérifiable [omerta-v7-release-contract.json](../qa/omerta-v7-release-contract.json). Leurs règles ne sont pas encore déployées en jeu.
+
 ## CINQ AFFAIRES AUTONOMES · UNE FAMIGLIA SANTORO · ZÉRO CONTINUITÉ OBLIGATOIRE
 
 **Décision de l'auteur (25 octobre 2026) :** OMERTÀ est un **DLC anthologique**, **pas** une campagne HÉRITAGE. Les cinq dossiers 021–025 appartiennent au même univers de La Cosa Nostra italo-américaine, mais leurs intrigues **ne se recoupent pas**. Quelques clins d'œil non essentiels sont acceptés.
