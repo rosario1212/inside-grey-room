@@ -9,6 +9,7 @@ Une victime liée à un réseau de narcotiques est droguée, humiliée et filmé
 - 7 joueurs : + Journaliste.
 - 8 joueurs : + Juge.
 - Respecter le droit du Suspect de renoncer au Maître et la faculté du Maître de cesser sa représentation selon les règles existantes, sans appliquer les pénalités spécifiques aux scénarios CARTEL 030/031.
+- **Vérification du moteur effectuée :** `igr_private.igr_v170_end_representation` autorise la rupture à l'initiative du Suspect ou du Maître pendant la partie ; la pénalité du Maître est strictement conditionnée à `scenario_id IN ('030','031')`. Les contrôles déjà présents `scripts/lawyer-mutual-termination-check.mjs` et `scripts/cartel-lawyer-assignment-check.mjs` couvrent explicitement le 016. Le nouveau garde v480 vérifie désormais que cette séparation ne régresse pas.
 - Les rôles additionnels ne doivent pas accéder aux preuves et solutions privées du camp Enquête, sauf disposition explicitement autorisée par leurs règles.
 - Aucun joueur ne doit déduire l'identité de la variante depuis les métadonnées, les identifiants publics, l'ordre des affichages ou les erreurs serveur.
 
