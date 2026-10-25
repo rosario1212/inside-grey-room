@@ -5,7 +5,7 @@ const a=app.indexOf("id:'016'"),b=app.indexOf("id:'017'",a);
 assert(a>0&&b>a,'016 catalog entry missing');
 const entry=app.slice(a,b);
 assert(entry.includes("title:'LE DERNIER ÉTAGE'"));
-assert(entry.includes('min:5,max:8'),'016 capacity must support 5 to 8 players');
+assert(entry.includes('min:5,max:9'),'016 must support five to nine players');
 assert(entry.includes('Les circonstances exactes de sa mort restent hors champ'));
 assert(!entry.includes('avant le geste fatal'),'016 must not claim an off-camera homicide');
 assert(entry.includes('Vidéo ≠ preuve du décès'),'016 forensic distinction missing');
@@ -22,5 +22,7 @@ assert(mutual.includes("['016','030','031']"),'016 counselor regression coverage
 assert(cartel.includes("['030','031','016']"),'016 lawyer assignment QA missing');
 const migrations=await readdir('supabase/migrations');
 const partial=migrations.filter(x=>/igr_v47\d+_016/.test(x));
-assert(partial.length===0,'016 private A/B/C runtime migration detected without validated complete release gate; update this test only after all three canonical packs are complete and tested');
-console.log('016 safe legacy story, counsel protections, four player limits and private-release barrier PASS');
+assert(partial.length===0,'Legacy v470 016 partial migrations cannot bypass the complete runtime');
+assert(migrations.includes('20261025192406_igr_v480_016_private_release_engine.sql'),'016 complete private A/B/C runtime migration not versioned');
+assert(migrations.includes('20261025193141_igr_v490_016_expert_cycle_access_guard.sql'),'016 forensic report cycle guard not versioned');
+console.log('016 canonical neutrality, 5–9 roles, counsel separation, private release gates PASS');

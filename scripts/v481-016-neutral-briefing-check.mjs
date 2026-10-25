@@ -4,7 +4,7 @@ const app=await readFile('app-v11.js','utf8');
 const at=app.indexOf("id:'016'"), next=app.indexOf("id:'017'",at);
 assert(at>=0&&next>at,'016 catalog missing');
 const scenario=app.slice(at,next);
-assert(scenario.includes('min:5,max:8'),'016 role capacity changed');
+assert(scenario.includes('min:5,max:9'),'016 role capacity changed');
 assert(scenario.includes('Les circonstances exactes de sa mort restent hors champ'),'016 intro presupposes a murderer');
 assert(scenario.includes('Vidéo ≠ preuve du décès'),'016 evidential caution missing');
 assert(!scenario.includes('avant le geste fatal'),'016 intro contradicts variants');

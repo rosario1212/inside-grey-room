@@ -44,7 +44,7 @@ Le but n'est pas seulement de trouver un coupable, mais de **prouver qui savait 
 5. Rejeter les verdicts incomplets ou hors des options permises ; tester bonnes/mauvaises réponses séparées de l'Enquêteur et de l'Analyste ; ne jamais attribuer un résultat homicide à un scénario dont les faits ne l'établissent pas.
 6. Tester dans des transactions annulées. Vérifier les anciennes versions 001–015. Exiger CI vertes et déploiement Cloudflare sur le SHA exact, **puis** approuver les trois manuscrits.
 
-### État de la réalisation au 25 octobre 2026
+### État avant la refonte du 25 octobre 2026
 - Briefing public neutre : **publié** par PR #361.
 - Compatibilité héritée à 5–8 joueurs, rôle de Maître, 3 cycles : **testée**.
 - Tableau local privé de preuves (français/anglais) : **implémenté sur branche, non publié**.
@@ -52,3 +52,15 @@ Le but n'est pas seulement de trouver un coupable, mais de **prouver qui savait 
 - Runtime A/B/C privé, approbation et jeu réel en variante : **non vérifiés, donc non publiés**.
 
 **Le présent document définit une cible vérifiable, pas une attestation de fonctionnalité déjà déployée.**
+
+### Refonte technique et éditoriale du 25 octobre 2026
+
+**Développement réellement effectué :**
+- Trois manuscrits canoniques A/B/C privés structurés et recoupés : 3 pièces obligatoires et sourcées par variante (C1, C2, C3), 9 investigations facultatives distinctes (3/cycle) et 3 objectifs de reconstitution du verdict. Les pièces ne sont pas inscrites dans le dépôt public.
+- Les trois fins ont des causes et des responsabilités réellement différentes. Le texte public, le Journaliste et les mécanismes de preuve n'imposent jamais un meurtre volontaire avant d'avoir établi les faits.
+- Variant aléatoire privé épinglé au salon pour les trois cycles et la reconnexion, validation des champs, accès restreints, limites d'une investigation du camp/cycle, contre-expertise de l'Expert, et séparation des résultats de l'Enquêteur/Analyste.
+- Le jeu original à 5–8 joueurs demeure : 5 Enquêteur/Analyste/3 Suspects ; +Avocat à 6 ; +Journaliste à 7 ; +Juge à 8. **À 9 joueurs, Expert médico-légal facultatif** ; une analyse par cycle, déverrouillée selon son cycle, jamais visible à l'avance. Aucun de ces rôles additionnels n'est indispensable aux trois preuves obligatoires.
+- L'interface propose trois questions finales indépendantes, vérifiées en fin de partie selon la seule vérité A/B/C du salon. Le tableau de notes personnelles reste local, facultatif, bilingue.
+- Migration Supabase versionnée ; déploiement Cloudflare soumis aux contrats de tests, aux vérifications de source et à un contrôle du SHA publié.
+- Conditions de production : tests de non-divulgation et permissions, routes 5–9 joueurs, cycles C1–C3, verrouillage des finales, CI verte, validation éditoriale des trois variantes, contrôle post-publication.
+- La présence de ces mécanismes n'atteste **pas** un playtest humain. La note 10/10 est un objectif de conception, non un résultat mesuré.
