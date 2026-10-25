@@ -1,3 +1,5 @@
+> **ARCHIVÉ — SUPPLANTÉ PAR V4.** Choix confirmé : **Famiglia Santoro**. Référence éditoriale actuelle : [OMERTA_SANTORO_CONTEXT_PLAYER_AGENCY_V4.md](OMERTA_SANTORO_CONTEXT_PLAYER_AGENCY_V4.md). Cette V3 garde des formulations anciennes sur le patronyme et ne fait pas autorité. Aucun renommage des packs de production n'a encore été exécuté.
+
 # INSIDE GREY ROOM — OMERTÀ V3
 ## BIBLE MAFIEUSE RÉALISTE — LA COSA NOSTRA, SANS ACTING
 
