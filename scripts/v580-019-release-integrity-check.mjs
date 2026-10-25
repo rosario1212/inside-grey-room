@@ -36,6 +36,6 @@ assert(hooks.includes('reconstruction_019'),'019 locked response not persisted')
 assert(sync.includes("'investigation_019_used'"),'019 camp investigation limit missing');
 assert(sync.includes('igr_v571_019_pinned_pack'),'019 sync not using private snapshot');
 assert(sync.includes("r.scenario_id='019'"),'019 protected sync filter missing');
-assert(check.includes('node '+ 'scripts/v580-019-release-integrity-check.mjs'+'),'019 not checked before build');
-assert(deploy.includes('node '+ 'scripts/v580-019-release-integrity-check.mjs'+'),'019 missing Cloudflare preflight');
+assert(check.includes('node scripts/v580-019-release-integrity-check.mjs'),'019 not checked before build');
+assert(deploy.includes('node scripts/v580-019-release-integrity-check.mjs'),'019 missing Cloudflare preflight');
 console.log('PASS 019: protected variants, fixed nine roles, 3-cycle investigations, validated final reconstruction, secure room pinning, PWA and deployment gates.');
