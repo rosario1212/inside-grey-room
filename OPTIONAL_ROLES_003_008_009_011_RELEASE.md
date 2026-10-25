@@ -14,3 +14,5 @@
 - Migration : `supabase/migrations/20261025040000_igr_optional_roles_003_008_009_011.sql`.
 - Contrôle structurel ajouté à Cloudflare Build Check et Production Deploy : `scripts/optional-roles-003-008-009-011-check.mjs`.
 - QA serveur : quatre parties de six joueurs (une par scénario) démarrées, rôles et fiches validés, instantanés privés présents, transaction annulée. Pas de playtest humain réel certifié.
+
+- Le Procureur du 011 consulte la variante A/B/C épinglée pour ses objectifs secrets éventuels ; migration : `supabase/migrations/20261025041000_igr_011_prosecutor_variant_runtime.sql`.
