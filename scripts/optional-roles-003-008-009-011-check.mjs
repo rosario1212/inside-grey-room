@@ -31,8 +31,8 @@ assert(db.includes("igr_v220_003_build_pack"),'003 pinned pack must keep expert_
 assert(db.includes("'{expert_actions}'"),'Expert has no actual choices');
 assert(db.includes("'{protected}'"),'008 Judge has no protected procedural items');
 assert(prosecutorVariant.includes('igr_private.igr_v371_011_pinned_pack(p_room)'), '011 prosecutor must use pinned A/B/C variant');
-assert(index.includes('v580-019-grand-bal'));
-assert(sw.includes("igr-v580-019-grand-bal"));
-assert(sw.includes('v580-019-grand-bal'));
-assert(finalizer.includes("const clientVersion='v580-019-grand-bal'"),'Production finalizer would restore stale role cache');
+assert(index.includes('v620-020-apotheose-finale'));
+assert(sw.includes("igr-v620-020-apotheose-finale"));
+assert(sw.includes('v620-020-apotheose-finale'));
+assert(finalizer.includes("const clientVersion='v620-020-apotheose-finale'"),'Production finalizer would restore stale role cache');
 console.log('Optional-role 003/008/009/011 contract: PASS (4/5-player rosters preserved; 6-player roles, private release guards, action content and PWA checked).');
