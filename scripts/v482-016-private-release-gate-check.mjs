@@ -5,7 +5,7 @@ const a=app.indexOf("id:'016'"),b=app.indexOf("id:'017'",a);
 assert(a>0&&b>a,'016 catalog entry missing');
 const entry=app.slice(a,b);
 assert(entry.includes("title:'LE DERNIER ÉTAGE'"));
-assert(entry.includes('min:5,max:8'),'016 capacity must support 5 to 8 players');
+assert(entry.includes('min:5,max:9'),'016 must support five to nine players');
 assert(entry.includes('Les circonstances exactes de sa mort restent hors champ'));
 assert(!entry.includes('avant le geste fatal'),'016 must not claim an off-camera homicide');
 assert(entry.includes('Vidéo ≠ preuve du décès'),'016 forensic distinction missing');
