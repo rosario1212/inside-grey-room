@@ -132,6 +132,8 @@ jobs:
         run: node scripts/v532-017-release-integrity-check.mjs
       - name: Audit 018 secure variants, Inspector, roles and cache
         run: node scripts/v560-018-release-integrity-check.mjs
+      - name: Audit 019 three-variant private runtime, verdict, and production cache
+        run: node scripts/v580-019-release-integrity-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
