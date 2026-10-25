@@ -1,5 +1,8 @@
 # Inside Grey Room v13.1 — mécaniques signature des DLC
 
+> **Note de version OMERTÀ :** La référence la plus récente pour les quatre lois et les cinq enquêtes autonomes est [OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md](docs/OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md), avec le contrat de publication vérifiable [omerta-v7-release-contract.json](qa/omerta-v7-release-contract.json). Leurs règles ne sont pas encore déployées en jeu.
+
+
 ## Règle générale
 
 Les DLC utilisent la même grammaire sociale que la v13 : phases autoritaires, conversations humaines, faits canoniques, aucun micro d’analyse, aucun mini-jeu gratuit. Leur différence vient d’un **monde persistant visible** et d’une **mécanique signature propre à chaque dossier**.
