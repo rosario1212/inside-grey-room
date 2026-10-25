@@ -25,6 +25,6 @@ assert.match(app,/currentCase==='011'\?\['order','field','halt'\]/);
 assert.match(app,/STATE\.sync\?\.room\?\.scenario_id==='011'/);
 assert.doesNotMatch(app,/"v370_verdict"\s*:\s*\{/);
 const html=await readFile('index.html','utf8'),sw=await readFile('service-worker.js','utf8');
-assert(['20261024-011-variants','20261024-012-variants','20261024-013-variants','20261024-014-variants','v480-016-private-variants-expert'].some(v=>html.includes(v)));
-assert(["igr-v38-9-011-variants","igr-v40-012-variants","igr-v42-013-variants","igr-v44-014-variants","igr-v480-016-private-variants-expert"].some(v=>sw.includes(v)));
+assert(['20261024-011-variants','20261024-012-variants','20261024-013-variants','20261024-014-variants','v520-017-silence-variants'].some(v=>html.includes(v)));
+assert(["igr-v38-9-011-variants","igr-v40-012-variants","igr-v42-013-variants","igr-v44-014-variants","igr-v520-017-silence-variants"].some(v=>sw.includes(v)));
 console.log('011 integration contracts: PASS (structural; real server multiplayer tests still mandatory).');
