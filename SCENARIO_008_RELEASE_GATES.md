@@ -1,4 +1,7 @@
 # Dossier 008 — SOUS SERMENT · Audit et refonte privée v300
+
+> **Mise à jour du 25 octobre 2026 — extension facultative à six joueurs.** La configuration précédente (Enquêteur, Analyste et trois Suspects) reste obligatoire à cinq. À six joueurs, un **Juge** rejoint la partie sans modifier les trois variantes A/B/C ni leurs solutions. Le rôle supplémentaire dispose d'une fiche spécifique et n'a pas accès aux investigations réservées à l'Enquêteur et à l'Analyste. Contrôle Supabase : salon de six joueurs, six fiches privées et snapshot de variante vérifiés par transaction annulée. Aucun playtest humain n'a encore été certifié. Les formulations historiques ci-dessous décrivent l'état antérieur à cette extension.
+
 > **Mise à jour : intégration serveur v301–v309 terminée, publication préparée.** Le dossier 008 dispose d'un tirage A/B/C aléatoire par salon, d'un instantané privé immuable, de cartes propres à chaque rôle, de trois révélations garanties, de neuf investigations par variante et d'un verdict à trois axes noté dans la révélation. Des tests automatisés sur le **vrai moteur Supabase** sont passés : 24 salons à cinq joueurs (A=13, B=7, C=4 ; 13 répartitions de rôles), puis 12 parties complètes jusqu'à la révélation (A=3, B=5, C=4), trois cycles avec quota commun et preuve invisible aux suspects, et reconstruction correcte/erronée. Aucune partie de QA ni instantané n'a été laissé. L'essai avec cinq personnes physiques n'a **pas** été effectué. Les sections historiques plus bas décrivent le travail avant raccordement, pas l'état actuel.
 
 

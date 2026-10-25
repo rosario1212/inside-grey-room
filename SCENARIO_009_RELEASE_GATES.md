@@ -1,5 +1,8 @@
 # Dossier 009 — Le Sujet 17 · Refonte privée v330
 
+> **Mise à jour du 25 octobre 2026 — extension facultative à six joueurs.** La configuration précédente (Enquêteur, Analyste et trois Suspects) reste obligatoire à cinq. À six joueurs, un **Expert** rejoint la partie sans modifier les trois variantes A/B/C ni leurs solutions. Le rôle supplémentaire dispose d'une fiche spécifique et n'a pas accès aux investigations réservées à l'Enquêteur et à l'Analyste. Contrôle Supabase : salon de six joueurs, six fiches privées et snapshot de variante vérifiés par transaction annulée. Aucun playtest humain n'a encore été certifié. Les formulations historiques ci-dessous décrivent l'état antérieur à cette extension.
+
+
 > **Intégration technique du 009 achevée et testée sur Supabase (24/10/2026).** Le moteur tire A/B/C au lancement d'un salon, fige un instantané privé, distribue les cartes, trames et investigations par cycle aux rôles autorisés, verrouille la reconstruction à trois axes et la corrige à la révélation. **24 salons à cinq joueurs simulés** : A=9, B=5, C=10, 12 distributions de rôles. **12 parties achevées** : A=3, B=4, C=5. Cycle 1–3 : 3 trames, 3 investigations, double demande refusée, suspect sans preuve privée. Verdict mal formé refusé ; verdict exact correct, verdict différent faux. Tous les salons tests ont été annulés. Le playtest humain reste non effectué. L'approbation de publication serveur reste fermée tant que le code n'est pas déployé.
 
 
