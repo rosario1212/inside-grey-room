@@ -1413,13 +1413,18 @@ function renderInvestigationTab(){
  let body=`<div class="phase-explain"><h2>${h(phaseLabel(ph))}</h2>${phaseInstruction(role,ph,target)}</div>`;
 
  if(r.scenario_id==='016'&&['enqueteur','analyste'].includes(role)){
-   const cells=[
+   const english=window.IGR_LOCALE==='en';
+   const cells=english?[
+     {id:'visible',title:'1 · What the footage shows',hint:'Describe only visible acts; do not assume how the victim died.'},
+     {id:'outside',title:'2 · What happened off camera',hint:'Build a sourced timeline; separate testimony, contradictions and corroboration.'},
+     {id:'cause',title:'3 · What caused the death',hint:'Distinguish medical findings, causal hypotheses and any proven intent.'}
+   ]:[
      {id:'visible',title:'1 · Ce que montrent les images',hint:'Décris uniquement les actes visibles, sans conclure sur le décès.'},
      {id:'outside',title:'2 · Ce qui se passe hors caméra',hint:'Note une chronologie sourcée, et distingue témoignage, contradiction et élément corroboré.'},
      {id:'cause',title:'3 · Ce qui explique le décès',hint:'Sépare constat médico-légal, hypothèse causale et intention éventuellement prouvée.'}
    ];
    const prefix='igr016_ledger_'+STATE.room+'_'+STATE.playerId+'_';
-   body+=`<details class="private-block igr016-ledger"><summary>TABLE DE PREUVES · 3 questions à résoudre</summary><p class="choice-helper">Un interrogatoire peut être mensonger. Une vidéo peut être authentique sans établir la cause du décès. Classe les faits et leurs sources avant de décider. Ces notes restent sur cet appareil.</p>${cells.map(c=>`<div class="field"><label for="igr016_${c.id}">${h(c.title)}</label><p class="choice-helper">${h(c.hint)}</p><textarea id="igr016_${c.id}" maxlength="650" rows="2" placeholder="Fait · source · ce qui demeure incertain…" oninput="save016EvidenceNote('${c.id}',this.value)">${h(STORAGE.getItem(prefix+c.id)||'')}</textarea></div>`).join('')}</details>`;
+   body+=`<details class="private-block igr016-ledger"><summary>${english?'EVIDENCE BOARD · 3 questions':'TABLE DE PREUVES · 3 questions à résoudre'}</summary><p class="choice-helper">${english?'Interviews can mislead. Genuine footage does not establish the cause of death. Record what each source actually proves. Notes remain on this device.':'Un interrogatoire peut être mensonger. Une vidéo peut être authentique sans établir la cause du décès. Classe les faits et leurs sources avant de décider. Ces notes restent sur cet appareil.'}</p>${cells.map(c=>`<div class="field"><label for="igr016_${c.id}">${h(c.title)}</label><p class="choice-helper">${h(c.hint)}</p><textarea id="igr016_${c.id}" maxlength="650" rows="2" placeholder="Fait · source · ce qui demeure incertain…" oninput="save016EvidenceNote('${c.id}',this.value)">${h(STORAGE.getItem(prefix+c.id)||'')}</textarea></div>`).join('')}</details>`;
  }
 
  if(r.scenario_id==='003'){
