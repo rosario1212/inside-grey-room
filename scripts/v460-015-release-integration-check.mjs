@@ -13,6 +13,6 @@ assert(app.includes(f),'015 client missing '+f);
 assert.match(app,/currentCase==='015'\?\['authority','continuation','records'\]/);
 assert(!app.includes('Une médecin est retrouvée morte alors qu’elle enquêtait sur ÉLIGIBLES'),'015 wrong public premise');
 const html=await readFile('index.html','utf8'),sw=await readFile('service-worker.js','utf8');
-assert(html.includes('v480-016-private-variants-expert'));
-assert(sw.includes('igr-v480-016-private-variants-expert'));
+assert(html.includes('v520-017-silence-variants'));
+assert(sw.includes('igr-v520-017-silence-variants'));
 console.log('015 private pack, 5–7 player, UI and release contracts PASS');

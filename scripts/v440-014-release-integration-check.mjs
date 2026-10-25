@@ -22,5 +22,5 @@ for(const term of ['igr_v435_014_investigate','investigation_014','igr014Source'
  assert(app.includes(term),'014 UI missing '+term);
 assert.match(app,/currentCase==='014'\?\['source','transmission','concealment'\]/);
 const html=await readFile('index.html','utf8'),sw=await readFile('service-worker.js','utf8');
-assert(['20261024-014-variants','v480-016-private-variants-expert'].some(v=>html.includes(v)));assert(['igr-v44-014-variants','igr-v480-016-private-variants-expert'].some(v=>sw.includes(v)));
+assert(['20261024-014-variants','v520-017-silence-variants'].some(v=>html.includes(v)));assert(['igr-v44-014-variants','igr-v520-017-silence-variants'].some(v=>sw.includes(v)));
 console.log('014 integration contracts PASS');
