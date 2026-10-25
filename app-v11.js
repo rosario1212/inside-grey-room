@@ -201,7 +201,7 @@ const PUBLIC_LOBBY_SUMMARIES = {
  '013':'Le président Kessler est assassiné par un tireur payé. Le tir est établi ; la chaîne d’intention, de financement et de préparation qui l’a précédé reste à reconstruire.',
  '014':'Une fuite expose onze informateurs et leurs familles. Dans un service où chacun ne détient qu’une partie du secret, il faut déterminer qui a compromis quoi — et avec quelles conséquences.',
  '015':'Une médecin est retrouvée morte alors qu’elle enquêtait sur le programme ÉLIGIBLES. Ses recherches touchent à des patients encore récupérables et à des décisions que l’hôpital préférerait ne pas avoir à défendre.',
- '016':'Une victime est droguée, humiliée et filmée, puis retrouvée morte. La vidéo s’arrête avant le meurtre : le dossier commence précisément là où l’image ne montre plus rien.',
+ '016':'Une victime est droguée, humiliée et filmée, puis retrouvée morte. Le film ne montre pas les circonstances de son décès. L’enquête devra établir ce qui s’est passé avant et après la coupure, sans présumer d’un nouvel acte mortel.',
  '017':'Deux personnes sont enlevées. L’une meurt, l’autre survit. Entre menaces, loyauté et survie, il faut comprendre ce qui a réellement déterminé leur sort.',
  '018':'L’ancien directeur d’un foyer abusif est retrouvé mort au bout d’une table dressée pour neuf anciens résidents absents. Chaque assiette porte un nom. Quelqu’un a voulu que cette scène soit lue.',
  '019':'Un lanceur d’alerte est retrouvé mort pendant un gala d’élite, juste avant de révéler un dossier compromettant. Dans la salle, plusieurs pouvoirs avaient quelque chose à perdre.',
