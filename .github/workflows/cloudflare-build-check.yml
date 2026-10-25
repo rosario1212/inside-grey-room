@@ -118,6 +118,8 @@ jobs:
         run: node scripts/v460-015-release-integration-check.mjs
       - name: Validate optional sixth-player roles (003, 008, 009, 011)
         run: node scripts/optional-roles-003-008-009-011-check.mjs
+      - name: Audit strengthened case roles and editorial boundaries
+        run: node scripts/v498-case-role-editorial-check.mjs
       - name: Verify 016 canonical briefing neutrality
         run: node scripts/v481-016-neutral-briefing-check.mjs
       - name: Guard 016 private runtime approval
