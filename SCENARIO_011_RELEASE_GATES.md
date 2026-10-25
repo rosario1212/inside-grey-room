@@ -1,5 +1,8 @@
 # Dossier 011 — 36 HEURES | Portail de publication
 
+> **Mise à jour du 25 octobre 2026 — extension facultative à six joueurs.** La configuration précédente (Enquêteur, Analyste et trois Suspects) reste obligatoire à cinq. À six joueurs, un **Procureur** rejoint la partie sans modifier les trois variantes A/B/C ni leurs solutions. Le rôle supplémentaire dispose d'une fiche spécifique et n'a pas accès aux investigations réservées à l'Enquêteur et à l'Analyste. Contrôle Supabase : salon de six joueurs, six fiches privées et snapshot de variante vérifiés par transaction annulée. Aucun playtest humain n'a encore été certifié. Les formulations historiques ci-dessous décrivent l'état antérieur à cette extension.
+
+
 ## Situation au 24 octobre 2026
 Refonte éditoriale privée créée dans Supabase, **non publiée**. Les trois manuscrits privés (A/B/C) conservent leurs responsabilités différentes, avec un nouveau cycle complet de preuves. Le scénario public historique reste distinct de ces manuscrits.
 
