@@ -116,6 +116,8 @@ jobs:
         run: node scripts/v440-014-release-integration-check.mjs
       - name: Verify 015 private variant and client integration
         run: node scripts/v460-015-release-integration-check.mjs
+      - name: Verify 016 canonical briefing neutrality
+        run: node scripts/v481-016-neutral-briefing-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity

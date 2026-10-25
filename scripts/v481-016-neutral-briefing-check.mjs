@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+const app=await readFile('app-v11.js','utf8');
+const at=app.indexOf("id:'016'"), next=app.indexOf("id:'017'",at);
+assert(at>=0&&next>at,'016 catalog missing');
+const scenario=app.slice(at,next);
+assert(scenario.includes('min:5,max:8'),'016 role capacity changed');
+assert(scenario.includes('Les circonstances exactes de sa mort restent hors champ'),'016 intro presupposes a murderer');
+assert(scenario.includes('Vidéo ≠ preuve du décès'),'016 evidential caution missing');
+assert(!scenario.includes('avant le geste fatal'),'016 intro contradicts variants');
+const intro=app.match(/'016':'([^']*)',\s*'017':/);
+assert(intro&&intro[1].includes('Le film ne montre pas les circonstances de son décès'),'016 cinematic briefing unsupported');
+assert(!/avant le meurtre|geste fatal/i.test(intro[1]),'016 briefing leaks a homicide theory');
+console.log('016 canonical introduction remains neutral across three endings.');
