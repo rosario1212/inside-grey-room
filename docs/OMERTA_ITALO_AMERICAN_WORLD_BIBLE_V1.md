@@ -127,6 +127,36 @@ Deux pièces indépendantes éclairent le mouvement physique et la destination d
 
 Pas de renommage des personnages, pas de nouveaux rangs attribués de force, pas de réécriture du canon caché, pas de nouveau surnom qui masque automatiquement une identité; pas d'ajout de lieux comme preuves sans sources, pas d'activation A/B/C, pas de changement aux DLC autres qu'OMERTÀ et surtout pas à CARTEL. Le présent document est **une proposition de direction**, pas une version jouable de 021.
 
+
+## Arbitrage créatif — 25 octobre 2026 : période, géographie et localisation libre de la Grey Room
+
+### Période : **2006 comme point de référence** (proposition forte)
+
+Fixer l'histoire d'OMERTÀ vers **2006**, dans la première moitié / seconde moitié des années 2000, plutôt que demander à chaque joueur de choisir l'année. Ne pas réécrire toutes les cartes avec des dates tant que les chronologies des variantes ne sont pas vérifiées. Les cinq épisodes se dérouleraient sur quelques semaines ou mois dans la même continuité. Les portables, appels horodatés, témoins fédéraux, négociations de peine et documents bancaires sont compatibles avec cette période. Un réglage arbitraire de l'époque déstabiliserait ces preuves, le vocabulaire et les contextes judiciaires.
+
+**Authenticité géographique :** les cinq familles historiques de New York étaient **Bonanno, Colombo, Gambino, Genovese et Lucchese** (sources FBI / DOJ déjà citées). Si les Verri sont un boss de *famille* totalement indépendante, éviter de les présenter comme une *sixième grande famille de New York*. Option recommandée pour cette fiction : **Famiglia Verri, famille fictive installée dans le nord du New Jersey avec un crew et des relations d'affaires à Brooklyn**, en interaction sociale et commerciale avec la sphère des cinq familles. C'est proche de la situation distincte des DeCavalcante dans le New Jersey, sans copier cette famille ni fabriquer une rencontre avec un mafieux réel. La couleur visuelle reste Brooklyn, Queens, Manhattan et les villes du nord du New Jersey. Option de rechange : univers entièrement fictif avec cinq familles analogues anonymes.
+
+**Authenticité relationnelle :** les Verri ne possèdent pas « toute la ville ». Les autres groupes sont des acteurs avec des droits, des différends, des intermédiaires et des limites. Un conflit peut porter sur une réputation ou un partage de revenus, pas forcément sur une tuerie.
+
+### Bureau de la Grey Room : **libre à chaque partie**, indépendant du canon mafieux
+
+La localisation de la cellule Grey Room appartient **aux joueurs**, pas au scénario :
+- Au **démarrage de chaque partie**, l'hôte saisit ou choisit un **nom libre de localisation**. Cela peut être un quartier, une ville, un endroit réel ou imaginaire, un bâtiment inventé, ou seulement un nom évocateur : « Une arrière-salle à Newark », « Bureau 14 à Genève », « L'Ancienne Gare », « Sous-sol de Vesper ».
+- Afficher cette localisation au briefing/lobby et dans l'en-tête de cellule après validation. La même partie garde le même nom durant toute la session; une nouvelle partie peut le changer.
+- C'est un **lieu de jeu narratif**, **pas** une localisation GPS, une adresse postale obligatoire ou une information de géolocalisation de l'utilisateur. Ne pas la déduire automatiquement; les joueurs la choisissent. Si texte libre, appliquer une limite de longueur, le contrôle des contenus déjà existant et l'échappement HTML de l'interface.
+- La localisation Grey Room ne modifie ni l'année 2006, ni les événements mafieux, ni les preuves, ni la géographie d'une scène du dossier. On peut interroger un suspect à une Grey Room fictive située ailleurs; ne pas prétendre que le meurtre s'y est produit.
+- Dans une saga 021–025, proposer **« reprendre le dernier bureau »** par défaut pour la continuité, sans interdire une nouvelle localisation; l'hôte conserve le dernier mot.
+
+**STATUT TECHNIQUE VÉRIFIÉ : non implémenté**. À ce stade, `public.igr_omerta_create_room` accepte `p_code, p_scenario_id, p_pseudo, p_profile_id, p_profile_token` et aucun champ de bureau/localisation. La table `public.igr_v4_rooms` ne comporte pas de colonne dédiée et les états des cellules vérifiés n'en ont pas. Il faudra **ajouter ce paramètre et sa persistance côté serveur, puis mettre à jour l'écran de création et le briefing** avant d'affirmer que cette règle est opérationnelle. Ne pas la présenter comme déjà existante.
+
+### Contrôle de vérité historique et de jouabilité
+
+- Le canon Verri est une fiction dramatique; éviter de prêter des crimes fictifs à des personnes réelles.
+- Le « juge de la Grey Room » est une fonction fictive du jeu : ne pas prétendre qu'un juge fédéral américain dirige normalement une audition de police.
+- Respecter les structures d'entreprise documentées : boss/underboss/consigliere/capos/soldiers/associates, avec des pouvoirs concrets et des limites; le grade ne doit jamais révéler la vérité.
+- Inspirations artistiques : *The Sopranos* (vie familiale et sociale, 1999–2007), *The Godfather* (héritage et devoir familial), affaires fédérales des familles de New York (procédure, hiérarchie, pression sur les témoins).
+- **Les décisions ci-dessus sont des propositions documentées sur une branche de revue**, sans modification de l'application ou de la base.
+
 ## Priorités après validation du cadre
 
 1. Vérifier les cinq romans privés A/B/C et l'exactitude des liaisons 021→025.
