@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
-const clientVersion='v480-016-private-variants-expert';
+const clientVersion='v520-017-silence-variants';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
