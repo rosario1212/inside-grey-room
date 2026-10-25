@@ -58,6 +58,7 @@ jobs:
           node scripts/v482-016-private-release-gate-check.mjs
           node scripts/v483-016-evidence-ledger-check.mjs
           node scripts/v491-016-release-integrity-check.mjs
+          node scripts/v532-017-release-integrity-check.mjs
           node scripts/casino-runtime-check.mjs
           node scripts/casino-release-check.mjs dist
           node scripts/cartel-posters-check.mjs dist
