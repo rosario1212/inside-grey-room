@@ -128,7 +128,8 @@ jobs:
         run: node scripts/v483-016-evidence-ledger-check.mjs
       - name: Audit complete 016 private variants, Expert and production cache
         run: node scripts/v491-016-release-integrity-check.mjs
-          node scripts/v532-017-release-integrity-check.mjs
+      - name: Audit 017 private variants, release and full cache
+        run: node scripts/v532-017-release-integrity-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
