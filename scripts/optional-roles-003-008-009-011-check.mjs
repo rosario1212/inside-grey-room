@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 
 const app=readFileSync('app-v11.js','utf8');
 const db=readFileSync('supabase/migrations/20261025040000_igr_optional_roles_003_008_009_011.sql','utf8');
+const prosecutorVariant=readFileSync('supabase/migrations/20261025041000_igr_011_prosecutor_variant_runtime.sql','utf8');
 const index=readFileSync('index.html','utf8');
 const sw=readFileSync('service-worker.js','utf8');
 
@@ -28,6 +29,7 @@ assert(db.includes("Five-player roster changed in %"),'Old roster assertion miss
 assert(db.includes("igr_v220_003_build_pack"),'003 pinned pack must keep expert_actions');
 assert(db.includes("'{expert_actions}'"),'Expert has no actual choices');
 assert(db.includes("'{protected}'"),'008 Judge has no protected procedural items');
+assert(prosecutorVariant.includes('igr_private.igr_v371_011_pinned_pack(p_room)'), '011 prosecutor must use pinned A/B/C variant');
 assert(index.includes('20261025-optional-roles-003-008-009-011'));
 assert(sw.includes("igr-v47-optional-roles-003-008-009-011"));
 assert(sw.includes('20261025-optional-roles-003-008-009-011'));
