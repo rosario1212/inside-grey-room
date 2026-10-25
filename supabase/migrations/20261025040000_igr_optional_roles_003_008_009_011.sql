@@ -8,16 +8,16 @@ BEGIN
   expected := 'when p_scenario in (''001'',''003'',''004'',''005'',''006'') then 5';
   replacement := 'when p_scenario in (''001'',''004'',''005'',''006'') then 5'
     || E'\n ' || 'when p_scenario in (''003'',''008'',''009'',''011'') then 6';
-  IF position(expected in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected legacy maximum-player roster'; END IF;
+  IF position(expected in source_sql)=0 AND position('when p_scenario in (''003'',''008'',''009'',''011'') then 6' in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected legacy maximum-player roster'; END IF;
   source_sql := replace(source_sql,expected,replacement);
   expected := 'when p_scenario in (''007'',''008'',''009'',''010'',''011'',''012'') then 5';
-  IF position(expected in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected five-player roster'; END IF;
+  IF position(expected in source_sql)=0 AND position('when p_scenario in (''007'',''010'',''012'') then 5' in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected five-player roster'; END IF;
   source_sql := replace(source_sql,expected,'when p_scenario in (''007'',''010'',''012'') then 5');
   EXECUTE source_sql;
 
   SELECT pg_get_functiondef('public.igr_v4_role_for_seat(text,integer,integer)'::regprocedure) INTO source_sql;
   expected := 'elsif p_scenario in (''001'',''003'',''004'',''005'',''006'') then';
-  IF position(expected in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected 003 role roster'; END IF;
+  IF position(expected in source_sql)=0 AND position('elsif p_scenario=''003'' then' in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected 003 role roster'; END IF;
   replacement := $roster$
 elsif p_scenario='003' then
    if p_count=6 then return (array['enqueteur','analyste','suspect','suspect','suspect','expert'])[p_seat+1];
@@ -26,7 +26,7 @@ elsif p_scenario='003' then
  elsif p_scenario in ('001','004','005','006') then$roster$;
   source_sql := replace(source_sql,expected,replacement);
   expected := 'elsif p_scenario in (''007'',''008'',''009'',''010'',''011'',''012'') then return (array[''enqueteur'',''analyste'',''suspect'',''suspect'',''suspect''])[p_seat+1];';
-  IF position(expected in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected 008/009/011 role roster'; END IF;
+  IF position(expected in source_sql)=0 AND position('elsif p_scenario=''008'' then' in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected 008/009/011 role roster'; END IF;
   replacement := $roster$
 elsif p_scenario in ('007','010','012') then return (array['enqueteur','analyste','suspect','suspect','suspect'])[p_seat+1];
  elsif p_scenario='008' then return (array['enqueteur','analyste','suspect','suspect','suspect','juge'])[p_seat+1];
@@ -49,7 +49,7 @@ elsif p_scenario in ('007','010','012') then return (array['enqueteur','analyste
     WHERE n.nspname='igr_private' AND p.proname=item.routine_name;
     IF source_sql IS NULL THEN RAISE EXCEPTION 'Missing %',item.routine_name; END IF;
     expected := 'public.igr_v4_max_players('''||item.case_id||''')=5';
-    IF position(expected in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected release contract %',item.case_id; END IF;
+    IF position(expected in source_sql)=0 AND position('public.igr_v4_max_players('''||item.case_id||''')=6' in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected release contract %',item.case_id; END IF;
     source_sql := replace(source_sql,expected,'public.igr_v4_max_players('''||item.case_id||''')=6');
     EXECUTE source_sql;
   END LOOP;
@@ -59,7 +59,7 @@ elsif p_scenario in ('007','010','012') then return (array['enqueteur','analyste
   FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
   WHERE n.nspname='igr_private' AND p.proname='igr_v220_003_build_pack';
   expected := '''expert_actions'',''[]''::jsonb';
-  IF position(expected in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected 003 expert action builder'; END IF;
+  IF position(expected in source_sql)=0 AND position('''expert_actions'',coalesce(base->''expert_actions'',''[]''::jsonb)' in source_sql)=0 THEN RAISE EXCEPTION 'Unexpected 003 expert action builder'; END IF;
   source_sql := replace(source_sql,expected,'''expert_actions'',coalesce(base->''expert_actions'',''[]''::jsonb)');
   EXECUTE source_sql;
 END;
