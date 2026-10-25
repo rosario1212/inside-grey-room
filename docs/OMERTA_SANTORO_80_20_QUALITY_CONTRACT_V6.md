@@ -1,4 +1,7 @@
 # OMERTÀ — CONTRAT DE QUALITÉ V6 (80/20)
+
+> **Note de version OMERTÀ :** La référence la plus récente pour les quatre lois et les cinq enquêtes autonomes est [OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md](OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md), avec le contrat de publication vérifiable [omerta-v7-release-contract.json](../qa/omerta-v7-release-contract.json). Leurs règles ne sont pas encore déployées en jeu.
+
 ## Famiglia Santoro · cinq enquêtes fortes · un univers réellement commun
 
 **Référence éditoriale actuelle.** Le DLC OMERTÀ 021–025 n'est PAS une campagne HÉRITAGE. Son objectif est une excellence narrative et ludique **à vérifier** ; « 10/10 » n'est pas une note revendiquée sans tests. **V5 est supersédée sur le sens exact du recoupement** : le nouvel arbitrage autorise des liens de monde et de personnages, voire des situations connues en commun, tant que la compréhension et le résultat de chaque enquête sont autonomes.
