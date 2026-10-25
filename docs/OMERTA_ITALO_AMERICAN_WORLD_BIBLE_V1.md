@@ -4,7 +4,7 @@
 
 ## Ambition éditoriale
 
-L'objectif n'est pas une parodie de *Goodfellas* ou des Gambino. C'est une fiction originale sur la **Famiglia Verri**, famille criminelle italo-américaine implantée dans l'agglomération de New York. Le joueur doit croire qu'avant son entrée dans la Grey Room, chacun vivait déjà dans ce monde : avait des obligations, des proches, des habitudes, des rancœurs, des dettes et une réputation.
+L'objectif n'est pas une parodie de *Goodfellas* ou des Gambino. C'est une fiction originale sur la **Famiglia Verri**, famille criminelle fictive ancrée dans le nord du New Jersey et liée à des crews et relations d'affaires du Grand New York. Le joueur doit croire qu'avant son entrée dans la Grey Room, chacun vivait déjà dans ce monde : avait des obligations, des proches, des habitudes, des rancœurs, des dettes et une réputation.
 
 Règle centrale : *la famille de sang* et *la famille criminelle* ne sont pas la même chose. L'appartenance italienne n'implique pas la criminalité. Une personne peut être très proche du Don et étrangère à l'organisation.
 
@@ -16,7 +16,7 @@ Règle centrale : *la famille de sang* et *la famille criminelle* ne sont pas la
 
 ## Lieu / époque — proposition canonique à valider avant publication
 
-**New York métropolitain et New Jersey, environ 2010–2015**, mais ne pas inscrire une année sur le briefing avant relecture des cinq épisodes et de leurs techniques de preuve. Brooklyn est le centre social de la Famiglia; Manhattan son monde des activités légales et de l'argent; Queens et New Jersey ses périphéries personnelles et économiques. Pour l'instant, tous les lieux précis sont de la **géographie d'atmosphère**, pas des faits canoniques de la base.
+**Grand New York et nord du New Jersey, vers 2006**, sous réserve de compatibilité avec les cinq chronologies et les variantes. Le nord du New Jersey est le foyer de la Famiglia; Brooklyn accueille son crew et plusieurs relations sociales; Manhattan et le Queens sont des lieux d'affaires et d'intermédiation. Tous les lieux précis restent de la **géographie d'atmosphère**, pas encore des faits canoniques en base.
 
 Cette époque autorise la juxtaposition de vieux clubs de quartier, rendez-vous familiers, téléphones portables, pièces bancaires et enquêtes fédérales. Elle évite l'anachronisme d'une imitation pure des années 1970 dans une intrigue reposant déjà sur des données téléphoniques.
 
