@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS igr_private.igr_v521_017_room_snapshots (
  pack jsonb NOT NULL,
  pinned_at timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE igr_private.igr_v521_017_room_snapshots ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON igr_private.igr_v521_017_room_snapshots FROM public,anon,authenticated;
 CREATE OR REPLACE FUNCTION igr_private.igr_v320_017_build_pack(p_variant text)
  RETURNS jsonb
