@@ -1478,6 +1478,14 @@ function renderInvestigationTab(){
   }
  }
 
+ if(r.scenario_id==='017'&&['enqueteur','analyste'].includes(role)){
+ const reports=(d.events||[]).filter(e=>e.event_type==='investigation_017');
+ const used=reports.some(e=>+e.cycle===+r.cycle);
+ const names=window.IGR_LOCALE==='en'?['Reconstruct the timeline','Cross-check the accounts','Examine independent traces']:['Reconstituer la chronologie','Confronter les déclarations','Vérifier les traces indépendantes'];
+ const allowed=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
+ if(reports.length)body+=`<section class="private-block"><h3>PIÈCES COMPLÉMENTAIRES · ${reports.length}</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Constat')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
+ if(allowed&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>LE PRIX DU SILENCE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste par cycle pour tout le camp Enquête. Les trois pièces garanties restent automatiques. Le témoignage du survivant est un récit à recouper, pas une preuve de complicité.</p>${used?'<div class="locked-state">Investigation réalisée · résultat disponible ci-dessus.</div>':names.map((name,i)=>`<button type="button" class="choice-row" onclick="investigate017Index(${i+1})"><span>${h(name)}</span><b>Examiner</b></button>`).join('')}</section>`;
+}
  if(['030','031'].includes(currentScenario()?.id)&&canInvestigationChannel(role)){const pieces=(d.events||[]).filter(e=>e.event_type==='trame'&&e.payload?.evidence_id);if(pieces.length)body+=`<section class="private-block igr82-known"><h3>PIÈCES D’ENQUÊTE · ${pieces.length} reçues</h3><div class="timeline">${pieces.slice().reverse().map(e=>`<details class="event trame"><summary>${h(e.payload?.title||'Pièce')} · Cycle ${h(e.cycle||'')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;}
  if((d.pending_requests||[]).length)body+=renderPendingRequests();
  if(ph==='interrogation_select'&&role==='enqueteur')body+=renderInterrogationSelect();
@@ -1567,6 +1575,7 @@ async function submit006Statement(){
  await syncNow(true)}
  catch(e){console.error(e);toast('Déclaration indisponible ou déjà enregistrée.')}
 }
+async function investigate017Index(i){try{await rpc('igr_v526_017_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est plus disponible pour ce cycle.')}}
 async function investigateByScenario(choice){
  try{await rpc(STATE.sync?.room?.scenario_id==='016'?'igr_v485_016_investigate':STATE.sync?.room?.scenario_id==='015'?'igr_v455_015_investigate':STATE.sync?.room?.scenario_id==='014'?'igr_v435_014_investigate':STATE.sync?.room?.scenario_id==='013'?'igr_v415_013_investigate':STATE.sync?.room?.scenario_id==='012'?'igr_v395_012_investigate':STATE.sync?.room?.scenario_id==='011'?'igr_v375_011_investigate':STATE.sync?.room?.scenario_id==='010'?'igr_v355_010_investigate':STATE.sync?.room?.scenario_id==='009'?'igr_v335_009_investigate':STATE.sync?.room?.scenario_id==='008'?'igr_v305_008_investigate':STATE.sync?.room?.scenario_id==='007'?'igr_v292_007_investigate':STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
  catch(e){console.error(e);toast('Investigation indisponible, déjà demandée ou phase terminée.')}
