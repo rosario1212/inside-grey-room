@@ -45,7 +45,7 @@ for(const [index,c] of (contract.cases||[]).entries()){
  check(body.includes('**Fin autonome')||body.includes('**Fin autonome :'),'No independent ending for '+id);
  check(body.includes('**Positions')||body.includes('**Positions du joueur'),'No free player-involvement positions '+id);
  check(/Santoro/.test(body),'No Santoro context for '+id);
- check(!/quatre dossiers précédents|dossiers précédents convergent|selon les choix précédents/i.test(body),
+ check(!/quatre dossiers ont laissé|dossiers précédents convergent|selon les choix précédents/i.test(body),
   'Legacy campaign continuity still present '+id);
 }
 check(Object.keys(contract.audit_state||{}).length>=8,'Production audit checklist incomplete');
