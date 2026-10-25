@@ -1,3 +1,5 @@
+> **ARCHIVE / SUPPLANTÉ :** la direction éditoriale actuelle est [OMERTA_LA_COSA_NOSTRA_REALISM_V3.md](OMERTA_LA_COSA_NOSTRA_REALISM_V3.md). Les références apostoliques ne sont pas centrales; *Malaspina* a été rejeté et *Lucifora* reste une possibilité non confirmée. Le nouveau canon n'est pas intégré en production.
+
 # INSIDE GREY ROOM — OMERTÀ V2
 ## Famiglia Malaspina / concept d'immersion sans interprétation
 
