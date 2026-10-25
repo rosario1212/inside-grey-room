@@ -7,7 +7,8 @@ assert(at>=0,'016 must be listed');
 const scenario=app.slice(at,app.indexOf("id:'017'",at));
 assert(scenario.includes("title:'LE DERNIER ÉTAGE'"),'016 title');
 assert(scenario.includes('min:5,max:8'),'016 supports five to eight players');
-for(const s of ['Le meurtre, lui, n’apparaît sur aucune image','Avocat possible','Humiliation ≠ meurtre','Abandon tardif'])
+assert(!scenario.includes('avant le geste fatal'),'016 introduction must not assert a post-video fatal act that one variant does not establish');
+for(const s of ['Les circonstances exactes de sa mort restent hors champ','Avocat possible','Vidéo ≠ preuve du décès','Abandon tardif'])
  assert(scenario.includes(s),'016 premise or unique mechanic missing '+s);
 for(const s of ['5 joueurs','6 joueurs','7 joueurs','8 joueurs','A/B/C','BEGIN/ROLLBACK','non publié'])
  assert(doc.includes(s),'release criterion not documented '+s);
