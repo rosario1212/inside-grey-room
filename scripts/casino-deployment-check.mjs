@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
+const clientVersion='v174-optional-roles-003-008-009-011';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
 const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.5/);
@@ -35,8 +36,8 @@ if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deplo
 assert.deepEqual(cartel.moles,{'7':1,'8':1,'9':2});
 assert.deepEqual(cartel.evidence_per_cycle,[6,7,10]);
 const cartelHome=await get('/?release='+encodeURIComponent(cartel.version));
-assert.match(await cartelHome.text(),/app-v11\.js\?v=v173-cartel031-negotiation/);
-const cartelApp=await get('/app-v11.js?v='+cartel.version);
+assert((await cartelHome.text()).includes('app-v11.js?v='+clientVersion),'Client cache must match optional-role release');
+const cartelApp=await get('/app-v11.js?v='+clientVersion);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
 assert(cartelSource.includes('Procureur · Juge · Journaliste · Don · Bras droit'),'CARTEL 029 optional roles missing');
@@ -56,8 +57,8 @@ assert(terminationSource.includes('igr_v170_end_representation'),'Mutual termina
 assert(terminationSource.includes('p_acknowledge_cartel'),'Cartel consequence confirmation missing');
 for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
 assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
-const cartelWorker=await get('/service-worker.js?v='+cartel.version);
-assert((await cartelWorker.text()).includes("const CACHE='igr-v173-cartel031-negotiation';"));
+const cartelWorker=await get('/service-worker.js?v='+clientVersion);
+assert((await cartelWorker.text()).includes("const CACHE='igr-"+clientVersion+"';"));
 for(const poster of ['campagne','scenario-1','scenario-2','scenario-3']){
  const response=await get('/assets/casino/'+poster+'.webp');assert.equal(response.status,200);
  assert.match(response.headers.get('Content-Type'),/image\/webp/);
