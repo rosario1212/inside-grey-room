@@ -12,4 +12,11 @@ for(const s of ['Le meurtre, lui, n’apparaît sur aucune image','Avocat possib
 for(const s of ['5 joueurs','6 joueurs','7 joueurs','8 joueurs','A/B/C','BEGIN/ROLLBACK','non publié'])
  assert(doc.includes(s),'release criterion not documented '+s);
 assert(!doc.includes('human_playtest_verified=true'),'human test must not be invented');
+const lawyerSql=await readFile('supabase/migrations/20261022144154_lawyer_mutual_termination.sql','utf8');
+const lawyerTests=await readFile('scripts/lawyer-mutual-termination-check.mjs','utf8');
+const cartelTests=await readFile('scripts/cartel-lawyer-assignment-check.mjs','utf8');
+assert(lawyerSql.includes("penalty:=me.public_role='maitre' and r.scenario_id in ('030','031');"),'016 lawyer must never receive cartel abandonment penalty');
+assert(lawyerSql.includes("'cartel_penalty_on_withdraw',me.public_role='maitre' and r.scenario_id in ('030','031')"),'016 lawyer UI penalty flag must remain false');
+assert(lawyerTests.includes("['016','030','031']"),'lawyer mutual-termination tests must cover 016');
+assert(cartelTests.includes("['030','031','016']"),'016 counsel must retain ordinary client-selection regime');
 console.log('016 existing premise, 5–8 players and safe release plan: PASS. This is NOT a production/private manuscript validation.');
