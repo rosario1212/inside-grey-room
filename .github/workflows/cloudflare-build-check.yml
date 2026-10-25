@@ -116,6 +116,8 @@ jobs:
         run: node scripts/v440-014-release-integration-check.mjs
       - name: Verify 015 private variant and client integration
         run: node scripts/v460-015-release-integration-check.mjs
+      - name: Check 016 canonical story and 5-8 player contract
+        run: node scripts/v480-016-premise-guard-check.mjs
       - name: Audit v100 private variant preview release barriers
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
