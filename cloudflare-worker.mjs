@@ -63,8 +63,11 @@ export default {
   const headers=new Headers(asset.headers);
   if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
   // Opaque release marker; narrative and variant IDs remain server-side.
-  headers.set('X-IGR-Release','igr-001-20261023');
+  headers.set('X-IGR-Release','igr-003-008-009-011-secure-20261025');
   headers.set('X-Content-Type-Options','nosniff');
+  // Deny embedding private role cards in third-party frames.
+  headers.set('X-Frame-Options','DENY');
+  headers.set('Content-Security-Policy',"frame-ancestors 'none'");
   headers.set('Referrer-Policy','no-referrer');
   // Public URL, but do not index the unfinished beta in search engines.
   headers.set('X-Robots-Tag','noindex, nofollow, noarchive');

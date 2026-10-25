@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  statuses: write
 concurrency:
   group: cloudflare-production
   cancel-in-progress: false
@@ -20,6 +21,18 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Publish Cloudflare pending commit status
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --silent --show-error --request POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            -d '{"state":"pending","context":"Cloudflare Production","description":"Workers deployment and production checks pending"}' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" >/dev/null
       - name: Verify Cloudflare credentials are configured
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -55,3 +68,27 @@ jobs:
         env:
           IGR_EXPECTED_COMMIT: ${{ github.sha }}
         run: node scripts/casino-deployment-check.mjs
+      - name: Publish Cloudflare success commit status
+        if: success()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --silent --show-error --request POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            -d '{"state":"success","context":"Cloudflare Production","description":"Worker deployed and commit verified"}' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" >/dev/null
+      - name: Publish Cloudflare failure commit status
+        if: failure()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --silent --show-error --request POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            -d '{"state":"failure","context":"Cloudflare Production","description":"Workers deployment or production verification failed"}' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" >/dev/null

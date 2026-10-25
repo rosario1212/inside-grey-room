@@ -9,6 +9,10 @@ for(const path of ['/','/index.html','/app-v11.js','/assets/intro-v10-14.webp','
  assert.equal(res.status,200,'Public route must not require a passcode: '+path);
  assert.equal(await res.text(),'public asset');
  assert(!res.headers.has('Set-Cookie'),'Public route must not set a login cookie');
+ assert.equal(res.headers.get('X-Frame-Options'),'DENY','Player UI may not be framed');
+ assert.equal(res.headers.get('Content-Security-Policy'),"frame-ancestors 'none'");
+ assert.equal(res.headers.get('X-Content-Type-Options'),'nosniff');
+ assert.equal(res.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025');
 }
 assert.equal(assets,5);
 let res=await worker.fetch(req('/__igr-private'),env);
