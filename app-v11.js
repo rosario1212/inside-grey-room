@@ -1480,11 +1480,11 @@ function renderInvestigationTab(){
 
  if(r.scenario_id==='017'&&['enqueteur','analyste'].includes(role)){
  const reports=(d.events||[]).filter(e=>e.event_type==='investigation_017');
- const used=reports.some(e=>+e.cycle===+r.cycle);
- const names=window.IGR_LOCALE==='en'?['Reconstruct the timeline','Cross-check the accounts','Examine independent traces']:['Reconstituer la chronologie','Confronter les déclarations','Vérifier les traces indépendantes'];
+ const choices=Array.isArray(d.scenario?.investigation_017)?d.scenario.investigation_017:[];
+ const used=!!d.scenario?.investigation_017_used||reports.some(e=>+e.cycle===+r.cycle);
  const allowed=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
  if(reports.length)body+=`<section class="private-block"><h3>PIÈCES COMPLÉMENTAIRES · ${reports.length}</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Constat')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
- if(allowed&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>LE PRIX DU SILENCE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste par cycle pour tout le camp Enquête. Les trois pièces garanties restent automatiques. Le témoignage du survivant est un récit à recouper, pas une preuve de complicité.</p>${used?'<div class="locked-state">Investigation réalisée · résultat disponible ci-dessus.</div>':names.map((name,i)=>`<button type="button" class="choice-row" onclick="investigate017Index(${i+1})"><span>${h(name)}</span><b>Examiner</b></button>`).join('')}</section>`;
+ if(allowed&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>LE PRIX DU SILENCE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste par cycle pour tout le camp Enquête. Les trois pièces garanties restent automatiques. Le témoignage du survivant est un récit à recouper, pas une preuve de complicité.</p>${used?'<div class="locked-state">Investigation réalisée · résultat disponible ci-dessus.</div>':choices.map((choice,i)=>`<button type="button" class="choice-row" onclick="investigate017Index(${i+1})"><span>${h(choice.title||'Vérifier cette piste')}</span><b>Examiner</b></button>`).join('')}</section>`;
 }
  if(['030','031'].includes(currentScenario()?.id)&&canInvestigationChannel(role)){const pieces=(d.events||[]).filter(e=>e.event_type==='trame'&&e.payload?.evidence_id);if(pieces.length)body+=`<section class="private-block igr82-known"><h3>PIÈCES D’ENQUÊTE · ${pieces.length} reçues</h3><div class="timeline">${pieces.slice().reverse().map(e=>`<details class="event trame"><summary>${h(e.payload?.title||'Pièce')} · Cycle ${h(e.cycle||'')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;}
  if((d.pending_requests||[]).length)body+=renderPendingRequests();
