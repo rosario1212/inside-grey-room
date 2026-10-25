@@ -8,7 +8,7 @@ La rejouabilité reste prioritaire : la mécanique signature reste reconnaissabl
 
 ## OMERTÀ 021–025 — LA FAMIGLIA VIVANTE
 
-Élément permanent : état de la Famiglia (actifs, protégés, disparus, morts, cercle compromis). Pas de surnoms ajoutés. Les identités récurrentes et la campagne restent lisibles.
+**Contrat 80/20, Famiglia Santoro (V6, éditorial et non encore intégré)** : 80 % d'affaires autonomes, 20 % de monde partagé (famille, hiérarchie, territoires, personnages récurrents et clins d'œil non essentiels). Les dossiers 021–025 sont accessibles dans n'importe quel ordre : **aucune mort, protection, dénonciation, variante, culpabilité, alliance, score ou décision ne passe d'une affaire à l'autre**. L'état narratif de la Famiglia (actifs, protégés, etc.) existe **dans une partie seulement** puis repart de zéro au prochain dossier. Les joueurs conservent leurs pseudos et personnalités : aucune obligation d'acting ni de dialogue écrit. Voir `docs/OMERTA_SANTORO_80_20_QUALITY_CONTRACT_V6.md`.
 
 - **021 L’ENVELOPPE — LE CERCLE SE RESSERRE** : chaque information sensible possède un cercle canonique de personnes qui pouvaient la connaître. Lorsqu’elle sort, la Famiglia apprend seulement la taille du cercle, jamais automatiquement l’identité de la source.
 - **022 OMERTÀ — RECONSTITUTION DE L’ORDRE** : en C3, les acteurs concernés verrouillent séparément `ORDRE / MENACE / AUTORISATION IMPLICITE / INITIATIVE PERSONNELLE`, puis Confrontation.
