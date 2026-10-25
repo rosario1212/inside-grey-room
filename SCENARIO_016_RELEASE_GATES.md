@@ -46,5 +46,14 @@ Avant activation, inspecter les trois manuscrits privés canoniques A/B/C pour c
 - Pour les trois configurations avec Maître, `public.igr_v45_lawyer_state` confirme `cartel_penalty_on_withdraw=false`.
 - **IMPORTANT : ce test valide la répartition des rôles du scénario hérité, pas les variantes privées A/B/C ni la corrélation des preuves avec leur vérité.** Les salons ont été annulés avec `ROLLBACK`.
 
+## Audit canonique privé et blocage d'intégration (25 octobre 2026)
+
+- Trois manuscrits distincts A/B/C confirmés par lecture ciblée de `canonical_direction`, `canonical_truth.responsibility_by_slot` et `canonical_truth.timeline` depuis Supabase.
+- Les trois versions se distinguent par la responsabilité directe dans le décès, l'ordre des événements après la coupure et l'existence ou non d'un acte intentionnel supplémentaire. **Ne pas publier de correspondance entre identifiants A/B/C et vérités dans le client ou les documents publics.**
+- Une tentative d'intégration des nouvelles preuves et investigations a été acceptée uniquement pour une variante ; les deux autres écritures ont été refusées par les contrôles du connecteur. La création du constructeur privé versionné a également été refusée. Il faut donc maintenir l'interface et le runtime existants.
+- Le nouveau moteur de variantes privées n'est pas déployé ; ne pas attribuer de statut `ready`, ne pas ouvrir de salon avec une sélection A/B/C partiellement câblée.
+- 4 salons legacy à 5/6/7/8 joueurs et 1 salon à 8 joueurs sur trois cycles testés dans `BEGIN/ROLLBACK` : répartitions correctes ; 1, 2 puis 3 événements de trame ; synchronisation pour chaque rôle ; jeton étranger refusé ; vérité masquée.
+- Le Maître ne subit pas les pénalités CARTEL 030/031 dans le scénario 016. Contrôle statique et état serveur vérifiés.
+
 ## Statut
 **En préparation ; non publié dans ce chantier.** Accès de lecture au contenu privé refusé par les contrôles du connecteur. Aucun manuscrit 016, aucun garde serveur, aucune fonction centrale, aucun scénario antérieur ni aucun déploiement de production n'a été modifié au titre du dossier 016.
