@@ -111,7 +111,7 @@ CREATE OR REPLACE FUNCTION igr_private.igr_v529_017_room_release_guard()
 AS $function$ begin if new.scenario_id='017' and coalesce((igr_private.igr_v521_017_release_status()->>'eligible')::boolean,false) is not true then raise exception 'Dossier 017 non publie';end if;return new;end $function$;
 
 REVOKE ALL ON FUNCTION public.igr_v525_017_investigate(text,uuid,text) FROM public,anon,authenticated;
-GRANT EXECUTE ON FUNCTION public.igr_v525_017_investigate(text,uuid,text) TO anon,authenticated;
+-- Direct named-investigation RPC remains private; only the validated index wrapper is exposed.
 REVOKE ALL ON FUNCTION public.igr_v526_017_investigate_index(text,uuid,integer) FROM public,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_v526_017_investigate_index(text,uuid,integer) TO anon,authenticated;
 REVOKE ALL ON FUNCTION igr_private.igr_v527_017_reveal_enrich(text,jsonb) FROM public,anon,authenticated;
