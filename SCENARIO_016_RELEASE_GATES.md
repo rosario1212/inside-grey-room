@@ -40,5 +40,11 @@ Avant activation, inspecter les trois manuscrits privés canoniques A/B/C pour c
 - Vérifier que les scénarios 001 à 015 restent utilisables.
 - Une partie humaine à 5–8 joueurs reste nécessaire avant de déclarer le scénario parfait.
 
+## Test d'intégration à blanc (Supabase, 25 octobre 2026)
+- Quatre salons temporaires (5, 6, 7 et 8 joueurs), lancés sur le **moteur existant** dans une transaction SQL annulée ; **4/4 répartitions conformes**, **5/6/7/8 fiches privées non vides**.
+- 5 joueurs : Enquêteur, Analyste, 3 Suspects ; 6 : + Maître ; 7 : + Journaliste ; 8 : + Juge.
+- Pour les trois configurations avec Maître, `public.igr_v45_lawyer_state` confirme `cartel_penalty_on_withdraw=false`.
+- **IMPORTANT : ce test valide la répartition des rôles du scénario hérité, pas les variantes privées A/B/C ni la corrélation des preuves avec leur vérité.** Les salons ont été annulés avec `ROLLBACK`.
+
 ## Statut
 **En préparation ; non publié dans ce chantier.** Accès de lecture au contenu privé refusé par les contrôles du connecteur. Aucun manuscrit 016, aucun garde serveur, aucune fonction centrale, aucun scénario antérieur ni aucun déploiement de production n'a été modifié au titre du dossier 016.
