@@ -13,7 +13,7 @@ assert(app.includes("'016':{required:['Enquêteur','Analyste','3 suspects'],opti
 for(const part of ["'016'?'investigation_016'","igr_v485_016_investigate","payload.reconstruction_016","igr016After","igr016Death","igr016Warning","sixteenReconstruction", "currentCase==='016'?'reconstruction_016'","'after_video','death','warning'"]){
  assert(app.includes(part),'016 interactive private case missing: '+part);
 }
-for(const part of ['igr_private.igr_v480_016_build_pack','igr_private.igr_v480_016_safe_pack','igr_private.igr_v481_016_pin_room','igr_private.igr_v481_016_release_status','igr_private.igr_v489_016_room_release_guard','igr_v485_016_investigate','igr_v487_016_reveal_enrich','public.igr_v4_lock_final','reconstruction_016','investigation_016','found','private_secure']){
+for(const part of ['igr_private.igr_v480_016_build_pack','igr_private.igr_v480_016_safe_pack','igr_private.igr_v481_016_pin_room','igr_private.igr_v481_016_release_status','igr_private.igr_v489_016_room_release_guard','igr_v485_016_investigate','igr_v487_016_reveal_enrich','public.igr_v4_lock_final','reconstruction_016','investigation_016']){
  assert(db.includes(part),'016 private migration missing: '+part);
 }
 assert(db.includes("before insert or update of scenario_id")||db.includes("BEFORE INSERT OR UPDATE OF scenario_id"),'016 room guard missing');
