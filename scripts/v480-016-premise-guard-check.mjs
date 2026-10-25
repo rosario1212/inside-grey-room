@@ -8,6 +8,10 @@ const scenario=app.slice(at,app.indexOf("id:'017'",at));
 assert(scenario.includes("title:'LE DERNIER ÉTAGE'"),'016 title');
 assert(scenario.includes('min:5,max:8'),'016 supports five to eight players');
 assert(!scenario.includes('avant le geste fatal'),'016 introduction must not assert a post-video fatal act that one variant does not establish');
+const briefing=app.match(/'016':'([^']*)',\s*'017':/);
+assert(briefing,'016 public briefing must exist');
+assert(briefing[1].includes('Le film ne montre pas les circonstances de son décès'),'016 briefing must be neutral across all A/B/C conclusions');
+assert(!/avant le meurtre|geste fatal|meurtre hors champ/i.test(briefing[1]),'016 briefing must not presuppose post-film homicide');
 for(const s of ['Les circonstances exactes de sa mort restent hors champ','Avocat possible','Vidéo ≠ preuve du décès','Abandon tardif'])
  assert(scenario.includes(s),'016 premise or unique mechanic missing '+s);
 for(const s of ['5 joueurs','6 joueurs','7 joueurs','8 joueurs','A/B/C','BEGIN/ROLLBACK','non publié'])
