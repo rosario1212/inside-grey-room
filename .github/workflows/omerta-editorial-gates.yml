@@ -1,0 +1,39 @@
+name: OMERTA 80-20 Editorial Gates
+
+on:
+  pull_request:
+    paths:
+      - 'docs/OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md'
+      - 'qa/omerta-v7-release-contract.json'
+      - 'scripts/check-omerta-v7-gates.mjs'
+      - '.github/workflows/omerta-editorial-gates.yml'
+  push:
+    branches:
+      - 'docs/non-cartel-dlc-rework-**'
+    paths:
+      - 'docs/OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md'
+      - 'qa/omerta-v7-release-contract.json'
+      - 'scripts/check-omerta-v7-gates.mjs'
+      - '.github/workflows/omerta-editorial-gates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-omerta-80-20:
+    name: Four editorial laws, five standalone cases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout proposed design branch
+        uses: actions/checkout@v4
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Enforce OMERTA V7 editorial gates
+        run: node scripts/check-omerta-v7-gates.mjs
+      - name: Explain what this does NOT certify
+        run: |
+          echo 'This job validates public editorial structure only.'
+          echo 'Private A/B/C, safety, role distribution, production data, and real multiplayer playtests require separate release QA.'
