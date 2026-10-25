@@ -42,6 +42,9 @@ jobs:
           node scripts/optional-roles-003-008-009-011-check.mjs
           node scripts/v498-case-role-editorial-check.mjs
           node scripts/v481-016-neutral-briefing-check.mjs
+          node scripts/v482-016-private-release-gate-check.mjs
+          node scripts/v483-016-evidence-ledger-check.mjs
+          node scripts/v491-016-release-integrity-check.mjs
           node scripts/casino-runtime-check.mjs
           node scripts/casino-release-check.mjs dist
           node scripts/cartel-posters-check.mjs dist
