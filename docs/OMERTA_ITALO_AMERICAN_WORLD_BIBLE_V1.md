@@ -1,5 +1,8 @@
 # OMERTÀ — BIBLE DE L'UNIVERS ITALO-AMÉRICAIN (V1, ARCHIVÉE)
 
+> **ARCHIVE / SUPPLANTÉ :** la direction éditoriale actuelle est [OMERTA_LA_COSA_NOSTRA_REALISM_V3.md](OMERTA_LA_COSA_NOSTRA_REALISM_V3.md). Les références apostoliques ne sont pas centrales; *Malaspina* a été rejeté et *Lucifora* reste une possibilité non confirmée. Le nouveau canon n'est pas intégré en production.
+
+
 > **Supplantée pour les orientations futures** par [OMERTA_MALASPINA_IMMERSION_NOT_ACTING_V2.md](OMERTA_MALASPINA_IMMERSION_NOT_ACTING_V2.md). Les anciennes propositions d'incarnation de personnages nommés et le patronyme Verri ne sont plus la direction retenue. Cette V1 reste à titre de notes de recherche historiques. Les noms en jeu n'ont pas encore changé.
 
 **Statut :** direction narrative en revue; **aucune modification du jeu ni de Supabase**. Tous les dossiers CARTEL 029–031 sont exclus. Ne jamais publier les secrets de variantes dans ce dépôt public.
