@@ -12,7 +12,7 @@ const [app,html,sw,db1,db2,db3,db4,workflow,prod]=await Promise.all([
   '.github/workflows/cloudflare-build-check.yml','.github/workflows/cloudflare-production-deploy.yml'
 ].map(load));
 
-const cache='v520-017-silence-variants';
+const cache='v533-017-evidence-titles';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+cache),'Source HTML has stale game cache');
 assert(sw.includes("const CACHE='igr-"+cache+"'"),'SW cache mismatch');
@@ -22,6 +22,7 @@ assert(app.includes("id:'017',title:'LE PRIX DU SILENCE'"),'017 missing from gam
 assert(app.includes('min:7,max:10'),'017 room size mismatch');
 assert(app.includes("optional:['2e témoin','Avocat','Expert']"),'017 optional roles missing');
 assert(app.includes('investigate017Index'),'017 optional investigations missing');
+assert(app.includes('Array.isArray(d.scenario?.investigation_017)'),'017 investigation titles must use cycle-gated real manuscript titles');
 assert(app.includes('igr_v526_017_investigate_index'),'017 backend investigation not routed');
 assert(app.includes('payload.reconstruction_017={act,decision,cover}'),'017 final decision not persisted');
 assert(app.includes("currentCase==='017'?'reconstruction_017'"),'017 final reveal not shown');
@@ -42,6 +43,8 @@ assert(db3.includes('reconstruction_017'),'Three-axis final should be locked');
 assert(db4.includes('igr_v521_017_pinned_pack'),'Private pack must be used for sync/reveal');
 assert(db4.includes('igr_v527_017_reveal_enrich'),'Verdict scorer must be hooked into reveal');
 assert(db4.includes("r.scenario_id in ('003','009','016','017')"),'017 Expert must honor existing cycle limits');
+const db5=await load('supabase/migrations/20261025223500_igr_v533_017_expert_cycle_sync_visibility.sql');
+assert(db5.includes("r.scenario_id not in ('016','017')"),'Future-cycle expert metadata must be hidden in sync');
 assert(workflow.includes('node scripts/v532-017-release-integrity-check.mjs'),'017 CI check missing');
 assert(prod.includes('node scripts/v532-017-release-integrity-check.mjs'),'017 production preflight missing');
 console.log('PASS 017: private variants, secure snapshots, optional roles 7-10, indexed investigations, verdict, expert cycle limits, CI and PWA cache.');
