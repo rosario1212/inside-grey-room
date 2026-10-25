@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+const s=await readFile('app-v11.js','utf8');
+const a=s.indexOf("if(r.scenario_id==='016'&&['enqueteur','analyste'].includes(role))");
+const b=s.indexOf("if(r.scenario_id==='003')",a);
+assert(a>0&&b>a,'016 board must only be present in investigator tab');
+const board=s.slice(a,b);
+for(const key of ['visible','outside','cause']){
+  assert(board.includes("id:'"+key+"'"),'missing evidence axis '+key);
+  assert(board.includes("'igr016_ledger_'"),'notes are not stored per room/player');
+}
+assert(board.includes("window.IGR_LOCALE==='en'"),'English locale missing');
+assert(board.includes('EVIDENCE BOARD')&&board.includes('TABLE DE PREUVES'),'bilingual title missing');
+assert(board.includes('<details')&&board.includes('igr016-ledger'),'nonintrusive collapsed section missing');
+assert(board.includes('h(STORAGE.getItem(prefix+c.id)'), 'saved notes must be escaped before HTML rendering');
+assert(board.includes('save016EvidenceNote('),'on-device note saver not wired');
+assert(!board.includes('rpc('),'evidence notes must not be uploaded');
+const savestart=s.indexOf('function save016EvidenceNote(');
+const saveend=s.indexOf('function currentTarget(',savestart);
+assert(savestart>0&&saveend>savestart,'saver is absent');
+const save=s.slice(savestart,saveend);
+assert(save.includes("STATE.sync?.room?.scenario_id!=='016'"),'do not save for other scenarios');
+assert(save.includes("['enqueteur','analyste'].includes(STATE.sync?.player?.public_role)"),'forbid suspect access to investigator notes');
+assert(save.includes("STORAGE.setItem('igr016_ledger_'"),'persist notes on-device only');
+assert(save.includes('.slice(0,650)'),'cap note size to avoid unbounded storage');
+const as=s.indexOf("id:'016'");
+const end=s.indexOf("id:'017'",as);
+assert(as>0&&end>as,'scenario 016 catalog not found');
+assert(!s.slice(as,end).includes('avant le geste fatal'),'narrative premise must remain neutral');
+console.log('016 evidence board: three axes, bilingual, private, escaped, role-scoped, release-independent PASS');
