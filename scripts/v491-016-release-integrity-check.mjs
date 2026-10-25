@@ -22,7 +22,7 @@ assert(db.includes("'016'"),'016 backend path absent');
 assert(expert.includes("r.scenario_id in (''003'',''009'',''016'')"),'016 forensic cycle guard missing');
 assert(expert.includes("THEN CONTINUE"),'future forensic catalog data must not appear');
 assert(!app.includes("variant_id==='B'"),'canon variant must not be exposed to frontend');
-const cache='v560-018-private-reconstruction';
+const cache='v580-019-grand-bal';
 assert(html.includes('app-v11.js?v='+cache),'016 source client cache missing');
 assert(sw.includes("const CACHE='igr-"+cache+"'"),'016 service-worker cache missing');
 assert(sw.includes('/app-v11.js?v='+cache),'016 app shell cache missing');
