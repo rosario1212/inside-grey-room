@@ -1,5 +1,8 @@
 # OMERTÀ V8 — MAFIA SANTORO : EXTORSIONS, EXÉCUTIONS, INFORMATEURS ET ARBRE PUBLIC 
 
+> **ARBITRAGE V11 PRIORITAIRE :** [Indicateur clandestin obligatoire et cinq intrigues densifiées vers 9,5/10](OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md). Désormais, **exactement un joueur indic est présent et caché dans chaque partie OMERTÀ 021–025**. Toutes les anciennes phrases « indic facultatif / 0 ou 1 » dans ce document sont archivées et **ne constituent plus la décision actuelle**. L'indic compte pour la reconstruction parfaite, mais son silence ne doit pas bloquer les phases. Le backend n'a pas encore été migré.
+
+
 > **V9 PRIORITAIRE POUR L'ARBRE ET LE 021 :** [OMERTA_V9_PLAYER_RANKS_021_ENVELOPPE.md](OMERTA_V9_PLAYER_RANKS_021_ENVELOPPE.md). Les rangs jouables affichent désormais les **pseudos des joueurs** et non les noms fixes ci-dessous; seul **Don Santoro** reste une désignation permanente de poste. Les victimes et autres personnes du contexte peuvent conserver un nom. V8 reste l'archive de synopsis pour 022–025, non leurs fiches jouables. Aucun changement en base à ce stade.
 
 
