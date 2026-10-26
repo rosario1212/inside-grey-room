@@ -27,7 +27,7 @@ for(const [id,roleLabels] of Object.entries(rolesByScenario)){
   assert.ok(line.includes(roleLabels[i]),id+' role '+roleLabels[i]);
   const columns=line.split(' | ');
   assert.ok(columns.length>=3,id+' invalid markdown row');
-  const quoted=[...line.matchAll(/«([^»]+)»/g)].map(m=>m[1]);
+  const quoted=[...line.matchAll(/«([^»]+)»/g)].map(m=>m[1].trim());
   assert.ok(quoted.length>=1,id+' missing initial goal '+roleLabels[i]);
   assert.ok(quoted[0].startsWith('Au verdict,')||quoted[0].startsWith('Au dénouement,'),id+' goal not scoreable');
   assert.ok(quoted[0].endsWith('.'),id+' punctuation');
