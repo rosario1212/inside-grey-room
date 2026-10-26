@@ -1,6 +1,6 @@
 {
   "version": "OMERTA-V12",
-  "stage": "editorial-review-only",
+  "stage": "archived-non-normative",
   "live": false,
   "tenets": [
     "self_interested_secret_informant",
@@ -187,5 +187,8 @@
     "unchanged other DLCs"
   ],
   "audited_live": false,
-  "note": "Personal win examples are editorial; adjust to actual variant causal facts and available validated endgame checks. Do not expose private assignments or A/B/C outcomes."
+  "note": "Personal win examples are editorial; adjust to actual variant causal facts and available validated endgame checks. Do not expose private assignments or A/B/C outcomes.",
+  "normative": false,
+  "superseded_by": "OMERTA-V13",
+  "archive_warning": "ARCHIVED: automatic or mandatory informants rejected. V13 makes becoming an informant a player-controlled, consequential decision beginning cycle 2; zero informants is valid."
 }
