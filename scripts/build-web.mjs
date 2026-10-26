@@ -35,6 +35,7 @@ const premiumScripts=[
 const durationHead='  <link rel="stylesheet" href="duration-modes-v35.css?v=v35-duration-modes">';
 const durationScript='  <script src="duration-modes-v35.js?v=v35-duration-modes"></script>';
 const authoritativeScript='  <script src="authoritative-runtime-v40.js?v=v40-authoritative-ui"></script>';
+const santoroTreeScript='  <script src="omerta-santoro-family-v7.js?v=v7-family-public"></script>';
 const storeCatalogScript='  <script src="store-catalog-v69.js?v=v69-host-pays"></script>';
 for(const page of ['index.html','en.html']){
   const target=path.join(out,page);let html=await readFile(target,'utf8');
@@ -49,7 +50,8 @@ for(const page of ['index.html','en.html']){
     else html=html.replace('</body>',`${storeCatalogScript}\n</body>`);
   }
   html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
-  html=html.replace('</body>',`${authoritativeScript}\n</body>`);
+  html=html.replace(/\s*<script[^>]+src=["']omerta-santoro-family-v7\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
+  html=html.replace('</body>',`${authoritativeScript}\n${santoroTreeScript}\n</body>`);
   await writeFile(target,html,'utf8');
 }
 
