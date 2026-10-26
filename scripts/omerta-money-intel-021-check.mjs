@@ -26,7 +26,7 @@ assert.match(pact,/'private',suspect\.id/);
 assert.match(pact,/'private',inv\.id/);
 assert.doesNotMatch(js,/contenteditable/i);
 
-function simulate({role='suspect',scenario='021',cycle=2,accepted=false,offered=false}={}){
+function simulate({role='suspect',scenario='021',cycle=2,phase='interrogation',accepted=false,offered=false}={}){
  const all=[];
  function el(tag){
   const x={tag,className:'',textContent:'',children:[],events:{},value:'',isConnected:true,
@@ -40,9 +40,9 @@ function simulate({role='suspect',scenario='021',cycle=2,accepted=false,offered=
   };
   all.push(x);return x;
  }
- const dock=el('div'),body=el('body');
+ const dock=el('div'),body=el('body'),panel=el('div');
  const d={
-  room:{code:'ROOM1',scenario_id:scenario,cycle,status:'playing',phase:'interrogation',state:{match_no:1}},
+  room:{code:'ROOM1',scenario_id:scenario,cycle,status:'playing',phase,state:{match_no:1}},
   player:{id:'INDIC1',public_role:role},
   players:[{id:'S1',pseudo:'Suspect A',public_role:'suspect'}],
   my_actions:[],
@@ -50,7 +50,7 @@ function simulate({role='suspect',scenario='021',cycle=2,accepted=false,offered=
     ...(offered?[{event_type:'omerta_indic_offer',payload:{offer_id:10,match_no:1}}]:[])]
  };
  const doc={body,readyState:'complete',createElement:el,addEventListener(){},
-  querySelector(sel){return sel==='.omerta-decision-dock'?dock:body.children.find(x=>x.className==='modal igr-money-intel-modal')||null;}};
+  querySelector(sel){if(sel==='.omerta-decision-dock')return dock;if(sel==='.game-panel-v11')return panel;return body.children.find(x=>x.className==='modal igr-money-intel-modal')||null;}};
  const calls=[];
  const rp=async(name,args)=>{calls.push({name,args});switch(name){
   case 'igr_omerta_money_intel_options':return{cards:[
@@ -62,11 +62,15 @@ function simulate({role='suspect',scenario='021',cycle=2,accepted=false,offered=
  vm.runInNewContext(js,{STATE:{room:'ROOM1',token:'TOKEN',sync:d},rpc:rp,
   document:doc,window:{addEventListener(){}},MutationObserver:class{observe(){}},
   confirm:()=>true,syncNow:async()=>{},console});
- return{all,dock,calls};
+ return{all,dock,panel,calls};
 }
 const no=simulate();assert.equal(no.dock.children.length,0,'no panel before recruitment');
 const early=simulate({accepted:true,cycle:1});assert.equal(early.dock.children.length,0);
-const other=simulate({accepted:true,scenario:'022'});assert.equal(other.dock.children.length,0);
+for(const scenario of ['022','023','024','025']){
+ const active=simulate({accepted:true,scenario});
+ assert.equal(active.dock.children.length,1,'five dossiers support source cards');
+}
+const other=simulate({accepted:true,scenario:'026'});assert.equal(other.dock.children.length,0);
 const offer=simulate({role:'enqueteur'});
 assert.equal(offer.dock.children.length,1,'Enquêteur can offer source pact');
 const pending=simulate({offered:true});
@@ -85,3 +89,15 @@ await after.events.click();
 assert.equal(src.calls[2].name,'igr_omerta_money_intel_send');
 assert.equal(src.calls[2].args.p_card_id,'021_money_route');
 console.log('OMERTÀ 021 — tests de branche : PASS (accord, 3 sujets, signal libre, consignation post-orale)');
+
+const investigator=simulate({role:'enqueteur',accepted:true,phase:'locking'});
+assert.equal(investigator.panel.children.length,1,'Investigator final panel appears');
+const review=investigator.all.find(x=>x.tag==='button'&&x.textContent==='Évaluer mon Indic');
+assert.ok(review);
+await review.events.click();
+const yes=investigator.all.find(x=>x.tag==='button'&&x.textContent==='Oui, cette source m’a été utile');
+assert.ok(yes,'Final useful vote must be available even without cards');
+await yes.events.click();
+assert.equal(investigator.calls[0].name,'igr_omerta_indic_assess');
+assert.equal(investigator.calls[0].args.p_useful,true);
+console.log('OMERTÀ : avis positif validable sans aucune carte déclarée');
