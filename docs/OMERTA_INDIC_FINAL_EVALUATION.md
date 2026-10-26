@@ -1,15 +1,15 @@
 # OMERTÀ — Évaluation finale de l'Indic (spécification de gameplay)
 
-**Statut : parcours Indic « oral d'abord » développé pour le scénario 021 sur une branche de développement, sans déploiement ni changement des verdicts actuels.** Les scénarios 022–025, la victoire finale et le vote final restent à intégrer et à tester.
+**Statut : parcours Indic « oral d'abord » et évaluation finale Oui/Non codés pour le scénario 021 sur une branche de développement, sans déploiement en production.** La généralisation à 022–025, les variantes A/B/C et les tests serveur/clients restent nécessaires.
 
 ## Principe
 
 L'Indic gagne seulement si **toutes** les conditions personnelles suivantes sont réunies :
 1. **Intérêt personnel** : son objectif égoïste, choisi au lancement et verrouillé, est rempli.
-2. **Coopération réelle** : il a transmis à l'Enquêteur au moins un renseignement vérifiable, pertinent pour la branche en cours et susceptible de faire progresser l'enquête.
+2. **Coopération reconnue** : soit l'Enquêteur répond **Oui, cet Indic m'a été utile** lors de l'évaluation finale (même si aucune carte n'a été utilisée), soit le jeu vérifie un renseignement canonique officiellement consigné qui remplit les critères prévus.
 3. **Survie** : il est encore en vie à la fin du dossier (sauf si une variante explicite prévoit une autre issue, définie avant la partie).
 
-Aucun avis subjectif d'un joueur ne peut, à lui seul, confirmer ou annuler l'une de ces conditions.
+**Exception voulue par le concepteur : l'avis POSITIF de l'Enquêteur peut suffire à confirmer la deuxième condition.** Un avis négatif n'est pas un veto si une transmission canonique vérifiée existe. L'avis ne dispense jamais de la condition personnelle ou de survie.
 
 ## Écran de clôture : Enquêteur uniquement
 
@@ -22,7 +22,7 @@ Aucun avis subjectif d'un joueur ne peut, à lui seul, confirmer ou annuler l'un
 > - Oui : ses renseignements m'ont été utiles.
 > - Non : ils étaient insuffisants ou inutiles.
 >
-> *Votre appréciation sera confrontée aux éléments réellement transmis. Elle ne décide pas, à elle seule, du sort de l'Indic.*
+> *Si vous répondez Oui, la condition de coopération est validée, même sans utilisation du téléphone. Cela ne garantit pas la victoire complète.*
 
 Le choix est **privé**, attribué à l'Indic concerné et **modifiable tant que le formulaire n'est pas verrouillé**. En cas d'absence / expiration de la fenêtre finale : `sans_avis`. Il ne doit pas bloquer la fin de partie des autres joueurs. Si plusieurs sources sont possibles, un formulaire distinct par Indic, jamais un vote global.
 
@@ -36,13 +36,13 @@ Le choix est **privé**, attribué à l'Indic concerné et **modifiable tant que
 
 ## Calcul non arbitraire
 
-- `avis_enqueteur` ∈ {`oui`,`non`,`sans_avis`} : utilisé pour le bilan narratif, **jamais comme condition de victoire automatique**.
-- `cooperation_verifiee` : vraie uniquement si ≥1 renseignement réellement transféré et pertinent selon la vérité serveur, **non déjà disponible gratuitement à l'Enquêteur**.
+- `avis_enqueteur` ∈ {`oui`,`non`,`sans_avis`} : **oui** suffit à valider la deuxième condition ; `non` et `sans_avis` laissent subsister la vérification des cartes canoniques.
+- `cooperation_verifiee` : vraie si **avis_enqueteur=oui**, indépendamment des trois cartes, OU si une transmission canonique vérifiée apporte une information admissible selon les règles serveur.
 - `victoire_indic = objectif_personnel_atteint && cooperation_verifiee && survie`.
 
 Exemples :
-- Avis « non », information réellement utile : coopération validée ; cela peut refléter de la méfiance, mais **ne prouve pas** une vengeance.
-- Avis « oui », aucune transmission valide : coopération non validée ; impossible de s'accorder une victoire de complaisance.
+- Avis « non », renseignement canonique confirmé : coopération validée ; cela peut refléter de la méfiance, mais **ne prouve pas** une vengeance.
+- Avis « oui », aucune carte transmise : **coopération validée**. L'Indic doit encore réussir son objectif personnel et survivre.
 - Aucune réponse : calcul conservé, appréciation « non renseignée ».
 
 ## Sécurité et conditions de publication
@@ -107,3 +107,15 @@ Une simple intention ne compte jamais pour la deuxième condition de victoire. U
 - Étendre aux scénarios 022–025 et à leurs variantes, avec trois faits vraiment adaptés à chaque suspect ; éviter de fabriquer automatiquement des faits narratifs non autorisés.
 - Ajouter séparément la prise en compte serveur dans la victoire de l'Indic et le bilan final de l'Enquêteur, sans veto subjectif.
 - Le canon actuellement enregistré pour 021 mentionne la Famiglia **Verri** ; la migration de canon vers **Santoro**, souhaitée pour Omertà, devra être traitée explicitement avant la publication définitive.
+
+## Extension de l'évaluation finale — 27 octobre 2026
+
+La branche GitHub contient désormais :
+- `igr_omerta_indic_assess` : vote de l'Enquêteur uniquement pendant la phase de verrouillage final, lié à une source réellement recrutée ; pas de vote après verrouillage final ; réponse unique et privée.
+- `omerta-money-intel-v1.js` : formulaire Oui/Non dans la vue Enquêteur pendant la phase finale, indépendant des trois cartes et des échanges oraux.
+- `20261027004500_omerta_indic_reveal_scoring.sql` : pour une source recrutée, `indic_second_ok = indic_vote_yes OR indic_by_card` ; la victoire complète exige en plus la condition personnelle et la survie. Les autres rôles non recrutés restent inchangés.
+- `scripts/omerta-indic-final-rule-check.mjs` et CI Cloudflare : garde-fous syntaxiques et vérifications du contrat de verdict.
+
+**Note de validation :** les anciennes règles de rôle (`pentito`, `contabile`, etc.) ont des objectifs hétérogènes. La branche explicite les trois axes de l'Indic, mais il faut éprouver le résultat en vraie partie et, pour chaque variante, valider que sa condition personnelle n'est ni contradictoire ni triviale.
+
+**Statut de publication :** les 15 variantes des dossiers 021–025 sont bien enregistrées en état `review`. Chacune dispose d'une vérité distincte et d'une révélation candidate au cycle III, mais les 15 ont `approved=0`, `verified_cycle_three_guarantees=0`, d'où un `release_eligible=false` pour chacun des cinq dossiers. Les verrous serveur A/B/C interdisent à juste titre une activation sans validation éditoriale humaine. Ne pas publier en contournant cette exigence.
