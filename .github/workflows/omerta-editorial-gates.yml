@@ -38,6 +38,8 @@ on:
       - 'qa/omerta-v18-personal-victory-contract.json'
       - 'qa/omerta-v18-personal-goal-evaluator.mjs'
       - 'scripts/check-omerta-v18-win-conditions.mjs'
+      - 'docs/OMERTA_V19_VERBATIM_PLAYER_GOALS_021_025.md'
+      - 'scripts/check-omerta-v19-verbatim-goals.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -83,6 +85,8 @@ on:
       - 'qa/omerta-v18-personal-victory-contract.json'
       - 'qa/omerta-v18-personal-goal-evaluator.mjs'
       - 'scripts/check-omerta-v18-win-conditions.mjs'
+      - 'docs/OMERTA_V19_VERBATIM_PLAYER_GOALS_021_025.md'
+      - 'scripts/check-omerta-v19-verbatim-goals.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -121,6 +125,8 @@ jobs:
         run: node scripts/check-omerta-v17-clear-instructions-double-agent.mjs
       - name: Validate V18 suspect and indic measurable personal victory conditions
         run: node scripts/check-omerta-v18-win-conditions.mjs
+      - name: Validate V19 exact player goal copy by Mafia rank and dossier
+        run: node scripts/check-omerta-v19-verbatim-goals.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
