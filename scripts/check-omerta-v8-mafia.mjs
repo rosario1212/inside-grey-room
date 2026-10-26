@@ -43,11 +43,19 @@ for(const field of contract.family_view.must_never_read){
 }
 check(html.includes(contract.family_view.script),'Family tree script wired into index');
 check(html.includes(contract.family_view.style),'Family tree CSS wired into index');
-for(const name of ['Vittorio Santoro','Matteo Bellini','Enzo Rinaldi','Luca Moretti','Adriano Santoro','Elena Santoro']){
- check(tree.includes(name),'Family tree missing '+name);
+for(const title of ['Don Santoro','Consigliere','Sottocapo','Capo','Soldato','Associato','Contabile']){
+ check(tree.includes(title),'Missing playable rank '+title);
 }
-check(tree.includes('UNDERBOSS')&&tree.includes('Poste non confirmé'),'Underboss not to be invented');
-check(tree.includes('FAMILLE DE SANG')&&tree.includes('ASSOCIATO'),'Bloodline must be separate from membership');
+for(const name of ['Vittorio Santoro','Matteo Bellini','Enzo Rinaldi','Luca Moretti','Rocco Fiore','Giuseppe Ferraro']){
+ check(!tree.includes(name),'Fixed criminal identity in a playable rank: '+name);
+}
+for(const blood of ['Adriano Santoro','Elena Santoro']){
+ check(tree.includes(blood),'Known blood family missing '+blood);
+}
+check(tree.includes('preferred_role')&&tree.includes('pseudo'),'Player-pseudo ownership not implemented');
+check(tree.includes('os9-tree-open')&&tree.includes('updateGameShortcut'),'In-game family tree shortcut missing');
+check(tree.includes('FAMILLE DE SANG')===false||tree.includes('BLOOD'),'Separate blood family not supported');
+check(css.includes('os9-tree-shortcut'),'Tree access not styled for gameplay');
 check(!tree.includes('Verri')&&!tree.includes('Malaspina'),'Outdated family name in viewer');
 check(css.includes('@media'),'Responsive CSS missing');
 check(Object.keys(contract.gates||{}).length>=8,'QA release checklist incomplete');
