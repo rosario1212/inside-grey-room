@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V16
+
+> **COMPLÉMENT DE LISIBILITÉ ET DE DOUBLE JEU V17 :** [OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md](OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md). Le choix V16 reste identique (offre envoyée par l'Enquêteur, Accepter/Refuser, nouvel objectif immédiat, aucun renseignement automatique). V17 explicite les rubriques ÉNONCÉ, FAITS, OBJECTIF, RISQUES, LIBERTÉS et la possibilité de manipuler l'Enquêteur pour le compte d'un suspect de rang supérieur, sans que ce supérieur puisse diriger le joueur. **Non déployé dans les parties réelles.**
+
 ## LE PRIX DE LA TRAHISON : UNE OFFRE, DEUX CHOIX, UN NOUVEL OBJECTIF
 
 > **DÉCISION D'AUTEUR — 26 octobre 2026.** Remplace les interfaces de consentement en trois écrans V13–V15. La règle **V16** est : l'Enquêteur envoie une proposition privée à un suspect **à partir du cycle 2** ; le suspect reçoit **UNE SEULE CARTE COMPLÈTE**, avec **Accepter** et **Refuser** immédiatement visibles. **Accepter l'inscrit aussitôt comme indic clandestin et remplace son objectif personnel principal ; ce geste ne divulgue automatiquement AUCUNE INFORMATION**. L'indic décide ensuite librement ce qu'il communique, quand, à qui, et s'il communique quoi que ce soit. Refuser conserve l'objectif original sans coût de refus. **Il peut y avoir zéro, un ou plusieurs indics volontaires.** La confidentialité, la protection demandée et les représailles à preuve/rang de V14–V15 demeurent valables. **Norme de conception, non fonctionnalité live.**
