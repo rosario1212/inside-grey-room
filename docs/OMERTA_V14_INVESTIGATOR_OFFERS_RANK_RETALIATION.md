@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V14
+
+> **COMPLÉMENT NORMATIF V15 :** [OMERTA_V15_CONDITIONAL_PROTECTION_BY_RANK.md](OMERTA_V15_CONDITIONAL_PROTECTION_BY_RANK.md). L'Enquêteur peut proposer la confidentialité ou **solliciter** une protection provisoire/renforcée, jamais garantir l'admission fédérale. L'exposition accrue des hauts rangs complique le plan de protection mais leur renseignement peut avoir une grande valeur; aucun rang n'est automatiquement éligible ou exclu. Ce complément est conceptuel et NON live.
+
 ## LE PACTE ET LA VENDETTA · OFFRE DE L'ENQUÊTEUR · TRAHISON LIBRE · REPRÉSAILLES DE RANG
 
 > **NORME ACTUELLE (26 octobre 2026).** Supplante la V13 sur l'initiative d'une coopération et les réponses de la Famiglia. **Seul l'Enquêteur propose au suspect de devenir indic**, à partir du **cycle 2** ; le suspect évalue, négocie, accepte ou refuse **librement**, avec des risques connus et non une promesse d'immunité. **Zéro indic est une issue normale et complète.** Les représailles restent fictionnelles, motivées par des indices réellement accessibles aux mafieux et limitées par le **rang du joueur qui les réclame**. Les quatre lois (autonomie, joueurs eux-mêmes, A/B/C rejouables, zéro blocage) et le 80/20 restent intacts. **Ceci est un contrat de revue, PAS un correctif déployé dans les salles en production.**
