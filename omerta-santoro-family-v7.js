@@ -28,8 +28,11 @@
     return n;
   }
   function currentId(){
-    try {return String(window.STATE?.sync?.room?.scenario_id || window.STATE?.scenarioId || window.STATE?.selectedScenario || '')}
-    catch(_){return ''}
+    try {
+      // STATE is a top-level lexical in app-v11.js and may NOT be window.STATE.
+      const s=(typeof STATE!=='undefined' && STATE)?STATE:(window.STATE||{});
+      return String(s.sync?.room?.scenario_id || s.scenarioId || s.selectedScenario || '');
+    } catch(_){return ''}
   }
   function en(){return String(document.documentElement.lang||'').toLowerCase().startsWith('en')}
   function node(id){
@@ -110,10 +113,11 @@
     document.body.appendChild(modal);configurations[0].button.focus();
     return modal;
   }
-  const legacy=window.igrOmertaOpenFamilyTree;
   window.igrOmertaOpenFamilyTree=function(){
-    // Do not expose or change other DLC's screens.
-    if(!IDS.has(currentId()))return typeof legacy==='function'?legacy.apply(this,arguments):undefined;
+    // Other DLCs do not call this button; never fall back to legacy OMERTA
+    // campaign-state renderer, even if selectedScenario is temporarily unset.
+    const id=currentId();
+    if(id && !IDS.has(id))return;
     return open();
   };
   window.IGR_OMERTA_SANTORO_PUBLIC_FAMILY=Object.freeze({
