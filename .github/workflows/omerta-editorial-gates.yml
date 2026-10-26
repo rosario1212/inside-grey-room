@@ -49,6 +49,8 @@ on:
       - 'docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md'
       - 'qa/omerta-v22-coherent-role-goals.json'
       - 'scripts/check-omerta-v22-goal-coherence.mjs'
+      - 'qa/omerta-v22-cast-complementarity-auditor.mjs'
+      - 'scripts/check-omerta-v22-cast-complementarity.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -105,6 +107,8 @@ on:
       - 'docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md'
       - 'qa/omerta-v22-coherent-role-goals.json'
       - 'scripts/check-omerta-v22-goal-coherence.mjs'
+      - 'qa/omerta-v22-cast-complementarity-auditor.mjs'
+      - 'scripts/check-omerta-v22-cast-complementarity.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -151,6 +155,8 @@ jobs:
         run: node scripts/check-omerta-v21-goals.mjs
       - name: Validate V22 coherence of complementing role interests and no duplicate objectives
         run: node scripts/check-omerta-v22-goal-coherence.mjs
+      - name: Validate V22 cast-specific distinct goals and unsupported variants fail closed
+        run: node scripts/check-omerta-v22-cast-complementarity.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
