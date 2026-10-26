@@ -1,4 +1,7 @@
-# OMERTÀ V8 — MAFIA SANTORO : EXTORSIONS, EXÉCUTIONS, INFORMATEURS ET ARBRE PUBLIC
+# OMERTÀ V8 — MAFIA SANTORO : EXTORSIONS, EXÉCUTIONS, INFORMATEURS ET ARBRE PUBLIC 
+
+> **V9 PRIORITAIRE POUR L'ARBRE ET LE 021 :** [OMERTA_V9_PLAYER_RANKS_021_ENVELOPPE.md](OMERTA_V9_PLAYER_RANKS_021_ENVELOPPE.md). Les rangs jouables affichent désormais les **pseudos des joueurs** et non les noms fixes ci-dessous; seul **Don Santoro** reste une désignation permanente de poste. Les victimes et autres personnes du contexte peuvent conserver un nom. V8 reste l'archive de synopsis pour 022–025, non leurs fiches jouables. Aucun changement en base à ce stade.
+
 
 **Cadre éditorial approuvé :** les QUATRE LOIS de V7 restent non négociables. L'auteur souhaite des affaires explicites, noires, incarnées dans le crime organisé italo-américain (ambition d'intensité et de crédibilité comparable aux thrillers mafieux, sans copie d'œuvres ni obligation d'acting). Cette V8 **approfondit** la V7, ne transforme pas OMERTÀ en HÉRITAGE. Elle n'approuve ni ne publie encore les quinze variantes privées.
 
