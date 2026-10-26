@@ -34,7 +34,7 @@ for(const c of db.scenarios){
   scenario:c,cast:[{...cast[0],outcomeScoringAuthenticated:false}],availableOutcomeTracks:available
  }),/authenticated verdict/);
  assert.throws(()=>reviewRoleObjectiveAssignment({
-  scenario:c,cast:[cast[0]],availableOutcomeTracks:available.slice(1)
+  scenario:c,cast:[cast[0]],availableOutcomeTracks:available.filter(id=>id!==c.role_track_assignments[cast[0].role][0])
  }),/outcome not verified/);
  // Cast does not require any informant, and this check never assigns one.
  assert.ok(!JSON.stringify(ok).includes('isInformant'));
