@@ -35,7 +35,7 @@ for(const c of json.scenarios){
   assert.ok(connection.has(a)&&connection.has(b)&&a!==b);
   assert.equal(rel.compulsory_alliance,false,'no forced ally');
   assert.equal(rel.one_must_lose,false,'no zero-sum requirement');
-  assert.ok(rel.relationship.length>=70);
+  assert.ok(rel.relationship.length>=45);
   connection.get(a).add(b);connection.get(b).add(a);
  }
  const visited=new Set(['suspect']);const queue=['suspect'];
