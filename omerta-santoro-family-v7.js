@@ -61,14 +61,18 @@
     const body=el('div','os7-panels');
     const auth=el('section','os7-panel');auth.id='os7-hierarchy';
     auth.appendChild(title('Organisation criminelle'));
-    auth.appendChild(group('Administration', ['vittorio','matteo','underboss']));
-    auth.appendChild(group('Crew Rinaldi', ['enzo','luca','paolo','salvatore']));
-    auth.appendChild(group('Crew Fiore', ['rocco']));
-    auth.appendChild(group('Crew Ferraro', ['giuseppe']));
+    const boss=el('div','os7-topboss');boss.appendChild(node('vittorio'));auth.appendChild(boss);
+    const direction=el('div','os7-command');direction.appendChild(group('Conseil et second', ['matteo','underboss']));auth.appendChild(direction);
+    const crews=el('div','os7-crews');
+    crews.appendChild(group('Crew Rinaldi', ['enzo','luca','paolo','salvatore']));
+    crews.appendChild(group('Crew Fiore', ['rocco']));
+    crews.appendChild(group('Crew Ferraro', ['giuseppe']));
+    auth.appendChild(crews);
     auth.appendChild(el('p','os7-note','Les associés ne sont pas des membres initiés. Les liens indiquent une appartenance au crew, jamais une culpabilité.'));
     const blood=el('section','os7-panel');blood.id='os7-blood';blood.hidden=true;
     blood.appendChild(title('Famille de sang'));
-    blood.appendChild(group('Vittorio Santoro et ses enfants', ['vittorio','adriano','elena']));
+    const father=el('div','os7-topboss');father.appendChild(node('vittorio'));blood.appendChild(father);
+    const children=el('div','os7-command');children.appendChild(group('Ses enfants (sans titre automatique)', ['adriano','elena']));blood.appendChild(children);
     blood.appendChild(el('p','os7-note','Un lien de parenté n’établit aucun titre criminel, aucun acte ni aucune implication dans un dossier.'));
     const configurations=[
       {label:'HIÉRARCHIE',panel:auth},
