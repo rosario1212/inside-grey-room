@@ -95,7 +95,7 @@ BEGIN
  GET DIAGNOSTICS inserted=ROW_COUNT;
  IF inserted<>1 THEN RAISE EXCEPTION 'spy choice already sealed';END IF;
  RETURN jsonb_build_object('ok',true,'cycle',r.cycle,'sealed',true,
-  'stage',stage_,'matched',p_choice=expect_);
+  'stage',stage_);
 END $fn$;
 REVOKE ALL ON FUNCTION public.igr_v631_spy_decide(text,uuid,text) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_v631_spy_decide(text,uuid,text) TO anon,authenticated;
@@ -139,7 +139,7 @@ BEGIN
          AND NOT coalesce((p.private_state->>'lawyer_cartel_forfeit')::boolean,false)
          AND NOT coalesce((entry->>'forfeited')::boolean,false)
          AND coalesce(entry->>'family_fate','')<>'killed'
-         AND coalesce(entry->>'fate','') NOT IN ('killed','executed','dead');
+         AND coalesce(entry->>'fate','') NOT IN ('killed','executed','dead','killed_after_release');
        -- Keep achievements unrelated to the removed old verdict-only spy victory rule.
        achievements:='[]'::jsonb;
        FOR old_achievement IN SELECT value FROM jsonb_array_elements(coalesce(entry->'achievements','[]'::jsonb)) LOOP

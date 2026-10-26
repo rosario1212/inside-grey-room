@@ -22,7 +22,7 @@ assert(sql.includes("entry->>'forfeited'"),'Cartel forfeiture outcome not checke
 assert(sql.includes("entry->>'fate'"),'Death penalty not checked');
 assert(sql.includes("IF won AND exact_*2<=total_"),'Ombre Totale badge not mission-validated');
 assert(sql.includes("old_achievement <> to_jsonb('espion_ombre'::text)"),'Obsolete spy badge not filtered');
-assert(!sql.includes("'achievements','[]'::jsonb"),'Existing achievements overwritten');
+assert(sql.includes("achievements:=achievements||jsonb_build_array(old_achievement)"),'Unrelated achievements are not preserved');
 assert(sql.includes("r.phase LIKE 'final_%'"),'Final audience still permits spy signal');
 assert(sql.includes('NEW.scenario_id||\':\'||route_'), 'Per-match secret contact route not pinned');
 assert(html.includes('v631-espion-mission-corrections')&&sw.includes('v631-espion-mission-corrections'),'PWA version mismatch');
