@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V18
+
+> **CONDITION DE VICTOIRE INDIC MISE À JOUR EN V23 :** [OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md](OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md). Les anciennes affirmations de cette archive selon lesquelles un indic pouvait **gagner sans jamais transmettre d'information** sont remplacées. Le libre silence reste autorisé, mais la victoire d'indic exige désormais **sécurité personnelle ET renseignement transmis**. L'acceptation reste sans divulgation automatique. Les règles de victoire du suspect ordinaire demeurent indépendantes.
+
 ## CONDITIONS DE VICTOIRE · SUSPECTS & INDICS · UNE PHRASE POUR JOUER, DES DÉTAILS À PORTÉE DE MAIN
 
 > **DÉCISION DE CONCEPTION DU 26 OCTOBRE 2026.** Ce document complète V17, V16 et les règles antérieures. Le **suspect a UN objectif personnel principal** assigné à sa carte privée, évaluable au dénouement. Si et seulement s'il accepte volontairement une offre de l'Enquêteur dès C2+, son objectif principal est **immédiatement REMPLACÉ** par **UN nouvel objectif d'indic** intégralement affiché avant « Accepter ». Devenir indic n'envoie aucune preuve, déclaration ou message automatiquement. **L'indic peut se taire, faire un double jeu pour un Capo/Consigliere/Sottocapo/Don, communiquer une version intéressée, ou servir réellement l'Enquête ; la victoire dépend du nouvel objectif, pas de la loyauté déclarée.**
