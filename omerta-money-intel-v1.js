@@ -1,110 +1,152 @@
-/* Inside Grey Room — OMERTÀ 021 / intelligence financière
- * L'échange est oral. La transmission officielle est volontaire et vérifiée côté serveur.
- * Ne jamais se fier à une affirmation client pour conclure qu'un fait est authentique.
+/* Inside Grey Room — OMERTÀ 021 · pilote Indic oral-first
+ * Deux parcours indépendants : « Je souhaite en parler » (intention seule) ;
+ * « J'en ai déjà parlé » (consignation formelle).
+ * Aucun indicateur, aucun renseignement ou score n'est certifié par le client.
  */
 (function(){
-  'use strict';
-  const SID='021';
-  const FORBIDDEN=new Set(['briefing','provisional_lock','final_debrief','locking','reveal']);
-  const BLOCKED_MESSAGE={
-    intel_unavailable:'La transmission n’est plus disponible.',
-    intel_not_owned_or_unavailable:'Cette information ne t’appartient pas ou a déjà été transmise.',
-    one_intel_per_cycle:'Tu as déjà transmis un renseignement pendant ce cycle.',
-    intel_already_received:'L’Enquêteur connaît déjà ce renseignement.',
-    investigator_not_found:'L’Enquêteur n’est pas présent.'
-  };
-  function current(){
-    try { return typeof STATE==='undefined' ? null : STATE.sync; } catch(_) { return null; }
+'use strict';
+const SID='021';
+const FINISHED=new Set(['briefing','provisional_lock','final_debrief','locking','reveal']);
+function context(){try{return typeof STATE!=='undefined'?STATE.sync:null;}catch(_){return null;}}
+function isPlaying(d){return d?.room?.scenario_id===SID&&d.room.status==='playing'&&Number(d.room.cycle)>=2&&!FINISHED.has(d.room.phase);}
+function match(d){return Math.max(1,Number(d?.room?.state?.match_no)||1);}
+function events(d,type){return (d?.events||[]).filter(e=>e.event_type===type&&Number(e.payload?.match_no||1)===match(d));}
+function activated(d){return d?.player?.public_role==='suspect'&&events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true);}
+function pendingOffer(d){return events(d,'omerta_indic_offer').find(e=>!events(d,'omerta_indic_status').some(x=>x.payload?.accepted===true||x.payload?.accepted===false));}
+function role(d){return d?.player?.public_role||'';}
+function btn(title,cls,fn){const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=title;b.addEventListener('click',fn);return b;}
+function node(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;}
+function alertMessage(error){const e=String(error?.message||'');const msgs={
+ 'indic_not_recruited':'Tu dois accepter le pacte avant de transmettre un renseignement.',
+ 'indic_closed':'Il est trop tard pour cette décision.',
+ 'invalid_source':'Cette proposition n’est pas disponible dans ce dossier pilote.',
+ 'indic_already_recruited':'Une source est déjà recrutée.',
+ 'offer_already_made':'Une proposition a déjà été envoyée à cette personne.',
+ 'offer_missing':'La proposition n’est plus disponible.',
+ 'already_decided':'La décision a déjà été enregistrée.',
+ 'intel_not_owned_or_unavailable':'Ce renseignement ne t’appartient pas ou a déjà été consigné.',
+ 'one_intel_per_cycle':'Une seule consignation officielle est autorisée par cycle.',
+ 'intel_already_received':'Ce renseignement a déjà été consigné.'
+ };for(const [key,msg]of Object.entries(msgs))if(e.includes(key))return msg;
+ return 'Décision indisponible. Vérifie l’état du cycle puis réessaie.';}
+function close(){document.querySelector('.igr-money-intel-modal')?.remove();}
+async function sendRpc(name,params){return rpc(name,{p_code:STATE.room||context()?.room?.code,p_player_token:STATE.token,...params});}
+async function refresh(){try{if(typeof syncNow==='function')await syncNow(true);}catch(e){console.warn('[OMERTA] synchronisation',e);}}
+function modal(title,description){
+ close();
+ const overlay=node('div');overlay.className='modal igr-money-intel-modal';
+ const panel=node('div');panel.className='modal-box igr-money-intel-panel';
+ const head=node('span','OMERTÀ · SOURCE CONFIDENTIELLE');head.className='omerta-eyebrow';
+ const h=node('h2',title),p=node('p',description);
+ const slot=node('div');slot.className='igr-money-intel-card';
+ const footer=node('div');footer.className='modal-actions';
+ footer.appendChild(btn('Retour à la table','btn ghost',close));
+ panel.append(head,h,p,slot,footer);
+ overlay.appendChild(panel);overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+ document.body.appendChild(overlay);
+ return {overlay,slot,footer};
+}
+function failure(slot,e){
+ const msg=node('p',alertMessage(e));msg.className='igr-money-intel-error';
+ slot.appendChild(msg);
+}
+async function offer(){
+ if(!isPlaying(context())||role(context())!=='enqueteur')return;
+ const d=context(),m=modal('Recruter une source','Négocie d’abord à l’oral. La proposition officielle reste privée entre vous deux.');
+ const choices=(d.players||[]).filter(p=>p.public_role==='suspect');
+ if(!choices.length){m.slot.textContent='Aucun suspect disponible.';return;}
+ const select=node('select');select.className='igr-money-intel-select';
+ for(const person of choices){const option=node('option',person.pseudo);option.value=person.id;select.appendChild(option);}
+ m.slot.appendChild(select);
+ const act=btn('Proposer un pacte confidentiel','btn primary',async()=>{
+  act.disabled=true;
+  try{await sendRpc('igr_omerta_indic_offer',{p_suspect:select.value});m.slot.textContent='Proposition transmise discrètement au suspect.';act.remove();await refresh();}
+  catch(e){failure(m.slot,e);act.disabled=false;}
+ });
+ m.footer.insertBefore(act,m.footer.firstChild);
+}
+async function respond(accept){
+ const d=context();if(!isPlaying(d)||!pendingOffer(d)||role(d)!=='suspect')return;
+ const m=modal('Proposition de l’Enquêteur','Ton choix reste confidentiel. Tu peux négocier oralement avant de répondre.');
+ const act=btn(accept?'Accepter et devenir Indic':'Refuser la proposition',accept?'btn primary':'btn ghost',async()=>{
+   act.disabled=true;
+   try{await sendRpc('igr_omerta_indic_respond',{p_accept:accept});m.slot.textContent=accept?'Pacte accepté. Ton dossier de source est désormais accessible.':'Proposition refusée.';act.remove();await refresh();}
+   catch(e){failure(m.slot,e);act.disabled=false;}
+ });
+ m.slot.textContent=accept?'En acceptant, tu peux choisir ce que tu révéleras. Aucun aveu oral n’est automatiquement enregistré.':'Tu restes libre de refuser.';
+ m.footer.insertBefore(act,m.footer.firstChild);
+}
+async function intel(){
+ const d=context();if(!isPlaying(d)||!activated(d)||typeof rpc!=='function')return;
+ const m=modal('Mes renseignements','Trois sujets que tu connais. Tu peux parler avant de toucher ton téléphone ou annoncer une discussion à l’avance.');
+ m.slot.textContent='Consultation confidentielle…';
+ try{
+  const reply=await sendRpc('igr_omerta_money_intel_options',{});
+  if(!m.overlay.isConnected)return;
+  m.slot.replaceChildren();
+  const cards=Array.isArray(reply?.cards)?reply.cards:[];
+  if(!cards.length){m.slot.textContent='Tous les renseignements disponibles ont déjà été consignés.';return;}
+  const d2=context();
+  const actions=(d2?.my_actions||[]);
+  for(const card of cards){
+   const wrapper=node('section');wrapper.className='igr-money-intel-item';
+   const title=node('h3',card.title||'Renseignement');
+   const detail=node('p',card.detail||'');
+   const flag=actions.some(a=>a.action_type==='omerta_intel_intent'&&a.payload?.fact_id===card.id);
+   const tag=node('small',flag?'Discussion déjà proposée':'Pas encore abordé officiellement');
+   const row=node('div');row.className='igr-money-intel-actions';
+   const intent=btn(flag?'Renouveler le signal':'Je souhaite en parler','btn ghost',async()=>{
+     intent.disabled=true;
+     try{
+      const out=await sendRpc('igr_omerta_money_intel_signal',{p_card_id:card.id});
+      tag.textContent=out?.already?'Signal déjà reçu par l’Enquêteur.':'Votre disponibilité a été signalée, pas le contenu.';
+      await refresh();
+     }catch(e){failure(wrapper,e);}
+     finally{intent.disabled=false;}
+   });
+   const committed=btn('J’en ai déjà parlé','btn primary',async()=>{
+     if(!confirm('Consigner ce renseignement dans le dossier de l’Enquêteur ? Cette action est irréversible.'))return;
+     committed.disabled=true;
+     try{
+      const out=await sendRpc('igr_omerta_money_intel_send',{p_card_id:card.id});
+      if(out?.ok!==true)throw Error('intel_unavailable');
+      tag.textContent='Renseignement consigné auprès de l’Enquêteur.';
+      row.remove();
+      await refresh();
+     }catch(e){failure(wrapper,e);committed.disabled=false;}
+   });
+   row.append(intent,committed);wrapper.append(title,detail,tag,row);m.slot.appendChild(wrapper);
   }
-  function eligible(d){
-    const room=d?.room, me=d?.player;
-    if(!room||!me||room.scenario_id!==SID||room.status!=='playing'||Number(room.cycle)<2||FORBIDDEN.has(room.phase)||me.public_role!=='suspect')return false;
-    const text=String(me.private_state?.hide||'').toLowerCase();
-    return text.includes('l’argent devait en partie remonter')||text.includes('les comptes indiquent une somme supplémentaire');
-  }
-  function createButton(label,cls,cb){
-    const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.addEventListener('click',cb);return b;
-  }
-  function close(){document.querySelector('.igr-money-intel-modal')?.remove();}
-  function errorText(err){const s=String(err?.message||'');for(const [key,msg] of Object.entries(BLOCKED_MESSAGE))if(s.includes(key))return msg;return 'Transmission indisponible. Réessaie pendant le cycle actif.';}
-  async function open(){
-    const d=current();
-    if(!eligible(d)||typeof rpc!=='function')return;
-    close();
-    const modal=document.createElement('div');
-    modal.className='modal igr-money-intel-modal';
-    const panel=document.createElement('div');panel.className='modal-box igr-money-intel-panel';
-    const eyebrow=document.createElement('span');eyebrow.className='omerta-eyebrow';eyebrow.textContent='OMERTÀ · SOURCE CONFIDENTIELLE';
-    const heading=document.createElement('h2');heading.textContent='Les transferts d’argent';
-    const expl=document.createElement('p');expl.textContent='Parle d’abord librement avec l’Enquêteur. Ensuite seulement, décide si tu assumes de lui transmettre officiellement ce renseignement.';
-    const note=document.createElement('p');note.className='igr-money-intel-note';note.textContent='La transmission sera enregistrée. Elle pourra révéler que quelqu’un parle à la police.';
-    const slot=document.createElement('div');slot.className='igr-money-intel-card';slot.textContent='Consultation du dossier privé…';
-    const actions=document.createElement('div');actions.className='modal-actions';
-    const cancel=createButton('Retour à la table','btn ghost',close);
-    actions.appendChild(cancel);
-    panel.append(eyebrow,heading,expl,note,slot,actions);modal.appendChild(panel);
-    modal.addEventListener('click',e=>{if(e.target===modal)close();});
-    document.body.appendChild(modal);
-    try{
-      const out=await rpc('igr_omerta_money_intel_options',{
-        p_code:d.room.code,p_player_token:STATE.token
-      });
-      if(!modal.isConnected)return;
-      slot.replaceChildren();
-      const card=Array.isArray(out?.cards)?out.cards[0]:null;
-      if(!card){
-        slot.textContent=out?.already_sent?'Ce renseignement a déjà été transmis.':'Aucun renseignement financier à transmettre à ce stade.';
-        return;
-      }
-      const name=document.createElement('strong');name.textContent=card.title||'Renseignement';
-      const detail=document.createElement('p');detail.textContent=card.detail||'';
-      slot.append(name,detail);
-      const send=createButton('Transmettre à l’Enquêteur','btn primary',async()=>{
-        if(!confirm('Confirmer cette transmission ? Elle ne pourra plus être annulée.'))return;
-        send.disabled=true;
-        try{
-          const live=current();
-          if(!live||live.room?.code!==d.room.code||live.player?.id!==d.player?.id){throw new Error('intel_unavailable');}
-          const sent=await rpc('igr_omerta_money_intel_send',{
-            p_code:d.room.code,p_player_token:STATE.token,p_card_id:card.id
-          });
-          if(sent?.ok!==true)throw new Error('intel_unavailable');
-          slot.replaceChildren();
-          const done=document.createElement('strong');done.textContent='Transmission enregistrée';
-          const message=document.createElement('p');message.textContent='L’Enquêteur a reçu ce renseignement dans son dossier privé. Continue la partie oralement.';
-          slot.append(done,message);send.remove();
-          try {if(typeof syncNow==='function')await syncNow(true);}catch(syncError){console.warn('[OMERTA] synchronisation après transmission',syncError);}
-        }catch(err){
-          console.error('[OMERTA] transmission',err);
-          if(modal.isConnected){const message=document.createElement('p');message.className='igr-money-intel-error';message.textContent=errorText(err);slot.appendChild(message);}
-          send.disabled=false;
-        }
-      });
-      actions.insertBefore(send,cancel);
-    }catch(err){
-      console.warn('[OMERTA] carte indisponible',err);
-      if(modal.isConnected)slot.textContent='Impossible de consulter cette carte. La transmission n’a pas été effectuée.';
-    }
-  }
-  function mount(){
-    const d=current(),dock=document.querySelector('.omerta-decision-dock');
-    if(!dock||!eligible(d))return;
-    if(dock.querySelector('.igr-money-intel-entry'))return;
-    const button=createButton('Transmettre un renseignement financier','btn ghost igr-money-intel-entry',open);
-    button.setAttribute('aria-label','OMERTÀ : ouvrir la carte Les transferts d’argent');
-    dock.appendChild(button);
-  }
-  function init(){
-    mount();
-    const root=document.body;
-    if(!root)return;
-    const watcher=new MutationObserver(records=>{
-      // Ne réagit qu'aux éléments nouveaux, pas aux styles de la modale.
-      if(records.some(r=>r.addedNodes.length))mount();
-    });
-    watcher.observe(root,{childList:true,subtree:true});
-    window.addEventListener('pageshow',mount);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
-  else init();
+  const tip=node('p','Un signal de discussion ne compte pas comme coopération. Seule une consignation officielle peut être évaluée par le serveur.');
+  tip.className='igr-money-intel-note';m.slot.appendChild(tip);
+ }catch(e){
+  console.warn('[OMERTA] chargement de renseignement',e);
+  if(m.overlay.isConnected)m.slot.textContent='Le dossier n’est pas disponible pour ce cycle.';
+ }
+}
+function mount(){
+ const d=context(),dock=document.querySelector('.omerta-decision-dock');
+ if(!dock||!isPlaying(d))return;
+ if(role(d)==='enqueteur'&&!dock.querySelector('.igr-indic-offer-button')){
+  const b=btn('Proposer un pacte secret','btn ghost igr-indic-offer-button',offer);
+  dock.appendChild(b);
+ }
+ if(role(d)==='suspect'&&pendingOffer(d)&&!events(d,'omerta_indic_status').length){
+   if(!dock.querySelector('.igr-indic-accept-button')){
+     dock.appendChild(btn('Accepter le pacte proposé','btn primary igr-indic-accept-button',()=>respond(true)));
+     dock.appendChild(btn('Refuser le pacte','btn ghost igr-indic-reject-button',()=>respond(false)));
+   }
+ }
+ if(role(d)==='suspect'&&activated(d)&&!dock.querySelector('.igr-money-intel-entry')){
+   const b=btn('Mes renseignements · Indic','btn ghost igr-money-intel-entry',intel);
+   b.setAttribute('aria-label','Ouvrir mes renseignements confidentiels');dock.appendChild(b);
+ }
+}
+function init(){
+ mount();if(!document.body)return;
+ const ob=new MutationObserver(changes=>{if(changes.some(x=>x.addedNodes?.length))mount();});
+ ob.observe(document.body,{childList:true,subtree:true});
+ window.addEventListener('pageshow',mount);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
