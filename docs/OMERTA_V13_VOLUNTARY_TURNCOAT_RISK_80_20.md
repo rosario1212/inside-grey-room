@@ -1,5 +1,8 @@
 # INSIDE GREY ROOM — OMERTÀ V13 · LA TENTATION DE TRAHIR
 
+> **SUPPLANTÉ PAR V14 :** [OMERTA_V14_INVESTIGATOR_OFFERS_RANK_RETALIATION.md](OMERTA_V14_INVESTIGATOR_OFFERS_RANK_RETALIATION.md). La coopération doit désormais être **proposée par l'Enquêteur** au C2+ : les suspects ne peuvent plus initier une demande eux-mêmes. Les représailles sont bornées par le rang et les preuves. V13 demeure une archive du principe de consentement volontaire et du risque. Ceci n'est pas encore une mécanique live.
+
+
 **Décision de conception prioritaire (26 octobre 2026).** Cette version **ABROGE FORMELLEMENT** V11 et V12 concernant l'indic **garanti**, la distribution secrète initiale et la dépendance du camp Enquête à la coopération. Elle préserve leur qualité mafieuse, leurs intrigues et le principe qu'un indic n'agit que pour son intérêt. **L'indic naît d'une décision du joueur durant la partie ; il peut parfaitement n'y avoir AUCUN indic.**
 
 **Statut : CONTRAT NARRATIF ET TECHNIQUE PRÉPARÉ SUR BRANCHE DE REVUE, NON DÉPLOYÉ.** Aucun droit Supabase, RPC, variante privée A/B/C, scène publique ou mode CARTEL n'est altéré par la rédaction de ce fichier. Une fonctionnalité n'est dite jouable qu'après implémentation serveur et tests.
