@@ -41,14 +41,14 @@
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Évite qu'on te désigne comme responsable du détournement de l'enveloppe du vendredi. » | « Obtiens une protection provisoire effectivement approuvée pour tes déclarations sur les collectes. » |
-| **Associato** | « Évite qu'on te désigne comme celui qui a imposé à Gallo un second versement. » | « Conserve la part de la collecte du vendredi qui te revenait. » |
-| **Soldato / Uomo d'Onore** | « Évite qu'on te désigne comme l'exécutant du meurtre d'Antonio Gallo. » | « Évite qu'on te désigne comme l'auteur des menaces adressées à Gallo avant sa mort. » |
-| **Contabile** | « Évite qu'on te désigne comme l'auteur des écritures falsifiées dans les livres de collecte. » | « Évite qu'on te désigne comme la personne ayant divulgué le montant confidentiel à la police. » |
-| **Capo / Caporegime** | « Évite qu'on te désigne comme le commanditaire du meurtre de Gallo. » | « Conserve l'autorité sur les collectes de ton propre crew. » |
-| **Consigliere** | « Évite qu'on te désigne comme l'organisateur de la disparition de l'enveloppe. » | « Conserve la faveur du Don liée à l'arbitrage du différend sur cette collecte. » |
-| **Sottocapo / Underboss** | « Évite qu'on te désigne comme celui qui a autorisé la remise de l'enveloppe hors du circuit prévu. » | « Conserve le pouvoir de valider les futures remises de ce crew. » |
-| **Don Santoro** | « Évite qu'on te désigne comme celui qui a autorisé le second prélèvement imposé à Gallo. » | « Conserve le droit de fixer les prélèvements qui remontent à la Famiglia dans cette affaire. » |
+| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme responsable du détournement de l'enveloppe du vendredi. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour tes déclarations sur les collectes. » |
+| **Associato** | « Au verdict, évite qu'on te désigne comme celui qui a imposé à Gallo un second versement. » | « Au dénouement, conserve la part de la collecte du vendredi qui te revenait. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant du meurtre d'Antonio Gallo. » | « Au verdict, évite qu'on te désigne comme l'auteur des menaces adressées à Gallo avant sa mort. » |
+| **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur des écritures falsifiées dans les livres de collecte. » | « Au verdict, évite qu'on te désigne comme la personne ayant divulgué le montant confidentiel à la police. » |
+| **Capo / Caporegime** | « Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Gallo. » | « Au dénouement, conserve l'autorité sur les collectes de ton propre crew. » |
+| **Consigliere** | « Au verdict, évite qu'on te désigne comme l'organisateur de la disparition de l'enveloppe. » | « Au dénouement, conserve la faveur du Don liée à l'arbitrage du différend sur cette collecte. » |
+| **Sottocapo / Underboss** | « Au verdict, évite qu'on te désigne comme celui qui a autorisé la remise de l'enveloppe hors du circuit prévu. » | « Au dénouement, conserve le pouvoir de valider les futures remises de ce crew. » |
+| **Don Santoro** | « Au verdict, évite qu'on te désigne comme celui qui a autorisé le second prélèvement imposé à Gallo. » | « Au dénouement, conserve le droit de fixer les prélèvements qui remontent à la Famiglia dans cette affaire. » |
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
@@ -75,14 +75,14 @@
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Évite qu'on te désigne comme l'auteur d'une fausse déclaration sur la soirée du meurtre. » | « Obtiens une protection provisoire effectivement approuvée pour pouvoir témoigner sans dépendre du crew. » |
-| **Associato** | « Évite qu'on te désigne comme responsable de la disparition des recettes des paris. » | « Évite qu'on te désigne comme l'organisateur du pacte de faux témoignages. » |
-| **Soldato / Uomo d'Onore** | « Évite qu'on te désigne comme celui qui a exécuté le meurtre de Caruso. » | « Évite qu'on te désigne comme l'auteur des menaces formulées contre Caruso avant sa mort. » |
-| **Contabile** | « Évite qu'on te désigne comme l'auteur du détournement des recettes de paris. » | « Conserve la commission de comptabilité promise sur les paris de cette soirée. » |
-| **Capo / Caporegime** | « Évite qu'on te désigne comme celui qui a ordonné la mort de Caruso. » | « Évite qu'on te désigne comme l'organisateur du pacte de faux témoignages. » |
-| **Consigliere** | « Évite qu'on te désigne comme celui qui a mis les témoins d'accord sur une fausse version. » | « Conserve la faveur du Don attachée à ton règlement du différend sur les dettes de Caruso. » |
-| **Sottocapo / Underboss** | « Évite qu'on te désigne comme celui qui a validé l'intimidation de Caruso. » | « Conserve le mandat de répartir les dettes de jeu entre les crews concernés. » |
-| **Don Santoro** | « Évite qu'on te désigne comme le commanditaire de l'assassinat de Caruso. » | « Conserve la maîtrise de la part des recettes de paris versée au sommet de la Famiglia. » |
+| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme l'auteur d'une fausse déclaration sur la soirée du meurtre. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour pouvoir témoigner sans dépendre du crew. » |
+| **Associato** | « Au verdict, évite qu'on te désigne comme responsable de la disparition des recettes des paris. » | « Au verdict, évite qu'on te désigne comme l'organisateur du pacte de faux témoignages. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme celui qui a exécuté le meurtre de Caruso. » | « Au verdict, évite qu'on te désigne comme l'auteur des menaces formulées contre Caruso avant sa mort. » |
+| **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur du détournement des recettes de paris. » | « Au dénouement, conserve la commission de comptabilité promise sur les paris de cette soirée. » |
+| **Capo / Caporegime** | « Au verdict, évite qu'on te désigne comme celui qui a ordonné la mort de Caruso. » | « Au verdict, évite qu'on te désigne comme celui qui a ordonné au crew de reprendre les mêmes faux alibis. » |
+| **Consigliere** | « Au verdict, évite qu'on te désigne comme celui qui a mis les témoins d'accord sur une fausse version. » | « Au dénouement, conserve la faveur du Don attachée à ton règlement du différend sur les dettes de Caruso. » |
+| **Sottocapo / Underboss** | « Au verdict, évite qu'on te désigne comme celui qui a validé l'intimidation de Caruso. » | « Au dénouement, conserve le mandat de répartir les dettes de jeu entre les crews concernés. » |
+| **Don Santoro** | « Au verdict, évite qu'on te désigne comme le commanditaire de l'assassinat de Caruso. » | « Au dénouement, conserve la maîtrise de la part des recettes de paris versée au sommet de la Famiglia. » |
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
@@ -109,14 +109,14 @@
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Évite qu'on te désigne comme la personne ayant révélé l'itinéraire d'Adriano. » | « Conserve la part des revenus de transport qui t'était promise dans cet accord. » |
-| **Associato** | « Évite qu'on te désigne comme celui qui a fait échouer la négociation. » | « Évite qu'on te désigne comme la personne ayant remis l'itinéraire d'Adriano à ses agresseurs. » |
-| **Soldato / Uomo d'Onore** | « Évite qu'on te désigne comme l'exécutant de l'attaque contre Adriano. » | « Obtiens une protection provisoire effectivement approuvée pour toi dans l'affaire de la table. » |
-| **Contabile** | « Évite qu'on te désigne comme l'auteur des conditions financières falsifiées. » | « Conserve ta commission sur l'accord de transport réellement retenu au dénouement. » |
-| **Capo / Caporegime** | « Évite qu'on te désigne comme le commanditaire du meurtre de Falco. » | « Conserve la part de transport promise à ton crew. » |
-| **Consigliere** | « Évite qu'on te désigne comme celui qui a saboté la réunion. » | « Évite qu'on te désigne comme la source de la fuite du déplacement d'Adriano. » |
-| **Sottocapo / Underboss** | « Évite qu'on te désigne comme le commanditaire de l'attaque contre Adriano. » | « Conserve ton mandat d'arbitrer la répartition des revenus de transport après la réunion. » |
-| **Don Santoro** | « Évite qu'on te désigne comme l'auteur de la divulgation du trajet d'Adriano. » | « Conserve la décision finale sur le partage des recettes de transport entre les crews. » |
+| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme la personne ayant révélé l'itinéraire d'Adriano. » | « Au dénouement, conserve la part des revenus de transport qui t'était promise dans cet accord. » |
+| **Associato** | « Au verdict, évite qu'on te désigne comme celui qui a fait échouer la négociation. » | « Au verdict, évite qu'on te désigne comme la personne ayant remis l'itinéraire d'Adriano à ses agresseurs. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant de l'attaque contre Adriano. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour toi dans l'affaire de la table. » |
+| **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur des conditions financières falsifiées. » | « Au dénouement, conserve ta commission sur l'accord de transport réellement retenu au dénouement. » |
+| **Capo / Caporegime** | « Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Falco. » | « Au dénouement, conserve la part de transport promise à ton crew. » |
+| **Consigliere** | « Au verdict, évite qu'on te désigne comme celui qui a saboté la réunion. » | « Au verdict, évite qu'on te désigne comme la source de la fuite du déplacement d'Adriano. » |
+| **Sottocapo / Underboss** | « Au verdict, évite qu'on te désigne comme le commanditaire de l'attaque contre Adriano. » | « Au dénouement, conserve ton mandat d'arbitrer la répartition des revenus de transport après la réunion. » |
+| **Don Santoro** | « Au verdict, évite qu'on te désigne comme l'auteur de la divulgation du trajet d'Adriano. » | « Au dénouement, conserve la décision finale sur le partage des recettes de transport entre les crews. » |
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
@@ -143,14 +143,14 @@
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Évite qu'on te désigne comme celui qui a ordonné l'assassinat de Valenti. » | « Obtiens une protection provisoire effectivement approuvée pour tes déclarations sur le réseau de transport. » |
-| **Associato** | « Évite qu'on te désigne comme l'organisateur du racket des transporteurs. » | « Évite qu'on te désigne comme la personne ayant divulgué la date de déposition de Valenti. » |
-| **Soldato / Uomo d'Onore** | « Évite qu'on te désigne comme l'exécutant du meurtre de Valenti. » | « Évite qu'on te désigne comme l'organisateur principal des collectes extorquées aux transporteurs. » |
-| **Contabile** | « Évite qu'on te désigne comme l'auteur des faux versements inscrits dans les notes. » | « Évite qu'on te désigne comme celui qui a ordonné les versements forcés. » |
-| **Capo / Caporegime** | « Évite qu'on te désigne comme celui qui a commandé la mort de Valenti. » | « Conserve la part des collectes de transport attribuée à ton crew. » |
-| **Consigliere** | « Évite qu'on te désigne comme celui qui a validé l'intimidation de Valenti. » | « Évite qu'on te désigne comme celui qui a dirigé le racket des transporteurs. » |
-| **Sottocapo / Underboss** | « Évite qu'on te désigne comme celui qui a entravé la déposition de Valenti. » | « Conserve le pouvoir d'affecter les collectes de transport entre les crews. » |
-| **Don Santoro** | « Évite qu'on te désigne comme le commanditaire des représailles contre Valenti. » | « Conserve le droit de fixer le tribut que les transporteurs versent à la Famiglia dans cette affaire. » |
+| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme celui qui a ordonné l'assassinat de Valenti. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour tes déclarations sur le réseau de transport. » |
+| **Associato** | « Au verdict, évite qu'on te désigne comme l'organisateur du racket des transporteurs. » | « Au verdict, évite qu'on te désigne comme la personne ayant divulgué la date de déposition de Valenti. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Valenti. » | « Au verdict, évite qu'on te désigne comme l'organisateur principal des collectes extorquées aux transporteurs. » |
+| **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur des faux versements inscrits dans les notes. » | « Au verdict, évite qu'on te désigne comme celui qui a ordonné les versements forcés. » |
+| **Capo / Caporegime** | « Au verdict, évite qu'on te désigne comme celui qui a commandé la mort de Valenti. » | « Au dénouement, conserve la part des collectes de transport attribuée à ton crew. » |
+| **Consigliere** | « Au verdict, évite qu'on te désigne comme celui qui a validé l'intimidation de Valenti. » | « Au verdict, évite qu'on te désigne comme celui qui a dirigé le racket des transporteurs. » |
+| **Sottocapo / Underboss** | « Au verdict, évite qu'on te désigne comme celui qui a entravé la déposition de Valenti. » | « Au dénouement, conserve le pouvoir d'affecter les collectes de transport entre les crews. » |
+| **Don Santoro** | « Au verdict, évite qu'on te désigne comme le commanditaire des représailles contre Valenti. » | « Au dénouement, conserve le droit de fixer le tribut que les transporteurs versent à la Famiglia dans cette affaire. » |
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
@@ -179,14 +179,14 @@
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Évite qu'on te désigne comme l'auteur des menaces adressées à Benedetti. » | « Obtiens une protection provisoire effectivement approuvée pour ton témoignage dans cette affaire. » |
-| **Associato** | « Évite qu'on te désigne comme l'organisateur du racket de Benedetti. » | « Évite qu'on te désigne comme celui qui a porté l'ultimatum à Benedetti. » |
-| **Soldato / Uomo d'Onore** | « Évite qu'on te désigne comme l'exécutant du meurtre de Benedetti. » | « Évite qu'on te désigne comme celui qui a transmis l'ordre de tuer Benedetti. » |
-| **Contabile** | « Évite qu'on te désigne comme celui qui a détourné les sommes extorquées à Benedetti. » | « Évite qu'on te désigne comme l'organisateur des versements forcés exigés de Benedetti. » |
-| **Capo / Caporegime** | « Évite qu'on te désigne comme le commanditaire du meurtre de Benedetti. » | « Conserve la part des contrats de chantier promise à ton crew. » |
-| **Consigliere** | « Évite qu'on te désigne comme celui qui a déformé la consigne attribuée au Don. » | « Évite qu'on te désigne comme l'organisateur principal du racket contre Benedetti. » |
-| **Sottocapo / Underboss** | « Évite qu'on te désigne comme celui qui a relayé un ordre de tuer Benedetti. » | « Conserve le pouvoir de répartir les recettes des chantiers entre les crews. » |
-| **Don Santoro** | « Évite qu'on te désigne comme le commanditaire du meurtre de Benedetti. » | « Évite qu'on te désigne comme celui qui a décidé l'extorsion contre Benedetti. » |
+| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme l'auteur des menaces adressées à Benedetti. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour ton témoignage dans cette affaire. » |
+| **Associato** | « Au verdict, évite qu'on te désigne comme l'organisateur du racket de Benedetti. » | « Au verdict, évite qu'on te désigne comme celui qui a porté l'ultimatum à Benedetti. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Benedetti. » | « Au verdict, évite qu'on te désigne comme celui qui a transmis l'ordre de tuer Benedetti. » |
+| **Contabile** | « Au verdict, évite qu'on te désigne comme celui qui a détourné les sommes extorquées à Benedetti. » | « Au verdict, évite qu'on te désigne comme l'organisateur des versements forcés exigés de Benedetti. » |
+| **Capo / Caporegime** | « Au verdict, évite qu'on te désigne comme celui qui a donné à tes hommes l'ordre de tuer Benedetti. » | « Au dénouement, conserve la part des contrats de chantier promise à ton crew. » |
+| **Consigliere** | « Au verdict, évite qu'on te désigne comme celui qui a déformé la consigne attribuée au Don. » | « Au verdict, évite qu'on te désigne comme l'organisateur principal du racket contre Benedetti. » |
+| **Sottocapo / Underboss** | « Au verdict, évite qu'on te désigne comme celui qui a relayé un ordre de tuer Benedetti. » | « Au dénouement, conserve le pouvoir de répartir les recettes des chantiers entre les crews. » |
+| **Don Santoro** | « Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Benedetti. » | « Au verdict, évite qu'on te désigne comme celui qui a décidé l'extorsion contre Benedetti. » |
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
