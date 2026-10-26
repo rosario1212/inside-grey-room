@@ -53,6 +53,10 @@ on:
       - 'scripts/check-omerta-v22-cast-complementarity.mjs'
       - 'qa/omerta-v22-random-mafia-roles-simulator.mjs'
       - 'scripts/check-omerta-v22-random-mafia-roles.mjs'
+      - 'docs/OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md'
+      - 'qa/omerta-v23-indic-two-condition-goals.json'
+      - 'qa/omerta-v23-two-condition-indic-simulator.mjs'
+      - 'scripts/check-omerta-v23-indic-and-goals.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -113,6 +117,10 @@ on:
       - 'scripts/check-omerta-v22-cast-complementarity.mjs'
       - 'qa/omerta-v22-random-mafia-roles-simulator.mjs'
       - 'scripts/check-omerta-v22-random-mafia-roles.mjs'
+      - 'docs/OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md'
+      - 'qa/omerta-v23-indic-two-condition-goals.json'
+      - 'qa/omerta-v23-two-condition-indic-simulator.mjs'
+      - 'scripts/check-omerta-v23-indic-and-goals.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -163,8 +171,10 @@ jobs:
         run: node scripts/check-omerta-v22-cast-complementarity.mjs
       - name: Validate V22 variant-authored random Santoro ranks and no generic Suspect role
         run: node scripts/check-omerta-v22-random-mafia-roles.mjs
+      - name: Validate V23 simple AND conditions for informant win and optional private fact disclosure
+        run: node scripts/check-omerta-v23-indic-and-goals.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
-          echo 'V11/V12 mandatory, V13 self-initiated and V14 three-step acceptance are archived; V16 governs accepting indic status and goal.'
+          echo 'V23 supersedes old informant scoring: personal escape AND voluntarily deliver one genuine private tip. V16 still governs accepting informant status and goal.'
           echo 'Private A/B/C, secure server implementation, safety, role distribution, production data, and human playtests require separate release QA.'
