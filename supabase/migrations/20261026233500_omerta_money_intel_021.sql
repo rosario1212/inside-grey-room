@@ -26,7 +26,7 @@ begin
   if not found then raise exception 'unauthorized'; end if;
   select * into r from public.igr_v4_rooms where code=p.room_code;
 
-  if not found or r.scenario_id<>'021' or r.status<>'playing' or r.cycle<2
+  if not found or r.scenario_id not in ('021','022','023','024','025') or r.status<>'playing' or r.cycle<2
      or r.phase in ('briefing','provisional_lock','final_debrief','locking','reveal')
      or p.public_role<>'suspect'
      or coalesce((r.state->'omerta'->'dead') ? p.id::text,false)
@@ -48,7 +48,29 @@ begin
 
   -- Trois sujets distincts fondés sur la fiche réellement assignée au joueur.
   -- Seule la première carte donne une information financière cachée majeure.
-  if p.internal_slot=1 and position('rinaldi' in lower(coalesce(p.private_state->>'hide','')))>0 then
+  if r.scenario_id<>'021' then
+    -- Dossiers 022–025 : trois sujets, strictement tirés des cartes privées
+    -- du canon actif, sans révélation fabriquée ni fuite d'une variante secrète.
+    select x.pack->'suspects'->(p.internal_slot-1) into authored
+    from public.igr_v4_scenario_packs x where x.scenario_id=r.scenario_id;
+    if authored is null
+      or coalesce(authored->>'hide','')='' or coalesce(authored->>'chronology','')=''
+      or jsonb_array_length(coalesce(authored->'anchors','[]'::jsonb))=0
+      or coalesce(authored->>'hide','')<>coalesce(p.private_state->>'hide','')
+      or coalesce(authored->>'chronology','')<>coalesce(p.private_state->>'chronology','')
+    then return jsonb_build_object('available',false,'cards','[]'::jsonb); end if;
+    catalog:=jsonb_build_array(
+      jsonb_build_object('id',r.scenario_id||'_'||p.internal_slot||'_secret',
+        'title',coalesce(nullif(authored->'negotiable_facts'->>0,''),'Ce que je sais'),
+        'detail',authored->>'hide','novelty','unassessed'),
+      jsonb_build_object('id',r.scenario_id||'_'||p.internal_slot||'_chronology',
+        'title',coalesce(nullif(authored->'negotiable_facts'->>1,''),'La chronologie'),
+        'detail',authored->>'chronology','novelty','unassessed'),
+      jsonb_build_object('id',r.scenario_id||'_'||p.internal_slot||'_anchor',
+        'title','Un fait établi',
+        'detail',authored->'anchors'->>0,'novelty','already_documented')
+    );
+  elsif p.internal_slot=1 and position('rinaldi' in lower(coalesce(p.private_state->>'hide','')))>0 then
     select x.pack->'suspects'->0->>'hide' into pack_secret
       from public.igr_v4_scenario_packs x where x.scenario_id='021';
     if position('rinaldi' in lower(coalesce(pack_secret,'')))=0
@@ -144,7 +166,7 @@ begin
 
   -- Verrou de salle : sérialise la consommation du renseignement et le quota par cycle.
   select * into r from public.igr_v4_rooms where code=p.room_code for update;
-  if not found or r.status<>'playing' or r.scenario_id<>'021' or r.cycle<2 then
+  if not found or r.status<>'playing' or r.scenario_id not in ('021','022','023','024','025') or r.cycle<2 then
     raise exception 'intel_unavailable';
   end if;
   perform igr_private.rate_limit('omerta_money_intel_send',p.id::text,10,60);
@@ -186,10 +208,10 @@ begin
   values(r.code,p.id,r.cycle,'omerta_verified_intel',
          jsonb_build_object('fact_id',p_card_id,'receiver_id',receiver.id,
            'canonically_authored',true,'truth_verified',
-           (p_card_id in ('021_money_route','021_money_ledger','021_handoff')),
+           (r.scenario_id='021' and p_card_id in ('021_money_route','021_money_ledger','021_handoff')),
            'first_official_delivery',true,
            'match_no',greatest(1,coalesce((r.state->>'match_no')::int,1)),
-           'scenario_id','021','topic_title',chosen->>'title',
+           'scenario_id',r.scenario_id,'topic_title',chosen->>'title',
            'novelty',chosen->>'novelty'))
   returning id into action_id;
 
