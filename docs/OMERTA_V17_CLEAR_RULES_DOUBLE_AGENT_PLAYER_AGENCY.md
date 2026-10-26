@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V17
+
+> **V18 — CONDITIONS DE VICTOIRE :** [OMERTA_V18_SUSPECT_INFORMANT_WIN_CONDITIONS.md](OMERTA_V18_SUSPECT_INFORMANT_WIN_CONDITIONS.md) précise désormais l'objectif unique de chaque suspect, son remplacement immédiat par l'objectif personnel INDIC après acceptation, et l'évaluation officielle indépendante du score de l'Enquête. Les exemples d'objectifs de la V17 sont des illustrations, non des résultats actifs dans le moteur. Le détail des conditions est consultable à portée de main, sans saturer les cartes compactes.
+
 ## L'ART DE TRAHIR · CONSIGNES COMPRÉHENSIBLES · INDIC DOUBLE JEU
 
 > **NOUVELLE RÉFÉRENCE ÉDITORIALE (26 octobre 2026)** : compléter V16 par des consignes **explicites, concrètes et non directives**. L'Enquêteur peut proposer au cycle 2+ de devenir INDIC ; le suspect voit d'emblée **Accepter / Refuser**, les deux objectifs (avant/après), les conséquences et les protections non garanties. **Accepter = indic secret et nouvel objectif immédiatement actifs, zéro information envoyée.** La parole, le mensonge, la rétention de faits et la stratégie future restent libres. **Il peut trahir l'Enquêteur lui-même au profit d'un autre suspect de rang supérieur**. Aucune personnalité forcée, aucun paragraphe de roleplay obligé, aucun « jeu de taupe » supplémentaire. **Document en revue uniquement ; les packs et RPC live ne sont pas remplacés.**
