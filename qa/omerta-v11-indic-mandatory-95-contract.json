@@ -1,6 +1,6 @@
 {
   "contract_version": "OMERTA-V11",
-  "status": "DRAFT_EDITORIAL_AND_QA_NOT_LIVE",
+  "status": "ARCHIVED_NON_NORMATIVE",
   "target_editorial_score": 9.5,
   "scenarios": [
     "021",
@@ -238,5 +238,8 @@
     "no_cross_episode_effects": false,
     "cloudflare_mobile_production_deployed": false
   },
-  "annotations": "An editorial target is not a tested rating. The mandatory informant is currently not implemented on live OMERTA servers. Public files must not include the real culprit or the source's identity."
+  "annotations": "An editorial target is not a tested rating. The mandatory informant is currently not implemented on live OMERTA servers. Public files must not include the real culprit or the source's identity.",
+  "normative": false,
+  "superseded_by": "OMERTA-V13",
+  "archive_warning": "ARCHIVED: automatic or mandatory informants rejected. V13 makes becoming an informant a player-controlled, consequential decision beginning cycle 2; zero informants is valid."
 }
