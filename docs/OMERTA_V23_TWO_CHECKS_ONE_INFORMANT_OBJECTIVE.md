@@ -1,5 +1,8 @@
 # OMERTÀ V23 — UN OBJECTIF D'INDIC, DEUX CONDITIONS SIMPLES
 
+> **RÉCONCILIATION CANONIQUE V24 — LIRE AVANT TOUTE ATTRIBUTION DE RÔLE :** [OMERTA_V24_15_VARIANTS_SECURITY_AND_RELEASE_GATES.md](OMERTA_V24_15_VARIANTS_SECURITY_AND_RELEASE_GATES.md). Les anciennes formulations impliquant le meurtre de Gallo (021), celui de Falco (023), celui de Valenti (024) ou celui de Benedetti (025) **ne correspondent pas au canon V7 actuellement retenu** ; elles sont **supprimées des brouillons privés de variantes** et ne doivent pas être intégrées en jeu. Le 022 concerne bien le meurtre de Caruso. La **règle V23 sur l'indic** (se sauver ET transmettre volontairement un renseignement vrai et utile) **reste normative**, mais ses exemples d'enquête ne le sont plus. **15 variantes privées rédigées, aucune release ni validation des RPC.**
+
+
 > **AUDIT ACTUEL 021 — CORRECTION À EFFECTUER AVANT PUBLICATION :** [OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md](OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md). Les objectifs 021 mentionnant un « meurtre de Gallo » ont été proposés sans canon correspondant dans la bible V7. **Ne pas les injecter en jeu**. Le pilote privé A/B/C recentre 021 sur l'enveloppe, les montants et les responsabilités de remise ; les objectifs de chaque rôle doivent être alignés avec sa vérité et son acte de verdict. Les cinq anciens packs sont encore actifs et non convertis. La logique générale de l'indic (se sauver ET transmettre volontairement un fait vrai) reste valide.
 
 
