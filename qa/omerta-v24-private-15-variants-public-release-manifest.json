@@ -59,7 +59,10 @@
     "checked_anon_authenticated_direct_SELECT_grants": false,
     "not_full_RPC_security_audit": true,
     "production_mutated": false,
-    "one_023_lobby_room_observed": true
+    "one_023_lobby_room_observed": true,
+    "several_security_definer_omerta_RPC_publicly_executable": true,
+    "security_definer_rpc_exposure_audited_for_authorization": false,
+    "precise_security_note": "RLS and denied direct table SELECT protect against direct REST queries; privileged callable RPCs still require independent authorization, role secrecy, and object-level checks. No exploit asserted."
   },
   "release_gate": {
     "private_variant_storage_RPC": false,
