@@ -59,6 +59,7 @@ begin
   select exists(
     select 1 from public.igr_v4_actions a
     where a.room_code=r.code and a.action_type='omerta_verified_intel'
+      and coalesce((a.payload->>'match_no')::int,1)=greatest(1,coalesce((r.state->>'match_no')::int,1))
       and a.payload->>'fact_id'=key
   ) into already_sent;
 
@@ -106,11 +107,13 @@ begin
     select 1 from public.igr_v4_actions a
     where a.room_code=r.code and a.player_id=p.id and a.cycle=r.cycle
       and a.action_type='omerta_verified_intel'
+      and coalesce((a.payload->>'match_no')::int,1)=greatest(1,coalesce((r.state->>'match_no')::int,1))
   ) then raise exception 'one_intel_per_cycle'; end if;
 
   if exists(
     select 1 from public.igr_v4_actions a
     where a.room_code=r.code and a.action_type='omerta_verified_intel'
+      and coalesce((a.payload->>'match_no')::int,1)=greatest(1,coalesce((r.state->>'match_no')::int,1))
       and a.payload->>'fact_id'=p_card_id
   ) then raise exception 'intel_already_received'; end if;
 
@@ -123,7 +126,9 @@ begin
   insert into public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
   values(r.code,p.id,r.cycle,'omerta_verified_intel',
          jsonb_build_object('fact_id',p_card_id,'receiver_id',receiver.id,
-           'truth_verified',true,'new_to_investigator',true,'scenario_id','021'))
+           'truth_verified',true,'first_official_delivery',true,
+           'match_no',greatest(1,coalesce((r.state->>'match_no')::int,1)),
+           'scenario_id','021'))
   returning id into action_id;
 
   -- Seul l'Enquêteur peut lire le contenu, via le filtrage privé des événements.
@@ -137,7 +142,7 @@ begin
          jsonb_build_object('title','TRANSMISSION CONFIRMÉE',
            'text','L’Enquêteur a reçu le renseignement sur les transferts d’argent. La transmission reste confidentielle.'));
   return jsonb_build_object('ok',true,'action_id',action_id,
-    'truth_verified',true,'new_to_investigator',true);
+    'truth_verified',true,'first_official_delivery',true);
 end;
 $$;
 
