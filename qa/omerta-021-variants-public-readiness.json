@@ -1,0 +1,48 @@
+{
+  "dossier": "021",
+  "name": "L'Enveloppe",
+  "pilot_date": "2026-10-26",
+  "status": "PRIVATE_AUTHORING_DRAFT_REQUIRES_RUNTIME_VALIDATION",
+  "public_repo_contains_sealed_answers": false,
+  "confidential_artifact": "Delivered separately to project owner; not committed to public repository",
+  "variant_count": 3,
+  "verified_private_editorial_structure": {
+    "cycles_per_variant": 3,
+    "case_specific_role_slots_per_variant": 7,
+    "guaranteed_independent_c3_sources_per_variant": 2,
+    "private_tips_total": 21,
+    "distinct_causal_chains": 3,
+    "standalone_case": true,
+    "no_initial_informant": true,
+    "informant_requires_self_safety_and_truthful_voluntary_tip": true
+  },
+  "live_source": {
+    "table": "public.igr_v4_scenario_packs",
+    "rows_021_025_present": 5,
+    "pack_trames_count_per_scenario": 3,
+    "pack_variants_json_property_present": false,
+    "historical_continuity_references_present": true,
+    "legacy_omerta_start_game_campaign_aware": true,
+    "legacy_omerta_make_reveal_campaign_aware": true,
+    "room_min_observed": 4,
+    "room_max_observed": 8
+  },
+  "narrative_reconciliation": {
+    "anchor": "OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md §021",
+    "v22_v23_gallo_homicide_supported_in_anchor": false,
+    "must_avoid_using_gallo_homicide_as_021_goal": true,
+    "private_pilot": "Enveloppe lost/delayed/illusory balance, without adding unsupported victim homicide"
+  },
+  "release_criteria": {
+    "sealed_A_B_C_are_server_only": false,
+    "cycle_3_independent_corroboration_in_engine": false,
+    "role_assignment_bound_to_actual_room_count": false,
+    "individual_per_act_goals_score_in_live_engine": false,
+    "v23_inf_win_server_authored_clues": false,
+    "no_accidental_private_fact_exposure": false,
+    "three_variants_are_selected_once_per_room": false,
+    "all_v22_v23_021_incompatible_goals_reconciled": false,
+    "FR_EN_and_real_players_tested": false,
+    "safe_to_merge": false
+  }
+}
