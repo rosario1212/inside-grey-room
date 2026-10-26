@@ -1,5 +1,8 @@
 # OMERTÀ V22 — OBJECTIFS LIÉS, DISTINCTS ET CLAIRS POUR LES JOUEURS
 
+> **RÈGLE ACTUELLE DE VICTOIRE INDIC = V23 :** [OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md](OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md). Un joueur du camp mafieux accepte éventuellement une offre de l'Enquêteur à partir de C2 ; il reçoit **une mission composée de deux conditions obligatoires : (1) se sauver lui-même, (2) transmettre volontairement au moins un renseignement privé, vrai et utile à l'Enquête**. L'acceptation ne transmet rien. Le silence demeure permis mais fait échouer la victoire d'indic ; les anciennes phrases V22 « indic gagnant sans parler » et les objectifs indic seuls sont **supplantés**. La carte affiche seulement deux lignes, les justificatifs restent facultatifs.
+
+
 > **CORRECTION DU 26 OCTOBRE — COHÉRENCE DES RÔLES ET CLARTÉ** : la partie se concentre désormais sur **quatre enjeux narratifs communs par dossier**, et non sur seize « mini-enquêtes » distinctes. Chaque suspect conserve **une victoire personnelle**, avec un mobile précis et un risque, mais partage les mêmes preuves principales que les autres. Des intérêts peuvent se rejoindre ou s'opposer ; aucun joueur n'est obligé de défendre ou de trahir quelqu'un. **V22 reste une bibliothèque de conception, non validée sur les quinze variantes privées ni publiée dans le jeu.**
 
 
