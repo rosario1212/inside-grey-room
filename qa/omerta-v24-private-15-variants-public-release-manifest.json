@@ -62,7 +62,8 @@
     "one_023_lobby_room_observed": true,
     "several_security_definer_omerta_RPC_publicly_executable": true,
     "security_definer_rpc_exposure_audited_for_authorization": false,
-    "precise_security_note": "RLS and denied direct table SELECT protect against direct REST queries; privileged callable RPCs still require independent authorization, role secrecy, and object-level checks. No exploit asserted."
+    "precise_security_note": "RLS and denied direct table SELECT protect against direct REST queries; privileged callable RPCs still require independent authorization, role secrecy, and object-level checks. No exploit asserted.",
+    "callable_SECURITY_DEFINER_functions_require_review": true
   },
   "release_gate": {
     "private_variant_storage_RPC": false,
@@ -77,5 +78,10 @@
     "PR_merged": false,
     "production_deployed": false
   },
-  "release_ready": false
+  "release_ready": false,
+  "private_compact_player_card_drafts": 105,
+  "private_compact_player_card_max_visible_words": 94,
+  "private_compact_player_cards_active_live": false,
+  "private_offer_cards_prepared": 105,
+  "private_offer_cards_active_live": false
 }
