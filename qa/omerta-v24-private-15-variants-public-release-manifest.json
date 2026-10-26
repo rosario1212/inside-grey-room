@@ -1,0 +1,78 @@
+{
+  "version": "OMERTA-V24",
+  "updated_date": "2026-10-26",
+  "status": "PRIVATE_EDITORIAL_DRAFTS_AND_QA_NOT_LIVE",
+  "public_is_spoiler_free": true,
+  "source_private_artifact": "OMERTA_021_025_PACK_PRIVE_A_B_C_NON_DEPLOYE.zip (user-only sandbox attachment)",
+  "case_count": 5,
+  "variants_per_case": 3,
+  "variant_count": 15,
+  "roles_per_private_variant": 7,
+  "total_variant_role_slots": 105,
+  "qualifying_private_tip_candidates": 105,
+  "guaranteed_independent_C3_sources": 30,
+  "optional_draft_role_corrob_sources": 84,
+  "cases": [
+    {
+      "id": "021",
+      "theme": "missing collection envelope and remittance",
+      "invalid_old_claim": "Gallo homicide not established by reference V7"
+    },
+    {
+      "id": "022",
+      "theme": "Caruso homicide, ambiguity of order and false post-crime alibis"
+    },
+    {
+      "id": "023",
+      "theme": "Falco absent from sit-down, Adriano assaulted, route and deal disputes",
+      "invalid_old_claim": "Falco homicide not established by reference V7"
+    },
+    {
+      "id": "024",
+      "theme": "Massimo De Luca arrested, extortion and disputed value of cooperation",
+      "invalid_old_claim": "Valenti homicide not established by reference V7"
+    },
+    {
+      "id": "025",
+      "theme": "independent business victim seriously assaulted, chain of Santoro orders",
+      "invalid_old_claim": "Benedetti homicide not established by reference V7"
+    }
+  ],
+  "correct_gameplay": {
+    "random_authored_mafia_role_slot_instead_of_generic_suspect": true,
+    "one_primary_suspect_goal": true,
+    "source_stays_mafia": true,
+    "source_win_requires_safety_and_one_willing_true_corrobable_tip": true,
+    "no_auto_disclosure_on_offer_accept": true,
+    "no_mandatory_target_choice": true,
+    "no_required_informants": true,
+    "independent_C3_with_zero_informants": true,
+    "no_cross_episode_dependency": true
+  },
+  "production_security_read_only_findings": {
+    "project": "jtasbdiguhiswoyvobkn",
+    "source": "public.igr_v4_scenario_packs",
+    "packs_have_trames_not_variants": true,
+    "pack_variants_field_present": false,
+    "legacy_campaign_logic_present": true,
+    "checked_tables_RLS_enabled": true,
+    "checked_anon_authenticated_direct_SELECT_grants": false,
+    "not_full_RPC_security_audit": true,
+    "production_mutated": false,
+    "one_023_lobby_room_observed": true
+  },
+  "release_gate": {
+    "private_variant_storage_RPC": false,
+    "variant_by_variant_human_fact_and_proof_review": false,
+    "verdict_by_act_and_source_two_condition_scorer": false,
+    "server_only_immutable_random_ABC_per_room": false,
+    "safe_room_cast_of_4_to_8_total_players": false,
+    "review_security_definer_rpc_exposure": false,
+    "FR_EN_UI_and_accessibility": false,
+    "reconnection_and_multiplayer_playtest": false,
+    "no_regressions_other_DLC": false,
+    "PR_merged": false,
+    "production_deployed": false
+  },
+  "release_ready": false
+}
