@@ -43,7 +43,7 @@ for(const [i,c] of data.cases.entries()){
 }
 assert.equal(count,35);
 assert.equal(indics,33);
-for(const key of ['80 %','20 %','Accepter','Refuser','C2','INDIC','A/B/C','sans transmettre automatiquement']){
+for(const key of ['80 %','20 %','Accepter','Refuser','C2','INDIC','A/B/C','sans partager automatiquement']){
  assert.ok(md.includes(key),'Missing authoring law '+key);
 }
 // A freely accused person never changes an unrelated authenticated payout.
