@@ -31,6 +31,42 @@
 
 ---
 
+## Deux exemples du rendu joueur souhaité
+
+**021 · Associato — exemple de carte compacte** (le contenu de « Ce que tu sais » doit être validé pour la variante réelle) :
+
+> **ÉNONCÉ :** Antonio Gallo est mort. L'argent extorqué aux commerçants devait remonter au Capo, mais l'enveloppe manque.
+>
+> **CE QUE TU SAIS :** Tu connais les commerces où une remise était attendue. Tu sais à qui tu devais remettre ta propre collecte. Tu ignores qui a pris l'enveloppe.
+>
+> **TON OBJECTIF :** Au verdict, évite qu'on te désigne comme celui qui a imposé à Gallo un second versement.
+>
+> **TU PEUX :** parler, contester les montants, défendre un supérieur ou accuser quelqu'un — **à toi de décider**.
+>
+> **TON RISQUE :** parler des sommes peut prouver ton implication dans le racket.
+>
+> **Voir les détails et les pièces** (facultatif)
+
+**Si l'Enquêteur lui propose de devenir indic au C2**, l'Associato voit immédiatement son nouvel objectif : « Au dénouement, conserve la part de la collecte du vendredi qui te revenait. » Il voit que la promesse de confidentialité **ne garantit pas la protection**, qu'il abandonne son objectif de suspect et qu'il n'aura aucune information à transmettre obligatoirement. Puis **Accepter / Refuser**. Le système ne choisit pas sa stratégie.
+
+**025 · Sottocapo — exemple de carte compacte** (faits détaillés à confirmer par A/B/C) :
+
+> **ÉNONCÉ :** Carlo Benedetti a été assassiné après avoir refusé les prélèvements imposés sur son chantier. Trois versions d'un ordre circulent.
+>
+> **CE QUE TU SAIS :** Tu connais la fonction des hommes chargés de transmettre les consignes. Tu ne sais pas nécessairement qui a transformé la dernière consigne en ordre de tuer.
+>
+> **TON OBJECTIF :** Au verdict, évite qu'on te désigne comme celui qui a relayé un ordre de tuer Benedetti.
+>
+> **TU PEUX :** contester un témoin, défendre le Don, accuser un Capo ou conserver ton silence. Rien ne t'oblige à protéger la hiérarchie.
+>
+> **TON RISQUE :** donner un détail sur la chaîne de transmission peut révéler ton propre niveau d'implication.
+>
+> **Voir les détails et les pièces** (facultatif)
+
+**Ces deux cartes sont des maquettes de ton, pas des faits de variantes publiées.** Les réels savoirs privés, le lien avec chaque preuve et la possibilité de gagner sont à déterminer dans les quinze manuscrits. Même si la carte évoque « défendre le Don », ce n'est jamais une action ou une loyauté obligatoire.
+
+---
+
 ## 021 — L'ENVELOPPE
 
 **ÉNONCÉ :** Brooklyn, 2006. L'enveloppe du vendredi manque dans la collecte de neuf commerces. Antonio Gallo, qui refusait le second versement, a été assassiné. Les registres et le montant parvenu à la police ne concordent pas.
