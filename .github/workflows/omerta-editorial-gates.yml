@@ -4,6 +4,12 @@ on:
   pull_request:
     paths:
       - 'docs/OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md'
+      - 'docs/OMERTA_SANTORO_V8_VIOLENCE_INDIC_FAMILY_TREE.md'
+      - 'qa/omerta-v8-mafia-release-contract.json'
+      - 'scripts/check-omerta-v8-mafia.mjs'
+      - 'omerta-santoro-family-v7.js'
+      - 'omerta-santoro-family-v7.css'
+      - 'index.html'
       - 'qa/omerta-v7-release-contract.json'
       - 'scripts/check-omerta-v7-gates.mjs'
       - '.github/workflows/omerta-editorial-gates.yml'
@@ -12,6 +18,12 @@ on:
       - 'docs/non-cartel-dlc-rework-**'
     paths:
       - 'docs/OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md'
+      - 'docs/OMERTA_SANTORO_V8_VIOLENCE_INDIC_FAMILY_TREE.md'
+      - 'qa/omerta-v8-mafia-release-contract.json'
+      - 'scripts/check-omerta-v8-mafia.mjs'
+      - 'omerta-santoro-family-v7.js'
+      - 'omerta-santoro-family-v7.css'
+      - 'index.html'
       - 'qa/omerta-v7-release-contract.json'
       - 'scripts/check-omerta-v7-gates.mjs'
       - '.github/workflows/omerta-editorial-gates.yml'
@@ -33,6 +45,10 @@ jobs:
           node-version: '20'
       - name: Enforce OMERTA V7 editorial gates
         run: node scripts/check-omerta-v7-gates.mjs
+      - name: Check Santoro family viewer JS syntax
+        run: node --check omerta-santoro-family-v7.js && node --check scripts/check-omerta-v8-mafia.mjs
+      - name: Validate OMERTA V8 violent cases, informant privacy and family tree
+        run: node scripts/check-omerta-v8-mafia.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
