@@ -1,0 +1,300 @@
+{
+  "version": "OMERTA-V21",
+  "stage": "editorial-draft-not-live",
+  "source": "docs/OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md",
+  "cases": [
+    {
+      "id": "021",
+      "title": "L'ENVELOPPE",
+      "roles": [
+        {
+          "role": "Suspect",
+          "initial_goal": "Au verdict, ne sois pas désigné comme responsable principal du détournement de l'enveloppe.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour toi.",
+          "informant_kind": "approved_protection"
+        },
+        {
+          "role": "Associato",
+          "initial_goal": "Au verdict, ne sois pas désigné comme responsable de la seconde collecte imposée à Antonio Gallo.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la part de la collecte du vendredi qui t'était due.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Soldato / Uomo d'Onore",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'exécutant du meurtre d'Antonio Gallo.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme responsable des menaces exercées contre Antonio Gallo.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Contabile",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'auteur de la falsification des comptes de la collecte.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme la personne ayant transmis le montant secret aux enquêteurs.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Capo / Caporegime",
+          "initial_goal": "Au verdict, ne sois pas désigné comme le commanditaire du meurtre d'Antonio Gallo.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve le contrôle des collectes de ton crew.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Consigliere",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'organisateur du détournement de l'enveloppe.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la faveur du Don attachée à l'arbitrage de cette collecte.",
+          "informant_kind": "retain_interest"
+        }
+      ]
+    },
+    {
+      "id": "022",
+      "title": "OMERTÀ",
+      "roles": [
+        {
+          "role": "Suspect",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'organisateur des faux témoignages sur la mort de Caruso.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour toi.",
+          "informant_kind": "approved_protection"
+        },
+        {
+          "role": "Associato",
+          "initial_goal": "Au verdict, ne sois pas désigné comme responsable du détournement des recettes des paris.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'organisateur du pacte de faux témoignages.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Soldato / Uomo d'Onore",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'exécutant du meurtre de Nino Caruso.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'auteur des menaces adressées à Nino Caruso avant sa mort.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Contabile",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'auteur du détournement des recettes de paris.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la commission qui t'était due sur les paris de cette soirée.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Capo / Caporegime",
+          "initial_goal": "Au verdict, ne sois pas désigné comme le commanditaire du meurtre de Nino Caruso.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'organisateur du pacte de faux témoignages.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Consigliere",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'organisateur des déclarations identiques sur la mort de Caruso.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la faveur du Don liée au règlement de la dette de Caruso.",
+          "informant_kind": "retain_interest"
+        }
+      ]
+    },
+    {
+      "id": "023",
+      "title": "LA TABLE",
+      "roles": [
+        {
+          "role": "Suspect",
+          "initial_goal": "Au verdict, ne sois pas désigné comme responsable de la fuite concernant le déplacement d'Adriano.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la part de revenus que l'accord de transport devait t'assurer.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Associato",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'auteur du sabotage des négociations.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme la personne ayant divulgué l'itinéraire d'Adriano.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Soldato / Uomo d'Onore",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'exécutant de l'attaque contre Adriano Santoro.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour toi.",
+          "informant_kind": "approved_protection"
+        },
+        {
+          "role": "Contabile",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'auteur de la falsification des conditions financières de l'accord.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve ta commission sur les revenus de transport négociés.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Capo / Caporegime",
+          "initial_goal": "Au verdict, ne sois pas désigné comme le commanditaire du meurtre de Domenico Falco.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la part de transport promise à ton crew.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Consigliere",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'instigateur du sabotage du rendez-vous.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme responsable de la fuite sur le déplacement d'Adriano.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Sottocapo / Underboss",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'instigateur de l'attaque visant Adriano.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve ton mandat d'arbitrer le partage des revenus de transport.",
+          "informant_kind": "retain_interest"
+        }
+      ]
+    },
+    {
+      "id": "024",
+      "title": "IL PENTITO",
+      "roles": [
+        {
+          "role": "Suspect",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'instigateur du meurtre de Sergio Valenti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour toi.",
+          "informant_kind": "approved_protection"
+        },
+        {
+          "role": "Associato",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'organisateur du racket des transporteurs.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme la personne ayant divulgué la date de la déposition de Valenti.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Soldato / Uomo d'Onore",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'exécutant du meurtre de Valenti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'organisateur principal du racket des transporteurs.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Contabile",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'auteur de la falsification des versements des transporteurs.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme la personne ayant ordonné les versements forcés.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Capo / Caporegime",
+          "initial_goal": "Au verdict, ne sois pas désigné comme le commanditaire du meurtre de Valenti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la part des recettes de transport attribuée à ton crew.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Consigliere",
+          "initial_goal": "Au verdict, ne sois pas désigné comme celui qui a autorisé l'intimidation de Valenti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'organisateur principal du racket des transporteurs.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Pentito (coopération formelle active)",
+          "initial_goal": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour ta coopération judiciaire.",
+          "initial_kind": "approved_protection",
+          "informant_goal": null,
+          "informant_kind": null
+        }
+      ]
+    },
+    {
+      "id": "025",
+      "title": "IL DON",
+      "roles": [
+        {
+          "role": "Suspect",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'exécutant du meurtre de Carlo Benedetti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour toi.",
+          "informant_kind": "approved_protection"
+        },
+        {
+          "role": "Associato",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'organisateur du racket contre Benedetti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme celui qui a transmis l'ultimatum à Benedetti.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Soldato / Uomo d'Onore",
+          "initial_goal": "Au verdict, ne sois pas désigné comme l'exécutant du meurtre de Benedetti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme celui qui a transmis l'ordre de tuer Benedetti.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Contabile",
+          "initial_goal": "Au verdict, ne sois pas désigné comme le responsable du détournement des sommes extorquées à Benedetti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'organisateur des versements forcés exigés de Benedetti.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Capo / Caporegime",
+          "initial_goal": "Au verdict, ne sois pas désigné comme le commanditaire du meurtre de Benedetti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve la part des contrats de chantier promise à ton crew.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Consigliere",
+          "initial_goal": "Au verdict, ne sois pas désigné comme celui qui a déformé l'ordre attribué au Don.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'organisateur principal du racket contre Benedetti.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Sottocapo / Underboss",
+          "initial_goal": "Au verdict, ne sois pas désigné comme celui qui a relayé un ordre de tuer Benedetti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au dénouement, conserve ton autorité sur la répartition des recettes du chantier.",
+          "informant_kind": "retain_interest"
+        },
+        {
+          "role": "Don Santoro",
+          "initial_goal": "Au verdict, ne sois pas désigné comme le commanditaire du meurtre de Benedetti.",
+          "initial_kind": "avoid_attribution",
+          "informant_goal": "Au verdict, ne sois pas désigné comme l'organisateur principal du racket contre Benedetti.",
+          "informant_kind": "avoid_attribution"
+        },
+        {
+          "role": "Pentito (coopération formelle active)",
+          "initial_goal": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour tes déclarations.",
+          "initial_kind": "approved_protection",
+          "informant_goal": null,
+          "informant_kind": null
+        }
+      ]
+    }
+  ],
+  "one_main_goal_per_role": true,
+  "source_remains_in_mafia": true,
+  "accept_swaps_goal_immediately": true,
+  "accept_disclosures_zero": true,
+  "no_mandatory_informant": true,
+  "free_accusation_target_does_not_score": true,
+  "mandatory_validation": [
+    "15 private variants and cast combinations",
+    "objectives have success and failure paths",
+    "every avoid-attribution goal maps to a contested crime-specific verdict",
+    "every retain-interest goal maps to an authenticated contested financial/favor/authority outcome",
+    "every protection goal maps to an actual approved protection decision",
+    "no impossible goals",
+    "no canonical perpetrator leaked in private role goals",
+    "no murder or other episode persistence",
+    "server-side result grading and source secrecy"
+  ],
+  "production_ready": false
+}
