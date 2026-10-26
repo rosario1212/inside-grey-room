@@ -1,6 +1,6 @@
 # OMERTÀ — Évaluation finale de l'Indic (spécification de gameplay)
 
-**Statut : conception approuvée, intégration logicielle à effectuer après raccordement de l'Indic.** Cette spécification n'active pas de nouvelle règle en production.
+**Statut : prototype fonctionnel de transmission financière pour 021 sur une branche de développement.** La règle générale de victoire de l'Indic et le vote final de l'Enquêteur ne sont PAS encore déployés. Aucune modification des verdicts de production n'est réalisée.
 
 ## Principe
 
@@ -52,3 +52,18 @@ Exemples :
 - Empêcher doubles validations, réponses hors phase, votes concernant une autre salle/Indic, et modifications après verrouillage.
 - Tester les scénarios 021–025, parties sans Indic, Indic recruté au cycle 2+, joueurs déconnectés, indicateurs morts/protégés, et toutes les branches de verdict.
 - **Ne pas déployer en production une modalité de vote isolée qui influerait sur la victoire tant que le suivi des renseignements vérifiés et les tests de non-régression ne sont pas prêts.**
+
+## Intégration pilote : « Les transferts d’argent » (021)
+
+**Implémentation GitHub sur cette branche :**
+- `supabase/migrations/20261026233500_omerta_money_intel_021.sql` : RPC `igr_omerta_money_intel_options` (renseignement autorisé) et `igr_omerta_money_intel_send` (transfert authentifié et atomique).
+- `omerta-money-intel-v1.js` et `.css` : nouvelle carte privée à ouvrir **après la discussion orale** ; pas de saisie libre ni d'analyse automatisée des paroles.
+- `scripts/omerta-money-intel-021-check.mjs` : contrôle statique des règles serveur et simulation de l'interface.
+
+**Vérité canonique de 021 :** slot 1 = une partie de l'enveloppe devait revenir au cercle Rinaldi ; slot 7 = une somme supplémentaire absente des comptes. L'accès est lié au slot réellement attribué au joueur et aux secrets inscrits dans sa carte privée ; toute autre carte est rejetée par le serveur. Si une variante modifie ces faits, la carte n'est pas proposée.
+
+**Règles :** dès le cycle 2, uniquement en partie active, une transmission de renseignement par joueur et par cycle ; un même fait ne peut être livré officiellement qu'une fois par partie, avec isolation par `match_no`. Le serveur verrouille la salle, vérifie le token, le rôle et la connaissance, puis écrit une action sans texte secret et un événement privé ciblé sur l'Enquêteur. Le contenu n'est ni diffusé publiquement ni envoyé aux autres Suspects.
+
+**Limites actuellement explicites :** `truth_verified=true` signifie que **le contenu de cette carte est ancré dans le canon serveur**, et `first_official_delivery=true` que cette carte n'avait pas été officiellement envoyée auparavant. Cela ne démontre PAS que l'information n'a jamais été dite oralement ou découverte par une autre voie. Ce signal peut nourrir une future seconde condition de victoire, mais n'altère pas encore le verdict OMERTÀ. Le vote final envisagé séparément n'est pas présent dans l'interface.
+
+**Publication :** appliquer et éprouver la migration sur un environnement de test Supabase, puis valider les permissions, le compte à rebours, les variantes et les 5 dossiers avant toute fusion et mise en production. Tant que ces tests n'ont pas eu lieu, conserver la PR en brouillon.
