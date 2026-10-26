@@ -1,0 +1,242 @@
+{
+  "contract_version": "OMERTA-V11",
+  "status": "DRAFT_EDITORIAL_AND_QA_NOT_LIVE",
+  "target_editorial_score": 9.5,
+  "scenarios": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "cases_must_be_independent": true,
+  "ordinary_inside_grey_room_rules": true,
+  "confrontation_first_cycle": 2,
+  "actual_live_backend_support_verified": false,
+  "story_split": {
+    "case_specific_percent_editorial": 80,
+    "shared_universe_percent_editorial": 20,
+    "not_numerical_rule": true
+  },
+  "four_laws": [
+    "standalone_case",
+    "player_free_with_meaningful_involvement",
+    "materially_different_ABC_replay",
+    "no_contradictions_no_hardlock_or_secret_leaks"
+  ],
+  "player_character_policy": "Play as yourself, display current game pseudo under public Mafia rank; Don Santoro title only; blood children are contextual NPCs.",
+  "informant": {
+    "exactly_one_per_room": true,
+    "every_scenario": true,
+    "hidden_to_other_players": true,
+    "mandatory_for_best_fully_supported_attribution": true,
+    "mandatory_for_game_phase_progression": false,
+    "assigned_server_side_after_player_roles": true,
+    "eligible_public_roles": [
+      "associato",
+      "uomo_onore",
+      "contabile",
+      "caporegime",
+      "consigliere",
+      "sottocapo",
+      "don",
+      "suspect"
+    ],
+    "untrusted_public_exposure_fields": [
+      "is_informant",
+      "indic",
+      "secret_source",
+      "informant_player_id",
+      "informant_assignment",
+      "informant_card",
+      "variant_id"
+    ],
+    "player_can_withhold": true,
+    "player_can_lie": true,
+    "cannot_be_guaranteed_informant_by_selected_public_rank": true,
+    "never_displayed_in_family_tree": true,
+    "stable_after_reconnect": true,
+    "isolated_across_rooms": true,
+    "max_once_per_room": true,
+    "different_from_formal_pentito": true,
+    "objective": "One exclusive, corroborable piece of contextual knowledge that matters to the complete verdict but is not a universal truth oracle; no dramatic personality or acting.",
+    "no_softlock_protocol": "If silent or absent, timed phases and evidence still progress; 2 independent C3 public/structural sources remain; the verdict may be incomplete/incorrect, and the game may fairly be lost.",
+    "failure_mode": "Never guarantee a perfect verdict or automatically reveal the informant identity on silence."
+  },
+  "case_contracts": [
+    {
+      "id": "021",
+      "theme": "collection extortion and shopkeeper homicide",
+      "score_target": 9.5,
+      "axes": [
+        "coercion",
+        "money_path",
+        "homicide",
+        "source_of_leak"
+      ],
+      "independent_c3_sources": [
+        "financial_trace",
+        "forensic_homicide_timeline"
+      ],
+      "informant_exclusive": "reason for corrected instruction and first-hand source of leaked collection amount",
+      "replay_axes": [
+        "money_discrepancy_cause",
+        "money_homicide_link",
+        "source_motive"
+      ],
+      "variations": [
+        "A",
+        "B",
+        "C"
+      ],
+      "crossovers": [
+        "Santoro name",
+        "crew rank",
+        "Bensonhurst"
+      ],
+      "imported_events": []
+    },
+    {
+      "id": "022",
+      "theme": "bookmaker killed after disputed superior statement",
+      "score_target": 9.5,
+      "axes": [
+        "debt_motive",
+        "homicide_execution",
+        "command_interpretation",
+        "witness_accord"
+      ],
+      "independent_c3_sources": [
+        "murder_timeline",
+        "postcrime_statement_coordination"
+      ],
+      "informant_exclusive": "private agreement context explaining why witness versions match",
+      "replay_axes": [
+        "command_source",
+        "private_debt",
+        "coverup_function"
+      ],
+      "variations": [
+        "A",
+        "B",
+        "C"
+      ],
+      "crossovers": [
+        "mafia ranks",
+        "Newark club",
+        "Omertà"
+      ],
+      "imported_events": []
+    },
+    {
+      "id": "023",
+      "theme": "sit-down double violence and disappearing transport offer",
+      "score_target": 9.5,
+      "axes": [
+        "economic_offer",
+        "falco_murder",
+        "adriano_attack",
+        "negotiation_sabotage"
+      ],
+      "independent_c3_sources": [
+        "falco_timeline",
+        "route_information_access"
+      ],
+      "informant_exclusive": "original intended destination of revised offer or critical information",
+      "replay_axes": [
+        "offer_beneficiary",
+        "attack_causal_relationship",
+        "leak_path"
+      ],
+      "variations": [
+        "A",
+        "B",
+        "C"
+      ],
+      "crossovers": [
+        "Adriano Santoro blood relative",
+        "Consigliere title",
+        "NY-NJ milieu"
+      ],
+      "imported_events": []
+    },
+    {
+      "id": "024",
+      "theme": "transport racketeering and a murdered witness before deposition",
+      "score_target": 9.5,
+      "axes": [
+        "extortion",
+        "valenti_homicide",
+        "reliability_of_evidence",
+        "cooperation_terms"
+      ],
+      "independent_c3_sources": [
+        "transport_payment_history",
+        "valenti_death_chronology"
+      ],
+      "informant_exclusive": "provenance context of annotation in Valenti's notes",
+      "replay_axes": [
+        "notation_meaning",
+        "cooperation_newness",
+        "violence_cause"
+      ],
+      "variations": [
+        "A",
+        "B",
+        "C"
+      ],
+      "crossovers": [
+        "Santoro commercial network",
+        "NJ federal justice",
+        "silence norm"
+      ],
+      "imported_events": []
+    },
+    {
+      "id": "025",
+      "theme": "boss-name extortion culminating in business-owner murder",
+      "score_target": 9.5,
+      "axes": [
+        "racketeering_proceeds",
+        "who_had_actual_authority",
+        "murder_chain",
+        "message_distortion"
+      ],
+      "independent_c3_sources": [
+        "murder_timeline",
+        "chain_of_messages"
+      ],
+      "informant_exclusive": "private context of decisive reinterpretation of the boss's instruction",
+      "replay_axes": [
+        "command_scope",
+        "violent_escalation",
+        "subcontractor_interest"
+      ],
+      "variations": [
+        "A",
+        "B",
+        "C"
+      ],
+      "crossovers": [
+        "Don Santoro",
+        "Consigliere and Capo rank",
+        "Jersey City"
+      ],
+      "imported_events": []
+    }
+  ],
+  "release_blockers": {
+    "live_packs_converted_to_player_rank_cast": false,
+    "exact_one_informant_server_assertion": false,
+    "every_possible_role_assignment_has_relevant_informant_knowledge": false,
+    "no_hidden_state_exposure_ever": false,
+    "phase_rules_021_to_025_compatible": false,
+    "fifteen_secret_ABC_manuscripts_completed": false,
+    "alternate_party_size_matrices_pass": false,
+    "all_C3_two_evidence_sources_verified": false,
+    "all_15_variants_playtested": false,
+    "no_cross_episode_effects": false,
+    "cloudflare_mobile_production_deployed": false
+  },
+  "annotations": "An editorial target is not a tested rating. The mandatory informant is currently not implemented on live OMERTA servers. Public files must not include the real culprit or the source's identity."
+}
