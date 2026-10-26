@@ -1,5 +1,8 @@
 # OMERTÀ V23 — UN OBJECTIF D'INDIC, DEUX CONDITIONS SIMPLES
 
+> **AUDIT ACTUEL 021 — CORRECTION À EFFECTUER AVANT PUBLICATION :** [OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md](OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md). Les objectifs 021 mentionnant un « meurtre de Gallo » ont été proposés sans canon correspondant dans la bible V7. **Ne pas les injecter en jeu**. Le pilote privé A/B/C recentre 021 sur l'enveloppe, les montants et les responsabilités de remise ; les objectifs de chaque rôle doivent être alignés avec sa vérité et son acte de verdict. Les cinq anciens packs sont encore actifs et non convertis. La logique générale de l'indic (se sauver ET transmettre volontairement un fait vrai) reste valide.
+
+
 > **Règle prioritaire 26 octobre 2026.** L'indic reste membre de la Mafia, conserve son rang et prend un risque pour **sauver sa peau**. Pour **gagner comme indic**, il doit **(1) se protéger personnellement ET (2) transmettre volontairement au moins un renseignement vrai et utile à l'Enquête**. Ce sont **deux conditions d'un seul objectif**, pas deux missions supplémentaires. **Accepter n'envoie toujours aucune information automatiquement.** Il peut se taire, mais il ne gagnera alors pas avec l'objectif d'indic. La V23 remplace les objectifs INDIC économiques et de silence de la V22, qui restent en archive de conception. **DRAFT : aucun moteur live ni A/B/C vérifié.**
 
 ## Ce que verra le joueur sur l'offre — une seule carte
