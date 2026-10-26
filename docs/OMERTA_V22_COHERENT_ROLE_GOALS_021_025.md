@@ -1,5 +1,8 @@
 # OMERTÀ V22 — OBJECTIFS LIÉS, DISTINCTS ET CLAIRS POUR LES JOUEURS
 
+> **CORRECTION DU 26 OCTOBRE — COHÉRENCE DES RÔLES ET CLARTÉ** : la partie se concentre désormais sur **quatre enjeux narratifs communs par dossier**, et non sur seize « mini-enquêtes » distinctes. Chaque suspect conserve **une victoire personnelle**, avec un mobile précis et un risque, mais partage les mêmes preuves principales que les autres. Des intérêts peuvent se rejoindre ou s'opposer ; aucun joueur n'est obligé de défendre ou de trahir quelqu'un. **V22 reste une bibliothèque de conception, non validée sur les quinze variantes privées ni publiée dans le jeu.**
+
+
 > **Nouvelle source de vérité éditoriale pour les objectifs** (26 octobre 2026). Cette refonte fait suite à un audit de V21 : trop de formules « évite d'être accusé », des objectifs de rangs parfois interchangeables, des parts/faveurs sans arbitrage encore inscrit dans le moteur, et un Pentito inséré abusivement dans le 025. Les objectifs ci-dessous sont la **bibliothèque de rédaction** couvrant tous les rangs possibles, **pas une attribution validée pour chacune des quinze variantes A/B/C**. Les personnages et les rangs ne sont montrés que s'ils sont présents dans la salle. **PR en brouillon, NON DÉPLOYÉE.**
 
 ## Les six règles incontournables
@@ -10,6 +13,120 @@
 4. **L'indic poursuit un bénéfice POUR LUI** : une part, une autorité, un résultat judiciaire personnel ou une protection **vraiment accordée**. La désignation de n'importe quel autre suspect est une **stratégie facultative**, jamais un point ou une condition automatique de victoire.
 5. **Un résultat traçable** : la victoire de chaque rôle est calculable seulement à partir d'un **verdict verrouillé sur l'acte précis**, d'un **état de part/faveur/autorité contestée officiellement enregistré**, ou d'une **protection approuvée par l'autorité compétente**. Une déclaration non vérifiée, une promesse de protection et une simple faveur orale ne sont jamais des scores.
 6. **Pas de victoire acquise d'avance ni de mission impossible** : les faits de la variante, les personnes présentes et les décisions atteignables doivent offrir au moins une issue gagnante et une perdante. Si l'axe ou l'événement officiel manque, l'objectif correspondant **n'est pas distribué** et une alternative adaptée doit être écrite et validée. Aucun statut n'est importé d'une partie à l'autre.
+
+## Audit complémentaire : UNE affaire, plusieurs intérêts distincts
+
+Les joueurs **n'ont pas seize crimes différents à comprendre**. Chaque scénario a quatre questions centrales, qui suffisent à alimenter le camp Enquête et à faire se rencontrer les objectifs personnels. Les distinctions « commanditaire / exécutant / falsificateur / bénéficiaire » sont des **responsabilités possibles à établir sur ces faits communs**, pas seize nouvelles phases ou formulaires de verdict à imposer. **Le moteur devra malgré tout enregistrer assez de détails par acte et personne pour évaluer chaque objectif ; cet enregistrement n'existe pas encore dans les parties live.**
+
+### 021 — L'ENVELOPPE : le fil conducteur
+
+- **La collecte et l'enveloppe :** Qui exige, remet ou détourne les fonds ?
+- **Menaces et meurtre de Gallo :** Qui a menacé Gallo, exécuté ou ordonné sa mort ?
+- **La fuite d'un montant secret :** Qui connaissait le montant transmis à la police ?
+- **Le contrôle des recettes :** Qui conserve part, faveur ou droit de collecte ?
+
+**Pourquoi les suspects ont besoin des mêmes preuves, sans le même objectif :**
+
+- **suspect / soldato :** Le soupçon général n'établit ni l'exécutant ni la destination des fonds.
+- **soldato / capo :** L'ordre et l'exécution de l'acte violent sont des responsabilités à distinguer.
+- **capo / associato :** Le Capo contrôle les collectes, l'Associato cherche sa part ; ils peuvent négocier ou s'opposer.
+- **associato / contabile :** Les montants déclarés peuvent sauver une part ou incriminer le collecteur.
+
+**Reste libre :** ces liens ne prescrivent aucun pacte, accusation ou résultat. Le joueur peut changer d'intérêt tactique au cours des trois cycles, sans changer sa victoire personnelle, sauf s'il accepte librement l'offre d'indic.
+
+### 022 — OMERTÀ : le fil conducteur
+
+- **Paris et dette Caruso :** Qui a détourné les recettes et qui conserve un droit financier ?
+- **Menace et meurtre :** Qui a menacé, exécuté ou donné l'ordre contre Caruso ?
+- **Faux témoignages :** Qui a menti et qui aurait concerté les récits ?
+- **Arbitrage entre crews :** Qui conserve le droit de trancher la dette ou de percevoir un tribut ?
+
+**Pourquoi les suspects ont besoin des mêmes preuves, sans le même objectif :**
+
+- **suspect / consigliere :** Les versions qui se répètent n'impliquent pas automatiquement celui qui les a recueillies.
+- **consigliere / don :** Arbitrer une dette ne prouve pas une autorisation de violence.
+- **don / sottocapo :** L'origine de l'autorité et le relais de la menace doivent être séparés.
+- **sottocapo / soldato :** La validation d'intimidation n'est pas l'exécution d'un homicide.
+
+**Reste libre :** ces liens ne prescrivent aucun pacte, accusation ou résultat. Le joueur peut changer d'intérêt tactique au cours des trois cycles, sans changer sa victoire personnelle, sauf s'il accepte librement l'offre d'indic.
+
+### 023 — LA TABLE : le fil conducteur
+
+- **L'accord de transport :** Quelle version des chiffres prévaut et qui garde son intérêt financier ?
+- **Fuite du trajet d'Adriano :** Qui a appris et diffusé l'itinéraire ?
+- **La mort de Falco :** Qui a ordonné ou exécuté le meurtre du médiateur ?
+- **L'attaque contre Adriano :** Qui a préparé, commandé ou exécuté cette attaque ?
+
+**Pourquoi les suspects ont besoin des mêmes preuves, sans le même objectif :**
+
+- **suspect / consigliere :** Être informé de l'horaire n'implique pas être responsable du sabotage.
+- **consigliere / don :** La confidence d'un itinéraire et la décision familiale ne se confondent pas.
+- **don / sottocapo :** Le lien de sang avec Adriano n'identifie pas l'auteur de l'attaque.
+- **sottocapo / capo :** Arbitrer un partage n'est pas autoriser la mort de Falco.
+
+**Reste libre :** ces liens ne prescrivent aucun pacte, accusation ou résultat. Le joueur peut changer d'intérêt tactique au cours des trois cycles, sans changer sa victoire personnelle, sauf s'il accepte librement l'offre d'indic.
+
+### 024 — IL PENTITO : le fil conducteur
+
+- **Extorsion des transporteurs :** Qui exige, ordonne ou administre les versements forcés ?
+- **La date de déposition :** Qui connaissait la déposition et qui a tenté de l'empêcher ?
+- **Pression sur Valenti :** Qui a ordonné ou autorisé l'intimidation du témoin ?
+- **Assassinat de Valenti :** Qui a décidé et exécuté le meurtre ?
+
+**Pourquoi les suspects ont besoin des mêmes preuves, sans le même objectif :**
+
+- **suspect / soldato :** Une mise en cause générale du meurtre ne suffit pas à désigner son exécutant.
+- **soldato / capo :** L'acte violent et l'ordre de le commettre sont distincts.
+- **capo / associato :** Le chef bénéficie des collectes, l'Associato effectue une partie des remises.
+- **associato / contabile :** Une remise et son enregistrement ne prouvent pas le même niveau d'autorité.
+
+**Reste libre :** ces liens ne prescrivent aucun pacte, accusation ou résultat. Le joueur peut changer d'intérêt tactique au cours des trois cycles, sans changer sa victoire personnelle, sauf s'il accepte librement l'offre d'indic.
+
+### 025 — IL DON : le fil conducteur
+
+- **Extorsion de Benedetti :** Qui impose et organise les prélèvements ?
+- **La chaîne des consignes :** Qui a écrit, transmis ou modifié l'ordre ?
+- **Meurtre de Benedetti :** Qui ordonne et qui exécute l'assassinat ?
+- **Partage du chantier :** À qui reviennent les droits financiers après le drame ?
+
+**Pourquoi les suspects ont besoin des mêmes preuves, sans le même objectif :**
+
+- **suspect / associato :** Un ultimatum et des menaces ne sont pas toujours la même instruction.
+- **associato / contabile :** Porter l'ultimatum ne prouve pas avoir décidé des versements.
+- **contabile / capo :** Tenir les comptes ne vaut pas commandement du crew.
+- **capo / soldato :** Le Capo peut répondre d'un ordre distinct de l'exécution du Soldato.
+
+**Reste libre :** ces liens ne prescrivent aucun pacte, accusation ou résultat. Le joueur peut changer d'intérêt tactique au cours des trois cycles, sans changer sa victoire personnelle, sauf s'il accepte librement l'offre d'indic.
+
+### Comment comprendre « gagner » en 10 secondes
+
+**TON OBJECTIF** n'est pas une consigne de comportement. C'est le **résultat** que tu veux obtenir. Tu choisis comment t'en approcher : négocier, mentir, demander une confrontation, défendre quelqu'un ou te taire.
+
+- **Au verdict :** ton but est vérifié sur la **décision officielle finale de l'Enquête** concernant **un acte précis**. Le verdict peut être faux ; la vérité réelle reste indépendante et sert à noter le camp Enquête. « Ne pas être désigné » n'est pas « être innocent dans la vérité de la variante ».
+- **Au dénouement :** ton but est vérifié sur une décision de fin de partie **réellement enregistrée par le jeu** (part versée, autorité conservée, faveur maintenue, protection expressément approuvée). **Une promesse orale ou une demande de protection en attente ne suffit pas.**
+- **Indic :** si l'Enquêteur te propose de **trahir**, ton écran te montre ce que tu abandonnes, ce que tu peux obtenir et les risques connus. **Accepter** change aussitôt ton but et ton statut secret, mais **ne transmet rien et ne te fait pas changer de camp**. Tu peux toujours mentir, manipuler l'Enquête ou garder le silence. **Refuser** ne coûte rien.
+
+### Fiche prête à lire sur téléphone (modèle compact)
+
+**ÉNONCÉ :** [deux phrases sur l'affaire et ta place attestée par la variante].
+
+**CE QUE TU SAIS :** [deux faits privés et vrais pour ton rôle ; « tu ignores X » seulement si attesté].
+
+**TON OBJECTIF — POUR GAGNER :** [une phrase seulement, adaptée au rôle et vérifiable].
+
+**TU PEUX CHOISIR DE :** parler, cacher un fait, négocier, accuser, protéger ou trahir ; rien n'est obligatoire.
+
+**TON RISQUE :** [ce que tes déclarations pourraient révéler contre toi ou ce que tu pourrais perdre].
+
+**Voir les détails et les pièces** — **facultatif** ; contient la chronologie, les documents authentiques, le mobile propre au joueur, « comment mon objectif sera jugé » et les limites de protection. Ces explications doivent rester **en permanence à portée de main**, pas être affichées en permanence.
+
+**À NE PAS FAIRE :** envoyer à un joueur toute la matrice des rôles, lui révéler les vrais coupables, lui demander d'apprendre le vocabulaire mafieux avant de jouer, transformer une hypothèse en fait, attribuer une victoire uniquement parce qu'il a désigné un rival, ou demander au MJ de juger son charisme.
+
+### Lecture des objectifs avec le casting réel
+
+Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueurs obligatoires**. Si une personne a le rang de Capo, elle reçoit **une** mission Capo, **pas** celle du « suspect générique » en plus. Si deux joueurs partagent un rang, ils ne doivent **pas** recevoir automatiquement le même objectif : il faut personnaliser leur poste, leur fait connu et leur but d'après la variante. Si une fonction manque, les autres continuent à jouer : la mission ne dépend jamais d'une déclaration obligatoire de l'absent.
+
+**Défaut bloquant :** la cohérence des scénarios n'est pas prouvée tant qu'une véritable distribution de 1 à 7+ joueurs et chaque variante A/B/C n'a pas été simulée et relue. Les liens ci-dessus démontrent la **cohérence narrative envisagée**, pas leur faisabilité concrète sur les données de production.
 
 ## Interface des cartes : deux niveaux de lecture
 
