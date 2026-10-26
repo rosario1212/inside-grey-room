@@ -11,6 +11,9 @@ on:
       - 'docs/OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md'
       - 'qa/omerta-v11-indic-mandatory-95-contract.json'
       - 'scripts/check-omerta-v11-indic-95.mjs'
+      - 'docs/OMERTA_V12_PERSONAL_INDIC_AND_MAFIA_ATMOSPHERE.md'
+      - 'qa/omerta-v12-indic-self-interest-and-atmosphere.json'
+      - 'scripts/check-omerta-v12-selfish-indic.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -29,6 +32,9 @@ on:
       - 'docs/OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md'
       - 'qa/omerta-v11-indic-mandatory-95-contract.json'
       - 'scripts/check-omerta-v11-indic-95.mjs'
+      - 'docs/OMERTA_V12_PERSONAL_INDIC_AND_MAFIA_ATMOSPHERE.md'
+      - 'qa/omerta-v12-indic-self-interest-and-atmosphere.json'
+      - 'scripts/check-omerta-v12-selfish-indic.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -61,6 +67,8 @@ jobs:
         run: node scripts/check-omerta-v9-player-tree.mjs
       - name: Validate mandatory hidden indic, five 9.5-target cases and 80/20
         run: node scripts/check-omerta-v11-indic-95.mjs
+      - name: Validate selfish indic personal victory and dense Mafia V12 atmosphere
+        run: node scripts/check-omerta-v12-selfish-indic.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
