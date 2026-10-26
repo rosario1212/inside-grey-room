@@ -40,6 +40,9 @@ on:
       - 'scripts/check-omerta-v18-win-conditions.mjs'
       - 'docs/OMERTA_V19_VERBATIM_PLAYER_GOALS_021_025.md'
       - 'scripts/check-omerta-v19-verbatim-goals.mjs'
+      - 'docs/OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md'
+      - 'qa/omerta-v20-personal-motive-nonarbitrary-target.json'
+      - 'scripts/check-omerta-v20-self-interested-target-choice.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -87,6 +90,9 @@ on:
       - 'scripts/check-omerta-v18-win-conditions.mjs'
       - 'docs/OMERTA_V19_VERBATIM_PLAYER_GOALS_021_025.md'
       - 'scripts/check-omerta-v19-verbatim-goals.mjs'
+      - 'docs/OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md'
+      - 'qa/omerta-v20-personal-motive-nonarbitrary-target.json'
+      - 'scripts/check-omerta-v20-self-interested-target-choice.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -127,6 +133,8 @@ jobs:
         run: node scripts/check-omerta-v18-win-conditions.mjs
       - name: Validate V19 exact player goal copy by Mafia rank and dossier
         run: node scripts/check-omerta-v19-verbatim-goals.mjs
+      - name: Validate V20 personal informant stakes without arbitrary-target victories
+        run: node scripts/check-omerta-v20-self-interested-target-choice.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
