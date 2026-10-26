@@ -50,7 +50,7 @@ for(let i=0;i<5;i++){
  check(c.crossovers?.length>=2,id+' shared world');
  const part=story.split('# '+id+' — ')[1]?.split('\n---\n')[0]||'';
  check(Boolean(part),id+' full story exists');
- for(const marker of ['**C1','**C2','**C3','**Fausse piste vraie','**Dilemme de l’indic','**80 %**','**Ambition éditoriale : 9,5/10']){
+ for(const marker of ['**C1','**C2','**C3','**Fausse piste vraie',"**Dilemme de l'indic",'**80 %**','**Ambition éditoriale : 9,5/10']){
   check(part.includes(marker),id+' story lacks '+marker);
  }
  check(part.includes('indic'),id+' informed source missing from story');
