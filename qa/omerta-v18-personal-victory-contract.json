@@ -1,0 +1,165 @@
+{
+  "version": "OMERTA-V18",
+  "status": "EDITORIAL_AND_TEST_ONLY_NOT_LIVE",
+  "normative": true,
+  "scope": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "inherits": [
+    "OMERTA-V17 clear compact cards and double game",
+    "OMERTA-V16 accept instantly swaps private goal no disclosures",
+    "OMERTA-V14 investigator-only C2+ offers and rank restrictions",
+    "OMERTA-V15 conditional witness protection"
+  ],
+  "primary_win_condition_per_player": 1,
+  "optional_bonus_launch_enabled": false,
+  "victory_model": {
+    "suspect_individual_win_independent_of_investigator": true,
+    "informant_individual_win_independent_of_investigator": true,
+    "active_goal_only": true,
+    "accept_changes_goal_immediately": true,
+    "zero_information_transmitted_on_accept": true,
+    "can_win_without_disclosure": true,
+    "can_lose_without_being_convicted": true,
+    "verdict_actions_scored_by_formal_server_records_only": true,
+    "no_subjective_oral_scoring": true,
+    "truth_unmodified_by_testimony": true,
+    "investigator_scored_against_canonical_facts_separately": true
+  },
+  "allowed_objective_types": {
+    "avoid_attribution": {
+      "verdict_based": true,
+      "requires": [
+        "crime_id",
+        "player_id",
+        "liability_level"
+      ],
+      "win_if": "locked_verdict does not assign this player at or above specified liability level for this crime",
+      "avoid_auto_win": "crime_id must exist in verdict and there must be meaningful case risk"
+    },
+    "pin_target": {
+      "verdict_based": true,
+      "requires": [
+        "crime_id",
+        "target_player_id",
+        "liability_level"
+      ],
+      "win_if": "locked_verdict assigns target player at or above liability threshold, regardless of whether the investigators are correct",
+      "avoid_auto_win": "target player currently present and case evidence creates a defensible contested issue"
+    },
+    "protect_ally": {
+      "verdict_based": true,
+      "requires": [
+        "crime_id",
+        "ally_player_id",
+        "liability_level"
+      ],
+      "win_if": "locked_verdict does not assign ally at or above liability threshold, and target is present",
+      "avoid_auto_win": "ally must be plausible suspect in this variant, not guaranteed already excluded"
+    },
+    "retain_interest": {
+      "event_based": true,
+      "requires": [
+        "interest_id",
+        "owner_player_id"
+      ],
+      "win_if": "authenticated server endgame business state records interest held",
+      "avoid_auto_win": "interest is contested and outcome is formally recorded; no unlogged oral agreement"
+    },
+    "approved_protection": {
+      "event_based": true,
+      "requires": [
+        "protected_player_id",
+        "min_protection_level"
+      ],
+      "win_if": "competent authority explicitly approved actual protection at requested level",
+      "avoid_auto_win": "pending, requested and discretionary confidentiality alone cannot count as approved witness protection"
+    }
+  },
+  "role_constraints": {
+    "never_require_espionage_or_lies": true,
+    "never_require_any_source_disclosure": true,
+    "never_require_protection_grant_to_play": true,
+    "high_rank_player_may_be_ally_or_rival": true,
+    "superior_no_control_of_indic_state": true,
+    "missing_rank_means_choose_different_pre_authored_feasible_goal": true,
+    "never_assume_killer_from_role_or_rank": true
+  },
+  "screen": {
+    "compact_intro_label": "ÉNONCÉ",
+    "main_label": "TON OBJECTIF — POUR GAGNER",
+    "optional_details_label": "Voir les détails, pièces et conditions exactes",
+    "offer": {
+      "before": "SI TU REFUSES : TU GARDES TON OBJECTIF",
+      "after": "SI TU ACCEPTES : TON OBJECTIF DEVIENT",
+      "risk": "LE PRIX DE LA TRAHISON",
+      "actions": [
+        "ACCEPTER ET DEVENIR INDIC",
+        "REFUSER ET GARDER MON OBJECTIF"
+      ]
+    },
+    "max_primary_win_sentences": 1,
+    "explain_verdict_at_end": true
+  },
+  "sample_goals": [
+    {
+      "id": "021",
+      "suspect": "Avoid being held principally responsible for envelope diversion",
+      "indic": "Prevent present Capo from being identified as Gallo murder mastermind",
+      "note": "Avoid fixed culpability clues in publicly rendered objectives"
+    },
+    {
+      "id": "022",
+      "suspect": "Avoid being identified as the killer of Caruso",
+      "indic": "Make named rival receive attribution for false-witness coordination",
+      "note": "Execution and coverup separate"
+    },
+    {
+      "id": "023",
+      "suspect": "Avoid attribution of Adriano route leak",
+      "indic": "Prevent named Consigliere from being assigned responsibility for negotiation sabotage",
+      "note": "Protecting cast member only if present and plausibly implicated"
+    },
+    {
+      "id": "024",
+      "suspect": "Avoid attribution of instigating Valenti's murder",
+      "indic": "Make named rival attributed as primary actor in transport extortion",
+      "note": "Informant distinct from formal pentito"
+    },
+    {
+      "id": "025",
+      "suspect": "Avoid attribution for Benedetti killing",
+      "indic": "Prevent present Don Santoro from being attributed as homicide commander",
+      "note": "Racket and murder not automatically same liability"
+    }
+  ],
+  "balance_requirements": [
+    "Each actual hidden A/B/C cast assignment has reachable win and loss outcomes",
+    "No objective is automatically true without an evaluable disputed issue",
+    "Each primary goal has one clear named event or one crime+liability threshold",
+    "All targeted ranks exist in room; else sealed fallback goals",
+    "No secret true culprit revealed by public objectives",
+    "Locked verdict has each required crime dimension or objective prohibited",
+    "Authenticated favorable events only for asset/protection goals",
+    "Two independent C3 evidence routes and zero informants supported",
+    "No objective demands player acting or disclosure",
+    "Room status and protected secrets never leak to public roster"
+  ],
+  "release_gates": {
+    "fifteen_private_manuscripts_complete": false,
+    "live_objective_assignment": false,
+    "live_atomic_goal_swap": false,
+    "live_server_scoring": false,
+    "live_verdict_by_crime": false,
+    "authentic_case_events": false,
+    "integrated_reveal_results": false,
+    "network_reconnect_and_security": false,
+    "FR_EN_mobile_ui": false,
+    "human_playtests": false,
+    "production_ready": false
+  }
+}
