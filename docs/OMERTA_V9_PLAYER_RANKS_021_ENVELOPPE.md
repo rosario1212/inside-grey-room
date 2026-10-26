@@ -1,4 +1,7 @@
-# OMERTÀ V9 — Rangs attribués aux pseudos et chantier du 021
+# OMERTÀ V9 — Rangs attribués aux pseudos et chantier du 021 
+
+> **Suite éditoriale V10 :** les cinq affaires sont désormais approfondies sous les **règles classiques** (interrogatoires C1, confrontations officielles C2+, trois cycles et événements ordinaires) dans [OMERTA_V10_FIVE_HARD_CASES_CLASSIC_RULES_80_20.md](OMERTA_V10_FIVE_HARD_CASES_CLASSIC_RULES_80_20.md). V9 demeure la référence de détail pour le 021 et l'arbre à pseudos. La réécriture des packs live n'est pas faite.
+
 
 **Source de vérité éditoriale pour l'arbre et le développement du 021.** Branché en PR de revue, **pas encore dans les packs live**. Les quatre lois V7 et le 80/20 restent obligatoires. Aucune modification CARTEL. Les dossiers 022–025 restent à traiter un par un ensuite.
 
