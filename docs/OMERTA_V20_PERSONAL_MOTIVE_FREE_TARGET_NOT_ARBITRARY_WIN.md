@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V20
+
+> **FORMULATIONS V21 RÉDIGÉES :** [OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md](OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md). Le principe V20 demeure (intérêt personnel, cible libre non scorée), mais **la V21 est maintenant la référence textuelle par rang** : 35 objectifs initiaux et 33 objectifs INDIC adaptés au crime, avec détails optionnels. Aucune insertion live ni validation des 15 variantes privées.
+
 ## UNE RAISON PERSONNELLE DE TRAHIR · UNE CIBLE LIBRE · ZÉRO DÉSIGNATION ARBITRAIRE
 
 > **Décision éditoriale actuelle (26 octobre 2026).** Correction de la V19 : un indic ne gagne **jamais par le seul fait de choisir puis faire accuser arbitrairement n'importe quel suspect**. Le nouvel objectif répond à « **qu'est-ce que ce mafieux veut obtenir POUR LUI-MÊME en traitant avec l'Enquêteur ?** ». **La cible est un moyen facultatif et libre, pas la condition de victoire par défaut.** Le suspect reste dans le camp mafieux, sous son rang et son pseudo, et peut utiliser la coopération pour se sauver, préserver ses recettes, maintenir une faveur, écarter une responsabilité, défendre un partenaire ou manipuler la Grey Room. **Aucune divulgation automatique et aucune obligation de faire tomber qui que ce soit.**
