@@ -1,5 +1,8 @@
 # INSIDE GREY ROOM — OMERTÀ V19
 
+> **REMPLACÉ SUR LES OBJECTIFS INDIC PAR V20 :** [OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md](OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md). Le joueur **ne gagne plus en choisissant arbitrairement un suspect à faire accuser**. Son **unique but INDIC** doit préserver un intérêt personnel écrit dans ses faits (argent, autorité, responsabilité, protection réellement accordée). Il peut choisir librement qui cibler, protéger ou accuser, mais c'est une **stratégie facultative**, non la condition de succès. Les phrases V19 « fais désigner [rival] » restent en archive et ne doivent PAS être rendues comme objectif par défaut dans les cartes. V20 reste un design, non une attribution live.
+
+
 > **PRÉCISION SUR L'ALLÉGEANCE ET LA RAISON DE DEVENIR INDIC :** un indic **reste dans le camp mafieux** et conserve son rang et son pseudo. **Accepter une proposition de l'Enquêteur ne signifie jamais changer de camp ni recevoir l'ordre de dénoncer la Famiglia.** Le nouvel objectif décrit un **intérêt personnel** que le joueur espère servir grâce à ce contact risqué (faire accuser un rival, écarter une menace financière, protéger sa place). Il peut aussi librement prendre le parti d'un supérieur et manipuler l'Enquêteur, mais **« protéger le Don » n'est pas l'objectif par défaut** : cela ne justifierait pas à lui seul le prix de la trahison. Aucune divulgation automatique. Les motivations introduites dans la phrase n'ont d'effet de score que si l'événement officiellement visé est validé. Les objectifs restent des candidats à qualifier selon les 15 variantes, pas des cartes live.
 
 ## LES OBJECTIFS RÉDIGÉS MOT POUR MOT · SUSPECTS ET INDICS · DOSSIERS 021 À 025
