@@ -1,5 +1,8 @@
 # OMERTÀ — PILOTE 021 A/B/C : AUDIT SANS SPOILER (26 OCTOBRE 2026)
 
+> **RÉCONCILIATION CANONIQUE V24 — LIRE AVANT TOUTE ATTRIBUTION DE RÔLE :** [OMERTA_V24_15_VARIANTS_SECURITY_AND_RELEASE_GATES.md](OMERTA_V24_15_VARIANTS_SECURITY_AND_RELEASE_GATES.md). Les anciennes formulations impliquant le meurtre de Gallo (021), celui de Falco (023), celui de Valenti (024) ou celui de Benedetti (025) **ne correspondent pas au canon V7 actuellement retenu** ; elles sont **supprimées des brouillons privés de variantes** et ne doivent pas être intégrées en jeu. Le 022 concerne bien le meurtre de Caruso. La **règle V23 sur l'indic** (se sauver ET transmettre volontairement un renseignement vrai et utile) **reste normative**, mais ses exemples d'enquête ne le sont plus. **15 variantes privées rédigées, aucune release ni validation des RPC.**
+
+
 > **STATUT : 3 VARIANTES ÉDITORIALES PRIVÉES RÉDIGÉES, NON LIVRÉES AU DÉPÔT PUBLIC NI AU RUNTIME.** Leurs détails ne doivent jamais apparaître dans les fichiers web ni dans cette PR publique. La source confidentielle est remise au propriétaire séparément.
 
 ## Résultats de la vérification du système existant
