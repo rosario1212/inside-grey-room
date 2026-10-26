@@ -31,6 +31,24 @@ Il ne faut pas inventer une cinquième décision compliquée : **« Transmettre 
 
 **Attention :** l'indic peut transmettre une information vraie de peu d'intérêt, une fausse rumeur, une hypothèse ou un mensonge volontaire ; ces déclarations sont possibles dans le RP, mais **n'accomplissent pas** cette condition de victoire. Une vérité partielle doit avoir une valeur propre et être vérifiable indépendamment. Les responsabilités vraies ne sont jamais modifiées.
 
+## L'expérience idéale : deux lignes, un seul geste si tu décides de parler
+
+**Carte privée de l'indic — exemple 021, Associato**
+
+**TON OBJECTIF D'INDIC — DEUX CONDITIONS POUR GAGNER**
+
+**1. SAUVE TA PEAU.** Au verdict, ne sois pas désigné responsable principal de la disparition de l'enveloppe.
+
+**2. RENSEIGNE L'ENQUÊTE.** Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée.
+
+**TU RESTES LIBRE.** Accepter ne transmet rien. Tu peux dire la vérité, en retenir une partie, tromper l'Enquêteur sur d'autres choses ou te taire. **Si tu te tais jusqu'au bout, tu ne remportes pas la victoire d'indic.**
+
+**Transmettre un renseignement** — action privée facultative, choisie parmi les faits que ta carte autorise à communiquer. La transmission enregistre un fait vérifiable **sans obliger l'Enquêteur à y croire**. Les autres joueurs n'apprennent ni ton statut ni ce que tu lui as envoyé.
+
+**Voir les détails et les pièces** — ton mobile, les faits que tu connais et les conditions de validité du renseignement sont disponibles sur demande, sans encombrer les deux lignes de l'objectif.
+
+**Aucune troisième condition.** L'Enquêteur n'a pas besoin de gagner pour que l'indic gagne. L'indic n'a pas besoin d'accuser un joueur imposé ni de renier son rang. Les autres règles de protection et de représailles restent conditionnelles.
+
 ## Les objectifs textuels définitifs à examiner par rang
 
 Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de la liste n'apparaît pas. Les phrases sont **candidates à la qualification pour A/B/C** : ne pas attribuer celles qui ne sont ni contestables ni vérifiables avec la variante et le casting.
@@ -48,7 +66,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme responsable principal de la disparition de l'enveloppe. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les remises et montants de la collecte du vendredi. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu as quelque chose de concret à perdre : ta rémunération de cette collecte.
 
@@ -61,7 +79,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'auteur des menaces contre Antonio Gallo. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les déplacements du crew avant la mort de Gallo. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu refuses d'endosser chaque violence commise par le crew simplement parce que tu es Soldato.
 
@@ -74,7 +92,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme la personne qui a fait fuiter le montant confidentiel. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les écritures authentiques de la collecte. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** La provenance d'un chiffre très précis peut faire porter les soupçons sur celui qui tenait les comptes.
 
@@ -87,7 +105,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a organisé la disparition de l'enveloppe. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la chaîne des remises de l'enveloppe du vendredi. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Ton rang vaut moins si quelqu'un peut retirer tes recettes ou tes hommes.
 
@@ -100,7 +118,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a transmis le montant secret à la police. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur l'arbitrage des comptes du crew. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Ta position repose sur la confiance accordée à tes arbitrages, pas sur la possession de l'enveloppe.
 
@@ -113,7 +131,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a ordonné le meurtre de Gallo. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les autorisations de remise de l'enveloppe. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux garder la main sur la chaîne de remise sans porter seul la faute du vendredi.
 
@@ -126,7 +144,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme commanditaire du meurtre de Gallo. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les prélèvements décidés pour les commerces du quartier. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu peux tenter de préserver l'autorité du sommet sans assumer chaque acte du crew.
 
@@ -147,7 +165,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'organisateur du pacte de faux témoignages. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les recettes et les dettes de paris de Caruso. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Ta dette et ta présence dans l'entourage du bookmaker peuvent te faire porter un mensonge collectif.
 
@@ -160,7 +178,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'auteur des menaces contre Nino Caruso. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la réunion qui a précédé le meurtre de Caruso. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** La menace, l'exécution et l'ordre ne sont pas une seule responsabilité.
 
@@ -173,7 +191,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'auteur d'une falsification des montants de paris. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les écritures privées de la caisse des paris. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** La caisse et ta rémunération sont deux enjeux différents, que le crew peut confondre.
 
@@ -186,7 +204,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a coordonné les faux alibis. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les consignes données à la réunion du crew. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu peux tenter d'éviter qu'une consigne du crew soit confondue avec la fabrication de faux alibis.
 
@@ -199,7 +217,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a autorisé l'intimidation de Caruso. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les entretiens destinés à régler sa dette. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux rester crédible comme arbitre malgré le meurtre et les dettes contestées.
 
@@ -212,7 +230,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'organisateur des faux témoignages. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les consignes transmises entre les crews. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Les dettes contestées menacent ton pouvoir d'arbitrage entre chefs.
 
@@ -225,7 +243,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a autorisé les menaces contre Caruso. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la répartition du revenu des paris dans la Famiglia. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu as intérêt à maintenir les revenus du réseau même si un bookmaker est mort.
 
@@ -246,7 +264,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a remis l'itinéraire d'Adriano aux agresseurs. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les deux versions de l'accord de transport. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu refuses de payer pour une attaque simplement parce que tu as approché la table.
 
@@ -259,7 +277,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'exécutant du meurtre de Domenico Falco. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les déplacements autour de la réunion. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux survivre au conflit entre groupes sans dépendre de leur parole.
 
@@ -272,7 +290,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme la source de la fuite d'une version confidentielle de l'accord. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les montants qui diffèrent entre les deux accords. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Un accord modifié peut changer qui touche l'argent sans changer qui a tué Falco.
 
@@ -285,7 +303,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a divulgué le trajet d'Adriano. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les échanges entre ton crew et le médiateur Falco. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** La mort du médiateur menace les bénéfices pour lesquels tes hommes négociaient.
 
@@ -298,7 +316,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a remis le trajet d'Adriano aux agresseurs. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les engagements négociés autour de la table. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** En tant que médiateur, tu peux refuser que le même dossier te fasse porter une négociation ratée et une fuite d'itinéraire.
 
@@ -311,7 +329,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a commandé le meurtre de Falco. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les propositions échangées entre les deux crews. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Ta place entre les crews dépend de ta capacité à conserver l'arbitrage.
 
@@ -324,7 +342,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a autorisé l'attaque contre Adriano. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les conditions familiales de la négociation de transport. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** L'attaque contre un proche de sang peut menacer ton pouvoir de décider sans prouver ta participation à la violence.
 
@@ -345,7 +363,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme la source de la fuite de la date de déposition de Valenti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les collectes exigées aux transporteurs. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** La date du témoignage peut faire de toi un complice présumé du meurtre, indépendamment des collectes.
 
@@ -358,7 +376,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'organisateur du racket des transporteurs. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les versements et remises du réseau de transport. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu peux être impliqué dans une mission sans décider du racket et de ses bénéficiaires.
 
@@ -371,7 +389,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a ordonné les versements forcés. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les sommes inscrites dans les notes de Valenti. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tenir un registre n'est pas nécessairement décider de l'extorsion, mais le distinguer sera difficile.
 
@@ -384,7 +402,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme le responsable principal du racket des transporteurs. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la destination des collectes de transport de ton crew. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux sauver les revenus de tes hommes même si les notes de Valenti les compromettent.
 
@@ -397,7 +415,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a dirigé le racket des transporteurs. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les entretiens qui ont précédé l'intimidation de Valenti. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu cherchais à arbitrer un conflit, mais les enquêteurs peuvent y voir une direction des prélèvements.
 
@@ -410,7 +428,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a ordonné des représailles contre Valenti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les instructions concernant la déposition de Valenti. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux garder un droit de décision sur les collectes malgré la déposition et l'arrestation.
 
@@ -423,7 +441,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a organisé le racket des transporteurs. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les tributs imposés au réseau de transport. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux garder l'autorité économique même si des hommes sont arrêtés.
 
@@ -444,7 +462,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a transmis l'ultimatum à Benedetti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les demandes de versement concernant Benedetti. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu ne veux pas assumer la décision d'extorquer ni être sacrifié comme seul messager.
 
@@ -457,7 +475,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a relayé l'ordre de tuer Benedetti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la circulation des consignes entre les hommes du crew. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux distinguer ce qu'on t'a demandé de ce que tu as réellement transmis ou fait.
 
@@ -470,7 +488,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'organisateur des versements forcés de Benedetti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les mouvements d'argent liés aux contrats de chantier. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux séparer la gestion d'argent de l'autorité qui imposait les versements.
 
@@ -483,7 +501,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme l'organisateur du racket de Benedetti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les liens entre les contrats de chantier et les collectes. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tes hommes comptaient sur ces contrats ; la mort de Benedetti menace leur part.
 
@@ -496,7 +514,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a décidé les prélèvements imposés à Benedetti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les versions contradictoires de l'ordre attribué au Don. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux préserver ta place de conseiller sans devenir le chef supposé de l'extorsion.
 
@@ -509,7 +527,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a organisé le racket autour du chantier. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les étapes de transmission des ordres entre les rangs. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu risques ton autorité si un Capo peut te faire porter toutes les conséquences du meurtre.
 
@@ -522,7 +540,7 @@ Chaque joueur voit **seulement son rang et ses deux conditions** ; le reste de l
 **SI TU DEVIENS INDIC — DEUX CONDITIONS OBLIGATOIRES :**
 
 - **1. SAUVE TA PEAU :** « Ne sois pas désigné comme celui qui a autorisé les versements forcés exigés de Benedetti. »
-- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les consignes sur les contrats et les prélèvements. »
+- **2. RENSEIGNE L'ENQUÊTE :** « Avant le verdict, transmets volontairement à l'Enquêteur au moins un renseignement vrai et utile tiré de ta fiche privée. »
 
 **Pourquoi tu pourrais accepter :** Tu veux empêcher qu'une consigne économique soit reconnue comme ta décision personnelle de racket.
 
