@@ -1,6 +1,6 @@
 # OMERTÀ — Évaluation finale de l'Indic (spécification de gameplay)
 
-**Statut : parcours Indic « oral d'abord » et évaluation finale Oui/Non codés pour le scénario 021 sur une branche de développement, sans déploiement en production.** La généralisation à 022–025, les variantes A/B/C et les tests serveur/clients restent nécessaires.
+**Statut : parcours Indic « oral d'abord » et évaluation finale Oui/Non codés pour les dossiers canoniques 021–025 sur une branche de développement, sans déploiement en production.** Les variantes A/B/C restent en révision et les tests serveur/clients réels restent nécessaires.
 
 ## Principe
 
@@ -119,3 +119,7 @@ La branche GitHub contient désormais :
 **Note de validation :** les anciennes règles de rôle (`pentito`, `contabile`, etc.) ont des objectifs hétérogènes. La branche explicite les trois axes de l'Indic, mais il faut éprouver le résultat en vraie partie et, pour chaque variante, valider que sa condition personnelle n'est ni contradictoire ni triviale.
 
 **Statut de publication :** les 15 variantes des dossiers 021–025 sont bien enregistrées en état `review`. Chacune dispose d'une vérité distincte et d'une révélation candidate au cycle III, mais les 15 ont `approved=0`, `verified_cycle_three_guarantees=0`, d'où un `release_eligible=false` pour chacun des cinq dossiers. Les verrous serveur A/B/C interdisent à juste titre une activation sans validation éditoriale humaine. Ne pas publier en contournant cette exigence.
+
+## Extension technique aux cinq dossiers canoniques
+
+Le module de recrutement, l'onglet confidentiel de trois cartes et le formulaire final sont maintenant préparés pour 021–025. Pour les dossiers 022–025, les trois cartes affichent une connaissance cachée, une chronologie et un fait établi déjà présents dans la fiche personnelle et vérifiés par le serveur. Aucun texte nouveau n'est inventé. La règle d'évaluation finale (Oui de l'Enquêteur = coopération validée) est commune aux cinq dossiers. Les cinq variantes canoniques existantes ne sont **pas** les quinze variantes A/B/C encore en attente d'approbation. Voir `docs/OMERTA_VNEXT_RELEASE_AUDIT_20261027.md`.
