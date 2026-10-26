@@ -28,3 +28,7 @@
 .igr-indic-final-review strong{display:block;margin-bottom:7px}
 .igr-indic-final-review p{font-size:.9rem;line-height:1.5;margin:4px 0 12px}
 .igr-indic-final-review .btn{width:100%;white-space:normal}
+
+.igr-indic-knowledge-detail{margin:6px 0 10px}
+.igr-indic-knowledge-detail summary{cursor:pointer;opacity:.76;font-size:.88rem}
+.igr-indic-knowledge-detail p{margin:7px 0 0!important}
