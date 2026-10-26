@@ -1,0 +1,198 @@
+{
+  "version": "V8",
+  "universe": "FAMIGLIA SANTORO",
+  "distribution": "80% autonomous crime investigation / 20% shared underworld background",
+  "case_ids": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "absolute_rules": [
+    "standalone_case",
+    "player_agency_no_acting",
+    "meaningful_ABC_replays",
+    "proven_anti_softlock"
+  ],
+  "informant_rules": {
+    "frequency": "0 or 1 only when approved for this room variant",
+    "identity": "private server-only",
+    "presence_known_to_public": false,
+    "forced_in_every_game": false,
+    "public_tree_can_reveal": false,
+    "never_required_to_solve": true,
+    "distinguish_from_pentito_and_spy": true
+  },
+  "family_view": {
+    "script": "omerta-santoro-family-v7.js",
+    "style": "omerta-santoro-family-v7.css",
+    "entry": "index.html",
+    "tabs": [
+      "HIÉRARCHIE",
+      "FAMILLE DE SANG"
+    ],
+    "source": "public stable fictional universe only",
+    "must_never_read": [
+      "omerta_campaign",
+      "character_status",
+      "private_state",
+      "is_informant",
+      "variant_id",
+      "campaign_branch",
+      "room_canons"
+    ],
+    "legacy_status_import": false,
+    "ranking": "boss / consigliere / underboss unconfirmed / caporegime / soldato / associato; bloodline separate"
+  },
+  "cases": [
+    {
+      "id": "021",
+      "title": "L'ENVELOPPE",
+      "crime": [
+        "extorsion",
+        "collecte",
+        "homicide"
+      ],
+      "local_story": [
+        "enveloppe",
+        "Antonio Gallo",
+        "comptes"
+      ],
+      "shared_world": [
+        "crew Rinaldi",
+        "Santoro",
+        "Brooklyn",
+        "Bellavista"
+      ],
+      "cycles": [
+        "extorsion et dernière collecte",
+        "deux registres financiers",
+        "chronologie du meurtre et trajet de l'enveloppe"
+      ],
+      "c3_independent_sources": 2,
+      "informant": "optional 0-1"
+    },
+    {
+      "id": "022",
+      "title": "OMERTÀ",
+      "crime": [
+        "assassinat",
+        "dette",
+        "dissimulation"
+      ],
+      "local_story": [
+        "Nino Caruso",
+        "ordre verbal",
+        "témoignages concordants"
+      ],
+      "shared_world": [
+        "crew Fiore",
+        "codes de rang",
+        "Newark",
+        "Santoro"
+      ],
+      "cycles": [
+        "paroles exactes",
+        "meurtre et déplacements",
+        "silence coordonné versus commandement"
+      ],
+      "c3_independent_sources": 2,
+      "informant": "optional 0-1"
+    },
+    {
+      "id": "023",
+      "title": "LA TABLE",
+      "crime": [
+        "assassinat",
+        "attaque ciblée",
+        "pression sur les contrats"
+      ],
+      "local_story": [
+        "Domenico Falco",
+        "sit-down",
+        "attaque contre Adriano"
+      ],
+      "shared_world": [
+        "Matteo Bellini",
+        "Adriano Santoro",
+        "NY / NJ",
+        "crew Ferraro"
+      ],
+      "cycles": [
+        "siège vide et offres",
+        "cadavre et fuite d'itinéraire",
+        "deux attaques et changement de position"
+      ],
+      "c3_independent_sources": 2,
+      "informant": "optional 0-1; leaker not necessarily law enforcement source"
+    },
+    {
+      "id": "024",
+      "title": "IL PENTITO",
+      "crime": [
+        "extorsion",
+        "arrestation",
+        "homicide"
+      ],
+      "local_story": [
+        "Massimo De Luca",
+        "Sergio Valenti",
+        "registre et coopération"
+      ],
+      "shared_world": [
+        "Santoro",
+        "entreprises de transport",
+        "New Jersey",
+        "culture d'omertà"
+      ],
+      "cycles": [
+        "preuves déjà connues",
+        "renseignement nouveau vérifiable",
+        "engagement irréversible et responsabilités"
+      ],
+      "c3_independent_sources": 2,
+      "informant": "no automatic additional informant; pentito is choice"
+    },
+    {
+      "id": "025",
+      "title": "IL DON",
+      "crime": [
+        "extorsion",
+        "assassinat",
+        "transmission d'ordre"
+      ],
+      "local_story": [
+        "Carlo Benedetti",
+        "entreprise de construction",
+        "chaîne des ordres"
+      ],
+      "shared_world": [
+        "Vittorio Santoro",
+        "Matteo Bellini",
+        "crew Ferraro",
+        "Jersey City"
+      ],
+      "cycles": [
+        "racket et menace",
+        "changements d'instruction",
+        "homicide et chaîne de responsabilités"
+      ],
+      "c3_independent_sources": 2,
+      "informant": "optional 0-1"
+    }
+  ],
+  "gates": {
+    "public_bible": true,
+    "public_tree_code_on_review_branch": true,
+    "public_tree_safety_automated_test": false,
+    "public_tree_multiplayer_test": false,
+    "live_santoro_packs": false,
+    "private_15_variants_rewritten": false,
+    "private_variant_backend_room_isolation": false,
+    "optional_informant_backend_approved": false,
+    "human_playtests": false,
+    "live_deployment": false
+  },
+  "notes": "All true flags are about authored review materials, not released gameplay. Final 10/10 depends on private approval and actual tests."
+}

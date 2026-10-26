@@ -1,0 +1,123 @@
+{
+  "version": "OMERTA-V20",
+  "stage": "editorial+isolated-tests-NOT-LIVE",
+  "normative": true,
+  "supersedes": "V19 informant goals requiring an arbitrarily selected rival to be accused",
+  "scenarios": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "single_primary_personal_objective": true,
+  "motivation_in_characters_case_facts": true,
+  "stays_in_mafia_camp": true,
+  "still_holds_public_rank_and_pseudo": true,
+  "any_informant_at_match_start": false,
+  "investigator_offers_from_cycle": 2,
+  "acceptance": {
+    "privately_becomes_informant": true,
+    "immediately_replaces_personal_goal": true,
+    "automatically_disclosed_facts": 0,
+    "can_refuse_without_penalty": true,
+    "can_keep_silent": true,
+    "can_protect_higher_ranking_mafioso": true,
+    "can_manipulate_investigators": true,
+    "no_objective_to_assist_investigator_by_default": true
+  },
+  "targeting": {
+    "optional": true,
+    "personal_motive_distinct_from_target": true,
+    "can_choose_target_later": true,
+    "can_change_target_as_strategy_changes": true,
+    "can_choose_no_target": true,
+    "accusing_arbitrary_target_is_not_win": true,
+    "can_make_false_verbal_allegations": true,
+    "no_fabricated_canonical_evidence": true,
+    "investigator_must_corroborate_claims": true,
+    "target_list_built_from_public_roster_not_hidden_truth": true,
+    "target_selection_does_not_reveal_actual_culprit": true,
+    "no_automatic_targeting_bonus": true,
+    "higher_ranks_cannot_force_source_to_choose_target": true
+  },
+  "win_condition": {
+    "score_only_active_personal_goal": true,
+    "acceptable_sources": [
+      "crime_specific_locked_verdict",
+      "authenticated_case_event",
+      "protection_status_actually_approved"
+    ],
+    "never_based_on": [
+      "chosen_target_identity_alone",
+      "number_of_accusations",
+      "quality_of_lies",
+      "unrecorded_oral_pact",
+      "unverified_statement",
+      "request_for_protection_not_yet_granted"
+    ],
+    "need_success_and_failure_paths": true,
+    "never_automatically_won_when_accepted": true,
+    "optional_extra_goal_at_launch": false,
+    "room_and_variant_specific_feasibility_required": true,
+    "interest_type_requires_reliable_server_accounting": true,
+    "if_not_supported_use_verdict_scored_alternative": true
+  },
+  "case_examples": [
+    {
+      "id": "021",
+      "motive": "keep genuinely contested collection share",
+      "single_goal": "retain_interest",
+      "server_key": "weekly_collection_share",
+      "fallback": "avoid_attribution",
+      "fallback_crime": "leak_of_total",
+      "in_game_targeting": "may implicate any other present suspect but only case evidence gives allegation weight"
+    },
+    {
+      "id": "022",
+      "motive": "avoid being singled out as author of the witness pact",
+      "single_goal": "avoid_attribution",
+      "crime": "false_testimony_coordination",
+      "in_game_targeting": "may challenge rival testimony without automatic point"
+    },
+    {
+      "id": "023",
+      "motive": "preserve specific share of transport contract",
+      "single_goal": "retain_interest",
+      "server_key": "transport_contract_share",
+      "fallback": "avoid_attribution",
+      "fallback_crime": "fraudulent_agreement_modification",
+      "in_game_targeting": "may expose alternative agreement without automatic victory"
+    },
+    {
+      "id": "024",
+      "motive": "avoid bearing primary blame for transport extortion",
+      "single_goal": "avoid_attribution",
+      "crime": "transport_extortion",
+      "in_game_targeting": "may oppose a formal pentito but cannot edit witness evidence"
+    },
+    {
+      "id": "025",
+      "motive": "avoid personal attribution of ordering Benedetti murder",
+      "single_goal": "avoid_attribution",
+      "crime": "Benedetti_homicide_order",
+      "in_game_targeting": "may protect Don or accuse Capo without changing own objective"
+    }
+  ],
+  "playable_even_if_zero_informants": true,
+  "private_variant_truth_not_visible_to_target_picker": true,
+  "two_independent_C3_evidence_paths": true,
+  "shared_universe_fraction": 20,
+  "case_fraction": 80,
+  "release_blockers": {
+    "15_private_variants_checked": false,
+    "role_and_variant_goals_authored": false,
+    "live_indic_status_rpc": false,
+    "live_case_verdict_and_interest_events": false,
+    "target_option_backend": false,
+    "no_hidden_truth_leak_test": false,
+    "FR_EN_mobility_a11y_test": false,
+    "actual_multiplayer_playtests": false,
+    "production_deployed": false
+  }
+}

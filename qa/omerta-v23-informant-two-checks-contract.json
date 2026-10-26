@@ -1,0 +1,1058 @@
+{
+  "version": "OMERTA-V23",
+  "status": "EDITORIAL_AND_TEST_ONLY_NOT_LIVE",
+  "supersedes": "V22 informationally optional disclosures AS INFORMANT VICTORY CONDITION ONLY; V16 still never sends automatically; mafia camp unaffected",
+  "cases": [
+    {
+      "id": "021",
+      "title": "L'ENVELOPPE",
+      "story": "Brooklyn, 2006. L'enveloppe du vendredi manque dans la collecte de neuf commerces. Antonio Gallo, qui refusait le second versement, a été assassiné. Les registres et le montant parvenu à la police ne concordent pas.",
+      "roles": [
+        {
+          "rank": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a imposé à Gallo un second versement.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme responsable du détournement de l'enveloppe.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "envelope_diversion"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les remises de la collecte",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu as quelque chose de concret à perdre : ta rémunération de cette collecte.",
+          "risk": "Un aveu sur les versements peut te compromettre dans le racket."
+        },
+        {
+          "rank": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant du meurtre d'Antonio Gallo.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme l'auteur des menaces adressées à Gallo avant sa mort.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "gallo_threats"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les déplacements autour de Gallo",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu refuses d'endosser chaque violence commise par le crew simplement parce que tu es Soldato.",
+          "risk": "Ta version des déplacements peut aussi servir à reconstituer le meurtre."
+        },
+        {
+          "rank": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur des écritures falsifiées dans les livres de collecte.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme la personne ayant divulgué le montant confidentiel à la police.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "amount_leak"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les deux livres de comptes",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "La provenance d'un chiffre très précis peut faire porter les soupçons sur celui qui tenait les comptes.",
+          "risk": "La précision de tes informations peut trahir ton accès exclusif."
+        },
+        {
+          "rank": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Gallo.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme l'organisateur du détournement de la collecte.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "envelope_diversion_organizer"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les décisions du crew sur l'enveloppe",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Ton rang vaut moins si quelqu'un peut retirer tes recettes ou tes hommes.",
+          "risk": "En négociant, tu risques de confirmer comment les versements remontent jusqu'à toi."
+        },
+        {
+          "rank": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'organisateur de la disparition de l'enveloppe.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a fait falsifier les montants.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "collection_falsification_order"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les réunions sur la collecte",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Ta position repose sur la confiance accordée à tes arbitrages, pas sur la possession de l'enveloppe.",
+          "risk": "Ton rôle de médiateur peut être retourné contre toi si les notes de l'arbitrage sortent."
+        },
+        {
+          "rank": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a autorisé la remise de l'enveloppe hors du circuit prévu.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme responsable de la dissimulation des montants manquants.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "collection_coverup"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les autorisations de remise",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux garder la main sur la chaîne de remise sans porter seul la faute du vendredi.",
+          "risk": "Une seule consigne remontant à ton rang peut te rendre facilement identifiable."
+        },
+        {
+          "rank": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a autorisé le second prélèvement imposé à Gallo.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme le commanditaire du meurtre de Gallo.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "gallo_homicide_order"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les consignes de prélèvement",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu peux tenter de préserver l'autorité du sommet sans assumer chaque acte du crew.",
+          "risk": "La traçabilité de tes ordres rend une coopération de haut rang risquée."
+        }
+      ]
+    },
+    {
+      "id": "022",
+      "title": "OMERTÀ",
+      "story": "Newark, 2006. Le bookmaker Nino Caruso est assassiné après une dette litigieuse. Une phrase de réunion ressemble à un ordre, et plusieurs hommes livrent des déclarations presque identiques.",
+      "roles": [
+        {
+          "rank": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme responsable de la disparition des recettes des paris.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme l'organisateur du pacte de faux témoignages.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "witness_pact_organizer"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les récits des témoins",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Ta dette et ta présence dans l'entourage du bookmaker peuvent te faire porter un mensonge collectif.",
+          "risk": "Décrire les récits concertés peut prouver que tu y as participé."
+        },
+        {
+          "rank": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a exécuté le meurtre de Caruso.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme l'auteur des menaces formulées contre Caruso avant sa mort.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "caruso_threats"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les menaces et déplacements",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "La menace, l'exécution et l'ordre ne sont pas une seule responsabilité.",
+          "risk": "Les heures de réunion peuvent contredire ton récit."
+        },
+        {
+          "rank": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur du détournement des recettes de paris.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme responsable de la falsification des comptes des paris.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "betting_accounts_forgery"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les comptes de paris",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "La caisse et ta rémunération sont deux enjeux différents, que le crew peut confondre.",
+          "risk": "Tes registres peuvent révéler des dettes que tu aurais préféré taire."
+        },
+        {
+          "rank": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a ordonné la mort de Caruso.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme celui qui a ordonné au crew de reprendre les mêmes faux alibis.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "witness_pact_caporegime"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les faux alibis du crew",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu peux tenter d'éviter qu'une consigne du crew soit confondue avec la fabrication de faux alibis.",
+          "risk": "Des propos tenus devant plusieurs membres peuvent remonter jusqu'à toi."
+        },
+        {
+          "rank": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a mis les témoins d'accord sur une fausse version.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a dissimulé la dette de Caruso.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "caruso_debt_coverup"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "l'arbitrage des dettes",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux rester crédible comme arbitre malgré le meurtre et les dettes contestées.",
+          "risk": "Tes entretiens confidentiels peuvent être interprétés comme des consignes."
+        },
+        {
+          "rank": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a validé l'intimidation de Caruso.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a coordonné les fausses déclarations.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "false_witness_coordination"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les consignes après la réunion",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Les dettes contestées menacent ton pouvoir d'arbitrage entre chefs.",
+          "risk": "Un détail sur les instructions des crews peut indiquer d'où vient la fuite."
+        },
+        {
+          "rank": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire de l'assassinat de Caruso.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a fait ordonner les menaces contre Caruso.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "caruso_threats_order"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les instructions données au crew",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu as intérêt à maintenir les revenus du réseau même si un bookmaker est mort.",
+          "risk": "La valeur de tes révélations grandit avec ton rang, comme le risque d'être identifié."
+        }
+      ]
+    },
+    {
+      "id": "023",
+      "title": "LA TABLE",
+      "story": "Une réunion devait trancher un litige sur les revenus de transport. Domenico Falco est assassiné ; Adriano Santoro est pris pour cible ; deux versions du même accord circulent.",
+      "roles": [
+        {
+          "rank": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a fait échouer la négociation.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme la personne ayant remis l'itinéraire d'Adriano à ses agresseurs.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "adriano_route_delivery"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "l'itinéraire d'Adriano",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu refuses de payer pour une attaque simplement parce que tu as approché la table.",
+          "risk": "Ton accès au trajet peut te lier à des hommes que tu veux protéger."
+        },
+        {
+          "rank": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant de l'attaque contre Adriano.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Obtiens une protection provisoire effectivement approuvée pour toi dans l'affaire de la table.",
+              "scored_by": "approved_protection",
+              "crime_axis": null
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "l'attaque contre Adriano",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux survivre au conflit entre groupes sans dépendre de leur parole.",
+          "risk": "Ta protection peut être refusée alors que tes anciens actes restent poursuivables."
+        },
+        {
+          "rank": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur des conditions financières falsifiées.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme responsable du détournement des recettes de transport.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "transport_diversion"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les versions de l'accord",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Un accord modifié peut changer qui touche l'argent sans changer qui a tué Falco.",
+          "risk": "Les deux versions de l'accord peuvent montrer qui a écrit ou modifié les montants."
+        },
+        {
+          "rank": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Falco.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a saboté l'accord de transport.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "transport_sabotage_capo"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "la négociation avec Falco",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "La mort du médiateur menace les bénéfices pour lesquels tes hommes négociaient.",
+          "risk": "Tes échanges avec Falco peuvent éclairer les raisons de son assassinat."
+        },
+        {
+          "rank": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a saboté la réunion.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme la source de la fuite du déplacement d'Adriano.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "adriano_leak_consigliere"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les échanges précédant la table",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "En tant que médiateur, tu peux refuser que le même dossier te fasse porter une négociation ratée et une fuite d'itinéraire.",
+          "risk": "Tes rendez-vous et tes confidences peuvent être recoupés."
+        },
+        {
+          "rank": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire de l'attaque contre Adriano.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a divulgué le lieu de la réunion.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "sitdown_place_leak"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "la convocation à la réunion",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Ta place entre les crews dépend de ta capacité à conserver l'arbitrage.",
+          "risk": "Une offre clandestine peut te brouiller avec les deux groupes."
+        },
+        {
+          "rank": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur de la divulgation du trajet d'Adriano.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a fait modifier frauduleusement l'accord.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "transport_forgery_order"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les clauses de partage du transport",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "L'attaque contre un proche de sang peut menacer ton pouvoir de décider sans prouver ta participation à la violence.",
+          "risk": "Un cercle réduit connaît tes décisions et rend une fuite traçable."
+        }
+      ]
+    },
+    {
+      "id": "024",
+      "title": "IL PENTITO",
+      "story": "Un membre est arrêté pour extorsion des transporteurs. Sergio Valenti, qui devait déposer, est assassiné ; ses notes contradictoires circulent. Une coopération judiciaire formelle est distincte du statut d'indic.",
+      "roles": [
+        {
+          "rank": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'organisateur du racket des transporteurs.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme la personne ayant divulgué la date de déposition de Valenti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "valenti_deposition_leak"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "la date de déposition de Valenti",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "La date du témoignage peut faire de toi un complice présumé du meurtre, indépendamment des collectes.",
+          "risk": "Un rendez-vous ou une correspondance peut montrer ce que tu savais."
+        },
+        {
+          "rank": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Valenti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme l'organisateur principal des collectes extorquées aux transporteurs.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "transport_extortion_soldato"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les collectes des transporteurs",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu peux être impliqué dans une mission sans décider du racket et de ses bénéficiaires.",
+          "risk": "Des aveux sur tes missions peuvent te compromettre."
+        },
+        {
+          "rank": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur des faux versements inscrits dans les notes.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme celui qui a ordonné les versements forcés.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "forced_transfers_order"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les écritures des transporteurs",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tenir un registre n'est pas nécessairement décider de l'extorsion, mais le distinguer sera difficile.",
+          "risk": "Les destinataires des fonds peuvent identifier le cercle comptable."
+        },
+        {
+          "rank": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a commandé la mort de Valenti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme l'organisateur principal du racket des transporteurs.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "transport_extortion_capo"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "la répartition des collectes",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux sauver les revenus de tes hommes même si les notes de Valenti les compromettent.",
+          "risk": "Un supérieur peut perdre sa protection financière s'il révèle la chaîne de collecte."
+        },
+        {
+          "rank": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a validé l'intimidation de Valenti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme celui qui a dirigé le racket des transporteurs.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "transport_racket_command_consigliere"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les rencontres avec Valenti",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu cherchais à arbitrer un conflit, mais les enquêteurs peuvent y voir une direction des prélèvements.",
+          "risk": "Les entretiens de médiation peuvent être recoupés avec les paiements."
+        },
+        {
+          "rank": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a entravé la déposition de Valenti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a révélé le lieu de la déposition de Valenti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "valenti_deposition_location_leak"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les décisions autour de la déposition",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux garder un droit de décision sur les collectes malgré la déposition et l'arrestation.",
+          "risk": "Tes instructions aux équipes peuvent établir une implication plus grave."
+        },
+        {
+          "rank": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire des représailles contre Valenti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme l'organisateur du racket des transporteurs.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "transport_extortion_don"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les consignes de prélèvement",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux garder l'autorité économique même si des hommes sont arrêtés.",
+          "risk": "Les révélations d'un Don peuvent être très utiles mais facilement attribuables."
+        }
+      ]
+    },
+    {
+      "id": "025",
+      "title": "IL DON",
+      "story": "Carlo Benedetti a été racketté puis assassiné. Trois versions d'une consigne attribuée au sommet circulent, et un différend de chantier fournit un autre mobile possible.",
+      "roles": [
+        {
+          "rank": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'organisateur du racket de Benedetti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme celui qui a porté l'ultimatum à Benedetti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "benedetti_ultimatum_delivery"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les messages adressés à Benedetti",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu ne veux pas assumer la décision d'extorquer ni être sacrifié comme seul messager.",
+          "risk": "Un message dont tu connais le texte peut te mettre en cause."
+        },
+        {
+          "rank": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Benedetti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme celui qui a transmis l'ordre de tuer Benedetti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "benedetti_murder_order_relay"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les versions de l'ordre reçu",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux distinguer ce qu'on t'a demandé de ce que tu as réellement transmis ou fait.",
+          "risk": "Les destinataires d'une consigne peuvent contredire ta version."
+        },
+        {
+          "rank": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a détourné les sommes extorquées à Benedetti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme l'organisateur des versements forcés exigés de Benedetti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "benedetti_forced_payments"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les montants exigés du chantier",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux séparer la gestion d'argent de l'autorité qui imposait les versements.",
+          "risk": "Tes comptes peuvent prouver tes propres décisions."
+        },
+        {
+          "rank": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a donné à tes hommes l'ordre de tuer Benedetti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme l'auteur des menaces adressées à Benedetti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "benedetti_threats_capo"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les menaces du crew contre Benedetti",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tes hommes comptaient sur ces contrats ; la mort de Benedetti menace leur part.",
+          "risk": "Une information sur un ordre connu d'un cercle étroit peut révéler ta coopération."
+        },
+        {
+          "rank": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a déformé la consigne attribuée au Don.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme l'organisateur principal du racket contre Benedetti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "benedetti_racket_command_consigliere"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les versions de la consigne du Don",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux préserver ta place de conseiller sans devenir le chef supposé de l'extorsion.",
+          "risk": "Tes confidences sur les ordres peuvent te compromettre."
+        },
+        {
+          "rank": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a relayé un ordre de tuer Benedetti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite d'être désigné comme celui qui a déformé l'ordre avant le meurtre.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "benedetti_order_distortion_underboss"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "la transmission des ordres",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu risques ton autorité si un Capo peut te faire porter toutes les conséquences du meurtre.",
+          "risk": "La chaîne des consignes peut faire remonter l'enquête jusqu'à toi."
+        },
+        {
+          "rank": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Benedetti.",
+          "indic": {
+            "display_label": "TON OBJECTIF D'INDIC — POUR GAGNER",
+            "condition_1": {
+              "label": "1. SAUVE TA PEAU",
+              "text": "Évite qu'on te désigne comme celui qui a décidé l'extorsion contre Benedetti.",
+              "scored_by": "avoid_attribution",
+              "crime_axis": "benedetti_extortion_don"
+            },
+            "condition_2": {
+              "label": "2. RENSEIGNE L'ENQUÊTE",
+              "text": "Transmets un renseignement vrai, utile et vérifiable.",
+              "expected_case_subject": "les instructions au sujet du chantier",
+              "counted_if": "1 server-authored private clue of this role, true, relevant, nonpublic when submitted, independently corroborable, explicitly sent by player",
+              "counted_if_investigator_ignores": true
+            },
+            "victory": "both_conditions_true",
+            "forced_disclosure_at_acceptance": false,
+            "stays_mafia": true,
+            "player_may_keep_silent": true,
+            "silence_means_informant_cannot_win": true
+          },
+          "motive": "Tu veux empêcher qu'une consigne économique soit reconnue comme ta décision personnelle de racket.",
+          "risk": "Ta notoriété rend la clandestinité de tes révélations très difficile."
+        }
+      ]
+    }
+  ],
+  "source": "docs/OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md",
+  "contract": {
+    "exactly_one_initial_and_one_replacement_goal_per_player": true,
+    "informant_replacement_is_one_goal_with_two_AND_conditions": true,
+    "condition1": "PERSONAL_SAFETY_OR_ACTUALLY_APPROVED_PROTECTION",
+    "condition2": "EXPLICITLY_SENT_TRUE_USEFUL_VERIFIABLE_NONPUBLIC_PRIVATE_CLUE",
+    "no_informant_win_if_no_disclosures": true,
+    "no_informant_win_if_safety_fails": true,
+    "no_informant_win_if_false_or_public_or_unverifiable_information": true,
+    "no_requirement_to_reveal_murderer_or_all_facts": true,
+    "no_requirement_for_investigator_to_win_or_rely_on_clue": true,
+    "no_auto_disclosure_or_forced_cooperation_after_accept": true,
+    "can_still_make_misleading_oral_claims": true,
+    "stays_mafia": true,
+    "no_target_selection_game": true,
+    "maximum_information_needed": 1,
+    "official_disclosure_records_exact_private_clue_id": true,
+    "no_public_sync_of_informant_status_or_goal": true,
+    "need_sealed_case_truth_and_independent_source": true,
+    "if_qualifying_clue_already_public_player_must_have_another_eligible_clue": true,
+    "role_specific_clues_and_safety_must_be_winnable_and_losable": true,
+    "simple_UI": "one screen Accept/Refuse, then optional Transmettre un renseignement action",
+    "zero_informants_remains_supported": true,
+    "no_transfer_between_episodes": true
+  },
+  "release_blockers": {
+    "server_owned_clue_catalog_for_15_variants": false,
+    "private_disclosure_RPCS": false,
+    "server_and_score_objective": false,
+    "case_specific_verdict_axes": false,
+    "actual_protection_approval": false,
+    "mobile_FR_EN_UI": false,
+    "independent_evidence_routes_15_variants": false,
+    "multiplayer_human_playtest": false,
+    "production_deployed": false
+  }
+}

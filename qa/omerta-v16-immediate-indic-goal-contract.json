@@ -1,0 +1,180 @@
+{
+  "version": "OMERTA-V16",
+  "normative": true,
+  "status": "editorial-design-and-isolated-simulation-only",
+  "live_implemented": false,
+  "supersedes": [
+    "OMERTA-V13-two-stage-preview-and-commit-flow",
+    "OMERTA-V14-three-stage-reading-flow",
+    "OMERTA-V15-preview-before-commit-flow"
+  ],
+  "retains": [
+    "V14-investigator-only-C2plus-offer",
+    "V14-rank-evidence-based-retaliation",
+    "V15-conditional-protection",
+    "V9-pseudonym-rank-tree",
+    "V7-four-laws"
+  ],
+  "scenarios": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "phase": {
+    "offer_first_cycle": 2,
+    "official_confrontation_first_cycle": 2,
+    "cycles_total": 3,
+    "offer_after_verdict_locked": false
+  },
+  "investigator": {
+    "can_send_offer": true,
+    "only_investigator_sends": true,
+    "does_not_automatically_learn_acceptance": true,
+    "may_request_protection_not_guarantee": true,
+    "offer_recipient_one_eligible_suspect": true
+  },
+  "suspect": {
+    "receive_complete_card_immediately": true,
+    "choices": [
+      "ACCEPT_AND_BECOME_INFORMANT",
+      "DECLINE_KEEP_ORIGINAL_GOAL"
+    ],
+    "separate_preview_screen_required": false,
+    "extra_confirmation_screen_required": false,
+    "original_goal_visible_before_choice": true,
+    "replacement_goal_visible_before_choice": true,
+    "all_known_risks_displayed_before_choice": true,
+    "conditional_consequences_clearly_labeled": true,
+    "protected_status_not_guaranteed": true,
+    "decline_is_penalty_free": true,
+    "accept_immediately_changes_secret_informant_flag": true,
+    "accept_immediately_replaces_primary_personal_goal": true,
+    "original_primary_goal_no_longer_scored_after_accept": true,
+    "accept_irreversible": true,
+    "accept_discloses_zero_information": true,
+    "disclosure_requires_new_explicit_action": true,
+    "disclosure_is_optional": true,
+    "zero_disclosures_valid": true,
+    "multiple_disclosures_possible": true,
+    "can_misstate_information_but_cannot_change_canon": true,
+    "public_rank_unchanged": true,
+    "public_pseudo_unchanged": true,
+    "no_automatic_notice_to_other_suspects": true,
+    "no_automatic_acceptance_notice_to_investigator": true,
+    "no_informant_possible": true,
+    "no_maximum_forced_one": true,
+    "secret_state_room_scoped": true,
+    "reconnection_preserves_choice": true,
+    "duplicate_network_click_idempotent": true
+  },
+  "risk_categories": {
+    "certain": [
+      "original_primary_goal_replaced",
+      "source_flag_set_privately_when_accepted"
+    ],
+    "conditional": [
+      "financial_share_or_favor_lost_after_verified_case_events",
+      "concealed_source_inferred_from_evidence",
+      "past_extortion_or_perjury_exposed_by_voluntary_disclosure",
+      "limited_protection_requested_and_possibly_denied",
+      "case_appropriate_rank_approved_fictional_retaliation"
+    ],
+    "cannot_use": [
+      "instant_execution_after_accept",
+      "automatically_revealed_indic",
+      "surprise_mechanics_not_disclosed_on_card",
+      "guaranteed_external_protection",
+      "automatic_immunity",
+      "unavoidable_information_disclosure"
+    ]
+  },
+  "offer_required_fields": [
+    "scenario_id",
+    "recipient_id",
+    "original_goal",
+    "informant_goal",
+    "certain_effects",
+    "possible_benefits",
+    "exposure_risk",
+    "financial_risk",
+    "judicial_risk",
+    "rank_retaliation_conditions",
+    "protection_conditions",
+    "protection_approval_status",
+    "scope_of_optional_disclosures",
+    "unknown_facts_limits",
+    "accept_label",
+    "decline_label"
+  ],
+  "personal_goal_policy": {
+    "new_goal_is_about_user_self_interest": true,
+    "may_conflict_with_investigators": true,
+    "requires_case_and_variant_specific_feasibility": true,
+    "visible_before_acceptance": true,
+    "scored_only_if_active": true,
+    "no_oral_acting_score": true,
+    "no_automatic_win_on_acceptance": true
+  },
+  "evidence_and_replay": {
+    "without_informant_still_solvable": true,
+    "c3_independent_evidence_sources_min": 2,
+    "variants": [
+      "A",
+      "B",
+      "C"
+    ],
+    "no_outcomes_shared_between_cases": true,
+    "no_real_player_sanctions": true
+  },
+  "story_80_20": {
+    "own_case_share_editorial": 80,
+    "shared_santoro_share_editorial": 20,
+    "examples": [
+      {
+        "id": "021",
+        "personal_goal": "identify responsible crew rival while avoiding main Gallo murder liability",
+        "risk": "ledger exposes own extortion",
+        "shared": "Capo collects Santoro tribute"
+      },
+      {
+        "id": "022",
+        "personal_goal": "disprove one's role in Caruso murder while assigning responsibility to true initiator",
+        "risk": "reveals own false testimony",
+        "shared": "rank and Omertà"
+      },
+      {
+        "id": "023",
+        "personal_goal": "prevent unfavorable commercial agreement without being blamed for attack leak",
+        "risk": "private alternate contract exposes source",
+        "shared": "Consigliere and blood relative Adriano"
+      },
+      {
+        "id": "024",
+        "personal_goal": "avoid being scapegoated by accused associate while retaining conditional favor",
+        "risk": "Valenti notes reveal one's own coerced payments",
+        "shared": "Santoro transport interests"
+      },
+      {
+        "id": "025",
+        "personal_goal": "defeat false order attribution while avoiding one's own principal murder liability",
+        "risk": "reveals involvement in Benedetti extortion",
+        "shared": "Don Santoro hierarchy"
+      }
+    ]
+  },
+  "release_blockers": {
+    "live_private_offer_delivery": false,
+    "live_authorization_and_atomic_accept": false,
+    "live_goal_change_and_score": false,
+    "live_separate_optional_disclosure_rpc": false,
+    "live_public_sync_secret_scrub": false,
+    "live_rank_retaliation_evidence_gate": false,
+    "live_protection_approval_engine": false,
+    "fifteen_private_variant_documents": false,
+    "live_fr_en_UI_tests": false,
+    "live_multiplayer_and_disconnect_tests": false,
+    "production_deployed": false
+  }
+}

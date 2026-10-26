@@ -1,0 +1,205 @@
+{
+  "version": "OMERTA-V17",
+  "status": "editorial-test-only-not-live",
+  "normative": true,
+  "supersedes": [
+    "V16:undefined freedom to manipulate source claims"
+  ],
+  "retains": [
+    "V16 one-screen Accept Refuse, instant private INDIC goal swap, optional later disclosure",
+    "V14 Investigator-only private offers from C2 and rank-evidence retaliation",
+    "V15 protection requested-not-guaranteed according to value threat exposure",
+    "V9 public Santoro rank tree with real player pseudonyms",
+    "V7 standalone A/B/C and 80/20"
+  ],
+  "scope": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "card_structure": [
+    {
+      "key": "enonce",
+      "title": "ÉNONCÉ",
+      "hint": "What actually happened for this role and case, not a dialogue the user must recite",
+      "maxVisibleSentences": 4
+    },
+    {
+      "key": "sait",
+      "title": "CE QUE TU SAIS",
+      "hint": "Two to four authentic private facts",
+      "countMin": 2,
+      "countMax": 4
+    },
+    {
+      "key": "ignore",
+      "title": "CE QUE TU IGNORES",
+      "hint": "Explicit limits: not omniscient"
+    },
+    {
+      "key": "objectif",
+      "title": "TON OBJECTIF",
+      "hint": "One measurable personal win condition, no mandatory acting"
+    },
+    {
+      "key": "possibilites",
+      "title": "TU PEUX CHOISIR DE",
+      "hint": "Examples of actions, always optional"
+    },
+    {
+      "key": "risques",
+      "title": "CE QUE TU RISQUES",
+      "hint": "Concrete conditional drawbacks and trigger conditions"
+    },
+    {
+      "key": "victoire",
+      "title": "COMMENT ON TE JUGE",
+      "hint": "Only formal decisions and objective, never acting quality"
+    }
+  ],
+  "offer_card": {
+    "title": "PROPOSITION DE TRAHISON — CONFIDENTIEL",
+    "initiator": "enqueteur",
+    "earliest_cycle": 2,
+    "displayed_immediately": [
+      "original_goal",
+      "new_personal_goal",
+      "known_certain_consequences",
+      "conditional_risks",
+      "conditional_protection",
+      "freedom_after_acceptance",
+      "no_automatic_disclosure"
+    ],
+    "buttons": [
+      "ACCEPTER ET DEVENIR INDIC",
+      "REFUSER ET GARDER MON OBJECTIF"
+    ],
+    "secondary_acceptance_confirmation": false,
+    "accept": {
+      "private_informant_flag": true,
+      "change_goal_immediately": true,
+      "original_goal_no_longer_scored": true,
+      "disclosures_on_accept": 0
+    },
+    "decline": {
+      "goal_unchanged": true,
+      "penalty": false,
+      "public_event": false
+    },
+    "informant_may_withhold": true,
+    "informant_can_still_support_mafia": true,
+    "informant_can_mislead_investigators": true,
+    "informant_can_speak_true_or_partially_true": true,
+    "informant_can_turn_against_old_ally": true,
+    "informant_not_required_in_every_room": true,
+    "informant_does_not_automatically_move_to_investigation_camp": true,
+    "no_obligatory_personality_or_dialogue": true
+  },
+  "double_game": {
+    "allowed": true,
+    "can_support_other_suspect": true,
+    "can_support_superior_rank": true,
+    "examples": [
+      "associato aids capo",
+      "soldato protects consigliere",
+      "capo protects Don Santoro"
+    ],
+    "agreement_is_voluntary_social_interaction": true,
+    "higher_rank_has_no_power_to_force_other_player_to_be_informant": true,
+    "higher_rank_cannot_read_informant_secret_state": true,
+    "higher_rank_cannot_know_acceptance_without_voluntary_social_disclosure": true,
+    "higher_rank_cannot_control_informant_goal_or_statements": true,
+    "new_goal_defined_before_acceptance": true,
+    "new_goal_must_be_feasible_for_cast_and_variant": true,
+    "alignment_is_not_pinned_as_extra_hidden_role": true,
+    "informant_statement_is_claim_not_canon": true,
+    "lies_cannot_alter_authenticated_evidence": true,
+    "independent_investigator_corroboration_required": true,
+    "no_automatic_win_for_delivered_accusation": true,
+    "investigation_winnable_with_zero_indics": true,
+    "no_player_required_to_lie": true
+  },
+  "legal_gameplay": {
+    "cycles": 3,
+    "interrogations_from": 1,
+    "formal_confrontations_from": 2,
+    "evidence_C3_independent_min": 2,
+    "protection_granted_automatically": false,
+    "rank_retaliation_can_read_private_informant_flag": false,
+    "no_forced_elimination": true,
+    "separate_cases": true,
+    "no_campaign_state": true
+  },
+  "ui": {
+    "initial_card_visible_word_budget": 150,
+    "short_copy_first": true,
+    "details_expandable": true,
+    "one_offer_screen": true,
+    "no_new_mini_game": true,
+    "fr_en_required": true,
+    "supports_mobile_voiceover": true,
+    "no_roleplay_scripts": true,
+    "allows_multiple_outcomes": true
+  },
+  "case_examples": [
+    {
+      "id": "021",
+      "protected_rank": "Capo",
+      "possible_player": "Associato or Contabile",
+      "strategic_claim": "present a real discrepancy as possible evidence against a rival",
+      "independent_crosscheck": "commercial ledger and transfer chronology",
+      "own_story": "Gallo's death and missing envelope",
+      "shared_world": "Capo collects dues for Santoro"
+    },
+    {
+      "id": "022",
+      "protected_rank": "Capo",
+      "possible_player": "Soldato",
+      "strategic_claim": "admit a threat but downplay its meaning",
+      "independent_crosscheck": "forensics and statements by non-cooperating witnesses",
+      "own_story": "Caruso death and contradictory witness pact",
+      "shared_world": "ranks and Omerta code"
+    },
+    {
+      "id": "023",
+      "protected_rank": "Consigliere",
+      "possible_player": "Associato",
+      "strategic_claim": "show genuine revised proposal while hiding intended beneficiary",
+      "independent_crosscheck": "transport contract versions and route records",
+      "own_story": "Falco death and Adriano targeted",
+      "shared_world": "blood family and mediator rank"
+    },
+    {
+      "id": "024",
+      "protected_rank": "Capo",
+      "possible_player": "Associato",
+      "strategic_claim": "undermine formal pentito by disclosing selectively true witness-note facts",
+      "independent_crosscheck": "Valenti's notes and independent company records",
+      "own_story": "extortion and murdered witness",
+      "shared_world": "Santoro transport interests"
+    },
+    {
+      "id": "025",
+      "protected_rank": "Don Santoro",
+      "possible_player": "Soldato or Capo",
+      "strategic_claim": "emphasize real economic instruction while falsely excluding a violent order",
+      "independent_crosscheck": "the chain of messages plus murder timeline",
+      "own_story": "Benedetti extortion and homicide",
+      "shared_world": "Don hierarchy and hierarchy of orders"
+    }
+  ],
+  "release_blockers": {
+    "actual_eligible_role_cards_written": false,
+    "variant_specific_deception_hooks_all_15": false,
+    "case_evidence_sufficient_without_source": false,
+    "sealed_server_canon_confirms_not_overwritten_by_claims": false,
+    "server_goal_assignment_and_result_check": false,
+    "no_source_secret_in_public_sync": false,
+    "fr_en_phone_accessibility_test": false,
+    "live_rpc_and_multiplayer_test": false,
+    "actual_user_playtests_measuring_comprehension": false,
+    "production_deployed": false
+  }
+}

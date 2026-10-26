@@ -102,6 +102,10 @@ if(await exists(swPath)){
   for(const name of maitrePosters){
     if(await exists(path.join(target,'assets',name)))optionalShell.push(`/assets/${name}?v=${maitreVersion}`);
   }
+  // The public Santoro hierarchy must also be usable when OMERTA is opened offline.
+  for(const name of ['omerta-santoro-family-v7.css','omerta-santoro-family-v7.js']){
+    if(await exists(path.join(target,name)))optionalShell.push(`/${name}?v=v7-family-public`);
+  }
   sw=addShellEntries(sw,optionalShell);
   await writeFile(swPath,sw,'utf8');
 }

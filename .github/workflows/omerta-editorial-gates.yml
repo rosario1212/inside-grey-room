@@ -1,0 +1,200 @@
+name: OMERTA 80-20 Editorial Gates
+
+on:
+  pull_request:
+    paths:
+      - 'docs/OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md'
+      - 'docs/OMERTA_SANTORO_V8_VIOLENCE_INDIC_FAMILY_TREE.md'
+      - 'qa/omerta-v8-mafia-release-contract.json'
+      - 'scripts/check-omerta-v8-mafia.mjs'
+      - 'scripts/check-omerta-v9-player-tree.mjs'
+      - 'docs/OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md'
+      - 'qa/omerta-v11-indic-mandatory-95-contract.json'
+      - 'scripts/check-omerta-v11-indic-95.mjs'
+      - 'docs/OMERTA_V12_PERSONAL_INDIC_AND_MAFIA_ATMOSPHERE.md'
+      - 'qa/omerta-v12-indic-self-interest-and-atmosphere.json'
+      - 'scripts/check-omerta-v12-selfish-indic.mjs'
+      - 'docs/OMERTA_V13_VOLUNTARY_TURNCOAT_RISK_80_20.md'
+      - 'qa/omerta-v13-voluntary-turncoat-contract.json'
+      - 'qa/omerta-v13-turncoat-choice-simulator.mjs'
+      - 'scripts/check-omerta-v13-voluntary-indic.mjs'
+      - 'docs/OMERTA_V14_INVESTIGATOR_OFFERS_RANK_RETALIATION.md'
+      - 'qa/omerta-v14-investigator-offers-and-rank-retaliation.json'
+      - 'qa/omerta-v14-investigator-offer-simulator.mjs'
+      - 'scripts/check-omerta-v14-investigator-offers.mjs'
+      - 'docs/OMERTA_V15_CONDITIONAL_PROTECTION_BY_RANK.md'
+      - 'qa/omerta-v15-protection-contract.json'
+      - 'qa/omerta-v15-protection-review-simulator.mjs'
+      - 'scripts/check-omerta-v15-protection.mjs'
+      - 'docs/OMERTA_V16_ACCEPT_REPLACE_GOAL_DISCLOSE_LATER.md'
+      - 'qa/omerta-v16-immediate-indic-goal-contract.json'
+      - 'qa/omerta-v16-informant-goal-simulator.mjs'
+      - 'scripts/check-omerta-v16-immediate-indic-goal.mjs'
+      - 'docs/OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md'
+      - 'qa/omerta-v17-clear-cards-double-agent-contract.json'
+      - 'qa/omerta-v17-double-game-simulator.mjs'
+      - 'scripts/check-omerta-v17-clear-instructions-double-agent.mjs'
+      - 'docs/OMERTA_V18_SUSPECT_INFORMANT_WIN_CONDITIONS.md'
+      - 'qa/omerta-v18-personal-victory-contract.json'
+      - 'qa/omerta-v18-personal-goal-evaluator.mjs'
+      - 'scripts/check-omerta-v18-win-conditions.mjs'
+      - 'docs/OMERTA_V19_VERBATIM_PLAYER_GOALS_021_025.md'
+      - 'scripts/check-omerta-v19-verbatim-goals.mjs'
+      - 'docs/OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md'
+      - 'qa/omerta-v20-personal-motive-nonarbitrary-target.json'
+      - 'scripts/check-omerta-v20-self-interested-target-choice.mjs'
+      - 'docs/OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md'
+      - 'qa/omerta-v21-personal-goals-by-role.json'
+      - 'scripts/check-omerta-v21-goals.mjs'
+      - 'docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md'
+      - 'qa/omerta-v22-coherent-role-goals.json'
+      - 'scripts/check-omerta-v22-goal-coherence.mjs'
+      - 'qa/omerta-v22-cast-complementarity-auditor.mjs'
+      - 'scripts/check-omerta-v22-cast-complementarity.mjs'
+      - 'qa/omerta-v22-random-mafia-roles-simulator.mjs'
+      - 'scripts/check-omerta-v22-random-mafia-roles.mjs'
+      - 'docs/OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md'
+      - 'qa/omerta-v23-informant-two-checks-contract.json'
+      - 'qa/omerta-v23-two-checks-evaluator.mjs'
+      - 'scripts/check-omerta-v23-informant-two-checks.mjs'
+      - 'docs/OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md'
+      - 'qa/omerta-021-variants-public-readiness.json'
+      - 'scripts/check-omerta-021-variant-pilot-public.mjs'
+      - 'docs/OMERTA_V24_15_VARIANTS_SECURITY_AND_RELEASE_GATES.md'
+      - 'qa/omerta-v24-private-15-variants-public-release-manifest.json'
+      - 'scripts/check-omerta-v24-private-variant-release-gate.mjs'
+      - 'docs/OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md'
+      - 'qa/omerta-v23-indic-two-condition-goals.json'
+      - 'qa/omerta-v23-two-condition-indic-simulator.mjs'
+      - 'scripts/check-omerta-v23-indic-and-goals.mjs'
+      - 'omerta-santoro-family-v7.js'
+      - 'omerta-santoro-family-v7.css'
+      - 'index.html'
+      - 'qa/omerta-v7-release-contract.json'
+      - 'scripts/check-omerta-v7-gates.mjs'
+      - '.github/workflows/omerta-editorial-gates.yml'
+  push:
+    branches:
+      - 'docs/non-cartel-dlc-rework-**'
+    paths:
+      - 'docs/OMERTA_SANTORO_FIVE_STANDALONE_CASES_V7.md'
+      - 'docs/OMERTA_SANTORO_V8_VIOLENCE_INDIC_FAMILY_TREE.md'
+      - 'qa/omerta-v8-mafia-release-contract.json'
+      - 'scripts/check-omerta-v8-mafia.mjs'
+      - 'scripts/check-omerta-v9-player-tree.mjs'
+      - 'docs/OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md'
+      - 'qa/omerta-v11-indic-mandatory-95-contract.json'
+      - 'scripts/check-omerta-v11-indic-95.mjs'
+      - 'docs/OMERTA_V12_PERSONAL_INDIC_AND_MAFIA_ATMOSPHERE.md'
+      - 'qa/omerta-v12-indic-self-interest-and-atmosphere.json'
+      - 'scripts/check-omerta-v12-selfish-indic.mjs'
+      - 'docs/OMERTA_V13_VOLUNTARY_TURNCOAT_RISK_80_20.md'
+      - 'qa/omerta-v13-voluntary-turncoat-contract.json'
+      - 'qa/omerta-v13-turncoat-choice-simulator.mjs'
+      - 'scripts/check-omerta-v13-voluntary-indic.mjs'
+      - 'docs/OMERTA_V14_INVESTIGATOR_OFFERS_RANK_RETALIATION.md'
+      - 'qa/omerta-v14-investigator-offers-and-rank-retaliation.json'
+      - 'qa/omerta-v14-investigator-offer-simulator.mjs'
+      - 'scripts/check-omerta-v14-investigator-offers.mjs'
+      - 'docs/OMERTA_V15_CONDITIONAL_PROTECTION_BY_RANK.md'
+      - 'qa/omerta-v15-protection-contract.json'
+      - 'qa/omerta-v15-protection-review-simulator.mjs'
+      - 'scripts/check-omerta-v15-protection.mjs'
+      - 'docs/OMERTA_V16_ACCEPT_REPLACE_GOAL_DISCLOSE_LATER.md'
+      - 'qa/omerta-v16-immediate-indic-goal-contract.json'
+      - 'qa/omerta-v16-informant-goal-simulator.mjs'
+      - 'scripts/check-omerta-v16-immediate-indic-goal.mjs'
+      - 'docs/OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md'
+      - 'qa/omerta-v17-clear-cards-double-agent-contract.json'
+      - 'qa/omerta-v17-double-game-simulator.mjs'
+      - 'scripts/check-omerta-v17-clear-instructions-double-agent.mjs'
+      - 'docs/OMERTA_V18_SUSPECT_INFORMANT_WIN_CONDITIONS.md'
+      - 'qa/omerta-v18-personal-victory-contract.json'
+      - 'qa/omerta-v18-personal-goal-evaluator.mjs'
+      - 'scripts/check-omerta-v18-win-conditions.mjs'
+      - 'docs/OMERTA_V19_VERBATIM_PLAYER_GOALS_021_025.md'
+      - 'scripts/check-omerta-v19-verbatim-goals.mjs'
+      - 'docs/OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md'
+      - 'qa/omerta-v20-personal-motive-nonarbitrary-target.json'
+      - 'scripts/check-omerta-v20-self-interested-target-choice.mjs'
+      - 'docs/OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md'
+      - 'qa/omerta-v21-personal-goals-by-role.json'
+      - 'scripts/check-omerta-v21-goals.mjs'
+      - 'docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md'
+      - 'qa/omerta-v22-coherent-role-goals.json'
+      - 'scripts/check-omerta-v22-goal-coherence.mjs'
+      - 'qa/omerta-v22-cast-complementarity-auditor.mjs'
+      - 'scripts/check-omerta-v22-cast-complementarity.mjs'
+      - 'qa/omerta-v22-random-mafia-roles-simulator.mjs'
+      - 'scripts/check-omerta-v22-random-mafia-roles.mjs'
+      - 'docs/OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md'
+      - 'qa/omerta-v23-informant-two-checks-contract.json'
+      - 'qa/omerta-v23-two-checks-evaluator.mjs'
+      - 'scripts/check-omerta-v23-informant-two-checks.mjs'
+      - 'docs/OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md'
+      - 'qa/omerta-v23-indic-two-condition-goals.json'
+      - 'qa/omerta-v23-two-condition-indic-simulator.mjs'
+      - 'scripts/check-omerta-v23-indic-and-goals.mjs'
+      - 'omerta-santoro-family-v7.js'
+      - 'omerta-santoro-family-v7.css'
+      - 'index.html'
+      - 'qa/omerta-v7-release-contract.json'
+      - 'scripts/check-omerta-v7-gates.mjs'
+      - '.github/workflows/omerta-editorial-gates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-omerta-80-20:
+    name: Four editorial laws, five standalone cases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout proposed design branch
+        uses: actions/checkout@v4
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Enforce OMERTA V7 editorial gates
+        run: node scripts/check-omerta-v7-gates.mjs
+      - name: Check Santoro family viewer JS syntax
+        run: node --check omerta-santoro-family-v7.js && node --check scripts/check-omerta-v8-mafia.mjs
+      - name: Validate OMERTA V8 violent cases, informant privacy and family tree
+        run: node scripts/check-omerta-v8-mafia.mjs
+      - name: Validate player-owned Mafia ranks and hidden informer status
+        run: node scripts/check-omerta-v9-player-tree.mjs
+      - name: Validate V16 single-screen acceptance and optional later disclosure
+        run: node scripts/check-omerta-v16-immediate-indic-goal.mjs
+      - name: Validate V15 protection approval tiers and rank-sensitive risk
+        run: node scripts/check-omerta-v15-protection.mjs
+      - name: Validate V17 player guidance and double-game source autonomy
+        run: node scripts/check-omerta-v17-clear-instructions-double-agent.mjs
+      - name: Validate V18 suspect and indic measurable personal victory conditions
+        run: node scripts/check-omerta-v18-win-conditions.mjs
+      - name: Validate V19 exact player goal copy by Mafia rank and dossier
+        run: node scripts/check-omerta-v19-verbatim-goals.mjs
+      - name: Validate V20 personal informant stakes without arbitrary-target victories
+        run: node scripts/check-omerta-v20-self-interested-target-choice.mjs
+      - name: Validate V21 role-by-role self-interested suspect and informant goals
+        run: node scripts/check-omerta-v21-goals.mjs
+      - name: Validate V22 coherence of complementing role interests and no duplicate objectives
+        run: node scripts/check-omerta-v22-goal-coherence.mjs
+      - name: Validate V22 cast-specific distinct goals and unsupported variants fail closed
+        run: node scripts/check-omerta-v22-cast-complementarity.mjs
+      - name: Validate V22 variant-authored random Santoro ranks and no generic Suspect role
+        run: node scripts/check-omerta-v22-random-mafia-roles.mjs
+      - name: Validate V23 simple AND conditions for informant win and optional private fact disclosure
+        run: node scripts/check-omerta-v23-indic-and-goals.mjs
+      - name: Validate V23 indic victory requires personal safety AND verified voluntary disclosure
+        run: node scripts/check-omerta-v23-informant-two-checks.mjs
+      - name: Audit 021 A/B/C pilot blockers without exposing sealed variants
+        run: node scripts/check-omerta-021-variant-pilot-public.mjs
+      - name: Block public spoilers and unverified release of 15 sealed variant drafts
+        run: node scripts/check-omerta-v24-private-variant-release-gate.mjs
+      - name: Explain what this does NOT certify
+        run: |
+          echo 'This job validates public editorial structure only.'
+          echo 'V23 supersedes old informant scoring: personal escape AND voluntarily deliver one genuine private tip. V16 still governs accepting informant status and goal.'
+          echo 'Private A/B/C, secure server implementation, safety, role distribution, production data, and human playtests require separate release QA.'

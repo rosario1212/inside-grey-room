@@ -1,0 +1,241 @@
+{
+  "project": "Inside Grey Room",
+  "dlc": "OMERTA",
+  "version": "V7.0",
+  "universe": "Famiglia Santoro; north New Jersey / greater New York; ca. 2006",
+  "scope": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "rule_ids": [
+    "independent",
+    "player_agency",
+    "replayability",
+    "no_softlock"
+  ],
+  "rule_text": {
+    "independent": "Every case resolves with only its own briefing, evidence and players; never imports another case's result.",
+    "player_agency": "Each player is an extension of the facts under their own pseudonym, not a character to impersonate.",
+    "replayability": "A/B/C each have complete private facts and meaningful different causal responsibility, pinned anew per room.",
+    "no_softlock": "No special role, optional confession or other DLC is required for a fair evidence-led resolution."
+  },
+  "shared_world_fraction_editorial": "80% case-specific; 20% stable shared universe, no numeric implementation quota",
+  "forbidden_imports": [
+    "player_choice",
+    "death",
+    "arrest",
+    "cooperation",
+    "trial_verdict",
+    "campaign_branch",
+    "variant_letter",
+    "transferred_secrets",
+    "fixed_result"
+  ],
+  "office_location": "Host-selected real or fictional name, separate from narrative case geography; production feature not yet verified",
+  "production_state": "NOT_RELEASE_READY",
+  "cases": [
+    {
+      "id": "021",
+      "title": "L'ENVELOPPE",
+      "signature": "knowledge_circle",
+      "core": "missing_collection",
+      "evidence_c1": [
+        "collection_document"
+      ],
+      "evidence_c2": [
+        "transfer_witness_record"
+      ],
+      "evidence_c3": [
+        "independent_money_path",
+        "independent_destination_ledger"
+      ],
+      "player_slot_roles": [
+        "remittance",
+        "instruction_recipient",
+        "collection_witness",
+        "account_keeper",
+        "confidence_holder"
+      ],
+      "variant_ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "variant_axes": [
+        "causal_origin",
+        "effective_beneficiary",
+        "knowledge_distribution"
+      ],
+      "crossovers": [
+        "Santoro family background",
+        "Enzo Rinaldi capo"
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "022",
+      "title": "OMERTÀ",
+      "signature": "separate_order_and_action",
+      "core": "death_after_ambiguous_order",
+      "evidence_c1": [
+        "two_conversation_accounts"
+      ],
+      "evidence_c2": [
+        "material_crime_timeline"
+      ],
+      "evidence_c3": [
+        "independent_postcrime_coordination",
+        "independent_precrime_timeline"
+      ],
+      "player_slot_roles": [
+        "conversation_witness",
+        "message_carrier",
+        "movement_witness",
+        "statement_participant"
+      ],
+      "variant_ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "variant_axes": [
+        "instruction_type",
+        "execution_initiative",
+        "coverup_responsibility"
+      ],
+      "crossovers": [
+        "Santoro organization",
+        "Newark"
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "023",
+      "title": "LA TABLE",
+      "signature": "sitdown_before_after_position",
+      "core": "attack_amid_negotiation",
+      "evidence_c1": [
+        "invitation_and_absence"
+      ],
+      "evidence_c2": [
+        "movement_information_access"
+      ],
+      "evidence_c3": [
+        "independent_information_leak",
+        "independent_attack_timeline"
+      ],
+      "player_slot_roles": [
+        "mediated_representative",
+        "offer_holder",
+        "time_change_witness",
+        "commercial_record_holder"
+      ],
+      "variant_ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "variant_axes": [
+        "leak_path",
+        "attack_responsibility",
+        "hidden_interest"
+      ],
+      "crossovers": [
+        "Adriano Santoro",
+        "Matteo Bellini",
+        "Trattoria Bellavista"
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "024",
+      "title": "IL PENTITO",
+      "signature": "cooperation_point_of_no_return",
+      "core": "federal_cooperating_witness",
+      "evidence_c1": [
+        "known_federal_case_file"
+      ],
+      "evidence_c2": [
+        "independently_checkable_new_fact"
+      ],
+      "evidence_c3": [
+        "independent_source_corrob",
+        "independent_judicial_value"
+      ],
+      "player_slot_roles": [
+        "detainee",
+        "operation_witness",
+        "financial_evidence_holder",
+        "cooperation_target"
+      ],
+      "variant_ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "variant_axes": [
+        "new_information_scope",
+        "source_credibility",
+        "legal_responsibility"
+      ],
+      "crossovers": [
+        "Santoro family background",
+        "New Jersey"
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "025",
+      "title": "IL DON",
+      "signature": "command_chain_responsibility",
+      "core": "coercion_in_boss_name",
+      "evidence_c1": [
+        "original_company_complaint"
+      ],
+      "evidence_c2": [
+        "documented_message_variation"
+      ],
+      "evidence_c3": [
+        "independent_message_provenance",
+        "independent_harm_timeline"
+      ],
+      "player_slot_roles": [
+        "original_instruction_witness",
+        "message_intermediary",
+        "business_records_holder",
+        "harm_witness"
+      ],
+      "variant_ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "variant_axes": [
+        "scope_of_boss_instruction",
+        "intermediary_agency",
+        "escalation_author"
+      ],
+      "crossovers": [
+        "Vittorio Santoro",
+        "Matteo Bellini",
+        "Club di Via Mare"
+      ],
+      "depends_on": []
+    }
+  ],
+  "audit_state": {
+    "public_cases_migrated": false,
+    "santoro_live_names_verified": false,
+    "per_room_private_variant_pin_verified": false,
+    "all_fifteen_private_variants_editorially_approved": false,
+    "all_fifteen_independent_c3_proofs_verified": false,
+    "reduced_player_role_matrix_tested": false,
+    "cross_case_independence_tested_in_runtime": false,
+    "privacy_fr_en_rejoin_e2e_tested": false,
+    "human_playtest_complete": false
+  },
+  "note": "This is a public release contract, NOT variant content. These false flags are honest staging blockers and cannot be switched automatically by document edits."
+}
