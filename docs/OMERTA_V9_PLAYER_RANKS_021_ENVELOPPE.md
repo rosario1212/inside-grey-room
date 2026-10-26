@@ -1,5 +1,8 @@
 # OMERTÀ V9 — Rangs attribués aux pseudos et chantier du 021 
 
+> **ARBITRAGE V11 PRIORITAIRE :** [Indicateur clandestin obligatoire et cinq intrigues densifiées vers 9,5/10](OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md). Désormais, **exactement un joueur indic est présent et caché dans chaque partie OMERTÀ 021–025**. Toutes les anciennes phrases « indic facultatif / 0 ou 1 » dans ce document sont archivées et **ne constituent plus la décision actuelle**. L'indic compte pour la reconstruction parfaite, mais son silence ne doit pas bloquer les phases. Le backend n'a pas encore été migré.
+
+
 > **Suite éditoriale V10 :** les cinq affaires sont désormais approfondies sous les **règles classiques** (interrogatoires C1, confrontations officielles C2+, trois cycles et événements ordinaires) dans [OMERTA_V10_FIVE_HARD_CASES_CLASSIC_RULES_80_20.md](OMERTA_V10_FIVE_HARD_CASES_CLASSIC_RULES_80_20.md). V9 demeure la référence de détail pour le 021 et l'arbre à pseudos. La réécriture des packs live n'est pas faite.
 
 
