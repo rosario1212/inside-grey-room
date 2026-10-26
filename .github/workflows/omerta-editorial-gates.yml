@@ -14,6 +14,10 @@ on:
       - 'docs/OMERTA_V12_PERSONAL_INDIC_AND_MAFIA_ATMOSPHERE.md'
       - 'qa/omerta-v12-indic-self-interest-and-atmosphere.json'
       - 'scripts/check-omerta-v12-selfish-indic.mjs'
+      - 'docs/OMERTA_V13_VOLUNTARY_TURNCOAT_RISK_80_20.md'
+      - 'qa/omerta-v13-voluntary-turncoat-contract.json'
+      - 'qa/omerta-v13-turncoat-choice-simulator.mjs'
+      - 'scripts/check-omerta-v13-voluntary-indic.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -35,6 +39,10 @@ on:
       - 'docs/OMERTA_V12_PERSONAL_INDIC_AND_MAFIA_ATMOSPHERE.md'
       - 'qa/omerta-v12-indic-self-interest-and-atmosphere.json'
       - 'scripts/check-omerta-v12-selfish-indic.mjs'
+      - 'docs/OMERTA_V13_VOLUNTARY_TURNCOAT_RISK_80_20.md'
+      - 'qa/omerta-v13-voluntary-turncoat-contract.json'
+      - 'qa/omerta-v13-turncoat-choice-simulator.mjs'
+      - 'scripts/check-omerta-v13-voluntary-indic.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -65,11 +73,10 @@ jobs:
         run: node scripts/check-omerta-v8-mafia.mjs
       - name: Validate player-owned Mafia ranks and hidden informer status
         run: node scripts/check-omerta-v9-player-tree.mjs
-      - name: Validate mandatory hidden indic, five 9.5-target cases and 80/20
-        run: node scripts/check-omerta-v11-indic-95.mjs
-      - name: Validate selfish indic personal victory and dense Mafia V12 atmosphere
-        run: node scripts/check-omerta-v12-selfish-indic.mjs
+      - name: Validate V13 voluntary informant design and non-live consent state machine
+        run: node scripts/check-omerta-v13-voluntary-indic.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
-          echo 'Private A/B/C, safety, role distribution, production data, and real multiplayer playtests require separate release QA.'
+          echo 'V11 mandatory-informant and V12 automatic-informant checks are archived and intentionally not run.'
+          echo 'Private A/B/C, secure server implementation, safety, role distribution, production data, and human playtests require separate release QA.'
