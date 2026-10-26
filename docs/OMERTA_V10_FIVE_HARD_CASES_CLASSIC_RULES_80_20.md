@@ -1,5 +1,8 @@
 # OMERTÀ V10 — CINQ AFFAIRES MAFIEUSES DENSES, MÊMES RÈGLES INSIDE GREY ROOM
 
+> **ARBITRAGE V11 PRIORITAIRE :** [Indicateur clandestin obligatoire et cinq intrigues densifiées vers 9,5/10](OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md). Désormais, **exactement un joueur indic est présent et caché dans chaque partie OMERTÀ 021–025**. Toutes les anciennes phrases « indic facultatif / 0 ou 1 » dans ce document sont archivées et **ne constituent plus la décision actuelle**. L'indic compte pour la reconstruction parfaite, mais son silence ne doit pas bloquer les phases. Le backend n'a pas encore été migré.
+
+
 **Décision auteur 26 octobre 2026 :** ne pas inventer de nouveaux cycles ou sous-jeux pour OMERTÀ. Réutiliser les règles *classiques* d'Inside Grey Room : briefing, cartes privées, enquête / interrogatoires individuels en C1, première confrontation **officielle seulement à partir de C2**, choix d'événements compatibles par le MJ, assemblées / trames / rôles facultatifs, C3, verrouillage du verdict et révélation. Parole humaine libre pendant tous les cycles. Le projet V13 actuel route pourtant officiellement l'event select vers 001–020 uniquement : **ne jamais prétendre que cette adaptation est déjà active sur 021–025**.
 
 **Autre décision auteur :** « surcharger le camp Enquête » signifie **plus de questions probatoires simultanées et de décisions difficiles**, pas bloquer les indices essentiels, inventer des mensonges de MJ ni multiplier artificiellement les sous-jeux.
