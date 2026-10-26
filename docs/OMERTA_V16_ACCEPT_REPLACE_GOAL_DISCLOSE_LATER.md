@@ -1,5 +1,8 @@
 # INSIDE GREY ROOM — OMERTÀ V16
 
+> **PRÉCISION V23 SUR LA VICTOIRE :** [OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md](OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md). V16 gouverne toujours **l'acceptation volontaire, le changement immédiat d'objectif privé et l'absence de divulgation automatique**. Mais son ancien exemple de victoire d'indic sans renseignement est désormais **obsolète** : la victoire exige maintenant deux conditions **se protéger ET transmettre un renseignement vrai, utile et vérifiable**. Le joueur reste libre de ne pas transmettre, auquel cas il ne gagne pas l'objectif d'indic.
+
+
 > **COMPLÉMENT DE LISIBILITÉ ET DE DOUBLE JEU V17 :** [OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md](OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md). Le choix V16 reste identique (offre envoyée par l'Enquêteur, Accepter/Refuser, nouvel objectif immédiat, aucun renseignement automatique). V17 explicite les rubriques ÉNONCÉ, FAITS, OBJECTIF, RISQUES, LIBERTÉS et la possibilité de manipuler l'Enquêteur pour le compte d'un suspect de rang supérieur, sans que ce supérieur puisse diriger le joueur. **Non déployé dans les parties réelles.**
 
 ## LE PRIX DE LA TRAHISON : UNE OFFRE, DEUX CHOIX, UN NOUVEL OBJECTIF
