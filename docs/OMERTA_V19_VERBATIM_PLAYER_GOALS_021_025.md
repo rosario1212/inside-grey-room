@@ -13,7 +13,7 @@
 
 **TU PEUX CHOISIR DE :** parler, mentir sur ton interprétation, ne pas répondre, défendre un allié, dénoncer un rival, changer de stratégie.
 
-**SI L'ENQUÊTEUR TE PROPOSE DE DEVENIR INDIC (C2+) :** « Tu peux **trahir** la Famiglia ou utiliser la proposition pour tes propres intérêts. **Accepter** te rend secrètement indic et remplace immédiatement ton objectif par celui affiché ci-dessous. **Refuser** conserve ton objectif actuel. Même si tu acceptes, tu n'es pas obligé de fournir une information ; tu peux manipuler l'Enquêteur pour protéger un autre suspect, même plus haut placé. »
+**Une partie peut se terminer sans aucun indic** : l'Enquête reste résoluble et tous les objectifs initiaux sont évalués normalement.\n\n**SI L'ENQUÊTEUR TE PROPOSE DE DEVENIR INDIC (C2+) :** « Tu peux **trahir** la Famiglia ou utiliser la proposition pour tes propres intérêts. **Accepter** te rend secrètement indic et remplace immédiatement ton objectif par celui affiché ci-dessous. **Refuser** conserve ton objectif actuel. Même si tu acceptes, tu n'es pas obligé de fournir une information ; tu peux manipuler l'Enquêteur pour protéger un autre suspect, même plus haut placé. »
 
 **LE PRIX AFFICHÉ AVANT LE CHOIX :** « Ton ancien objectif cesse de compter si tu acceptes. Un renseignement peut révéler qui l'a fourni, te compromettre pour tes actes ou entraîner une perte de faveur et des représailles **si des faits les justifient**. La confidentialité ne garantit pas ta sécurité ; une protection renforcée doit être autorisée, jamais simplement promise. Tu restes libre de te taire. »
 
