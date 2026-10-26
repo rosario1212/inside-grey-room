@@ -73,7 +73,7 @@ for(const c of json.scenarios){
  assert.ok(c.player_text_rules.main_card_limit_words<=120);
  assert.equal(c.player_text_rules.optional_details_label,'Voir les détails et les pièces');
  assert.ok(c.goals.every(g=>g.player_detail&&g.player_detail.interest&&g.player_detail.when_score&&g.player_detail.freedom));
- const caseSection=md.split('## '+c.id+' — '+c.title)[1]?.split('\n---\n')[0]||'';
+ const caseSection=md.split('\n## '+c.id+' — '+c.title+'\n')[1]?.split('\n---\n')[0]||'';
  assert.ok(caseSection.includes('**ÉNONCÉ :**'));
  assert.ok(caseSection.includes('**Comment les intérêts s\'entrecroisent'));
  assert.ok(caseSection.includes('80 %')&&caseSection.includes('20 %'));
