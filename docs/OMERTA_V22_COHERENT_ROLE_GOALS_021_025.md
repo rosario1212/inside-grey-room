@@ -1,5 +1,8 @@
 # OMERTÀ V22 — OBJECTIFS LIÉS, DISTINCTS ET CLAIRS POUR LES JOUEURS
 
+> **AUDIT ACTUEL 021 — CORRECTION À EFFECTUER AVANT PUBLICATION :** [OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md](OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md). Les objectifs 021 mentionnant un « meurtre de Gallo » ont été proposés sans canon correspondant dans la bible V7. **Ne pas les injecter en jeu**. Le pilote privé A/B/C recentre 021 sur l'enveloppe, les montants et les responsabilités de remise ; les objectifs de chaque rôle doivent être alignés avec sa vérité et son acte de verdict. Les cinq anciens packs sont encore actifs et non convertis. La logique générale de l'indic (se sauver ET transmettre volontairement un fait vrai) reste valide.
+
+
 > **OBJECTIFS INDIC V22 DÉSORMAIS REMPLACÉS PAR V23 :** [OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md](OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md). Les formulations V22 à une seule condition (argent, faveur ou simple évitement d'accusation) **ne doivent pas être intégrées comme victoires d'indic**. V23 fixe **un seul objectif à deux conditions cumulatives : se protéger ET envoyer volontairement un renseignement vrai, utile et vérifiable**. Les objectifs initiaux des suspects et les quatre enjeux de chaque dossier restent les références V22. L'indic peut choisir le silence, mais il ne remporte pas alors la victoire d'indic. Non-live.
 
 
