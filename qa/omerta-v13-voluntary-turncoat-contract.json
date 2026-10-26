@@ -1,7 +1,7 @@
 {
   "version": "OMERTA-V13",
   "author_decision": "Voluntary turncoat with meaningful informed risk, no mandatory informant",
-  "status": "editorial+prototype_not_live",
+  "status": "archived-non-normative",
   "mode": "OMERTA",
   "scenarios": [
     "021",
@@ -177,5 +177,8 @@
     "CARTEL_029",
     "CARTEL_030",
     "CARTEL_031"
-  ]
+  ],
+  "normative": false,
+  "superseded_by": "OMERTA-V14",
+  "archive_warning": "V13 self-initiated cooperation proposals are superseded; only Investigator sends C2+ offers, and rank-evidence-thresholded fiction retaliation applies."
 }
