@@ -1,0 +1,175 @@
+{
+  "version": "OMERTA-V15",
+  "stage": "editorial_and_sandbox_tests_only",
+  "live": false,
+  "scenarios": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "prior_version": "OMERTA-V14",
+  "supersedes": [],
+  "decision": "Investigator may offer confidentiality and REQUEST—not grant—limited or enhanced protection; higher rank increases exposure and review burden but cannot automatically disqualify.",
+  "invariants": {
+    "protection_not_equal_to_immunity": true,
+    "protection_not_equal_to_pentito": true,
+    "protection_not_equal_to_complete_safety": true,
+    "reveal_offer_only_to_target": true,
+    "no_protection_spoiler_in_family_tree": true,
+    "rank_higher_on_average_more_traceable": true,
+    "rank_may_offer_more_valuable_information": true,
+    "never_use_rank_alone_to_approve_or_deny": true,
+    "need_value_and_documented_threat": true,
+    "no_automatic_cover_identity_from_confidentiality": true,
+    "server_authority_for_provisional_or_enhanced": true,
+    "investigator_cannot_authorize_federal_protection": true,
+    "avoid_random_survival_percentage": true,
+    "player_may_decline_after_preview": true,
+    "no_sanction_just_for_reading": true,
+    "offered_from_cycle": 2,
+    "zero_informants_possible": true,
+    "no_automatic_killing_or_exclusion_during_game": true,
+    "no_informant_solution_required": true,
+    "rank_retaliation_requires_case_evidence": true,
+    "no_protection_import_to_other_episode": true
+  },
+  "tiers": {
+    "confidential": {
+      "offer_authority": "investigator",
+      "result": "discretion_offered",
+      "physical_safety": false,
+      "identity_guarantee": false,
+      "automatic_no": true
+    },
+    "temporary": {
+      "offer_authority": "investigator_can_request_only",
+      "result_if_pending": "requested_not_effective",
+      "approver": "competent_case_authority",
+      "requires": [
+        "supported_testimony",
+        "credible_threat",
+        "appropriate_precautions",
+        "explicit_authorization"
+      ],
+      "physical_safety": "limited_when_approved",
+      "immunity": false
+    },
+    "enhanced": {
+      "offer_authority": "investigator_can_request_referral_only",
+      "result_if_pending": "referred_not_approved",
+      "approver": "designated_institutional_authority",
+      "requires": [
+        "essential_witness",
+        "grave_documented_threat",
+        "vetting_of_risk_and_witness",
+        "formal_authorization"
+      ],
+      "immunity": false
+    }
+  },
+  "role_exposure": {
+    "associato": {
+      "visibility": "variable",
+      "risk": "creditors and captains may find a new source",
+      "benefit": "direct detail of local racket"
+    },
+    "uomo_onore": {
+      "visibility": "narrower crew circle",
+      "risk": "initiation and shared orders",
+      "benefit": "direct order exposure"
+    },
+    "contabile": {
+      "visibility": "narrow set of ledger holders",
+      "risk": "account traces identify source",
+      "benefit": "specific sums"
+    },
+    "caporegime": {
+      "visibility": "crew management and tributary chain",
+      "risk": "crew can track absence and orders",
+      "benefit": "orders and financial superiors"
+    },
+    "consigliere": {
+      "visibility": "private conflict resolution",
+      "risk": "knowledge often unique",
+      "benefit": "cross-crew agreements"
+    },
+    "sottocapo": {
+      "visibility": "across several crews",
+      "risk": "higher public profile and liability",
+      "benefit": "cross-crew orders"
+    },
+    "don": {
+      "visibility": "head of fictional organization",
+      "risk": "exceptional notoriety and responsibility",
+      "benefit": "potentially significant testimony"
+    }
+  },
+  "case_protection_examples": [
+    {
+      "id": "021",
+      "risk": "accountant source narrowed through two ledgers",
+      "value": "authenticate diversion",
+      "eighty": "Gallo, racket collection and independent records",
+      "twenty": "Capo and Santoro collection structure"
+    },
+    {
+      "id": "022",
+      "risk": "member linked to false statements",
+      "value": "differentiate murder order and subsequent cover-up",
+      "eighty": "Caruso homicide and witness pact",
+      "twenty": "rank loyalty and Newark social club"
+    },
+    {
+      "id": "023",
+      "risk": "only negotiator privy to revised offer",
+      "value": "trace who sabotaged agreement",
+      "eighty": "Falco murder and attack on Adriano",
+      "twenty": "Consigliere and Santoro blood ties"
+    },
+    {
+      "id": "024",
+      "risk": "Valenti notebook links source to coerced payment",
+      "value": "corroborate threatened payment",
+      "eighty": "Valenti deposition, extortion and homicide",
+      "twenty": "Santoro transport and federal context"
+    },
+    {
+      "id": "025",
+      "risk": "very few senior ranks saw rewritten instructions",
+      "value": "resolve superior orders versus violent initiative",
+      "eighty": "Benedetti murder, coercion and order chain",
+      "twenty": "Don Santoro, Capo and Sottocapo"
+    }
+  ],
+  "quality_gates": [
+    "no_protection_starts_as_approved",
+    "confidentiality_not_escort_or_program",
+    "temporary_request_can_stay_pending_or_be_rejected",
+    "enhanced_request_cannot_be_granted_by_investigator",
+    "same_rank_different_threat_evidence_different_outcome",
+    "don_not_auto_ineligible",
+    "associato_not_auto_safe",
+    "high_rank_better_testimony_may_qualify_despite_higher_exposure",
+    "retaliation_uses_public_evidence_not_informant_flag",
+    "no_informant_game_solvable",
+    "private_player_choice_and_application",
+    "15_variant_evidence_and_character_matrix",
+    "reconnect_protection_state_stable",
+    "internationalized_FR_EN",
+    "no_other_DLC_modified"
+  ],
+  "release_blockers": {
+    "server_rpc_requested_and_authorized": false,
+    "server_protection_decision_authority": false,
+    "server_private_storage": false,
+    "live_no_secret_leakage": false,
+    "fifteen_variant_docs_and_evidence": false,
+    "live_interface_and_accessibility": false,
+    "live_multiplayer_reconnect_checks": false,
+    "no_informant_playtest": false,
+    "mobile_and_web_live_build_test": false,
+    "production_published": false
+  }
+}
