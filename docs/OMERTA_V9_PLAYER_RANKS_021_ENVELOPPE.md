@@ -101,4 +101,20 @@ Les A/B/C privées doivent changer l'origine de la divergence financière, la re
 | Arbre | Pseudos et rangs **de la partie en cours** | Famille de sang Santoro |
 | Fin | Verdict exclusivement sur le 021 | Aucun état transféré |
 
+
+## CONTRAT DE PHASES — IDENTIQUE À INSIDE GREY ROOM, SANS CONFRONTATION EN C1
+
+**Décision auteur confirmée le 26 octobre 2026.** OMERTÀ utilise les phases fondamentales d'Inside Grey Room et non un autre jeu : briefing public, lecture des cartes privées, Assemblée Enquête, trois cycles, interrogatoires, événements officiels compatibles, débrief/trames, verdict et révélation.
+
+- **Cycle 1 :** premières convocations **individuelles** et interrogatoires officiels (durée standard 6 minutes). Les joueurs peuvent converser librement hors procédure, sans **confrontation officielle**.
+- **Cycle 2 :** introduction des nouvelles preuves et ouverture de la sélection d'événements officiels du MJ : **confrontation à deux**, assemblée et autres choix compatibles avec les rôles présents. **Les confrontations ne deviennent possibles qu'à partir du deuxième cycle.**
+- **Cycle 3 :** nouveaux éléments probatoires garantis, dernières interrogations/confrontations permises par le système, préparation puis verrouillage des responsabilités et révélation.
+- **Liberté de parole :** « confrontations officielles seulement C2+ » ne signifie **pas** interdiction de discuter, contester ou questionner quelqu'un en C1 hors Grey Room.
+- **Vérité :** confrontations et aveux ne sont pas les seules voies d'accès aux preuves essentielles. Deux sources de C3 doivent rester garanties même lorsque tous les participants refusent de parler.
+- **Arbre :** bouton accessible à l'hôte et aux joueurs pendant la partie (et au lobby), liste uniquement les pseudos associés à des rangs publics et le cadre familial Santoro, jamais indic, trahison, rôle caché, morts ni résultat antérieur.
+
+**Statut technique vérifié :** `supabase/migrations/gameplay-flow-v13.sql` est **expressément limité aux scénarios 001–020** : `igr_v13_is_core_scenario` retourne faux pour 021–025. Les RPC `igr_v13_start_event` et `igr_v13_event_options` ne doivent donc pas être présentés comme déjà opérationnels pour OMERTÀ. Une adaptation de routage **spécifique aux cinq dossiers** est requise avant activation. Ne pas élargir aveuglément la fonction core aux DLC : cela risquerait de casser le déroulé propre des scénarios. Ajouter des tests serveur qui refusent les confrontations au C1, les autorisent au C2/C3 quand compatibles et ne font jamais fuiter les rôles privés.
+
+L'interface publique de l'arbre V9 est **déjà branchée sur la PR de revue** ; sa présence en PR n'est pas une publication du gameplay OMERTÀ.
+
 **Cible de qualité : 10/10 après QA**, pas note acquise. Il reste à migrer les packs publics, adapter les 15 variantes privées avec les positions jouables, prouver l'absence de fuite/softlock et tester la version FR/EN en vraies parties.
