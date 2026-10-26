@@ -30,6 +30,10 @@ on:
       - 'qa/omerta-v16-immediate-indic-goal-contract.json'
       - 'qa/omerta-v16-informant-goal-simulator.mjs'
       - 'scripts/check-omerta-v16-immediate-indic-goal.mjs'
+      - 'docs/OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md'
+      - 'qa/omerta-v17-clear-cards-double-agent-contract.json'
+      - 'qa/omerta-v17-double-game-simulator.mjs'
+      - 'scripts/check-omerta-v17-clear-instructions-double-agent.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -67,6 +71,10 @@ on:
       - 'qa/omerta-v16-immediate-indic-goal-contract.json'
       - 'qa/omerta-v16-informant-goal-simulator.mjs'
       - 'scripts/check-omerta-v16-immediate-indic-goal.mjs'
+      - 'docs/OMERTA_V17_CLEAR_RULES_DOUBLE_AGENT_PLAYER_AGENCY.md'
+      - 'qa/omerta-v17-clear-cards-double-agent-contract.json'
+      - 'qa/omerta-v17-double-game-simulator.mjs'
+      - 'scripts/check-omerta-v17-clear-instructions-double-agent.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -101,6 +109,8 @@ jobs:
         run: node scripts/check-omerta-v16-immediate-indic-goal.mjs
       - name: Validate V15 protection approval tiers and rank-sensitive risk
         run: node scripts/check-omerta-v15-protection.mjs
+      - name: Validate V17 player guidance and double-game source autonomy
+        run: node scripts/check-omerta-v17-clear-instructions-double-agent.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
