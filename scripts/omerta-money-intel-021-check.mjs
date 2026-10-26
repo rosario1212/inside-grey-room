@@ -1,77 +1,87 @@
-// Validation reproductible du module de carte financière OMERTÀ 021.
-// Exécution : node scripts/omerta-money-intel-021-check.mjs
+// node scripts/omerta-money-intel-021-check.mjs
+// Tests hors production : logique du parcours UI + assertions de migrations.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 const js=fs.readFileSync('omerta-money-intel-v1.js','utf8');
 const sql=fs.readFileSync('supabase/migrations/20261026233500_omerta_money_intel_021.sql','utf8');
-const index=fs.readFileSync('index.html','utf8');
-new vm.Script(js,{filename:'omerta-money-intel-v1.js'});
-assert.match(index,/omerta-money-intel-v1\.js/);
-assert.match(index,/omerta-money-intel-v1\.css/);
-assert.match(sql,/p\.player_token|player_token=p_player_token/);
-assert.match(sql,/for update/);
-assert.match(sql,/r\.cycle<2/);
-assert.match(sql,/p\.internal_slot=1/);
-assert.match(sql,/p\.internal_slot=7/);
-assert.match(sql,/one_intel_per_cycle/);
-assert.match(sql,/intel_already_received/);
+const pact=fs.readFileSync('supabase/migrations/20261026233000_omerta_indic_recruitment_021.sql','utf8');
+const html=fs.readFileSync('index.html','utf8');
+new vm.Script(js);
+assert.match(html,/omerta-money-intel-v1\.js/);
+assert.match(sql,/igr_omerta_money_intel_signal/);
+assert.match(sql,/igr_omerta_money_intel_send/);
+assert.match(sql,/igr_omerta_money_intel_options/);
+assert.match(pact,/igr_omerta_indic_offer/);
+assert.match(pact,/igr_omerta_indic_respond/);
+assert.match(sql,/action_type='omerta_indic_response'/);
+assert.match(sql,/coalesce\(\(a\.payload->>'match_no'\)::int/);
+assert.match(sql,/omerta_intel_intent/);
+assert.match(sql,/counts_for_cooperation',false/);
+assert.match(sql,/p\.internal_slot between 2 and 6/);
 assert.match(sql,/first_official_delivery/);
-assert.match(sql,/truth_verified/);
-assert.match(sql,/match_no/);
+assert.match(sql,/one_intel_per_cycle/);
 assert.match(sql,/'private',receiver\.id/);
-assert.match(sql,/revoke all on function public\.igr_omerta_money_intel_send/);
-assert.doesNotMatch(js,/textarea|contenteditable/i); // Aucun renseignement libre non validable
+assert.match(pact,/'private',suspect\.id/);
+assert.match(pact,/'private',inv\.id/);
+assert.doesNotMatch(js,/contenteditable/i);
 
-function simulate({scenario_id='021',cycle=2,role='suspect',
-  hide='Tu sais que l’argent devait en partie remonter vers le cercle de Rinaldi.'}={}){
-  const created=[];
-  const el=tag=>{
-    const node={tag,textContent:'',className:'',children:[],events:{},isConnected:true,
-      addEventListener(k,fn){this.events[k]=fn;},setAttribute(){},
-      append(...xs){for(const x of xs){x.parent=this;this.children.push(x);}},
-      appendChild(x){x.parent=this;this.children.push(x);return x;},
-      replaceChildren(...xs){this.children=xs;for(const x of xs)x.parent=this;},
-      insertBefore(x,y){const i=this.children.indexOf(y);this.children.splice(i<0?this.children.length:i,0,x);x.parent=this;},
-      remove(){this.isConnected=false;if(this.parent)this.parent.children=this.parent.children.filter(x=>x!==this);},
-      querySelector(sel){return sel==='.igr-money-intel-entry'?this.children.find(x=>x.className.includes('igr-money-intel-entry'))||null:null}
-    };created.push(node);return node;
+function simulate({role='suspect',scenario='021',cycle=2,accepted=false,offered=false}={}){
+ const all=[];
+ function el(tag){
+  const x={tag,className:'',textContent:'',children:[],events:{},value:'',isConnected:true,
+    addEventListener(k,fn){this.events[k]=fn;},setAttribute(){},
+    append(...vs){for(const v of vs){v.parent=this;this.children.push(v);}},
+    appendChild(v){v.parent=this;this.children.push(v);return v;},
+    replaceChildren(...vs){this.children=vs;for(const v of vs)v.parent=this;},
+    insertBefore(v,w){const i=this.children.indexOf(w);this.children.splice(i<0?this.children.length:i,0,v);v.parent=this;},
+    remove(){this.isConnected=false;if(this.parent)this.parent.children=this.parent.children.filter(y=>y!==this);},
+    querySelector(q){return this.children.find(x=>x.className.includes(q.substring(1)))||null}
   };
-  const dock=el('div'),body=el('body');
-  const doc={body,readyState:'complete',createElement:el,addEventListener(){},
-    querySelector:sel=>sel==='.omerta-decision-dock'?dock:body.children.find(x=>x.className==='modal igr-money-intel-modal')||null};
-  const state={token:'TOKEN',sync:{room:{code:'TEST1',scenario_id,status:'playing',cycle,phase:'interrogation'},
-    player:{id:'PLAYER1',public_role:role,private_state:{hide}}}};
-  const calls=[];
-  const rpc=async(name,args)=>{
-    calls.push({name,args});
-    return name==='igr_omerta_money_intel_options'
-      ? {cards:[{id:'021_money_route',title:'Les transferts d’argent',detail:'Circuit financier'}]}
-      : {ok:true};
-  };
-  vm.runInNewContext(js,{
-    document:doc,window:{addEventListener(){}},MutationObserver:class{observe(){}},
-    STATE:state,rpc,syncNow:async()=>{},confirm:()=>true,console
-  });
-  return {dock,created,calls};
+  all.push(x);return x;
+ }
+ const dock=el('div'),body=el('body');
+ const d={
+  room:{code:'ROOM1',scenario_id:scenario,cycle,status:'playing',phase:'interrogation',state:{match_no:1}},
+  player:{id:'INDIC1',public_role:role},
+  players:[{id:'S1',pseudo:'Suspect A',public_role:'suspect'}],
+  my_actions:[],
+  events:[...(accepted?[{event_type:'omerta_indic_status',payload:{accepted:true,match_no:1}}]:[]),
+    ...(offered?[{event_type:'omerta_indic_offer',payload:{offer_id:10,match_no:1}}]:[])]
+ };
+ const doc={body,readyState:'complete',createElement:el,addEventListener(){},
+  querySelector(sel){return sel==='.omerta-decision-dock'?dock:body.children.find(x=>x.className==='modal igr-money-intel-modal')||null;}};
+ const calls=[];
+ const rp=async(name,args)=>{calls.push({name,args});switch(name){
+  case 'igr_omerta_money_intel_options':return{cards:[
+   {id:'021_money_route',title:'Les transferts d’argent',detail:'Circuit de Rinaldi'},
+   {id:'021_handoff',title:'La remise de l’enveloppe',detail:'Une remise'},
+   {id:'021_detour',title:'Le détour',detail:'Un déplacement'}]};
+  default:return{ok:true};
+ }};
+ vm.runInNewContext(js,{STATE:{room:'ROOM1',token:'TOKEN',sync:d},rpc:rp,
+  document:doc,window:{addEventListener(){}},MutationObserver:class{observe(){}},
+  confirm:()=>true,syncNow:async()=>{},console});
+ return{all,dock,calls};
 }
-const cases=[
-  [{},true],
-  [{cycle:1},false],
-  [{scenario_id:'022'},false],
-  [{role:'enqueteur'},false],
-  [{hide:'Secret sans lien avec les paiements.'},false],
-  [{hide:'Les comptes indiquent une somme supplémentaire qui ne figure dans aucun registre.'},true]
-];
-for(const [args,expected] of cases){
- const s=simulate(args);assert.equal(!!s.dock.children.find(x=>x.className.includes('igr-money-intel-entry')),expected);
-}
-const demo=simulate();
-await demo.dock.children[0].events.click();
-const send=demo.created.find(x=>x.textContent==='Transmettre à l’Enquêteur');
-assert.ok(send);
-await send.events.click();
-assert.equal(demo.calls[0].name,'igr_omerta_money_intel_options');
-assert.equal(demo.calls[1].name,'igr_omerta_money_intel_send');
-assert.equal(demo.calls[1].args.p_card_id,'021_money_route');
-console.log('OMERTÀ 021 — PASS : contrôles statiques + parcours client simulé');
+const no=simulate();assert.equal(no.dock.children.length,0,'no panel before recruitment');
+const early=simulate({accepted:true,cycle:1});assert.equal(early.dock.children.length,0);
+const other=simulate({accepted:true,scenario:'022'});assert.equal(other.dock.children.length,0);
+const offer=simulate({role:'enqueteur'});
+assert.equal(offer.dock.children.length,1,'Enquêteur can offer source pact');
+const pending=simulate({offered:true});
+assert.equal(pending.dock.children.length,2,'Suspect can accept or refuse');
+const src=simulate({accepted:true});
+assert.equal(src.dock.children.length,1);
+await src.dock.children[0].events.click();
+assert.equal(src.calls[0].name,'igr_omerta_money_intel_options');
+const intent=src.all.find(x=>x.tag==='button'&&x.textContent==='Je souhaite en parler');
+assert.ok(intent,'optional pre-oral signalling');
+await intent.events.click();
+assert.equal(src.calls[1].name,'igr_omerta_money_intel_signal');
+const after=src.all.find(x=>x.tag==='button'&&x.textContent==='J’en ai déjà parlé');
+assert.ok(after,'post-oral confirmation');
+await after.events.click();
+assert.equal(src.calls[2].name,'igr_omerta_money_intel_send');
+assert.equal(src.calls[2].args.p_card_id,'021_money_route');
+console.log('OMERTÀ 021 — tests de branche : PASS (accord, 3 sujets, signal libre, consignation post-orale)');
