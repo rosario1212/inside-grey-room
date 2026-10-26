@@ -144,6 +144,10 @@ jobs:
         run: node scripts/v100-private-preview-check.mjs
       - name: Validate v101 campaign continuity
         run: node scripts/v101-omerta-branch-check.mjs
+      - name: Validate OMERTA informant oral-first gameplay and usefulness verdict
+        run: |
+          node scripts/omerta-money-intel-021-check.mjs
+          node scripts/omerta-indic-final-rule-check.mjs
       - name: Audit v102 private role-specific clue visibility
         run: node scripts/v102-role-simulator-check.mjs
       - name: Reject unverified variant proof sources
