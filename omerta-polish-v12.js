@@ -98,7 +98,7 @@
     zone.querySelectorAll('.igr-random-role-cta,.omerta-role-status,.omerta-tree-open').forEach(x=>x.remove());
     if(omerta){
       const me={...(d.players||[]).find(p=>String(p.id)===String(d.player?.id)),...d.player};
-      const tree=document.createElement('button');tree.type='button';tree.className='btn ghost block omerta-tree-open';tree.onclick=window.igrOmertaOpenFamilyTree;tree.innerHTML='Arbre de la Famiglia <span>Liens et conséquences</span>';if(grid)zone.insertBefore(tree,grid);
+      const tree=document.createElement('button');tree.type='button';tree.className='btn ghost block omerta-tree-open';tree.onclick=window.igrOmertaOpenFamilyTree;tree.innerHTML='Arbre de la Famiglia <span>Rangs et liens connus</span>';if(grid)zone.insertBefore(tree,grid);
       const status=document.createElement('div');status.className='omerta-role-status '+(me.preferred_role?'has-role':'');status.innerHTML=me.preferred_role?`<span>TON CHOIX</span><strong>${h(publicRoleLabel(me.preferred_role))}</strong><button type="button" onclick="chooseLobbyRole('')">Retirer</button>`:'<span>TON CHOIX</span><strong>Aucun rôle choisi</strong><small>Un rôle sera attribué au lancement.</small>';if(grid)zone.insertBefore(status,grid);
     }
     const random=document.createElement('button');random.type='button';random.className='igr-random-role-cta';random.onclick=()=>chooseRandomLobbyRole();random.innerHTML='<span><b>RÔLE AU HASARD</b><small>Tirage uniforme parmi les rôles encore disponibles.</small></span><em>TIRER</em>';if(grid)zone.insertBefore(random,grid);
@@ -110,7 +110,7 @@
     let html=prevPrivateCard();if(!isOmerta(STATE.sync?.room?.scenario_id))return html;
     const card=STATE.sync?.player?.private_state||{},facts=Array.isArray(card.fixed_facts)?card.fixed_facts:[],sentence=Number(card.base_sentence||0);
     if(facts.length||sentence){html+=`<section class="omerta-objective-card omerta-fixed-facts"><span>CONSÉQUENCES FIXES</span>${sentence?`<div><small>PEINE DE DÉPART</small><strong>${sentence} ans</strong></div>`:''}${facts.length?`<details><summary>Faits irréversibles</summary><ul>${facts.map(x=>`<li>${h(x)}</li>`).join('')}</ul></details>`:''}</section>`;}
-    return html+`<button class="btn ghost block omerta-tree-open" onclick="igrOmertaOpenFamilyTree()">Arbre de la Famiglia <span>Voir les liens et les conséquences</span></button>`;
+    return html+`<button class="btn ghost block omerta-tree-open" onclick="igrOmertaOpenFamilyTree()">Arbre de la Famiglia <span>Voir les membres et la parenté</span></button>`;
   };
 
   const prevRenderLobby=renderLobby;
