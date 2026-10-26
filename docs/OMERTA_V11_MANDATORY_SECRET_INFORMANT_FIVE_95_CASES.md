@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V11
+
+> **ARCHIVE / DÉCISION REMPLACÉE :** [OMERTÀ V13 — indic volontaire, risque réel et parties sans indic](OMERTA_V13_VOLUNTARY_TURNCOAT_RISK_80_20.md) est maintenant le **SEUL contrat actif pour l'indic**. Ne plus appliquer les mentions anciennes d'« indic toujours présent », d'attribution automatique ou de « reconstitution impossible sans indic ». Les enquêtes et leur contenu atmosphérique restent des références éditoriales, mais la décision de coopérer appartient au joueur à partir de C2. Aucun de ces documents archivés ne prouve une intégration de gameplay en production.
+
 ## CINQ DOSSIERS 9,5/10 CIBLÉS · UN INDIC GARANTI · PRESSION MAXIMALE SUR L'ENQUÊTE
 
 **Décisions d'auteur, 26 octobre 2026 :** l'indic est **toujours présent, exactement une fois dans chaque partie OMERTÀ 021–025**, et il doit être décisif pour une reconstitution *complète*. Les 5 affaires gagnent en densité criminelle et psychologique pour viser **9,5/10 éditorial chacun**. La famille s'appelle **Santoro**. Les postes jouables s'appellent **Don Santoro, Consigliere, Capo, Soldato, Associato, Sottocapo, Contabile**, et affichent **le pseudo du participant**, pas une identité fictive imposée. **L'indic ne figure jamais dans l'arbre.**
