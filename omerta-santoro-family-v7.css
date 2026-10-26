@@ -1,0 +1,46 @@
+/* OMERTA Santoro v7 — public family organization, never variant-linked. */
+.omerta-santoro-tree-modal{z-index:10030}
+.omerta-santoro-tree-modal .os7-box{width:min(940px,calc(100vw - 24px));max-height:min(90vh,900px);overflow:auto;padding:clamp(14px,3vw,28px);background:#121519;color:#edf0f1;border:1px solid #56575a;border-radius:14px}
+.os7-heading{text-align:center;margin:4px 0 16px}
+.os7-overline{font-size:.69rem;letter-spacing:.2em;color:#b5b8bd}
+.os7-heading h2{font-size:clamp(21px,4vw,32px);letter-spacing:.08em;line-height:1.1;margin:8px 0}
+.os7-heading p{font-size:.82rem;max-width:63ch;margin:0 auto;color:#c0c3c9;line-height:1.4}
+.os7-tabs{display:flex;justify-content:center;gap:8px;margin:14px 0 24px;flex-wrap:wrap}
+.os7-tab{background:#202529;border:1px solid #666b70;color:#d5d9dd;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:700;letter-spacing:.07em;font-size:.72rem}
+.os7-tab[aria-selected=true]{background:#3a4149;border-color:#c9d0d7;color:#fff}
+.os7-tab:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.os7-panel h3{font-size:.81rem;letter-spacing:.13em;color:#e2e5e8;text-transform:uppercase;text-align:center;margin:8px 0 16px}
+.os7-topboss{max-width:265px;margin:0 auto 22px;position:relative}
+.os7-topboss::after{content:'';position:absolute;left:50%;top:100%;height:22px;border-left:1px solid #747d87}
+.os7-command{width:min(480px,95%);margin:0 auto 27px;position:relative}
+.os7-command::after{content:'';position:absolute;left:50%;top:100%;height:26px;border-left:1px solid #747d87}
+.os7-crew{border:1px solid #555e65;padding:10px;border-radius:9px;background:#191e22}
+.os7-command .os7-crew{background:#151a1e}
+.os7-crew h3{font-size:.64rem;color:#afb7bd;margin:0 0 12px}
+.os7-crew-members{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px}
+.os7-crews{display:grid;grid-template-columns:1.7fr 1fr 1fr;align-items:start;gap:12px;position:relative}
+.os7-crews::before{content:'';position:absolute;top:-14px;left:15%;right:15%;border-top:1px solid #747d87}
+.os7-person{background:#252b30;border:1px solid #5a6269;border-radius:7px;padding:10px;min-height:94px;text-align:left;display:flex;flex-direction:column;gap:3px;overflow-wrap:anywhere}
+.os7-person strong{font-size:.89rem;line-height:1.18}
+.os7-person small{font-size:.62rem;letter-spacing:.12em;color:#c6d0d9}
+.os7-person p{font-size:.71rem;line-height:1.35;color:#bfc6ca;margin:5px 0 0}
+.os7-boss{border-color:#a7a8a3;background:#333535}
+.os7-caporegime{border-color:#747f8b}
+.os7-famille-de-sang{border-style:dashed}
+.os7-note{color:#b8c0c6;font-size:.77rem;line-height:1.45;text-align:center;max-width:75ch;margin:15px auto 8px}
+.os7-footer{margin-top:16px;display:flex;align-items:center;gap:14px;justify-content:space-between;font-size:.73rem;color:#aeb8be}
+.os7-footer .btn{flex-shrink:0}
+.os7-panel[hidden]{display:none!important}
+@media(max-width:700px){
+ .os7-crews{grid-template-columns:1fr;gap:11px}
+ .os7-crews::before{display:none}
+ .os7-crew-members{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .os7-topboss{margin-bottom:19px}
+ .os7-person p{font-size:.72rem}
+ .os7-footer{flex-wrap:wrap}
+}
+@media(max-width:420px){
+ .os7-crew-members{grid-template-columns:1fr}
+ .os7-box{padding:12px!important}
+}
+@media(prefers-reduced-motion:reduce){.os7-tab{transition:none}}
