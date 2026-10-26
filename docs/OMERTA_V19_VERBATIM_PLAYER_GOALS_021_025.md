@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V19
+
+> **PRÉCISION SUR L'ALLÉGEANCE ET LA RAISON DE DEVENIR INDIC :** un indic **reste dans le camp mafieux** et conserve son rang et son pseudo. **Accepter une proposition de l'Enquêteur ne signifie jamais changer de camp ni recevoir l'ordre de dénoncer la Famiglia.** Le nouvel objectif décrit un **intérêt personnel** que le joueur espère servir grâce à ce contact risqué (faire accuser un rival, écarter une menace financière, protéger sa place). Il peut aussi librement prendre le parti d'un supérieur et manipuler l'Enquêteur, mais **« protéger le Don » n'est pas l'objectif par défaut** : cela ne justifierait pas à lui seul le prix de la trahison. Aucune divulgation automatique. Les motivations introduites dans la phrase n'ont d'effet de score que si l'événement officiellement visé est validé. Les objectifs restent des candidats à qualifier selon les 15 variantes, pas des cartes live.
+
 ## LES OBJECTIFS RÉDIGÉS MOT POUR MOT · SUSPECTS ET INDICS · DOSSIERS 021 À 025
 
 > **Version de rédaction jouable visée — 26 octobre 2026.** Les formulations ci-dessous sont destinées aux **cartes privées** de chaque joueur, pas aux introductions publiques des affaires. **UNE seule phrase « TON OBJECTIF — POUR GAGNER »** est choisie selon son rôle réellement attribué et sa variante privée A/B/C ; si l'Enquêteur l'approche en C2+, le suspect voit **une seule phrase « TON NOUVEL OBJECTIF SI TU ACCEPTES »** avant les boutons. En acceptant, il devient secrètement INDIC et **remplace immédiatement son ancien objectif, sans transmettre automatiquement aucune information**. L'indic est libre de se taire, mentir ou protéger un autre suspect. **Toute cible nommée doit exister dans la partie et être réellement susceptible d'être mise en cause dans cette variante.**
@@ -6,6 +9,9 @@
 **Statut honnête :** ces phrases sont **du texte final proposé pour les rôles**, sur PR de conception. Elles ne sont **pas encore injectées dans les packs Supabase** et n'ont **pas** été rapprochées des quinze vérités privées définitives A/B/C ; les validation de faisabilité et de score sont des préalables de déploiement, pas des réussites déjà attestées.
 
 ## LE TEXTE COMMUN À TOUTES LES CARTES
+
+**Pourquoi le nouvel objectif est différent :** l'offre de l'Enquêteur est une **opportunité risquée pour un mafieux**, pas un changement d'équipe. Pour un joueur tenté, un rival peut menacer ses recettes, sa réputation ou sa liberté, et le contact avec l'Enquêteur peut lui servir à provoquer une attribution avantageuse. Les formulations d'indic ci-dessous **recentrent donc les objectifs sur le bénéfice personnel précis**. L'option de protéger un supérieur en double jeu reste autorisée si ce joueur le choisit ; ne jamais l'imposer parce qu'il est indic. **Seul le résultat explicite du verdict (« désigner X comme responsable de Y ») est évalué**, pas l'intention psychologique ou le bénéfice supposé « pour préserver ton autorité », qui donne du sens à l'objectif sans devenir une seconde condition cachée.
+
 
 **ÉNONCÉ :** Les faits de ta carte décrivent ce que ton personnage sait ou a fait dans ce dossier. Tu es libre de les raconter, de les minimiser, de les contester ou de les cacher. Tu peux accuser un autre suspect, le protéger, conclure un accord ou le trahir. Tu ne peux pas modifier les pièces authentiques.
 
@@ -28,12 +34,12 @@
 
 | Rôle attribué | **TON OBJECTIF — SUSPECT** | **TON NOUVEL OBJECTIF — SI TU DEVIENS INDIC** |
 |---|---|---|
-| **Suspect** (rôle générique) | « Au verdict, évite d'être désigné comme responsable principal de la disparition de l'enveloppe. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal du détournement de l'enveloppe. » |
-| **Associato** | « Au verdict, évite d'être désigné comme la personne ayant détourné l'enveloppe. » | « Au verdict, empêche que **[pseudo du Capo]** soit désigné commanditaire du meurtre d'Antonio Gallo. » |
-| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme l'exécutant du meurtre d'Antonio Gallo. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable de la disparition de l'enveloppe. » |
-| **Contabile** | « Au verdict, évite d'être désigné comme l'auteur de la falsification des comptes de la collecte. » | « Au verdict, empêche que **[pseudo du Capo]** soit désigné responsable principal de la disparition de l'enveloppe. » |
-| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme celui qui a commandé l'assassinat d'Antonio Gallo. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal du détournement de la collecte. » |
-| **Consigliere** | « Au verdict, empêche que **[pseudo du Capo]** soit désigné responsable principal du détournement de la collecte. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme la personne responsable de la fuite du montant vers la police. » |
+| **Suspect** (rôle générique) | « Au verdict, évite d'être désigné comme responsable principal de la disparition de l'enveloppe. » | « Au verdict, fais désigner [pseudo du rival désigné] comme responsable du détournement pour écarter les soupçons de tes propres remises. » |
+| **Associato** | « Au verdict, évite d'être désigné comme la personne ayant détourné l'enveloppe. » | « Au verdict, fais retenir [pseudo du rival désigné] comme auteur du détournement pour ne pas avoir à répondre de l'enveloppe manquante. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme l'exécutant du meurtre d'Antonio Gallo. » | « Au verdict, fais désigner [pseudo du rival désigné] comme commanditaire de la mort de Gallo pour détourner les soupçons de ton intervention. » |
+| **Contabile** | « Au verdict, évite d'être désigné comme l'auteur de la falsification des comptes de la collecte. » | « Au verdict, fais retenir [pseudo du rival désigné] comme responsable de la falsification des comptes afin de préserver ta position de Contabile. » |
+| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme celui qui a commandé l'assassinat d'Antonio Gallo. » | « Au verdict, fais désigner [pseudo du rival désigné] comme responsable du détournement pour préserver ton autorité sur les recettes du crew. » |
+| **Consigliere** | « Au verdict, empêche que **[pseudo du Capo]** soit désigné responsable principal du détournement de la collecte. » | « Au verdict, fais retenir [pseudo du rival désigné] comme auteur de la fuite financière pour écarter une menace sur ta position auprès du Don. » |
 
 **Détail consultable :** « La disparition de l'argent, la mort de Gallo et la fuite d'un chiffre sont **trois responsabilités différentes**. Faire soupçonner quelqu'un d'avoir menti sur les comptes ne prouve pas qu'il a tué Gallo. » Les objectifs dont la cible n'est pas présente ou plausiblement suspecte **ne sont jamais servis**.
 
@@ -46,12 +52,12 @@
 
 | Rôle attribué | **TON OBJECTIF — SUSPECT** | **TON NOUVEL OBJECTIF — SI TU DEVIENS INDIC** |
 |---|---|---|
-| **Suspect** | « Au verdict, évite d'être désigné comme l'organisateur des faux témoignages sur la mort de Nino Caruso. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable de la coordination des faux témoignages. » |
-| **Associato** | « Au verdict, évite d'être désigné comme responsable principal de la disparition des recettes des paris. » | « Au verdict, empêche que **[pseudo du Capo]** soit désigné commanditaire de l'assassinat de Nino Caruso. » |
-| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme celui qui a exécuté l'assassinat de Nino Caruso. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme l'instigateur du pacte de faux témoignages. » |
-| **Contabile** | « Au verdict, évite d'être désigné comme responsable principal du détournement des recettes de paris. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal du détournement des recettes. » |
-| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme le commanditaire de la mort de Nino Caruso. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal de l'assassinat de Caruso. » |
-| **Consigliere** | « Au verdict, empêche que **[pseudo du Capo]** soit désigné commanditaire de la mort de Caruso. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable du pacte de faux témoignages. » |
+| **Suspect** | « Au verdict, évite d'être désigné comme l'organisateur des faux témoignages sur la mort de Nino Caruso. » | « Au verdict, fais retenir [pseudo du rival désigné] comme organisateur des faux témoignages pour ne pas payer le prix du silence des autres. » |
+| **Associato** | « Au verdict, évite d'être désigné comme responsable principal de la disparition des recettes des paris. » | « Au verdict, fais désigner [pseudo du rival désigné] comme responsable du détournement des recettes pour écarter la dette qu'on veut te faire porter. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme celui qui a exécuté l'assassinat de Nino Caruso. » | « Au verdict, fais retenir [pseudo du rival désigné] comme instigateur du pacte de silence pour détourner les soupçons de tes propres déclarations. » |
+| **Contabile** | « Au verdict, évite d'être désigné comme responsable principal du détournement des recettes de paris. » | « Au verdict, fais désigner [pseudo du rival désigné] comme responsable des recettes disparues pour écarter le soupçon de fraude sur tes comptes. » |
+| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme le commanditaire de la mort de Nino Caruso. » | « Au verdict, fais retenir [pseudo du rival désigné] comme organisateur des faux témoignages pour préserver ton autorité sur le crew. » |
+| **Consigliere** | « Au verdict, empêche que **[pseudo du Capo]** soit désigné commanditaire de la mort de Caruso. » | « Au verdict, fais désigner [pseudo du rival désigné] comme commanditaire de l'assassinat de Caruso pour affaiblir son influence sur la Famiglia. » |
 
 **Détail consultable :** « Avoir assisté à la réunion, avoir menti ensuite et avoir ordonné le meurtre sont **trois faits distincts**. Une déclaration peut être sincère et incomplète. »
 
@@ -64,13 +70,13 @@
 
 | Rôle attribué | **TON OBJECTIF — SUSPECT** | **TON NOUVEL OBJECTIF — SI TU DEVIENS INDIC** |
 |---|---|---|
-| **Suspect** | « Au verdict, évite d'être désigné comme responsable principal de la fuite sur le déplacement d'Adriano. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable de cette fuite. » |
-| **Associato** | « Au verdict, évite d'être désigné comme celui qui a saboté les négociations en faisant circuler l'offre modifiée. » | « Au verdict, empêche que **[pseudo du Consigliere]** soit désigné responsable du sabotage des négociations. » |
-| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme l'exécutant de l'attaque visant Adriano Santoro. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal du meurtre de Domenico Falco. » |
-| **Contabile** | « Au verdict, évite d'être désigné comme celui qui a falsifié les conditions financières de l'accord. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable de la modification frauduleuse de l'accord. » |
-| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme le commanditaire du meurtre de Domenico Falco. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable de la fuite concernant Adriano. » |
-| **Consigliere** | « Au verdict, évite d'être désigné comme l'instigateur du sabotage du rendez-vous. » | « Au verdict, empêche que **[pseudo du Capo]** soit désigné commanditaire du meurtre de Falco. » |
-| **Sottocapo / Underboss** | « Au verdict, empêche que **[pseudo du Consigliere]** soit désigné responsable du sabotage de l'accord. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal de la fuite concernant Adriano. » |
+| **Suspect** | « Au verdict, évite d'être désigné comme responsable principal de la fuite sur le déplacement d'Adriano. » | « Au verdict, fais retenir [pseudo du rival désigné] comme responsable de la fuite concernant Adriano pour éviter de servir de bouc émissaire. » |
+| **Associato** | « Au verdict, évite d'être désigné comme celui qui a saboté les négociations en faisant circuler l'offre modifiée. » | « Au verdict, fais désigner [pseudo du rival désigné] comme instigateur du sabotage de l'accord pour préserver l'avantage commercial que tu convoites. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme l'exécutant de l'attaque visant Adriano Santoro. » | « Au verdict, fais retenir [pseudo du rival désigné] comme exécutant de l'attaque contre Adriano pour éloigner les soupçons liés à tes déplacements. » |
+| **Contabile** | « Au verdict, évite d'être désigné comme celui qui a falsifié les conditions financières de l'accord. » | « Au verdict, fais désigner [pseudo du rival désigné] comme auteur de la modification frauduleuse de l'accord pour préserver ton contrôle sur les comptes. » |
+| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme le commanditaire du meurtre de Domenico Falco. » | « Au verdict, fais retenir [pseudo du rival désigné] comme responsable de la fuite concernant Adriano pour protéger ta place dans les négociations. » |
+| **Consigliere** | « Au verdict, évite d'être désigné comme l'instigateur du sabotage du rendez-vous. » | « Au verdict, fais désigner [pseudo du rival désigné] comme responsable du sabotage de l'accord pour préserver ta réputation de médiateur. » |
+| **Sottocapo / Underboss** | « Au verdict, empêche que **[pseudo du Consigliere]** soit désigné responsable du sabotage de l'accord. » | « Au verdict, fais retenir [pseudo du rival désigné] comme commanditaire du meurtre de Falco pour préserver ta place dans la hiérarchie. » |
 
 **Détail consultable :** « La négociation avortée, le meurtre de Falco et l'attaque contre Adriano ne sont pas automatiquement le même complot. Protéger un allié peut te faire perdre l'appui d'un autre. »
 
@@ -83,12 +89,12 @@
 
 | Rôle attribué | **TON OBJECTIF — SUSPECT** | **TON NOUVEL OBJECTIF — SI TU DEVIENS INDIC** |
 |---|---|---|
-| **Suspect** | « Au verdict, évite d'être désigné comme l'instigateur du meurtre de Sergio Valenti. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal des extorsions de transporteurs. » |
-| **Associato** | « Au verdict, évite d'être désigné comme l'organisateur des extorsions de transporteurs. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal des extorsions. » |
-| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme l'exécutant du meurtre de Sergio Valenti. » | « Au verdict, empêche que **[pseudo du Capo]** soit désigné commanditaire du meurtre de Valenti. » |
-| **Contabile** | « Au verdict, évite d'être désigné comme l'auteur de la falsification des versements liés aux transporteurs. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable de la falsification des comptes de transport. » |
-| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme celui qui a ordonné la mort de Sergio Valenti. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal des extorsions. » |
-| **Consigliere** | « Au verdict, empêche que **[pseudo du Capo]** soit désigné instigateur du meurtre de Valenti. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme celui qui a ordonné le meurtre de Valenti. » |
+| **Suspect** | « Au verdict, évite d'être désigné comme l'instigateur du meurtre de Sergio Valenti. » | « Au verdict, fais désigner [pseudo du rival désigné] comme organisateur des extorsions pour ne pas devenir le bouc émissaire du détenu. » |
+| **Associato** | « Au verdict, évite d'être désigné comme l'organisateur des extorsions de transporteurs. » | « Au verdict, fais retenir [pseudo du rival désigné] comme responsable principal du racket des transporteurs pour échapper aux accusations du détenu. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme l'exécutant du meurtre de Sergio Valenti. » | « Au verdict, fais désigner [pseudo du rival désigné] comme commanditaire de la mort de Valenti pour éloigner les soupçons de ton intervention. » |
+| **Contabile** | « Au verdict, évite d'être désigné comme l'auteur de la falsification des versements liés aux transporteurs. » | « Au verdict, fais retenir [pseudo du rival désigné] comme falsificateur des comptes pour préserver ta place dans les opérations financières. » |
+| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme celui qui a ordonné la mort de Sergio Valenti. » | « Au verdict, fais désigner [pseudo du rival désigné] comme organisateur des extorsions pour conserver ton influence sur le réseau. » |
+| **Consigliere** | « Au verdict, empêche que **[pseudo du Capo]** soit désigné instigateur du meurtre de Valenti. » | « Au verdict, fais retenir [pseudo du rival désigné] comme commanditaire du meurtre de Valenti pour écarter le risque que sa déposition te compromette. » |
 | **Pentito** (si rôle formel réellement attribué) | « Au dénouement, obtiens une protection provisoire réellement approuvée pour ta coopération formelle. » | **Non proposé si la coopération formelle est déjà active** : Pentito et indic clandestin sont deux cadres distincts, pas un changement automatique d'étiquette. |
 
 **Détail consultable :** « Un associé arrêté, un pentito formel et un indic recruté en secret ne sont pas trois noms pour le même statut. Si ton rôle a déjà formalisé une coopération judiciaire, le jeu ne t'offre pas une deuxième coopération clandestine contradictoire. »
@@ -102,14 +108,14 @@
 
 | Rôle attribué | **TON OBJECTIF — SUSPECT** | **TON NOUVEL OBJECTIF — SI TU DEVIENS INDIC** |
 |---|---|---|
-| **Suspect** | « Au verdict, évite d'être désigné comme l'exécutant du meurtre de Carlo Benedetti. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal du racket contre Benedetti. » |
-| **Associato** | « Au verdict, évite d'être désigné comme l'organisateur du racket contre Carlo Benedetti. » | « Au verdict, empêche que **[pseudo du Capo]** soit désigné responsable principal du meurtre de Benedetti. » |
-| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme celui qui a assassiné Carlo Benedetti. » | « Au verdict, empêche que **[pseudo du Don]** soit désigné commanditaire du meurtre de Benedetti. » |
-| **Contabile** | « Au verdict, évite d'être désigné comme responsable principal du détournement des sommes extorquées à Benedetti. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme responsable principal de ces détournements. » |
-| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme le commanditaire de l'assassinat de Benedetti. » | « Au verdict, empêche que **[pseudo du Don]** soit désigné commanditaire du meurtre de Benedetti. » |
-| **Consigliere** | « Au verdict, empêche que **[pseudo du Don]** soit désigné comme commanditaire du meurtre de Benedetti. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme celui qui a déformé l'ordre avant le meurtre. » |
-| **Sottocapo / Underboss** | « Au verdict, évite d'être désigné comme celui qui a transmis un ordre d'assassiner Benedetti. » | « Au verdict, empêche que **[pseudo du Don]** soit désigné commanditaire du meurtre de Benedetti. » |
-| **Don Santoro** | « Au verdict, évite d'être désigné comme le commanditaire du meurtre de Carlo Benedetti. » | « Au verdict, fais désigner **[pseudo du rival désigné]** comme principal responsable de l'extorsion contre Benedetti. » |
+| **Suspect** | « Au verdict, évite d'être désigné comme l'exécutant du meurtre de Carlo Benedetti. » | « Au verdict, fais désigner [pseudo du rival désigné] comme responsable principal du racket pour éloigner les soupçons de tes propres versements. » |
+| **Associato** | « Au verdict, évite d'être désigné comme l'organisateur du racket contre Carlo Benedetti. » | « Au verdict, fais retenir [pseudo du rival désigné] comme organisateur du racket pour préserver la place que tu occupes dans le crew. » |
+| **Soldato / Uomo d'Onore** | « Au verdict, évite d'être désigné comme celui qui a assassiné Carlo Benedetti. » | « Au verdict, fais désigner [pseudo du rival désigné] comme auteur de la déformation de l'ordre pour écarter les soupçons de tes actes. » |
+| **Contabile** | « Au verdict, évite d'être désigné comme responsable principal du détournement des sommes extorquées à Benedetti. » | « Au verdict, fais retenir [pseudo du rival désigné] comme auteur du détournement des sommes extorquées pour conserver ta place dans les comptes. » |
+| **Capo / Caporegime** | « Au verdict, évite d'être désigné comme le commanditaire de l'assassinat de Benedetti. » | « Au verdict, fais désigner [pseudo du rival désigné] comme celui qui a transmis l'ordre de tuer Benedetti pour préserver ton autorité sur le crew. » |
+| **Consigliere** | « Au verdict, empêche que **[pseudo du Don]** soit désigné comme commanditaire du meurtre de Benedetti. » | « Au verdict, fais retenir [pseudo du rival désigné] comme auteur d'une déformation de l'ordre pour préserver ton influence auprès du Don. » |
+| **Sottocapo / Underboss** | « Au verdict, évite d'être désigné comme celui qui a transmis un ordre d'assassiner Benedetti. » | « Au verdict, fais désigner [pseudo du rival désigné] comme celui qui a transmis l'ordre meurtrier pour empêcher qu'on remonte jusqu'à toi. » |
+| **Don Santoro** | « Au verdict, évite d'être désigné comme le commanditaire du meurtre de Carlo Benedetti. » | « Au verdict, fais retenir [pseudo du rival désigné] comme principal responsable des extorsions contre Benedetti pour préserver ton autorité de Don. » |
 | **Pentito** (si une coopération judiciaire formelle préexiste dans ce dossier) | « Au dénouement, obtiens une protection provisoire réellement approuvée pour tes déclarations. » | **Non proposé si la coopération formelle est active** : le scénario doit rester cohérent avec la procédure déjà choisie. |
 
 **Détail consultable :** « Un ordre de racket, une menace et un ordre de tuer sont des responsabilités distinctes. Un Don peut être responsable des premiers sans avoir commandé le dernier ; l'inverse ne peut pas être déduit de son rang. »
