@@ -15,6 +15,9 @@ declare
   detail text;
   pack_secret text;
   already_sent boolean;
+  cards_out jsonb;
+  catalog jsonb;
+  match_id int;
 begin
   select * into p from public.igr_v4_players
   where room_code=upper(trim(p_code)) and player_token=p_player_token;
@@ -29,47 +32,67 @@ begin
     return jsonb_build_object('available',false,'cards','[]'::jsonb);
   end if;
 
-  -- Une carte dépend strictement des connaissances du personnage attribuées au début.
-  if p.internal_slot=1
-     and position('rinaldi' in lower(coalesce(p.private_state->>'hide',''))) > 0
-  then
-    key:='021_money_route';
-    detail:='Une partie de l’argent de l’enveloppe devait remonter au cercle de Rinaldi.';
-  elsif p.internal_slot=7
-     and position('somme supplémentaire' in lower(coalesce(p.private_state->>'hide',''))) > 0
-  then
-    key:='021_money_ledger';
-    detail:='Les comptes révèlent une somme supplémentaire absente des registres du groupe.';
+  match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
+  -- L'onglet n'existe qu'après acceptation d'une offre authentifiée par le serveur.
+  if not exists(
+    select 1 from public.igr_v4_actions a
+    where a.room_code=r.code and a.player_id=p.id
+      and a.action_type='omerta_indic_response'
+      and a.payload->>'accepted'='true'
+      and coalesce((a.payload->>'match_no')::int,1)=match_id
+  ) then
+    return jsonb_build_object('available',false,'cards','[]'::jsonb);
+  end if;
+
+  -- Trois sujets distincts fondés sur la fiche réellement assignée au joueur.
+  -- Seule la première carte donne une information financière cachée majeure.
+  if p.internal_slot=1 and position('rinaldi' in lower(coalesce(p.private_state->>'hide','')))>0 then
+    select x.pack->'suspects'->0->>'hide' into pack_secret
+      from public.igr_v4_scenario_packs x where x.scenario_id='021';
+    if position('rinaldi' in lower(coalesce(pack_secret,'')))=0
+    then return jsonb_build_object('available',false,'cards','[]'::jsonb); end if;
+    catalog:=jsonb_build_array(
+      jsonb_build_object('id','021_money_route','title','Les transferts d’argent',
+        'detail','Une partie de l’argent de l’enveloppe devait remonter au cercle de Rinaldi.',
+        'novelty','potentially_new'),
+      jsonb_build_object('id','021_handoff','title','La remise de l’enveloppe',
+        'detail','Paolo a remis l’enveloppe à un intermédiaire avant 22 heures.',
+        'novelty','potentially_new'),
+      jsonb_build_object('id','021_detour','title','Le détour de 21 h 22',
+        'detail','Paolo n’était plus sur l’itinéraire prévu à 21 h 22.',
+        'novelty','already_documented')
+    );
+  elsif p.internal_slot=7 and position('somme supplémentaire' in lower(coalesce(p.private_state->>'hide','')))>0 then
+    select x.pack->'suspects'->6->>'hide' into pack_secret
+      from public.igr_v4_scenario_packs x where x.scenario_id='021';
+    if position('somme supplémentaire' in lower(coalesce(pack_secret,'')))=0
+    then return jsonb_build_object('available',false,'cards','[]'::jsonb); end if;
+    catalog:=jsonb_build_array(
+      jsonb_build_object('id','021_money_ledger','title','Les transferts d’argent',
+        'detail','Les comptes révèlent une somme supplémentaire absente des registres du groupe.',
+        'novelty','potentially_new'),
+      jsonb_build_object('id','021_money_preparation','title','La préparation des montants',
+        'detail','Salvatore a préparé les montants plus tôt dans la journée.',
+        'novelty','already_documented'),
+      jsonb_build_object('id','021_money_records','title','Les écritures comptables',
+        'detail','Les écritures comptables de Salvatore existent.',
+        'novelty','already_documented')
+    );
   else
     return jsonb_build_object('available',false,'cards','[]'::jsonb);
   end if;
 
-  -- Les deux versions sont ancrées dans le dossier serveur, pas dans du texte client.
-  select case when p.internal_slot=1 then x.pack->'suspects'->0->>'hide'
-              when p.internal_slot=7 then x.pack->'suspects'->6->>'hide' end
-    into pack_secret
-  from public.igr_v4_scenario_packs x where x.scenario_id='021';
-  if pack_secret is null or
-     (p.internal_slot=1 and position('rinaldi' in lower(pack_secret))=0) or
-     (p.internal_slot=7 and position('somme supplémentaire' in lower(pack_secret))=0)
-  then
-    return jsonb_build_object('available',false,'cards','[]'::jsonb);
-  end if;
-
-  select exists(
+  select coalesce(jsonb_agg(c.value order by c.ordinality),'[]'::jsonb)
+  into cards_out
+  from jsonb_array_elements(catalog) with ordinality c(value,ordinality)
+  where not exists(
     select 1 from public.igr_v4_actions a
     where a.room_code=r.code and a.action_type='omerta_verified_intel'
-      and coalesce((a.payload->>'match_no')::int,1)=greatest(1,coalesce((r.state->>'match_no')::int,1))
-      and a.payload->>'fact_id'=key
-  ) into already_sent;
-
-  return jsonb_build_object(
-    'available',not already_sent, 'already_sent',already_sent,
-    'cards',case when already_sent then '[]'::jsonb else jsonb_build_array(
-      jsonb_build_object('id',key,'title','Les transferts d’argent',
-        'detail',detail,'warning','Le renseignement sera transmis à l’Enquêteur et pourra exposer ta coopération.')
-    ) end
+      and coalesce((a.payload->>'match_no')::int,1)=match_id
+      and a.payload->>'fact_id'=c.value->>'id'
   );
+  return jsonb_build_object('available',jsonb_array_length(cards_out)>0,
+    'cards',cards_out,'total_cards',3,'remaining',jsonb_array_length(cards_out));
 end;
 $$;
 
@@ -85,6 +108,7 @@ declare
   chosen jsonb;
   receiver public.igr_v4_players%rowtype;
   action_id bigint;
+  match_id int;
 begin
   select * into p from public.igr_v4_players
   where room_code=upper(trim(p_code)) and player_token=p_player_token;
@@ -96,6 +120,13 @@ begin
     raise exception 'intel_unavailable';
   end if;
   perform igr_private.rate_limit('omerta_money_intel_send',p.id::text,10,60);
+  match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
+  if not exists(
+    select 1 from public.igr_v4_actions a
+    where a.room_code=r.code and a.player_id=p.id and a.action_type='omerta_indic_response'
+      and a.payload->>'accepted'='true'
+      and coalesce((a.payload->>'match_no')::int,1)=match_id
+  ) then raise exception 'indic_not_recruited'; end if;
 
   options:=public.igr_omerta_money_intel_options(p_code,p_player_token);
   select value into chosen
@@ -128,7 +159,8 @@ begin
          jsonb_build_object('fact_id',p_card_id,'receiver_id',receiver.id,
            'truth_verified',true,'first_official_delivery',true,
            'match_no',greatest(1,coalesce((r.state->>'match_no')::int,1)),
-           'scenario_id','021'))
+           'scenario_id','021','topic_title',chosen->>'title',
+           'novelty',chosen->>'novelty'))
   returning id into action_id;
 
   -- Seul l'Enquêteur peut lire le contenu, via le filtrage privé des événements.
@@ -151,3 +183,50 @@ revoke all on function public.igr_omerta_money_intel_options(text,uuid) from pub
 revoke all on function public.igr_omerta_money_intel_send(text,uuid,text) from public;
 grant execute on function public.igr_omerta_money_intel_options(text,uuid) to anon,authenticated;
 grant execute on function public.igr_omerta_money_intel_send(text,uuid,text) to anon,authenticated;
+
+-- Signal anticipé purement facultatif : « Je souhaite en parler ».
+-- Jamais comptabilisé comme coopération réelle ; aucun détail secret n'est transmis.
+create or replace function public.igr_omerta_money_intel_signal(
+ p_code text, p_player_token uuid, p_card_id text
+) returns jsonb language plpgsql security definer set search_path=''
+as $$
+declare
+ p public.igr_v4_players%rowtype;
+ r public.igr_v4_rooms%rowtype;
+ receiver public.igr_v4_players%rowtype;
+ chosen jsonb;
+ opts jsonb;
+ match_id int;
+begin
+ select * into p from public.igr_v4_players
+ where room_code=upper(trim(p_code)) and player_token=p_player_token;
+ if not found then raise exception 'unauthorized'; end if;
+ select * into r from public.igr_v4_rooms where code=p.room_code for update;
+ if r.scenario_id<>'021' or r.status<>'playing' or r.cycle<2 then raise exception 'intel_unavailable'; end if;
+ perform igr_private.rate_limit('omerta_money_intel_signal',p.id::text,10,60);
+ opts:=public.igr_omerta_money_intel_options(p_code,p_player_token);
+ select value into chosen from jsonb_array_elements(coalesce(opts->'cards','[]'::jsonb))
+  where value->>'id'=p_card_id limit 1;
+ if chosen is null then raise exception 'intel_not_owned_or_unavailable'; end if;
+ match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
+ if exists(select 1 from public.igr_v4_actions a where a.room_code=r.code
+   and a.player_id=p.id and a.cycle=r.cycle and a.action_type='omerta_intel_intent'
+   and coalesce((a.payload->>'match_no')::int,1)=match_id
+   and a.payload->>'fact_id'=p_card_id)
+ then return jsonb_build_object('ok',true,'already',true,'status','intent_only'); end if;
+ select * into receiver from public.igr_v4_players
+ where room_code=r.code and public_role='enqueteur' order by seat_index limit 1;
+ if not found then raise exception 'investigator_not_found'; end if;
+ insert into public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
+ values(r.code,p.id,r.cycle,'omerta_intel_intent',jsonb_build_object(
+  'fact_id',p_card_id,'match_no',match_id,'counts_for_cooperation',false));
+ insert into public.igr_v4_events(room_code,cycle,event_type,visibility,target_player_id,payload)
+ values(r.code,r.cycle,'omerta_intel_intent','private',receiver.id,jsonb_build_object(
+ 'title','UNE SOURCE SOUHAITE PARLER',
+ 'text',p.pseudo||' souhaite vous parler de : '||(chosen->>'title')||'.',
+ 'fact_id',p_card_id,'match_no',match_id));
+ return jsonb_build_object('ok',true,'status','intent_only','counts_for_cooperation',false);
+end $$;
+
+revoke all on function public.igr_omerta_money_intel_signal(text,uuid,text) from public;
+grant execute on function public.igr_omerta_money_intel_signal(text,uuid,text) to anon,authenticated;
