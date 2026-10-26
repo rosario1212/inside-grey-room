@@ -1245,7 +1245,7 @@ function privateCardHtml(){
  const canSpyDecide=secret==='espion'&&d?.room?.status==='playing'&&d.room.cycle>=1&&d.room.cycle<=3
   &&!['briefing','role_reading','closed','locking','reveal','final_debrief'].includes(spyPhase)&&!spyPhase.startsWith('final_');
  const spySealKey='igr_spy_v631_'+STATE.room+'_'+p?.id+'_'+d?.room?.cycle;
- const spySealed=STORAGE.getItem(spySealKey)==='1';
+ const spySealed=typeof STORAGE!=='undefined'&&STORAGE.getItem(spySealKey)==='1';
  const spyChoices=d?.room?.cycle===3
   ?[{id:'protect',label:'Protéger la source'},{id:'verify',label:'Vérifier l’archive'}]
   :[{id:'source',label:'Contacter la source'},{id:'archive',label:'Sécuriser les archives'}];
