@@ -1,5 +1,8 @@
 # INSIDE GREY ROOM · OMERTÀ V21 — Objectifs personnels rédigés
 
+> **ARCHIVE — V22 PREND LE RELAIS POUR LE RP ET LA COMPLÉMENTARITÉ :** [OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md](OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md). Les objectifs V21 n'étaient pas encore équilibrés ensemble et certains relevaient de résultats financiers non enregistrés. **Ne pas publier les textes V21 comme fiches définitives**. V22 distingue huit rangs possibles par affaire, leurs objectifs personnels et les tensions mutuelles; elle reste également soumise à la vérification des 15 variantes A/B/C et du moteur.
+
+
 > **Nouvelle référence des formulations de cartes.** Cette V21 remplace les **objectifs de suspects et d'indics V19** et les exemples génériques V20. Un indic **reste mafieux**, accepte librement une offre de l'Enquêteur **dès le cycle 2**, change **immédiatement d'objectif**, sans partager automatiquement de renseignements. Il peut protéger, manipuler, accuser ou garder le silence ; choisir arbitrairement une cible ne donne aucun point. **Chaque joueur ne voit que sa carte compacte** et les détails facultatifs correspondants. **Statut : contenu éditorial de PR brouillon, pas encore intégré dans les salles ni validé sur les quinze canons A/B/C.**
 
 ## Texte commun à afficher aux joueurs
