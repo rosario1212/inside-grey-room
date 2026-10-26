@@ -1,0 +1,191 @@
+{
+  "version": "OMERTA-V12",
+  "stage": "editorial-review-only",
+  "live": false,
+  "tenets": [
+    "self_interested_secret_informant",
+    "credible_mafia_stakes",
+    "original_gameplay_rules",
+    "player_real_personality",
+    "80_20_independent_cases",
+    "replayability_ABC",
+    "no_blocking_silence"
+  ],
+  "title_rule": {
+    "don": "Don Santoro",
+    "other_public_ranks": [
+      "Consigliere",
+      "Sottocapo",
+      "Capo",
+      "Soldato",
+      "Associato",
+      "Contabile"
+    ],
+    "player_pseudonym": true,
+    "private_informant_shown": false,
+    "blood_family_only": [
+      "Adriano Santoro",
+      "Elena Santoro"
+    ]
+  },
+  "informant": {
+    "mandatory": true,
+    "exact_count_per_match": 1,
+    "eligible_family_players_min": 2,
+    "overarching_motivation": "OWN PERSONAL WIN CONDITION, NOT INVESTIGATOR SUCCESS",
+    "win_condition_independent_of_investigator_result": true,
+    "may_benefit_from_investigator_failure": true,
+    "may_lose_when_investigators_win": true,
+    "source_knows_full_truth": false,
+    "may_lie": true,
+    "may_keep_silent": true,
+    "objective_must_be_measurable_via_server_events": true,
+    "objective_must_be_feasible_under_selected_variant_and_assigned_rank": true,
+    "oral_sentiment_not_scorable": true,
+    "uncooperative_informant_does_not_block_phases": true,
+    "no_automatic_informant_identity_reveal": true,
+    "invariant_after_reconnect": true,
+    "independent_per_room": true,
+    "public_role_as_cover": true,
+    "never_in_public_family_tree": true,
+    "requires_private_migration_and_security_test": true,
+    "conflict_model": "Informant owns a specific fact desired by investigators; disclosing can threaten informant's personal interest; disclosures require independent corroboration.",
+    "privacy_fields_never_public": [
+      "is_informant",
+      "informant_player_id",
+      "informant_objective",
+      "variant_truth"
+    ]
+  },
+  "gameplay": {
+    "interrogations_cycle_1": true,
+    "official_confrontations_earliest_cycle": 2,
+    "cycle_total": 3,
+    "use_existing_events": true,
+    "no_new_mini_game": true,
+    "final_verdict_and_reveal": true
+  },
+  "tone": {
+    "setting": "2006 greater New York and north New Jersey",
+    "family": "Santoro fictional",
+    "themes": [
+      "coerced protection money",
+      "weekly tributes",
+      "crew hierarchy",
+      "bookmakers and debts",
+      "sit-down economic bargains",
+      "commercial extortion",
+      "murder and personal consequences",
+      "fragile loyalty",
+      "self-interested sources",
+      "federal pressure"
+    ],
+    "prohibit_player_acting": true,
+    "prohibit_cartoon_mob_speech": true,
+    "avoid_crime_instructions": true,
+    "concrete_economic_and_human_effects": true
+  },
+  "cases": [
+    {
+      "id": "021",
+      "title": "L'ENVELOPPE",
+      "private_goal_example": "Correct the accusation of the person who withheld informant's share while protecting informant from principal murder responsibility",
+      "solo_story": [
+        "nine shops pay extortion",
+        "Antonio Gallo murdered",
+        "envelope missing",
+        "accounts mismatch"
+      ],
+      "world_echo": [
+        "Santoro crew",
+        "Capo tribute"
+      ],
+      "variant_goal_adjustment_required": true
+    },
+    {
+      "id": "022",
+      "title": "OMERTÀ",
+      "private_goal_example": "Expose the person who transferred a private gambling debt to the informant while avoiding attribution for collective false testimony",
+      "solo_story": [
+        "Nino Caruso killed",
+        "bookmaker debt",
+        "ambiguous superior instruction",
+        "coordinated declarations"
+      ],
+      "world_echo": [
+        "social club in Newark",
+        "made member hierarchy"
+      ],
+      "variant_goal_adjustment_required": true
+    },
+    {
+      "id": "023",
+      "title": "LA TABLE",
+      "private_goal_example": "Prevent an arrangement costing informant their cut without the verdict assigning them responsibility for the itinerary leak",
+      "solo_story": [
+        "Domenico Falco murdered",
+        "two different sit-down offers",
+        "Adriano attacked",
+        "transport proceeds"
+      ],
+      "world_echo": [
+        "Consigliere",
+        "Santoro blood family"
+      ],
+      "variant_goal_adjustment_required": true
+    },
+    {
+      "id": "024",
+      "title": "IL PENTITO",
+      "private_goal_example": "Avoid being identified as principal collector while a detained associate negotiates, preserving a separately registered protection or lesser liability",
+      "solo_story": [
+        "transport extortion",
+        "Valenti murdered",
+        "contradictory notes",
+        "cooperation offer"
+      ],
+      "world_echo": [
+        "Santoro commercial network",
+        "federal justice"
+      ],
+      "variant_goal_adjustment_required": true
+    },
+    {
+      "id": "025",
+      "title": "IL DON",
+      "private_goal_example": "Shift principal responsibility for the murder to the demonstrably relevant command layer while preserving own limited exposure to the racket",
+      "solo_story": [
+        "Benedetti murder",
+        "construction extortion",
+        "altered orders",
+        "separate subcontractor dispute"
+      ],
+      "world_echo": [
+        "Don Santoro",
+        "Capo and Consigliere"
+      ],
+      "variant_goal_adjustment_required": true
+    }
+  ],
+  "split": {
+    "case_story": 80,
+    "shared_santoro_world": 20,
+    "editorial_proportions_not_math": true,
+    "no_imported_variants_or_player_deaths": true
+  },
+  "checks_required_before_release": [
+    "15 secret variant objective cards and truths coherent",
+    "measurable personal win flags on actual server",
+    "exactly one assigned on room start and reconnect stable",
+    "at least two eligible players remain anonymous",
+    "no leakage via API tree or error",
+    "never-harder-than-fiction mechanical tests",
+    "existing C2+ confrontation routing",
+    "noncooperation does not softlock",
+    "multiplayer and low-player matrix",
+    "FR and EN localization",
+    "unchanged other DLCs"
+  ],
+  "audited_live": false,
+  "note": "Personal win examples are editorial; adjust to actual variant causal facts and available validated endgame checks. Do not expose private assignments or A/B/C outcomes."
+}
