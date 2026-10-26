@@ -14,6 +14,18 @@
 5. **Un résultat traçable** : la victoire de chaque rôle est calculable seulement à partir d'un **verdict verrouillé sur l'acte précis**, d'un **état de part/faveur/autorité contestée officiellement enregistré**, ou d'une **protection approuvée par l'autorité compétente**. Une déclaration non vérifiée, une promesse de protection et une simple faveur orale ne sont jamais des scores.
 6. **Pas de victoire acquise d'avance ni de mission impossible** : les faits de la variante, les personnes présentes et les décisions atteignables doivent offrir au moins une issue gagnante et une perdante. Si l'axe ou l'événement officiel manque, l'objectif correspondant **n'est pas distribué** et une alternative adaptée doit être écrite et validée. Aucun statut n'est importé d'une partie à l'autre.
 
+## Tirage aléatoire des fonctions — pas de rôle jouable « Suspect »
+
+**Nouvelle règle impérative :** les joueurs ne choisissent pas librement « Capo » ou « Don ». À chaque nouvelle partie OMERTÀ, le **serveur** distribue aléatoirement les **postes de la Famiglia Santoro préparés pour ce scénario et sa variante**. Chaque joueur mafieux reçoit exactement un rôle concret, sa fiche de faits, son unique objectif personnel et les pouvoirs limités à son rang. Un rang ne suffit jamais à révéler la vérité de l'enquête ou l'identité d'un indic.
+
+Les postes possibles sont **Associato, Soldato / Uomo d'Onore, Contabile, Capo / Caporegime, Consigliere, Sottocapo / Underboss et Don Santoro**. **« Suspect » est un statut de procédure, pas une huitième fonction mafieuse.** L'Enquêteur voit des personnes suspectées, mais les joueurs concernés jouent chacun une fonction réelle au sein de la Famiglia.
+
+**Aléatoire ne signifie pas incohérent :** on mélange des **places scénarisées prévalidées**, et non des étiquettes indépendantes des indices. **Au maximum un Don Santoro** dans une partie ; aucune obligation de donner le Don à un joueur. Le Don peut être un PNJ de contexte. Plusieurs Soldati ou Associati peuvent être jouables seulement s'ils ont **des missions et des faits privés réellement distincts**. Un Capo supplémentaire demande un crew distinct et des enjeux cohérents. Si le nombre de joueurs dépasse les places scénarisées et validées, la salle ne peut pas fabriquer des rôles ou copier un objectif : il faut une variante avec assez de postes écrits.
+
+**Dès le début**, le pseudo du joueur est associé à son rang visible dans l'arbre Santoro. Son objectif, ses pièces privées et un éventuel futur statut d'indic restent secrets. **L'indic n'est jamais distribué comme rang initial** : seul le joueur peut accepter volontairement l'offre confidentielle envoyée par l'Enquêteur à partir de C2. Il reste alors à son poste mafieux et ne révèle rien automatiquement.
+
+**État technique :** ces règles sont à implémenter côté serveur pour OMERTÀ 021–025 ; l'arbre affiche déjà des rangs et pseudos disponibles, **mais cela ne prouve pas une attribution aléatoire sécurisée en production**.
+
 ## Audit complémentaire : UNE affaire, plusieurs intérêts distincts
 
 Les joueurs **n'ont pas seize crimes différents à comprendre**. Chaque scénario a quatre questions centrales, qui suffisent à alimenter le camp Enquête et à faire se rencontrer les objectifs personnels. Les distinctions « commanditaire / exécutant / falsificateur / bénéficiaire » sont des **responsabilités possibles à établir sur ces faits communs**, pas seize nouvelles phases ou formulaires de verdict à imposer. **Le moteur devra malgré tout enregistrer assez de détails par acte et personne pour évaluer chaque objectif ; cet enregistrement n'existe pas encore dans les parties live.**
@@ -124,7 +136,7 @@ Les joueurs **n'ont pas seize crimes différents à comprendre**. Chaque scénar
 
 ### Lecture des objectifs avec le casting réel
 
-Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueurs obligatoires**. Si une personne a le rang de Capo, elle reçoit **une** mission Capo, **pas** celle du « suspect générique » en plus. Si deux joueurs partagent un rang, ils ne doivent **pas** recevoir automatiquement le même objectif : il faut personnaliser leur poste, leur fait connu et leur but d'après la variante. Si une fonction manque, les autres continuent à jouer : la mission ne dépend jamais d'une déclaration obligatoire de l'absent.
+Les sept fonctions mafieuses des tableaux sont des **gabarits possibles, jamais sept joueurs obligatoires** : Associato, Soldato, Contabile, Capo, Consigliere, Sottocapo et Don Santoro. **À l'ouverture de la partie, le serveur tire au hasard des postes compatibles avec la variante**, et chaque joueur mafieux reçoit exactement **un poste et une seule mission privée**. « Suspect » désigne uniquement son statut dans l'enquête, **jamais un rôle attribuable**. Le Don peut rester PNJ et sa case sans pseudo. Si plusieurs joueurs occupent un même rang, chacun doit disposer d'un poste, de faits et d'objectifs propres, rédigés et validés à l'avance. Un rang absent n'empêche jamais la résolution de l'affaire.
 
 **Défaut bloquant :** la cohérence des scénarios n'est pas prouvée tant qu'une véritable distribution de 1 à 7+ joueurs et chaque variante A/B/C n'a pas été simulée et relue. Les liens ci-dessus démontrent la **cohérence narrative envisagée**, pas leur faisabilité concrète sur les données de production.
 
@@ -194,7 +206,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme responsable du détournement de l'enveloppe du vendredi. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour tes déclarations sur les collectes. » |
 | **Associato** | « Au verdict, évite qu'on te désigne comme celui qui a imposé à Gallo un second versement. » | « Au dénouement, conserve la part de la collecte du vendredi qui te revenait. » |
 | **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant du meurtre d'Antonio Gallo. » | « Au verdict, évite qu'on te désigne comme l'auteur des menaces adressées à Gallo avant sa mort. » |
 | **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur des écritures falsifiées dans les livres de collecte. » | « Au verdict, évite qu'on te désigne comme la personne ayant divulgué le montant confidentiel à la police. » |
@@ -205,7 +216,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
-- **Suspect (sans rang particulier) :** Tu crains de servir de bouc émissaire dans une affaire qui dépasse l'argent manquant. **Ce que tu risques :** Le statut d'indic peut t'exposer sans te garantir une protection.
 - **Associato :** Tu as quelque chose de concret à perdre : ta rémunération de cette collecte. **Ce que tu risques :** Un aveu sur les versements peut te compromettre dans le racket.
 - **Soldato / Uomo d'Onore :** Tu refuses d'endosser chaque violence commise par le crew simplement parce que tu es Soldato. **Ce que tu risques :** Ta version des déplacements peut aussi servir à reconstituer le meurtre.
 - **Contabile :** La provenance d'un chiffre très précis peut faire porter les soupçons sur celui qui tenait les comptes. **Ce que tu risques :** La précision de tes informations peut trahir ton accès exclusif.
@@ -228,7 +238,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme l'auteur d'une fausse déclaration sur la soirée du meurtre. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour pouvoir témoigner sans dépendre du crew. » |
 | **Associato** | « Au verdict, évite qu'on te désigne comme responsable de la disparition des recettes des paris. » | « Au verdict, évite qu'on te désigne comme l'organisateur du pacte de faux témoignages. » |
 | **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme celui qui a exécuté le meurtre de Caruso. » | « Au verdict, évite qu'on te désigne comme l'auteur des menaces formulées contre Caruso avant sa mort. » |
 | **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur du détournement des recettes de paris. » | « Au dénouement, conserve la commission de comptabilité promise sur les paris de cette soirée. » |
@@ -239,7 +248,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
-- **Suspect (sans rang particulier) :** Tu peux vouloir sortir de l'étau des versions concertées sans dénoncer qui que ce soit au hasard. **Ce que tu risques :** Le fait d'accepter ne te garantit ni immunité ni anonymat.
 - **Associato :** Ta dette et ta présence dans l'entourage du bookmaker peuvent te faire porter un mensonge collectif. **Ce que tu risques :** Décrire les récits concertés peut prouver que tu y as participé.
 - **Soldato / Uomo d'Onore :** La menace, l'exécution et l'ordre ne sont pas une seule responsabilité. **Ce que tu risques :** Les heures de réunion peuvent contredire ton récit.
 - **Contabile :** La caisse et ta rémunération sont deux enjeux différents, que le crew peut confondre. **Ce que tu risques :** Tes registres peuvent révéler des dettes que tu aurais préféré taire.
@@ -262,7 +270,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme la personne ayant révélé l'itinéraire d'Adriano. » | « Au dénouement, conserve la part des revenus de transport qui t'était promise dans cet accord. » |
 | **Associato** | « Au verdict, évite qu'on te désigne comme celui qui a fait échouer la négociation. » | « Au verdict, évite qu'on te désigne comme la personne ayant remis l'itinéraire d'Adriano à ses agresseurs. » |
 | **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant de l'attaque contre Adriano. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour toi dans l'affaire de la table. » |
 | **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur des conditions financières falsifiées. » | « Au dénouement, conserve ta commission sur l'accord de transport réellement retenu au dénouement. » |
@@ -273,7 +280,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
-- **Suspect (sans rang particulier) :** Tu peux posséder un intérêt dans l'accord sans être à l'origine de l'attaque. **Ce que tu risques :** La connaissance d'une version confidentielle peut t'identifier.
 - **Associato :** Tu refuses de payer pour une attaque simplement parce que tu as approché la table. **Ce que tu risques :** Ton accès au trajet peut te lier à des hommes que tu veux protéger.
 - **Soldato / Uomo d'Onore :** Tu veux survivre au conflit entre groupes sans dépendre de leur parole. **Ce que tu risques :** Ta protection peut être refusée alors que tes anciens actes restent poursuivables.
 - **Contabile :** Un accord modifié peut changer qui touche l'argent sans changer qui a tué Falco. **Ce que tu risques :** Les deux versions de l'accord peuvent montrer qui a écrit ou modifié les montants.
@@ -296,7 +302,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme celui qui a ordonné l'assassinat de Valenti. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour tes déclarations sur le réseau de transport. » |
 | **Associato** | « Au verdict, évite qu'on te désigne comme l'organisateur du racket des transporteurs. » | « Au verdict, évite qu'on te désigne comme la personne ayant divulgué la date de déposition de Valenti. » |
 | **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Valenti. » | « Au verdict, évite qu'on te désigne comme l'organisateur principal des collectes extorquées aux transporteurs. » |
 | **Contabile** | « Au verdict, évite qu'on te désigne comme l'auteur des faux versements inscrits dans les notes. » | « Au verdict, évite qu'on te désigne comme celui qui a ordonné les versements forcés. » |
@@ -307,7 +312,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
-- **Suspect (sans rang particulier) :** La coopération peut sembler préférable aux risques liés aux notes du témoin. **Ce que tu risques :** Une simple demande de protection ne suffit pas.
 - **Associato :** La date du témoignage peut faire de toi un complice présumé du meurtre, indépendamment des collectes. **Ce que tu risques :** Un rendez-vous ou une correspondance peut montrer ce que tu savais.
 - **Soldato / Uomo d'Onore :** Tu peux être impliqué dans une mission sans décider du racket et de ses bénéficiaires. **Ce que tu risques :** Des aveux sur tes missions peuvent te compromettre.
 - **Contabile :** Tenir un registre n'est pas nécessairement décider de l'extorsion, mais le distinguer sera difficile. **Ce que tu risques :** Les destinataires des fonds peuvent identifier le cercle comptable.
@@ -332,7 +336,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 | Rang public / fonction | **TON OBJECTIF — SUSPECT** | **SI TU ACCEPTES — OBJECTIF INDIC** |
 |---|---|---|
-| **Suspect (sans rang particulier)** | « Au verdict, évite qu'on te désigne comme l'auteur des menaces adressées à Benedetti. » | « Au dénouement, obtiens une protection provisoire effectivement approuvée pour ton témoignage dans cette affaire. » |
 | **Associato** | « Au verdict, évite qu'on te désigne comme l'organisateur du racket de Benedetti. » | « Au verdict, évite qu'on te désigne comme celui qui a porté l'ultimatum à Benedetti. » |
 | **Soldato / Uomo d'Onore** | « Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Benedetti. » | « Au verdict, évite qu'on te désigne comme celui qui a transmis l'ordre de tuer Benedetti. » |
 | **Contabile** | « Au verdict, évite qu'on te désigne comme celui qui a détourné les sommes extorquées à Benedetti. » | « Au verdict, évite qu'on te désigne comme l'organisateur des versements forcés exigés de Benedetti. » |
@@ -343,7 +346,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 **Détails facultatifs sur les enjeux du rôle** (visible uniquement au titulaire, pas à tous les joueurs) :
 
-- **Suspect (sans rang particulier) :** Tu veux une sortie personnelle face à la pression des deux camps. **Ce que tu risques :** Un haut rang ou un témoin indispensable n'est pas automatiquement protégé.
 - **Associato :** Tu ne veux pas assumer la décision d'extorquer ni être sacrifié comme seul messager. **Ce que tu risques :** Un message dont tu connais le texte peut te mettre en cause.
 - **Soldato / Uomo d'Onore :** Tu veux distinguer ce qu'on t'a demandé de ce que tu as réellement transmis ou fait. **Ce que tu risques :** Les destinataires d'une consigne peuvent contredire ta version.
 - **Contabile :** Tu veux séparer la gestion d'argent de l'autorité qui imposait les versements. **Ce que tu risques :** Tes comptes peuvent prouver tes propres décisions.
@@ -369,7 +371,6 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 - **Médier** : Consigliere défend sa mission d'arbitrage et l'interprétation de ses échanges.
 - **Superviser plusieurs crews** : Sottocapo répond de relais/mandats et d'un pouvoir différent de la caisse locale du Capo.
 - **Autorité suprême** : Don Santoro n'est pas automatiquement coupable, mais doit répondre de l'origine des consignes et des prélèvements qui lui sont imputés.
-- **Suspect générique** : une place de repli **seulement si un dossier comprend réellement un suspect sans rang spécialisé**, et si le métier/accès aux faits justifie son objectif. Ne jamais utiliser la catégorie générique pour donner une **deuxième** mission à quelqu'un qui porte déjà un rang.
 
 **Conflits intéressants, jamais imposés :** au 021 l'Associato peut vouloir sa part tandis que le Capo veut garder l'autorité de collecte ; les deux peuvent gagner **si les décisions le permettent**. Au 022 un pacte de faux récits peut mettre en cause plusieurs rangs mais chaque joueur répond de **son acte précis**. Au 023 un contrat et une fuite d'itinéraire se croisent mais l'un n'établit pas l'autre. Au 024 une coopération formelle ne rend pas automatiquement un indic sincère. Au 025 une chaîne d'ordres Don → Sottocapo → Capo → Soldato est une **hypothèse à examiner**, **pas** la vérité présumée d'une variante.
 
@@ -379,4 +380,4 @@ Les huit rôles de chaque tableau sont des **gabarits possibles, pas huit joueur
 
 **Évaluation :** un objectif d'échapper à une imputation peut être gagné même si un autre suspect est accusé à tort ; le **camp Enquête** est évalué séparément sur l'exactitude du verdict par rapport à la vérité canonique. Les objectifs de ressources ou de protection nécessitent de vrais événements autorisés dans le moteur, **pas la décision subjective du MJ**. La règle du verdict, la confidentialité, les sanctions selon rang et la protection conditionnelle demeurent celles des V14–V20.
 
-**En attente d'implémentation :** **les huit rangs** sont ici des *gabarits*, pas la preuve qu'ils sont distribuables sur chacune des 15 variantes. Aucun pack privé ni RPC Supabase n'est modifié par la rédaction ; pas de simulation complète de parties avec casting réel ; les événements financiers, d'autorité et de protection ne sont pas garantis. **Le titre « prêt à jouer » est interdit avant vérification.**
+**En attente d'implémentation :** **les sept fonctions mafieuses** sont ici des *gabarits*, pas la preuve qu'ils sont distribuables sur chacune des 15 variantes. Aucun pack privé ni RPC Supabase n'est modifié par la rédaction ; pas de simulation complète de parties avec casting réel ; les événements financiers, d'autorité et de protection ne sont pas garantis. **Le titre « prêt à jouer » est interdit avant vérification.**
