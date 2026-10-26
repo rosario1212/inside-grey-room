@@ -1,0 +1,47 @@
+// OMERTÀ - assertions de publication préliminaires (sans exécuter le SQL en production).
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const load=p=>fs.readFileSync(p,'utf8');
+const review=load('supabase/migrations/20261027004000_omerta_indic_final_review.sql');
+const score=load('supabase/migrations/20261027004500_omerta_indic_reveal_scoring.sql');
+const recruit=load('supabase/migrations/20261026233000_omerta_indic_recruitment_021.sql');
+const intel=load('supabase/migrations/20261026233500_omerta_money_intel_021.sql');
+const ui=load('omerta-money-intel-v1.js');
+const html=load('index.html'),build=load('scripts/build-web.mjs'),sw=load('service-worker.js');
+new vm.Script(ui);
+new vm.Script(sw);
+for(const asset of ['omerta-money-intel-v1.js','omerta-money-intel-v1.css']){
+ assert.ok(html.includes(asset),'index');
+ assert.ok(build.includes("'"+asset+"'"),'bundler copy');
+ assert.ok(sw.includes("/"+asset+"?"),'offline cache');
+}
+assert.match(recruit,/igr_omerta_indic_offer/);
+assert.match(recruit,/igr_omerta_indic_respond/);
+assert.match(intel,/total_cards',3/);
+assert.match(intel,/counts_for_cooperation',false/);
+assert.match(intel,/one_intel_per_cycle/);
+assert.match(intel,/omerta_verified_intel/);
+assert.match(review,/p_useful boolean/);
+assert.match(review,/p_useful is null then raise exception/);
+assert.match(review,/public_role='enqueteur'/);
+assert.match(review,/room.phase<>'locking'/);
+assert.match(review,/a.action_type='final_lock'/);
+assert.match(review,/action_type='omerta_indic_final_assessment'/);
+assert.match(review,/assessment_already_submitted/);
+assert.match(score,/indic_second_ok:=indic_vote_yes or indic_by_card;/);
+assert.match(score,/indic_personal_ok and indic_second_ok and not dead/);
+assert.match(score,/second_via_investigator_yes/);
+assert.match(score,/second_via_confirmed_card/);
+assert.match(score,/indic_vote_yes then 'validée par l’Enquêteur'/);
+assert.match(score,/if indic_matched then/);
+// Le vote positif ne doit surtout pas exiger une carte envoyée.
+const begin=score.indexOf('indic_second_ok:=indic_vote_yes or indic_by_card;');
+assert.ok(begin>-1);
+const scoring=score.slice(begin,score.indexOf('item:=item||jsonb_build_object',begin));
+assert.doesNotMatch(scoring,/indic_vote_yes and indic_by_card/);
+assert.ok(ui.includes('Oui, cette source m’a été utile'));
+assert.ok(ui.includes('Non, elle ne m’a pas été utile'));
+assert.ok(ui.includes('p_useful:useful'));
+assert.ok(ui.includes("d.room?.phase!=='locking'"));
+console.log('OMERTÀ indic : contrôles statiques de verdict et bundle OK');
