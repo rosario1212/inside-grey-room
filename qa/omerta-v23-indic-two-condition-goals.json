@@ -1,0 +1,1187 @@
+{
+  "version": "OMERTA-V23",
+  "status": "editorial-only-not-live",
+  "supersedes": "V22 informant goals that were winnable without sharing information",
+  "base_design": "V22 complementarity and server-only random authentic Mafia ranks",
+  "scenario_count": 5,
+  "mafia_role_templates": 35,
+  "active_mafia_roles": [
+    "associato",
+    "soldato",
+    "contabile",
+    "capo",
+    "consigliere",
+    "sottocapo",
+    "don"
+  ],
+  "initial_informants": 0,
+  "offer_first_cycle": 2,
+  "informant_remains_in_mafia": true,
+  "one_main_objective_composed_of_two_required_conditions": true,
+  "mandatory_win_conditions": [
+    "save_one_self",
+    "send_one_verified_relevant_private_disclosure"
+  ],
+  "acceptance": {
+    "objective_swapped_immediately": true,
+    "secret_informant_active": true,
+    "disclosures_sent_on_accept": 0,
+    "acceptance_does_not_require_immediate_disclosure": true,
+    "player_may_remain_silent": true,
+    "silent_indic_cannot_win_without_second_condition": true,
+    "decline_preserves_initial_goal_without_penalty": true
+  },
+  "information_rule": {
+    "one_or_more": true,
+    "submitted_after_acceptance_and_before_verdict": true,
+    "originates_in_actual_private_facts": true,
+    "not_already_public": true,
+    "case_relevant": true,
+    "authentic_and_corrobable": true,
+    "has_a_real_information_consequence": true,
+    "false_statement_cannot_satisfy_condition": true,
+    "partial_true_information_can_qualify": true,
+    "source_does_not_have_to_accuse_or_betray_anyone_in_particular": true,
+    "can_maintain_mafia_loyalty": true,
+    "disclosure_event_must_be_authenticated_server_side": true,
+    "private_to_investigator": true,
+    "mere_chat_claim_not_auto_verified": true,
+    "no_reveal_of_variant_truth_from_success_check": true
+  },
+  "protection_and_retaliation": "V14/V15 remain; no guaranteed protection, no automatic penalty on decline, no client-side secret reveal",
+  "cases": [
+    {
+      "id": "021",
+      "title": "L'ENVELOPPE",
+      "story": "Brooklyn, 2006. L'enveloppe du vendredi manque dans la collecte de neuf commerces. Antonio Gallo, qui refusait le second versement, a été assassiné. Les registres et le montant parvenu à la police ne concordent pas.",
+      "focus": "Qui a exigé l'argent, qui a fait disparaître l'enveloppe, qui a ordonné ou exécuté le meurtre, et comment un montant privé est-il sorti du crew ?",
+      "roles": [
+        {
+          "role": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a imposé à Gallo un second versement.",
+          "suspect_axis": "second_collection",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme responsable principal de la disparition de l'enveloppe.",
+            "kind": "avoid_attribution",
+            "axis": "envelope_diversion"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les remises et montants de la collecte du vendredi.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les remises et montants de la collecte du vendredi",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu as quelque chose de concret à perdre : ta rémunération de cette collecte.",
+          "risk": "Un aveu sur les versements peut te compromettre dans le racket.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant du meurtre d'Antonio Gallo.",
+          "suspect_axis": "gallo_homicide_executor",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'auteur des menaces contre Antonio Gallo.",
+            "kind": "avoid_attribution",
+            "axis": "gallo_threats"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les déplacements du crew avant la mort de Gallo.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les déplacements du crew avant la mort de Gallo",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu refuses d'endosser chaque violence commise par le crew simplement parce que tu es Soldato.",
+          "risk": "Ta version des déplacements peut aussi servir à reconstituer le meurtre.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur des écritures falsifiées dans les livres de collecte.",
+          "suspect_axis": "ledger_falsification",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme la personne qui a fait fuiter le montant confidentiel.",
+            "kind": "avoid_attribution",
+            "axis": "amount_leak"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les écritures authentiques de la collecte.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les écritures authentiques de la collecte",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "La provenance d'un chiffre très précis peut faire porter les soupçons sur celui qui tenait les comptes.",
+          "risk": "La précision de tes informations peut trahir ton accès exclusif.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Gallo.",
+          "suspect_axis": "gallo_homicide_order",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a organisé la disparition de l'enveloppe.",
+            "kind": "avoid_attribution",
+            "axis": "envelope_diversion_organizer"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la chaîne des remises de l'enveloppe du vendredi.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "la chaîne des remises de l'enveloppe du vendredi",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Ton rang vaut moins si quelqu'un peut retirer tes recettes ou tes hommes.",
+          "risk": "En négociant, tu risques de confirmer comment les versements remontent jusqu'à toi.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'organisateur de la disparition de l'enveloppe.",
+          "suspect_axis": "envelope_diversion_organizer",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a transmis le montant secret à la police.",
+            "kind": "avoid_attribution",
+            "axis": "amount_leak_mediator"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur l'arbitrage des comptes du crew.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "l'arbitrage des comptes du crew",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Ta position repose sur la confiance accordée à tes arbitrages, pas sur la possession de l'enveloppe.",
+          "risk": "Ton rôle de médiateur peut être retourné contre toi si les notes de l'arbitrage sortent.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a autorisé la remise de l'enveloppe hors du circuit prévu.",
+          "suspect_axis": "envelope_delivery_override",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a ordonné le meurtre de Gallo.",
+            "kind": "avoid_attribution",
+            "axis": "gallo_homicide_order_underboss"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les autorisations de remise de l'enveloppe.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les autorisations de remise de l'enveloppe",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux garder la main sur la chaîne de remise sans porter seul la faute du vendredi.",
+          "risk": "Une seule consigne remontant à ton rang peut te rendre facilement identifiable.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a autorisé le second prélèvement imposé à Gallo.",
+          "suspect_axis": "second_collection_authorizer",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme commanditaire du meurtre de Gallo.",
+            "kind": "avoid_attribution",
+            "axis": "gallo_homicide_order_don"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les prélèvements décidés pour les commerces du quartier.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les prélèvements décidés pour les commerces du quartier",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu peux tenter de préserver l'autorité du sommet sans assumer chaque acte du crew.",
+          "risk": "La traçabilité de tes ordres rend une coopération de haut rang risquée.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "022",
+      "title": "OMERTÀ",
+      "story": "Newark, 2006. Le bookmaker Nino Caruso est assassiné après une dette litigieuse. Une phrase de réunion ressemble à un ordre, et plusieurs hommes livrent des déclarations presque identiques.",
+      "focus": "Quel conflit portait sur les paris, qui a menacé Caruso, qui a commandé ou commis son meurtre, et qui a coordonné les récits ?",
+      "roles": [
+        {
+          "role": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme responsable de la disparition des recettes des paris.",
+          "suspect_axis": "betting_diversion",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'organisateur du pacte de faux témoignages.",
+            "kind": "avoid_attribution",
+            "axis": "witness_pact_organizer"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les recettes et les dettes de paris de Caruso.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les recettes et les dettes de paris de Caruso",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Ta dette et ta présence dans l'entourage du bookmaker peuvent te faire porter un mensonge collectif.",
+          "risk": "Décrire les récits concertés peut prouver que tu y as participé.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a exécuté le meurtre de Caruso.",
+          "suspect_axis": "caruso_homicide_executor",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'auteur des menaces contre Nino Caruso.",
+            "kind": "avoid_attribution",
+            "axis": "caruso_threats"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la réunion qui a précédé le meurtre de Caruso.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "la réunion qui a précédé le meurtre de Caruso",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "La menace, l'exécution et l'ordre ne sont pas une seule responsabilité.",
+          "risk": "Les heures de réunion peuvent contredire ton récit.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur du détournement des recettes de paris.",
+          "suspect_axis": "betting_diversion_accounts",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'auteur d'une falsification des montants de paris.",
+            "kind": "avoid_attribution",
+            "axis": "betting_account_forgery"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les écritures privées de la caisse des paris.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les écritures privées de la caisse des paris",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "La caisse et ta rémunération sont deux enjeux différents, que le crew peut confondre.",
+          "risk": "Tes registres peuvent révéler des dettes que tu aurais préféré taire.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a ordonné la mort de Caruso.",
+          "suspect_axis": "caruso_homicide_order",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a coordonné les faux alibis.",
+            "kind": "avoid_attribution",
+            "axis": "witness_pact_capo"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les consignes données à la réunion du crew.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les consignes données à la réunion du crew",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu peux tenter d'éviter qu'une consigne du crew soit confondue avec la fabrication de faux alibis.",
+          "risk": "Des propos tenus devant plusieurs membres peuvent remonter jusqu'à toi.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a mis les témoins d'accord sur une fausse version.",
+          "suspect_axis": "witness_pact_mediator",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a autorisé l'intimidation de Caruso.",
+            "kind": "avoid_attribution",
+            "axis": "caruso_intimidation_cons"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les entretiens destinés à régler sa dette.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les entretiens destinés à régler sa dette",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux rester crédible comme arbitre malgré le meurtre et les dettes contestées.",
+          "risk": "Tes entretiens confidentiels peuvent être interprétés comme des consignes.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a validé l'intimidation de Caruso.",
+          "suspect_axis": "caruso_intimidation_authorizer",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'organisateur des faux témoignages.",
+            "kind": "avoid_attribution",
+            "axis": "witness_pact_underboss"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les consignes transmises entre les crews.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les consignes transmises entre les crews",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Les dettes contestées menacent ton pouvoir d'arbitrage entre chefs.",
+          "risk": "Un détail sur les instructions des crews peut indiquer d'où vient la fuite.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire de l'assassinat de Caruso.",
+          "suspect_axis": "don_caruso_order",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a autorisé les menaces contre Caruso.",
+            "kind": "avoid_attribution",
+            "axis": "caruso_threats_don"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la répartition du revenu des paris dans la Famiglia.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "la répartition du revenu des paris dans la Famiglia",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu as intérêt à maintenir les revenus du réseau même si un bookmaker est mort.",
+          "risk": "La valeur de tes révélations grandit avec ton rang, comme le risque d'être identifié.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "023",
+      "title": "LA TABLE",
+      "story": "Une réunion devait trancher un litige sur les revenus de transport. Domenico Falco est assassiné ; Adriano Santoro est pris pour cible ; deux versions du même accord circulent.",
+      "focus": "Qui bénéficiait de l'accord modifié, qui a saboté la rencontre, qui savait où passerait Adriano, et qui a organisé la violence ?",
+      "roles": [
+        {
+          "role": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a fait échouer la négociation.",
+          "suspect_axis": "agreement_sabotage_associato",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a remis l'itinéraire d'Adriano aux agresseurs.",
+            "kind": "avoid_attribution",
+            "axis": "route_to_attackers"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les deux versions de l'accord de transport.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les deux versions de l'accord de transport",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu refuses de payer pour une attaque simplement parce que tu as approché la table.",
+          "risk": "Ton accès au trajet peut te lier à des hommes que tu veux protéger.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant de l'attaque contre Adriano.",
+          "suspect_axis": "adriano_attack_executor",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'exécutant du meurtre de Domenico Falco.",
+            "kind": "avoid_attribution",
+            "axis": "falco_homicide_executor"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les déplacements autour de la réunion.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les déplacements autour de la réunion",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux survivre au conflit entre groupes sans dépendre de leur parole.",
+          "risk": "Ta protection peut être refusée alors que tes anciens actes restent poursuivables.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur des conditions financières falsifiées.",
+          "suspect_axis": "agreement_forgery_contabile",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme la source de la fuite d'une version confidentielle de l'accord.",
+            "kind": "avoid_attribution",
+            "axis": "contract_leak_accountant"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les montants qui diffèrent entre les deux accords.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les montants qui diffèrent entre les deux accords",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Un accord modifié peut changer qui touche l'argent sans changer qui a tué Falco.",
+          "risk": "Les deux versions de l'accord peuvent montrer qui a écrit ou modifié les montants.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Falco.",
+          "suspect_axis": "falco_homicide_order",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a divulgué le trajet d'Adriano.",
+            "kind": "avoid_attribution",
+            "axis": "adriano_route_leak_capo"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les échanges entre ton crew et le médiateur Falco.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les échanges entre ton crew et le médiateur Falco",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "La mort du médiateur menace les bénéfices pour lesquels tes hommes négociaient.",
+          "risk": "Tes échanges avec Falco peuvent éclairer les raisons de son assassinat.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a saboté la réunion.",
+          "suspect_axis": "sitdown_sabotage_consigliere",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a remis le trajet d'Adriano aux agresseurs.",
+            "kind": "avoid_attribution",
+            "axis": "adriano_route_to_attackers"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les engagements négociés autour de la table.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les engagements négociés autour de la table",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "En tant que médiateur, tu peux refuser que le même dossier te fasse porter une négociation ratée et une fuite d'itinéraire.",
+          "risk": "Tes rendez-vous et tes confidences peuvent être recoupés.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire de l'attaque contre Adriano.",
+          "suspect_axis": "adriano_attack_underboss",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a commandé le meurtre de Falco.",
+            "kind": "avoid_attribution",
+            "axis": "falco_homicide_order_underboss"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les propositions échangées entre les deux crews.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les propositions échangées entre les deux crews",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Ta place entre les crews dépend de ta capacité à conserver l'arbitrage.",
+          "risk": "Une offre clandestine peut te brouiller avec les deux groupes.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur de la divulgation du trajet d'Adriano.",
+          "suspect_axis": "adriano_route_leak_don",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a autorisé l'attaque contre Adriano.",
+            "kind": "avoid_attribution",
+            "axis": "adriano_attack_order_don"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les conditions familiales de la négociation de transport.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les conditions familiales de la négociation de transport",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "L'attaque contre un proche de sang peut menacer ton pouvoir de décider sans prouver ta participation à la violence.",
+          "risk": "Un cercle réduit connaît tes décisions et rend une fuite traçable.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "024",
+      "title": "IL PENTITO",
+      "story": "Un membre est arrêté pour extorsion des transporteurs. Sergio Valenti, qui devait déposer, est assassiné ; ses notes contradictoires circulent. Une coopération judiciaire formelle est distincte du statut d'indic.",
+      "focus": "Qui organisait les prélèvements, qui connaissait la déposition, qui a intimidé Valenti et qui a décidé son meurtre ?",
+      "roles": [
+        {
+          "role": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'organisateur du racket des transporteurs.",
+          "suspect_axis": "transport_extortion_associato",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme la source de la fuite de la date de déposition de Valenti.",
+            "kind": "avoid_attribution",
+            "axis": "valenti_deposition_leak"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les collectes exigées aux transporteurs.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les collectes exigées aux transporteurs",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "La date du témoignage peut faire de toi un complice présumé du meurtre, indépendamment des collectes.",
+          "risk": "Un rendez-vous ou une correspondance peut montrer ce que tu savais.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Valenti.",
+          "suspect_axis": "valenti_homicide_executor",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'organisateur du racket des transporteurs.",
+            "kind": "avoid_attribution",
+            "axis": "transport_extortion_soldato"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les versements et remises du réseau de transport.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les versements et remises du réseau de transport",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu peux être impliqué dans une mission sans décider du racket et de ses bénéficiaires.",
+          "risk": "Des aveux sur tes missions peuvent te compromettre.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'auteur des faux versements inscrits dans les notes.",
+          "suspect_axis": "valenti_accounts_forgery",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a ordonné les versements forcés.",
+            "kind": "avoid_attribution",
+            "axis": "forced_transfers_order"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les sommes inscrites dans les notes de Valenti.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les sommes inscrites dans les notes de Valenti",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tenir un registre n'est pas nécessairement décider de l'extorsion, mais le distinguer sera difficile.",
+          "risk": "Les destinataires des fonds peuvent identifier le cercle comptable.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a commandé la mort de Valenti.",
+          "suspect_axis": "valenti_homicide_capo",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme le responsable principal du racket des transporteurs.",
+            "kind": "avoid_attribution",
+            "axis": "transport_extortion_capo"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la destination des collectes de transport de ton crew.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "la destination des collectes de transport de ton crew",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux sauver les revenus de tes hommes même si les notes de Valenti les compromettent.",
+          "risk": "Un supérieur peut perdre sa protection financière s'il révèle la chaîne de collecte.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a validé l'intimidation de Valenti.",
+          "suspect_axis": "valenti_intimidation_consigliere",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a dirigé le racket des transporteurs.",
+            "kind": "avoid_attribution",
+            "axis": "transport_racket_command_cons"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les entretiens qui ont précédé l'intimidation de Valenti.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les entretiens qui ont précédé l'intimidation de Valenti",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu cherchais à arbitrer un conflit, mais les enquêteurs peuvent y voir une direction des prélèvements.",
+          "risk": "Les entretiens de médiation peuvent être recoupés avec les paiements.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a entravé la déposition de Valenti.",
+          "suspect_axis": "valenti_deposition_obstruction",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a ordonné des représailles contre Valenti.",
+            "kind": "avoid_attribution",
+            "axis": "valenti_retaliation_order_underboss"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les instructions concernant la déposition de Valenti.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les instructions concernant la déposition de Valenti",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux garder un droit de décision sur les collectes malgré la déposition et l'arrestation.",
+          "risk": "Tes instructions aux équipes peuvent établir une implication plus grave.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire des représailles contre Valenti.",
+          "suspect_axis": "valenti_retaliation_don",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a organisé le racket des transporteurs.",
+            "kind": "avoid_attribution",
+            "axis": "transport_extortion_don"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les tributs imposés au réseau de transport.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les tributs imposés au réseau de transport",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux garder l'autorité économique même si des hommes sont arrêtés.",
+          "risk": "Les révélations d'un Don peuvent être très utiles mais facilement attribuables.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "025",
+      "title": "IL DON",
+      "story": "Carlo Benedetti a été racketté puis assassiné. Trois versions d'une consigne attribuée au sommet circulent, et un différend de chantier fournit un autre mobile possible.",
+      "focus": "Qui a organisé l'extorsion, qui a transmis ou déformé une consigne, et qui a réellement ordonné ou commis le meurtre ?",
+      "roles": [
+        {
+          "role": "associato",
+          "label": "Associato",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'organisateur du racket de Benedetti.",
+          "suspect_axis": "benedetti_extortion_associato",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a transmis l'ultimatum à Benedetti.",
+            "kind": "avoid_attribution",
+            "axis": "benedetti_ultimatum_delivery"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les demandes de versement concernant Benedetti.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les demandes de versement concernant Benedetti",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu ne veux pas assumer la décision d'extorquer ni être sacrifié comme seul messager.",
+          "risk": "Un message dont tu connais le texte peut te mettre en cause.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "soldato",
+          "label": "Soldato / Uomo d'Onore",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme l'exécutant du meurtre de Benedetti.",
+          "suspect_axis": "benedetti_homicide_executor",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a relayé l'ordre de tuer Benedetti.",
+            "kind": "avoid_attribution",
+            "axis": "benedetti_murder_order_relay"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur la circulation des consignes entre les hommes du crew.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "la circulation des consignes entre les hommes du crew",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux distinguer ce qu'on t'a demandé de ce que tu as réellement transmis ou fait.",
+          "risk": "Les destinataires d'une consigne peuvent contredire ta version.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "contabile",
+          "label": "Contabile",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a détourné les sommes extorquées à Benedetti.",
+          "suspect_axis": "benedetti_cash_diversion",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'organisateur des versements forcés de Benedetti.",
+            "kind": "avoid_attribution",
+            "axis": "benedetti_forced_payments"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les mouvements d'argent liés aux contrats de chantier.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les mouvements d'argent liés aux contrats de chantier",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux séparer la gestion d'argent de l'autorité qui imposait les versements.",
+          "risk": "Tes comptes peuvent prouver tes propres décisions.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "capo",
+          "label": "Capo / Caporegime",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a donné à tes hommes l'ordre de tuer Benedetti.",
+          "suspect_axis": "benedetti_homicide_capo",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme l'organisateur du racket de Benedetti.",
+            "kind": "avoid_attribution",
+            "axis": "benedetti_extortion_capo"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les liens entre les contrats de chantier et les collectes.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les liens entre les contrats de chantier et les collectes",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tes hommes comptaient sur ces contrats ; la mort de Benedetti menace leur part.",
+          "risk": "Une information sur un ordre connu d'un cercle étroit peut révéler ta coopération.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "consigliere",
+          "label": "Consigliere",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a déformé la consigne attribuée au Don.",
+          "suspect_axis": "benedetti_order_distortion",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a décidé les prélèvements imposés à Benedetti.",
+            "kind": "avoid_attribution",
+            "axis": "benedetti_extortion_cons"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les versions contradictoires de l'ordre attribué au Don.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les versions contradictoires de l'ordre attribué au Don",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux préserver ta place de conseiller sans devenir le chef supposé de l'extorsion.",
+          "risk": "Tes confidences sur les ordres peuvent te compromettre.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "sottocapo",
+          "label": "Sottocapo / Underboss",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme celui qui a relayé un ordre de tuer Benedetti.",
+          "suspect_axis": "benedetti_order_relay_underboss",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a organisé le racket autour du chantier.",
+            "kind": "avoid_attribution",
+            "axis": "benedetti_extortion_underboss"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les étapes de transmission des ordres entre les rangs.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les étapes de transmission des ordres entre les rangs",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu risques ton autorité si un Capo peut te faire porter toutes les conséquences du meurtre.",
+          "risk": "La chaîne des consignes peut faire remonter l'enquête jusqu'à toi.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        },
+        {
+          "role": "don",
+          "label": "Don Santoro",
+          "suspect_goal": "Au verdict, évite qu'on te désigne comme le commanditaire du meurtre de Benedetti.",
+          "suspect_axis": "benedetti_homicide_don",
+          "indic_goal_heading": "TON OBJECTIF D’INDIC — POUR GAGNER",
+          "indic_condition_1": {
+            "label": "SAUVE TA PEAU",
+            "text": "Ne sois pas désigné comme celui qui a autorisé les versements forcés exigés de Benedetti.",
+            "kind": "avoid_attribution",
+            "axis": "benedetti_extortion_don"
+          },
+          "indic_condition_2": {
+            "label": "RENSEIGNE L’ENQUÊTE",
+            "text": "Avant le verdict, transmets volontairement au moins un renseignement privé, exact, pertinent et vérifiable sur les consignes sur les contrats et les prélèvements.",
+            "kind": "verified_voluntary_private_disclosure",
+            "theme": "les consignes sur les contrats et les prélèvements",
+            "min_qualifying_disclosures": 1
+          },
+          "free_to_refuse": true,
+          "can_be_silent_and_lose_informant_win": true,
+          "goal_is_single_and": true,
+          "rationale": "Tu veux empêcher qu'une consigne économique soit reconnue comme ta décision personnelle de racket.",
+          "risk": "Ta notoriété rend la clandestinité de tes révélations très difficile.",
+          "prereqs": [
+            "player has genuine at-risk personal liability",
+            "player knows at least one genuine non-public case-relevant fact",
+            "information can be safely corroborated in same scenario",
+            "two conditions have independent possible success/failure outcomes"
+          ]
+        }
+      ]
+    }
+  ],
+  "blocking_gaps": [
+    "35 save-axis verdict fields not yet verified as existing for real variants",
+    "35 private disclosure hooks not yet bound to real sealed facts and independent evidence",
+    "Server side informant acceptance and linked result evaluation missing",
+    "Player role assignment not verified live",
+    "FR/EN UI and 15 A/B/C real playtests pending"
+  ],
+  "production_deployed": false
+}
