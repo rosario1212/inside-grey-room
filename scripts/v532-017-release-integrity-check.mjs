@@ -12,7 +12,7 @@ const [app,html,sw,db1,db2,db3,db4,workflow,prod]=await Promise.all([
   '.github/workflows/cloudflare-build-check.yml','.github/workflows/cloudflare-production-deploy.yml'
 ].map(load));
 
-const cache='v630-espion-hidden-missions';
+const cache='v631-espion-mission-corrections';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+cache),'Source HTML has stale game cache');
 assert(sw.includes("const CACHE='igr-"+cache+"'"),'SW cache mismatch');
