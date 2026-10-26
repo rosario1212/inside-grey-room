@@ -136,6 +136,8 @@ jobs:
         run: node scripts/v580-019-release-integrity-check.mjs
       - name: Verify 020 sealed finale, roles, forensic proof and cache
         run: node scripts/v620-020-release-integrity-check.mjs
+      - name: Audit v631 corrected spy scoring, irreversible penalties and two-stage decisions
+        run: node scripts/v631-spy-audit-regression-check.mjs
       - name: Audit v630 optional secret spy role and secure mission
         run: node scripts/v630-hidden-spy-release-check.mjs
       - name: Audit v100 private variant preview release barriers

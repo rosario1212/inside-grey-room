@@ -63,6 +63,7 @@ jobs:
           node scripts/v580-019-release-integrity-check.mjs
           node scripts/v620-020-release-integrity-check.mjs
           node scripts/v630-hidden-spy-release-check.mjs
+          node scripts/v631-spy-audit-regression-check.mjs
           node scripts/casino-runtime-check.mjs
           node scripts/casino-release-check.mjs dist
           node scripts/cartel-posters-check.mjs dist
