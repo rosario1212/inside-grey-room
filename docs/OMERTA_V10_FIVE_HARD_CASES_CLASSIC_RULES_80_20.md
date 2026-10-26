@@ -107,7 +107,7 @@ Ces exigences sont **éditoriales et de QA** : ne changent ni le moteur, ni les 
 
 # 024 — IL PENTITO : « LA DÉPOSITION DU MORT »
 
-**Ouverture.** New Jersey, 2006. **Massimo De Luca**, associé périphérique à un crew Santoro, a été arrêté dans une affaire d'extorsion visant des transporteurs. Son nom figure dans plusieurs registres dont la portée est contestée. **Sergio Valenti**, ancien employé d'une entreprise concernée, devait être entendu officiellement. Il a été retrouvé assassiné avant sa déposition. Les fédéraux cherchent de nouveaux éléments corroborables. Dans l'entourage de la Famiglia, chacun redoute une éventuelle coopération — sans savoir ce que le détenu peut réellement prouver.
+**Ouverture.** New Jersey, 2006. Un **Associato d'un crew Santoro** a été arrêté dans une affaire d'extorsion visant des transporteurs. Dans une partie où cette position est occupée par un joueur, les pièces emploient **son pseudo** ; aucun nom de fiction ne lui est imposé. Son implication figure dans plusieurs registres dont la portée est contestée. **Sergio Valenti**, ancien employé d'une entreprise concernée, devait être entendu officiellement. Il a été retrouvé assassiné avant sa déposition. Les fédéraux cherchent de nouveaux éléments corroborables. Dans l'entourage de la Famiglia, chacun redoute une éventuelle coopération — sans savoir ce que le détenu peut réellement prouver.
 
 **Particularité :** les joueurs ne cherchent pas seulement qui a tué Valenti. Ils doivent comprendre quelle déposition est vraie, nouvelle, utile à la justice et éventuellement dangereuse pour ceux qu'elle accuse.
 
@@ -123,7 +123,7 @@ Ces exigences sont **éditoriales et de QA** : ne changent ni le moteur, ni les 
 
 **Surcharge :** deux enquêtes imbriquées (racket et meurtre), une évaluation de sources, les stratégies contradictoires de la défense et du parquet, de fausses implications juridiquement plausibles. Le coopérant n'a pas une personnalité de « rat » imposée.
 
-**80 %** : De Luca, Valenti, registres, déposition, choix de coopération dans ce cas. **20 %** : réseaux Santoro, culture de l'omertà, justice fédérale et sociétés de transport. Aucune affaire antérieure n'a besoin d'avoir été jouée.
+**80 %** : associé arrêté identifié par le pseudo du joueur s'il occupe ce rôle, Valenti comme victime non jouable, registres, déposition et choix de coopération dans ce cas. **20 %** : réseaux Santoro, culture de l'omertà, justice fédérale et sociétés de transport. Aucune affaire antérieure n'a besoin d'avoir été jouée.
 
 **A/B/C prévues :** modifier ce que le détenu sait vraiment, le meurtre, la corroboration et l'attribution des responsabilités, sans créer un pentito automatiquement obligatoire.
 
