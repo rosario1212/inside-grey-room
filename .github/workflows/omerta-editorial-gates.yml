@@ -18,6 +18,10 @@ on:
       - 'qa/omerta-v13-voluntary-turncoat-contract.json'
       - 'qa/omerta-v13-turncoat-choice-simulator.mjs'
       - 'scripts/check-omerta-v13-voluntary-indic.mjs'
+      - 'docs/OMERTA_V14_INVESTIGATOR_OFFERS_RANK_RETALIATION.md'
+      - 'qa/omerta-v14-investigator-offers-and-rank-retaliation.json'
+      - 'qa/omerta-v14-investigator-offer-simulator.mjs'
+      - 'scripts/check-omerta-v14-investigator-offers.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -43,6 +47,10 @@ on:
       - 'qa/omerta-v13-voluntary-turncoat-contract.json'
       - 'qa/omerta-v13-turncoat-choice-simulator.mjs'
       - 'scripts/check-omerta-v13-voluntary-indic.mjs'
+      - 'docs/OMERTA_V14_INVESTIGATOR_OFFERS_RANK_RETALIATION.md'
+      - 'qa/omerta-v14-investigator-offers-and-rank-retaliation.json'
+      - 'qa/omerta-v14-investigator-offer-simulator.mjs'
+      - 'scripts/check-omerta-v14-investigator-offers.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -73,10 +81,10 @@ jobs:
         run: node scripts/check-omerta-v8-mafia.mjs
       - name: Validate player-owned Mafia ranks and hidden informer status
         run: node scripts/check-omerta-v9-player-tree.mjs
-      - name: Validate V13 voluntary informant design and non-live consent state machine
-        run: node scripts/check-omerta-v13-voluntary-indic.mjs
+      - name: Validate V14 investigator-only C2+ offers and rank-controlled retaliation
+        run: node scripts/check-omerta-v14-investigator-offers.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
-          echo 'V11 mandatory-informant and V12 automatic-informant checks are archived and intentionally not run.'
+          echo 'V11/V12 mandatory-informant and V13 self-initiated offer rules are archived; V14 is current.'
           echo 'Private A/B/C, secure server implementation, safety, role distribution, production data, and human playtests require separate release QA.'
