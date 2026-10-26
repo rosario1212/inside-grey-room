@@ -4,8 +4,8 @@
   "normative": true,
   "source": "docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md",
   "case_count": 5,
-  "role_template_count": 40,
-  "indic_template_count": 40,
+  "role_template_count": 35,
+  "indic_template_count": 35,
   "special_formal_pentito": {
     "case_id": "024",
     "status": "Pentito (rôle judiciaire formel, pas un rang mafieux)",
@@ -29,24 +29,6 @@
       ],
       "mesh": "L'Associato tient à sa part ; le Capo contrôle sa distribution ; le Contabile sait lire les deux livres ; le Consigliere tente de régler le litige ; le Soldato peut être mis en cause pour une violence différente du détournement.",
       "goals": [
-        {
-          "role": "suspect",
-          "rank_label": "Suspect (sans rang particulier)",
-          "suspect_text": "Au verdict, évite qu'on te désigne comme responsable du détournement de l'enveloppe du vendredi.",
-          "indic_text": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour tes déclarations sur les collectes.",
-          "self_interest": "Tu crains de servir de bouc émissaire dans une affaire qui dépasse l'argent manquant.",
-          "risk": "Le statut d'indic peut t'exposer sans te garantir une protection.",
-          "suspect_axis": "envelope_diversion",
-          "indic_axis": "protection",
-          "suspect_track": "collections",
-          "indic_track": "leak",
-          "player_detail": {
-            "interest": "Ce que tu cherches à préserver : Tu crains de servir de bouc émissaire dans une affaire qui dépasse l'argent manquant.",
-            "when_score": "Cette mission se vérifie au verdict final sur cet acte précis.",
-            "risk": "Ton risque : Le statut d'indic peut t'exposer sans te garantir une protection.",
-            "freedom": "Tu peux parler, te taire, négocier ou changer d'alliance : aucun comportement n'est imposé."
-          }
-        },
         {
           "role": "associato",
           "rank_label": "Associato",
@@ -205,10 +187,6 @@
         }
       ],
       "role_track_assignments": {
-        "suspect": [
-          "collections",
-          "leak"
-        ],
         "associato": [
           "collections",
           "authority"
@@ -239,15 +217,6 @@
         ]
       },
       "cross_role_links": [
-        {
-          "roles": [
-            "suspect",
-            "soldato"
-          ],
-          "relationship": "Le soupçon général n'établit ni l'exécutant ni la destination des fonds.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
-        },
         {
           "roles": [
             "soldato",
@@ -332,7 +301,8 @@
         "clarify_verdict": "Le verdict est la décision finale du camp Enquête, pas nécessairement la vérité.",
         "clarify_deno": "Le dénouement est l'état final des ressources, faveurs et protections réellement enregistrées.",
         "source_chooses_strategy_not_required_to_denounce": true
-      }
+      },
+      "random_assignment_note": "Seven rank templates are possible, not simultaneous. The server must randomize pre-authored and variant-compatible role slots, not labels blindly. Two slots sharing rank need distinct facts and goals."
     },
     {
       "id": "022",
@@ -348,24 +318,6 @@
       ],
       "mesh": "Le Contabile défend les comptes ; l'Associato craint la dette ; le Soldato doit rendre compte de ses actes ; le Capo peut répondre des ordres du crew ; le Consigliere défend son arbitrage des dettes.",
       "goals": [
-        {
-          "role": "suspect",
-          "rank_label": "Suspect (sans rang particulier)",
-          "suspect_text": "Au verdict, évite qu'on te désigne comme l'auteur d'une fausse déclaration sur la soirée du meurtre.",
-          "indic_text": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour pouvoir témoigner sans dépendre du crew.",
-          "self_interest": "Tu peux vouloir sortir de l'étau des versions concertées sans dénoncer qui que ce soit au hasard.",
-          "risk": "Le fait d'accepter ne te garantit ni immunité ni anonymat.",
-          "suspect_axis": "false_witness_statement",
-          "indic_axis": "protection",
-          "suspect_track": "cover",
-          "indic_track": "authority",
-          "player_detail": {
-            "interest": "Ce que tu cherches à préserver : Tu peux vouloir sortir de l'étau des versions concertées sans dénoncer qui que ce soit au hasard.",
-            "when_score": "Cette mission se vérifie au verdict final sur cet acte précis.",
-            "risk": "Ton risque : Le fait d'accepter ne te garantit ni immunité ni anonymat.",
-            "freedom": "Tu peux parler, te taire, négocier ou changer d'alliance : aucun comportement n'est imposé."
-          }
-        },
         {
           "role": "associato",
           "rank_label": "Associato",
@@ -524,10 +476,6 @@
         }
       ],
       "role_track_assignments": {
-        "suspect": [
-          "cover",
-          "authority"
-        ],
         "associato": [
           "debt",
           "cover"
@@ -558,15 +506,6 @@
         ]
       },
       "cross_role_links": [
-        {
-          "roles": [
-            "suspect",
-            "consigliere"
-          ],
-          "relationship": "Les versions qui se répètent n'impliquent pas automatiquement celui qui les a recueillies.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
-        },
         {
           "roles": [
             "consigliere",
@@ -620,15 +559,6 @@
           "relationship": "Une somme manquante peut mettre en jeu l'intérêt de l'Associato et la tenue des comptes.",
           "compulsory_alliance": false,
           "one_must_lose": false
-        },
-        {
-          "roles": [
-            "associato",
-            "suspect"
-          ],
-          "relationship": "Une dette ne prouve pas automatiquement la participation au pacte de faux alibis.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
         }
       ],
       "player_text_rules": {
@@ -651,7 +581,8 @@
         "clarify_verdict": "Le verdict est la décision finale du camp Enquête, pas nécessairement la vérité.",
         "clarify_deno": "Le dénouement est l'état final des ressources, faveurs et protections réellement enregistrées.",
         "source_chooses_strategy_not_required_to_denounce": true
-      }
+      },
+      "random_assignment_note": "Seven rank templates are possible, not simultaneous. The server must randomize pre-authored and variant-compatible role slots, not labels blindly. Two slots sharing rank need distinct facts and goals."
     },
     {
       "id": "023",
@@ -668,24 +599,6 @@
       ],
       "mesh": "Les intérêts financiers de l'Associato, du Contabile et du Capo se croisent autour d'un même accord ; Consigliere et Sottocapo doivent arbitrer sans nécessairement partager le même objectif ; la fuite du trajet et les meurtres sont des questions distinctes.",
       "goals": [
-        {
-          "role": "suspect",
-          "rank_label": "Suspect (sans rang particulier)",
-          "suspect_text": "Au verdict, évite qu'on te désigne comme la personne ayant révélé l'itinéraire d'Adriano.",
-          "indic_text": "Au dénouement, conserve la part des revenus de transport qui t'était promise dans cet accord.",
-          "self_interest": "Tu peux posséder un intérêt dans l'accord sans être à l'origine de l'attaque.",
-          "risk": "La connaissance d'une version confidentielle peut t'identifier.",
-          "suspect_axis": "adriano_route_leak",
-          "indic_axis": "transport_private_share",
-          "suspect_track": "route",
-          "indic_track": "contract",
-          "player_detail": {
-            "interest": "Ce que tu cherches à préserver : Tu peux posséder un intérêt dans l'accord sans être à l'origine de l'attaque.",
-            "when_score": "Cette mission se vérifie au verdict final sur cet acte précis.",
-            "risk": "Ton risque : La connaissance d'une version confidentielle peut t'identifier.",
-            "freedom": "Tu peux parler, te taire, négocier ou changer d'alliance : aucun comportement n'est imposé."
-          }
-        },
         {
           "role": "associato",
           "rank_label": "Associato",
@@ -844,10 +757,6 @@
         }
       ],
       "role_track_assignments": {
-        "suspect": [
-          "route",
-          "contract"
-        ],
         "associato": [
           "contract",
           "route"
@@ -878,15 +787,6 @@
         ]
       },
       "cross_role_links": [
-        {
-          "roles": [
-            "suspect",
-            "consigliere"
-          ],
-          "relationship": "Être informé de l'horaire n'implique pas être responsable du sabotage.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
-        },
         {
           "roles": [
             "consigliere",
@@ -940,15 +840,6 @@
           "relationship": "Faire circuler un accord n'est pas exécuter l'attaque.",
           "compulsory_alliance": false,
           "one_must_lose": false
-        },
-        {
-          "roles": [
-            "soldato",
-            "suspect"
-          ],
-          "relationship": "L'itinéraire divulgué et l'exécution doivent pouvoir être démontrés séparément.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
         }
       ],
       "player_text_rules": {
@@ -971,7 +862,8 @@
         "clarify_verdict": "Le verdict est la décision finale du camp Enquête, pas nécessairement la vérité.",
         "clarify_deno": "Le dénouement est l'état final des ressources, faveurs et protections réellement enregistrées.",
         "source_chooses_strategy_not_required_to_denounce": true
-      }
+      },
+      "random_assignment_note": "Seven rank templates are possible, not simultaneous. The server must randomize pre-authored and variant-compatible role slots, not labels blindly. Two slots sharing rank need distinct facts and goals."
     },
     {
       "id": "024",
@@ -987,24 +879,6 @@
       ],
       "mesh": "Le Soldato peut répondre de la violence et non de toute l'extorsion ; le Contabile des écritures et non de l'ordre ; l'Associato de ses remises ; le Capo des collectes ; un Pentito formel, s'il est vraiment un joueur, cherche la protection sans changer une deuxième fois de statut.",
       "goals": [
-        {
-          "role": "suspect",
-          "rank_label": "Suspect (sans rang particulier)",
-          "suspect_text": "Au verdict, évite qu'on te désigne comme celui qui a ordonné l'assassinat de Valenti.",
-          "indic_text": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour tes déclarations sur le réseau de transport.",
-          "self_interest": "La coopération peut sembler préférable aux risques liés aux notes du témoin.",
-          "risk": "Une simple demande de protection ne suffit pas.",
-          "suspect_axis": "valenti_homicide_generic",
-          "indic_axis": "protection",
-          "suspect_track": "murder",
-          "indic_track": "deposition",
-          "player_detail": {
-            "interest": "Ce que tu cherches à préserver : La coopération peut sembler préférable aux risques liés aux notes du témoin.",
-            "when_score": "Cette mission se vérifie au verdict final sur cet acte précis.",
-            "risk": "Ton risque : Une simple demande de protection ne suffit pas.",
-            "freedom": "Tu peux parler, te taire, négocier ou changer d'alliance : aucun comportement n'est imposé."
-          }
-        },
         {
           "role": "associato",
           "rank_label": "Associato",
@@ -1163,10 +1037,6 @@
         }
       ],
       "role_track_assignments": {
-        "suspect": [
-          "murder",
-          "deposition"
-        ],
         "associato": [
           "racket",
           "deposition"
@@ -1197,15 +1067,6 @@
         ]
       },
       "cross_role_links": [
-        {
-          "roles": [
-            "suspect",
-            "soldato"
-          ],
-          "relationship": "Une mise en cause générale du meurtre ne suffit pas à désigner son exécutant.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
-        },
         {
           "roles": [
             "soldato",
@@ -1259,15 +1120,6 @@
           "relationship": "Le sommet peut fixer une politique, le second répartir les collectes.",
           "compulsory_alliance": false,
           "one_must_lose": false
-        },
-        {
-          "roles": [
-            "sottocapo",
-            "suspect"
-          ],
-          "relationship": "Une entrave à témoignage n'établit pas nécessairement un ordre d'assassinat.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
         }
       ],
       "player_text_rules": {
@@ -1290,7 +1142,8 @@
         "clarify_verdict": "Le verdict est la décision finale du camp Enquête, pas nécessairement la vérité.",
         "clarify_deno": "Le dénouement est l'état final des ressources, faveurs et protections réellement enregistrées.",
         "source_chooses_strategy_not_required_to_denounce": true
-      }
+      },
+      "random_assignment_note": "Seven rank templates are possible, not simultaneous. The server must randomize pre-authored and variant-compatible role slots, not labels blindly. Two slots sharing rank need distinct facts and goals."
     },
     {
       "id": "025",
@@ -1306,24 +1159,6 @@
       ],
       "mesh": "Le Don répond de l'origine d'une consigne éventuelle, le Sottocapo de sa transmission, le Capo de ses décisions locales, le Soldato des actes qu'il a commis, le Contabile des sommes : ces responsabilités ne doivent jamais être fusionnées en un coupable unique par facilité.",
       "goals": [
-        {
-          "role": "suspect",
-          "rank_label": "Suspect (sans rang particulier)",
-          "suspect_text": "Au verdict, évite qu'on te désigne comme l'auteur des menaces adressées à Benedetti.",
-          "indic_text": "Au dénouement, obtiens une protection provisoire effectivement approuvée pour ton témoignage dans cette affaire.",
-          "self_interest": "Tu veux une sortie personnelle face à la pression des deux camps.",
-          "risk": "Un haut rang ou un témoin indispensable n'est pas automatiquement protégé.",
-          "suspect_axis": "benedetti_threats_generic",
-          "indic_axis": "protection",
-          "suspect_track": "orders",
-          "indic_track": "homicide",
-          "player_detail": {
-            "interest": "Ce que tu cherches à préserver : Tu veux une sortie personnelle face à la pression des deux camps.",
-            "when_score": "Cette mission se vérifie au verdict final sur cet acte précis.",
-            "risk": "Ton risque : Un haut rang ou un témoin indispensable n'est pas automatiquement protégé.",
-            "freedom": "Tu peux parler, te taire, négocier ou changer d'alliance : aucun comportement n'est imposé."
-          }
-        },
         {
           "role": "associato",
           "rank_label": "Associato",
@@ -1482,10 +1317,6 @@
         }
       ],
       "role_track_assignments": {
-        "suspect": [
-          "orders",
-          "homicide"
-        ],
         "associato": [
           "racket",
           "orders"
@@ -1516,15 +1347,6 @@
         ]
       },
       "cross_role_links": [
-        {
-          "roles": [
-            "suspect",
-            "associato"
-          ],
-          "relationship": "Un ultimatum et des menaces ne sont pas toujours la même instruction.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
-        },
         {
           "roles": [
             "associato",
@@ -1578,15 +1400,6 @@
           "relationship": "Conseiller et Don ont des accès différents à une même consigne.",
           "compulsory_alliance": false,
           "one_must_lose": false
-        },
-        {
-          "roles": [
-            "consigliere",
-            "suspect"
-          ],
-          "relationship": "Interpréter un ordre peut influencer des menaces sans prouver le meurtre.",
-          "compulsory_alliance": false,
-          "one_must_lose": false
         }
       ],
       "player_text_rules": {
@@ -1609,7 +1422,8 @@
         "clarify_verdict": "Le verdict est la décision finale du camp Enquête, pas nécessairement la vérité.",
         "clarify_deno": "Le dénouement est l'état final des ressources, faveurs et protections réellement enregistrées.",
         "source_chooses_strategy_not_required_to_denounce": true
-      }
+      },
+      "random_assignment_note": "Seven rank templates are possible, not simultaneous. The server must randomize pre-authored and variant-compatible role slots, not labels blindly. Two slots sharing rank need distinct facts and goals."
     }
   ],
   "invariants": {
@@ -1630,7 +1444,9 @@
     "no_cast_mandatory_ally": true,
     "player_copy_separates_what_is_known_from_how_to_play": true,
     "detailed_scoring_rules_optional": true,
-    "real_variant_validation_pending": true
+    "real_variant_validation_pending": true,
+    "no_generic_suspect_rank": true,
+    "random_validated_role_slot_assignment_required": true
   },
   "not_verified": {
     "A_B_C_role_objective_feasibility": true,
@@ -1642,5 +1458,44 @@
     "true_role_cast_subgraph_connected_for_every_possible_cast": true,
     "real_variant_conflict_pairwise": true
   },
-  "audit_revision": "V22-coherence-and-player-clarity-2026-10-26"
+  "audit_revision": "V22-coherence-and-player-clarity-2026-10-26",
+  "playable_mafia_role_keys": [
+    "associato",
+    "soldato",
+    "contabile",
+    "capo",
+    "consigliere",
+    "sottocapo",
+    "don"
+  ],
+  "generic_suspect_is_not_playable": true,
+  "rank_selection_policy": {
+    "selection_actor": "server",
+    "selection_method": "random_server_controlled_from_prevalidated_variant_role_slots",
+    "assignment_time": "room_start",
+    "unknown_to_players_until_public_ranks_revealed": true,
+    "every_suspect_exactly_one_playable_rank": true,
+    "suspect_is_investigative_status_not_role": true,
+    "rank_public_pseudonym_public": true,
+    "informant_flag_private": true,
+    "mafia_roles": [
+      "associato",
+      "soldato",
+      "contabile",
+      "capo",
+      "consigliere",
+      "sottocapo",
+      "don"
+    ],
+    "family_don_max_per_room": 1,
+    "capo_multiple_only_if_distinct_crew_and_private_facts": true,
+    "repeat_rank_allowed_only_if_separate_validated_role_slots": true,
+    "role_slot_has_unique_private_facts_and_objective": true,
+    "no_role_mandatory_for_zero_softlock": true,
+    "missing_don_may_be_non_player_character": true,
+    "do_not_assign_non_authored_role_for_variant": true,
+    "no_client_chosen_role_or_random_client_assignment": true,
+    "no_secret_role_leak_in_public_tree": true,
+    "no_guarantee_randomness_implemented_in_live_server": true
+  }
 }
