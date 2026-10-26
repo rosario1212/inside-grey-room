@@ -26,6 +26,10 @@ on:
       - 'qa/omerta-v15-protection-contract.json'
       - 'qa/omerta-v15-protection-review-simulator.mjs'
       - 'scripts/check-omerta-v15-protection.mjs'
+      - 'docs/OMERTA_V16_ACCEPT_REPLACE_GOAL_DISCLOSE_LATER.md'
+      - 'qa/omerta-v16-immediate-indic-goal-contract.json'
+      - 'qa/omerta-v16-informant-goal-simulator.mjs'
+      - 'scripts/check-omerta-v16-immediate-indic-goal.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -59,6 +63,10 @@ on:
       - 'qa/omerta-v15-protection-contract.json'
       - 'qa/omerta-v15-protection-review-simulator.mjs'
       - 'scripts/check-omerta-v15-protection.mjs'
+      - 'docs/OMERTA_V16_ACCEPT_REPLACE_GOAL_DISCLOSE_LATER.md'
+      - 'qa/omerta-v16-immediate-indic-goal-contract.json'
+      - 'qa/omerta-v16-informant-goal-simulator.mjs'
+      - 'scripts/check-omerta-v16-immediate-indic-goal.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -89,12 +97,12 @@ jobs:
         run: node scripts/check-omerta-v8-mafia.mjs
       - name: Validate player-owned Mafia ranks and hidden informer status
         run: node scripts/check-omerta-v9-player-tree.mjs
-      - name: Validate V14 investigator-only C2+ offers and rank-controlled retaliation
-        run: node scripts/check-omerta-v14-investigator-offers.mjs
+      - name: Validate V16 single-screen acceptance and optional later disclosure
+        run: node scripts/check-omerta-v16-immediate-indic-goal.mjs
       - name: Validate V15 protection approval tiers and rank-sensitive risk
         run: node scripts/check-omerta-v15-protection.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
-          echo 'V11/V12 mandatory-informant and V13 self-initiated offer rules are archived; V14 is current.'
+          echo 'V11/V12 mandatory, V13 self-initiated and V14 three-step acceptance are archived; V16 governs accepting indic status and goal.'
           echo 'Private A/B/C, secure server implementation, safety, role distribution, production data, and human playtests require separate release QA.'
