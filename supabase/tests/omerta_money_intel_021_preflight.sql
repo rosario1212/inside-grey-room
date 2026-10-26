@@ -2,10 +2,16 @@
 -- Contrôles sans écriture : aucune salle ni action de production n'est modifiée.
 do $$
 begin
- if to_regprocedure('public.igr_omerta_money_intel_options(text,uuid)') is null
+ if to_regprocedure('public.igr_omerta_indic_offer(text,uuid,uuid)') is null
+    or to_regprocedure('public.igr_omerta_indic_respond(text,uuid,boolean)') is null
+    or to_regprocedure('public.igr_omerta_money_intel_options(text,uuid)') is null
+    or to_regprocedure('public.igr_omerta_money_intel_signal(text,uuid,text)') is null
     or to_regprocedure('public.igr_omerta_money_intel_send(text,uuid,text)') is null
- then raise exception 'RPC financières manquantes'; end if;
- if not has_function_privilege('anon','public.igr_omerta_money_intel_options(text,uuid)','EXECUTE')
+ then raise exception 'RPC Indic 021 manquantes'; end if;
+ if not has_function_privilege('anon','public.igr_omerta_indic_offer(text,uuid,uuid)','EXECUTE')
+    or not has_function_privilege('anon','public.igr_omerta_indic_respond(text,uuid,boolean)','EXECUTE')
+    or not has_function_privilege('anon','public.igr_omerta_money_intel_signal(text,uuid,text)','EXECUTE')
+    or not has_function_privilege('anon','public.igr_omerta_money_intel_options(text,uuid)','EXECUTE')
     or not has_function_privilege('anon','public.igr_omerta_money_intel_send(text,uuid,text)','EXECUTE')
  then raise exception 'Accès RPC non configuré'; end if;
  if has_table_privilege('anon','public.igr_v4_actions','SELECT')
