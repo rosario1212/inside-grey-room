@@ -1,0 +1,9 @@
+/* OMERTÀ · Carte de renseignement financier 021 */
+.igr-money-intel-entry{margin-top:8px;white-space:normal;text-align:center}
+.igr-money-intel-panel{max-width:510px}
+.igr-money-intel-note{font-size:.89rem;opacity:.84}
+.igr-money-intel-card{border:1px solid rgba(188,163,118,.45);background:rgba(24,20,15,.38);border-radius:12px;padding:16px;margin:16px 0}
+.igr-money-intel-card strong{display:block;margin-bottom:8px}
+.igr-money-intel-card p{margin:0;line-height:1.55}
+.igr-money-intel-error{color:#edb3a7;margin-top:10px!important}
+.igr-money-intel-panel .modal-actions{display:flex;flex-wrap:wrap;gap:8px}
