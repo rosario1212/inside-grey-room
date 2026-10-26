@@ -23,3 +23,8 @@
  .igr-money-intel-actions{flex-direction:column}
  .igr-money-intel-actions button{width:100%}
 }
+
+.igr-indic-final-review{border:1px solid rgba(188,163,118,.5);padding:14px;border-radius:12px;margin:14px 0;background:rgba(26,20,13,.28)}
+.igr-indic-final-review strong{display:block;margin-bottom:7px}
+.igr-indic-final-review p{font-size:.9rem;line-height:1.5;margin:4px 0 12px}
+.igr-indic-final-review .btn{width:100%;white-space:normal}
