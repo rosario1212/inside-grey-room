@@ -92,12 +92,16 @@ async function intel(){
    const wrapper=node('section');wrapper.className='igr-money-intel-item';
    const title=node('h3',card.title||'Renseignement');
    const detail=node('p',card.detail||'');
+   const reminder=node('details');
+   reminder.className='igr-indic-knowledge-detail';
+   reminder.appendChild(node('summary','Relire ce que je sais'));
+   reminder.appendChild(detail);
    const flag=actions.some(a=>a.action_type==='omerta_intel_intent'&&a.payload?.fact_id===card.id);
    const tag=node('small',card.logged?'Consigné dans le dossier de l’Enquêteur':flag?'Discussion déjà proposée':'Pas encore abordé officiellement');
    const row=node('div');row.className='igr-money-intel-actions';
    if(card.logged){
      const summary=node('p','Renseignement déjà consigné : aucune nouvelle transmission nécessaire.');
-     wrapper.append(title,detail,tag,summary);m.slot.appendChild(wrapper);
+     wrapper.append(title,reminder,tag,summary);m.slot.appendChild(wrapper);
      continue;
    }
    const intent=btn(flag?'Renouveler le signal':'Je souhaite en parler','btn ghost',async()=>{
@@ -120,7 +124,7 @@ async function intel(){
       await refresh();
      }catch(e){failure(wrapper,e);committed.disabled=false;}
    });
-   row.append(intent,committed);wrapper.append(title,detail,tag,row);m.slot.appendChild(wrapper);
+   row.append(intent,committed);wrapper.append(title,reminder,tag,row);m.slot.appendChild(wrapper);
   }
   const tip=node('p','Le signal de disponibilité ne compte pas comme coopération. À la fin, l’Enquêteur peut aussi reconnaître ton aide orale, même sans carte consignée.');
   tip.className='igr-money-intel-note';m.slot.appendChild(tip);
