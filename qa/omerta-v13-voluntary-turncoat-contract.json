@@ -1,0 +1,181 @@
+{
+  "version": "OMERTA-V13",
+  "author_decision": "Voluntary turncoat with meaningful informed risk, no mandatory informant",
+  "status": "editorial+prototype_not_live",
+  "mode": "OMERTA",
+  "scenarios": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "four_rules": [
+    "standalone_case",
+    "player_personality_and_meaningful_choices",
+    "true_ABC_replay",
+    "no_softlocks_and_confidentiality"
+  ],
+  "eighty_twenty": {
+    "case_specific": 80,
+    "shared_Santoro": 20,
+    "editorial_not_measured": true,
+    "never_import_room_state": true
+  },
+  "phase_contract": {
+    "cycles": 3,
+    "investigator_interviews_cycle_1": true,
+    "official_confrontations_from_cycle": 2,
+    "turncoat_offer_from_cycle": 2,
+    "turncoat_commit_cutoff": "before_conclusions_locked",
+    "no_new_mini_game": true
+  },
+  "public_identity": {
+    "boss_title": "Don Santoro",
+    "other_ranks": [
+      "Consigliere",
+      "Sottocapo",
+      "Capo",
+      "Soldato",
+      "Associato",
+      "Contabile"
+    ],
+    "blood_NPCs": [
+      "Adriano Santoro",
+      "Elena Santoro"
+    ],
+    "rank_holder": "player_pseudo",
+    "show_turncoat_status": false
+  },
+  "turncoat": {
+    "at_start": 0,
+    "optional": true,
+    "any_eligible_suspect_may_evaluate": true,
+    "required_minimum": 0,
+    "forced_maximum": null,
+    "does_not_override_public_rank": true,
+    "never_auto_assigned": true,
+    "only_explicit_player_commit": true,
+    "browse_step": "preview",
+    "inspect_step": "specific_offer",
+    "commit_step": "irreversible_transmission",
+    "preview_has_cost": false,
+    "specific_offer_must_reveal": [
+      "fact_to_be_disclosed",
+      "potential_benefit",
+      "economic_and_social_risks",
+      "legal_risk_in_fiction",
+      "condition_of_protection",
+      "new_personal_win_condition",
+      "case_specific_exposure_route",
+      "what_is_unknown"
+    ],
+    "commit_requires_second_confirmation": true,
+    "precommit_cancel_allowed": true,
+    "postcommit_rewind_allowed": false,
+    "secret_server_owned": true,
+    "public_list_exposure": false,
+    "objective_is_personal_not_equivalent_to_investigators": true,
+    "oral_performance_never_scored": true,
+    "can_keep_silent": true,
+    "can_share_false_statement_but_no_automatic_protection": true,
+    "never_grants_immunity_just_by_accepting": true,
+    "not_a_formal_pentito": true,
+    "on_disconnect_preserve_commitment": true,
+    "never_softlocks_progress": true,
+    "multiple_voluntary_commits_supported_or_safely_limited_only_by_explicit_rules": true
+  },
+  "evidence_contract": {
+    "no_informant_case_solvable": true,
+    "independent_c3_sources_min": 2,
+    "not_dependent_on_unforced_confession": true,
+    "canon_fixed_by_server_variant": true,
+    "informant_can_accelerate_or_recontextualize_but_not_be_only_source_of_crucial_fact": true
+  },
+  "case_hooks": [
+    {
+      "id": "021",
+      "crime": "collection racket plus Antonio Gallo murder",
+      "decision_trigger": "financial contradiction and suspect's place in collection",
+      "potential_benefit": "challenge attribution of a collection discrepancy",
+      "risk": "own role in extortion exposed by financial evidence",
+      "without_turncoat": "external commercial and forensic proof",
+      "shared_world": "Santoro hierarchy and Brooklyn crew"
+    },
+    {
+      "id": "022",
+      "crime": "Nino Caruso murdered after ambiguous order",
+      "decision_trigger": "witness-version coordination",
+      "potential_benefit": "contradict murder implication without protecting other falsehoods",
+      "risk": "own false testimony and debt revealed",
+      "without_turncoat": "independent chronology and communication records",
+      "shared_world": "Santoro capo and Newark social club"
+    },
+    {
+      "id": "023",
+      "crime": "Falco murdered plus Adriano attack amidst sit-down",
+      "decision_trigger": "private revised offer disclosed during negotiations",
+      "potential_benefit": "redirect commercial responsibility away from suspect",
+      "risk": "reveals concealed participation in side deal",
+      "without_turncoat": "versions of offer and independent location records",
+      "shared_world": "Santoro consigliere and blood family"
+    },
+    {
+      "id": "024",
+      "crime": "Valenti murdered amid transport extortion",
+      "decision_trigger": "contradiction in witness notebooks",
+      "potential_benefit": "avoid being scapegoated by detained associate",
+      "risk": "own payments become corroborated",
+      "without_turncoat": "Valenti notes and outside business records",
+      "shared_world": "Santoro transport interests and federal justice"
+    },
+    {
+      "id": "025",
+      "crime": "Benedetti murdered after construction extortion",
+      "decision_trigger": "diverging versions of Don order",
+      "potential_benefit": "disprove one wrongful murder command allegation",
+      "risk": "self implicated in coercion while disproving homicide instruction",
+      "without_turncoat": "independent order traces and homicide chronology",
+      "shared_world": "Don Santoro and crew hierarchy"
+    }
+  ],
+  "qa_matrix": {
+    "scenario_count": 5,
+    "variant_ids": [
+      "A",
+      "B",
+      "C"
+    ],
+    "required_scenarios_per_variant": [
+      "zero_optins",
+      "one_commit",
+      "multiple_commits",
+      "inspect_then_decline",
+      "disconnect_after_commit",
+      "offer_before_cycle_2_rejected",
+      "after_final_lock_rejected",
+      "unavailable_info_rejected",
+      "secrecy_of_public_sync",
+      "no_impossible_objectives"
+    ],
+    "human_playtest_required": true,
+    "FR_EN_required": true
+  },
+  "release_blockers": {
+    "live_server_endpoints": false,
+    "verified_secure_storage": false,
+    "public_ui_wired": false,
+    "fifteen_ABC_variants_sufficient_without_turncoat": false,
+    "personal_objectives_and_measurable_win_states": false,
+    "ability_to_couple_to_standard_events_C2": false,
+    "full_role_count_matrix": false,
+    "live_no_informant_playtests": false,
+    "privacy_reread": false,
+    "production_released": false
+  },
+  "never_touch": [
+    "CARTEL_029",
+    "CARTEL_030",
+    "CARTEL_031"
+  ]
+}
