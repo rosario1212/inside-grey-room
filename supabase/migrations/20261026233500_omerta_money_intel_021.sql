@@ -18,6 +18,8 @@ declare
   cards_out jsonb;
   catalog jsonb;
   match_id int;
+  authored jsonb;
+  headings text[];
 begin
   select * into p from public.igr_v4_players
   where room_code=upper(trim(p_code)) and player_token=p_player_token;
@@ -77,6 +79,30 @@ begin
       jsonb_build_object('id','021_money_records','title','Les écritures comptables',
         'detail','Les écritures comptables de Salvatore existent.',
         'novelty','already_documented')
+    );
+  elsif p.internal_slot between 2 and 6 then
+    -- Les autres suspects peuvent aussi devenir Indic. Leurs trois sujets
+    -- reprennent strictement des éléments déjà écrits dans leur fiche privée.
+    -- Une suspicion ne devient jamais une preuve par la seule consignation.
+    select x.pack->'suspects'->(p.internal_slot-1) into authored
+    from public.igr_v4_scenario_packs x where x.scenario_id='021';
+    if authored is null
+     or coalesce(authored->>'hide','')<>coalesce(p.private_state->>'hide','')
+     or coalesce(authored->>'chronology','')<>coalesce(p.private_state->>'chronology','')
+    then return jsonb_build_object('available',false,'cards','[]'::jsonb);end if;
+    headings:=case p.internal_slot
+      when 2 then array['Les ordres du Caporegime','La disparition de l’enveloppe','Les pressions sur le groupe']
+      when 3 then array['La somme dissimulée','La rencontre avec Rinaldi','Le paiement préparé']
+      when 4 then array['Le paiement exceptionnel','Les appels de la soirée','Le dîner des Verri']
+      when 5 then array['La confidence de Paolo','La rencontre avec Paolo','Sa place dans la Famiglia']
+      else array['L’escorte écartée','Le changement de mission','L’itinéraire du transport'] end;
+    catalog:=jsonb_build_array(
+      jsonb_build_object('id','021_person_'||p.internal_slot||'_secret','title',headings[1],
+        'detail',authored->>'hide','novelty','unassessed'),
+      jsonb_build_object('id','021_person_'||p.internal_slot||'_chronology','title',headings[2],
+        'detail',authored->>'chronology','novelty','unassessed'),
+      jsonb_build_object('id','021_person_'||p.internal_slot||'_anchor','title',headings[3],
+        'detail',authored->'anchors'->>0,'novelty','already_documented')
     );
   else
     return jsonb_build_object('available',false,'cards','[]'::jsonb);
@@ -157,7 +183,9 @@ begin
   insert into public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
   values(r.code,p.id,r.cycle,'omerta_verified_intel',
          jsonb_build_object('fact_id',p_card_id,'receiver_id',receiver.id,
-           'truth_verified',true,'first_official_delivery',true,
+           'canonically_authored',true,'truth_verified',
+           (p_card_id in ('021_money_route','021_money_ledger','021_handoff')),
+           'first_official_delivery',true,
            'match_no',greatest(1,coalesce((r.state->>'match_no')::int,1)),
            'scenario_id','021','topic_title',chosen->>'title',
            'novelty',chosen->>'novelty'))
@@ -174,7 +202,7 @@ begin
          jsonb_build_object('title','TRANSMISSION CONFIRMÉE',
            'text','L’Enquêteur a reçu le renseignement sur les transferts d’argent. La transmission reste confidentielle.'));
   return jsonb_build_object('ok',true,'action_id',action_id,
-    'truth_verified',true,'first_official_delivery',true);
+    'canonically_authored',true,'first_official_delivery',true);
 end;
 $$;
 
