@@ -34,6 +34,10 @@ on:
       - 'qa/omerta-v17-clear-cards-double-agent-contract.json'
       - 'qa/omerta-v17-double-game-simulator.mjs'
       - 'scripts/check-omerta-v17-clear-instructions-double-agent.mjs'
+      - 'docs/OMERTA_V18_SUSPECT_INFORMANT_WIN_CONDITIONS.md'
+      - 'qa/omerta-v18-personal-victory-contract.json'
+      - 'qa/omerta-v18-personal-goal-evaluator.mjs'
+      - 'scripts/check-omerta-v18-win-conditions.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -75,6 +79,10 @@ on:
       - 'qa/omerta-v17-clear-cards-double-agent-contract.json'
       - 'qa/omerta-v17-double-game-simulator.mjs'
       - 'scripts/check-omerta-v17-clear-instructions-double-agent.mjs'
+      - 'docs/OMERTA_V18_SUSPECT_INFORMANT_WIN_CONDITIONS.md'
+      - 'qa/omerta-v18-personal-victory-contract.json'
+      - 'qa/omerta-v18-personal-goal-evaluator.mjs'
+      - 'scripts/check-omerta-v18-win-conditions.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -111,6 +119,8 @@ jobs:
         run: node scripts/check-omerta-v15-protection.mjs
       - name: Validate V17 player guidance and double-game source autonomy
         run: node scripts/check-omerta-v17-clear-instructions-double-agent.mjs
+      - name: Validate V18 suspect and indic measurable personal victory conditions
+        run: node scripts/check-omerta-v18-win-conditions.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
