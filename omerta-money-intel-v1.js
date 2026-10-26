@@ -5,10 +5,10 @@
  */
 (function(){
 'use strict';
-const SID='021';
+const OMERTA=new Set(['021','022','023','024','025']);
 const FINISHED=new Set(['briefing','provisional_lock','final_debrief','locking','reveal']);
 function context(){try{return typeof STATE!=='undefined'?STATE.sync:null;}catch(_){return null;}}
-function isPlaying(d){return d?.room?.scenario_id===SID&&d.room.status==='playing'&&Number(d.room.cycle)>=2&&!FINISHED.has(d.room.phase);}
+function isPlaying(d){return OMERTA.has(d?.room?.scenario_id)&&d.room.status==='playing'&&Number(d.room.cycle)>=2&&!FINISHED.has(d.room.phase);}
 function match(d){return Math.max(1,Number(d?.room?.state?.match_no)||1);}
 function events(d,type){return (d?.events||[]).filter(e=>e.event_type===type&&Number(e.payload?.match_no||1)===match(d));}
 function activated(d){return d?.player?.public_role==='suspect'&&events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true);}
@@ -131,7 +131,7 @@ async function intel(){
 }
 function finalReviewAvailable(d){
  if(!d||d.player?.public_role!=='enqueteur'||d.room?.status!=='playing'
-  ||d.room?.phase!=='locking'||d.room.scenario_id!==SID)return false;
+  ||d.room?.phase!=='locking'||!OMERTA.has(d.room.scenario_id))return false;
  if(!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true))return false;
  if((d.my_actions||[]).some(a=>a.action_type==='omerta_indic_final_assessment'))return false;
  if((d.my_actions||[]).some(a=>a.action_type==='final_lock'))return false;
