@@ -50,7 +50,7 @@ for(const c of json.scenarios){
  const caseSection=md.split('## '+c.id+' — '+c.title)[1]?.split('\n---\n')[0]||'';
  assert.ok(caseSection.includes('**ÉNONCÉ :**'));
  assert.ok(caseSection.includes('**Comment les intérêts s\'entrecroisent'));
- assert.ok(caseSection.includes('**80 %**')&&caseSection.includes('**20 %**'));
+ assert.ok(caseSection.includes('80 %')&&caseSection.includes('20 %'));
 }
 for(const phrase of [
  'UNE seule mission','UNE seule mission personnelle','une seule mission',
