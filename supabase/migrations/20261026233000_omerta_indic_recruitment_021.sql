@@ -25,8 +25,7 @@ begin
  match_id:=greatest(1,coalesce((room.state->>'match_no')::int,1));
  select * into sus from public.igr_v4_players
  where room_code=room.code and id=p_suspect and public_role='suspect';
- if not found or sus.internal_slot not in (1,7)
- or coalesce((room.state->'omerta'->'dead') ? p_suspect::text,false)
+ if not found or coalesce((room.state->'omerta'->'dead') ? p_suspect::text,false)
  then raise exception 'invalid_source'; end if;
  if exists(
   select 1 from public.igr_v4_actions a where a.room_code=room.code
