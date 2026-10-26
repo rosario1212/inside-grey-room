@@ -1,0 +1,521 @@
+{
+  "version": "OMERTA-V22",
+  "status": "editorial-and-coherence-audit-only-not-live",
+  "normative": true,
+  "source": "docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md",
+  "case_count": 5,
+  "role_template_count": 40,
+  "indic_template_count": 40,
+  "special_formal_pentito": {
+    "case_id": "024",
+    "status": "Pentito (rôle judiciaire formel, pas un rang mafieux)",
+    "goal": "Obtiens au dénouement une protection provisoire effectivement approuvée pour tes déclarations judiciaires.",
+    "recruitable_as_indic": false,
+    "only_if_authored_as_playable": true
+  },
+  "scenarios": [
+    {
+      "id": "021",
+      "title": "L'ENVELOPPE",
+      "intro": "Brooklyn, 2006. L'enveloppe du vendredi manque dans la collecte de neuf commerces. Antonio Gallo, qui refusait le second versement, a été assassiné. Les registres et le montant parvenu à la police ne concordent pas.",
+      "question": "Qui a exigé l'argent, qui a fait disparaître l'enveloppe, qui a ordonné ou exécuté le meurtre, et comment un montant privé est-il sorti du crew ?",
+      "anchors": [
+        "second_collection",
+        "envelope_diversion",
+        "gallo_homicide",
+        "ledger_falsification",
+        "amount_leak",
+        "collection_rights"
+      ],
+      "mesh": "L'Associato tient à sa part ; le Capo contrôle sa distribution ; le Contabile sait lire les deux livres ; le Consigliere tente de régler le litige ; le Soldato peut être mis en cause pour une violence différente du détournement.",
+      "goals": [
+        {
+          "role": "suspect",
+          "rank_label": "Suspect (sans rang particulier)",
+          "suspect_text": "Évite qu'on te désigne comme responsable du détournement de l'enveloppe du vendredi.",
+          "indic_text": "Obtiens une protection provisoire effectivement approuvée pour tes déclarations sur les collectes.",
+          "self_interest": "Tu crains de servir de bouc émissaire dans une affaire qui dépasse l'argent manquant.",
+          "risk": "Le statut d'indic peut t'exposer sans te garantir une protection.",
+          "suspect_axis": "envelope_diversion",
+          "indic_axis": "protection"
+        },
+        {
+          "role": "associato",
+          "rank_label": "Associato",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a imposé à Gallo un second versement.",
+          "indic_text": "Conserve la part de la collecte du vendredi qui te revenait.",
+          "self_interest": "Tu as quelque chose de concret à perdre : ta rémunération de cette collecte.",
+          "risk": "Un aveu sur les versements peut te compromettre dans le racket.",
+          "suspect_axis": "second_collection",
+          "indic_axis": "weekly_associato_cut"
+        },
+        {
+          "role": "soldato",
+          "rank_label": "Soldato / Uomo d'Onore",
+          "suspect_text": "Évite qu'on te désigne comme l'exécutant du meurtre d'Antonio Gallo.",
+          "indic_text": "Évite qu'on te désigne comme l'auteur des menaces adressées à Gallo avant sa mort.",
+          "self_interest": "Tu refuses d'endosser chaque violence commise par le crew simplement parce que tu es Soldato.",
+          "risk": "Ta version des déplacements peut aussi servir à reconstituer le meurtre.",
+          "suspect_axis": "gallo_homicide_executor",
+          "indic_axis": "gallo_threats"
+        },
+        {
+          "role": "contabile",
+          "rank_label": "Contabile",
+          "suspect_text": "Évite qu'on te désigne comme l'auteur des écritures falsifiées dans les livres de collecte.",
+          "indic_text": "Évite qu'on te désigne comme la personne ayant divulgué le montant confidentiel à la police.",
+          "self_interest": "La provenance d'un chiffre très précis peut faire porter les soupçons sur celui qui tenait les comptes.",
+          "risk": "La précision de tes informations peut trahir ton accès exclusif.",
+          "suspect_axis": "ledger_falsification",
+          "indic_axis": "amount_leak"
+        },
+        {
+          "role": "capo",
+          "rank_label": "Capo / Caporegime",
+          "suspect_text": "Évite qu'on te désigne comme le commanditaire du meurtre de Gallo.",
+          "indic_text": "Conserve l'autorité sur les collectes de ton propre crew.",
+          "self_interest": "Ton rang vaut moins si quelqu'un peut retirer tes recettes ou tes hommes.",
+          "risk": "En négociant, tu risques de confirmer comment les versements remontent jusqu'à toi.",
+          "suspect_axis": "gallo_homicide_order",
+          "indic_axis": "capo_collection_authority"
+        },
+        {
+          "role": "consigliere",
+          "rank_label": "Consigliere",
+          "suspect_text": "Évite qu'on te désigne comme l'organisateur de la disparition de l'enveloppe.",
+          "indic_text": "Conserve la faveur du Don liée à l'arbitrage du différend sur cette collecte.",
+          "self_interest": "Ta position repose sur la confiance accordée à tes arbitrages, pas sur la possession de l'enveloppe.",
+          "risk": "Ton rôle de médiateur peut être retourné contre toi si les notes de l'arbitrage sortent.",
+          "suspect_axis": "envelope_diversion_organizer",
+          "indic_axis": "consigliere_collection_favor"
+        },
+        {
+          "role": "sottocapo",
+          "rank_label": "Sottocapo / Underboss",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a autorisé la remise de l'enveloppe hors du circuit prévu.",
+          "indic_text": "Conserve le pouvoir de valider les futures remises de ce crew.",
+          "self_interest": "Tu veux garder la main sur la chaîne de remise sans porter seul la faute du vendredi.",
+          "risk": "Une seule consigne remontant à ton rang peut te rendre facilement identifiable.",
+          "suspect_axis": "envelope_delivery_override",
+          "indic_axis": "underboss_collection_approval"
+        },
+        {
+          "role": "don",
+          "rank_label": "Don Santoro",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a autorisé le second prélèvement imposé à Gallo.",
+          "indic_text": "Conserve le droit de fixer les prélèvements qui remontent à la Famiglia dans cette affaire.",
+          "self_interest": "Tu peux tenter de préserver l'autorité du sommet sans assumer chaque acte du crew.",
+          "risk": "La traçabilité de tes ordres rend une coopération de haut rang risquée.",
+          "suspect_axis": "second_collection_authorizer",
+          "indic_axis": "don_tribute_authority"
+        }
+      ]
+    },
+    {
+      "id": "022",
+      "title": "OMERTÀ",
+      "intro": "Newark, 2006. Le bookmaker Nino Caruso est assassiné après une dette litigieuse. Une phrase de réunion ressemble à un ordre, et plusieurs hommes livrent des déclarations presque identiques.",
+      "question": "Quel conflit portait sur les paris, qui a menacé Caruso, qui a commandé ou commis son meurtre, et qui a coordonné les récits ?",
+      "anchors": [
+        "betting_shortfall",
+        "caruso_threats",
+        "caruso_homicide",
+        "witness_pact",
+        "debt_mediation"
+      ],
+      "mesh": "Le Contabile défend les comptes ; l'Associato craint la dette ; le Soldato doit rendre compte de ses actes ; le Capo peut répondre des ordres du crew ; le Consigliere défend son arbitrage des dettes.",
+      "goals": [
+        {
+          "role": "suspect",
+          "rank_label": "Suspect (sans rang particulier)",
+          "suspect_text": "Évite qu'on te désigne comme l'auteur d'une fausse déclaration sur la soirée du meurtre.",
+          "indic_text": "Obtiens une protection provisoire effectivement approuvée pour pouvoir témoigner sans dépendre du crew.",
+          "self_interest": "Tu peux vouloir sortir de l'étau des versions concertées sans dénoncer qui que ce soit au hasard.",
+          "risk": "Le fait d'accepter ne te garantit ni immunité ni anonymat.",
+          "suspect_axis": "false_witness_statement",
+          "indic_axis": "protection"
+        },
+        {
+          "role": "associato",
+          "rank_label": "Associato",
+          "suspect_text": "Évite qu'on te désigne comme responsable de la disparition des recettes des paris.",
+          "indic_text": "Évite qu'on te désigne comme l'organisateur du pacte de faux témoignages.",
+          "self_interest": "Ta dette et ta présence dans l'entourage du bookmaker peuvent te faire porter un mensonge collectif.",
+          "risk": "Décrire les récits concertés peut prouver que tu y as participé.",
+          "suspect_axis": "betting_diversion",
+          "indic_axis": "witness_pact_organizer"
+        },
+        {
+          "role": "soldato",
+          "rank_label": "Soldato / Uomo d'Onore",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a exécuté le meurtre de Caruso.",
+          "indic_text": "Évite qu'on te désigne comme l'auteur des menaces formulées contre Caruso avant sa mort.",
+          "self_interest": "La menace, l'exécution et l'ordre ne sont pas une seule responsabilité.",
+          "risk": "Les heures de réunion peuvent contredire ton récit.",
+          "suspect_axis": "caruso_homicide_executor",
+          "indic_axis": "caruso_threats"
+        },
+        {
+          "role": "contabile",
+          "rank_label": "Contabile",
+          "suspect_text": "Évite qu'on te désigne comme l'auteur du détournement des recettes de paris.",
+          "indic_text": "Conserve la commission de comptabilité promise sur les paris de cette soirée.",
+          "self_interest": "La caisse et ta rémunération sont deux enjeux différents, que le crew peut confondre.",
+          "risk": "Tes registres peuvent révéler des dettes que tu aurais préféré taire.",
+          "suspect_axis": "betting_diversion_accounts",
+          "indic_axis": "bookmaking_commission"
+        },
+        {
+          "role": "capo",
+          "rank_label": "Capo / Caporegime",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a ordonné la mort de Caruso.",
+          "indic_text": "Évite qu'on te désigne comme l'organisateur du pacte de faux témoignages.",
+          "self_interest": "Tu peux tenter d'éviter qu'une consigne du crew soit confondue avec la fabrication de faux alibis.",
+          "risk": "Des propos tenus devant plusieurs membres peuvent remonter jusqu'à toi.",
+          "suspect_axis": "caruso_homicide_order",
+          "indic_axis": "witness_pact_caporegime"
+        },
+        {
+          "role": "consigliere",
+          "rank_label": "Consigliere",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a mis les témoins d'accord sur une fausse version.",
+          "indic_text": "Conserve la faveur du Don attachée à ton règlement du différend sur les dettes de Caruso.",
+          "self_interest": "Tu veux rester crédible comme arbitre malgré le meurtre et les dettes contestées.",
+          "risk": "Tes entretiens confidentiels peuvent être interprétés comme des consignes.",
+          "suspect_axis": "witness_pact_mediator",
+          "indic_axis": "debt_mediation_favor"
+        },
+        {
+          "role": "sottocapo",
+          "rank_label": "Sottocapo / Underboss",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a validé l'intimidation de Caruso.",
+          "indic_text": "Conserve le mandat de répartir les dettes de jeu entre les crews concernés.",
+          "self_interest": "Les dettes contestées menacent ton pouvoir d'arbitrage entre chefs.",
+          "risk": "Un détail sur les instructions des crews peut indiquer d'où vient la fuite.",
+          "suspect_axis": "caruso_intimidation_authorizer",
+          "indic_axis": "bookmaking_debt_mandate"
+        },
+        {
+          "role": "don",
+          "rank_label": "Don Santoro",
+          "suspect_text": "Évite qu'on te désigne comme le commanditaire de l'assassinat de Caruso.",
+          "indic_text": "Conserve la maîtrise de la part des recettes de paris versée au sommet de la Famiglia.",
+          "self_interest": "Tu as intérêt à maintenir les revenus du réseau même si un bookmaker est mort.",
+          "risk": "La valeur de tes révélations grandit avec ton rang, comme le risque d'être identifié.",
+          "suspect_axis": "don_caruso_order",
+          "indic_axis": "don_bookmaking_tribute"
+        }
+      ]
+    },
+    {
+      "id": "023",
+      "title": "LA TABLE",
+      "intro": "Une réunion devait trancher un litige sur les revenus de transport. Domenico Falco est assassiné ; Adriano Santoro est pris pour cible ; deux versions du même accord circulent.",
+      "question": "Qui bénéficiait de l'accord modifié, qui a saboté la rencontre, qui savait où passerait Adriano, et qui a organisé la violence ?",
+      "anchors": [
+        "contract_versions",
+        "negotiation_sabotage",
+        "falco_homicide",
+        "adriano_attack",
+        "route_leak",
+        "transport_rights"
+      ],
+      "mesh": "Les intérêts financiers de l'Associato, du Contabile et du Capo se croisent autour d'un même accord ; Consigliere et Sottocapo doivent arbitrer sans nécessairement partager le même objectif ; la fuite du trajet et les meurtres sont des questions distinctes.",
+      "goals": [
+        {
+          "role": "suspect",
+          "rank_label": "Suspect (sans rang particulier)",
+          "suspect_text": "Évite qu'on te désigne comme la personne ayant révélé l'itinéraire d'Adriano.",
+          "indic_text": "Conserve la part des revenus de transport qui t'était promise dans cet accord.",
+          "self_interest": "Tu peux posséder un intérêt dans l'accord sans être à l'origine de l'attaque.",
+          "risk": "La connaissance d'une version confidentielle peut t'identifier.",
+          "suspect_axis": "adriano_route_leak",
+          "indic_axis": "transport_private_share"
+        },
+        {
+          "role": "associato",
+          "rank_label": "Associato",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a fait échouer la négociation.",
+          "indic_text": "Évite qu'on te désigne comme la personne ayant remis l'itinéraire d'Adriano à ses agresseurs.",
+          "self_interest": "Tu refuses de payer pour une attaque simplement parce que tu as approché la table.",
+          "risk": "Ton accès au trajet peut te lier à des hommes que tu veux protéger.",
+          "suspect_axis": "agreement_sabotage_associato",
+          "indic_axis": "adriano_route_delivery"
+        },
+        {
+          "role": "soldato",
+          "rank_label": "Soldato / Uomo d'Onore",
+          "suspect_text": "Évite qu'on te désigne comme l'exécutant de l'attaque contre Adriano.",
+          "indic_text": "Obtiens une protection provisoire effectivement approuvée pour toi dans l'affaire de la table.",
+          "self_interest": "Tu veux survivre au conflit entre groupes sans dépendre de leur parole.",
+          "risk": "Ta protection peut être refusée alors que tes anciens actes restent poursuivables.",
+          "suspect_axis": "adriano_attack_executor",
+          "indic_axis": "protection"
+        },
+        {
+          "role": "contabile",
+          "rank_label": "Contabile",
+          "suspect_text": "Évite qu'on te désigne comme l'auteur des conditions financières falsifiées.",
+          "indic_text": "Conserve ta commission sur l'accord de transport réellement retenu au dénouement.",
+          "self_interest": "Un accord modifié peut changer qui touche l'argent sans changer qui a tué Falco.",
+          "risk": "Les deux versions de l'accord peuvent montrer qui a écrit ou modifié les montants.",
+          "suspect_axis": "agreement_forgery_contabile",
+          "indic_axis": "transport_accounting_commission"
+        },
+        {
+          "role": "capo",
+          "rank_label": "Capo / Caporegime",
+          "suspect_text": "Évite qu'on te désigne comme le commanditaire du meurtre de Falco.",
+          "indic_text": "Conserve la part de transport promise à ton crew.",
+          "self_interest": "La mort du médiateur menace les bénéfices pour lesquels tes hommes négociaient.",
+          "risk": "Tes échanges avec Falco peuvent éclairer les raisons de son assassinat.",
+          "suspect_axis": "falco_homicide_order",
+          "indic_axis": "capo_transport_share"
+        },
+        {
+          "role": "consigliere",
+          "rank_label": "Consigliere",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a saboté la réunion.",
+          "indic_text": "Évite qu'on te désigne comme la source de la fuite du déplacement d'Adriano.",
+          "self_interest": "En tant que médiateur, tu peux refuser que le même dossier te fasse porter une négociation ratée et une fuite d'itinéraire.",
+          "risk": "Tes rendez-vous et tes confidences peuvent être recoupés.",
+          "suspect_axis": "sitdown_sabotage_consigliere",
+          "indic_axis": "adriano_leak_consigliere"
+        },
+        {
+          "role": "sottocapo",
+          "rank_label": "Sottocapo / Underboss",
+          "suspect_text": "Évite qu'on te désigne comme le commanditaire de l'attaque contre Adriano.",
+          "indic_text": "Conserve ton mandat d'arbitrer la répartition des revenus de transport après la réunion.",
+          "self_interest": "Ta place entre les crews dépend de ta capacité à conserver l'arbitrage.",
+          "risk": "Une offre clandestine peut te brouiller avec les deux groupes.",
+          "suspect_axis": "adriano_attack_underboss",
+          "indic_axis": "underboss_transport_arbitration"
+        },
+        {
+          "role": "don",
+          "rank_label": "Don Santoro",
+          "suspect_text": "Évite qu'on te désigne comme l'auteur de la divulgation du trajet d'Adriano.",
+          "indic_text": "Conserve la décision finale sur le partage des recettes de transport entre les crews.",
+          "self_interest": "L'attaque contre un proche de sang peut menacer ton pouvoir de décider sans prouver ta participation à la violence.",
+          "risk": "Un cercle réduit connaît tes décisions et rend une fuite traçable.",
+          "suspect_axis": "adriano_route_leak_don",
+          "indic_axis": "don_transport_final_authority"
+        }
+      ]
+    },
+    {
+      "id": "024",
+      "title": "IL PENTITO",
+      "intro": "Un membre est arrêté pour extorsion des transporteurs. Sergio Valenti, qui devait déposer, est assassiné ; ses notes contradictoires circulent. Une coopération judiciaire formelle est distincte du statut d'indic.",
+      "question": "Qui organisait les prélèvements, qui connaissait la déposition, qui a intimidé Valenti et qui a décidé son meurtre ?",
+      "anchors": [
+        "transport_extortion",
+        "valenti_notes",
+        "deposition_leak",
+        "valenti_intimidation",
+        "valenti_homicide"
+      ],
+      "mesh": "Le Soldato peut répondre de la violence et non de toute l'extorsion ; le Contabile des écritures et non de l'ordre ; l'Associato de ses remises ; le Capo des collectes ; un Pentito formel, s'il est vraiment un joueur, cherche la protection sans changer une deuxième fois de statut.",
+      "goals": [
+        {
+          "role": "suspect",
+          "rank_label": "Suspect (sans rang particulier)",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a ordonné l'assassinat de Valenti.",
+          "indic_text": "Obtiens une protection provisoire effectivement approuvée pour tes déclarations sur le réseau de transport.",
+          "self_interest": "La coopération peut sembler préférable aux risques liés aux notes du témoin.",
+          "risk": "Une simple demande de protection ne suffit pas.",
+          "suspect_axis": "valenti_homicide_generic",
+          "indic_axis": "protection"
+        },
+        {
+          "role": "associato",
+          "rank_label": "Associato",
+          "suspect_text": "Évite qu'on te désigne comme l'organisateur du racket des transporteurs.",
+          "indic_text": "Évite qu'on te désigne comme la personne ayant divulgué la date de déposition de Valenti.",
+          "self_interest": "La date du témoignage peut faire de toi un complice présumé du meurtre, indépendamment des collectes.",
+          "risk": "Un rendez-vous ou une correspondance peut montrer ce que tu savais.",
+          "suspect_axis": "transport_extortion_associato",
+          "indic_axis": "valenti_deposition_leak"
+        },
+        {
+          "role": "soldato",
+          "rank_label": "Soldato / Uomo d'Onore",
+          "suspect_text": "Évite qu'on te désigne comme l'exécutant du meurtre de Valenti.",
+          "indic_text": "Évite qu'on te désigne comme l'organisateur principal des collectes extorquées aux transporteurs.",
+          "self_interest": "Tu peux être impliqué dans une mission sans décider du racket et de ses bénéficiaires.",
+          "risk": "Des aveux sur tes missions peuvent te compromettre.",
+          "suspect_axis": "valenti_homicide_executor",
+          "indic_axis": "transport_extortion_soldato"
+        },
+        {
+          "role": "contabile",
+          "rank_label": "Contabile",
+          "suspect_text": "Évite qu'on te désigne comme l'auteur des faux versements inscrits dans les notes.",
+          "indic_text": "Évite qu'on te désigne comme celui qui a ordonné les versements forcés.",
+          "self_interest": "Tenir un registre n'est pas nécessairement décider de l'extorsion, mais le distinguer sera difficile.",
+          "risk": "Les destinataires des fonds peuvent identifier le cercle comptable.",
+          "suspect_axis": "valenti_accounts_forgery",
+          "indic_axis": "forced_transfers_order"
+        },
+        {
+          "role": "capo",
+          "rank_label": "Capo / Caporegime",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a commandé la mort de Valenti.",
+          "indic_text": "Conserve la part des collectes de transport attribuée à ton crew.",
+          "self_interest": "Tu veux sauver les revenus de tes hommes même si les notes de Valenti les compromettent.",
+          "risk": "Un supérieur peut perdre sa protection financière s'il révèle la chaîne de collecte.",
+          "suspect_axis": "valenti_homicide_capo",
+          "indic_axis": "capo_transport_cut"
+        },
+        {
+          "role": "consigliere",
+          "rank_label": "Consigliere",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a validé l'intimidation de Valenti.",
+          "indic_text": "Évite qu'on te désigne comme celui qui a dirigé le racket des transporteurs.",
+          "self_interest": "Tu cherchais à arbitrer un conflit, mais les enquêteurs peuvent y voir une direction des prélèvements.",
+          "risk": "Les entretiens de médiation peuvent être recoupés avec les paiements.",
+          "suspect_axis": "valenti_intimidation_consigliere",
+          "indic_axis": "transport_racket_command_consigliere"
+        },
+        {
+          "role": "sottocapo",
+          "rank_label": "Sottocapo / Underboss",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a entravé la déposition de Valenti.",
+          "indic_text": "Conserve le pouvoir d'affecter les collectes de transport entre les crews.",
+          "self_interest": "Tu veux garder un droit de décision sur les collectes malgré la déposition et l'arrestation.",
+          "risk": "Tes instructions aux équipes peuvent établir une implication plus grave.",
+          "suspect_axis": "valenti_deposition_obstruction",
+          "indic_axis": "underboss_transport_allocation"
+        },
+        {
+          "role": "don",
+          "rank_label": "Don Santoro",
+          "suspect_text": "Évite qu'on te désigne comme le commanditaire des représailles contre Valenti.",
+          "indic_text": "Conserve le droit de fixer le tribut que les transporteurs versent à la Famiglia dans cette affaire.",
+          "self_interest": "Tu veux garder l'autorité économique même si des hommes sont arrêtés.",
+          "risk": "Les révélations d'un Don peuvent être très utiles mais facilement attribuables.",
+          "suspect_axis": "valenti_retaliation_don",
+          "indic_axis": "don_transport_tribute"
+        }
+      ]
+    },
+    {
+      "id": "025",
+      "title": "IL DON",
+      "intro": "Carlo Benedetti a été racketté puis assassiné. Trois versions d'une consigne attribuée au sommet circulent, et un différend de chantier fournit un autre mobile possible.",
+      "question": "Qui a organisé l'extorsion, qui a transmis ou déformé une consigne, et qui a réellement ordonné ou commis le meurtre ?",
+      "anchors": [
+        "benedetti_extortion",
+        "benedetti_messages",
+        "benedetti_homicide",
+        "contract_money",
+        "order_distortion"
+      ],
+      "mesh": "Le Don répond de l'origine d'une consigne éventuelle, le Sottocapo de sa transmission, le Capo de ses décisions locales, le Soldato des actes qu'il a commis, le Contabile des sommes : ces responsabilités ne doivent jamais être fusionnées en un coupable unique par facilité.",
+      "goals": [
+        {
+          "role": "suspect",
+          "rank_label": "Suspect (sans rang particulier)",
+          "suspect_text": "Évite qu'on te désigne comme l'auteur des menaces adressées à Benedetti.",
+          "indic_text": "Obtiens une protection provisoire effectivement approuvée pour ton témoignage dans cette affaire.",
+          "self_interest": "Tu veux une sortie personnelle face à la pression des deux camps.",
+          "risk": "Un haut rang ou un témoin indispensable n'est pas automatiquement protégé.",
+          "suspect_axis": "benedetti_threats_generic",
+          "indic_axis": "protection"
+        },
+        {
+          "role": "associato",
+          "rank_label": "Associato",
+          "suspect_text": "Évite qu'on te désigne comme l'organisateur du racket de Benedetti.",
+          "indic_text": "Évite qu'on te désigne comme celui qui a porté l'ultimatum à Benedetti.",
+          "self_interest": "Tu ne veux pas assumer la décision d'extorquer ni être sacrifié comme seul messager.",
+          "risk": "Un message dont tu connais le texte peut te mettre en cause.",
+          "suspect_axis": "benedetti_extortion_associato",
+          "indic_axis": "benedetti_ultimatum_delivery"
+        },
+        {
+          "role": "soldato",
+          "rank_label": "Soldato / Uomo d'Onore",
+          "suspect_text": "Évite qu'on te désigne comme l'exécutant du meurtre de Benedetti.",
+          "indic_text": "Évite qu'on te désigne comme celui qui a transmis l'ordre de tuer Benedetti.",
+          "self_interest": "Tu veux distinguer ce qu'on t'a demandé de ce que tu as réellement transmis ou fait.",
+          "risk": "Les destinataires d'une consigne peuvent contredire ta version.",
+          "suspect_axis": "benedetti_homicide_executor",
+          "indic_axis": "benedetti_murder_order_relay"
+        },
+        {
+          "role": "contabile",
+          "rank_label": "Contabile",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a détourné les sommes extorquées à Benedetti.",
+          "indic_text": "Évite qu'on te désigne comme l'organisateur des versements forcés exigés de Benedetti.",
+          "self_interest": "Tu veux séparer la gestion d'argent de l'autorité qui imposait les versements.",
+          "risk": "Tes comptes peuvent prouver tes propres décisions.",
+          "suspect_axis": "benedetti_cash_diversion",
+          "indic_axis": "benedetti_forced_payments"
+        },
+        {
+          "role": "capo",
+          "rank_label": "Capo / Caporegime",
+          "suspect_text": "Évite qu'on te désigne comme le commanditaire du meurtre de Benedetti.",
+          "indic_text": "Conserve la part des contrats de chantier promise à ton crew.",
+          "self_interest": "Tes hommes comptaient sur ces contrats ; la mort de Benedetti menace leur part.",
+          "risk": "Une information sur un ordre connu d'un cercle étroit peut révéler ta coopération.",
+          "suspect_axis": "benedetti_homicide_capo",
+          "indic_axis": "capo_construction_share"
+        },
+        {
+          "role": "consigliere",
+          "rank_label": "Consigliere",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a déformé la consigne attribuée au Don.",
+          "indic_text": "Évite qu'on te désigne comme l'organisateur principal du racket contre Benedetti.",
+          "self_interest": "Tu veux préserver ta place de conseiller sans devenir le chef supposé de l'extorsion.",
+          "risk": "Tes confidences sur les ordres peuvent te compromettre.",
+          "suspect_axis": "benedetti_order_distortion",
+          "indic_axis": "benedetti_racket_command_consigliere"
+        },
+        {
+          "role": "sottocapo",
+          "rank_label": "Sottocapo / Underboss",
+          "suspect_text": "Évite qu'on te désigne comme celui qui a relayé un ordre de tuer Benedetti.",
+          "indic_text": "Conserve le pouvoir de répartir les recettes des chantiers entre les crews.",
+          "self_interest": "Tu risques ton autorité si un Capo peut te faire porter toutes les conséquences du meurtre.",
+          "risk": "La chaîne des consignes peut faire remonter l'enquête jusqu'à toi.",
+          "suspect_axis": "benedetti_order_relay_underboss",
+          "indic_axis": "underboss_construction_allocation"
+        },
+        {
+          "role": "don",
+          "rank_label": "Don Santoro",
+          "suspect_text": "Évite qu'on te désigne comme le commanditaire du meurtre de Benedetti.",
+          "indic_text": "Évite qu'on te désigne comme celui qui a décidé l'extorsion contre Benedetti.",
+          "self_interest": "Tu veux empêcher qu'une consigne économique soit reconnue comme ta décision personnelle de racket.",
+          "risk": "Ta notoriété rend la clandestinité de tes révélations très difficile.",
+          "suspect_axis": "benedetti_homicide_don",
+          "indic_axis": "benedetti_extortion_don"
+        }
+      ]
+    }
+  ],
+  "invariants": {
+    "one_goal_per_player": true,
+    "specific_private_interest": true,
+    "initial_and_indic_goals_are_different": true,
+    "no_arbitrary_scapegoat_score": true,
+    "source_stays_mafia": true,
+    "offer_initiated_by_investigator_cycle_2_plus": true,
+    "accept_has_zero_disclosures": true,
+    "no_ranks_forced_into_any_variant": true,
+    "no_automatic_win_or_loss": true,
+    "all_outcomes_need_real_server_event_or_verdict": true,
+    "variant_specific_casting_review_required": true
+  },
+  "not_verified": {
+    "A_B_C_role_objective_feasibility": true,
+    "authentic_financial_outcomes": true,
+    "server_per_act_verdict": true,
+    "physical_protection_adjudication": true,
+    "real_multiplayer_tests": true,
+    "production_deployment": true
+  }
+}
