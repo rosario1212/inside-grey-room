@@ -93,8 +93,13 @@ async function intel(){
    const title=node('h3',card.title||'Renseignement');
    const detail=node('p',card.detail||'');
    const flag=actions.some(a=>a.action_type==='omerta_intel_intent'&&a.payload?.fact_id===card.id);
-   const tag=node('small',flag?'Discussion déjà proposée':'Pas encore abordé officiellement');
+   const tag=node('small',card.logged?'Consigné dans le dossier de l’Enquêteur':flag?'Discussion déjà proposée':'Pas encore abordé officiellement');
    const row=node('div');row.className='igr-money-intel-actions';
+   if(card.logged){
+     const summary=node('p','Renseignement déjà consigné : aucune nouvelle transmission nécessaire.');
+     wrapper.append(title,detail,tag,summary);m.slot.appendChild(wrapper);
+     continue;
+   }
    const intent=btn(flag?'Renouveler le signal':'Je souhaite en parler','btn ghost',async()=>{
      intent.disabled=true;
      try{
