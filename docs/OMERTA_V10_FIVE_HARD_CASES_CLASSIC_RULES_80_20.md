@@ -1,5 +1,8 @@
 # OMERTÀ V10 — CINQ AFFAIRES MAFIEUSES DENSES, MÊMES RÈGLES INSIDE GREY ROOM
 
+> **ARCHIVE / DÉCISION REMPLACÉE :** [OMERTÀ V13 — indic volontaire, risque réel et parties sans indic](OMERTA_V13_VOLUNTARY_TURNCOAT_RISK_80_20.md) est maintenant le **SEUL contrat actif pour l'indic**. Ne plus appliquer les mentions anciennes d'« indic toujours présent », d'attribution automatique ou de « reconstitution impossible sans indic ». Les enquêtes et leur contenu atmosphérique restent des références éditoriales, mais la décision de coopérer appartient au joueur à partir de C2. Aucun de ces documents archivés ne prouve une intégration de gameplay en production.
+
+
 > **ARBITRAGE V11 PRIORITAIRE :** [Indicateur clandestin obligatoire et cinq intrigues densifiées vers 9,5/10](OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md). Désormais, **exactement un joueur indic est présent et caché dans chaque partie OMERTÀ 021–025**. Toutes les anciennes phrases « indic facultatif / 0 ou 1 » dans ce document sont archivées et **ne constituent plus la décision actuelle**. L'indic compte pour la reconstruction parfaite, mais son silence ne doit pas bloquer les phases. Le backend n'a pas encore été migré.
 
 
