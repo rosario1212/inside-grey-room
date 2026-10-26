@@ -1,4 +1,7 @@
 # INSIDE GREY ROOM — OMERTÀ V12
+
+> **ARCHIVE / DÉCISION REMPLACÉE :** [OMERTÀ V13 — indic volontaire, risque réel et parties sans indic](OMERTA_V13_VOLUNTARY_TURNCOAT_RISK_80_20.md) est maintenant le **SEUL contrat actif pour l'indic**. Ne plus appliquer les mentions anciennes d'« indic toujours présent », d'attribution automatique ou de « reconstitution impossible sans indic ». Les enquêtes et leur contenu atmosphérique restent des références éditoriales, mais la décision de coopérer appartient au joueur à partir de C2. Aucun de ces documents archivés ne prouve une intégration de gameplay en production.
+
 ## L'INDIC JOUE POUR LUI · CINQ AFFAIRES QUI SENTENT LA COSA NOSTRA
 
 > **ARBITRAGE D'AUTEUR — 26 OCTOBRE 2026.** Cette V12 **supplante V11** pour la motivation, le comportement libre, les objectifs et les conditions de victoire de l'indic. Son rôle n'est **PAS** d'aider le camp Enquête : il poursuit **avant tout un objectif PERSONNEL**, parfois compatible avec la recherche de la vérité, parfois directement opposé. Sa présence reste **obligatoire, exactement un joueur secret par partie OMERTÀ** (021–025). `9,5/10` demeure une **cible éditoriale** : aucun score de playtest n'est certifié. **Document sur PR brouillon, pas des données live. Aucune modification CARTEL.**
