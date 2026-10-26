@@ -8,6 +8,9 @@ on:
       - 'qa/omerta-v8-mafia-release-contract.json'
       - 'scripts/check-omerta-v8-mafia.mjs'
       - 'scripts/check-omerta-v9-player-tree.mjs'
+      - 'docs/OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md'
+      - 'qa/omerta-v11-indic-mandatory-95-contract.json'
+      - 'scripts/check-omerta-v11-indic-95.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -23,6 +26,9 @@ on:
       - 'qa/omerta-v8-mafia-release-contract.json'
       - 'scripts/check-omerta-v8-mafia.mjs'
       - 'scripts/check-omerta-v9-player-tree.mjs'
+      - 'docs/OMERTA_V11_MANDATORY_SECRET_INFORMANT_FIVE_95_CASES.md'
+      - 'qa/omerta-v11-indic-mandatory-95-contract.json'
+      - 'scripts/check-omerta-v11-indic-95.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -53,6 +59,8 @@ jobs:
         run: node scripts/check-omerta-v8-mafia.mjs
       - name: Validate player-owned Mafia ranks and hidden informer status
         run: node scripts/check-omerta-v9-player-tree.mjs
+      - name: Validate mandatory hidden indic, five 9.5-target cases and 80/20
+        run: node scripts/check-omerta-v11-indic-95.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
