@@ -46,6 +46,9 @@ on:
       - 'docs/OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md'
       - 'qa/omerta-v21-personal-goals-by-role.json'
       - 'scripts/check-omerta-v21-goals.mjs'
+      - 'docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md'
+      - 'qa/omerta-v22-coherent-role-goals.json'
+      - 'scripts/check-omerta-v22-goal-coherence.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -99,6 +102,9 @@ on:
       - 'docs/OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md'
       - 'qa/omerta-v21-personal-goals-by-role.json'
       - 'scripts/check-omerta-v21-goals.mjs'
+      - 'docs/OMERTA_V22_COHERENT_ROLE_GOALS_021_025.md'
+      - 'qa/omerta-v22-coherent-role-goals.json'
+      - 'scripts/check-omerta-v22-goal-coherence.mjs'
       - 'omerta-santoro-family-v7.js'
       - 'omerta-santoro-family-v7.css'
       - 'index.html'
@@ -143,6 +149,8 @@ jobs:
         run: node scripts/check-omerta-v20-self-interested-target-choice.mjs
       - name: Validate V21 role-by-role self-interested suspect and informant goals
         run: node scripts/check-omerta-v21-goals.mjs
+      - name: Validate V22 coherence of complementing role interests and no duplicate objectives
+        run: node scripts/check-omerta-v22-goal-coherence.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
