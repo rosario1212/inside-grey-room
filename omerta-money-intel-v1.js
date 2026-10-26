@@ -129,7 +129,44 @@ async function intel(){
   if(m.overlay.isConnected)m.slot.textContent='Le dossier n’est pas disponible pour ce cycle.';
  }
 }
+function finalReviewAvailable(d){
+ if(!d||d.player?.public_role!=='enqueteur'||d.room?.status!=='playing'
+  ||d.room?.phase!=='locking'||d.room.scenario_id!==SID)return false;
+ if(!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true))return false;
+ if((d.my_actions||[]).some(a=>a.action_type==='omerta_indic_final_assessment'))return false;
+ if((d.my_actions||[]).some(a=>a.action_type==='final_lock'))return false;
+ return true;
+}
+function showFinalReview(){
+ const d=context();
+ if(!finalReviewAvailable(d))return;
+ const m=modal('Bilan de votre source','Cet Indic vous a-t-il réellement été utile ? Les échanges oraux comptent, même si aucune des trois cartes n’a été utilisée.');
+ const note=node('p','Votre réponse est confidentielle. Un « Oui » valide sa deuxième condition, mais ne garantit pas sa victoire personnelle ni sa survie.');
+ m.slot.appendChild(note);
+ const vote=async(useful)=>{
+  yes.disabled=true;no.disabled=true;
+  try{
+   await sendRpc('igr_omerta_indic_assess',{p_useful:useful});
+   m.slot.textContent=useful?'Utilité reconnue. Sa deuxième condition de coopération sera validée.':'Avis défavorable enregistré. Le jeu vérifiera aussi les renseignements confirmés.';
+   yes.remove();no.remove();await refresh();
+  }catch(e){failure(m.slot,e);yes.disabled=false;no.disabled=false;}
+ };
+ const yes=btn('Oui, cette source m’a été utile','btn primary',()=>vote(true));
+ const no=btn('Non, elle ne m’a pas été utile','btn ghost',()=>vote(false));
+ m.footer.insertBefore(yes,m.footer.firstChild);m.footer.insertBefore(no,m.footer.firstChild);
+}
+function mountFinalReview(){
+ const d=context();if(!finalReviewAvailable(d))return;
+ const panel=document.querySelector('.game-panel-v11');
+ if(!panel||panel.querySelector('.igr-indic-final-review'))return;
+ const wrap=node('div');wrap.className='igr-indic-final-review';
+ wrap.appendChild(node('strong','OMERTÀ · ÉVALUATION DE L’INDIC'));
+ wrap.appendChild(node('p','Avant votre verdict final : cette source vous a-t-elle été utile, même uniquement à l’oral ?'));
+ wrap.appendChild(btn('Évaluer mon Indic','btn primary',showFinalReview));
+ panel.appendChild(wrap);
+}
 function mount(){
+ mountFinalReview();
  const d=context(),dock=document.querySelector('.omerta-decision-dock');
  if(!dock||!isPlaying(d))return;
  if(role(d)==='enqueteur'&&!dock.querySelector('.igr-indic-offer-button')){
