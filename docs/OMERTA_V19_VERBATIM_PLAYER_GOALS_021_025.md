@@ -1,5 +1,8 @@
 # INSIDE GREY ROOM — OMERTÀ V19
 
+> **ARCHIVE — REMPLACÉ POUR LES TEXTES DE CARTES PAR V21 :** [OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md](OMERTA_V21_PERSONAL_GOALS_BY_ROLE_021_025.md). Ne pas injecter les objectifs INDIC V19 basés sur un rival désigné comme unique condition de victoire. Un indic sert son intérêt personnel et peut librement décider qui accuser ou protéger. **Aucune carte live n'a été migrée.**
+
+
 > **REMPLACÉ SUR LES OBJECTIFS INDIC PAR V20 :** [OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md](OMERTA_V20_PERSONAL_MOTIVE_FREE_TARGET_NOT_ARBITRARY_WIN.md). Le joueur **ne gagne plus en choisissant arbitrairement un suspect à faire accuser**. Son **unique but INDIC** doit préserver un intérêt personnel écrit dans ses faits (argent, autorité, responsabilité, protection réellement accordée). Il peut choisir librement qui cibler, protéger ou accuser, mais c'est une **stratégie facultative**, non la condition de succès. Les phrases V19 « fais désigner [rival] » restent en archive et ne doivent PAS être rendues comme objectif par défaut dans les cartes. V20 reste un design, non une attribution live.
 
 
