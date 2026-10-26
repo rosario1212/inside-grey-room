@@ -24,7 +24,7 @@ assert(sql.includes("IF won AND exact_*2<=total_"),'Ombre Totale badge not missi
 assert(sql.includes("old_achievement <> to_jsonb('espion_ombre'::text)"),'Obsolete spy badge not filtered');
 assert(sql.includes("achievements:=achievements||jsonb_build_array(old_achievement)"),'Unrelated achievements are not preserved');
 assert(sql.includes("r.phase LIKE 'final_%'"),'Final audience still permits spy signal');
-assert(sql.includes('NEW.scenario_id||\':\'||route_'), 'Per-match secret contact route not pinned');
+assert(sql.includes("route_:=CASE WHEN random()<0.5")&&sql.includes("VALUES(NEW.code,actor.id,match_num"),'Per-match secret contact route not pinned');
 assert(html.includes('v631-espion-mission-corrections')&&sw.includes('v631-espion-mission-corrections'),'PWA version mismatch');
 assert(build.includes('node scripts/v631-spy-audit-regression-check.mjs')&&deploy.includes('node scripts/v631-spy-audit-regression-check.mjs'),'Release gates missing');
 console.log('PASS v631: audited spy victory, absence/Cartel precedence, irreversible choices, secured phases and PWA');
