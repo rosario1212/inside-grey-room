@@ -57,6 +57,9 @@ on:
       - 'qa/omerta-v23-informant-two-checks-contract.json'
       - 'qa/omerta-v23-two-checks-evaluator.mjs'
       - 'scripts/check-omerta-v23-informant-two-checks.mjs'
+      - 'docs/OMERTA_021_VARIANT_A_B_C_PILOT_PUBLIC_AUDIT.md'
+      - 'qa/omerta-021-variants-public-readiness.json'
+      - 'scripts/check-omerta-021-variant-pilot-public.mjs'
       - 'docs/OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md'
       - 'qa/omerta-v23-indic-two-condition-goals.json'
       - 'qa/omerta-v23-two-condition-indic-simulator.mjs'
@@ -183,6 +186,8 @@ jobs:
         run: node scripts/check-omerta-v23-indic-and-goals.mjs
       - name: Validate V23 indic victory requires personal safety AND verified voluntary disclosure
         run: node scripts/check-omerta-v23-informant-two-checks.mjs
+      - name: Audit 021 A/B/C pilot blockers without exposing sealed variants
+        run: node scripts/check-omerta-021-variant-pilot-public.mjs
       - name: Explain what this does NOT certify
         run: |
           echo 'This job validates public editorial structure only.'
