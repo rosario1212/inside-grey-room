@@ -13,7 +13,7 @@ check(contract.version==='V8','V8 version');
 check(contract.case_ids.join(',')===ids.join(','),'OMERTA scope must be exactly 021..025');
 check(contract.absolute_rules?.length===4,'Four laws are mandatory');
 check(contract.cases?.length===5,'Five cases are mandatory');
-check(/80%/.test(content)&&/20%/.test(content),'80/20 rule must be explained');
+check(/80\s*%/.test(content)&&/20\s*%/.test(content),'80/20 rule must be explained');
 check(/personnalité/i.test(content)&&/acting|comédie/i.test(content),'Player personality preserved');
 check(/A\/B\/C/.test(content),'Replay variants A/B/C required');
 check(/CARTEL/.test(content),'CARTEL exclusion must be explicit');
