@@ -1228,9 +1228,17 @@ function valueBlock(title,value,cls=''){
  const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
  return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${body}</div>`;
 }
+async function sendSpySignal(){
+ try{
+  const response=await rpc('igr_v630_spy_transmit',{p_code:STATE.room,p_player_token:STATE.token});
+  if(response?.ok){toast('Transmission secrète confirmée.');await syncNow(true)}
+  else toast('Transmission indisponible pour ce cycle.');
+ }catch(e){console.error(e);toast('Signal secret indisponible ou déjà transmis.');}
+}
 function privateCardHtml(){
  const d=STATE.sync,p=d?.player,ps=p?.private_state||{},pub=p?.public_role||STATE.role,secret=p?.secret_role;
- const secretInfo=secret==='espion'?valueBlock('MISSION SECRÈTE',ps.secret_mission||'Ta couverture publique reste Suspect.','secret-alert'):'';
+ const canSpyTransmit=secret==='espion'&&d?.room?.status==='playing'&&d.room.cycle>=1&&d.room.cycle<=3&&!['briefing','role_reading'].includes(d.room.phase);
+ const secretInfo=secret==='espion'?(valueBlock('MISSION SECRÈTE',ps.secret_mission||'Ta couverture publique reste inchangée.','secret-alert')+(canSpyTransmit?`<button type="button" class="btn secondary block" onclick="sendSpySignal()">Transmission confidentielle · cycle ${h(d.room.cycle)}</button>`:''):'';
  const cartel030Card=(currentScenario()?.id==='030'&&pub==='suspect'&&ps.variant_card)?[valueBlock('TON IDENTITÉ DANS LE DOSSIER',ps.variant_card.identity),valueBlock('CE QUE TU SAIS — DOSSIER 030',ps.variant_card.what_you_know),valueBlock('TON SECRET — DOSSIER 030',ps.variant_card.variant_secret,'danger-soft'),valueBlock('CE QUE TU CACHES — DOSSIER 030',ps.variant_card.what_you_hide,'danger-soft'),valueBlock('TA CHRONOLOGIE DÉTAILLÉE',ps.variant_card.your_chronology),valueBlock('TON OBJECTIF — DOSSIER 030',ps.variant_card.objective)].join(''):'';
  return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><h2>${h(displayRole(pub,p?.pseudo||STATE.playerPseudo))}</h2><div class="role-summary"><b>COMMENT TU GAGNES</b><span>${h(roleInfo(secret==='espion'?'espion':pub).win)}</span></div>${valueBlock('TA PLACE',ps.place)}${valueBlock('TA CHRONOLOGIE',ps.chronology)}${valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')}${valueBlock('TES REPÈRES',ps.anchors)}${valueBlock('TES RELATIONS',ps.relations)}${valueBlock('TES CLIENTS',ps.clients)}${valueBlock('TA POSITION',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)}${cartel030Card}${secretInfo}<div class="private-foot">Les faits de cette carte sont canoniques. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne modifies jamais la chronologie, les preuves ou les lieux.</div></div>`;
 }
