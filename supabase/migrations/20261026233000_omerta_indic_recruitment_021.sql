@@ -18,7 +18,7 @@ begin
  where room_code=upper(trim(p_code)) and player_token=p_player_token and public_role='enqueteur';
  if not found then raise exception 'unauthorized'; end if;
  select * into room from public.igr_v4_rooms where code=inv.room_code for update;
- if room.scenario_id<>'021' or room.status<>'playing' or room.cycle<2
+ if room.scenario_id not in ('021','022','023','024','025') or room.status<>'playing' or room.cycle<2
  or room.phase in ('briefing','provisional_lock','final_debrief','locking','reveal')
  then raise exception 'indic_closed'; end if;
  perform igr_private.rate_limit('omerta_indic_offer',inv.id::text,8,60);
@@ -64,7 +64,7 @@ begin
  where room_code=upper(trim(p_code)) and player_token=p_player_token and public_role='suspect';
  if not found then raise exception 'unauthorized'; end if;
  select * into room from public.igr_v4_rooms where code=suspect.room_code for update;
- if room.scenario_id<>'021' or room.status<>'playing' or room.cycle<2
+ if room.scenario_id not in ('021','022','023','024','025') or room.status<>'playing' or room.cycle<2
   or room.phase in ('briefing','provisional_lock','final_debrief','locking','reveal')
   or coalesce((room.state->'omerta'->'dead') ? suspect.id::text,false)
  then raise exception 'indic_closed'; end if;
