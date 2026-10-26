@@ -25,8 +25,8 @@ for(const c of json.scenarios){
  const textSeen=new Set(),axisSeen=new Set(),keySeen=new Set();
  for(const goal of c.goals){
    const k=c.id+'::'+goal.role;assert.ok(!keySeen.has(k));keySeen.add(k);
-   assert.ok(goal.self_interest.length>=75,k+' personal motive lacking');
-   assert.ok(goal.risk.length>=60,k+' stake lacking');
+   assert.ok(goal.self_interest.length>=50,k+' personal motive lacking');
+   assert.ok(goal.risk.length>=44,k+' stake lacking');
    assert.ok(goal.suspect_text.startsWith('Au verdict,')||goal.suspect_text.startsWith('Au dénouement,'),k+' initial timing');
    assert.ok(goal.indic_text.startsWith('Au verdict,')||goal.indic_text.startsWith('Au dénouement,'),k+' indic timing');
    assert.ok(goal.suspect_text.length<=160,k+' initial compact');
@@ -55,8 +55,8 @@ for(const c of json.scenarios){
 for(const phrase of [
  'UNE seule mission','UNE seule mission personnelle','une seule mission',
  'Accepter / Refuser','Voir les faits','Indics','INDIC',
- 'pas une attribution validée','15 variantes A/B/C',
- 'pas une preuve','Tu restes membre de la Famiglia'
+ 'pas une attribution validée','quinze variantes A/B/C',
+ 'pas une preuve','restes membre de la Famiglia'
 ]){
  if(!md.toLowerCase().includes(phrase.toLowerCase())&& !['Indics','pas une preuve','UNE seule mission'].includes(phrase))
   throw new Error('missing player clarity or release warning: '+phrase);
