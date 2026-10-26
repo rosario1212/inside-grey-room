@@ -1,5 +1,8 @@
 # OMERTÀ V22 — OBJECTIFS LIÉS, DISTINCTS ET CLAIRS POUR LES JOUEURS
 
+> **OBJECTIFS INDIC V22 DÉSORMAIS REMPLACÉS PAR V23 :** [OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md](OMERTA_V23_TWO_CHECKS_ONE_INFORMANT_OBJECTIVE.md). Les formulations V22 à une seule condition (argent, faveur ou simple évitement d'accusation) **ne doivent pas être intégrées comme victoires d'indic**. V23 fixe **un seul objectif à deux conditions cumulatives : se protéger ET envoyer volontairement un renseignement vrai, utile et vérifiable**. Les objectifs initiaux des suspects et les quatre enjeux de chaque dossier restent les références V22. L'indic peut choisir le silence, mais il ne remporte pas alors la victoire d'indic. Non-live.
+
+
 > **RÈGLE ACTUELLE DE VICTOIRE INDIC = V23 :** [OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md](OMERTA_V23_INDIC_TWO_CONDITIONS_PERSONAL_ESCAPE_AND_DISCLOSURE.md). Un joueur du camp mafieux accepte éventuellement une offre de l'Enquêteur à partir de C2 ; il reçoit **une mission composée de deux conditions obligatoires : (1) se sauver lui-même, (2) transmettre volontairement au moins un renseignement privé, vrai et utile à l'Enquête**. L'acceptation ne transmet rien. Le silence demeure permis mais fait échouer la victoire d'indic ; les anciennes phrases V22 « indic gagnant sans parler » et les objectifs indic seuls sont **supplantés**. La carte affiche seulement deux lignes, les justificatifs restent facultatifs.
 
 
