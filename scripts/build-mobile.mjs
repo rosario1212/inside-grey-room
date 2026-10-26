@@ -43,6 +43,7 @@ const premiumScripts=[
 const storeBoundary='  <script src="native-store-boundary-v14.js?v=v14-store-boundary"></script>';
 const storeCatalogScript='  <script src="store-catalog-v69.js?v=v69-host-pays"></script>';
 const authoritativeScript='  <script src="authoritative-runtime-v40.js?v=v40-authoritative-ui"></script>';
+const santoroTreeScript='  <script src="omerta-santoro-family-v7.js?v=v7-family-public"></script>';
 const legacyTagPatterns=[
  /\s*<link[^>]+href=["']dlc-invites-v12-45\.css[^"']*["'][^>]*>\s*/gi,
  /\s*<script[^>]+src=["']dlc-invites-v12-45\.js[^"']*["'][^>]*><\/script>\s*/gi
@@ -60,7 +61,8 @@ for(const page of ['index.html','en.html']){
   }
   if(!html.includes('native-store-boundary-v14.js'))html=html.replace('</body>',`${storeBoundary}\n</body>`);
   html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
-  html=html.replace('</body>',`${authoritativeScript}\n</body>`);
+  html=html.replace(/\s*<script[^>]+src=["']omerta-santoro-family-v7\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
+  html=html.replace('</body>',`${authoritativeScript}\n${santoroTreeScript}\n</body>`);
   await writeFile(target,html,'utf8');
 }
 for(const excluded of legacyStoreExcluded){if(await exists(path.join(out,excluded)))throw new Error(`Legacy premium unlock file leaked into native store bundle: ${excluded}`)}
