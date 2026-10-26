@@ -108,17 +108,19 @@ begin
     return jsonb_build_object('available',false,'cards','[]'::jsonb);
   end if;
 
-  select coalesce(jsonb_agg(c.value order by c.ordinality),'[]'::jsonb)
+  -- L'Indic conserve toujours ses trois cartes affichées ; une carte déjà
+  -- transmise passe à l'état « consigné » au lieu de disparaître.
+  select coalesce(jsonb_agg(
+      c.value||jsonb_build_object('logged',exists(
+        select 1 from public.igr_v4_actions a
+        where a.room_code=r.code and a.action_type='omerta_verified_intel'
+          and coalesce((a.payload->>'match_no')::int,1)=match_id
+          and a.payload->>'fact_id'=c.value->>'id'
+      )) order by c.ordinality),'[]'::jsonb)
   into cards_out
-  from jsonb_array_elements(catalog) with ordinality c(value,ordinality)
-  where not exists(
-    select 1 from public.igr_v4_actions a
-    where a.room_code=r.code and a.action_type='omerta_verified_intel'
-      and coalesce((a.payload->>'match_no')::int,1)=match_id
-      and a.payload->>'fact_id'=c.value->>'id'
-  );
-  return jsonb_build_object('available',jsonb_array_length(cards_out)>0,
-    'cards',cards_out,'total_cards',3,'remaining',jsonb_array_length(cards_out));
+  from jsonb_array_elements(catalog) with ordinality c(value,ordinality);
+  return jsonb_build_object('available',true,
+    'cards',cards_out,'total_cards',3);
 end;
 $$;
 
@@ -157,7 +159,7 @@ begin
   options:=public.igr_omerta_money_intel_options(p_code,p_player_token);
   select value into chosen
   from jsonb_array_elements(coalesce(options->'cards','[]'::jsonb))
-  where value->>'id'=p_card_id limit 1;
+  where value->>'id'=p_card_id and coalesce((value->>'logged')::boolean,false)=false limit 1;
   if chosen is null then raise exception 'intel_not_owned_or_unavailable'; end if;
 
   if exists(
