@@ -122,7 +122,7 @@ async function intel(){
    });
    row.append(intent,committed);wrapper.append(title,detail,tag,row);m.slot.appendChild(wrapper);
   }
-  const tip=node('p','Un signal de discussion ne compte pas comme coopération. Seule une consignation officielle peut être évaluée par le serveur.');
+  const tip=node('p','Le signal de disponibilité ne compte pas comme coopération. À la fin, l’Enquêteur peut aussi reconnaître ton aide orale, même sans carte consignée.');
   tip.className='igr-money-intel-note';m.slot.appendChild(tip);
  }catch(e){
   console.warn('[OMERTA] chargement de renseignement',e);
@@ -169,7 +169,7 @@ function mount(){
  mountFinalReview();
  const d=context(),dock=document.querySelector('.omerta-decision-dock');
  if(!dock||!isPlaying(d))return;
- if(role(d)==='enqueteur'&&!dock.querySelector('.igr-indic-offer-button')){
+ if(role(d)==='enqueteur'&&!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true)&&!dock.querySelector('.igr-indic-offer-button')){
   const b=btn('Proposer un pacte secret','btn ghost igr-indic-offer-button',offer);
   dock.appendChild(b);
  }
