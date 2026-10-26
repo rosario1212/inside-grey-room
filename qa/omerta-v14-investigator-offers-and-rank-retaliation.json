@@ -1,0 +1,232 @@
+{
+  "version": "OMERTA-V14",
+  "normative": true,
+  "status": "design-and-isolated-simulation-only",
+  "live_gameplay_verified": false,
+  "supersedes": [
+    "OMERTA-V13-on-offer-initiation",
+    "OMERTA-V11-mandatory-informant",
+    "OMERTA-V12-mandatory-informant"
+  ],
+  "scenarios": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "four_laws": [
+    "autonomous_case",
+    "preserve_player_pseudonym_personality_and_agency",
+    "credible_ABC_replayability",
+    "no_secret_leak_no_softlock"
+  ],
+  "play": {
+    "cycles": 3,
+    "interview_first_cycle": 1,
+    "confrontations_start_cycle": 2,
+    "offers_start_cycle": 2,
+    "offer_stops_before_final_verdict": true,
+    "ordinary_event_mechanics": true
+  },
+  "informant": {
+    "none_at_start": true,
+    "zero_possible": true,
+    "initiator_role": "enqueteur",
+    "recipient_role_group": "eligible_implicated_suspect",
+    "minimum_offers_sent": 0,
+    "recommended_total_offer_limit": 2,
+    "unique_recipient_per_offer": true,
+    "recipient_can_propose_to_self": false,
+    "auto_assignment": false,
+    "only_player_can_commit": true,
+    "inspection_is_free": true,
+    "requires_risk_disclosure": true,
+    "commit_requires_explicit_second_confirmation": true,
+    "commit_is_irreversible": true,
+    "can_decline_without_system_penalty": true,
+    "benefit_is_conditional": true,
+    "private_objective_can_change_after_commit": true,
+    "objective_can_conflict_with_investigator_victory": true,
+    "no_acceptance_read_receipt_to_investigator": true,
+    "no_public_notification_on_offer_or_commit": true,
+    "no_secret_roles_or_action_state_in_family_tree": true,
+    "can_end_with_zero_indics": true,
+    "can_end_with_multiple_indics": true,
+    "room_scoped_only": true,
+    "no_changing_truth_with_testimony": true,
+    "independent_c3_evidence_minimum": 2
+  },
+  "knowledge": {
+    "suspicion": {
+      "level": 1,
+      "meaning": "rumor or unverified accusation",
+      "severe_retaliation_allowed": false
+    },
+    "corroborated": {
+      "level": 2,
+      "meaning": "two independent in-game traces support actor's possible leak",
+      "severe_retaliation_allowed": false
+    },
+    "proven": {
+      "level": 3,
+      "meaning": "authenticated disclosure or formal admission attributable to target",
+      "severe_retaliation_allowed": true
+    },
+    "can_accuse_with_suspicion": true,
+    "private_server_flags_exposed_to_mafia": false,
+    "proposals_to_suspect_not_exposed_to_mafia": true,
+    "receipt_status_hidden_from_investigator": true
+  },
+  "retaliation": {
+    "fictional_only": true,
+    "requires_rank_authority": true,
+    "target_can_respond": true,
+    "no_real_world_threats": true,
+    "no_player_elimination_during_case": true,
+    "no_required_evidence_destruction": true,
+    "cannot_rewrite_canonical_truth": true,
+    "no_rank_knows_informant_secret_automatically": true,
+    "no_room_persistence": true,
+    "severe_actions_only_endgame": true,
+    "roles": {
+      "associato": {
+        "allowed": [
+          "report_suspicion",
+          "withdraw_own_arrangement"
+        ],
+        "max_level": 1
+      },
+      "uomo_onore": {
+        "allowed": [
+          "report_to_capo",
+          "request_confrontation"
+        ],
+        "max_level": 1
+      },
+      "contabile": {
+        "allowed": [
+          "submit_account_evidence",
+          "recommend_financial_suspension"
+        ],
+        "max_level": 2
+      },
+      "caporegime": {
+        "allowed": [
+          "withdraw_crew_favor",
+          "freeze_crew_share",
+          "request_major_sanction"
+        ],
+        "max_level": 2
+      },
+      "consigliere": {
+        "allowed": [
+          "request_hearing",
+          "recommend_mediation",
+          "advise_delay"
+        ],
+        "max_level": 2
+      },
+      "sottocapo": {
+        "allowed": [
+          "review_exclusion",
+          "approve_local_exclusion",
+          "refer_to_don"
+        ],
+        "max_level": 3
+      },
+      "don": {
+        "allowed": [
+          "grant_clemency",
+          "authorize_endgame_major_sanction"
+        ],
+        "max_level": 3
+      }
+    },
+    "major_sanction_involves_review": true,
+    "major_sanction_authority": "don or appropriately authorized underboss as defined by case",
+    "no_authority_role_absent_fallback_to_random_player": true,
+    "can_reject_false_accusation": true,
+    "accusing_own_source_not_auto_success": true
+  },
+  "family_tree": {
+    "display_boss": "Don Santoro",
+    "display_player_pseudos": true,
+    "blood_relatives": [
+      "Adriano Santoro",
+      "Elena Santoro"
+    ],
+    "no_indic_badge": true,
+    "accessible_during_game": true
+  },
+  "cases": [
+    {
+      "id": "021",
+      "primary": "Gallo homicide plus diverted collection",
+      "offer_value": "disputed remittance records",
+      "offer_risk": "reveals suspected associate's extortion role",
+      "rank_retaliation": "capo can freeze crew share after corroboration",
+      "no_indic_path": "two ledgers, independent money trail and forensic timeline",
+      "eighty": "Gallo, collection, homicide, leak",
+      "twenty": "Santoro crew hierarchy"
+    },
+    {
+      "id": "022",
+      "primary": "Caruso murder after ambiguous threats",
+      "offer_value": "unshared context of conflicting meeting account",
+      "offer_risk": "revelation shows own false declaration",
+      "rank_retaliation": "capo withdraws crew favor only with corroboration",
+      "no_indic_path": "meeting chronology, witness communications, murder evidence",
+      "eighty": "Caruso debt, death, pact",
+      "twenty": "club, ranks, Mafia silence"
+    },
+    {
+      "id": "023",
+      "primary": "Falco homicide and Adriano attack amid sit-down",
+      "offer_value": "identity of beneficiary of alternate transport offer",
+      "offer_risk": "source participated in concealed side deal",
+      "rank_retaliation": "consigliere mediates, capo can suspend own crew bargain",
+      "no_indic_path": "both written offers, route access evidence, incident chronology",
+      "eighty": "transport negotiation, double violence",
+      "twenty": "Santoro blood family and consigliere"
+    },
+    {
+      "id": "024",
+      "primary": "Valenti murdered prior to transport extortion testimony",
+      "offer_value": "meaning of a note in witness documents",
+      "offer_risk": "own contested payment record exposed",
+      "rank_retaliation": "possible exclusion from crew business after review",
+      "no_indic_path": "two notebooks, business records and forensics",
+      "eighty": "Valenti, transport extortion, cooperation",
+      "twenty": "Santoro finances and federal setting"
+    },
+    {
+      "id": "025",
+      "primary": "Benedetti murdered after construction extortion",
+      "offer_value": "context of altered order from a superior",
+      "offer_risk": "admission establishes own role in coercion",
+      "rank_retaliation": "don may approve endgame sanction on proven cooperation, never instant elimination",
+      "no_indic_path": "independent instruction chain and death chronology",
+      "eighty": "racket, murder, orders",
+      "twenty": "Don Santoro's power"
+    }
+  ],
+  "release_blockers": {
+    "live_rpc_authorized_investigator_only": false,
+    "live_private_offer_storage": false,
+    "live_recipient_permission_and_confirmation": false,
+    "live_retaliation_permissions": false,
+    "live_evidence_threshold_validation": false,
+    "live_c2_phase_routing": false,
+    "live_packs_updated": false,
+    "fifteen_variant_manuscripts_reworked": false,
+    "live_secret_exposure_tests": false,
+    "real_multiplayer_tests": false,
+    "FR_EN_accessibility_tests": false
+  },
+  "never_touch": [
+    "CARTEL_029",
+    "CARTEL_030",
+    "CARTEL_031"
+  ]
+}
