@@ -22,7 +22,30 @@ for(const c of json.scenarios){
  assert.ok(c.intro.length>110&&c.question.length>100&&c.mesh.length>160,c.id+' narrative framing');
  assert.ok(c.anchors.length>=5,c.id+' grounded interlocking crime axes');
  assert.ok(md.includes('## '+c.id+' — '+c.title),c.id+' visible section');
- const textSeen=new Set(),axisSeen=new Set(),keySeen=new Set();
+ const textSeen=new Set(),keySeen=new Set();
+ assert.equal(c.outcome_tracks.length,4,c.id+' exactly four case question families');
+ const trackIds=new Set(c.outcome_tracks.map(t=>t.id));
+ assert.equal(trackIds.size,4);
+ assert.ok(c.outcome_tracks.every(t=>t.question&&t.label&&t.proof&&t.observable));
+ assert.ok(c.cross_role_links.length>=7,'interlocking role interests required');
+ const connection=new Map(roleSet.map(id=>[id,new Set()]));
+ for(const rel of c.cross_role_links){
+  assert.equal(rel.roles.length,2);
+  const [a,b]=rel.roles;
+  assert.ok(connection.has(a)&&connection.has(b)&&a!==b);
+  assert.equal(rel.compulsory_alliance,false,'no forced ally');
+  assert.equal(rel.one_must_lose,false,'no zero-sum requirement');
+  assert.ok(rel.relationship.length>=70);
+  connection.get(a).add(b);connection.get(b).add(a);
+ }
+ const visited=new Set(['suspect']);const queue=['suspect'];
+ while(queue.length){for(const other of connection.get(queue.shift()))if(!visited.has(other)){visited.add(other);queue.push(other);}}
+ assert.equal(visited.size,roleSet.length,c.id+' all ranks connected through thematic case ties');
+ for(const role of roleSet){
+  const assignment=c.role_track_assignments[role];
+  assert.ok(Array.isArray(assignment)&&assignment.length===2,c.id+' role track mapping');
+  assert.ok(assignment.every(x=>trackIds.has(x)),c.id+' no disconnected sub-story');
+ }
  for(const goal of c.goals){
    const k=c.id+'::'+goal.role;assert.ok(!keySeen.has(k));keySeen.add(k);
    assert.ok(goal.self_interest.length>=50,k+' personal motive lacking');
@@ -37,8 +60,7 @@ for(const c of json.scenarios){
       ['indic',goal.indic_text,goal.indic_axis]]){
      assert.ok(!textSeen.has(text),k+' duplicate '+kind+' goal in same room');
      textSeen.add(text);
-     assert.ok(!axisSeen.has(axis),k+' same canonical outcome reused '+kind);
-     axisSeen.add(axis);
+     assert.ok(goal[kind+'_track']&&trackIds.has(goal[kind+'_track']),k+' objective grounded in a common case theme');
      assert.ok(!/\[(pseudo|cible|rival)/i.test(text),k+' random target placeholder');
      assert.ok(!/fais (accuser|désigner|retenir)\b/i.test(text),k+' target-based arbitrary win');
      assert.ok(md.includes('« '+text+' »'),k+' mismatch between MD and structured data');
@@ -46,7 +68,11 @@ for(const c of json.scenarios){
  }
  // If there are roles with overlapping motive spaces (e.g. chain of command),
  // their specific contested outcome axes must differ.
- assert.equal(axisSeen.size,16,c.id+' 16 separate tracked contest axes');
+ // Distinct player stakes may legitimately concern the same crime/track.
+ // Do NOT require 16 independent verdict questions; common tracks make stories coherent.
+ assert.ok(c.player_text_rules.main_card_limit_words<=120);
+ assert.equal(c.player_text_rules.optional_details_label,'Voir les détails et les pièces');
+ assert.ok(c.goals.every(g=>g.player_detail&&g.player_detail.interest&&g.player_detail.when_score&&g.player_detail.freedom));
  const caseSection=md.split('## '+c.id+' — '+c.title)[1]?.split('\n---\n')[0]||'';
  assert.ok(caseSection.includes('**ÉNONCÉ :**'));
  assert.ok(caseSection.includes('**Comment les intérêts s\'entrecroisent'));
@@ -81,5 +107,5 @@ ctx.caseEvents.protections[0].status='approved';
 ctx.caseEvents.protections[0].authorized_by_competent_authority=true;
 assert.equal(gradePersonalGoal(protectedGoal,ctx),true);
 assert.throws(()=>gradePersonalGoal(finance,{lockedVerdict:ctx.lockedVerdict,caseEvents:{interests:{},protections:[]}}),/untracked/);
-console.log('OMERTA V22 EDITORIAL PASS: 5 linked crime narratives, 40 uniquely worded role goals and 40 distinct optional indic replacements, 16 distinct tracked axes per case; no arbitrary target wins.');
+console.log('OMERTA V22 EDITORIAL PASS: 5 linked crime narratives, 40 uniquely worded role goals and 40 distinct optional indic replacements, 4 common case threads per scenario; no arbitrary target wins.');
 console.log('SPECIAL PENTITO only in 024. CONDITIONALLY AUTHORABLE, NOT LIVE: 15 variants, financial/protection events, objective scoring, confidentiality and multiplayer tests remain unverified.');
