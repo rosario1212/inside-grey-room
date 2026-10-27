@@ -681,7 +681,7 @@ begin
    room_code,cycle,event_type,visibility,payload)
  values(r.code,0,'context','public',
    jsonb_build_object('title','OMERTÀ · DOSSIER','text',
-     manuscript->>'public_briefing'));
+     manuscript->>'public_briefing','match_no',match_id));
 
  update public.igr_v4_rooms
  set state=jsonb_set(coalesce(state,'{}'::jsonb),
@@ -754,7 +754,8 @@ begin
  from pg_catalog.jsonb_array_elements(
     coalesce(raw->'events','[]'::jsonb)) e(value)
  where (e.value->>'event_type'='context'
-          and e.value->'payload'->>'text'=m->>'public_briefing')
+          and e.value->'payload'->>'text'=m->>'public_briefing'
+          and coalesce((e.value->'payload'->>'match_no')::integer,-1)=match_id)
     or (e.value->>'event_type'='omerta_c3_crosscheck'
           and coalesce((e.value->'payload'->>'match_no')::integer,-1)=match_id);
  raw:=jsonb_set(raw,'{events}',events_filtered,true);
