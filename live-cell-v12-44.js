@@ -682,7 +682,7 @@
       if(inRoom()){
         const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>70000;
         connectRealtime(stale);
-        syncSoon(0,false);
+        syncSoon(0,true);
         schedulePoll(stale?900:pollDelay());
       }
     }
@@ -690,7 +690,7 @@
   window.addEventListener('online',()=>{
     if(inRoom()){
       connectRealtime(true);
-      syncSoon(0,false);
+      syncSoon(0,true);
       schedulePoll(900);
     }
   },{passive:true});
@@ -710,10 +710,36 @@
     if(inRoom()){
       const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>70000;
       connectRealtime(stale);
-      syncSoon(0,false);
+      syncSoon(0,true);
       schedulePoll(stale?900:pollDelay());
     }
   },{passive:true});
+
+  // iOS home-screen apps can resume with an apparently-open but suspended
+  // WebSocket. Reconcile the authoritative room, not the locally cached phase.
+  let lastForegroundRepair=0;
+  function foregroundRepair(){
+    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    if(Date.now()-lastForegroundRepair<750)return;
+    lastForegroundRepair=Date.now();
+    const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>20000;
+    if(stale)connectRealtime(true);
+    syncSoon(0,true);
+    schedulePoll(stale?500:pollDelay());
+  }
+  window.addEventListener('focus',foregroundRepair,{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')foregroundRepair()},{passive:true});
+  // Independent of websocket events and adaptive polling, recover a sleeping
+  // client that has not successfully rendered a server snapshot in 10 seconds.
+  setInterval(()=>{
+    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    const since=Date.now()-Number(STATE.lastSuccessfulSyncAt||0);
+    if(since>10000){
+      if(!RT.ready||Date.now()-RT.lastMessageAt>35000)connectRealtime(true);
+      syncSoon(0,true);
+      schedulePoll(900);
+    }
+  },7000);
 
   try{
     Object.defineProperty(window,'__IGR_REALTIME__',{configurable:true,value:{
