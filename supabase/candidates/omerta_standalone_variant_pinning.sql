@@ -792,6 +792,18 @@ begin
  if coalesce((started->>'ok')::boolean,false) is not true
  then raise exception 'omerta_legacy_start_failed'; end if;
 
+ -- Legacy random assignment may select ranks absent from this Santoro manuscript.
+ -- Reject explicitly chosen ranks above; normalize only unavailable
+ -- automatically assigned ranks before pinning the final character.
+ if manuscript->>'private_format'='santoro_v25' then
+   update public.igr_v4_players p
+   set preferred_role='suspect',secret_role='suspect'
+   where p.room_code=r.code and p.public_role='suspect'
+     and not exists (
+       select 1 from pg_catalog.jsonb_array_elements(manuscript->'private_cards') c
+       where c->>'rank_code'=p.preferred_role
+     );
+ end if;
  n:=igr_private.igr_omerta_cast_standalone_room(r.code);
  if n<1 then raise exception 'standalone_no_assigned_characters'; end if;
 
