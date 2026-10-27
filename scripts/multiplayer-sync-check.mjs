@@ -247,4 +247,41 @@ await check('CARTEL 029: 6–11 independent devices follow host phase changes wi
  }
 });
 
+await check('every foreground platform resumes the same authoritative room without reopening',async()=>{
+ const cases=[
+  {name:'iPhone PWA',event:'pageshow'},
+  {name:'iPad PWA',event:'focus'},
+  {name:'Android WebView',event:'resume'},
+  {name:'desktop browser',event:'visibilitychange'},
+  {name:'tablet browser',event:'focus'}
+ ];
+ for(const {name,event} of cases){
+  const c=client();c.loadLive();await flush();
+  c.Socket.sockets[0].open();await c.runTimer();
+  assert.equal(c.requests.length,1,name+' initial room snapshot missing');
+  c.requests[0].resolve(data('lobby'));await flush();
+  if(event==='visibilitychange')c.scope.document.visibilityState='visible';
+  const handlers=c.listeners[event]||[];
+  assert(handlers.length>0,name+' missing lifecycle reconciliation');
+  handlers.at(-1)();await flush();
+  for(let i=0;i<6&&c.requests.length<2;i++)await c.runTimer(100,0);
+  assert.equal(c.requests.length,2,name+' did not fetch a fresh server phase');
+  c.requests[1].resolve(data('interrogation_select'));await flush();
+  assert.equal(c.scope.STATE.sync.room.phase,'interrogation_select',name+' is not on the host phase');
+  assert(c.renders.includes('interrogation_select'),name+' did not render the live phase');
+ }
+});
+await check('duplicate foreground events coalesce into one authoritative fetch',async()=>{
+ const c=client();c.loadLive();await flush();c.Socket.sockets[0].open();
+ await c.runTimer();c.requests[0].resolve(data('initial_debrief'));await flush();
+ for(const event of ['pageshow','focus','visibilitychange']){
+  const handler=c.listeners[event]?.at(-1);
+  if(handler)handler();
+ }
+ await flush();
+ for(let i=0;i<5&&c.requests.length<2;i++)await c.runTimer(100,0);
+ assert.equal(c.requests.length,2,'Multiple same-frame wake signals must not start duplicate fetches');
+ c.requests[1].resolve(data('cycle_debrief'));await flush();
+ assert.equal(c.scope.STATE.sync.room.phase,'cycle_debrief');
+});
 console.log(`Multiplayer synchronization: ${checks.length} behavioral checks passed (${target}).`);
