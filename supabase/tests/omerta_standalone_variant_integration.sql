@@ -3,7 +3,7 @@
 do $suite$
 declare
  sc text; c text; selected text; same text; next_variant text;
- pristine jsonb; after_mutation jsonb; blocked boolean; next_no integer;
+ pristine jsonb; after_mutation jsonb; blocked boolean; next_no integer; variant record;
 begin
  for sc in select lpad(s::text,3,'0') from generate_series(21,25) s loop
   c:='PIN'||sc;
