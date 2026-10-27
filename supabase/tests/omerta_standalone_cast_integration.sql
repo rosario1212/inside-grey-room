@@ -248,6 +248,20 @@ begin
  if safe_snapshot->'player'->'private_state'->>'objective' is null
    or safe_snapshot->'player'->'private_state' ? 'legacy_private'
  then raise exception 'suspect received legacy private role or missing objective';end if;
+
+ -- L'API historique publique ne permet plus de contourner le filtre.
+ safe_snapshot:=public.igr_v4_sync(
+  'START021',(select player_token from public.igr_v4_players
+              where room_code='START021' and seat_index=1));
+ if safe_snapshot::text like '%LEGACY VERRI%'
+    or safe_snapshot->'scenario'->>'context'
+        <>'Synthetic public case introduction'
+ then raise exception 'original public sync RPC bypasses standalone guard'; end if;
+ if has_function_privilege('anon',
+      'public.igr_omerta_legacy_sync_core(text,uuid)','EXECUTE')
+    or has_function_privilege('authenticated',
+      'public.igr_omerta_legacy_sync_core(text,uuid)','EXECUTE')
+ then raise exception 'internal raw sync accidentally remains callable';end if;
  if has_function_privilege('public',
     'public.igr_omerta_standalone_safe_sync(text,uuid)','EXECUTE')
  then raise exception 'PUBLIC execute not revoked from safe sync';end if;
