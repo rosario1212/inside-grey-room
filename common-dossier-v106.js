@@ -28,6 +28,7 @@ async function syncPublic(force=false){
   const changed=JSON.stringify(previous)!==JSON.stringify(result);
   if(previous){const ids=new Set(previous.events.map(e=>String(e.id)));window.IGR_NOTIFICATIONS?.publicUpdates?.({roomCode:d.room.code,playerId:d.player.id,events:result.events.filter(e=>!ids.has(String(e.id)))});}
   cache.data=result;cache.err=false;
+  window.IGR_NOTIFICATIONS?.refreshBadges?.();
   if(changed&&S()?.view==='game'&&S()?.tab==='timeline'){
    const root=document.querySelector('#app .game-panel-v11');
    if(root)root.innerHTML=publicHtml();
@@ -35,11 +36,25 @@ async function syncPublic(force=false){
  }catch(error){if(k===key()){cache.err=true;console.warn('[IGR v106] public dossier unavailable',error?.message||error)}}
  finally{cache.busy=false}
 }
+/* The public RPC is the single source of truth for all dossier counters.
+   Avoid repeating the opening context when it has already been printed as premise. */
+function publicEntries(data){
+ const context=String(data?.context||'').trim().replace(/\s+/g,' ').normalize('NFKC').toLocaleLowerCase();
+ return (Array.isArray(data?.events)?data.events:[]).filter(e=>{
+   const sameOpening=e?.event_type==='context'&&context&&String(e?.text||'').trim().replace(/\s+/g,' ').normalize('NFKC').toLocaleLowerCase()===context;
+   return !sameOpening;
+ });
+}
+function visibleEventIds(){
+ const data=cache.key===key()?cache.data:null;
+ if(!data)return null;
+ return publicEntries(data).map(e=>String(e.id)).filter(Boolean);
+}
 function publicHtml(){
  const d=game();if(!d)return '';
  const a=cache.key===key()?cache.data:null;
  const context=String(a?.context??d.scenario?.context??'').trim();
- const events=(a?.events||[]).slice().reverse();
+ const events=publicEntries(a).slice().reverse();
  const history=events.map(e=>{
   const c=safeCycle(e.cycle),press=e.event_type==='breaking_news'||e.press_claim;
   const type=press?tr('PUBLICATION DU JOURNALISTE','PRESS PUBLICATION'):e.verified?tr('FAIT CONFIRMÉ','VERIFIED FACT'):tr('INFORMATION PUBLIQUE','PUBLIC INFORMATION');
@@ -139,6 +154,6 @@ const style=document.createElement('style');style.id='igr106-css';style.textCont
 .igr106-inquiry-evidence{margin-bottom:14px}
 @media(max-width:600px){.igr106-premise,.igr106-event{padding:12px}.igr106-action-panel{margin:8px 0}.igr106-common{gap:11px}}
 `;document.head.appendChild(style);
-window.IGR_COMMON_DOSSIER_V106=Object.freeze({version:V,isInquiry,publicHtml,syncPublic});
+window.IGR_COMMON_DOSSIER_V106=Object.freeze({version:V,isInquiry,publicHtml,syncPublic,visibleEventIds});
 console.info('[IGR v106] public/private separation active');
 })();
