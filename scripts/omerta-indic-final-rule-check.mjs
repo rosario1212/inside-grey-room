@@ -41,4 +41,28 @@ assert.ok(ui.includes('As-tu partagé une information ?'));
 assert.ok(ui.includes("a.action_type==='omerta_verified_intel'"));
 assert.ok(ui.includes("d.room.phase==='cycle_debrief'"));
 assert.doesNotMatch(ui,/igr_omerta_indic_assess|showFinalReview/);
+// Contrat de sécurité A/B/C : jamais de fallback sur un échec réseau et
+// jamais de contenu Verri dans la synchronisation autonome.
+const standalone=load('supabase/candidates/omerta_standalone_variant_pinning.sql');
+const omertaClient=load('omerta-v12.js'),baseClient=load('app-v11.js');
+new vm.Script(omertaClient);
+new vm.Script(baseClient);
+for(const key of [
+ 'igr_omerta_standalone_release_control',
+ 'igr_omerta_standalone_can_start',
+ 'igr_omerta_standalone_safe_sync',
+ "raw:=jsonb_set(raw,'{scenario}'",
+ "raw:=jsonb_set(raw,'{player,private_state}'",
+ "raw:=jsonb_set(raw,'{my_actions}'",
+ "'family'='SANTORO'",
+])assert.ok(standalone.includes(key),'standalone server guard missing: '+key);
+assert.ok(omertaClient.includes('igr_omerta_standalone_release_status'));
+assert.ok(omertaClient.includes('igr_omerta_start_standalone'));
+assert.ok(omertaClient.includes("if(e.code!=='PGRST202'"));
+assert.ok(baseClient.includes('igr_omerta_standalone_safe_sync'));
+assert.ok(baseClient.includes("if(e.code==='PGRST202'"));
+assert.ok(recruit.includes('standalone_indic_facts_unapproved'));
+assert.ok(intel.includes('standalone_intel_facts_unapproved'));
+assert.ok(score.includes('standalone_win_rules_not_approved'));
+
 console.log('OMERTÀ : vérification statique anti-arbitraire et rappel conditionnel OK');
