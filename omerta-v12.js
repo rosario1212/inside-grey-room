@@ -237,7 +237,19 @@
     if(!isOmerta(STATE.scenarioId||STATE.sync?.room?.scenario_id))return baseStartGame();
     if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
     const autoCount=(STATE.sync?.players||[]).filter(p=>!p.preferred_role).length;cancelBriefingVoice();stopAmbient();
-    try{const result=await rpc('igr_omerta_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer OMERTÀ : minimum 4 joueurs et un rôle valide par joueur.')}
+    try{let startRpc='igr_omerta_start_game';
+    // Compatibilité : n'utiliser Santoro que si le serveur a explicitement
+    // ouvert son interrupteur ET certifié les trois variantes.
+    try{
+      const status=await rpc('igr_omerta_standalone_release_status',{
+        p_code:STATE.room,p_host_token:STATE.hostToken
+      });
+      if(status?.available===true)startRpc='igr_omerta_start_standalone';
+    }catch(e){
+      // Ancienne version serveur / RPC absent : conserver le jeu historique.
+      console.info('OMERTÀ standalone gate unavailable; using established mode');
+    }
+    const result=await rpc(startRpc,{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer OMERTÀ : minimum 4 joueurs et un rôle valide par joueur.')}
   };
 
   function omertaRole(){const p=STATE.sync?.player,ps=p?.private_state||{};return ps.omerta_preferred_role||p?.secret_role||p?.public_role||''}
