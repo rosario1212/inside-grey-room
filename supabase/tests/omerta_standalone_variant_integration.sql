@@ -66,7 +66,13 @@ begin
  select count(*) into next_no
  from igr_private.igr_omerta_room_variant_snapshots
  where room_code='PIN021';
- if next_no<>2 then raise exception 'match isolation broken'; end if;
+ if next_no<>2 then
+   raise exception 'match isolation broken: count %, snapshots %, current room state %',
+     next_no,
+     (select jsonb_agg(jsonb_build_object('room',x.room_code,'match',x.match_no,'variant',x.variant_id))
+       from igr_private.igr_omerta_room_variant_snapshots x),
+     (select state from public.igr_v4_rooms where code='PIN021');
+ end if;
 
  -- Les dossiers 022–025 restent inaccessibles tant qu'ils ne sont pas approuvés.
  for sc in select lpad(s::text,3,'0') from generate_series(22,25) s loop
