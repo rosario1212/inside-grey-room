@@ -18,6 +18,11 @@ for(const asset of ['omerta-money-intel-v1.js','omerta-money-intel-v1.css']){
 }
 assert.match(recruit,/igr_omerta_indic_offer/);
 assert.match(recruit,/igr_omerta_indic_respond/);
+assert.match(recruit,/igr_omerta_indic_protect/);
+assert.match(recruit,/omerta_protection_granted/);
+assert.match(recruit,/basis','indic_pact/);
+assert.match(score,/indic_personal_ok:=protected or reduction>=3/);
+assert.match(ui,/Protéger mon Indic/);
 assert.match(intel,/total_cards',3/);
 assert.match(intel,/counts_for_cooperation',false/);
 assert.match(intel,/one_intel_per_cycle/);
