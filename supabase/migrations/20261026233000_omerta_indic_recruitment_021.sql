@@ -39,6 +39,11 @@ begin
  or room.phase in ('briefing','provisional_lock','final_debrief','locking','reveal')
  then raise exception 'indic_closed'; end if;
  perform igr_private.rate_limit('omerta_indic_offer',inv.id::text,8,60);
+ -- Un contrat Verri ne constitue pas une preuve certifiée Santoro :
+ -- ne jamais recruter une source pour laquelle les fiches ABC n'ont aucun
+ -- catalogue de faits vérifié par l'auteur.
+ if coalesce((room.state->>'omerta_standalone')::boolean,false)
+ then raise exception 'standalone_indic_facts_unapproved'; end if;
  match_id:=greatest(1,coalesce((room.state->>'match_no')::int,1));
  select * into sus from public.igr_v4_players
  where room_code=room.code and id=p_suspect and public_role='suspect';
@@ -87,6 +92,11 @@ begin
   or room.phase in ('briefing','provisional_lock','final_debrief','locking','reveal')
   or coalesce((room.state->'omerta'->'dead') ? suspect.id::text,false)
  then raise exception 'indic_closed'; end if;
+ -- Un contrat Verri ne constitue pas une preuve certifiée Santoro :
+ -- ne jamais recruter une source pour laquelle les fiches ABC n'ont aucun
+ -- catalogue de faits vérifié par l'auteur.
+ if coalesce((room.state->>'omerta_standalone')::boolean,false)
+ then raise exception 'standalone_indic_facts_unapproved'; end if;
  match_id:=greatest(1,coalesce((room.state->>'match_no')::int,1));
  select * into orig from public.igr_v4_actions a
  where a.room_code=room.code and a.action_type='omerta_indic_offer'
@@ -151,7 +161,12 @@ begin
     or room.status<>'playing' or room.cycle<2
     or room.phase in ('briefing','locking','provisional_lock','final_debrief','reveal')
   then raise exception 'protection_closed'; end if;
-  match_id:=greatest(1,coalesce((room.state->>'match_no')::int,1));
+  -- Un contrat Verri ne constitue pas une preuve certifiée Santoro :
+ -- ne jamais recruter une source pour laquelle les fiches ABC n'ont aucun
+ -- catalogue de faits vérifié par l'auteur.
+ if coalesce((room.state->>'omerta_standalone')::boolean,false)
+ then raise exception 'standalone_indic_facts_unapproved'; end if;
+ match_id:=greatest(1,coalesce((room.state->>'match_no')::int,1));
   select * into src from public.igr_v4_players
   where room_code=room.code and id=p_source and public_role='suspect';
   if not found or coalesce((room.state->'omerta'->'dead') ? src.id::text,false)
