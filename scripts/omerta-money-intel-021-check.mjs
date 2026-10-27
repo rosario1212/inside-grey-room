@@ -26,7 +26,7 @@ assert.match(pact,/'private',suspect\.id/);
 assert.match(pact,/'private',inv\.id/);
 assert.doesNotMatch(js,/contenteditable/i);
 
-function simulate({role='suspect',scenario='021',cycle=2,phase='interrogation',accepted=false,offered=false}={}){
+function simulate({role='suspect',scenario='021',cycle=2,phase='interrogation',accepted=false,offered=false,logged=false}={}){
  const all=[];
  function el(tag){
   const x={tag,className:'',textContent:'',children:[],events:{},value:'',isConnected:true,
@@ -45,7 +45,7 @@ function simulate({role='suspect',scenario='021',cycle=2,phase='interrogation',a
   room:{code:'ROOM1',scenario_id:scenario,cycle,status:'playing',phase,state:{match_no:1}},
   player:{id:'INDIC1',public_role:role},
   players:[{id:'S1',pseudo:'Suspect A',public_role:'suspect'}],
-  my_actions:[],
+  my_actions:logged?[{action_type:'omerta_verified_intel',cycle,payload:{match_no:1}}]:[],
   events:[...(accepted?[{event_type:'omerta_indic_status',payload:{accepted:true,source_id:'INDIC1',match_no:1}}]:[]),
     ...(offered?[{event_type:'omerta_indic_offer',payload:{offer_id:10,match_no:1}}]:[])]
  };
@@ -90,25 +90,18 @@ assert.equal(src.calls[2].name,'igr_omerta_money_intel_send');
 assert.equal(src.calls[2].args.p_card_id,'021_money_route');
 console.log('OMERTÀ 021 — tests de branche : PASS (accord, 3 sujets, signal libre, consignation post-orale)');
 
-const investigator=simulate({role:'enqueteur',accepted:true,phase:'locking'});
-assert.equal(investigator.panel.children.length,1,'Investigator final panel appears');
-const review=investigator.all.find(x=>x.tag==='button'&&x.textContent==='Évaluer mon Indic');
-assert.ok(review);
-await review.events.click();
-const yes=investigator.all.find(x=>x.tag==='button'&&x.textContent==='Oui, cette source m’a été utile');
-assert.ok(yes,'Final useful vote must be available even without cards');
+// Le rappel n'apparaît que pour l'Indic sans transmission enregistrée.
+const reminder=simulate({accepted:true,cycle:2,phase:'cycle_debrief'});
+const prompt=reminder.all.find(x=>x.tag==='p'&&x.textContent==='As-tu partagé une information ?');
+assert.ok(prompt,'A single short end-cycle question appears with no recorded card');
+const yes=reminder.all.find(x=>x.tag==='button'&&x.textContent==='Oui');
+assert.ok(yes);
 await yes.events.click();
-assert.equal(investigator.calls[0].name,'igr_omerta_indic_assess');
-assert.equal(investigator.calls[0].args.p_useful,true);
-console.log('OMERTÀ : avis positif validable sans aucune carte déclarée');
-
-const protective=simulate({role:'enqueteur',accepted:true});
-const protector=protective.all.find(x=>x.tag==='button'&&x.textContent==='Protéger mon Indic');
-assert.ok(protector,'Enquêteur must be able to protect a recruited source');
-await protector.events.click();
-const grant=protective.all.find(x=>x.tag==='button'&&x.textContent==='Confirmer sa protection');
-assert.ok(grant,'Protection action must be confirmable privately');
-await grant.events.click();
-assert.equal(protective.calls[0].name,'igr_omerta_indic_protect');
-assert.equal(protective.calls[0].args.p_source,'INDIC1');
-console.log('OMERTÀ : protection indépendante des formulaires de révélation');
+assert.equal(reminder.calls[0].name,'igr_omerta_money_intel_options','Yes opens own private canonical cards');
+const already=simulate({accepted:true,cycle:2,phase:'cycle_debrief',logged:true});
+assert.equal(already.panel.children.length,0,'No question after already logging intel in this cycle');
+const silent=simulate({accepted:true,cycle:2,phase:'interrogation'});
+assert.equal(silent.panel.children.length,0,'No redundant question during oral gameplay');
+const noIndic=simulate({accepted:false,cycle:2,phase:'cycle_debrief'});
+assert.equal(noIndic.panel.children.length,0,'No question without a recruited source');
+console.log('OMERTÀ : conditional cycle reminder and no arbitrary final assessment, PASS');
