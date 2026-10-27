@@ -1274,13 +1274,15 @@ function privateCardHtml(){
  const santoroMyCard=santoroStandalone&&pub==='suspect'
    &&typeof ps.identity==='string'&&typeof ps.objective==='string'
    &&typeof ps.what_you_know==='string';
+ const santoroChronology=santoroMyCard&&typeof ps.your_chronology==='string'
+   ?ps.your_chronology.split(/\r?\n/).map(x=>x.trim()).filter(Boolean):[];
  const santoroQuestions=santoroMyCard&&Array.isArray(ps.conversation_hooks)
    ?ps.conversation_hooks.filter(x=>typeof x==='string'&&x.trim()).slice(0,4):[];
  const santoroPrivateCard=santoroMyCard?[
    valueBlock('TON IDENTITÉ DANS LA FAMILLE',ps.identity),
    valueBlock('CE QUE TU SAIS',ps.what_you_know),
    valueBlock('CE QUE TU GARDES POUR TOI',ps.what_you_hide,'danger-soft'),
-   valueBlock('TA CHRONOLOGIE PERSONNELLE',ps.your_chronology),
+   valueBlock('TA CHRONOLOGIE PERSONNELLE',santoroChronology),
    valueBlock('CE QUE TU PEUX DEMANDER',santoroQuestions),
    valueBlock('TON OBJECTIF PERSONNEL',ps.objective)
  ].join(''):'';
