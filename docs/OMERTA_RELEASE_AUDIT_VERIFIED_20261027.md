@@ -31,6 +31,19 @@ Supabase réclame un consentement spécifique avant de créer une branche de tes
 
 Aucune branche payante, aucune migration de production et aucun déploiement Cloudflare n'ont été exécutés pendant cet audit.
 
+
+## Correctifs apportés sans coût Supabase supplémentaire
+
+- Règle d'éligibilité explicite pour un renseignement précis de chaque source recrutable sur les cinq dossiers canoniques. Les profils 024/2, 024/4 et 024/6, dont les données actuelles sont seulement des soupçons, des informations déjà connues ou des intentions, ne peuvent pas accepter un pacte qu'ils seraient incapables de réussir.
+- Le booléen `truth_verified` est dérivé de la carte autorisée côté serveur, et non de l'importance choisie librement par le joueur. L'Indic ne peut pas valider sa coopération simplement en cochant une piste non vérifiée.
+- La première condition ne se satisfait plus d'un niveau de révélation auto-déclaré : protection officiellement négociée ou demande formelle postérieure au pacte suivie d'une preuve admissible. La remise de peine minimale est alors calculée par le système.
+- Protection et demande isolées du match courant par l'identifiant de recrutement ; aucune protection historique ne compte pour un rematch.
+- Accès direct à `igr_omerta_make_reveal` révoqué explicitement.
+- Fichier de test obsolète fondé sur le vote subjectif supprimé.
+- GitHub Actions : banc PostgreSQL 16 éphémère, sans branche Supabase payante, avec exécution des trois migrations de la mécanique + du verdict et une batterie multi-dossiers. La suite « Omerta Informant QA » est passée après correction, y compris son test SQL isolé.
+
+**Limite non levée :** ces succès testent le canon historique 021–025, **pas** les 15 variantes Santoro A/B/C. Les 15 histoires restent `review`, sans certification éditoriale de provenance, et les lecteurs serveur des branches A/B/C ne sont pas complètement raccordés. Une publication « complète » serait donc une fausse déclaration. Le déploiement reste bloqué par cette validation narrative et son intégration runtime.
+
 ## Recommandation de publication
 
 Conserver la PR #379 en brouillon et **ne pas fusionner** tant que les critères 1–7 ne sont pas réellement satisfaits. Une suite CI verte ne transforme pas des manuscrits en variantes certifiées et ne rend pas atteignable un objectif de victoire impossible.
