@@ -6,7 +6,7 @@ create role authenticated nologin;
 create schema if not exists igr_private;
 create table public.igr_v4_rooms(
  code text primary key,scenario_id text,status text,cycle int,phase text,
- state jsonb default '{}'::jsonb,created_at timestamptz default now(),
+ state jsonb default '{}'::jsonb,host_token uuid default gen_random_uuid(),created_at timestamptz default now(),
  updated_at timestamptz default now()
 );
 create table public.igr_v4_players(
@@ -43,6 +43,29 @@ create function public.igr_v4_make_reveal(p_room text) returns jsonb language sq
 $stub$ select jsonb_build_object('results',coalesce(jsonb_agg(jsonb_build_object(
 'player_id',p.id,'success',false,'text','')), '[]'::jsonb))
 from public.igr_v4_players p where p.room_code=p_room $stub$;
+
+-- Fake legacy starter used ONLY by disposable CI PostgreSQL to exercise the
+-- transactional contract of the new opt-in starter (not a production source).
+create function public.igr_omerta_start_game(p_code text,p_host_token uuid)
+returns jsonb language plpgsql security definer set search_path=''
+as $old_start$
+declare r public.igr_v4_rooms%rowtype; n integer;
+begin
+ select * into r from public.igr_v4_rooms
+ where code=upper(trim(p_code)) and host_token=p_host_token for update;
+ if not found then raise exception 'unauthorized'; end if;
+ if r.status<>'lobby' then raise exception 'already_started';end if;
+ select count(*) into n from public.igr_v4_players where room_code=r.code;
+ if n not between 4 and 8 then raise exception 'invalid_party';end if;
+ update public.igr_v4_rooms set status='playing',cycle=0,phase='briefing'
+ where code=r.code;
+ insert into public.igr_v4_events(room_code,cycle,event_type,visibility,payload)
+ values(r.code,0,'context','public',
+   '{"title":"Old context","text":"LEGACY STORY MUST BE REPLACED"}'::jsonb);
+ return '{"ok":true,"auto_assigned_roles":0}'::jsonb;
+end;
+$old_start$;
+
 insert into public.igr_v4_scenario_packs(scenario_id,pack)
 select lpad(n::text,3,'0'),
  jsonb_build_object('suspects',jsonb_build_array(
