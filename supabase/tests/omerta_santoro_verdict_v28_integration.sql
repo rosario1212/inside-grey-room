@@ -6,7 +6,7 @@ DO $qa$
 DECLARE
  room_ref text:='QAVERD28'; host uuid; inv uuid; src uuid; other uuid;
  src_id uuid; other_id uuid; out jsonb; current_manuscript jsonb;
- variant text; proof jsonb; axis text; ballot jsonb; denied boolean;
+ variant text; proof jsonb; axis text; other_axis text; ballot jsonb; denied boolean;
 BEGIN
  IF EXISTS(select 1 from public.igr_v4_rooms where public.igr_v4_rooms.code=room_ref)
   OR (select enabled from igr_private.igr_omerta_standalone_release_control where id=1)
@@ -17,6 +17,9 @@ BEGIN
   || '{"status":"ready","human_review_approved":true,"verdict_scoring_review":"approved"}'::jsonb
  WHERE scenario_id='021';
  UPDATE igr_private.igr_omerta_verdict_goal_axes SET
+  review_status='verified',reviewed_by='TEST_ROLLBACK',reviewed_at=now()
+ WHERE scenario_id='021';
+ UPDATE igr_private.igr_omerta_verdict_truth_actors SET
   review_status='verified',reviewed_by='TEST_ROLLBACK',reviewed_at=now()
  WHERE scenario_id='021';
  UPDATE igr_private.igr_omerta_standalone_release_control SET enabled=true WHERE id=1;
@@ -49,12 +52,20 @@ BEGIN
  SELECT g.act_axis INTO axis FROM igr_private.igr_omerta_verdict_goal_axes g
  JOIN public.igr_v4_players p ON p.id=src_id AND p.internal_slot=g.slot
  WHERE g.scenario_id='021' AND g.variant_id=variant;
+ SELECT g.act_axis INTO other_axis FROM igr_private.igr_omerta_verdict_goal_axes g
+ JOIN public.igr_v4_players p ON p.id=other_id AND p.internal_slot=g.slot
+ WHERE g.scenario_id='021' AND g.variant_id=variant;
+ UPDATE igr_private.igr_omerta_verdict_truth_actors SET
+   actual_slots=ARRAY[(SELECT internal_slot FROM public.igr_v4_players WHERE id=src_id)]
+ WHERE scenario_id='021' AND variant_id=variant AND act_axis=axis;
  out:=public.igr_omerta_standalone_verdict_options(room_ref,inv);
  IF out->>'available'<>'true' OR jsonb_array_length(out->'suspects')<>3
  OR jsonb_array_length(out->'acts')<>4
  OR out::text LIKE '%private_cards%' THEN RAISE EXCEPTION 'options_bad_or_leaky';END IF;
- ballot:=jsonb_build_array(jsonb_build_object('player_id',src_id,
-  'act_axis',axis,'evidence_ids',proof));
+ ballot:=jsonb_build_array(
+   jsonb_build_object('player_id',src_id,'act_axis',axis,'evidence_ids',proof),
+   jsonb_build_object('player_id',other_id,'act_axis',other_axis,'evidence_ids',proof)
+ );
  denied:=false;
  BEGIN PERFORM public.igr_omerta_standalone_lock_verdict(room_ref,src,ballot);
  EXCEPTION WHEN OTHERS THEN denied:=true; END;
@@ -67,8 +78,18 @@ BEGIN
  IF NOT denied OR EXISTS(SELECT 1 FROM igr_private.igr_omerta_verdict_locks l
  WHERE l.room_code=room_ref) THEN RAISE EXCEPTION 'invalid_axis_accepted_or_partial_lock';END IF;
  out:=public.igr_omerta_standalone_lock_verdict(room_ref,inv,ballot);
- IF out->>'finished'<>'true' OR out->>'designations_recorded'<>'1'
+ IF out->>'finished'<>'true' OR out->>'designations_recorded'<>'2'
  THEN RAISE EXCEPTION 'final_not_recorded';END IF;
+ -- A genuinely uncertified actor link never triggers a fabricated loss.
+ UPDATE igr_private.igr_omerta_verdict_truth_actors
+ SET review_status='review',reviewed_by=NULL,reviewed_at=NULL
+ WHERE scenario_id='021' AND variant_id=variant AND act_axis=axis;
+ out:=public.igr_omerta_standalone_my_verdict(room_ref,src);
+ IF out->>'reason'<>'editorial_actor_truth_pending'
+ THEN RAISE EXCEPTION 'unreviewed_actor_truth_scored';END IF;
+ UPDATE igr_private.igr_omerta_verdict_truth_actors
+ SET review_status='verified',reviewed_by='TEST_ROLLBACK',reviewed_at=now()
+ WHERE scenario_id='021' AND variant_id=variant AND act_axis=axis;
  out:=public.igr_omerta_standalone_my_verdict(room_ref,src);
  IF out->>'available'<>'true' OR out->'result'->>'status'<>'lost'
  THEN RAISE EXCEPTION 'wrongly_designated_goal_not_lost';END IF;
