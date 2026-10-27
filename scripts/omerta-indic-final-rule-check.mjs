@@ -60,6 +60,15 @@ assert.ok(omertaClient.includes('igr_omerta_standalone_release_status'));
 assert.ok(omertaClient.includes('igr_omerta_start_standalone'));
 assert.ok(omertaClient.includes("if(e.code!=='PGRST202'"));
 assert.ok(baseClient.includes('igr_omerta_standalone_safe_sync'));
+// Une fiche Santoro doit remplacer les objectifs Verri génériques dans la vue
+// uniquement lorsque la salle autonome est marquée par le serveur.
+assert.ok(baseClient.includes('santoroStandalone'));
+assert.ok(baseClient.includes("d?.room?.state?.omerta_standalone===true"));
+assert.ok(baseClient.includes("santoroPrivateCard"));
+assert.ok(baseClient.includes("TON OBJECTIF PERSONNEL"));
+assert.ok(baseClient.includes("CE QUE TU PEUX DEMANDER"));
+assert.ok(baseClient.includes("const privateWin=santoroMyCard?ps.objective"));
+
 assert.ok(baseClient.includes("if(e.code==='PGRST202'"));
 assert.ok(recruit.includes('standalone_indic_facts_unapproved'));
 assert.ok(intel.includes('standalone_intel_facts_unapproved'));

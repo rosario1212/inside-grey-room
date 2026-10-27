@@ -1269,8 +1269,26 @@ function privateCardHtml(){
      +spyChoices.map(c=>`<button type="button" class="btn secondary block" onclick="sendSpyDecision('${c.id}')">${h(c.label)}</button>`).join('')+'</div>')
   :'';
  const secretInfo=secret==='espion'?(valueBlock('MISSION SECRÈTE',ps.secret_mission||'Ta couverture publique reste inchangée.','secret-alert')+spyChoiceUi):'';
+ const santoroStandalone=['021','022','023','024','025'].includes(String(d?.room?.scenario_id||''))
+   &&d?.room?.state?.omerta_standalone===true;
+ const santoroMyCard=santoroStandalone&&pub==='suspect'
+   &&typeof ps.identity==='string'&&typeof ps.objective==='string'
+   &&typeof ps.what_you_know==='string';
+ const santoroChronology=santoroMyCard&&typeof ps.your_chronology==='string'
+   ?ps.your_chronology.split(/\r?\n/).map(x=>x.trim()).filter(Boolean):[];
+ const santoroQuestions=santoroMyCard&&Array.isArray(ps.conversation_hooks)
+   ?ps.conversation_hooks.filter(x=>typeof x==='string'&&x.trim()).slice(0,4):[];
+ const santoroPrivateCard=santoroMyCard?[
+   valueBlock('TON IDENTITÉ DANS LA FAMILLE',ps.identity),
+   valueBlock('CE QUE TU SAIS',ps.what_you_know),
+   valueBlock('CE QUE TU GARDES POUR TOI',ps.what_you_hide,'danger-soft'),
+   valueBlock('TA CHRONOLOGIE PERSONNELLE',santoroChronology),
+   valueBlock('CE QUE TU PEUX DEMANDER',santoroQuestions),
+   valueBlock('TON OBJECTIF PERSONNEL',ps.objective)
+ ].join(''):'';
+ const privateWin=santoroMyCard?ps.objective:roleInfo(secret==='espion'?'espion':pub).win;
  const cartel030Card=(currentScenario()?.id==='030'&&pub==='suspect'&&ps.variant_card)?[valueBlock('TON IDENTITÉ DANS LE DOSSIER',ps.variant_card.identity),valueBlock('CE QUE TU SAIS — DOSSIER 030',ps.variant_card.what_you_know),valueBlock('TON SECRET — DOSSIER 030',ps.variant_card.variant_secret,'danger-soft'),valueBlock('CE QUE TU CACHES — DOSSIER 030',ps.variant_card.what_you_hide,'danger-soft'),valueBlock('TA CHRONOLOGIE DÉTAILLÉE',ps.variant_card.your_chronology),valueBlock('TON OBJECTIF — DOSSIER 030',ps.variant_card.objective)].join(''):'';
- return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><h2>${h(displayRole(pub,p?.pseudo||STATE.playerPseudo))}</h2><div class="role-summary"><b>COMMENT TU GAGNES</b><span>${h(roleInfo(secret==='espion'?'espion':pub).win)}</span></div>${valueBlock('TA PLACE',ps.place)}${valueBlock('TA CHRONOLOGIE',ps.chronology)}${valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')}${valueBlock('TES REPÈRES',ps.anchors)}${valueBlock('TES RELATIONS',ps.relations)}${valueBlock('TES CLIENTS',ps.clients)}${valueBlock('TA POSITION',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)}${cartel030Card}${secretInfo}<div class="private-foot">Les faits de cette carte sont canoniques. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne modifies jamais la chronologie, les preuves ou les lieux.</div></div>`;
+ return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><h2>${h(displayRole(pub,p?.pseudo||STATE.playerPseudo))}</h2><div class="role-summary"><b>COMMENT TU GAGNES</b><span>${h(privateWin)}</span></div>${santoroPrivateCard}${valueBlock('TA PLACE',ps.place)}${valueBlock('TA CHRONOLOGIE',ps.chronology)}${valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')}${valueBlock('TES REPÈRES',ps.anchors)}${valueBlock('TES RELATIONS',ps.relations)}${valueBlock('TES CLIENTS',ps.clients)}${valueBlock('TA POSITION',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)}${cartel030Card}${secretInfo}<div class="private-foot">Les faits de cette carte sont canoniques. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne modifies jamais la chronologie, les preuves ou les lieux.</div></div>`;
 }
 function renderRole(){
  const d=STATE.sync;if(!d)return;
