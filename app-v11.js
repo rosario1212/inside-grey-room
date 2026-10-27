@@ -2647,6 +2647,6 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 /* v11-30-scenario-text-rewrite — PWA cache bootstrap */
 if (!NATIVE_SHELL && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v12-store-candidate').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v633-omerta-santoro-private-cards').catch(() => {});
   }, {once:true});
 }
