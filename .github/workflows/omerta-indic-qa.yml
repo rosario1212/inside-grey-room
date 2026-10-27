@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'omerta-money-intel-v1.js'
+      - 'omerta-v12.js'
+      - 'app-v11.js'
       - 'omerta-money-intel-v1.css'
       - 'scripts/omerta-*.mjs'
       - 'supabase/migrations/20261026*omerta*.sql'
