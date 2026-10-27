@@ -305,7 +305,7 @@ declare
  investigator_count int;
  suspects_count int;
  already_cast int;
- p record;
+ mafia_player record;
  entry jsonb;
  chosen_slot int;
  selected_slots int[]:=array[]::int[];
@@ -344,15 +344,15 @@ begin
  if already_cast>0 then
    if already_cast<>suspects_count or exists(
      select 1 from igr_private.igr_omerta_room_cast_slots x
-     left join public.igr_v4_players p
-       on p.id=x.player_id and p.room_code=x.room_code
-       and p.public_role='suspect'
-     where x.room_code=r.code and x.match_no=match_id and p.id is null
+     left join public.igr_v4_players member
+       on member.id=x.player_id and member.room_code=x.room_code
+       and member.public_role='suspect'
+     where x.room_code=r.code and x.match_no=match_id and member.id is null
    ) then raise exception 'omerta_cast_changed_during_match'; end if;
    return already_cast;
  end if;
 
- for p in
+ for mafia_player in
    select id from public.igr_v4_players
    where room_code=r.code and public_role='suspect'
    order by pg_catalog.random()
@@ -367,7 +367,7 @@ begin
    then raise exception 'omerta_insufficient_distinct_roles'; end if;
    insert into igr_private.igr_omerta_room_cast_slots(
      room_code,match_no,player_id,internal_slot)
-   values(r.code,match_id,p.id,chosen_slot);
+   values(r.code,match_id,mafia_player.id,chosen_slot);
    selected_slots:=pg_catalog.array_append(selected_slots,chosen_slot);
    update public.igr_v4_players
    set internal_slot=chosen_slot,
@@ -382,7 +382,7 @@ begin
        'chronology',entry->'your_chronology',
        'conversation_hooks',entry->'conversation_hooks'
      )
-   where id=p.id and room_code=r.code;
+   where id=mafia_player.id and room_code=r.code;
    n:=n+1;
  end loop;
  return n;
