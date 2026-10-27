@@ -526,7 +526,7 @@ begin
        'your_chronology',entry->'your_chronology',
        'chronology',entry->'your_chronology',
        'conversation_hooks',entry->'conversation_hooks',
-       'omerta_preferred_role',mafia_player.preferred_role,
+       'omerta_preferred_role',coalesce(entry->>'rank_code',mafia_player.preferred_role),
        'omerta_player_identity',
          (select pseudo from public.igr_v4_players
           where id=mafia_player.id)
