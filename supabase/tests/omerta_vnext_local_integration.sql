@@ -19,6 +19,11 @@ begin
                      'chronology',pack->'suspects'->0->>'chronology')
   from public.igr_v4_scenario_packs where scenario_id=sc returning * into s;
 
+  if sc='025' then
+   -- Protection historique sans match_no : ne doit pas valider le match actuel.
+   insert into public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
+   values(code,i.id,1,'omerta_protection_granted',jsonb_build_object('target',s.id));
+  end if;
   cards:=public.igr_omerta_money_intel_options(code,s.player_token);
   if cards->>'available'<>'false' then raise exception 'pre-recruitment leak in %',sc; end if;
   refused:=false;
