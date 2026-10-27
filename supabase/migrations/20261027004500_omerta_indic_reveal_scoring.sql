@@ -65,13 +65,13 @@ begin
         and coalesce((a.payload->>'match_no')::int,1)=indic_match_id
       ) into indic_by_card;
       indic_second_ok:=indic_vote_yes or indic_by_card;
-      indic_personal_ok:=case
-        when role='pentito' then protected
-        when role='contabile' then exposure<65
-        else success
-      end;
+      -- But individuel d'une source : sauver ses intérêts (protection OU
+      -- remise officielle d'au moins 3 ans). Survivre reste séparément requis.
+      -- L'ancien objectif de loyauté d'un uomo_onore ne peut pas devenir le
+      -- critère égoïste d'un joueur passé Indic.
+      indic_personal_ok:=protected or reduction>=3;
       success:=indic_personal_ok and indic_second_ok and not dead;
-      txt:=txt||' · INDIC : objectif personnel '||
+      txt:=txt||' · INDIC : protection ou remise de peine '||
         case when indic_personal_ok then 'atteint' else 'non atteint' end||
         ' · coopération '||
         case when indic_second_ok then
