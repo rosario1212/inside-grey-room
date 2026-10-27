@@ -1,4 +1,4 @@
-/* Non-network regression: the badge equals displayed public publications, not all alerts.
+/* Non-network regression: dossier publications are exact; no unread dot is shown without a new visible item.
    Runs for the shared gameplay shell across 001–049, three role/cycle/variant paths. */
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -60,9 +60,9 @@ for(let number=1;number<=49;number++){
   const notifDocument={querySelectorAll:()=>[timeline,card],createElement(){return {textContent:'',setAttribute(){},remove(){}}}};
   const badgeCtx={window:notifWindow,document:notifDocument,state:notices,resolvedRoute:x=>x,tr:(a)=>a};
   vm.runInNewContext(decorateSource+'\ndecorateTabs();',badgeCtx);
-  assert.equal(timeline.badge?.textContent,'3','timeline count must match displayed publications (including read), not 12+ unrelated notifications');
-  assert.equal(card.badge?.textContent,'•','other tabs may indicate new alerts but not claim a content total');
-  assert.equal(timeline._attrs.title,'3 publications visibles');
+  assert.equal(timeline.badge,null,'a dossier publication count is not an unread notification, even if three items are displayed');
+  assert.equal(card.badge,null,'no phantom badge on Ma fiche when no new card was delivered');
+  assert.equal(timeline._attrs.title,undefined,'no misleading tab tooltip for read publications');
   tested++;
  }
 }
@@ -70,4 +70,4 @@ for(let number=1;number<=49;number++){
 const empty=buttonFor('timeline'),badgeCtx={window:{IGR_COMMON_DOSSIER_V106:{visibleEventIds(){return null}}},document:{querySelectorAll:()=>[empty],createElement(){return {setAttribute(){}}}},state:{items:Array.from({length:10},(_,i)=>({id:i+1,route:'timeline',unread:true}))},resolvedRoute:x=>x,tr:a=>a};
 vm.runInNewContext(decorateSource+'\ndecorateTabs();',badgeCtx);
 assert.equal(empty.badge,null,'never show a speculative badge before server sync');
-console.log('PASS dossier badge and duplicate context: '+tested+' role/scenario/variant cases, three cycles, unloaded-state guard');
+console.log('PASS dossier verified publications and no phantom badges: '+tested+' role/scenario/variant cases, three cycles, unloaded-state guard');
