@@ -19,7 +19,7 @@ begin
       'public_briefing','Synthetic public case introduction',
       'final_reveal','SECRET: do not send to players',
       'canonical_truth',jsonb_build_object('synthetic',sc||variant.letter, 'responsibility_by_slot',jsonb_build_object('1',0,'2',1,'3',2), 'timeline', jsonb_build_array(jsonb_build_object('id','qa-t1','what','Synthetic document A'),jsonb_build_object('id','qa-t2','what','Synthetic document B'))),
-      'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only '||variant.letter,'identity','Synthetic role A','what_you_know','Private clue A','what_you_hide','Private secret A'),jsonb_build_object('slot',2,'objective','Other goal','identity','Synthetic role B','what_you_know','Private clue B','what_you_hide','Private secret B'),jsonb_build_object('slot',3,'objective','QA only','identity','Synthetic role C','what_you_know','Private clue C')),
+      'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only '||variant.letter,'identity','Synthetic role A','what_you_know','Private clue A','what_you_hide','Private secret A','your_chronology','Synthetic step A','conversation_hooks',jsonb_build_array('Question A1','Question A2')),jsonb_build_object('slot',2,'objective','Other goal','identity','Synthetic role B','what_you_know','Private clue B','what_you_hide','Private secret B','your_chronology','Synthetic step B','conversation_hooks',jsonb_build_array('Question B1','Question B2')),jsonb_build_object('slot',3,'objective','QA only','identity','Synthetic role C','what_you_know','Private clue C','what_you_hide','Private secret C','your_chronology','Synthetic step C','conversation_hooks',jsonb_build_array('Question C1','Question C2'))),
       'saga',jsonb_build_object('collection','OMERTA','family','SANTORO','branch',variant.letter,
         'chapter',sc::int-20),
       'revelations',jsonb_build_array(jsonb_build_object(
@@ -36,6 +36,17 @@ begin
 
  if igr_private.igr_omerta_structural_preflight('021') is not true
  then raise exception 'valid synthetic crosschecks rejected'; end if;
+ -- A missing private chronology must block even a structurally coherent C3.
+ update igr_private.igr_v99_variant_manuscripts
+ set manuscript=jsonb_set(manuscript,'{private_cards,0,your_chronology}','""'::jsonb,true)
+ where scenario_id='021' and variant_id='A';
+ if igr_private.igr_omerta_structural_preflight('021')
+ then raise exception 'incomplete private role card admitted'; end if;
+ update igr_private.igr_v99_variant_manuscripts
+ set manuscript=jsonb_set(manuscript,'{private_cards,0,your_chronology}','"Synthetic step A"'::jsonb,true)
+ where scenario_id='021' and variant_id='A';
+ if igr_private.igr_omerta_structural_preflight('021') is not true
+ then raise exception 'completed private role card rejected'; end if;
  -- Approuver une variante imaginaire UNIQUEMENT dans PostgreSQL jetable.
  -- 022–025 restent des brouillons ; 021 doit pouvoir démarrer indépendamment.
  update igr_private.igr_v99_variant_manuscripts
