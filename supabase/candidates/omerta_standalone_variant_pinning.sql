@@ -151,3 +151,128 @@ revoke all on function igr_private.igr_omerta_standalone_snapshot(text,integer)
 -- Ne jamais exposer un endpoint qui renvoie un manuscrit complet.
 -- Les futurs lecteurs serveur de fiches seront responsables de filtrer par
 -- token de joueur, par rôle, par slot, par cycle et par salle.
+
+-- Lecteur du dossier individuel. Accessible par jeton de salle, mais ne
+-- délivre JAMAIS le manuscrit entier ni les fiches d'autres personnages.
+create or replace function public.igr_omerta_my_private_dossier(
+ p_code text, p_player_token uuid
+) returns jsonb
+language plpgsql security definer set search_path=''
+as $mine$
+declare
+ p public.igr_v4_players%rowtype;
+ r public.igr_v4_rooms%rowtype;
+ m jsonb;
+ card jsonb;
+ match_id integer;
+begin
+ select * into p from public.igr_v4_players
+ where room_code=upper(trim(p_code)) and player_token=p_player_token;
+ if not found then raise exception 'unauthorized'; end if;
+ select * into r from public.igr_v4_rooms where code=p.room_code;
+ if not found or r.scenario_id not in ('021','022','023','024','025')
+   or r.status not in ('playing','finished')
+   or r.phase='briefing' or p.public_role<>'suspect' or p.internal_slot is null
+ then return jsonb_build_object('available',false); end if;
+ match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
+ select x.manuscript into m
+ from igr_private.igr_omerta_room_variant_snapshots x
+ where x.room_code=r.code and x.match_no=match_id
+   and x.scenario_id=r.scenario_id;
+ if m is null then return jsonb_build_object('available',false); end if;
+ select value into card
+ from pg_catalog.jsonb_array_elements(coalesce(m->'private_cards','[]'::jsonb)) value
+ where value->>'slot'=p.internal_slot::text limit 1;
+ if card is null then raise exception 'omerta_private_slot_missing'; end if;
+ -- Explicit allowlist: stray editorial fields cannot become client secrets.
+ return jsonb_build_object('available',true,'card',jsonb_build_object(
+   'identity',card->'identity',
+   'objective',card->'objective',
+   'what_you_know',card->'what_you_know',
+   'what_you_hide',card->'what_you_hide',
+   'your_chronology',card->'your_chronology',
+   'conversation_hooks',card->'conversation_hooks'
+ ));
+end;
+$mine$;
+revoke all on function public.igr_omerta_my_private_dossier(text,uuid)
+ from public,anon,authenticated;
+grant execute on function public.igr_omerta_my_private_dossier(text,uuid)
+ to anon,authenticated;
+
+-- Injecteur interne de deux pièces C3 distinctes : NE DOIT PAS être appelé
+-- depuis le client. À raccorder au changement de cycle du serveur lors de
+-- l'activation publique. Chaque opération est sérialisée et idempotente.
+create or replace function igr_private.igr_omerta_emit_c3_crosschecks(
+ p_room_code text
+) returns integer
+language plpgsql security definer set search_path=''
+as $emit$
+declare
+ r public.igr_v4_rooms%rowtype;
+ m jsonb;
+ match_id int;
+ item jsonb;
+ event_id text;
+ source_id text;
+ source_fact jsonb;
+ recipient record;
+ added int:=0;
+begin
+ select * into r from public.igr_v4_rooms
+ where code=upper(trim(p_room_code)) for update;
+ if not found or r.scenario_id not in ('021','022','023','024','025')
+   or r.status<>'playing' or r.cycle<>3 then return 0; end if;
+ match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
+ select x.manuscript into m
+ from igr_private.igr_omerta_room_variant_snapshots x
+ where x.room_code=r.code and x.match_no=match_id
+   and x.scenario_id=r.scenario_id;
+ if m is null then return 0; end if;
+ for item in
+   select v.value from pg_catalog.jsonb_array_elements(
+      coalesce(m->'revelations','[]'::jsonb)) v(value)
+   where v.value->>'kind'='guaranteed' and v.value->>'min_cycle'='3'
+      and v.value->>'audience'='investigation'
+      and v.value->'editorial_provenance'->>'human_source_review'='verified'
+      and v.value->'editorial_provenance'->>'independent_of_optional_actions'='true'
+ loop
+   event_id:=item->>'id';
+   -- Les deux sources documentaires sont présentes dans le canon épinglé.
+   for source_id in
+     select distinct e.value from pg_catalog.jsonb_array_elements_text(
+       coalesce(item->'editorial_provenance'->'existing_events','[]'::jsonb)) e(value)
+   loop
+     select t.value into source_fact from pg_catalog.jsonb_array_elements(
+         coalesce(m->'canonical_truth'->'timeline','[]'::jsonb)) t(value)
+     where t.value->>'id'=source_id limit 1;
+     if source_fact is null or nullif(source_fact->>'what','') is null then
+       raise exception 'omerta_crosscheck_source_missing'; end if;
+     for recipient in
+       select p.id from public.igr_v4_players p
+       where p.room_code=r.code and p.public_role in ('enqueteur','analyste')
+     loop
+       if not exists(
+         select 1 from public.igr_v4_events e
+         where e.room_code=r.code and e.event_type='omerta_c3_crosscheck'
+           and e.target_player_id=recipient.id and e.visibility='private'
+           and coalesce((e.payload->>'match_no')::int,-1)=match_id
+           and e.payload->>'revelation_id'=event_id
+           and e.payload->>'source_event_id'=source_id
+       ) then
+         insert into public.igr_v4_events(
+           room_code,cycle,event_type,visibility,target_player_id,payload)
+         values(r.code,r.cycle,'omerta_c3_crosscheck','private',recipient.id,
+           jsonb_build_object('title','RECOUPEMENT · CYCLE III',
+             'text',source_fact->>'what','revelation_id',event_id,
+             'source_event_id',source_id,'match_no',match_id));
+         added:=added+1;
+       end if;
+     end loop;
+   end loop;
+ end loop;
+ return added;
+end;
+$emit$;
+revoke all on function igr_private.igr_omerta_emit_c3_crosschecks(text)
+ from public,anon,authenticated;
