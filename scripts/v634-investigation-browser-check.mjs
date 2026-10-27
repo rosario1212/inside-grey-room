@@ -49,8 +49,9 @@ try{
   assert.equal(await page.locator('#igr634-actions').count(),1);
   assert.equal(await page.locator('#igr634-evidence').count(),1);
   assert.equal(await page.locator('#igr634-notebook').count(),1);
+  assert.equal(await page.locator('#igr634-personal').count(),1,'Private notes must be present separately');
   const order=await page.evaluate(()=>[...document.querySelector('.igr634-workspace').children].map(x=>x.id).filter(Boolean));
-  assert.deepEqual(order,['igr634-interviews','igr634-actions','igr634-evidence','igr634-notebook'],'Interviews must be first after the contextual priority block');
+  assert.deepEqual(order,['igr634-interviews','igr634-actions','igr634-evidence','igr634-notebook','igr634-personal'],'The shared notebook and private notes must have distinct sections');
   assert.equal(await page.locator('.igr634-quicknav').count(),0,'No duplicate four-button quick navigation');
   assert.equal(await page.locator('.igr634-priority').count(),1,'Supplemental investigation must be clearly visible');
   assert(await page.getByRole('button',{name:'Examiner'}).isVisible(),'Supplemental investigation is actionable without expansion');
@@ -58,7 +59,11 @@ try{
   assert.equal(await page.evaluate(()=>window.clicks.interview),1,'Original callback must survive DOM regrouping');
   assert(await page.getByText('Indice canonique').isVisible(),'Evidence must be immediately visible without expansion');
   await page.locator('#igr634-notebook > summary').click();
-  assert.equal(await page.locator('#privateNotesV32').count(),0,'Duplicate local scratchpad must not be present');
+  assert.equal(await page.locator('#igr634-notebook #privateNotesV32').count(),0,'Shared notebook must not contain private notes');
+  assert.equal(await page.locator('#privateNotesV32').count(),1,'Exactly one private notes editor must exist');
+  await page.locator('#igr634-personal > summary').click();
+  await page.locator('#privateNotesV32').fill('Mon hypothèse personnelle');
+  assert.equal(await page.evaluate(()=>window.clicks.notes),1,'Local autosave must remain functional');
   if(role==='enqueteur'){
    assert.equal(await page.locator('.igr87-note-form').count(),1,'Server notebook note form preserved');
    await page.screenshot({path:path.join(report,'investigation-v634-iphone.png'),fullPage:true});
@@ -66,5 +71,5 @@ try{
   const width=await page.evaluate(()=>document.documentElement.scrollWidth);
   assert(width<=390+1,'Investigation workspace must not overflow on iPhone');
  }
- console.log('PASS browser investigation workspace: interventions visible, evidence opened, team notebook, no duplicated private notes.');
+ console.log('PASS browser investigation workspace: visible actions, shared notebook, one private local autosaving note editor.');
 }finally{await browser.close()}

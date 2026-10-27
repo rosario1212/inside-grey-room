@@ -61,9 +61,17 @@
 #app .igr634-channel-help{background:#141b21;border:1px solid rgba(198,212,225,.22);border-left:3px solid #b7c8d2;border-radius:10px;padding:12px 13px;color:#cbd7df;font-size:13px;line-height:1.5;margin-bottom:12px}
 #app .igr634-notice{color:#bcc7d0;font-size:13px;line-height:1.55}
 #app .igr634-personal-notes{display:none!important}
+#app #igr634-personal .notes-tab-v32{margin:0!important;min-width:0;padding:4px 0 0;display:grid;gap:10px}
+#app #igr634-personal .notes-title-v32{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+#app #igr634-personal #privateNotesV32{min-height:150px!important;max-height:34dvh!important;resize:vertical}
+#app #igr634-personal .notes-help-v32{font-size:12px;line-height:1.5}
+#app #igr634-personal .notes-privacy-v32{font-size:11px}
 #app .igr634-workspace .igr634-group:not([open]){min-height:55px}
 @media(max-width:600px){
  #app .igr634-priority{padding:13px 12px}
  #app .igr634-workspace{gap:10px}
  #app .igr634-head h2{font-size:20px}
 }
+
+#app #igr634-personal .notes-tab-v32{display:grid;gap:10px;margin:0!important;padding:4px 0 0;min-width:0}
+#app #igr634-personal #privateNotesV32{min-height:150px!important;max-height:34dvh!important;resize:vertical}

@@ -114,6 +114,12 @@ function organize(raw){
  const noteInfo=makeEl('p','igr634-notice',tr('Carnet partagé : seules les personnes du camp Enquête peuvent lire et ajouter ces notes. Contrairement au Canal (messages rapides), elles restent classées par personne ou par affaire. Une note n’est jamais une preuve.','Shared notebook: only the investigation team can read and add notes. Unlike the Channel (quick messages), they remain organized by person or case. A note is never evidence.'));
  bucket.notebook.unshift(noteInfo);
  makeGroup('notebook',tr('Carnet partagé · camp Enquête','Shared investigation notebook'),tr('NOTES DURABLES · CAMP ENQUÊTE','SAVED TEAM NOTES'),bucket.notebook,false);
+ if(typeof window.renderNotesTabV32==='function'){
+  const privateEditor=document.createElement('template');
+  privateEditor.innerHTML=String(window.renderNotesTabV32()||'');
+  const info=makeEl('p','igr634-notice',tr('Notes privées, uniquement sur cet appareil. Le carnet partagé est destiné au camp Enquête.','Private notes on this device only. The shared notebook belongs to the investigation team.'));
+  makeGroup('personal',tr('Mes notes personnelles · privées','My private personal notes'),tr('MOI SEUL · CET APPAREIL','ONLY ME · THIS DEVICE'),[info,...Array.from(privateEditor.content.childNodes)],false);
+ }
  return outside.outerHTML;
 }
 const oldTabs=typeof gameTabs==='function'?gameTabs:window.gameTabs;
