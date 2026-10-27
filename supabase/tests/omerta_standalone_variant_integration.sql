@@ -71,6 +71,12 @@ begin
  values('PIN021','Enquêteur',3,'enqueteur','enqueteur') returning * into investigator;
  update public.igr_v4_rooms set status='playing',phase='interrogation',cycle=2 where code='PIN021';
  dossier:=public.igr_omerta_my_private_dossier('PIN021',source_player.player_token);
+ if dossier->>'available'<>'false'
+ then raise exception 'uncast legacy slot leaked standalone dossier'; end if;
+ insert into igr_private.igr_omerta_room_cast_slots(
+   room_code,match_no,player_id,internal_slot)
+ values('PIN021',1,source_player.id,1),('PIN021',1,other_player.id,2);
+ dossier:=public.igr_omerta_my_private_dossier('PIN021',source_player.player_token);
  if dossier->>'available'<>'true'
    or dossier->'card'->>'what_you_hide'<>'Private secret A'
    or dossier->'card' ? 'canonical_truth'
