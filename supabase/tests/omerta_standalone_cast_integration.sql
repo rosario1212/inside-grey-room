@@ -177,6 +177,22 @@ begin
  if (select status from public.igr_v4_rooms where code='START021')<>'lobby'
  then raise exception 'unauthorized call changed lobby';end if;
 
+ -- L'interrupteur reste sur OFF même si un auteur a approuvé toutes
+ -- les variantes dans les fixtures : aucune activation implicite.
+ if (public.igr_omerta_standalone_release_status('START021',host)
+    ->>'available')::boolean is not false then
+   raise exception 'standalone status leaked as active before release';end if;
+ blocked:=false;
+ begin perform public.igr_omerta_start_standalone('START021',host);
+ exception when others then blocked:=true;end;
+ if not blocked or (select status from public.igr_v4_rooms where code='START021')<>'lobby'
+ then raise exception 'unreleased standalone started without explicit flag';end if;
+ update igr_private.igr_omerta_standalone_release_control
+ set enabled=true,updated_at=now() where id=1;
+ if (public.igr_omerta_standalone_release_status('START021',host)
+    ->>'available')::boolean is not true then
+   raise exception 'release-eligible synthetic chapter status not enabled';end if;
+
  start_result:=public.igr_omerta_start_standalone('START021',host);
  if start_result->>'ok'<>'true' or start_result->>'standalone'<>'true'
     or start_result ? 'variant_id' or start_result ? 'manuscript'
