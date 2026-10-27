@@ -245,7 +245,7 @@
         setRealtimeState('live');
         startHeartbeat();
         // Rejoin can miss notifications even when the last revision is known.
-        syncSoon(0,false);
+        syncSoon(0,true);
       }else{
         console.warn('Realtime join rejected',msg.payload);
         failRealtime('join-rejected');
@@ -407,6 +407,9 @@
     if(hidden) return 30000;
 
     const room = STATE?.sync?.room;
+    // Server-state fallback for iPad: visible guests see host launch without restarting PWA.
+    if(!room || room.status==='lobby' || room.phase==='briefing' || room.phase==='role_reading')
+      return 1100;
     const end = Date.parse(room?.phase_ends_at || '');
     if(room?.status==='playing' && !room.state?.timer_paused && Number.isFinite(end)){
       const remaining = end-estimatedServerNow();
@@ -682,7 +685,7 @@
       if(inRoom()){
         const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>70000;
         connectRealtime(stale);
-        syncSoon(0,false);
+        syncSoon(0,true);
         schedulePoll(stale?900:pollDelay());
       }
     }
@@ -690,7 +693,7 @@
   window.addEventListener('online',()=>{
     if(inRoom()){
       connectRealtime(true);
-      syncSoon(0,false);
+      syncSoon(0,true);
       schedulePoll(900);
     }
   },{passive:true});
@@ -710,10 +713,36 @@
     if(inRoom()){
       const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>70000;
       connectRealtime(stale);
-      syncSoon(0,false);
+      syncSoon(0,true);
       schedulePoll(stale?900:pollDelay());
     }
   },{passive:true});
+
+  // iOS home-screen apps can resume with an apparently-open but suspended
+  // WebSocket. Reconcile the authoritative room, not the locally cached phase.
+  let lastForegroundRepair=0;
+  function foregroundRepair(){
+    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    if(Date.now()-lastForegroundRepair<750)return;
+    lastForegroundRepair=Date.now();
+    const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>20000;
+    if(stale)connectRealtime(true);
+    syncSoon(0,true);
+    schedulePoll(stale?500:pollDelay());
+  }
+  window.addEventListener('focus',foregroundRepair,{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')foregroundRepair()},{passive:true});
+  // Independent of websocket events and adaptive polling, recover a sleeping
+  // client that has not successfully rendered a server snapshot in 10 seconds.
+  setInterval(()=>{
+    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    const since=Date.now()-Number(STATE.lastSuccessfulSyncAt||0);
+    if(since>10000){
+      if(!RT.ready||Date.now()-RT.lastMessageAt>35000)connectRealtime(true);
+      syncSoon(0,true);
+      schedulePoll(900);
+    }
+  },7000);
 
   try{
     Object.defineProperty(window,'__IGR_REALTIME__',{configurable:true,value:{
@@ -725,6 +754,6 @@
   healIntroArt();
   if(inRoom()){
     startRoomWatcher();
-    syncSoon(0,false);
+    syncSoon(0,true);
   }
 })();
