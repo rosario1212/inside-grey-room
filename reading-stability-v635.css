@@ -1,0 +1,127 @@
+/* IGR v635 — reading surfaces and in-game ergonomics. */
+@media(max-width:900px){
+  html:has(#app .briefing-page),html:has(#app .role-card-v11),
+  body:has(#app .briefing-page),body:has(#app .role-card-v11){
+    height:100%;max-height:100dvh;overflow:hidden!important;overscroll-behavior:none;
+  }
+  body:has(#app .briefing-page),body:has(#app .role-card-v11){
+    position:fixed!important;inset:0;width:100%;
+  }
+  #app:has(.briefing-page),#app:has(.role-card-v11){
+    height:100%;min-height:0;overflow:hidden!important;
+  }
+  #app .app:has(.briefing-page),#app .app:has(.role-card-v11){
+    display:flex;flex-direction:column;height:100%;min-height:0;
+    overflow:hidden!important;padding-bottom:0!important;
+  }
+  #app .app:has(.briefing-page)>.topbar,
+  #app .app:has(.role-card-v11)>.topbar{flex:0 0 auto}
+  #app .app>.briefing-page,#app .app>.page:has(.role-card-v11){
+    flex:1 1 auto;min-height:0!important;height:auto!important;
+    max-height:100%!important;display:flex!important;flex-direction:column;
+    justify-content:flex-start!important;overflow:hidden!important;
+    margin:0!important;padding-top:0!important;
+  }
+  /* Fixed shell; only the actual reading region is scrollable. */
+  #app .briefing-page>.briefing-cinematic{
+    flex:1 1 auto;min-height:0!important;max-height:100%;
+    overflow-y:auto!important;overflow-x:hidden!important;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    width:100%;padding-bottom:calc(106px + env(safe-area-inset-bottom,0px));
+    align-content:start!important;
+  }
+  #app .briefing-page .briefing-card{
+    max-width:100%;min-width:0;padding:clamp(17px,4vw,30px)!important;
+  }
+  #app .briefing-page .briefing-card h1{
+    font-size:clamp(30px,8vw,58px)!important;line-height:1.02!important;
+    overflow-wrap:anywhere;
+  }
+  #app .briefing-page .briefing-card p{
+    font-size:clamp(14px,3.2vw,17px)!important;line-height:1.55!important;
+  }
+  #app .role-card-v11{
+    flex:1 1 auto;min-height:0!important;max-height:100%;
+    width:min(760px,100%);overflow-y:auto!important;overflow-x:hidden!important;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    padding:8px 5px calc(108px + env(safe-area-inset-bottom,0px))!important;
+    margin:0 auto!important;
+  }
+}
+/* Red/blue alternation implied unsupported loyalties and hostility. */
+#app .private-card-v11 .igr82-relations{
+  border-color:rgba(155,172,185,.25)!important;
+}
+#app .private-card-v11 .igr82-relations::before{
+  color:#b4c1cc!important;border-color:rgba(155,172,185,.25)!important;
+}
+#app .private-card-v11 .igr82-relation,
+#app .private-card-v11 .igr82-relation:nth-child(odd){
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  gap:11px!important;padding:15px!important;box-shadow:none!important;
+  border:1px solid rgba(154,175,190,.22)!important;
+  background:linear-gradient(135deg,rgba(17,24,31,.92),rgba(8,12,17,.96))!important;
+}
+#app .private-card-v11 .igr82-relation-person,
+#app .private-card-v11 .igr82-relation:nth-child(odd) .igr82-relation-person{
+  display:flex!important;align-items:center!important;gap:11px!important;
+  padding:0 0 11px!important;border-right:0!important;
+  border-bottom:1px solid rgba(154,175,190,.17)!important;
+}
+#app .private-card-v11 .igr82-relation-avatar,
+#app .private-card-v11 .igr82-relation:nth-child(odd) .igr82-relation-avatar{
+  color:#d5e0e7!important;background:rgba(120,154,177,.11)!important;
+  border-color:rgba(154,175,190,.26)!important;
+}
+#app .private-card-v11 .igr82-relation-body{display:grid;gap:8px}
+#app .private-card-v11 .igr82-relation-id small{margin:7px 0 3px!important}
+#app .private-card-v11 .igr82-relation-eyebrow{
+  color:#c5d2db!important;font-size:10px!important;letter-spacing:.11em!important;
+}
+#app .private-card-v11 .igr82-relation-fact{
+  color:#eff1f2!important;font-size:14px!important;line-height:1.55!important;margin:0!important;
+}
+#app .private-card-v11 .igr82-relation-question{
+  border-left:2px solid rgba(195,176,134,.8)!important;
+  background:rgba(182,152,102,.07)!important;padding:9px 11px!important;
+  margin:2px 0 0!important;color:#dfe3e6!important;line-height:1.5!important;
+}
+#app .private-card-v11 .igr82-relation-question span{
+  display:block!important;margin-bottom:5px!important;
+  color:#d1b992!important;font-size:10px!important;letter-spacing:.08em!important;
+  font-weight:800!important;
+}
+/* Mobile redraw cost: opaque phase strip, avoid animated noise layer. */
+#app .game-v11>.phase-strip{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  background:#0d1218!important;
+}
+body:has(#app .game-v11)>.bg-noise{display:none!important}
+/* Settings: an independent scroll body plus protected, fixed bottom action. */
+body>.igr-settings-modal{z-index:3200!important;align-items:center!important}
+body .igr-settings-box{
+  display:flex!important;flex-direction:column!important;min-height:0!important;
+  max-height:calc(100dvh - max(12px,env(safe-area-inset-top,0px)) - max(12px,env(safe-area-inset-bottom,0px)))!important;
+}
+body .igr-settings-head{flex:0 0 auto!important}
+body .igr-settings-body{
+  flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;
+  max-height:none!important;overscroll-behavior:contain;
+}
+body .igr-settings-footer{
+  position:relative!important;flex:0 0 auto!important;z-index:5!important;
+  padding:12px 16px max(16px,env(safe-area-inset-bottom,0px))!important;
+  border-top:1px solid rgba(222,234,241,.14)!important;background:#10161d!important;
+}
+body .igr-settings-footer button{
+  width:100%!important;min-height:50px!important;pointer-events:auto!important;
+  touch-action:manipulation;
+}
+body:has(.igr-settings-modal)>.live-session-controls,
+body:has(.igr-settings-modal)>.igr-universal-dock,
+body:has(.igr-settings-modal)>.igr-alert-stack{display:none!important}
+@media(max-width:600px){
+  #app .private-card-v11 .igr82-relation{padding:13px!important}
+  body .igr-settings-modal{padding:8px 10px!important}
+  body .igr-settings-box{width:100%!important}
+}

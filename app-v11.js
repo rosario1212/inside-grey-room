@@ -1218,8 +1218,10 @@ function igr82RelationsHtml(value) {
     }
     const person=String(entry?.pseudo||entry?.label||tr('Personne '+(index+1),'Person '+(index+1)));
     const original=String(entry?.text||'').trim();
-    const split=original.split(/À mettre sur la table\s*[—–:-]\s*/i);
-    const fact=String(split.shift()||'').replace(/^\s*Ton point de départ\s*[—–:-]\s*/i,'').trim();
+    // Facts remain canonical; suggested interview questions are not facts.
+    const normalized=original.replace(/^\s*(?:Ce que tu sais|Ton point de départ)\s*[—–:-]\s*/i,'');
+    const split=normalized.split(/\s*(?:Ce que tu peux lui demander|À mettre sur la table|Question à poser)\s*[—–:-]\s*/i);
+    const fact=String(split.shift()||'').trim();
     const opening=split.join(' ').trim();
     const link=igr82RelationLink(entry,fact);
     // A repeated piece of the dossier must not create a second suspect card.
