@@ -10,6 +10,7 @@ declare
  dossier jsonb;
  intro jsonb;
  start_result jsonb;
+ safe_snapshot jsonb;
  host uuid;
  started_count int;
  closure jsonb;
@@ -219,6 +220,31 @@ begin
    where room_code='START021' and event_type='context'
      and payload->>'text'='PREVIOUS MATCH HISTORICAL CONTEXT')
  then raise exception 'old match context wiped by standalone release';end if;
+ -- Un événement issu de l'ancienne trame ne doit JAMAIS traverser le
+ -- proxy de synchronisation d'un dossier Santoro.
+ insert into public.igr_v4_events(
+    room_code,cycle,event_type,visibility,payload)
+ values('START021',0,'trame','public',
+        '{"title":"VERRI TRAME","text":"LEGACY VERRI SPOILER"}'::jsonb);
+ safe_snapshot:=public.igr_omerta_standalone_safe_sync(
+   'START021',(select player_token from public.igr_v4_players
+               where room_code='START021' and seat_index=1));
+ if safe_snapshot->'scenario'->>'context'<>'Synthetic public case introduction'
+    or safe_snapshot->'scenario'->>'truth' is not null
+    or safe_snapshot::text like '%LEGACY VERRI%'
+ then raise exception 'old campaign narrative leaked through standalone sync';end if;
+ if jsonb_array_length(safe_snapshot->'events')<>1
+ then raise exception 'standalone event allowlist did not filter old trames';end if;
+ if has_function_privilege('public',
+    'public.igr_omerta_standalone_safe_sync(text,uuid)','EXECUTE')
+ then raise exception 'PUBLIC execute not revoked from safe sync';end if;
+ -- La même API ne doit rien modifier pour une salle Verri ancienne.
+ safe_snapshot:=public.igr_omerta_standalone_safe_sync(
+   'START022',(select player_token from public.igr_v4_players
+               where room_code='START022' and seat_index=1));
+ if safe_snapshot->'scenario'->>'context'<>'LEGACY VERRI PRIVATE CAMPAIGN'
+ then raise exception 'legacy Verri sync unexpectedly changed';end if;
+
  if has_function_privilege('public','public.igr_omerta_start_standalone(text,uuid)','EXECUTE')
  then raise exception 'PUBLIC access grant retained on standalone host starter';end if;
 end $qa$;
