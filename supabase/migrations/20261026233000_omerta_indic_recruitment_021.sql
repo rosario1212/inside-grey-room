@@ -3,6 +3,23 @@
 -- mécanique sont privés et les données de vote ne valent PAS preuve de parole.
 -- Fonctionnalité pilote, non appliquée à la base de production.
 
+-- Les conditions de victoire restent réalisables : ne jamais recruter une
+-- source qui n'a pas de renseignement objectivement admissible dans son dossier.
+-- Les indices non éligibles (soupçon, absence de connaissance, intention politique)
+-- ne peuvent pas être utilisés pour valider arbitrairement la coopération.
+create or replace function igr_private.igr_omerta_indic_eligible_role(
+  p_scenario text, p_slot integer
+) returns boolean
+language sql immutable set search_path=''
+as $eligibility$
+  select coalesce(p_slot between 1 and case p_scenario
+    when '021' then 7 when '022' then 7 when '023' then 7
+    when '024' then 8 when '025' then 9 else 0 end
+    and not (p_scenario='024' and p_slot in (2,4,6)),false);
+$eligibility$;
+revoke all on function igr_private.igr_omerta_indic_eligible_role(text,integer)
+ from public,anon,authenticated;
+
 create or replace function public.igr_omerta_indic_offer(
  p_code text, p_player_token uuid, p_suspect uuid
 ) returns jsonb language plpgsql security definer set search_path=''
@@ -27,6 +44,8 @@ begin
  where room_code=room.code and id=p_suspect and public_role='suspect';
  if not found or coalesce((room.state->'omerta'->'dead') ? p_suspect::text,false)
  then raise exception 'invalid_source'; end if;
+ if not igr_private.igr_omerta_indic_eligible_role(room.scenario_id,sus.internal_slot)
+ then raise exception 'source_not_eligible_for_pact'; end if;
  if exists(
   select 1 from public.igr_v4_actions a where a.room_code=room.code
   and a.action_type='omerta_indic_response' and a.payload->>'accepted'='true'
@@ -79,6 +98,9 @@ begin
    where a.room_code=room.code and a.action_type='omerta_indic_response'
    and a.payload->>'offer_id'=orig.id::text
  ) then raise exception 'already_decided'; end if;
+ if p_accept is null then raise exception 'invalid_decision'; end if;
+ if p_accept and not igr_private.igr_omerta_indic_eligible_role(room.scenario_id,suspect.internal_slot)
+ then raise exception 'source_not_eligible_for_pact'; end if;
  if p_accept and exists(
   select 1 from public.igr_v4_actions a where a.room_code=room.code
   and a.action_type='omerta_indic_response' and a.payload->>'accepted'='true'
