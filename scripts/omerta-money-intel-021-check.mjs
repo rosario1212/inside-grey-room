@@ -104,4 +104,21 @@ const silent=simulate({accepted:true,cycle:2,phase:'interrogation'});
 assert.equal(silent.panel.children.length,0,'No redundant question during oral gameplay');
 const noIndic=simulate({accepted:false,cycle:2,phase:'cycle_debrief'});
 assert.equal(noIndic.panel.children.length,0,'No question without a recruited source');
-console.log('OMERTÀ : conditional cycle reminder and no arbitrary final assessment, PASS');
+// L'avis final de l'Enquêteur est une action indépendante des 3 sujets.
+const lastCycle=simulate({role:'enqueteur',accepted:true,cycle:3,phase:'cycle_debrief'});
+const review=lastCycle.all.find(x=>x.tag==='button'&&x.textContent.includes('Évaluer mon Indic'));
+assert.ok(review,'Investigator gets final utility review in cycle III');
+await review.events.click();
+const selectors=lastCycle.all.filter(x=>x.tag==='select');
+assert.equal(selectors.length,2);
+selectors[0].value='yes';selectors[1].value='3';
+const finalize=lastCycle.all.find(x=>x.tag==='button'&&x.textContent==='Enregistrer le bilan définitif');
+assert.ok(finalize);
+await finalize.events.click();
+assert.equal(lastCycle.calls[0].name,'igr_omerta_indic_final_assess');
+assert.equal(lastCycle.calls[0].args.p_useful,true);
+assert.equal(lastCycle.calls[0].args.p_reduction_years,3);
+const notYet=simulate({role:'enqueteur',accepted:true,cycle:2,phase:'cycle_debrief'});
+assert.ok(!notYet.all.some(x=>x.tag==='button'&&x.textContent.includes('Évaluer mon Indic')),
+  'No early investigator review');
+console.log('OMERTÀ : conditional cycle reminder + authenticated oral final review UI, PASS');
