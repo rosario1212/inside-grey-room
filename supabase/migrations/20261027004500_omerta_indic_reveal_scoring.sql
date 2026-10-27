@@ -14,6 +14,10 @@ declare
   pack jsonb; base_sentence int; final_sentence int; cid uuid; camp public.igr_omerta_campaigns%rowtype; dossier jsonb; deaths jsonb:='[]'::jsonb; protections jsonb:='[]'::jsonb; charname text; next_dossier text; cstatus jsonb;
 begin
   select * into r from public.igr_v4_rooms where code=p_room; if not found then raise exception 'room not found'; end if;
+  -- Les verdicts Verri historiques ne jugent jamais un dossier Santoro.
+  -- Les objectifs de rang et faits ABC doivent recevoir un barème propre.
+  if coalesce((r.state->>'omerta_standalone')::boolean,false)
+  then raise exception 'standalone_win_rules_not_approved'; end if;
   base:=public.igr_v4_make_reveal(p_room);
   select x.pack into pack from public.igr_v4_scenario_packs x where x.scenario_id=r.scenario_id;
   for item in select value from jsonb_array_elements(coalesce(base->'results','[]'::jsonb)) loop
