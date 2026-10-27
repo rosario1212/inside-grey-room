@@ -27,7 +27,10 @@ function alertMessage(error){const e=String(error?.message||'');const msgs={
  'intel_not_owned_or_unavailable':'Ce renseignement ne t’appartient pas ou a déjà été consigné.',
  'one_intel_per_cycle':'Une seule consignation officielle est autorisée par cycle.',
  'intel_already_received':'Ce renseignement a déjà été consigné.',
- 'source_not_eligible_for_pact':'Ce pacte n’est pas possible pour cette personne dans ce dossier.'
+ 'source_not_eligible_for_pact':'Ce pacte n’est pas possible pour cette personne dans ce dossier.',
+  'indic_final_assessment_closed':'Bilan réservé au débriefing du troisième cycle.',
+  'indic_assessment_already_final':'Ce bilan a déjà été enregistré.',
+  'invalid_indic_final_assessment':'Choisis l’utilité de l’Indic et la remise de peine autorisée.'
  };for(const [key,msg]of Object.entries(msgs))if(e.includes(key))return msg;
  return 'Décision indisponible. Vérifie l’état du cycle puis réessaie.';}
 function close(){document.querySelector('.igr-money-intel-modal')?.remove();}
@@ -155,6 +158,45 @@ async function protectSource(){
   });
   m.footer.insertBefore(b,m.footer.firstChild);
 }
+// C3 : l'évaluation orale authentifiée peut valider l'utilité même avec 0 carte.
+async function assessSource(){
+ const d=context(),source=acceptedSource(d);
+ if(!d||role(d)!=='enqueteur'||!source||Number(d.room?.cycle)!==3
+   ||d.room?.phase!=='cycle_debrief'||d.room?.status!=='playing'
+   ||d.room?.state?.omerta_standalone===true
+   ||events(d,'omerta_indic_final_review_submitted').length)return;
+ const m=modal('Bilan final de l’Indic',
+  'L’Enquêteur juge l’utilité réelle des informations reçues, même si la source n’a signalé aucun des trois sujets dans l’application.');
+ const title=node('label','Cette source a-t-elle été utile ?');
+ const useful=node('select');useful.className='igr-money-intel-select';
+ for(const [val,text] of [['','Choisir une évaluation'],['yes','Oui · informations utiles'],['no','Non · utilité insuffisante']]){
+   const opt=node('option',text);opt.value=val;useful.appendChild(opt);
+ }
+ const benefitLabel=node('label','Réduction de peine officiellement négociée');
+ const reduction=node('select');reduction.className='igr-money-intel-select';
+ for(const [val,text] of [['0','Pas de réduction supplémentaire'],['3','Accorder une réduction de 3 ans']]){
+   const opt=node('option',text);opt.value=val;reduction.appendChild(opt);
+ }
+ m.slot.append(title,useful,benefitLabel,reduction,
+   node('p','La protection ou la réduction de peine satisfait la condition personnelle. L’utilité est évaluée indépendamment. Survivre reste indispensable.'));
+ const act=btn('Enregistrer le bilan définitif','btn primary',async()=>{
+   if(useful.value!=='yes'&&useful.value!=='no'){
+     failure(m.slot,new Error('invalid_indic_final_assessment'));return;
+   }
+   if(!confirm('Valider définitivement ce bilan ?'))return;
+   act.disabled=true;
+   try{
+     const out=await sendRpc('igr_omerta_indic_final_assess',{
+       p_source:source,p_useful:useful.value==='yes',
+       p_reduction_years:Number(reduction.value)
+     });
+     if(out?.ok!==true)throw Error('final_assessment_unavailable');
+     m.slot.textContent='Bilan enregistré confidentiellement. Le résultat sera calculé au verdict.';
+     act.remove();await refresh();
+   }catch(e){failure(m.slot,e);act.disabled=false;}
+ });
+ m.footer.insertBefore(act,m.footer.firstChild);
+}
 // Une transmission déjà consignée supprime automatiquement le rappel de cycle.
 const reminderDismissed=new Set();
 function mountCycleReminder(){
@@ -184,6 +226,14 @@ function mount(){
  if(role(d)==='enqueteur'&&!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true)&&!dock.querySelector('.igr-indic-offer-button')){
   const b=btn('Proposer un pacte secret','btn ghost igr-indic-offer-button',offer);
   dock.appendChild(b);
+ }
+ if(role(d)==='enqueteur'&&acceptedSource(d)
+   &&d.room.state?.omerta_standalone!==true
+   &&Number(d.room.cycle)===3&&d.room.phase==='cycle_debrief'
+   &&!events(d,'omerta_indic_final_review_submitted').length
+   &&!dock.querySelector('.igr-indic-final-assess-button')){
+   dock.appendChild(btn('Évaluer mon Indic · bilan final',
+     'btn primary igr-indic-final-assess-button',assessSource));
  }
  if(role(d)==='enqueteur'&&acceptedSource(d)&&d.room.phase!=='locking'
    &&!events(d,'omerta_indic_protection').length
