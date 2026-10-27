@@ -268,7 +268,7 @@ begin
  select * into r from public.igr_v4_rooms where code=p.room_code;
  if not found or r.scenario_id not in ('021','022','023','024','025')
    or r.status not in ('playing','finished')
-   or r.phase='briefing' or p.public_role<>'suspect' or p.internal_slot is null
+   or p.public_role<>'suspect' or p.internal_slot is null
  then return jsonb_build_object('available',false); end if;
  match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
  select x.manuscript into m
