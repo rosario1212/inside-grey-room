@@ -14,6 +14,57 @@ create table if not exists igr_private.igr_omerta_room_variant_snapshots (
 alter table igr_private.igr_omerta_room_variant_snapshots enable row level security;
 revoke all on igr_private.igr_omerta_room_variant_snapshots from public,anon,authenticated;
 
+-- Contrôle structurel en lecture seule, distinct de l'approbation éditoriale.
+-- Vérifie les événements canon, les postes distincts et l'existence de deux
+-- ancrages documentaires sans actions facultatives pour le cycle III.
+create or replace function igr_private.igr_omerta_structural_preflight(
+ p_scenario text
+) returns boolean
+language sql stable security definer set search_path=''
+as $structure$
+  select coalesce(
+    count(*)=3 and
+    count(distinct m.variant_id)=3 and
+    bool_and(
+      jsonb_typeof(m.manuscript->'private_cards')='array'
+      and jsonb_array_length(coalesce(m.manuscript->'private_cards','[]'::jsonb)) between 3 and 9
+      and (select count(distinct p->>'slot')
+        from jsonb_array_elements(coalesce(m.manuscript->'private_cards','[]'::jsonb)) p)
+        =jsonb_array_length(coalesce(m.manuscript->'private_cards','[]'::jsonb))
+      and not exists (
+         select 1 from jsonb_array_elements(coalesce(m.manuscript->'revelations','[]'::jsonb)) e
+         where not exists(
+           select 1 from jsonb_array_elements(
+             coalesce(m.manuscript->'canonical_truth'->'timeline','[]'::jsonb)) t
+           where t->>'id'=e->>'canonical_event_id'
+         )
+      )
+      and (select count(*) from jsonb_array_elements(
+           coalesce(m.manuscript->'revelations','[]'::jsonb)) e
+         where e->>'kind'='guaranteed' and e->>'min_cycle'='3'
+          and nullif(e->'editorial_provenance'->>'source_material','') is not null
+          and e->'editorial_provenance'->>'independent_of_optional_actions'='true'
+          and jsonb_array_length(coalesce(
+            e->'editorial_provenance'->'existing_events','[]'::jsonb))>=2
+          and (select count(distinct existing.value) from jsonb_array_elements_text(
+             coalesce(e->'editorial_provenance'->'existing_events','[]'::jsonb)) existing)>=2
+          and not exists(
+            select 1 from jsonb_array_elements_text(
+              coalesce(e->'editorial_provenance'->'existing_events','[]'::jsonb)) existing
+            where not exists(
+              select 1 from jsonb_array_elements(
+                coalesce(m.manuscript->'canonical_truth'->'timeline','[]'::jsonb)) t
+              where t->>'id'=existing.value
+            )
+          )
+      ) >= 1
+    ),false)
+  from igr_private.igr_v99_variant_manuscripts m
+  where m.scenario_id=p_scenario and m.variant_id in ('A','B','C');
+$structure$;
+revoke all on function igr_private.igr_omerta_structural_preflight(text)
+ from public,anon,authenticated;
+
 -- Appel serveur interne UNIQUEMENT ; le client ne peut ni choisir sa lettre,
 -- ni lire une variante. Un nouveau match est épinglé indépendamment des précédents.
 create or replace function igr_private.igr_omerta_pin_standalone_room_variant(
@@ -48,7 +99,8 @@ begin
  -- Bloquer une variante dont l'auteur/provenance C3 n'a pas été certifié.
  -- Évaluation par épisode : les cinq enquêtes doivent rester indépendantes.
  if coalesce((igr_private.igr_v100_preflight(room.scenario_id)->>'release_eligible')::boolean,false)
-    is not true then return null; end if;
+    is not true or igr_private.igr_omerta_structural_preflight(room.scenario_id) is not true
+    then return null; end if;
 
  select * into picked
  from igr_private.igr_v99_variant_manuscripts m
