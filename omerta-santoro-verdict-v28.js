@@ -103,7 +103,7 @@ async function openPersonalResult(){
   if(!m.outer.isConnected)return;
   m.content.replaceChildren();
   if(!data?.available){
-   m.content.append(el('p',data?.reason==='editorial_goal_axis_pending'
+   m.content.append(el('p',data?.reason==='editorial_goal_axis_pending'||data?.reason==='editorial_actor_truth_pending'
     ?'Résultat en attente de validation éditoriale.'
     :data?.reason==='informant_separate_goal_pending'
      ?'Le pacte de l’Indic suit ses propres conditions de victoire.'
