@@ -200,9 +200,10 @@ revoke all on function public.igr_omerta_my_private_dossier(text,uuid)
 grant execute on function public.igr_omerta_my_private_dossier(text,uuid)
  to anon,authenticated;
 
--- Injecteur interne de deux pièces C3 distinctes : NE DOIT PAS être appelé
--- depuis le client. À raccorder au changement de cycle du serveur lors de
--- l'activation publique. Chaque opération est sérialisée et idempotente.
+-- Recoupement C3 sûr : le texte livré est UNIQUEMENT la révélation
+-- éditoriale destinée à l'Enquête, jamais la chronologie omnisciente du canon.
+-- Les 2 références restent distinctes et vérifiées par le contrôle structurel.
+-- Le véritable archivage/affichage par le client reste à intégrer.
 create or replace function igr_private.igr_omerta_emit_c3_crosschecks(
  p_room_code text
 ) returns integer
@@ -213,11 +214,9 @@ declare
  m jsonb;
  match_id int;
  item jsonb;
- event_id text;
- source_id text;
- source_fact jsonb;
  recipient record;
  added int:=0;
+ source_ids jsonb;
 begin
  select * into r from public.igr_v4_rooms
  where code=upper(trim(p_room_code)) for update;
@@ -237,38 +236,34 @@ begin
       and v.value->'editorial_provenance'->>'human_source_review'='verified'
       and v.value->'editorial_provenance'->>'independent_of_optional_actions'='true'
  loop
-   event_id:=item->>'id';
-   -- Les deux sources documentaires sont présentes dans le canon épinglé.
-   for source_id in
-     select distinct e.value from pg_catalog.jsonb_array_elements_text(
-       coalesce(item->'editorial_provenance'->'existing_events','[]'::jsonb)) e(value)
+   source_ids:=item->'editorial_provenance'->'existing_events';
+   if nullif(item->>'text','') is null
+     or jsonb_array_length(coalesce(source_ids,'[]'::jsonb))<2
+     or (select count(distinct e.value) from pg_catalog.jsonb_array_elements_text(
+        source_ids) e(value))<2
+   then raise exception 'omerta_crosscheck_not_authored'; end if;
+   for recipient in
+     select p.id from public.igr_v4_players p
+     where p.room_code=r.code and p.public_role in ('enqueteur','analyste')
    loop
-     select t.value into source_fact from pg_catalog.jsonb_array_elements(
-         coalesce(m->'canonical_truth'->'timeline','[]'::jsonb)) t(value)
-     where t.value->>'id'=source_id limit 1;
-     if source_fact is null or nullif(source_fact->>'what','') is null then
-       raise exception 'omerta_crosscheck_source_missing'; end if;
-     for recipient in
-       select p.id from public.igr_v4_players p
-       where p.room_code=r.code and p.public_role in ('enqueteur','analyste')
-     loop
-       if not exists(
-         select 1 from public.igr_v4_events e
-         where e.room_code=r.code and e.event_type='omerta_c3_crosscheck'
-           and e.target_player_id=recipient.id and e.visibility='private'
-           and coalesce((e.payload->>'match_no')::int,-1)=match_id
-           and e.payload->>'revelation_id'=event_id
-           and e.payload->>'source_event_id'=source_id
-       ) then
-         insert into public.igr_v4_events(
-           room_code,cycle,event_type,visibility,target_player_id,payload)
-         values(r.code,r.cycle,'omerta_c3_crosscheck','private',recipient.id,
-           jsonb_build_object('title','RECOUPEMENT · CYCLE III',
-             'text',source_fact->>'what','revelation_id',event_id,
-             'source_event_id',source_id,'match_no',match_id));
-         added:=added+1;
-       end if;
-     end loop;
+     if not exists(
+       select 1 from public.igr_v4_events e
+       where e.room_code=r.code and e.event_type='omerta_c3_crosscheck'
+         and e.target_player_id=recipient.id and e.visibility='private'
+         and coalesce((e.payload->>'match_no')::int,-1)=match_id
+         and e.payload->>'revelation_id'=item->>'id'
+     ) then
+       insert into public.igr_v4_events(
+         room_code,cycle,event_type,visibility,target_player_id,payload)
+       values(r.code,r.cycle,'omerta_c3_crosscheck','private',recipient.id,
+         jsonb_build_object(
+           'title',item->>'title','text',item->>'text',
+           'revelation_id',item->>'id',
+           'source_event_ids',source_ids,
+           'document_category','recoupement_documentaire',
+           'match_no',match_id));
+       added:=added+1;
+     end if;
    end loop;
  end loop;
  return added;
