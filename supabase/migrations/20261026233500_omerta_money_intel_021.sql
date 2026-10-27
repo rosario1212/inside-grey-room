@@ -34,6 +34,12 @@ begin
     return jsonb_build_object('available',false,'cards','[]'::jsonb);
   end if;
 
+  -- Les fiches Verri historiques ne peuvent servir de renseignement
+  -- pour une branche Santoro A/B/C. Refuser au niveau du serveur avant
+  -- toute présentation ou consignation.
+  if coalesce((r.state->>'omerta_standalone')::boolean,false) then
+    return jsonb_build_object('available',false,'cards','[]'::jsonb);
+  end if;
   match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
   -- L'onglet n'existe qu'après acceptation d'une offre authentifiée par le serveur.
   if not exists(
@@ -205,6 +211,8 @@ begin
       and coalesce((a.payload->>'match_no')::int,1)=match_id
   ) then raise exception 'indic_not_recruited'; end if;
 
+  if coalesce((r.state->>'omerta_standalone')::boolean,false)
+    then raise exception 'standalone_intel_facts_unapproved'; end if;
   options:=public.igr_omerta_money_intel_options(p_code,p_player_token);
   select value into chosen
   from jsonb_array_elements(coalesce(options->'cards','[]'::jsonb))
@@ -283,6 +291,8 @@ begin
  select * into r from public.igr_v4_rooms where code=p.room_code for update;
  if r.scenario_id not in ('021','022','023','024','025') or r.status<>'playing' or r.cycle<2 then raise exception 'intel_unavailable'; end if;
  perform igr_private.rate_limit('omerta_money_intel_signal',p.id::text,10,60);
+ if coalesce((r.state->>'omerta_standalone')::boolean,false)
+ then raise exception 'standalone_intel_facts_unapproved'; end if;
  opts:=public.igr_omerta_money_intel_options(p_code,p_player_token);
  select value into chosen from jsonb_array_elements(coalesce(opts->'cards','[]'::jsonb))
   where value->>'id'=p_card_id limit 1;
