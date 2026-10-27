@@ -325,6 +325,8 @@ declare
  mafia_player record;
  entry jsonb;
  chosen_slot int;
+ fixed_slot int;
+ has_pentito boolean;
  selected_slots int[]:=array[]::int[];
  n int:=0;
 begin
@@ -359,27 +361,56 @@ begin
  from igr_private.igr_omerta_room_cast_slots x
  where x.room_code=r.code and x.match_no=match_id;
  if already_cast>0 then
+   -- Reconnexion: vérifier aussi que le numéro du personnage reste identique.
    if already_cast<>suspects_count or exists(
      select 1 from igr_private.igr_omerta_room_cast_slots x
      left join public.igr_v4_players member
        on member.id=x.player_id and member.room_code=x.room_code
        and member.public_role='suspect'
-     where x.room_code=r.code and x.match_no=match_id and member.id is null
+     where x.room_code=r.code and x.match_no=match_id and (member.id is null or member.internal_slot<>x.internal_slot)
    ) then raise exception 'omerta_cast_changed_during_match'; end if;
    return already_cast;
  end if;
 
+ select exists(
+   select 1 from public.igr_v4_players
+   where room_code=r.code and preferred_role='pentito'
+ ) into has_pentito;
+ -- Rangs nommés conservés selon le schéma canon du moteur hérité.
+ -- Seuls les rôles génériques reçoivent une identité encore disponible.
  for mafia_player in
-   select id from public.igr_v4_players
+   select id,preferred_role,private_state from public.igr_v4_players
    where room_code=r.code and public_role='suspect'
-   order by pg_catalog.random()
+   order by case preferred_role
+     when 'pentito' then 1 when 'associato' then 2
+     when 'caporegime' then 3 when 'consigliere' then 4
+     when 'sottocapo' then 5 when 'uomo_onore' then 6
+     when 'contabile' then 7 when 'don' then 8 else 99 end,seat_index
  loop
-   select s.value,(s.value->>'slot')::int
-   into entry,chosen_slot
-   from pg_catalog.jsonb_array_elements(
-     coalesce(m->'private_cards','[]'::jsonb)) s(value)
-   where (s.value->>'slot')::int<>all(selected_slots)
-   order by pg_catalog.random() limit 1;
+   fixed_slot:=case mafia_player.preferred_role
+     when 'pentito' then 1
+     when 'associato' then case
+       when has_pentito and r.scenario_id in ('024','025') then 8 else 1 end
+     when 'caporegime' then 2 when 'consigliere' then 3
+     when 'sottocapo' then 4 when 'uomo_onore' then 6
+     when 'contabile' then 7 when 'don' then 9 else null end;
+   entry:=null;
+   chosen_slot:=null;
+   if fixed_slot is not null then
+     select e.value,(e.value->>'slot')::int into entry,chosen_slot
+     from pg_catalog.jsonb_array_elements(m->'private_cards') e(value)
+     where (e.value->>'slot')::int=fixed_slot
+       and fixed_slot<>all(selected_slots)
+     limit 1;
+     if chosen_slot is null then
+       raise exception 'omerta_rank_cannot_match_canonical_identity'; end if;
+   else
+     select e.value,(e.value->>'slot')::int into entry,chosen_slot
+     from pg_catalog.jsonb_array_elements(
+       coalesce(m->'private_cards','[]'::jsonb)) e(value)
+     where (e.value->>'slot')::int<>all(selected_slots)
+     order by pg_catalog.random() limit 1;
+   end if;
    if entry is null or chosen_slot is null
    then raise exception 'omerta_insufficient_distinct_roles'; end if;
    insert into igr_private.igr_omerta_room_cast_slots(
@@ -397,7 +428,11 @@ begin
        'hide',entry->'what_you_hide',
        'your_chronology',entry->'your_chronology',
        'chronology',entry->'your_chronology',
-       'conversation_hooks',entry->'conversation_hooks'
+       'conversation_hooks',entry->'conversation_hooks',
+       'omerta_preferred_role',mafia_player.preferred_role,
+       'omerta_player_identity',
+         (select pseudo from public.igr_v4_players
+          where id=mafia_player.id)
      )
    where id=mafia_player.id and room_code=r.code;
    n:=n+1;
