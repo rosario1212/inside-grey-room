@@ -2,7 +2,7 @@ import {copyFile,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 const target=path.resolve(process.argv[2]||'dist');
-const root=process.cwd(),script='common-dossier-v106.js',version='v106-visible-publications-20261027';
+const root=process.cwd(),script='common-dossier-v106.js',version='v106-common-dossier-visible-publications-20261027';
 const refreshedAssets=['navigation-heritage-v19.css','screen-polish-v73.css','heritage-casino-v91.js','notification-bell-visibility-v31.js','play-modes-v13-8.js','narrative-dossier-v87.js','investigation-runtime-v42.js'];
 const refreshAssets=text=>refreshedAssets.reduce((s,asset)=>s.replaceAll(new RegExp(asset.replaceAll('.', '\\.')+'\\?v=[^\"\']+', 'g'),`${asset}?v=${version}`),text);
 const exists=async x=>{try{await stat(x);return true}catch{return false}};
