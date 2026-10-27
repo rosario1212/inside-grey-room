@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 const clientVersion='v631-espion-mission-corrections';
+const cacheVersion='v632-iphone-live-ux';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
@@ -67,8 +68,15 @@ assert(terminationSource.includes('igr_v170_end_representation'),'Mutual termina
 assert(terminationSource.includes('p_acknowledge_cartel'),'Cartel consequence confirmation missing');
 for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
 assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
-const cartelWorker=await get('/service-worker.js?v='+clientVersion);
-assert((await cartelWorker.text()).includes("const CACHE='igr-"+clientVersion+"';"));
+const cartelWorker=await get('/service-worker.js?v='+cacheVersion);
+assert.equal(cartelWorker.status,200);
+assert((await cartelWorker.text()).includes("const CACHE='igr-"+cacheVersion+"';"),'Deployed cache version must match the latest mobile UX release');
+const liveUxStyle=await get('/live-game-ux-v632.css?v='+cacheVersion);
+assert.equal(liveUxStyle.status,200);
+assert((await liveUxStyle.text()).includes('safe-area-inset-top'),'Live iPhone layout patch missing from production');
+const liveUxRuntime=await get('/live-game-ux-v632.js?v='+cacheVersion);
+assert.equal(liveUxRuntime.status,200);
+assert((await liveUxRuntime.text()).includes('mountLiveSessionControls'),'Live host action layout patch missing from production');
 for(const poster of ['campagne','scenario-1','scenario-2','scenario-3']){
  const response=await get('/assets/casino/'+poster+'.webp');assert.equal(response.status,200);
  assert.match(response.headers.get('Content-Type'),/image\/webp/);
