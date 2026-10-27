@@ -720,7 +720,7 @@ declare
  card_result jsonb;
  game_role text;
 begin
- raw:=public.igr_v4_sync(p_code,p_player_token);
+ raw:=public.igr_omerta_legacy_sync_core(p_code,p_player_token);
  select * into room from public.igr_v4_rooms
  where code=upper(trim(p_code));
  if not found then raise exception 'unauthorized';end if;
