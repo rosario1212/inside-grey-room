@@ -511,7 +511,7 @@ async function rpc(name,payload){
   const r=await fetch(`${API}/rpc/${name}`,{method:'POST',headers:headers(),body:JSON.stringify(payload),signal:ctl.signal});
   if(!r.ok){const body=await r.json().catch(()=>({}));const e=new Error(body.message||`Erreur ${r.status}`);e.code=body.code;e.status=r.status;throw e}
   const data=await r.json();
-  if(name==='igr_v4_sync'&&data.server_now)STATE.serverOffset=Date.parse(data.server_now)-(started+Date.now())/2;
+  if((name==='igr_v4_sync'||name==='igr_omerta_standalone_safe_sync')&&data.server_now)STATE.serverOffset=Date.parse(data.server_now)-(started+Date.now())/2;
   return data;
  }finally{clearTimeout(timer)}
 }
