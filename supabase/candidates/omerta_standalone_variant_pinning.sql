@@ -42,9 +42,15 @@ as $structure$
         where nullif(trim(card->>'identity'),'') is null
            or nullif(trim(card->>'objective'),'') is null
            or nullif(trim(card->>'what_you_know'),'') is null
-           or coalesce(
-              (m.manuscript->'canonical_truth'->'responsibility_by_slot'
-                 ->>(card->>'slot')) not in ('0','1','2'),true)
+           or case when m.manuscript->>'private_format'='santoro_v25'
+              then coalesce(
+                m.manuscript->'canonical_truth'->'verdict_goal_by_slot'
+                  ->(card->>'slot')->>'mode'
+                is distinct from 'avoid_formal_designation',true)
+              else coalesce(
+                (m.manuscript->'canonical_truth'->'responsibility_by_slot'
+                  ->>(card->>'slot')) not in ('0','1','2'),true)
+             end
       )
       and not exists (
          select 1 from jsonb_array_elements(coalesce(m.manuscript->'revelations','[]'::jsonb)) e
