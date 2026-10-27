@@ -716,6 +716,9 @@ declare
  room public.igr_v4_rooms%rowtype;
  match_id integer;
  events_filtered jsonb;
+ safe_private jsonb;
+ card_result jsonb;
+ game_role text;
 begin
  raw:=public.igr_v4_sync(p_code,p_player_token);
  select * into room from public.igr_v4_rooms
@@ -755,6 +758,33 @@ begin
     or (e.value->>'event_type'='omerta_c3_crosscheck'
           and coalesce((e.value->'payload'->>'match_no')::integer,-1)=match_id);
  raw:=jsonb_set(raw,'{events}',events_filtered,true);
+ -- Core v4 sync can still contain an old Verri private_state for
+ -- non-suspects, or stale rematch action logs. Replace them at source.
+ game_role:=raw->'player'->>'public_role';
+ if room.status in ('playing','finished') and room.phase<>'briefing' then
+   if game_role='suspect' then
+     card_result:=public.igr_omerta_my_private_dossier(p_code,p_player_token);
+     if card_result->>'available'<>'true'
+     then raise exception 'standalone_private_cast_missing';end if;
+     safe_private:=card_result->'card';
+   elsif game_role in ('enqueteur','analyste') then
+     safe_private:=jsonb_build_object(
+       'identity',case when game_role='analyste' then 'Analyste' else 'Enquêteur' end,
+       'objective','Reconstituer les faits sans inventer de preuve.',
+       'what_you_know',m->>'public_briefing',
+       'what_you_hide','',
+       'your_chronology','',
+       'conversation_hooks','[]'::jsonb
+     );
+   else
+     safe_private:='{}'::jsonb;
+   end if;
+ else
+   safe_private:='{}'::jsonb;
+ end if;
+ raw:=jsonb_set(raw,'{player,private_state}',safe_private,true);
+ -- Older reveal/action records may encode historical case text.
+ raw:=jsonb_set(raw,'{my_actions}','[]'::jsonb,true);
  return raw;
 end;
 $safe_sync$;
