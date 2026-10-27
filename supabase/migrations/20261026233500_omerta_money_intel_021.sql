@@ -254,7 +254,7 @@ begin
  where room_code=upper(trim(p_code)) and player_token=p_player_token;
  if not found then raise exception 'unauthorized'; end if;
  select * into r from public.igr_v4_rooms where code=p.room_code for update;
- if r.scenario_id<>'021' or r.status<>'playing' or r.cycle<2 then raise exception 'intel_unavailable'; end if;
+ if r.scenario_id not in ('021','022','023','024','025') or r.status<>'playing' or r.cycle<2 then raise exception 'intel_unavailable'; end if;
  perform igr_private.rate_limit('omerta_money_intel_signal',p.id::text,10,60);
  opts:=public.igr_omerta_money_intel_options(p_code,p_player_token);
  select value into chosen from jsonb_array_elements(coalesce(opts->'cards','[]'::jsonb))
