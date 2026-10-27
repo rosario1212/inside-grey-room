@@ -1,0 +1,48 @@
+/* v634 — investigative workspace, all scenarios. No changes to game logic. */
+#app .igr634-workspace{min-width:0;display:grid;gap:13px;max-width:100%}
+#app .igr634-head{padding:2px 2px 0}
+#app .igr634-head small,.igr634-summary small{display:block;color:#8898a5;font:750 10px 'IBM Plex Mono',monospace;letter-spacing:.12em}
+#app .igr634-head h2{font-size:clamp(21px,4.8vw,28px);margin:6px 0}
+#app .igr634-head p{font-size:13px;line-height:1.5;color:#a8b1b9;margin:0}
+#app .igr634-quicknav{display:flex;flex-wrap:wrap;gap:7px;padding-bottom:4px}
+#app .igr634-quicknav a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;flex:1 1 100px;padding:8px 10px;background:#121920;border:1px solid rgba(184,201,214,.16);border-radius:11px;color:#e1e8ed;text-decoration:none;font:750 11px 'IBM Plex Mono',monospace;line-height:1.2;text-align:center}
+#app .igr634-quicknav a:focus-visible{outline:2px solid #e1e8ed;outline-offset:3px}
+#app .igr634-interviews{border-radius:16px;border:1px solid rgba(200,212,223,.22);border-left:3px solid #bfcbd3;background:linear-gradient(135deg,#121a20,#0b1016);padding:15px 14px;min-width:0}
+#app .igr634-interviews>h3{font-size:20px;line-height:1.15;letter-spacing:-.02em;margin:0 0 6px}
+#app .igr634-subtitle{font-size:12px;line-height:1.5;color:#aab6bf;margin:0 0 12px}
+#app .igr634-interviews .phase-explain{margin:0 0 10px!important}
+#app .igr634-interviews .action-section{margin:9px 0 0!important}
+#app .igr634-empty{font-size:13px;color:#95a0a9;line-height:1.5;margin:6px 0}
+#app .igr634-group{border:1px solid rgba(196,212,225,.15);border-radius:15px;background:#0d141a;min-width:0;overflow:hidden}
+#app .igr634-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 14px;cursor:pointer;list-style:none;min-height:58px}
+#app .igr634-summary::-webkit-details-marker{display:none}
+#app .igr634-summary-copy{display:grid;gap:5px;min-width:0}
+#app .igr634-summary strong{font-size:16px;line-height:1.25;color:#e9eff2;overflow-wrap:anywhere}
+#app .igr634-chevron{font-size:23px;color:#a4b2bc;transition:transform .15s ease}
+#app .igr634-group[open]>.igr634-summary .igr634-chevron{transform:rotate(180deg)}
+#app .igr634-body{display:grid;gap:12px;border-top:1px solid rgba(200,212,224,.09);padding:12px 13px 15px;min-width:0}
+#app .igr634-body>:is(.phase-explain,.investigation-sheet,.action-section,.private-block,.igr87-dossier,.igr106-inquiry-evidence){margin:0!important;min-width:0;max-width:100%}
+#app .igr634-body .igr87-dossier{max-width:none}
+#app .igr634-body .igr87-note-form{min-width:0}
+#app .igr634-notice{font-size:12px;color:#a1aeb7;line-height:1.5;margin:0}
+#app .igr634-carnet-label{margin-top:0}
+#app .igr634-add-note{border:1px solid rgba(170,186,201,.19);border-radius:12px;margin:0 0 14px}
+#app .igr634-add-note>summary{padding:12px 14px;cursor:pointer;font-weight:700}
+#app .igr634-add-note .igr87-note-form{border:0;margin:0;padding:12px}
+#app .igr634-personal-notes{border-top:1px solid rgba(184,201,214,.14);padding-top:14px;display:grid;gap:8px}
+#app .igr634-personal-notes>h3{font-size:15px;margin:0}
+#app .igr634-personal-notes .notes-tab-v32{gap:10px!important;margin:0!important}
+#app .igr634-personal-notes #privateNotesV32{height:clamp(130px,24dvh,220px)!important;min-height:130px!important;max-height:40dvh!important}
+#app .igr634-workspace :is(input,select,textarea,button){max-width:100%;min-width:0}
+#app .igr634-workspace :is(.choice-row,.btn){min-height:44px}
+#app .igr634-workspace [id]{scroll-margin-top:154px}
+@media(max-width:600px){
+ #app .igr634-workspace{gap:11px}
+ #app .igr634-quicknav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ #app .igr634-quicknav a{min-height:40px;padding:8px 5px}
+ #app .igr634-interviews{padding:13px 12px}
+ #app .igr634-summary{padding:12px}
+ #app .igr634-body{padding:10px 11px 14px}
+ #app .igr634-head h2{font-size:22px}
+}
+@media(prefers-reduced-motion:reduce){#app .igr634-chevron{transition:none}}
