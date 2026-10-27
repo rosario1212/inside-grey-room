@@ -99,9 +99,9 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
     assert.equal(scope.note,'','Drafts from another phase must not leak into the new form');
     await page.locator('.tabs-v11').evaluate(el=>{el.scrollLeft=el.scrollWidth});
     await page.locator('#tab-rules').click();
-    const bounds=await page.evaluate(()=>{const strip=document.querySelector('.tabs-v11'),a=strip.getBoundingClientRect(),b=strip.querySelector('.active').getBoundingClientRect();return {left:strip.scrollLeft,visible:b.left>=a.left-.5&&b.right<=a.right+.5,tabs:strip.children.length,noOverflow:document.documentElement.scrollWidth<=innerWidth,oneRow:Math.max(...[...strip.children].map(el=>el.offsetTop))-Math.min(...[...strip.children].map(el=>el.offsetTop))<2}});
-    assert(bounds.visible&&bounds.tabs===6&&bounds.noOverflow&&bounds.oneRow,'All game tabs must remain reachable in one contained horizontal row: '+JSON.stringify(bounds));
-    if(width===320)assert(bounds.left>0,'Switching tabs must not jump the strip back to its start');
+    const bounds=await page.evaluate(()=>{const strip=document.querySelector('.tabs-v11'),a=strip.getBoundingClientRect(),b=strip.querySelector('.active').getBoundingClientRect();return {left:strip.scrollLeft,visible:b.left>=a.left-.5&&b.right<=a.right+.5,tabs:strip.children.length,noOverflow:document.documentElement.scrollWidth<=innerWidth,oneRow:Math.max(...[...strip.children].map(el=>el.offsetTop))-Math.min(...[...strip.children].map(el=>el.offsetTop))<2,grid:getComputedStyle(strip).display==='grid',contained:[...strip.children].every(el=>{const b=el.getBoundingClientRect();return b.left>=a.left-1&&b.right<=a.right+1&&b.bottom<=a.bottom+1})}});
+    assert(bounds.visible&&bounds.tabs===6&&bounds.noOverflow&&(bounds.grid?bounds.contained:bounds.oneRow),'All game tabs must remain reachable in a contained mobile grid or one scrollable desktop row: '+JSON.stringify(bounds));
+    if(width===320&&!bounds.grid)assert(bounds.left>0,'Switching tabs must not jump the scrollable strip back to its start');
     if(width===390)await page.screenshot({path:path.join(report,'game-navigation.png')});
   });
 
