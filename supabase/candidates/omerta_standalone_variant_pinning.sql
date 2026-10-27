@@ -770,6 +770,21 @@ begin
  where s.room_code=r.code and s.match_no=match_id
    and s.scenario_id=r.scenario_id;
  if manuscript is null then raise exception 'standalone_snapshot_missing'; end if;
+ if manuscript->>'private_format'='santoro_v25'
+    and exists (
+      select 1 from public.igr_v4_players p
+      where p.room_code=r.code and p.public_role='suspect'
+        and p.preferred_role not in ('suspect')
+        and p.preferred_role is not null
+        and not exists(
+          select 1 from pg_catalog.jsonb_array_elements(
+            manuscript->'private_cards') card
+          where card->>'rank_code'=p.preferred_role
+        )
+    ) then
+   raise exception 'standalone_selected_rank_not_in_manuscript';
+ end if;
+
 
  -- Only remove PUBLIC context events emitted by this new start.
  -- Historical event logs from earlier matches must be preserved.
