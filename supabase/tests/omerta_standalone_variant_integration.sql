@@ -20,7 +20,7 @@ begin
       'final_reveal','SECRET: do not send to players',
       'canonical_truth',jsonb_build_object('synthetic',sc||variant.letter, 'responsibility_by_slot',jsonb_build_object('1',0,'2',1,'3',2), 'timeline', jsonb_build_array(jsonb_build_object('id','qa-t1','what','Synthetic document A'),jsonb_build_object('id','qa-t2','what','Synthetic document B'))),
       'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only '||variant.letter,'identity','Synthetic role A','what_you_know','Private clue A','what_you_hide','Private secret A'),jsonb_build_object('slot',2,'objective','Other goal','identity','Synthetic role B','what_you_know','Private clue B','what_you_hide','Private secret B'),jsonb_build_object('slot',3,'objective','QA only','identity','Synthetic role C','what_you_know','Private clue C')),
-      'saga',jsonb_build_object('collection','OMERTA','branch',variant.letter,
+      'saga',jsonb_build_object('collection','OMERTA','family','SANTORO','branch',variant.letter,
         'chapter',sc::int-20),
       'revelations',jsonb_build_array(jsonb_build_object(
         'kind','guaranteed','min_cycle','3','canonical_event_id','qa-t2','id','qa-guaranteed-c3','audience','investigation','title','Synthetic crosscheck','text','Two documents establish a discrepancy, not individual guilt',
