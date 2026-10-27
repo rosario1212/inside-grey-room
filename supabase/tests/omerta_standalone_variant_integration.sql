@@ -23,7 +23,7 @@ begin
       'saga',jsonb_build_object('collection','OMERTA','branch',variant.letter,
         'chapter',sc::int-20),
       'revelations',jsonb_build_array(jsonb_build_object(
-        'kind','guaranteed','min_cycle','3','canonical_event_id','qa-t2','id','qa-guaranteed-c3','audience','investigation',
+        'kind','guaranteed','min_cycle','3','canonical_event_id','qa-t2','id','qa-guaranteed-c3','audience','investigation','title','Synthetic crosscheck','text','Two documents establish a discrepancy, not individual guilt',
         'editorial_provenance',jsonb_build_object(
           'human_source_review','unverified','source_material','synthetic manuscript fixture','existing_events',jsonb_build_array('qa-t1','qa-t2'),
           'independent_of_optional_actions','true'))),
