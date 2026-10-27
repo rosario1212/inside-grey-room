@@ -31,6 +31,9 @@ as $structure$
       and (select count(distinct p->>'slot')
         from jsonb_array_elements(coalesce(m.manuscript->'private_cards','[]'::jsonb)) p)
         =jsonb_array_length(coalesce(m.manuscript->'private_cards','[]'::jsonb))
+      -- Canon éditorial explicite: empêcher le mélange du vieux récit Verri
+      -- avec l'arc Santoro tant que celui-ci n'est pas intégralement authored.
+      and m.manuscript->'saga'->>'family'='SANTORO'
       and nullif(trim(m.manuscript->>'public_briefing'),'') is not null
       and nullif(trim(m.manuscript->>'final_reveal'),'') is not null
       and not exists (
