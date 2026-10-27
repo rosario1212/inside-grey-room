@@ -72,3 +72,6 @@
  #app .igr634-workspace{gap:10px}
  #app .igr634-head h2{font-size:20px}
 }
+
+#app #igr634-personal .notes-tab-v32{display:grid;gap:10px;margin:0!important;padding:4px 0 0;min-width:0}
+#app #igr634-personal #privateNotesV32{min-height:150px!important;max-height:34dvh!important;resize:vertical}
