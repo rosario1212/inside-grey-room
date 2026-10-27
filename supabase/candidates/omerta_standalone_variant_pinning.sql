@@ -422,7 +422,7 @@ begin
      private_state=jsonb_build_object(
        'identity',entry->'identity',
        'objective',entry->'objective',
-       'position',entry->'objective',
+       'position',entry->'identity',
        'what_you_know',entry->'what_you_know',
        'what_you_hide',entry->'what_you_hide',
        'hide',entry->'what_you_hide',
