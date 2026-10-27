@@ -7,7 +7,7 @@
   const PREF_KEY='igr_notify_prefs_v1';
   const ITEMS_PREFIX='igr_notify_items_';
   const CURSOR_PREFIX='igr_notify_cursor_';
-  const DEFAULTS={inApp:true,system:false,sound:true,vibrate:true};
+  const DEFAULTS={inApp:true,system:false,sound:false,vibrate:false};
   const MAX_ITEMS=60;
   const state={roomKey:'',cursor:0,items:[],bannerQueue:[],pumping:false,native:null,nativeListener:false,lastSoundAt:0,bannerTimer:null,bannerStart:null};
   let focusRequest=null;const viewedSince=new Map(),tabDrafts=new Map();
@@ -98,7 +98,7 @@
   }
   function shouldIgnore(e,d){
     if(!e||!Number.isFinite(+e.id))return true;
-    if(['timer','ready','join','leave','room_created','player_joined','player_left','sync'].includes(e.event_type))return true;
+    if(['timer','ready','join','leave','room_created','player_joined','player_left','sync','phase','cycle','interrogation','roles_distributed','context'].includes(e.event_type))return true;
     if(e.event_type==='message'&&String(e.payload?.author_id||'')===String(d?.player?.id||''))return true;
     return false;
   }
@@ -120,7 +120,7 @@
     document.getElementById('igrAlertStack')?.replaceChildren();
   }
   function enqueueBanner(item){
-    if(!prefs().inApp||document.hidden||!['game','role','briefing'].includes(STATE?.view))return;
+    if(!prefs().inApp||document.hidden||STATE?.view!=='game'||!['message','breaking_news','reveal'].includes(item.kind))return;
     state.bannerQueue.push(item);
     if(!state.pumping&&!state.bannerStart)state.bannerStart=setTimeout(()=>{state.bannerStart=null;pumpBanners()},180);
   }
@@ -129,7 +129,7 @@
     state.pumping=true;const key=state.roomKey,first=state.bannerQueue.shift(),route=resolvedRoute(first.route);
     const group=[first,...state.bannerQueue.filter(x=>resolvedRoute(x.route)===route)];state.bannerQueue=state.bannerQueue.filter(x=>resolvedRoute(x.route)!==route);
     const el=document.createElement('div');el.className='igr-event-alert';el.dataset.kind=first.kind;el.dataset.cycle=String(first.cycle||0);
-    const title=group.length>1?(route==='channel'?tr('Nouveaux messages','New messages'):tr('Nouvelles informations','New information'))+' · '+group.length:first.title;
+    const title=group.length>1?(route==='channel'?tr('Nouveaux messages','New messages'):tr('Nouvelles publications','New publications'))+' · '+group.length:first.title;
     el.innerHTML=`<button type="button" class="igr-alert-open"><span class="igr-alert-icon">${esc(first.label)}</span><span class="igr-alert-copy"><b>${esc(title)}</b><span>${esc(group.length>1?tr('Ouvrir les nouveautés de cette rubrique.','Open updates in this section.'):first.body)}</span></span></button><button type="button" class="igr-alert-close" aria-label="${tr('Masquer cette alerte','Dismiss this alert')}">×</button>`;
     const finish=()=>{el.remove();clearTimeout(state.bannerTimer);state.bannerTimer=null;state.pumping=false;if(key===state.roomKey)pumpBanners()};
     el.querySelector('.igr-alert-open').onclick=()=>{finish();if(key!==state.roomKey)return;if(group.length>1)window.igrOpenNotificationCenter(route);else openNotification(first.id)};
@@ -193,17 +193,17 @@
       // On the public case tab, a number must equal the published entries
       // actually rendered by the authoritative dossier, NEVER general game events.
       const displayed= id==='timeline' ? window.IGR_COMMON_DOSSIER_V106?.visibleEventIds?.() : null;
-      const count=id==='timeline'
-        ? (Array.isArray(displayed)?displayed.length:0)
-        : state.items.filter(x=>x.unread&&resolvedRoute(x.route)===id).length;
+      // Only a visible conversation can own a tab notification badge.
+      // Public dossier publications already have their own authoritative list.
+      const count=id==='channel'
+        ? state.items.filter(x=>x.unread&&x.kind==='message'&&resolvedRoute(x.route)==='channel').length
+        : 0;
       let badge=button.querySelector('.igr-tab-unread');
       if(!count){badge?.remove();button.removeAttribute('data-unread');button.removeAttribute('title');continue}
       if(!badge){badge=document.createElement('span');badge.className='igr-tab-unread';button.appendChild(badge)}
       // Non-dossier tabs show a discreet dot, not an ungrounded content total.
-      const amount=id==='timeline'?String(count):'•';
-      const label=id==='timeline'
-        ? (count+' '+tr('publications visibles','visible publications'))
-        : tr('Nouvelles notifications','New notifications');
+      const amount='•';
+      const label=tr('Messages non lus','Unread messages');
       if(badge.textContent!==amount)badge.textContent=amount;
       badge.setAttribute('aria-label',label);
       button.setAttribute('title',label);
@@ -253,6 +253,10 @@
       if(!available.includes(target))target='timeline';
       if(id)focusRequest={id:Number(id),key:state.roomKey,until:Date.now()+8000};
       if(STATE.tab!==target){if(typeof setTab==='function')setTab(target);else{STATE.tab=target;if(typeof renderGame==='function')renderGame()}}
+      if(target==='investigation'){
+        const evidence=document.getElementById('igr634-evidence');
+        if(evidence){evidence.open=true;evidence.scrollIntoView?.({block:'start'});}
+      }
       focusPending();decorateTabs();
     }catch{}
   }
@@ -288,7 +292,7 @@
   if(typeof originalOpenSettings==='function')window.openSettings=function(...args){const out=originalOpenSettings.apply(this,args);setTimeout(augmentSettings,0);return out};
 
   nativePlugin();
-  state.timer=setInterval(scan,500);
+  state.timer=setInterval(scan,1400);
   window.addEventListener('online',()=>setTimeout(scan,100));
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(scan,60)});
   setTimeout(scan,120);
