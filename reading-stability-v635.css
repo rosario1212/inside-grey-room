@@ -199,3 +199,16 @@ body:has(.igr-settings-modal)>.igr-alert-stack{display:none!important}
   #app .briefing-page .briefing-card>.briefing-line{margin:10px 0!important}
   #app .briefing-page .briefing-card .igr-briefing-protocol{margin:8px 0 5px!important;padding:7px 9px!important}
 }
+
+/* v637: preserve compact cards while making player identity and evidence status explicit. */
+#app .private-card-v11 .igr82-relation-hint{
+ color:#aebbc5!important;font-size:12px!important;line-height:1.45!important;
+ margin:0 0 12px!important;
+}
+#app .private-card-v11 .igr82-player-tag{
+ display:inline-flex!important;align-items:center!important;
+ border:1px solid rgba(154,175,190,.23)!important;border-radius:99px!important;
+ padding:3px 8px!important;margin:2px 0 0 8px!important;
+ font-size:10px!important;letter-spacing:.03em!important;color:#bfcbd3!important;
+ font-weight:600!important;background:rgba(154,175,190,.08)!important;
+}
