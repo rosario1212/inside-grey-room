@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
-const clientVersion='v631-espion-mission-corrections';
+const clientVersion='v633-omerta-santoro-private-cards';
 const cacheVersion='v632-iphone-live-ux';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
