@@ -27,7 +27,7 @@ function publicBrief029(index){
 }
 
 const key=()=>String(room()?.code||'')+':'+String(room()?.state?.match_no||1)+':'+String(me()?.id||'');
-let keySeen='',notes=[],loading=false,lastFetch=0,loadError='';
+let keySeen='',notes=[],loading=false,lastFetch=0,loadError='',pendingNoteRefresh=false,lastNotebookRevision='';
 function currentNotes(id){
  return notes.filter(n=>String(n.suspect_id||'')===String(id||''));
 }
@@ -97,12 +97,17 @@ function refreshNotes(){
 async function loadNotes(force=false){
  if(!isInvestigator()||!room()?.code||!S()?.token||typeof rpc!=='function')return;
  if(keySeen!==key()){keySeen=key();notes=[];lastFetch=0}
- if(loading||(!force&&Date.now()-lastFetch<4500))return;
+ if(loading){if(force)pendingNoteRefresh=true;return}
+ if(!force&&Date.now()-lastFetch<4500)return;
+ const requestedKey=key();
  loading=true;lastFetch=Date.now();
  try{const out=await rpc('igr_v87_dossier_notes',{p_code:room().code,p_player_token:S().token});
-  if(keySeen!==key())return;notes=Array.isArray(out?.notes)?out.notes:[];loadError='';refreshNotes();
+  if(keySeen!==requestedKey||key()!==requestedKey)return;notes=Array.isArray(out?.notes)?out.notes:[];loadError='';refreshNotes();
  }catch(e){loadError=tr('Carnet synchronisé indisponible pour le moment.','Synced notebook currently unavailable.');refreshNotes();console.warn('[IGR v87] notes',e)}
- finally{loading=false}
+ finally{
+  loading=false;
+  if(pendingNoteRefresh){pendingNoteRefresh=false;queueMicrotask(()=>loadNotes(true))}
+ }
 }
 window.igr87SaveNote=async function(event){
  event?.preventDefault?.();
@@ -131,7 +136,13 @@ if(originalInvestigation){
 const originalGame=typeof renderGame==='function'?renderGame:null;
 if(originalGame){
  const wrapped=function(){const result=originalGame.apply(this,arguments);
-  if(isInvestigator()&&S()?.tab==='investigation')queueMicrotask(()=>loadNotes());return result;
+  if(isInvestigator()&&S()?.tab==='investigation'){
+   const currentRevision=key()+':'+String(room()?.state?.notebook_revision_v636||0);
+   const force=currentRevision!==lastNotebookRevision;
+   lastNotebookRevision=currentRevision;
+   queueMicrotask(()=>loadNotes(force));
+  }
+  return result;
  };
  try{renderGame=wrapped}catch(_){}
  window.renderGame=wrapped;
