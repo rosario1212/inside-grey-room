@@ -226,6 +226,8 @@ begin
     room_code,cycle,event_type,visibility,payload)
  values('START021',0,'trame','public',
         '{"title":"VERRI TRAME","text":"LEGACY VERRI SPOILER"}'::jsonb);
+ update public.igr_v4_rooms set phase='role_reading',cycle=1
+ where code='START021';
  safe_snapshot:=public.igr_omerta_standalone_safe_sync(
    'START021',(select player_token from public.igr_v4_players
                where room_code='START021' and seat_index=1));
@@ -235,6 +237,17 @@ begin
  then raise exception 'old campaign narrative leaked through standalone sync';end if;
  if jsonb_array_length(safe_snapshot->'events')<>1
  then raise exception 'standalone event allowlist did not filter old trames';end if;
+ if safe_snapshot->'player'->'private_state'->>'identity'<>'Enquêteur'
+    or safe_snapshot->'player'->'private_state'->>'what_you_know'
+       <>'Synthetic public case introduction'
+    or safe_snapshot->'player'->'private_state' ? 'legacy_private'
+ then raise exception 'old investigator private card was not replaced';end if;
+ safe_snapshot:=public.igr_omerta_standalone_safe_sync(
+   'START021',(select player_token from public.igr_v4_players
+               where room_code='START021' and seat_index=2));
+ if safe_snapshot->'player'->'private_state'->>'objective' is null
+   or safe_snapshot->'player'->'private_state' ? 'legacy_private'
+ then raise exception 'suspect received legacy private role or missing objective';end if;
  if has_function_privilege('public',
     'public.igr_omerta_standalone_safe_sync(text,uuid)','EXECUTE')
  then raise exception 'PUBLIC execute not revoked from safe sync';end if;
