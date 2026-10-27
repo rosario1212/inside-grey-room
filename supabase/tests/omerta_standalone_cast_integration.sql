@@ -193,6 +193,12 @@ begin
     ->>'available')::boolean is not true then
    raise exception 'release-eligible synthetic chapter status not enabled';end if;
 
+ -- Événement d'archive : une relance ne doit effacer QUE le contexte
+ -- créé lors du lancement actuel, jamais une ancienne partie.
+ insert into public.igr_v4_events(
+   room_code,cycle,event_type,visibility,payload)
+ values('START021',0,'context','public',
+   '{"title":"ARCHIVE","text":"PREVIOUS MATCH HISTORICAL CONTEXT"}'::jsonb);
  start_result:=public.igr_omerta_start_standalone('START021',host);
  if start_result->>'ok'<>'true' or start_result->>'standalone'<>'true'
     or start_result ? 'variant_id' or start_result ? 'manuscript'
@@ -209,6 +215,10 @@ begin
     or not exists(select 1 from public.igr_v4_events where room_code='START021'
     and event_type='context' and payload->>'text'='Synthetic public case introduction')
  then raise exception 'legacy context leaked into standalone room';end if;
+ if not exists(select 1 from public.igr_v4_events
+   where room_code='START021' and event_type='context'
+     and payload->>'text'='PREVIOUS MATCH HISTORICAL CONTEXT')
+ then raise exception 'old match context wiped by standalone release';end if;
  if has_function_privilege('public','public.igr_omerta_start_standalone(text,uuid)','EXECUTE')
  then raise exception 'PUBLIC access grant retained on standalone host starter';end if;
 end $qa$;
