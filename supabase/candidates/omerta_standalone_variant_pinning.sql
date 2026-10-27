@@ -115,6 +115,14 @@ as $structure$
         where nullif(trim(card->>'identity'),'') is null
            or nullif(trim(card->>'objective'),'') is null
            or nullif(trim(card->>'what_you_know'),'') is null
+           -- A card without its own secret, timeline and oral prompts is not playable.
+           -- Never substitute the old Verri dossier to make up the missing fields.
+           or nullif(trim(card->>'what_you_hide'),'') is null
+           or nullif(trim(card->>'your_chronology'),'') is null
+           or case when jsonb_typeof(card->'conversation_hooks')='array'
+                then jsonb_array_length(card->'conversation_hooks')<2
+                else true
+              end
            or case when m.manuscript->>'private_format'='santoro_v25'
                and exists(select 1 from igr_private.igr_omerta_santoro_v25_drafts d
                  where d.scenario_id=m.scenario_id and d.variant_id=m.variant_id)

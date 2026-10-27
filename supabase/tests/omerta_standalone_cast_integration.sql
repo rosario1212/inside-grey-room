@@ -29,7 +29,7 @@ begin
        'what_you_know','Private clue '||slot,
        'what_you_hide','Private secret '||slot,
        'your_chronology','Synthetic chronology '||slot,
-       'conversation_hooks',jsonb_build_array('Talk if you wish')) order by slot)
+       'conversation_hooks',jsonb_build_array('Talk if you wish','Who issued the instruction?')) order by slot)
      from generate_series(4,7) slot
    ),true),'{canonical_truth,responsibility_by_slot}',
     '{"1":0,"2":1,"3":2,"4":0,"5":1,"6":2,"7":1}'::jsonb,true)
@@ -294,7 +294,9 @@ begin
             'slot',slot,'identity','Synthetic rank identity '||slot,
             'objective','Synthetic rank objective '||slot,
             'what_you_know','Synthetic rank knowledge '||slot,
-            'what_you_hide','Synthetic rank secret '||slot)
+            'what_you_hide','Synthetic rank secret '||slot,
+            'your_chronology','Synthetic rank chronology '||slot,
+            'conversation_hooks',jsonb_build_array('Who handled it?','When was it documented?'))
            order by slot) from generate_series(4,8) slot),
    'canonical_truth',(manuscript->'canonical_truth')
        ||jsonb_build_object('responsibility_by_slot',

@@ -40,6 +40,7 @@ jobs:
           node scripts/omerta-standalone-goal-scorer-check.mjs
           node scripts/omerta-santoro-private-ui-check.mjs
           node --check scripts/omerta-santoro-private-preflight.mjs
+          node scripts/omerta-santoro-card-completeness-check.mjs
 
   omerta-postgres:
     name: Isolated PostgreSQL 16 multiplayer RPC smoke test
