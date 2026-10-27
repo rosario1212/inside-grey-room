@@ -1,39 +1,47 @@
-# OMERTÀ — Indic : règle finale anti-arbitraire (27 octobre 2026)
+# OMERTÀ vNext — contrat de l'Indic, version de publication en préparation
 
-**Statut : implémentation sur la PR #379 en brouillon. Ne pas déployer tant que les critères de publication et les tests serveur/clients ne sont pas validés.**
+**Statut : PR #380 en brouillon ; aucune migration appliquée en production ; variantes A/B/C en révision.**
 
-## Une règle simple
+## Contrat lisible par tous les joueurs
 
-L'Indic doit **sauver sa peau** (objectif personnel du scénario et survie selon son contrat) **et renseigner l'enquête**. La seconde condition est calculée par le serveur uniquement à partir d'un renseignement canonique effectivement transmis, enregistré et éligible.
+Après son pacte secret accepté, l'Indic a trois exigences pour gagner :
 
-**Aucun joueur, y compris l'Enquêteur, ne peut par un simple avis subjectif accorder ou retirer la réussite de cette condition.** Il peut utiliser l'information, la contester ou mentir dans le récit, mais la réception d'une carte consignée est indéniable pour l'application.
+1. **Sauver ses intérêts** : obtenir une protection officielle accordée par l'Enquêteur OU une remise de peine d'au moins trois ans, selon les actions documentées par le serveur.
+2. **Rendre service à l'Enquête** : si l'Enquêteur répond **Oui, cette source m'a été utile** à la fin, la condition est **validée même sans aucune des trois cartes consignées**. Sinon, une information canonique officiellement transmise et jugée admissible par les règles serveur peut aussi valider cette condition. L'avis **Non** ne peut pas effacer une preuve admissible.
+3. **Rester en vie** à la conclusion.
 
-## Trois sujets, parole libre
+La réponse **Oui** est donc une validation positive voulue par le concepteur, mais elle **ne donne pas une victoire automatique** : les conditions personnelles et de survie doivent encore être remplies. L'Enquêteur ne peut pas utiliser une réponse « Non » pour annuler un renseignement déjà reconnu par le serveur.
 
-- **Je souhaite en parler** : l'Enquêteur reçoit une intention, uniquement le titre. Cela ne valide rien.
-- **J'en ai déjà parlé** : après la conversation orale, l'Indic consigne un renseignement précis. Le serveur valide provenance, appartenance, salle, rôle, phase et doublons, puis remet le contenu à l'Enquêteur dans un événement privé.
-- Une carte déjà consignée reste marquée comme telle et n'est ni redemandée ni retransmise.
-- **Fin de cycle : « As-tu partagé une information ? »** avec Oui / Non, uniquement si aucun renseignement n'a été enregistré durant ce cycle. Oui ouvre les trois cartes ; le choix de la carte est l'enregistrement vérifiable. Non masque le rappel pour ce cycle.
-- Aucune retranscription orale complète ni validation de l'Enquêteur n'est exigée. Une discussion non consignée ne peut être prouvée techniquement : le rappel sert précisément à éviter cet oubli.
+## Oral d'abord, jamais de téléphone obligatoire avant de parler
 
-## Victoire et impartialité
+- L'Enquêteur propose un pacte privé, le suspect accepte ou refuse. Rien de public.
+- L'Indic possède exactement **trois sujets abrégés**, choisis dans son propre dossier et visibles dans son espace confidentiel. Il connaît leurs détails via sa carte personnelle ; le rappel détaillé peut être replié.
+- L'Indic peut parler avant toute manipulation. Il peut aussi presser **« Je souhaite en parler »** pour prévenir discrètement l'Enquêteur d'un sujet ; cela n'est pas une transmission et ne donne aucun point.
+- Après un échange oral, il peut presser **« J'en ai déjà parlé »** : le serveur vérifie la carte et transmet le renseignement canonique dans le fil privé du camp Enquête (pilote : Enquêteur). Une seule consignation officielle par cycle, pas de doublons.
+- À la fin d'un cycle, un bref rappel « As-tu partagé une information ? » apparaît uniquement à la source **qui n'a rien consigné durant ce cycle**. Répondre « Oui » ouvre son onglet, sans affirmer qu'elle a divulgué une information précise. Aucun rappel si c'est déjà enregistré.
 
-- `indic_second_ok = existe(renseignement_canonique_transmis_et_vérifié)`, uniquement pour la salle, le joueur et le `match_no` actifs.
-- `victoire_indic = objectif_personnel_reussi && indic_second_ok && survie` (selon le contrat précis de la variante).
-- Un renseignement simplement annoncé, non transmis, non vérifié ou seulement supposé utile ne valide jamais la condition.
-- La confiance entre joueurs reste dramatique et narrative ; les conditions de victoire restent vérifiables par le système.
-- Le formulaire subjectif de fin de partie est retiré du parcours. L'ancienne migration d'évaluation est exclue du paquet à publier.
+## Négociation de protection
 
-## Garanties de confidentialité et de sécurité
+La protection peut être négociée **à l'oral**. L'Enquêteur la confirme par un clic privé « Protéger mon Indic », sans obliger la source à passer par l'ancien système de révélations de niveau 1/2/3. Cette protection donne accès à la condition personnelle, mais pas à la seconde condition et ne remplace jamais la survie.
 
-Les trois sujets restent propres au suspect recruté ; ils ne doivent pas révéler la vérité, la branche A/B/C, ni les secrets d'autres personnages. Les transmissions sont privées à l'Enquêteur. Un même fait ne doit pas produire plusieurs crédits de coopération ; les actions sont isolées par `room_code`, `match_no`, `cycle` et `player_id`. Le verdict est résolu côté serveur, jamais depuis une case cochée par le client.
+Une autre voie personnelle est une réduction de peine enregistrée d'au moins trois ans ; elle conserve une prise de risque.
 
-## Bloqueurs de publication
+## Écran final de l'Enquêteur
 
-1. La base active conserve le canon historique **Verri**, alors que la version souhaitée est **Santoro**. Les cinq scénarios doivent être cohérents avant remplacement.
-2. Les quinze variantes privées A/B/C sont en état `review`, non approuvées, sans chaînes de recoupement du cycle III validées. Le verrou serveur `release_eligible=false` est correct et ne doit pas être contourné.
-3. Le mécanisme actuel `truth_verified` n'est vrai que pour certaines cartes du **021** ; **022–025 ne peuvent donc pas encore valider leur deuxième condition via une carte**. Ne pas activer ce gameplay tant que l'indexation canonique par scénario et variante n'est pas complète.
-4. Les anciens RPC de révélations par niveau peuvent attribuer de la coopération séparément. Ils doivent être raccordés/neutralisés pour le seul parcours d'Indic sans casser les autres rôles.
-5. Tester sur une base Supabase de développement, avec adversaires, doubles clics, rematch, reconnexion, droits privés, rôles et toutes les phases ; exécuter les builds web/mobile et une partie réelle. Pas de migration de production avant validation.
+Pendant la phase de verrouillage, avant sa décision définitive :
 
-**À ce stade, ne pas fusionner la PR #379 ni déployer le nouveau moteur.**
+> Cet Indic vous a-t-il réellement été utile ?
+
+**Oui, cette source m'a été utile** / **Non, elle ne m'a pas été utile**.
+
+Ce jugement est confidentiel, attaché à la source recrutée et enregistré une seule fois. Après le verrouillage final, plus de modification. Si l'Enquêteur n'a pas donné son avis, le jeu regarde les informations officiellement consignées et éligibles. Les discussions orales ne sont jamais présentées par le serveur comme « comprises » ou enregistrées automatiquement.
+
+## Contrôles serveur
+
+Authentification par token, source réellement recrutée, droits de rôle, phase, scénario 021–025, numéro de partie, confidentialité des événements, aucune source nouvelle après conclusion, vérification des renseignements et déduplication. Les essais fonctionnels sous `BEGIN/ROLLBACK` sur les cinq dossiers canoniques ont réussi. Le scénario 022 a confirmé une **victoire complète** avec protection négociée + avis positif + survie, **sans transmission d'aucune carte**.
+
+## Ce qui empêche encore la publication complète
+
+Les 15 manuscrits A/B/C existent, mais leur état est `review`. **0 approbation éditoriale** et **0 provenance de preuve finale vérifiée** pour chacun des cinq dossiers. Le verrou de saga ne doit pas être forcé. Le raccordement du moteur des variantes, l'audit humain, le playtest multijoueur et le déploiement contrôlé restent nécessaires. Voir `OMERTA_VNEXT_RELEASE_AUDIT_20261027.md`.
+
+**Ne pas confondre** le moteur canonique 021–025 (sur lequel les essais SQL ont réussi) et les quinze variantes A/B/C non publiées.
