@@ -1,0 +1,81 @@
+name: Omerta Informant QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'omerta-money-intel-v1.js'
+      - 'omerta-v12.js'
+      - 'app-v11.js'
+      - 'omerta-money-intel-v1.css'
+      - 'scripts/omerta-*.mjs'
+      - 'supabase/migrations/20261026*omerta*.sql'
+      - 'supabase/migrations/20261027*omerta*.sql'
+      - 'supabase/candidates/omerta_standalone_variant_pinning.sql'
+      - 'supabase/candidates/omerta_core_sync_seal.sql'
+      - 'supabase/candidates/omerta_standalone_goal_score.sql'
+      - 'supabase/tests/omerta_*.sql'
+      - 'supabase/tests/omerta_vnext_*.sql'
+      - 'scripts/build-web.mjs'
+      - 'service-worker.js'
+      - 'index.html'
+      - '.github/workflows/omerta-indic-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  omerta-indic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source dossier JavaScript and controls
+        run: |
+          node --check omerta-money-intel-v1.js
+          node scripts/omerta-money-intel-021-check.mjs
+          node scripts/omerta-indic-final-rule-check.mjs
+          node --check scripts/omerta-standalone-goal-scorer.mjs
+          node scripts/omerta-standalone-goal-scorer-check.mjs
+          node --check scripts/omerta-santoro-private-preflight.mjs
+
+  omerta-postgres:
+    name: Isolated PostgreSQL 16 multiplayer RPC smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: omerta_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d omerta_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply production candidate functions to disposable database
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_vnext_local_harness.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261026233000_omerta_indic_recruitment_021.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261026233500_omerta_money_intel_021.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261027004500_omerta_indic_reveal_scoring.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_vnext_local_integration.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261027173530_omerta_santoro_private_staging_locked.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_variant_harness.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/candidates/omerta_standalone_variant_pinning.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/candidates/omerta_core_sync_seal.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_variant_integration.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_cast_integration.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_santoro_private_drafts_preflight.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/candidates/omerta_standalone_goal_score.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_goal_score_integration.sql

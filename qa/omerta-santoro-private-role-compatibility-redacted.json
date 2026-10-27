@@ -1,0 +1,94 @@
+{
+  "status": "private-draft-role-compatibility;release-off",
+  "scenario_ranges": [
+    "021",
+    "022",
+    "023",
+    "024",
+    "025"
+  ],
+  "by_scenario": {
+    "021": {
+      "playable_ranks": [
+        "associato",
+        "uomo_onore",
+        "contabile",
+        "caporegime",
+        "consigliere"
+      ],
+      "total_private_seats": 7,
+      "extra_available_seats": [
+        "associato",
+        "uomo_onore"
+      ],
+      "legacy_option_to_hide_when_standalone": []
+    },
+    "022": {
+      "playable_ranks": [
+        "associato",
+        "uomo_onore",
+        "contabile",
+        "caporegime",
+        "consigliere"
+      ],
+      "total_private_seats": 7,
+      "extra_available_seats": [
+        "associato",
+        "uomo_onore"
+      ],
+      "legacy_option_to_hide_when_standalone": []
+    },
+    "023": {
+      "playable_ranks": [
+        "associato",
+        "uomo_onore",
+        "contabile",
+        "caporegime",
+        "consigliere"
+      ],
+      "total_private_seats": 7,
+      "extra_available_seats": [
+        "associato",
+        "uomo_onore"
+      ],
+      "legacy_option_to_hide_when_standalone": [
+        "sottocapo"
+      ]
+    },
+    "024": {
+      "playable_ranks": [
+        "associato",
+        "uomo_onore",
+        "contabile",
+        "caporegime",
+        "consigliere"
+      ],
+      "total_private_seats": 7,
+      "extra_available_seats": [
+        "associato",
+        "uomo_onore"
+      ],
+      "legacy_option_to_hide_when_standalone": [
+        "pentito"
+      ]
+    },
+    "025": {
+      "playable_ranks": [
+        "associato",
+        "uomo_onore",
+        "contabile",
+        "caporegime",
+        "consigliere",
+        "sottocapo",
+        "don"
+      ],
+      "total_private_seats": 7,
+      "extra_available_seats": [],
+      "legacy_option_to_hide_when_standalone": [
+        "pentito"
+      ]
+    }
+  },
+  "source": "Private Santoro V24 draft archive, structural inventory only; no canon facts",
+  "note": "Do not enable release until final goals, C3 reviews and live runtime cast are verified. Hidden roles must not be silently remapped to another rank."
+}

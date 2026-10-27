@@ -511,7 +511,7 @@ async function rpc(name,payload){
   const r=await fetch(`${API}/rpc/${name}`,{method:'POST',headers:headers(),body:JSON.stringify(payload),signal:ctl.signal});
   if(!r.ok){const body=await r.json().catch(()=>({}));const e=new Error(body.message||`Erreur ${r.status}`);e.code=body.code;e.status=r.status;throw e}
   const data=await r.json();
-  if(name==='igr_v4_sync'&&data.server_now)STATE.serverOffset=Date.parse(data.server_now)-(started+Date.now())/2;
+  if((name==='igr_v4_sync'||name==='igr_omerta_standalone_safe_sync')&&data.server_now)STATE.serverOffset=Date.parse(data.server_now)-(started+Date.now())/2;
   return data;
  }finally{clearTimeout(timer)}
 }
@@ -992,7 +992,21 @@ async function performSync(force=false){
  if(!STATE.room||!STATE.token||STATE.syncBusy)return STATE.sync;
  STATE.syncBusy=true;const room=STATE.room,token=STATE.token;
  try{
-  const d=await rpc('igr_v4_sync',{p_code:STATE.room,p_player_token:STATE.token});
+  // OMERTÀ standalone: the API removes all legacy-story metadata BEFORE
+  // it reaches the client. Missing RPC (older server) uses historical sync,
+  // but operational server errors never downgrade a released A/B/C game.
+  const params={p_code:STATE.room,p_player_token:STATE.token};
+  const omertaRoom=['021','022','023','024','025'].includes(String(
+    STATE.sync?.room?.scenario_id||STATE.scenarioId||''));
+  let d;
+  if(omertaRoom){
+   try{d=await rpc('igr_omerta_standalone_safe_sync',params)}
+   catch(e){
+    if(e.code==='PGRST202'||(e.status===404&&/function|not found/i.test(e.message||'')))
+     d=await rpc('igr_v4_sync',params);
+    else throw e;
+   }
+  }else d=await rpc('igr_v4_sync',params);
   if(STATE.room!==room||STATE.token!==token)return null;
   connectionStatus(false);
   const sig=syncSignature(d);
