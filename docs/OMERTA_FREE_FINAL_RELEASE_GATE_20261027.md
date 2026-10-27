@@ -57,3 +57,15 @@ Corrections faites et testées après la clôture technique initiale :
 **Tests vérifiés** : la suite `Omerta Informant QA` et `Store Readiness` passent sur le commit `111fc981ad77bcc9253d73c0ff7adfb7721082fc` ; les builds Android, iOS, Cloudflare et Screen Layout étaient encore en cours lors du contrôle de ce commit.
 
 **IMPORTANT — le travail ne peut pas être présenté comme « tous les problèmes corrigés » ou comme publié** : les 15 manuscrits en base contiennent encore Verri et 0 Santoro, avec 0/15 validations éditoriales. Les épisodes A/B/C manquent encore d'un barème de renseignements par personnage approuvé et d'un verdict définitif rattaché à chaque objectif particulier. Le moteur historique de trames/événements et le traitement des clients restés sur d'anciennes versions doivent être vérifiés lors d'un véritable essai de bout en bout, sur la stack réelle, avant d'autoriser le switch. Le défaut `enabled=false` protège précisément contre une activation prématurée. Aucun test PostgreSQL synthétique, même vert, ne vaut une certification narrative humaine.
+
+
+## Audit final de publication urgente — synchronisation directe
+
+- Le dernier audit a trouvé un contournement côté serveur : les clients pouvaient appeler directement `public.igr_v4_sync` malgré le proxy filtrant les secrets Santoro. **Corrigé dans le candidat SQL** `supabase/candidates/omerta_core_sync_seal.sql` : l'ancienne fonction est renommée et son exécution directe révoquée pour `anon`/`authenticated` ; le RPC original devient une façade filtrée. Les salles historiques conservent le résultat hérité.
+- `igr_omerta_standalone_safe_sync` appelle désormais la fonction interne renommée, évitant la récursion.
+- Tests de non-contournement ajoutés : appel direct à `public.igr_v4_sync` dans une salle A/B/C, absence d'informations Verri, et refus d'exécuter l'ancien corps ; tests PostgreSQL 16 **réussis** sur `18fc55435e848966758dde617aaf6930a3b9b3c2`.
+- Ce durcissement implique **une migration de la fonction `igr_v4_sync` utilisée par tous les scénarios**. La réussir sur des fixtures synthétiques n'est pas une preuve de non-régression de la vraie stack avec tous les dossiers. Ne pas appliquer en production sans tests ciblés sur les autres DLC.
+- Le rapport de la base privée actuelle est toujours **15 manuscrits Verri, 0 Santoro, 0 revus/approuvés** (lecture seule, 27 octobre).
+- **Décision : ne pas fusionner pour une publication intégrale** tant que le canon Santoro et le calcul définitif des objectifs de 15 variantes ne sont pas rédigés/validés et tant qu'un test de bout en bout avec le vrai schéma et les RPCs existants n'a pas réussi. L'interrupteur privé de release reste `false` par défaut.
+- Aucune branche Supabase payante, aucun coût supplémentaire demandé, aucune modification du service en production.
+
