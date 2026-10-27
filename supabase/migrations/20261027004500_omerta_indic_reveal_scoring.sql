@@ -10,7 +10,7 @@ AS $function$
 declare
   r public.igr_v4_rooms%rowtype; base jsonb; item jsonb; out_results jsonb:='[]'::jsonb; out_winners jsonb:='[]'::jsonb;
   p public.igr_v4_players%rowtype; role text; success boolean; txt text; reveals int; major int; coop int; reduction int; exposure int; protected boolean; dead boolean; wrongful int; audiences int;
-  indic_matched boolean; indic_by_card boolean; indic_second_ok boolean; indic_personal_ok boolean; indic_match_id integer;
+  indic_matched boolean; indic_vote_yes boolean; indic_by_card boolean; indic_second_ok boolean; indic_personal_ok boolean; indic_match_id integer;
   pack jsonb; base_sentence int; final_sentence int; cid uuid; camp public.igr_omerta_campaigns%rowtype; dossier jsonb; deaths jsonb:='[]'::jsonb; protections jsonb:='[]'::jsonb; charname text; next_dossier text; cstatus jsonb;
 begin
   select * into r from public.igr_v4_rooms where code=p_room; if not found then raise exception 'room not found'; end if;
@@ -47,7 +47,17 @@ begin
       and coalesce((a.payload->>'match_no')::int,1)=indic_match_id
     ) into indic_matched;
     if indic_matched then
-
+      -- Reconnaître l'entraide orale : le Oui de l'Enquêteur valide la seconde
+      -- condition sans imposer la moindre carte à la source.
+      select exists(
+        select 1 from public.igr_v4_actions a
+        join public.igr_v4_players e on e.id=a.player_id
+        where a.room_code=r.code and e.public_role='enqueteur'
+          and a.action_type='omerta_indic_final_assessment'
+          and a.payload->>'source_id'=p.id::text
+          and a.payload->>'useful'='true'
+          and coalesce((a.payload->>'match_no')::int,1)=indic_match_id
+      ) into indic_vote_yes;
       select exists(
         select 1 from public.igr_v4_actions a
         where a.room_code=r.code and a.player_id=p.id
@@ -55,7 +65,7 @@ begin
         and a.payload->>'truth_verified'='true'
         and coalesce((a.payload->>'match_no')::int,1)=indic_match_id
       ) into indic_by_card;
-      indic_second_ok:=indic_by_card;
+      indic_second_ok:=indic_vote_yes or indic_by_card;
       -- But individuel d'une source : sauver ses intérêts (protection OU
       -- remise officielle d'au moins 3 ans). Survivre reste séparément requis.
       -- L'ancien objectif de loyauté d'un uomo_onore ne peut pas devenir le
@@ -65,13 +75,14 @@ begin
       txt:=txt||' · INDIC : protection ou remise de peine '||
         case when indic_personal_ok then 'atteint' else 'non atteint' end||
         ' · coopération '||
-        case when indic_second_ok then 'validée par renseignement officiellement confirmé'
+        case when indic_second_ok then case when indic_vote_yes then 'reconnue par l’Enquêteur' else 'validée par renseignement officiellement confirmé' end
         else 'non validée' end||
         ' · survie '||case when dead then 'non' else 'oui' end||'.';
       item:=item||jsonb_build_object('indic',jsonb_build_object(
         'recruited',true,
         'personal_condition_met',indic_personal_ok,
         'second_condition_met',indic_second_ok,
+        'second_via_investigator_yes',indic_vote_yes,
         'second_via_confirmed_card',indic_by_card,
         'survival_condition_met',not dead
       ));
