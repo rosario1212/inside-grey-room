@@ -215,6 +215,7 @@ function mountCycleReminder(){
  box.appendChild(row);panel.appendChild(box);
 }
 function mount(){
+ mountFinalReview();
  mountCycleReminder();
  const d=context(),dock=document.querySelector('.omerta-decision-dock');
  if(!dock||!isPlaying(d))return;
