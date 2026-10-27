@@ -246,8 +246,12 @@
       });
       if(status?.available===true)startRpc='igr_omerta_start_standalone';
     }catch(e){
-      // Ancienne version serveur / RPC absent : conserver le jeu historique.
-      console.info('OMERTÀ standalone gate unavailable; using established mode');
+      // Seule une ancienne API sans ce RPC peut revenir au moteur historique.
+      // Une panne réseau ou une autorisation refusée ne doit jamais lancer
+      // une autre histoire à la place de la variante attendue.
+      if(e.code!=='PGRST202'&&!(e.status===404&&/function|not found/i.test(e.message||'')))
+        throw e;
+      console.info('OMERTÀ standalone RPC absent; legacy mode retained');
     }
     const result=await rpc(startRpc,{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer OMERTÀ : minimum 4 joueurs et un rôle valide par joueur.')}
   };
