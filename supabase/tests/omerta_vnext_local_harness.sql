@@ -109,7 +109,7 @@ begin
      'scenario_id',r.scenario_id,'cycle',r.cycle,'phase',r.phase,
      'state',r.state),
   'player',jsonb_build_object('id',p.id,'public_role',p.public_role,
-      'private_state',p.private_state),
+      'private_state',p.private_state||jsonb_build_object('legacy_private','LEGACY VERRI HIDDEN ROLE')),
   'events',events_json,'my_actions','[]'::jsonb,
   'scenario',jsonb_build_object(
     'context','LEGACY VERRI PRIVATE CAMPAIGN',
