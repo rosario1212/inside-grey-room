@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
-const clientVersion='v631-espion-mission-corrections';
-const cacheVersion='v634-investigation-workspace';
+const clientVersion='v635-reading-stability';
+const cacheVersion='v635-reading-stability';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
@@ -41,7 +41,7 @@ if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deplo
 assert.deepEqual(cartel.moles,{'7':1,'8':1,'9':2});
 assert.deepEqual(cartel.evidence_per_cycle,[6,7,10]);
 const cartelHome=await get('/?release='+encodeURIComponent(cartel.version));
-assert((await cartelHome.text()).includes('app-v11.js?v='+clientVersion),'Client cache must match scenario 016 release');
+assert((await cartelHome.text()).includes('app-v11.js?v='+clientVersion),'Client JS cache must match the current v635 production bundle');
 const cartelApp=await get('/app-v11.js?v='+clientVersion);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
@@ -86,6 +86,8 @@ const assertDeployedAsset=async (name,marker)=>{
 await assertDeployedAsset('service-worker.js',"const CACHE='igr-"+cacheVersion+"';");
 await assertDeployedAsset('investigation-workspace-v634.css','igr634-interviews');
 await assertDeployedAsset('investigation-workspace-v634.js','renderNotesTabV32');
+await assertDeployedAsset('reading-stability-v635.css','igr82-relation:nth-child(odd)');
+await assertDeployedAsset('notifications-v12.js','state.timer=setInterval(scan,1400)');
 const liveUxStyle=await get('/live-game-ux-v632.css?v='+cacheVersion);
 assert.equal(liveUxStyle.status,200);
 assert((await liveUxStyle.text()).includes('safe-area-inset-top'),'Live iPhone layout patch missing from production');
