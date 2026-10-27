@@ -102,10 +102,10 @@ BEGIN
  IF EXISTS(SELECT 1 FROM igr_private.igr_omerta_verdict_locks
   WHERE room_code=r.code AND match_no=mid)
  THEN RAISE EXCEPTION 'verdict_already_locked'; END IF;
- SELECT e->'editorial_provenance'->'existing_events' INTO proofids
+ SELECT c3.value->'editorial_provenance'->'existing_events' INTO proofids
  FROM pg_catalog.jsonb_array_elements(
- coalesce(manuscript->'revelations','[]'::jsonb)) e
- WHERE e->>'kind'='guaranteed' AND e->>'min_cycle'='3'
+ coalesce(manuscript->'revelations','[]'::jsonb)) c3(value)
+ WHERE c3.value->>'kind'='guaranteed' AND c3.value->>'min_cycle'='3'
  LIMIT 1;
  IF jsonb_typeof(proofids) IS DISTINCT FROM 'array'
   OR jsonb_array_length(proofids)<2
