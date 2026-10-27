@@ -158,3 +158,44 @@ body:has(.igr-settings-modal)>.igr-alert-stack{display:none!important}
   #app .briefing-page .briefing-poster,
   #app .briefing-page .briefing-poster img{height:70px!important;max-height:70px!important}
 }
+
+/* v636: compact and stable briefing. Fit the story to its content instead of
+   stretching the lower half of the card or requiring an unnecessary swipe. */
+@media(max-width:900px){
+  #app .briefing-page{padding-bottom:0!important;justify-content:flex-start!important}
+  #app .briefing-page>.briefing-cinematic{
+    flex:0 1 auto!important;display:flex!important;flex-direction:column!important;
+    align-self:stretch!important;min-height:0!important;max-height:calc(100% - 4px)!important;
+    padding:0!important;overflow-y:auto!important;overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+  }
+  #app .briefing-page .briefing-poster,
+  #app .briefing-page .briefing-poster img{
+    flex:0 0 68px!important;height:68px!important;min-height:68px!important;
+    max-height:68px!important;
+  }
+  #app .briefing-page .briefing-stamp{bottom:9px;left:15px;padding:5px 8px;font-size:9px}
+  #app .briefing-page .briefing-card{
+    flex:0 0 auto!important;width:100%!important;height:auto!important;
+    min-height:0!important;max-height:none!important;
+    padding:16px 17px 18px!important;
+  }
+  #app .briefing-page .briefing-card h1{
+    font-size:clamp(27px,6.5vw,48px)!important;line-height:1.08!important;margin:9px 0 0!important;
+  }
+  #app .briefing-page .briefing-card>.briefing-line{margin:15px 0!important}
+  #app .briefing-page .briefing-card>p{font-size:clamp(13px,2.8vw,16px)!important;line-height:1.5!important}
+  #app .briefing-page .briefing-card .igr-briefing-protocol{margin:12px 0 7px!important;padding:10px 12px!important}
+  #app .briefing-page .briefing-card .igr-briefing-protocol p{font-size:clamp(12px,2.5vw,14px)!important;line-height:1.48!important}
+  #app .briefing-page .briefing-meta{margin:15px 0 6px!important;padding-top:10px!important}
+  #app .briefing-page .briefing-meta b{font-size:17px!important}
+  #app .briefing-page .briefing-card>small{font-size:10px!important;line-height:1.4!important}
+}
+@media(max-height:710px) and (max-width:900px){
+  #app .briefing-page .briefing-poster,
+  #app .briefing-page .briefing-poster img{height:46px!important;min-height:46px!important;max-height:46px!important}
+  #app .briefing-page .briefing-card{padding:11px 14px 12px!important}
+  #app .briefing-page .briefing-card h1{font-size:clamp(25px,6vw,40px)!important}
+  #app .briefing-page .briefing-card>.briefing-line{margin:10px 0!important}
+  #app .briefing-page .briefing-card .igr-briefing-protocol{margin:8px 0 5px!important;padding:7px 9px!important}
+}
