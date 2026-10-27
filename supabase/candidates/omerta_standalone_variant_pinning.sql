@@ -498,15 +498,15 @@ begin
     'player_id',player.id,
     'pseudo',player.pseudo,
     'editorial_involvement_level',
-     (m->'canonical_truth'->'responsibility_by_slot'->>cast.internal_slot::text)::integer
+     (m->'canonical_truth'->'responsibility_by_slot'->>(role_slot.internal_slot::text))::integer
     ) order by player.seat_index),'[]'::jsonb)
  into n_mapped,summary
- from igr_private.igr_omerta_room_cast_slots cast
- join public.igr_v4_players player on player.id=cast.player_id
-   and player.room_code=cast.room_code and player.public_role='suspect'
- where cast.room_code=r.code and cast.match_no=match_id
-   and cast.internal_slot=player.internal_slot
-   and (m->'canonical_truth'->'responsibility_by_slot'->>cast.internal_slot::text)
+ from igr_private.igr_omerta_room_cast_slots role_slot
+ join public.igr_v4_players player on player.id=role_slot.player_id
+   and player.room_code=role_slot.room_code and player.public_role='suspect'
+ where role_slot.room_code=r.code and role_slot.match_no=match_id
+   and role_slot.internal_slot=player.internal_slot
+   and (m->'canonical_truth'->'responsibility_by_slot'->>(role_slot.internal_slot::text))
        ~ '^[012]$';
  if n_mapped<>n_suspects or n_suspects=0
  then return jsonb_build_object('available',false); end if;
