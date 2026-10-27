@@ -326,5 +326,49 @@ begin
       where room_code='START024' and public_role='suspect')<>7
  then raise exception '024 rank-to-character assignments inconsistent';end if;
 
+
+ -- Santoro V25: le rang provient de la FICHE rédigée, pas de l'ancien
+ -- numéro Verri. Deux Associati et deux Soldati sont possibles.
+ update igr_private.igr_v99_variant_manuscripts
+ set manuscript=jsonb_set(
+     jsonb_set(manuscript,'{private_format}','"santoro_v25"'::jsonb,true),
+       '{private_cards}',(
+       select jsonb_agg(
+        jsonb_set(card,'{rank_code}',
+          to_jsonb(case (card->>'slot')::integer
+            when 1 then 'associato' when 2 then 'associato'
+            when 3 then 'uomo_onore' when 4 then 'uomo_onore'
+            when 5 then 'contabile' when 6 then 'caporegime'
+            else 'consigliere' end),true)
+         order by (card->>'slot')::integer)
+       from jsonb_array_elements(manuscript->'private_cards') card
+       ),true)
+ where scenario_id='021';
+ insert into public.igr_v4_rooms(code,scenario_id,status,cycle,phase,state)
+ values('SANT021','021','lobby',0,'briefing','{"match_no":1}'::jsonb);
+ if igr_private.igr_omerta_pin_standalone_room_variant('SANT021') not in ('A','B','C')
+ then raise exception 'Santoro 021 synthetic variant could not pin';end if;
+ for i in 1..4 loop
+   insert into public.igr_v4_players(
+      room_code,pseudo,seat_index,public_role,secret_role,preferred_role)
+   values('SANT021','V25 '||i,i,
+      case when i=1 then 'enqueteur' else 'suspect' end,
+      case i when 1 then 'enqueteur' when 2 then 'caporegime'
+        when 3 then 'associato' else 'uomo_onore' end,
+      case i when 1 then 'enqueteur' when 2 then 'caporegime'
+        when 3 then 'associato' else 'uomo_onore' end);
+ end loop;
+ update public.igr_v4_rooms set status='playing',phase='briefing',cycle=0
+ where code='SANT021';
+ if igr_private.igr_omerta_cast_standalone_room('SANT021')<>3
+ then raise exception 'Santoro rank cast failed';end if;
+ if (select internal_slot from public.igr_v4_players
+      where room_code='SANT021' and preferred_role='caporegime')<>6
+   or (select internal_slot from public.igr_v4_players
+      where room_code='SANT021' and preferred_role='associato') not in (1,2)
+   or (select internal_slot from public.igr_v4_players
+      where room_code='SANT021' and preferred_role='uomo_onore') not in (3,4)
+ then raise exception 'Santoro roles assigned to Verri numeric indices';end if;
+
 end $qa$;
 select 'PRIVATE_ROLE_CAST_8_PLAYERS_PASS' as outcome;
