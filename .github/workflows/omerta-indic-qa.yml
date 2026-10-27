@@ -38,6 +38,7 @@ jobs:
           node scripts/omerta-indic-final-rule-check.mjs
           node --check scripts/omerta-standalone-goal-scorer.mjs
           node scripts/omerta-standalone-goal-scorer-check.mjs
+          node scripts/omerta-santoro-private-ui-check.mjs
           node --check scripts/omerta-santoro-private-preflight.mjs
 
   omerta-postgres:
