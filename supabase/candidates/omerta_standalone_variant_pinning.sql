@@ -396,7 +396,23 @@ begin
      when 'contabile' then 7 when 'don' then 9 else null end;
    entry:=null;
    chosen_slot:=null;
-   if fixed_slot is not null then
+   -- Les nouveaux manuscrits Santoro ont deux Associati et deux Soldati.
+   -- Les numéros des places ne sont PAS les anciens rangs Verri :
+   -- chercher le rang réel dans la carte, jamais le slot hérité.
+   if m->>'private_format'='santoro_v25' then
+      fixed_slot:=null;
+   end if;
+   if m->>'private_format'='santoro_v25'
+     and mafia_player.preferred_role is not null
+     and mafia_player.preferred_role<>'suspect' then
+     select e.value,(e.value->>'slot')::int into entry,chosen_slot
+     from pg_catalog.jsonb_array_elements(m->'private_cards') e(value)
+     where e.value->>'rank_code'=mafia_player.preferred_role
+       and (e.value->>'slot')::int<>all(selected_slots)
+     order by pg_catalog.random() limit 1;
+     if chosen_slot is null then
+       raise exception 'omerta_santoro_rank_unavailable';end if;
+   elsif fixed_slot is not null then
      select e.value,(e.value->>'slot')::int into entry,chosen_slot
      from pg_catalog.jsonb_array_elements(m->'private_cards') e(value)
      where (e.value->>'slot')::int=fixed_slot
