@@ -15,8 +15,7 @@ begin
  select coalesce(jsonb_agg(jsonb_build_object('id',n.id,'suspect_id',n.suspect_id,
   'kind',n.kind,'text',n.content,'author',coalesce(author.pseudo,'Enquête'),'created_at',n.created_at) order by n.id),'[]'::jsonb)
  from public.igr_v87_investigator_notes n left join public.igr_v4_players author on author.id=n.author_id and author.room_code=n.room_code where n.room_code=actor.room_code));
-end$function$
-
+end$function$;
 
 CREATE OR REPLACE FUNCTION public.igr_v87_add_dossier_note(p_code text, p_player_token uuid, p_suspect_id uuid, p_kind text, p_text text)
  RETURNS jsonb
@@ -42,8 +41,7 @@ begin
  insert into public.igr_v87_investigator_notes(room_code,author_id,suspect_id,kind,content)
  values(actor.room_code,actor.id,p_suspect_id,p_kind,clean_text) returning id into note_id;
  return jsonb_build_object('ok',true,'id',note_id);
-end$function$
-
+end$function$;
 
 CREATE OR REPLACE FUNCTION public.igr_v13_start_event(p_code text, p_player_token uuid, p_event text, p_targets uuid[] DEFAULT NULL::uuid[])
  RETURNS jsonb
@@ -170,5 +168,4 @@ begin
   end if;
   return jsonb_build_object('ok',true);
 end
-$function$
-
+$function$;
