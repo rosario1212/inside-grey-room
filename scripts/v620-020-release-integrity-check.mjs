@@ -12,7 +12,7 @@ const inspector=read('supabase/migrations/20261026001034_igr_v620_020_inspector_
 const expert=read('supabase/migrations/20261026001032_igr_v620_020_expert_analyze.sql');
 const build=read('.github/workflows/cloudflare-build-check.yml');
 const deploy=read('.github/workflows/cloudflare-production-deploy.yml');
-const v='v631-espion-mission-corrections';
+const v='v633-omerta-santoro-private-cards';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+v),'020 HTML cache stale');
 assert(sw.includes("const CACHE='igr-"+v+"'"),'020 SW cache mismatch');
