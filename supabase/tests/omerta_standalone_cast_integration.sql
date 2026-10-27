@@ -1,0 +1,93 @@
+-- Intégration de l'attribution des rôles sur PostgreSQL 16 éphémère.
+-- Les secrets synthétiques ci-dessous NE SONT PAS le canon de production.
+do $qa$
+declare
+ c text:='CAST021';
+ investigator public.igr_v4_players%rowtype;
+ source_player public.igr_v4_players%rowtype;
+ before_slots jsonb;
+ after_slots jsonb;
+ dossier jsonb;
+ intro jsonb;
+ assigned integer;
+ blocked boolean;
+ i int;
+begin
+ -- Compléter le modèle factice 021 avec 7 rôles adaptés à une salle à 8.
+ update igr_private.igr_v99_variant_manuscripts
+ set manuscript=jsonb_set(manuscript,'{private_cards}',
+   coalesce(manuscript->'private_cards','[]'::jsonb)
+   || (
+     select jsonb_agg(jsonb_build_object('slot',slot,
+       'identity','Synthetic role '||slot,
+       'objective','Private goal '||slot,
+       'what_you_know','Private clue '||slot,
+       'what_you_hide','Private secret '||slot,
+       'your_chronology','Synthetic chronology '||slot,
+       'conversation_hooks',jsonb_build_array('Talk if you wish')) order by slot)
+     from generate_series(4,7) slot
+   ),true)
+ where scenario_id='021';
+ if igr_private.igr_omerta_structural_preflight('021') is not true
+ then raise exception '7-role structural preflight failed'; end if;
+
+ insert into public.igr_v4_rooms(code,scenario_id,status,cycle,phase,state)
+ values(c,'021','lobby',0,'briefing','{"match_no":1}'::jsonb);
+ if igr_private.igr_omerta_pin_standalone_room_variant(c) not in ('A','B','C')
+ then raise exception 'scenario 021 independent pin unavailable'; end if;
+ insert into public.igr_v4_players(room_code,pseudo,seat_index,public_role,secret_role)
+ values(c,'Investigator',1,'enqueteur','enqueteur') returning * into investigator;
+ for i in 2..8 loop
+   insert into public.igr_v4_players(
+      room_code,pseudo,seat_index,public_role,secret_role)
+   values(c,'Mafia '||i,i,'suspect','associato');
+ end loop;
+ update public.igr_v4_rooms set status='playing',phase='briefing',cycle=0 where code=c;
+ assigned:=igr_private.igr_omerta_cast_standalone_room(c);
+ if assigned<>7 then raise exception '8-player cast failed: %',assigned; end if;
+ if (select count(distinct internal_slot) from public.igr_v4_players
+      where room_code=c and public_role='suspect')<>7
+ then raise exception 'duplicate mafia identity'; end if;
+ if exists(select 1 from public.igr_v4_players where room_code=c
+      and public_role='suspect' and
+      private_state->>'objective' is null)
+ then raise exception 'role has no personal goal';end if;
+
+ select jsonb_object_agg(p.id::text,p.internal_slot) into before_slots
+ from public.igr_v4_players p
+ where p.room_code=c and p.public_role='suspect';
+ if igr_private.igr_omerta_cast_standalone_room(c)<>7
+ then raise exception 'second cast changed room';end if;
+ select jsonb_object_agg(p.id::text,p.internal_slot) into after_slots
+ from public.igr_v4_players p
+ where p.room_code=c and p.public_role='suspect';
+ if before_slots is distinct from after_slots
+ then raise exception 'cast not stable after reconnect';end if;
+
+ select * into source_player from public.igr_v4_players
+ where room_code=c and public_role='suspect' order by seat_index limit 1;
+ dossier:=public.igr_omerta_my_private_dossier(c,source_player.player_token);
+ if dossier->>'available'<>'false'
+ then raise exception 'private dossier accessible during briefing';end if;
+ update public.igr_v4_rooms set phase='interrogation',cycle=1 where code=c;
+ dossier:=public.igr_omerta_my_private_dossier(c,source_player.player_token);
+ if dossier->'card'->>'objective' is null
+ then raise exception 'assigned role not visible to its owner';end if;
+ if dossier::text like '%SECRET: do not send to players%'
+ then raise exception 'final reveal leaked into private dossier';end if;
+ intro:=public.igr_omerta_public_briefing(c,investigator.player_token);
+ if intro->>'text'<>'Synthetic public case introduction'
+ then raise exception 'public briefing missing';end if;
+ if intro::text like '%SECRET: do not send to players%'
+ then raise exception 'final reveal leaked into public briefing';end if;
+
+ blocked:=false;
+ begin perform igr_private.igr_omerta_cast_standalone_room(c);
+ exception when others then blocked:=true;end;
+ if not blocked then raise exception 'cast allowed after briefing'; end if;
+ if has_function_privilege('anon','igr_private.igr_omerta_cast_standalone_room(text)','EXECUTE')
+ then raise exception 'public privilege to cast roles';end if;
+ if has_table_privilege('anon','igr_private.igr_omerta_room_cast_slots','SELECT')
+ then raise exception 'role mapping leaked to anon';end if;
+end $qa$;
+select 'PRIVATE_ROLE_CAST_8_PLAYERS_PASS' as outcome;
