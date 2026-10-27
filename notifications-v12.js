@@ -292,7 +292,9 @@
   if(typeof originalOpenSettings==='function')window.openSettings=function(...args){const out=originalOpenSettings.apply(this,args);setTimeout(augmentSettings,0);return out};
 
   nativePlugin();
+  // Scan for new events sparingly; visible content still becomes read without waiting for network polling.
   state.timer=setInterval(scan,1400);
+  setInterval(trackVisible,450);
   window.addEventListener('online',()=>setTimeout(scan,100));
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(scan,60)});
   setTimeout(scan,120);
