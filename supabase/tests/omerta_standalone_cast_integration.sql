@@ -9,13 +9,14 @@ declare
  after_slots jsonb;
  dossier jsonb;
  intro jsonb;
+ closure jsonb;
  assigned integer;
  blocked boolean;
  i int;
 begin
  -- Compléter le modèle factice 021 avec 7 rôles adaptés à une salle à 8.
  update igr_private.igr_v99_variant_manuscripts
- set manuscript=jsonb_set(manuscript,'{private_cards}',
+ set manuscript=jsonb_set(jsonb_set(manuscript,'{private_cards}',
    coalesce(manuscript->'private_cards','[]'::jsonb)
    || (
      select jsonb_agg(jsonb_build_object('slot',slot,
@@ -26,7 +27,8 @@ begin
        'your_chronology','Synthetic chronology '||slot,
        'conversation_hooks',jsonb_build_array('Talk if you wish')) order by slot)
      from generate_series(4,7) slot
-   ),true)
+   ),true),'{canonical_truth,responsibility_by_slot}',
+    '{"1":0,"2":1,"3":2,"4":0,"5":1,"6":2,"7":1}'::jsonb,true)
  where scenario_id='021';
  if igr_private.igr_omerta_structural_preflight('021') is not true
  then raise exception '7-role structural preflight failed'; end if;
@@ -80,6 +82,29 @@ begin
  then raise exception 'public briefing missing';end if;
  if intro::text like '%SECRET: do not send to players%'
  then raise exception 'final reveal leaked into public briefing';end if;
+
+ closure:=public.igr_omerta_standalone_closure(c,investigator.player_token);
+ if closure->>'available'<>'false'
+ then raise exception 'closure revealed before official end';end if;
+ update public.igr_v4_rooms set status='finished',phase='finished' where code=c;
+ closure:=public.igr_omerta_standalone_closure(c,investigator.player_token);
+ if closure->>'available'<>'true'
+   or closure->>'story'<>'SECRET: do not send to players'
+   or jsonb_array_length(closure->'characters')<>7
+ then raise exception 'post-game authored closure or cast responsibility missing';end if;
+ if exists(
+   select 1 from jsonb_array_elements(closure->'characters') k
+   where coalesce((k->>'editorial_involvement_level')::int,-1) not between 0 and 2
+ ) then raise exception 'invalid editorial involvement level';end if;
+ blocked:=false;
+ begin perform public.igr_omerta_standalone_closure(c,gen_random_uuid());
+ exception when others then blocked:=true;end;
+ if not blocked then raise exception 'stranger accessed final storyline'; end if;
+ -- A rematch with no new approved snapshot must not inherit this ending.
+ update public.igr_v4_rooms set state='{"match_no":2}'::jsonb where code=c;
+ closure:=public.igr_omerta_standalone_closure(c,investigator.player_token);
+ if closure->>'available'<>'false'
+ then raise exception 'previous match ending leaked into rematch';end if;
 
  blocked:=false;
  begin perform igr_private.igr_omerta_cast_standalone_room(c);
