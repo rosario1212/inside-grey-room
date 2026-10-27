@@ -20,7 +20,7 @@ assert.match(recruit,/igr_omerta_indic_respond/);
 assert.match(recruit,/igr_omerta_indic_protect/);
 assert.match(recruit,/omerta_protection_granted/);
 assert.match(recruit,/basis','indic_pact/);
-assert.match(intel,/r\\.scenario_id not in \\('021','022','023','024','025'\\)/);
+assert.ok(intel.includes("r.scenario_id not in ('021','022','023','024','025')"));
 assert.match(score,/indic_personal_ok:=protected or reduction>=3/);
 assert.match(ui,/Protéger mon Indic/);
 assert.match(intel,/total_cards',3/);
