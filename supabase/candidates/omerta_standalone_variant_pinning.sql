@@ -759,7 +759,9 @@ begin
  raw:=jsonb_set(raw,'{room,state}',st,true);
  raw:=jsonb_set(raw,'{scenario}',jsonb_build_object(
    'context',m->>'public_briefing',
-   'truth',null,
+   -- La conclusion est invisible avant fermeture officielle mais le
+   -- moteur d'affichage hérité doit pouvoir l'afficher une fois terminé.
+   'truth',case when room.status='finished' then m->'final_reveal' else null end,
    'protected','[]'::jsonb,
    'field_actions','[]'::jsonb,
    'expert_actions','[]'::jsonb,
