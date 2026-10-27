@@ -92,6 +92,31 @@ begin
     raise exception 'arbitrary personal victory in % (actual %)',sc,personal;
   end if;
  end loop;
+
+ -- Une variante Santoro ne doit JAMAIS consommer les cartes de Verri,
+ -- même si elle se trouve par hasard sous le même numéro de scénario.
+ update public.igr_v4_rooms set state='{"match_no":1,"omerta_standalone":true}'
+ where code='TEST021';
+ select * into i from public.igr_v4_players
+ where room_code='TEST021' and public_role='enqueteur' limit 1;
+ select * into s from public.igr_v4_players
+ where room_code='TEST021' and public_role='suspect' limit 1;
+ cards:=public.igr_omerta_money_intel_options('TEST021',s.player_token);
+ if cards->>'available'<>'false' then
+   raise exception 'historical Verri intel leaked in standalone variant';end if;
+ refused:=false;
+ begin perform public.igr_omerta_indic_offer('TEST021',i.player_token,s.id);
+ exception when others then refused:=true;end;
+ if not refused then raise exception 'standalone unverified indic pact admitted';end if;
+ refused:=false;
+ begin perform public.igr_omerta_money_intel_send('TEST021',s.player_token,'021_money_route');
+ exception when others then refused:=true;end;
+ if not refused then raise exception 'old intel scored in standalone variant';end if;
+ refused:=false;
+ begin perform public.igr_omerta_make_reveal('TEST021');
+ exception when others then refused:=true;end;
+ if not refused then raise exception 'historic Verri verdict accepted for Santoro';end if;
+
  if has_function_privilege('anon','public.igr_omerta_make_reveal(text)','EXECUTE')
  then raise exception 'privileged reveal callable anonymously'; end if;
 end $test$;
