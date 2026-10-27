@@ -9,6 +9,9 @@ declare
  after_slots jsonb;
  dossier jsonb;
  intro jsonb;
+ start_result jsonb;
+ host uuid;
+ started_count int;
  closure jsonb;
  assigned integer;
  blocked boolean;
@@ -114,5 +117,62 @@ begin
  then raise exception 'public privilege to cast roles';end if;
  if has_table_privilege('anon','igr_private.igr_omerta_room_cast_slots','SELECT')
  then raise exception 'role mapping leaked to anon';end if;
+
+ -- Host-only opt-in release path: preserves legacy room, rejects unapproved
+ -- variants, and replaces any old public context inside the same transaction.
+ insert into public.igr_v4_rooms(code,scenario_id,status,cycle,phase,state)
+ values('START022','022','lobby',0,'briefing','{"match_no":1}'::jsonb)
+ returning host_token into host;
+ for i in 1..4 loop
+   insert into public.igr_v4_players(
+     room_code,pseudo,seat_index,public_role,secret_role)
+   values('START022','Player '||i,i,
+      case when i=1 then 'enqueteur' else 'suspect' end,
+      case when i=1 then 'enqueteur' else 'associato' end);
+ end loop;
+ blocked:=false;
+ begin perform public.igr_omerta_start_standalone('START022',host);
+ exception when others then blocked:=true;end;
+ if not blocked then raise exception 'unreviewed chapter launch succeeded';end if;
+ if (select status from public.igr_v4_rooms where code='START022')<>'lobby'
+    or exists(select 1 from igr_private.igr_omerta_room_variant_snapshots
+              where room_code='START022')
+ then raise exception 'blocked start mutated lobby';end if;
+
+ insert into public.igr_v4_rooms(code,scenario_id,status,cycle,phase,state)
+ values('START021','021','lobby',0,'briefing','{"match_no":1}'::jsonb)
+ returning host_token into host;
+ for i in 1..4 loop
+   insert into public.igr_v4_players(
+     room_code,pseudo,seat_index,public_role,secret_role)
+   values('START021','Player '||i,i,
+      case when i=1 then 'enqueteur' else 'suspect' end,
+      case when i=1 then 'enqueteur' else 'associato' end);
+ end loop;
+ blocked:=false;
+ begin perform public.igr_omerta_start_standalone('START021',gen_random_uuid());
+ exception when others then blocked:=true;end;
+ if not blocked then raise exception 'non-host started standalone case';end if;
+ if (select status from public.igr_v4_rooms where code='START021')<>'lobby'
+ then raise exception 'unauthorized call changed lobby';end if;
+
+ start_result:=public.igr_omerta_start_standalone('START021',host);
+ if start_result->>'ok'<>'true' or start_result->>'standalone'<>'true'
+    or start_result ? 'variant_id' or start_result ? 'manuscript'
+ then raise exception 'standalone host response failed or leaked its branch';end if;
+ if (select status from public.igr_v4_rooms where code='START021')<>'playing'
+    or (select state->>'omerta_standalone'
+        from public.igr_v4_rooms where code='START021')<>'true'
+ then raise exception 'room not safely started';end if;
+ select count(*) into started_count
+ from igr_private.igr_omerta_room_cast_slots where room_code='START021';
+ if started_count<>3 then raise exception 'standalone room cast was not wired';end if;
+ if exists(select 1 from public.igr_v4_events where room_code='START021'
+    and event_type='context' and payload::text like '%LEGACY STORY%')
+    or not exists(select 1 from public.igr_v4_events where room_code='START021'
+    and event_type='context' and payload->>'text'='Synthetic public case introduction')
+ then raise exception 'legacy context leaked into standalone room';end if;
+ if has_function_privilege('public','public.igr_omerta_start_standalone(text,uuid)','EXECUTE')
+ then raise exception 'PUBLIC access grant retained on standalone host starter';end if;
 end $qa$;
 select 'PRIVATE_ROLE_CAST_8_PLAYERS_PASS' as outcome;
