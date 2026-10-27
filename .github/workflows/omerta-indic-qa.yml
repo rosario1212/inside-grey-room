@@ -11,6 +11,7 @@ on:
       - 'supabase/migrations/20261026*omerta*.sql'
       - 'supabase/migrations/20261027*omerta*.sql'
       - 'supabase/candidates/omerta_standalone_variant_pinning.sql'
+      - 'supabase/candidates/omerta_core_sync_seal.sql'
       - 'supabase/tests/omerta_*.sql'
       - 'supabase/tests/omerta_vnext_*.sql'
       - 'scripts/build-web.mjs'
@@ -67,5 +68,6 @@ jobs:
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_vnext_local_integration.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_variant_harness.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/candidates/omerta_standalone_variant_pinning.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/candidates/omerta_core_sync_seal.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_variant_integration.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_cast_integration.sql
