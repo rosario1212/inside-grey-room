@@ -50,16 +50,17 @@ try{
   assert.equal(await page.locator('#igr634-evidence').count(),1);
   assert.equal(await page.locator('#igr634-notebook').count(),1);
   const order=await page.evaluate(()=>[...document.querySelector('.igr634-workspace').children].map(x=>x.id).filter(Boolean));
-  assert.deepEqual(order,['igr634-interviews','igr634-actions','igr634-evidence','igr634-notebook'],'Interviews must be first');
+  assert.deepEqual(order,['igr634-interviews','igr634-actions','igr634-evidence','igr634-notebook'],'Interviews must be first after the contextual priority block');
+  assert.equal(await page.locator('.igr634-quicknav').count(),0,'No duplicate four-button quick navigation');
+  assert.equal(await page.locator('.igr634-priority').count(),1,'Supplemental investigation must be clearly visible');
+  assert(await page.getByRole('button',{name:'Examiner'}).isVisible(),'Supplemental investigation is actionable without expansion');
   await page.getByRole('button',{name:'Interroger A'}).click();
   assert.equal(await page.evaluate(()=>window.clicks.interview),1,'Original callback must survive DOM regrouping');
-  await page.locator('#igr634-evidence > summary').click();
-  assert(await page.getByText('Indice canonique').isVisible(),'Evidence must be revealable without losing data');
+  assert(await page.getByText('Indice canonique').isVisible(),'Evidence must be immediately visible without expansion');
   await page.locator('#igr634-notebook > summary').click();
   assert(await page.locator('#privateNotesV32').isVisible(),'Local scratchpad preserved');
   assert.equal(await page.locator('#privateNotesV32').inputValue(),'déjà sauvegardé');
-  await page.locator('#privateNotesV32').fill('Nouvelle hypothèse');
-  assert.equal(await page.evaluate(()=>window.clicks.notes),1,'Original local save callback preserved');
+  assert.equal(await page.locator('#privateNotesV32').count(),0,'Duplicate local scratchpad must not be present');
   if(role==='enqueteur'){
    assert.equal(await page.locator('.igr87-note-form').count(),1,'Server notebook note form preserved');
    await page.screenshot({path:path.join(report,'investigation-v634-iphone.png'),fullPage:true});
@@ -67,5 +68,5 @@ try{
   const width=await page.evaluate(()=>document.documentElement.scrollWidth);
   assert(width<=390+1,'Investigation workspace must not overflow on iPhone');
  }
- console.log('PASS browser investigation workspace: interviews first, original actions, evidence, server notes and local Notes are usable.');
+ console.log('PASS browser investigation workspace: interventions visible, evidence opened, team notebook, no duplicated private notes.');
 }finally{await browser.close()}
