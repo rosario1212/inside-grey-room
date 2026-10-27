@@ -17,8 +17,7 @@ if(sw){
  assert(sw.includes('/investigation-workspace-v634.js?v=v634-investigation-workspace'));
  assert(sw.includes('/investigation-workspace-v634.css?v=v634-investigation-workspace'));
 }
-for(const key of ['igr634-interviews','igr634-actions','igr634-evidence','igr634-notebook','igr87-note-form','renderNotesTabV32','data-igr634-group','INTERVIEW_PHASES','igr87-dossier','privateNotesV32']){
- if(key==='INTERVIEW_PHASES')continue;
+for(const key of ['igr634-interviews',"makeGroup('actions'","makeGroup('evidence'","makeGroup('notebook'",'igr87-note-form','renderNotesTabV32','data-igr634-group','igr87-dossier','privateNotesV32']){
  assert(js.includes(key)||css.includes(key),'Missing essential UX component: '+key);
 }
 let tests=0;
