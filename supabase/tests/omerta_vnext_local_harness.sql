@@ -1,6 +1,8 @@
 -- Banc de test PostgreSQL local, destiné UNIQUEMENT au service postgres CI.
 -- Schéma minimal de compatibilité, sans importer aucune donnée de production.
 create extension if not exists pgcrypto;
+create role anon nologin;
+create role authenticated nologin;
 create schema if not exists igr_private;
 create table public.igr_v4_rooms(
  code text primary key,scenario_id text,status text,cycle int,phase text,
