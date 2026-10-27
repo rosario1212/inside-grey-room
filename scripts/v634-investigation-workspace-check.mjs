@@ -7,18 +7,18 @@ const target=path.resolve(process.argv[2]||'dist');
 const fetch=async x=>readFile(path.join(target,x),'utf8');
 const html=await fetch('index.html'),js=await fetch('investigation-workspace-v634.js'),css=await fetch('investigation-workspace-v634.css');
 const sw=await fetch('service-worker.js').catch(e=>e.code==='ENOENT'?null:Promise.reject(e));
-assert(html.includes('investigation-workspace-v634.js?v=v634-investigation-workspace'));
-assert(html.includes('investigation-workspace-v634.css?v=v634-investigation-workspace'));
+assert(html.includes('investigation-workspace-v634.js?v=v636-team-investigation'));
+assert(html.includes('investigation-workspace-v634.css?v=v636-team-investigation'));
 assert(html.lastIndexOf('investigation-workspace-v634.js')>html.lastIndexOf('common-dossier-v106.js'));
 assert(html.lastIndexOf('investigation-workspace-v634.js')>html.lastIndexOf('live-game-ux-v632.js'));
 assert(html.lastIndexOf('investigation-workspace-v634.css')>html.lastIndexOf('live-game-ux-v632.css'));
 if(sw){
- assert(sw.includes("const CACHE='igr-v635-reading-stability';"),'Latest ergonomic bundle must invalidate old reading cache');
+ assert(sw.includes("const CACHE='igr-v636-team-investigation';"),'Latest ergonomic bundle must invalidate old PWA cache');
  assert(sw.includes('/reading-stability-v635.css?v=v635-reading-stability'),'Reading CSS must be precached');
- assert(sw.includes('/investigation-workspace-v634.js?v=v634-investigation-workspace'));
- assert(sw.includes('/investigation-workspace-v634.css?v=v634-investigation-workspace'));
+ assert(sw.includes('/investigation-workspace-v634.js?v=v636-team-investigation'));
+ assert(sw.includes('/investigation-workspace-v634.css?v=v636-team-investigation'));
 }
-for(const key of ['igr634-interviews',"makeGroup('actions'","makeGroup('evidence'","makeGroup('notebook'",'igr87-note-form','renderNotesTabV32','data-igr634-group','igr87-dossier','privateNotesV32']){
+for(const key of ['igr634-interviews',"makeGroup('actions'","makeGroup('evidence'","makeGroup('notebook'",'igr87-note-form','igr634-priority','data-igr634-group','igr87-dossier','igr634-channel-help']){
  assert(js.includes(key)||css.includes(key),'Missing essential UX component: '+key);
 }
 let tests=0;
@@ -43,4 +43,4 @@ for(let id=1;id<=49;id++){
   tests++;
  }
 }
-console.log('PASS investigation workspace: '+tests+' scenario-role combinations; notes remain available, no scenario RPC modified.');
+console.log('PASS investigation workspace: '+tests+' scenario-role combinations; investigator notes unified and private tabs retained for other roles.');
