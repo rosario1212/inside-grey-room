@@ -36,6 +36,20 @@ begin
  if igr_private.igr_omerta_structural_preflight('021') is not true
  then raise exception '7-role structural preflight failed'; end if;
 
+ -- L'ancien univers Verri ne peut jamais être livré sous le label Santoro,
+ -- même si un éditeur avait marqué son manuscrit comme prêt.
+ update igr_private.igr_v99_variant_manuscripts
+ set manuscript=jsonb_set(manuscript,'{saga,family}','"VERRI"'::jsonb,true)
+ where scenario_id='021' and variant_id='A';
+ if igr_private.igr_omerta_structural_preflight('021') is not false
+ then raise exception 'old mafia canon falsely eligible for Santoro';end if;
+ update igr_private.igr_v99_variant_manuscripts
+ set manuscript=jsonb_set(manuscript,'{saga,family}','"SANTORO"'::jsonb,true)
+ where scenario_id='021' and variant_id='A';
+ if igr_private.igr_omerta_structural_preflight('021') is not true
+ then raise exception 'valid Santoro canon not restored';end if;
+
+
  insert into public.igr_v4_rooms(code,scenario_id,status,cycle,phase,state)
  values(c,'021','lobby',0,'briefing','{"match_no":1}'::jsonb);
  if igr_private.igr_omerta_pin_standalone_room_variant(c) not in ('A','B','C')
