@@ -32,7 +32,7 @@ Les trois sujets restent propres au suspect recruté ; ils ne doivent pas révé
 
 1. La base active conserve le canon historique **Verri**, alors que la version souhaitée est **Santoro**. Les cinq scénarios doivent être cohérents avant remplacement.
 2. Les quinze variantes privées A/B/C sont en état `review`, non approuvées, sans chaînes de recoupement du cycle III validées. Le verrou serveur `release_eligible=false` est correct et ne doit pas être contourné.
-3. Le mécanisme actuel `truth_verified` n'est vrai que pour certaines cartes du **021** ; **022–025 ne peuvent donc pas encore valider leur deuxième condition via une carte**. Ne pas activer ce gameplay tant que l'indexation canonique par scénario et variante n'est pas complète.
+3. Le correctif de prépublication identifie maintenant un renseignement admissible par personnage recruté dans les **cinq dossiers historiques 021–025**. Trois profils du 024 ne peuvent pas accepter un pacte irréalisable. Cette correction ne certifie **pas** les variantes privées A/B/C : leurs indices doivent être validés et intégrés séparément.
 4. Les anciens RPC de révélations par niveau peuvent attribuer de la coopération séparément. Ils doivent être raccordés/neutralisés pour le seul parcours d'Indic sans casser les autres rôles.
 5. Tester sur une base Supabase de développement, avec adversaires, doubles clics, rematch, reconnexion, droits privés, rôles et toutes les phases ; exécuter les builds web/mobile et une partie réelle. Pas de migration de production avant validation.
 
