@@ -1,0 +1,45 @@
+// OMERTÀ - garde-fous de cohérence à exécuter AVANT toute publication.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const get=p=>fs.readFileSync(p,'utf8');
+const review=get('supabase/migrations/20261027004000_omerta_indic_final_review.sql');
+const score=get('supabase/migrations/20261027004500_omerta_indic_reveal_scoring.sql');
+const recruit=get('supabase/migrations/20261026233000_omerta_indic_recruitment_021.sql');
+const intel=get('supabase/migrations/20261026233500_omerta_money_intel_021.sql');
+const ui=get('omerta-money-intel-v1.js');
+const html=get('index.html'),build=get('scripts/build-web.mjs'),sw=get('service-worker.js');
+new vm.Script(ui);
+new vm.Script(sw);
+for (const asset of ['omerta-money-intel-v1.js','omerta-money-intel-v1.css']){
+ assert.ok(html.includes(asset),'index missing '+asset);
+ assert.ok(build.includes("'"+asset+"'"),'web missing '+asset);
+ assert.ok(sw.includes("/"+asset+"?"),'cache missing '+asset);
+}
+assert.ok(recruit.includes('igr_omerta_indic_offer'));
+assert.ok(recruit.includes('igr_omerta_indic_respond'));
+assert.ok(recruit.includes('igr_omerta_indic_protect'));
+assert.ok(recruit.includes('omerta_protection_granted'));
+assert.ok(intel.includes("r.scenario_id not in ('021','022','023','024','025')"));
+assert.ok(intel.includes("'total_cards',3"));
+assert.ok(intel.includes("'counts_for_cooperation',false"));
+assert.ok(intel.includes("one_intel_per_cycle"));
+assert.ok(intel.includes("omerta_verified_intel"));
+assert.ok(review.includes("igr_omerta_indic_assess"));
+assert.ok(review.includes("p_useful boolean"));
+assert.ok(review.includes("public_role='enqueteur'"));
+assert.ok(review.includes("a.action_type='final_lock'"));
+assert.ok(review.includes("assessment_already_submitted"));
+assert.ok(score.includes("indic_second_ok:=indic_vote_yes or indic_by_card;"));
+assert.ok(score.includes("indic_personal_ok:=protected or reduction>=3;"));
+assert.ok(score.includes("indic_personal_ok and indic_second_ok and not dead"));
+assert.ok(score.includes("second_via_investigator_yes"));
+assert.ok(score.includes("second_via_confirmed_card"));
+assert.ok(ui.includes('As-tu partagé une information ?'));
+assert.ok(ui.includes('showFinalReview'));
+assert.ok(ui.includes('Oui, cette source m’a été utile'));
+assert.ok(ui.includes('Non, elle ne m’a pas été utile'));
+assert.ok(ui.includes("igr_omerta_indic_assess"));
+assert.ok(ui.includes('Protéger mon Indic'));
+assert.ok(fs.existsSync('supabase/tests/omerta_vnext_runtime_rollback.sql'));
+console.log('OMERTÀ : consentement, cycle, négociation orale, vote final Oui, coopération et survie PASS');

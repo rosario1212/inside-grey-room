@@ -1,0 +1,34 @@
+/* OMERTÀ 021 · pacte privé et renseignements, usage oral prioritaire */
+.igr-money-intel-entry,.igr-indic-offer-button,.igr-indic-accept-button,.igr-indic-reject-button{
+ margin-top:8px;white-space:normal;text-align:center
+}
+.igr-money-intel-panel{max-width:540px;max-height:85vh;overflow:auto}
+.igr-money-intel-card{margin:12px 0}
+.igr-money-intel-item{
+ border:1px solid rgba(188,163,118,.4);
+ background:rgba(24,20,15,.3);border-radius:12px;
+ margin-bottom:10px;padding:14px
+}
+.igr-money-intel-item h3{font-size:1rem;margin:0 0 6px}
+.igr-money-intel-item p{font-size:.91rem;line-height:1.45;margin:0 0 8px}
+.igr-money-intel-item small{display:block;margin-bottom:8px;opacity:.77}
+.igr-money-intel-actions,.igr-money-intel-panel .modal-actions{
+ display:flex;flex-wrap:wrap;gap:8px
+}
+.igr-money-intel-actions button{flex:1;min-width:150px;white-space:normal}
+.igr-money-intel-note{font-size:.85rem;opacity:.8}
+.igr-money-intel-select{width:100%;margin:8px 0 10px}
+.igr-money-intel-error{color:#edb3a7;margin-top:10px!important}
+@media(max-width:450px){
+ .igr-money-intel-actions{flex-direction:column}
+ .igr-money-intel-actions button{width:100%}
+}
+
+.igr-indic-final-review{border:1px solid rgba(188,163,118,.5);padding:14px;border-radius:12px;margin:14px 0;background:rgba(26,20,13,.28)}
+.igr-indic-final-review strong{display:block;margin-bottom:7px}
+.igr-indic-final-review p{font-size:.9rem;line-height:1.5;margin:4px 0 12px}
+.igr-indic-final-review .btn{width:100%;white-space:normal}
+
+.igr-indic-knowledge-detail{margin:6px 0 10px}
+.igr-indic-knowledge-detail summary{cursor:pointer;opacity:.76;font-size:.88rem}
+.igr-indic-knowledge-detail p{margin:7px 0 0!important}

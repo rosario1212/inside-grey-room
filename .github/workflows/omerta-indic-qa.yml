@@ -1,0 +1,31 @@
+name: Omerta Informant QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'omerta-money-intel-v1.js'
+      - 'omerta-money-intel-v1.css'
+      - 'scripts/omerta-*.mjs'
+      - 'supabase/migrations/20261026*omerta*.sql'
+      - 'supabase/migrations/20261027*omerta*.sql'
+      - 'scripts/build-web.mjs'
+      - 'service-worker.js'
+      - 'index.html'
+      - '.github/workflows/omerta-indic-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  omerta-indic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source dossier JavaScript and controls
+        run: |
+          node --check omerta-money-intel-v1.js
+          node scripts/omerta-money-intel-021-check.mjs
+          node scripts/omerta-indic-final-rule-check.mjs
