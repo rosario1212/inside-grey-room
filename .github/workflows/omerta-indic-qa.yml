@@ -76,3 +76,5 @@ jobs:
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_variant_integration.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_cast_integration.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_santoro_private_drafts_preflight.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/candidates/omerta_standalone_goal_score.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_goal_score_integration.sql
