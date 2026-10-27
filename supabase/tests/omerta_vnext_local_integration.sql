@@ -95,8 +95,8 @@ begin
 
  -- Une variante Santoro ne doit JAMAIS consommer les cartes de Verri,
  -- même si elle se trouve par hasard sous le même numéro de scénario.
- update public.igr_v4_rooms set state='{"match_no":1,"omerta_standalone":true}'
- where code='TEST021';
+ update public.igr_v4_rooms room set state='{"match_no":1,"omerta_standalone":true}'
+ where room.code='TEST021';
  select * into i from public.igr_v4_players
  where room_code='TEST021' and public_role='enqueteur' limit 1;
  select * into s from public.igr_v4_players
