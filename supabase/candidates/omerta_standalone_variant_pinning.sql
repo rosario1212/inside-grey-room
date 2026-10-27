@@ -417,3 +417,39 @@ revoke all on function public.igr_omerta_public_briefing(text,uuid)
  from public,anon,authenticated;
 grant execute on function public.igr_omerta_public_briefing(text,uuid)
  to anon,authenticated;
+
+-- Hook de transition C2 -> C3. Aucun RPC joueur ni appel de frontend requis.
+-- Quand il n'y a PAS de snapshot Santoro, le trigger est un no-op strict :
+-- aucune incidence sur les anciennes parties OMERTÀ et les autres DLC.
+create or replace function igr_private.igr_omerta_c3_on_cycle_transition()
+returns trigger
+language plpgsql security definer set search_path=''
+as $cycle$
+declare
+ current_match integer;
+begin
+ if new.scenario_id not in ('021','022','023','024','025')
+    or new.status<>'playing' or new.cycle<>3
+    or old.cycle is not distinct from new.cycle then
+   return new;
+ end if;
+ current_match:=greatest(1,coalesce((new.state->>'match_no')::int,1));
+ if exists(
+   select 1 from igr_private.igr_omerta_room_variant_snapshots s
+   where s.room_code=new.code and s.match_no=current_match
+     and s.scenario_id=new.scenario_id
+ ) then
+   perform igr_private.igr_omerta_emit_c3_crosschecks(new.code);
+ end if;
+ return new;
+end;
+$cycle$;
+revoke all on function igr_private.igr_omerta_c3_on_cycle_transition()
+ from public,anon,authenticated;
+drop trigger if exists igr_omerta_standalone_c3_auto on public.igr_v4_rooms;
+create trigger igr_omerta_standalone_c3_auto
+after update of cycle on public.igr_v4_rooms
+for each row
+when (new.cycle=3 and old.cycle is distinct from new.cycle)
+execute function igr_private.igr_omerta_c3_on_cycle_transition();
+
