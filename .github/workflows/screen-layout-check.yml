@@ -54,6 +54,8 @@ jobs:
         run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright@1.62.1
       - name: Install test browser
         run: npx playwright install --with-deps chromium
+      - name: Verify reorganized investigation workspace in Chromium
+        run: node scripts/v634-investigation-browser-check.mjs
       - name: Verify screen layouts
         env:
           IGR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
