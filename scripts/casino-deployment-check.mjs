@@ -68,15 +68,24 @@ assert(terminationSource.includes('igr_v170_end_representation'),'Mutual termina
 assert(terminationSource.includes('p_acknowledge_cartel'),'Cartel consequence confirmation missing');
 for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
 assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
-const cartelWorker=await get('/service-worker.js?v='+cacheVersion);
-assert.equal(cartelWorker.status,200);
-assert((await cartelWorker.text()).includes("const CACHE='igr-"+cacheVersion+"';"),'Deployed cache version must match the latest mobile UX release');
-const workspaceCss=await get('/investigation-workspace-v634.css?v='+cacheVersion);
-assert.equal(workspaceCss.status,200);
-assert((await workspaceCss.text()).includes('igr634-interviews'),'Investigation workspace CSS missing');
-const workspaceJs=await get('/investigation-workspace-v634.js?v='+cacheVersion);
-assert.equal(workspaceJs.status,200);
-assert((await workspaceJs.text()).includes('renderNotesTabV32'),'Integrated notes workspace missing');
+// Cloudflare's Worker is atomically published, but individual edge assets may
+// briefly resolve through the previous release. Require matching files, not a
+// transient first-response success or a permanently stale service worker.
+const assertDeployedAsset=async (name,marker)=>{
+  let content='',status=0;
+  for(let attempt=0;attempt<(expected?15:1);attempt++){
+    const url='/'+name+'?v='+cacheVersion+'&commit='+encodeURIComponent(expected)+'&probe='+attempt;
+    const response=await get(url);status=response.status;
+    content=status===200?await response.text():'';
+    if(status===200&&content.includes(marker))return;
+    if(attempt<14)await new Promise(resolve=>setTimeout(resolve,2200));
+  }
+  assert.equal(status,200,'Deployed asset unavailable: '+name);
+  assert(content.includes(marker),'Deployed asset has not propagated: '+name+' ('+cacheVersion+')');
+};
+await assertDeployedAsset('service-worker.js',"const CACHE='igr-"+cacheVersion+"';");
+await assertDeployedAsset('investigation-workspace-v634.css','igr634-interviews');
+await assertDeployedAsset('investigation-workspace-v634.js','renderNotesTabV32');
 const liveUxStyle=await get('/live-game-ux-v632.css?v='+cacheVersion);
 assert.equal(liveUxStyle.status,200);
 assert((await liveUxStyle.text()).includes('safe-area-inset-top'),'Live iPhone layout patch missing from production');
