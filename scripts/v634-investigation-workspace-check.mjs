@@ -13,7 +13,8 @@ assert(html.lastIndexOf('investigation-workspace-v634.js')>html.lastIndexOf('com
 assert(html.lastIndexOf('investigation-workspace-v634.js')>html.lastIndexOf('live-game-ux-v632.js'));
 assert(html.lastIndexOf('investigation-workspace-v634.css')>html.lastIndexOf('live-game-ux-v632.css'));
 if(sw){
- assert(sw.includes("const CACHE='igr-v634-investigation-workspace';"));
+ assert(sw.includes("const CACHE='igr-v635-reading-stability';"),'Latest ergonomic bundle must invalidate old reading cache');
+ assert(sw.includes('/reading-stability-v635.css?v=v635-reading-stability'),'Reading CSS must be precached');
  assert(sw.includes('/investigation-workspace-v634.js?v=v634-investigation-workspace'));
  assert(sw.includes('/investigation-workspace-v634.css?v=v634-investigation-workspace'));
 }
