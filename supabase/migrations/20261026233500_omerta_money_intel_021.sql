@@ -130,6 +130,33 @@ begin
     return jsonb_build_object('available',false,'cards','[]'::jsonb);
   end if;
 
+  -- Barème autoritatif et déterministe du renseignement, hors du client.
+  -- Seuls les faits matériels ou déclarations de première main relus et
+  -- pertinents pour le dossier sont éligibles. Les soupçons seuls ne le sont pas.
+  -- 024/2, 024/4, 024/6 n'ont aucune information admissible dans ce canon :
+  -- leur pacte est interdit AVANT recrutement par le serveur.
+  select coalesce(jsonb_agg(
+    c.value || jsonb_build_object(
+       'eligible',
+         case
+           when r.scenario_id='021' then
+             (p.internal_slot=1 and c.value->>'id' in ('021_money_route','021_handoff'))
+             or (p.internal_slot=7 and c.value->>'id'='021_money_ledger')
+             or (p.internal_slot between 2 and 5
+               and c.value->>'id'='021_person_'||p.internal_slot||'_secret')
+             or (p.internal_slot=6
+               and c.value->>'id'='021_person_6_chronology')
+           when r.scenario_id='023' and p.internal_slot=4 then
+             c.value->>'id'='023_4_chronology'
+           when r.scenario_id='024' and p.internal_slot in (2,4,6) then false
+           when r.scenario_id between '022' and '025' then
+             c.value->>'id'=r.scenario_id||'_'||p.internal_slot||'_secret'
+           else false
+         end
+      ) order by c.ordinality),'[]'::jsonb)
+    into catalog
+    from jsonb_array_elements(catalog) with ordinality c(value,ordinality);
+
   -- L'Indic conserve toujours ses trois cartes affichées ; une carte déjà
   -- transmise passe à l'état « consigné » au lieu de disparaître.
   select coalesce(jsonb_agg(
@@ -208,7 +235,7 @@ begin
   values(r.code,p.id,r.cycle,'omerta_verified_intel',
          jsonb_build_object('fact_id',p_card_id,'receiver_id',receiver.id,
            'canonically_authored',true,'truth_verified',
-           (r.scenario_id='021' and p_card_id in ('021_money_route','021_money_ledger','021_handoff')),
+           coalesce((chosen->>'eligible')::boolean,false),
            'first_official_delivery',true,
            'match_no',greatest(1,coalesce((r.state->>'match_no')::int,1)),
            'scenario_id',r.scenario_id,'topic_title',chosen->>'title',
@@ -219,12 +246,12 @@ begin
   insert into public.igr_v4_events(room_code,cycle,event_type,visibility,target_player_id,payload)
   values(r.code,r.cycle,'omerta_intel','private',receiver.id,
          jsonb_build_object('title','RENSEIGNEMENT D’UN INDIC',
-           'text',chosen->>'detail','category','transferts_argent',
+           'text',chosen->>'detail','category','source_confidentielle',
            'fact_id',p_card_id,'action_id',action_id));
   insert into public.igr_v4_events(room_code,cycle,event_type,visibility,target_player_id,payload)
   values(r.code,r.cycle,'omerta_private','private',p.id,
          jsonb_build_object('title','TRANSMISSION CONFIRMÉE',
-           'text','L’Enquêteur a reçu le renseignement sur les transferts d’argent. La transmission reste confidentielle.'));
+           'text','L’Enquêteur a reçu ton renseignement. La transmission reste confidentielle.'));
   return jsonb_build_object('ok',true,'action_id',action_id,
     'canonically_authored',true,'first_official_delivery',true);
 end;
