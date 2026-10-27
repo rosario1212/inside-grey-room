@@ -3,6 +3,8 @@
 do $suite$
 declare
  sc text; c text; selected text; same text; next_variant text;
+ source_player public.igr_v4_players%rowtype; other_player public.igr_v4_players%rowtype;
+ investigator public.igr_v4_players%rowtype; dossier jsonb; delivered int; refused boolean;
  pristine jsonb; after_mutation jsonb; blocked boolean; next_no integer; variant record;
 begin
  for sc in select lpad(s::text,3,'0') from generate_series(21,25) s loop
@@ -14,12 +16,12 @@ begin
     scenario_id,variant_id,manuscript,editorial_status)
    values(sc,variant.letter,
     jsonb_build_object(
-      'canonical_truth',jsonb_build_object('synthetic',sc||variant.letter, 'timeline', jsonb_build_array(jsonb_build_object('id','qa-t1'),jsonb_build_object('id','qa-t2'))),
-      'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only'),jsonb_build_object('slot',2,'objective','QA only'),jsonb_build_object('slot',3,'objective','QA only')),
+      'canonical_truth',jsonb_build_object('synthetic',sc||variant.letter, 'timeline', jsonb_build_array(jsonb_build_object('id','qa-t1','what','Synthetic document A'),jsonb_build_object('id','qa-t2','what','Synthetic document B'))),
+      'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only '||variant.letter,'identity','Synthetic role A','what_you_know','Private clue A','what_you_hide','Private secret A'),jsonb_build_object('slot',2,'objective','Other goal','identity','Synthetic role B','what_you_hide','Private secret B'),jsonb_build_object('slot',3,'objective','QA only','identity','Synthetic role C')),
       'saga',jsonb_build_object('collection','OMERTA','branch',variant.letter,
         'chapter',sc::int-20),
       'revelations',jsonb_build_array(jsonb_build_object(
-        'kind','guaranteed','min_cycle','3','canonical_event_id','qa-t2',
+        'kind','guaranteed','min_cycle','3','canonical_event_id','qa-t2','id','qa-guaranteed-c3','audience','investigation',
         'editorial_provenance',jsonb_build_object(
           'human_source_review','unverified','source_material','synthetic manuscript fixture','existing_events',jsonb_build_array('qa-t1','qa-t2'),
           'independent_of_optional_actions','true'))),
@@ -56,6 +58,49 @@ begin
  where scenario_id='021' and variant_id=selected;
  after_mutation:=igr_private.igr_omerta_standalone_snapshot('PIN021',1);
  if after_mutation is distinct from pristine then raise exception 'pinned truth mutated'; end if;
+
+ -- Un lecteur public n'obtient QUE son dossier par jeton, sans identité
+ -- d'une autre place, ni copie de la vérité totale.
+ insert into public.igr_v4_players(room_code,pseudo,seat_index,public_role,secret_role,internal_slot)
+ values('PIN021','Alice',1,'suspect','associato',1) returning * into source_player;
+ insert into public.igr_v4_players(room_code,pseudo,seat_index,public_role,secret_role,internal_slot)
+ values('PIN021','Bob',2,'suspect','associato',2) returning * into other_player;
+ insert into public.igr_v4_players(room_code,pseudo,seat_index,public_role,secret_role)
+ values('PIN021','Enquêteur',3,'enqueteur','enqueteur') returning * into investigator;
+ update public.igr_v4_rooms set status='playing',phase='interrogation',cycle=2 where code='PIN021';
+ dossier:=public.igr_omerta_my_private_dossier('PIN021',source_player.player_token);
+ if dossier->>'available'<>'true'
+   or dossier->'card'->>'what_you_hide'<>'Private secret A'
+   or dossier->'card' ? 'canonical_truth'
+ then raise exception 'source private dossier incorrect'; end if;
+ dossier:=public.igr_omerta_my_private_dossier('PIN021',other_player.player_token);
+ if dossier->'card'->>'what_you_hide'<>'Private secret B'
+   or dossier::text like '%Private secret A%'
+ then raise exception 'cross player private dossier leaked'; end if;
+ dossier:=public.igr_omerta_my_private_dossier('PIN021',investigator.player_token);
+ if dossier->>'available'<>'false' then raise exception 'investigator accessed private suspect dossier'; end if;
+ refused:=false;
+ begin
+   perform public.igr_omerta_my_private_dossier('PIN021',gen_random_uuid());
+ exception when others then refused:=true; end;
+ if not refused then raise exception 'invalid token accepted'; end if;
+ if igr_private.igr_omerta_emit_c3_crosschecks('PIN021')<>0 then
+   raise exception 'C3 evidence leaked in C2'; end if;
+ update public.igr_v4_rooms set cycle=3 where code='PIN021';
+ delivered:=igr_private.igr_omerta_emit_c3_crosschecks('PIN021');
+ if delivered<>2 then raise exception 'independent C3 sources not delivered: %',delivered;end if;
+ if igr_private.igr_omerta_emit_c3_crosschecks('PIN021')<>0 then
+    raise exception 'duplicate C3 event';end if;
+ if (select count(*) from public.igr_v4_events
+     where room_code='PIN021' and event_type='omerta_c3_crosscheck'
+       and visibility='private' and target_player_id=investigator.id)<>2
+ then raise exception 'investigation private C3 evidence missing';end if;
+ if exists(select 1 from public.igr_v4_events
+     where room_code='PIN021' and event_type='omerta_c3_crosscheck'
+       and target_player_id in (source_player.id,other_player.id))
+ then raise exception 'C3 evidence leaked to the mafia';end if;
+ if has_function_privilege('anon','igr_private.igr_omerta_emit_c3_crosschecks(text)','EXECUTE')
+ then raise exception 'C3 emission callable without server';end if;
 
  -- Nouveau match de la même salle -> autre variante quand elle est disponible.
  update public.igr_v4_rooms set state='{"match_no":2}'::jsonb
