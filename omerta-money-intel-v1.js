@@ -78,7 +78,7 @@ async function respond(accept){
 }
 async function intel(){
  const d=context();if(!isPlaying(d)||!activated(d)||typeof rpc!=='function')return;
- const m=modal('Mes renseignements','Trois sujets que tu connais. Tu peux parler avant de toucher ton téléphone ou annoncer une discussion à l’avance.');
+ const m=modal('Mes renseignements','Parle librement, puis choisis ce que tu consignes. Pour sauver ta peau : obtiens une protection officielle ou une remise de peine d’au moins trois ans, coopère utilement et reste en vie.');
  m.slot.textContent='Consultation confidentielle…';
  try{
   const reply=await sendRpc('igr_omerta_money_intel_options',{});
@@ -133,6 +133,27 @@ async function intel(){
   if(m.overlay.isConnected)m.slot.textContent='Le dossier n’est pas disponible pour ce cycle.';
  }
 }
+function acceptedSource(d){
+  const found=events(d,'omerta_indic_status').find(e=>e.payload?.accepted===true&&e.payload?.source_id);
+  return found?.payload?.source_id||null;
+}
+async function protectSource(){
+  const d=context(),source=acceptedSource(d);
+  if(!isPlaying(d)||role(d)!=='enqueteur'||!source||d.room.phase==='locking')return;
+  const m=modal('Protection de l’Indic','Vous pouvez officialiser votre accord, même si cette source vous a seulement parlé à l’oral.');
+  m.slot.appendChild(node('p','Une protection engage le camp d’enquête. Elle permettra à l’Indic d’atteindre son objectif personnel s’il survit et coopère utilement.'));
+  const b=btn('Confirmer sa protection','btn primary',async()=>{
+    if(!confirm('Accorder une protection officielle à cette source ? Cette décision ne pourra pas être annulée.'))return;
+    b.disabled=true;
+    try{
+      const response=await sendRpc('igr_omerta_indic_protect',{p_source:source});
+      if(response?.ok!==true)throw Error('protection_closed');
+      m.slot.textContent='Protection accordée. La source en a été informée confidentiellement.';
+      b.remove();await refresh();
+    }catch(e){failure(m.slot,e);b.disabled=false;}
+  });
+  m.footer.insertBefore(b,m.footer.firstChild);
+}
 function finalReviewAvailable(d){
  if(!d||d.player?.public_role!=='enqueteur'||d.room?.status!=='playing'
   ||d.room?.phase!=='locking'||!OMERTA.has(d.room.scenario_id))return false;
@@ -176,6 +197,11 @@ function mount(){
  if(role(d)==='enqueteur'&&!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true)&&!dock.querySelector('.igr-indic-offer-button')){
   const b=btn('Proposer un pacte secret','btn ghost igr-indic-offer-button',offer);
   dock.appendChild(b);
+ }
+ if(role(d)==='enqueteur'&&acceptedSource(d)&&d.room.phase!=='locking'
+   &&!events(d,'omerta_indic_protection').length
+   &&!dock.querySelector('.igr-indic-protect-button')){
+   dock.appendChild(btn('Protéger mon Indic','btn ghost igr-indic-protect-button',protectSource));
  }
  if(role(d)==='suspect'&&pendingOffer(d)&&!events(d,'omerta_indic_status').length){
    if(!dock.querySelector('.igr-indic-accept-button')){
