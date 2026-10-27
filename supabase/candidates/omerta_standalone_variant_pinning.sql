@@ -669,7 +669,8 @@ begin
         ='avoid_formal_designation')
      or (coalesce(m->>'private_format','')<>'santoro_v25'
        and (m->'canonical_truth'->'responsibility_by_slot'
-           ->>(role_slot.internal_slot::text)) ~ '^[012]
+           ->>(role_slot.internal_slot::text)) in ('0','1','2'))
+   );
  if n_mapped<>n_suspects or n_suspects=0
  then return jsonb_build_object('available',false); end if;
  return jsonb_build_object(
