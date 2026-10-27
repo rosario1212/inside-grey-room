@@ -180,6 +180,13 @@ begin
  where x.room_code=r.code and x.match_no=match_id
    and x.scenario_id=r.scenario_id;
  if m is null then return jsonb_build_object('available',false); end if;
+ -- Ne jamais réutiliser un slot historique après un rematch. Le tirage
+ -- confirmé du même joueur dans le match courant fait autorité.
+ if not exists(
+   select 1 from igr_private.igr_omerta_room_cast_slots c
+   where c.room_code=r.code and c.match_no=match_id
+     and c.player_id=p.id and c.internal_slot=p.internal_slot
+ ) then return jsonb_build_object('available',false); end if;
  select value into card
  from pg_catalog.jsonb_array_elements(coalesce(m->'private_cards','[]'::jsonb)) value
  where value->>'slot'=p.internal_slot::text limit 1;
