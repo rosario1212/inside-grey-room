@@ -26,7 +26,8 @@ function alertMessage(error){const e=String(error?.message||'');const msgs={
  'already_decided':'La décision a déjà été enregistrée.',
  'intel_not_owned_or_unavailable':'Ce renseignement ne t’appartient pas ou a déjà été consigné.',
  'one_intel_per_cycle':'Une seule consignation officielle est autorisée par cycle.',
- 'intel_already_received':'Ce renseignement a déjà été consigné.'
+ 'intel_already_received':'Ce renseignement a déjà été consigné.',
+ 'source_not_eligible_for_pact':'Ce pacte n’est pas possible pour cette personne dans ce dossier.'
  };for(const [key,msg]of Object.entries(msgs))if(e.includes(key))return msg;
  return 'Décision indisponible. Vérifie l’état du cycle puis réessaie.';}
 function close(){document.querySelector('.igr-money-intel-modal')?.remove();}
@@ -78,7 +79,7 @@ async function respond(accept){
 }
 async function intel(){
  const d=context();if(!isPlaying(d)||!activated(d)||typeof rpc!=='function')return;
- const m=modal('Mes renseignements','Parle librement, puis choisis ce que tu consignes. Pour sauver ta peau : obtiens une protection officielle ou une remise de peine d’au moins trois ans, coopère utilement et reste en vie.');
+ const m=modal('Mes renseignements','Parle librement, puis choisis ce que tu consignes. Sauve ta peau : obtiens une protection ou demande un accord. Donne un renseignement fiable et reste en vie.');
  m.slot.textContent='Consultation confidentielle…';
  try{
   const reply=await sendRpc('igr_omerta_money_intel_options',{});
