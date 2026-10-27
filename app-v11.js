@@ -2523,8 +2523,23 @@ function setupKeyboardGuard(){
 
 async function restore(){
  try{
-  stopRoomWatcher();const s=JSON.parse(STORAGE.getItem(sessionKey())||'null');if(!s?.room||!s?.token)return false;Object.assign(STATE,s);const d=await syncNow(true);if(!d){STATE.room=null;STATE.token=null;STATE.hostToken=null;STATE.sync=null;connectionStatus(false);return false}startRoomWatcher();return true
- }catch(e){console.error(e);clearSession();return false}
+  stopRoomWatcher();
+  const saved=JSON.parse(STORAGE.getItem(sessionKey())||'null');
+  if(!saved?.room||!saved?.token)return false;
+  Object.assign(STATE,saved);
+  // iOS PWA may resume before connectivity is usable. Do not abandon the
+  // saved room after a single transient failure.
+  for(let attempt=0;attempt<3;attempt++){
+    const snapshot=await syncNow(true,true);
+    if(snapshot?.room&&snapshot?.player){startRoomWatcher();return true}
+    if(!STATE.room||!STATE.token)break;
+    if(attempt<2)await new Promise(done=>setTimeout(done,450+attempt*650));
+  }
+  // Keep the saved credentials so Reprendre ma cellule works without rejoining.
+  STATE.room=null;STATE.token=null;STATE.hostToken=null;STATE.sync=null;
+  connectionStatus(false);
+  return false;
+ }catch(e){console.error(e);return false}
 }
 function renderCurrent(){if(STATE.view==='home')renderHome();else if(STATE.view==='create-list')renderCreateList();else if(STATE.view==='create-confirm')renderCreateConfirm();else if(STATE.view==='join')renderJoin();else if(STATE.view==='rules')renderRules();else if(STATE.view==='profile')renderProfile();else if(STATE.view==='lobby')renderLobby();else if(STATE.view==='briefing')renderBriefing();else if(STATE.view==='role')renderRole();else if(STATE.view==='game')renderGame()}
 setupKeyboardGuard();
