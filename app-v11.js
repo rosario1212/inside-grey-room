@@ -1229,7 +1229,7 @@ function igr82RelationsHtml(value) {
     if(seen.has(key))return'';
     seen.add(key);
     const initial=person.trim().slice(0,1).toUpperCase()||'?';
-    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b>${link?`<small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p>`:''}</div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS','WHAT YOU KNOW')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('QUESTION À LUI POSER','QUESTION TO ASK')}</span>${h(opening)}</p>`:''}</div></article>`;
+    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b>${link?`<small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p>`:''}</div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE LUI','WHAT YOU KNOW ABOUT THEM')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('À ÉCLAIRCIR ENTRE VOUS','TO CLARIFY TOGETHER')}</span>${h(opening)}</p>`:''}</div></article>`;
   });
   return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
