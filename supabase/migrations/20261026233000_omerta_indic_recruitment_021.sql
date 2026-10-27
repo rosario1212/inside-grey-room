@@ -166,7 +166,13 @@ begin
     select 1 from public.igr_v4_actions a
     where a.room_code=room.code and a.action_type='omerta_protection_granted'
       and a.payload->>'target'=src.id::text
-      and coalesce((a.payload->>'match_no')::int,match_id)=match_id
+      and a.id > (
+        select max(b.id) from public.igr_v4_actions b
+        where b.room_code=room.code and b.player_id=src.id
+          and b.action_type='omerta_indic_response'
+          and b.payload->>'accepted'='true'
+          and coalesce((b.payload->>'match_no')::int,1)=match_id
+      )
   ) then return jsonb_build_object('ok',true,'already',true); end if;
   perform igr_private.rate_limit('omerta_indic_protect',enq.id::text,10,60);
   insert into public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
