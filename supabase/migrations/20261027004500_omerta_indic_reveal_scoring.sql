@@ -10,7 +10,7 @@ AS $function$
 declare
   r public.igr_v4_rooms%rowtype; base jsonb; item jsonb; out_results jsonb:='[]'::jsonb; out_winners jsonb:='[]'::jsonb;
   p public.igr_v4_players%rowtype; role text; success boolean; txt text; reveals int; major int; coop int; reduction int; exposure int; protected boolean; dead boolean; wrongful int; audiences int;
-  indic_matched boolean; indic_by_card boolean; indic_second_ok boolean; indic_personal_ok boolean; indic_match_id integer;
+  indic_matched boolean; indic_by_card boolean; indic_second_ok boolean; indic_personal_ok boolean; indic_match_id integer; indic_bargain_requested boolean;
   pack jsonb; base_sentence int; final_sentence int; cid uuid; camp public.igr_omerta_campaigns%rowtype; dossier jsonb; deaths jsonb:='[]'::jsonb; protections jsonb:='[]'::jsonb; charname text; next_dossier text; cstatus jsonb;
 begin
   select * into r from public.igr_v4_rooms where code=p_room; if not found then raise exception 'room not found'; end if;
@@ -56,11 +56,28 @@ begin
         and coalesce((a.payload->>'match_no')::int,1)=indic_match_id
       ) into indic_by_card;
       indic_second_ok:=indic_by_card;
-      -- But individuel d'une source : sauver ses intérêts (protection OU
-      -- remise officielle d'au moins 3 ans). Survivre reste séparément requis.
-      -- L'ancien objectif de loyauté d'un uomo_onore ne peut pas devenir le
-      -- critère égoïste d'un joueur passé Indic.
-      indic_personal_ok:=protected or reduction>=3;
+      -- La première condition exige un acte personnel distinct de la preuve.
+      -- Ni le vote de l'Enquêteur ni un niveau de révélation auto-déclaré
+      -- ne peuvent attribuer la victoire.
+      select exists(
+        select 1 from public.igr_v4_actions a
+        where a.room_code=r.code and a.player_id=p.id
+          and a.action_type='omerta_protection_request'
+          and a.id > (
+            select max(b.id) from public.igr_v4_actions b
+            where b.room_code=r.code and b.player_id=p.id
+              and b.action_type='omerta_indic_response'
+              and b.payload->>'accepted'='true'
+              and coalesce((b.payload->>'match_no')::int,1)=indic_match_id
+          )
+      ) into indic_bargain_requested;
+      -- En cas de coopération authentifiée + demande formelle, la remise
+      -- minimale est réglée automatiquement : aucune appréciation unilatérale.
+      if indic_bargain_requested and indic_by_card then
+        reduction:=greatest(reduction,3);
+        final_sentence:=greatest(1,base_sentence-reduction);
+      end if;
+      indic_personal_ok:=protected or (indic_bargain_requested and indic_by_card);
       success:=indic_personal_ok and indic_second_ok and not dead;
       txt:=txt||' · INDIC : protection ou remise de peine '||
         case when indic_personal_ok then 'atteint' else 'non atteint' end||
