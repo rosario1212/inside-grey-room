@@ -16,6 +16,8 @@ begin
     scenario_id,variant_id,manuscript,editorial_status)
    values(sc,variant.letter,
     jsonb_build_object(
+      'public_briefing','Synthetic public case introduction',
+      'final_reveal','SECRET: do not send to players',
       'canonical_truth',jsonb_build_object('synthetic',sc||variant.letter, 'timeline', jsonb_build_array(jsonb_build_object('id','qa-t1','what','Synthetic document A'),jsonb_build_object('id','qa-t2','what','Synthetic document B'))),
       'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only '||variant.letter,'identity','Synthetic role A','what_you_know','Private clue A','what_you_hide','Private secret A'),jsonb_build_object('slot',2,'objective','Other goal','identity','Synthetic role B','what_you_hide','Private secret B'),jsonb_build_object('slot',3,'objective','QA only','identity','Synthetic role C')),
       'saga',jsonb_build_object('collection','OMERTA','branch',variant.letter,
