@@ -25,6 +25,13 @@ assert.ok(sql.includes("jsonb_array_length(e->'evidence_ids')<>2"),'Require two 
 assert.ok(sql.includes('verdict_already_locked'),'Cannot modify a final allegation');
 assert.ok(sql.includes('CREATE TABLE IF NOT EXISTS igr_private.igr_omerta_verdict_locks'));
 assert.ok(gate.includes('igr_omerta_verdict_goal_mapping_ready(p_scenario)'));
+const actors=file('supabase/migrations/20261028001500_omerta_truth_actor_guard_v28.sql');
+const truthfulScorer=file('supabase/migrations/20261028002500_omerta_nonarbitrary_goal_scorer_v28.sql');
+assert.ok(actors.includes('igr_omerta_verdict_truth_mapping_ready(p_scenario)'));
+assert.ok(actors.includes('igr_omerta_verdict_goal_mapping_ready(p_scenario)'));
+assert.ok(truthfulScorer.includes('editorial_actor_truth_pending'));
+assert.ok(truthfulScorer.includes('own.internal_slot=ANY(truth.actual_slots)'));
+assert.ok(ui.includes('editorial_actor_truth_pending'));
 assert.ok(seal.includes('omerta_signed_verdict_required'));
 for (const [path,ref] of [
  ['index.html','omerta-santoro-verdict-v28.js?v=santoro-verdict-v28'],
