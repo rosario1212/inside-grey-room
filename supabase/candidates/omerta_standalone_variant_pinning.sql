@@ -699,3 +699,66 @@ revoke all on function public.igr_omerta_start_standalone(text,uuid)
  from public,anon,authenticated;
 grant execute on function public.igr_omerta_start_standalone(text,uuid)
  to anon,authenticated;
+
+
+-- Filtre côté serveur : ne jamais livrer les métadonnées, faits ou
+-- événements de la Famiglia Verri à une partie Santoro épinglée.
+-- Pour une salle historique, le résultat de sync reste IDENTIQUE.
+create or replace function public.igr_omerta_standalone_safe_sync(
+ p_code text, p_player_token uuid
+) returns jsonb
+language plpgsql security definer set search_path=''
+as $safe_sync$
+declare
+ raw jsonb;
+ st jsonb;
+ m jsonb;
+ room public.igr_v4_rooms%rowtype;
+ match_id integer;
+ events_filtered jsonb;
+begin
+ raw:=public.igr_v4_sync(p_code,p_player_token);
+ select * into room from public.igr_v4_rooms
+ where code=upper(trim(p_code));
+ if not found then raise exception 'unauthorized';end if;
+ if room.scenario_id not in ('021','022','023','024','025')
+   or coalesce((room.state->>'omerta_standalone')::boolean,false) is not true
+ then return raw;end if;
+
+ match_id:=greatest(1,coalesce((room.state->>'match_no')::integer,1));
+ select s.manuscript into m
+ from igr_private.igr_omerta_room_variant_snapshots s
+ where s.room_code=room.code and s.match_no=match_id
+   and s.scenario_id=room.scenario_id;
+ if m is null then raise exception 'standalone_snapshot_missing';end if;
+
+ -- Pas de chronologie omnisciente, final_reveal, liste des rôles secrets,
+ -- contexte Verri, trames Verri, ni arbre familial hérité.
+ st:=coalesce(raw->'room'->'state','{}'::jsonb)
+     - 'omerta_campaign' - 'omerta_campaign_id' - 'omerta_campaign_mode'
+     - 'family_tree';
+ raw:=jsonb_set(raw,'{room,state}',st,true);
+ raw:=jsonb_set(raw,'{scenario}',jsonb_build_object(
+   'context',m->>'public_briefing',
+   'truth',null,
+   'protected','[]'::jsonb,
+   'field_actions','[]'::jsonb,
+   'expert_actions','[]'::jsonb,
+   'news','[]'::jsonb
+ ),true);
+ select coalesce(jsonb_agg(e.value order by (e.value->>'id')::bigint),'[]'::jsonb)
+ into events_filtered
+ from pg_catalog.jsonb_array_elements(
+    coalesce(raw->'events','[]'::jsonb)) e(value)
+ where (e.value->>'event_type'='context'
+          and e.value->'payload'->>'text'=m->>'public_briefing')
+    or (e.value->>'event_type'='omerta_c3_crosscheck'
+          and coalesce((e.value->'payload'->>'match_no')::integer,-1)=match_id);
+ raw:=jsonb_set(raw,'{events}',events_filtered,true);
+ return raw;
+end;
+$safe_sync$;
+revoke all on function public.igr_omerta_standalone_safe_sync(text,uuid)
+ from public,anon,authenticated;
+grant execute on function public.igr_omerta_standalone_safe_sync(text,uuid)
+ to anon,authenticated;
