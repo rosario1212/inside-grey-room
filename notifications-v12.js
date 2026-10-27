@@ -157,7 +157,7 @@
     try{if('Notification'in window&&Notification.permission==='granted')new Notification('Inside Grey Room · Nouvelle information',{body:'Ouvre la partie pour consulter tes informations.',tag:`igr-${state.roomKey}-${item.id}`,renotify:false})}catch{}
   }
 
-  window.IGR_NOTIFICATIONS=Object.freeze({publicUpdates({roomCode,playerId,events}){if(!ensureRoom()||roomCode!==STATE.sync.room.code||playerId!==STATE.sync.player.id)return;for(const e of events||[]){if(!Number.isFinite(+e.id))continue;const item=makeItem({...e,visibility:'public',payload:{title:e.title,text:e.text}},STATE.sync);item.route='timeline';receive(item)}}});
+  window.IGR_NOTIFICATIONS=Object.freeze({refreshBadges(){renderBell()},publicUpdates({roomCode,playerId,events}){if(!ensureRoom()||roomCode!==STATE.sync.room.code||playerId!==STATE.sync.player.id)return;for(const e of events||[]){if(!Number.isFinite(+e.id))continue;const item=makeItem({...e,visibility:'public',payload:{title:e.title,text:e.text}},STATE.sync);item.route='timeline';receive(item)}}});
   function receive(item){
     if(state.items.some(x=>+x.id===+item.id))return;
     state.items.unshift(item);state.items=state.items.slice(0,MAX_ITEMS);persist();enqueueBanner(item);playAlert(item);vibrate(item);systemNotify(item);
@@ -190,12 +190,24 @@
   function decorateTabs(){
     for(const button of document.querySelectorAll('#app .tabs-v11 .tab')){
       const id=button.getAttribute('onclick')?.match(/setTab\(['"]([^'"]+)['"]/ )?.[1];if(!id)continue;
-      const count=state.items.filter(x=>x.unread&&resolvedRoute(x.route)===id).length;
+      // On the public case tab, a number must equal the published entries
+      // actually rendered by the authoritative dossier, NEVER general game events.
+      const displayed= id==='timeline' ? window.IGR_COMMON_DOSSIER_V106?.visibleEventIds?.() : null;
+      const count=id==='timeline'
+        ? (Array.isArray(displayed)?displayed.length:0)
+        : state.items.filter(x=>x.unread&&resolvedRoute(x.route)===id).length;
       let badge=button.querySelector('.igr-tab-unread');
-      if(!count){badge?.remove();button.removeAttribute('data-unread');continue}
-      if(!badge){badge=document.createElement('span');badge.className='igr-tab-unread';badge.setAttribute('aria-label',tr('Éléments non lus','Unread items'));button.appendChild(badge)}
-      const text=String(Math.min(99,count));if(badge.textContent!==text)badge.textContent=text;
-      button.dataset.unread=text;
+      if(!count){badge?.remove();button.removeAttribute('data-unread');button.removeAttribute('title');continue}
+      if(!badge){badge=document.createElement('span');badge.className='igr-tab-unread';button.appendChild(badge)}
+      // Non-dossier tabs show a discreet dot, not an ungrounded content total.
+      const amount=id==='timeline'?String(count):'•';
+      const label=id==='timeline'
+        ? (count+' '+tr('publications visibles','visible publications'))
+        : tr('Nouvelles notifications','New notifications');
+      if(badge.textContent!==amount)badge.textContent=amount;
+      badge.setAttribute('aria-label',label);
+      button.setAttribute('title',label);
+      button.dataset.unread=String(count);
     }
   }
   function visible(el){
