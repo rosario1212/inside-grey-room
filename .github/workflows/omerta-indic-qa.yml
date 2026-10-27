@@ -60,3 +60,6 @@ jobs:
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261026233500_omerta_money_intel_021.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261027004500_omerta_indic_reveal_scoring.sql
           psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_vnext_local_integration.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_variant_harness.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/candidates/omerta_standalone_variant_pinning.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_standalone_variant_integration.sql
