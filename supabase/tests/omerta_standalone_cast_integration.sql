@@ -249,6 +249,15 @@ begin
    or safe_snapshot->'player'->'private_state' ? 'legacy_private'
  then raise exception 'suspect received legacy private role or missing objective';end if;
 
+ -- La fiche doit être visible immédiatement au briefing initial,
+ -- sans attendre une transition vers le cycle I.
+ update public.igr_v4_rooms set phase='briefing' where code='START021';
+ safe_snapshot:=public.igr_omerta_standalone_safe_sync(
+   'START021',(select player_token from public.igr_v4_players
+               where room_code='START021' and seat_index=2));
+ if nullif(safe_snapshot->'player'->'private_state'->>'objective','') is null
+ then raise exception 'initial briefing hides assigned Santoro objective';end if;
+
  -- L'API historique publique ne permet plus de contourner le filtre.
  safe_snapshot:=public.igr_v4_sync(
   'START021',(select player_token from public.igr_v4_players
