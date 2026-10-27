@@ -39,3 +39,21 @@
 Les tests PostgreSQL 16 éphémères passent par les ressources GitHub déjà connectées, sous réserve du quota déjà inclus. Aucun branchement Supabase payant et aucun service neuf n'ont été créés. Les migrations existantes de production, les données des joueurs et Cloudflare n'ont pas été modifiés.
 
 **Statut acceptable pour la PR #379 :** prépublication en brouillon et CI verte. Ne jamais dire « publié », « jouable en production » ou « 15 variantes certifiées » tant que ce document n'est pas effectivement mis à jour sur des vérifications réelles.
+
+
+## Nouvelle passe de correction — contrôles d'intégrité du 27 octobre
+
+Corrections faites et testées après la clôture technique initiale :
+
+- **Rangs mafieux fixes** : le moteur A/B/C ne redistribue plus aléatoirement un rang déjà choisi. Les affectations `caporegime=2`, `pentito=1`, `associato=8` lorsque le Pentito est présent au 024, et tous les rôles narratifs restants demeurent distincts. Tests PostgreSQL avec 8 joueurs sur 021 et 024.
+- **Fiches** : `position` reflète l'identité du personnage et non son objectif secret.
+- **Événements anciens** : un lancement autonome remplace uniquement le contexte qui vient d'être créé ; les archives des matchs précédents sont préservées. Chaque nouveau contexte comporte désormais un `match_no` et le lecteur le filtre par match.
+- **Compatibilité Indic et verdict** : les RPC Verri de négociation, d'information et de verdict refusent les parties autonomes tant que des critères narratifs vérifiés propres à chaque variante n'existent pas. Un refus explicite est préférable à un pacte impossible ou à un gain faussé.
+- **Interrupteur privé de publication** : `igr_private.igr_omerta_standalone_release_control` est `enabled=false` par défaut, sans rôle client capable de le modifier. L'autorisation effective impose à la fois cet interrupteur, la revue éditoriale de toutes les variantes du dossier et les exigences structurelles.
+- **Lancement depuis le client** : `omerta-v12.js` interroge un RPC de statut réservé à l'hôte. Il appelle le démarreur autonome seulement lorsque le serveur le dit autorisé. L'absence d'un RPC dans une ancienne version serveur conserve le parcours classique, mais une vraie erreur serveur/réseau arrête le démarrage.
+- **Synchronisation sécurisée** : `public.igr_omerta_standalone_safe_sync` encapsule la synchronisation existante, élimine `omerta_campaign` et les champs du vieux canon, masque la vérité et le journal des anciennes actions, filtre tous les événements sauf contexte autorisé et recoupements privés du match, et remplace les fiches personnelles par la carte réellement épinglée (ou une fiche d'enquête générique sans secrets Verri). L'appel est relié au client `app-v11.js`, y compris la synchronisation de l'horloge ; la réponse des salles historiques n'est pas modifiée. Les tests PostgreSQL injectent des faux secrets Verri pour contrôler la redaction, sans copier de données privées dans GitHub.
+- **CI renforcée** : le workflow Omerta Informant QA réagit maintenant aux fichiers SQL candidat, aux tests, à `app-v11.js` et à `omerta-v12.js`. Les tests Node contrôlent aussi l'absence de fallback silencieux et de calcul de victoire Verri en mode A/B/C.
+
+**Tests vérifiés** : la suite `Omerta Informant QA` et `Store Readiness` passent sur le commit `111fc981ad77bcc9253d73c0ff7adfb7721082fc` ; les builds Android, iOS, Cloudflare et Screen Layout étaient encore en cours lors du contrôle de ce commit.
+
+**IMPORTANT — le travail ne peut pas être présenté comme « tous les problèmes corrigés » ou comme publié** : les 15 manuscrits en base contiennent encore Verri et 0 Santoro, avec 0/15 validations éditoriales. Les épisodes A/B/C manquent encore d'un barème de renseignements par personnage approuvé et d'un verdict définitif rattaché à chaque objectif particulier. Le moteur historique de trames/événements et le traitement des clients restés sur d'anciennes versions doivent être vérifiés lors d'un véritable essai de bout en bout, sur la stack réelle, avant d'autoriser le switch. Le défaut `enabled=false` protège précisément contre une activation prématurée. Aucun test PostgreSQL synthétique, même vert, ne vaut une certification narrative humaine.
