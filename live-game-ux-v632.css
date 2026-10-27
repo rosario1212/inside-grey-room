@@ -138,6 +138,7 @@
 }
 /* Legacy dock is only a fallback. The runtime moves its host action into the
    phase bar so it cannot obscure either user notes or the final hearing form. */
+@media(max-width:700px){
 body:has(#app .game-v11) > .live-session-controls{
   position:static!important;
   z-index:auto!important;
@@ -149,6 +150,7 @@ body:has(#app .game-v11) > .live-session-controls{
 }
 body:has(#app .game-v11) > .live-session-controls .live-advance-btn{max-width:100%!important}
 body:has(#app .game-v11) > .live-session-controls .live-exit-btn{margin-right:auto}
+}
 /* Settings, confirmation dialogs and other overlays have absolute priority. */
 body .igr-settings-modal,
 body .action-confirm-modal,
