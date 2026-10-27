@@ -260,5 +260,57 @@ begin
 
  if has_function_privilege('public','public.igr_omerta_start_standalone(text,uuid)','EXECUTE')
  then raise exception 'PUBLIC access grant retained on standalone host starter';end if;
+
+ -- Vérification spécifique du Pentito 024 : ses obligations personnelles
+ -- ne doivent jamais être échangées avec celles de l'Associato.
+ update igr_private.igr_v99_variant_manuscripts
+ set editorial_status='ready',approved_by='fixture_only',approved_at=now(),
+ manuscript=manuscript||jsonb_build_object(
+   'private_cards',coalesce(manuscript->'private_cards','[]'::jsonb)
+       ||(select jsonb_agg(jsonb_build_object(
+            'slot',slot,'identity','Synthetic rank identity '||slot,
+            'objective','Synthetic rank objective '||slot,
+            'what_you_know','Synthetic rank knowledge '||slot,
+            'what_you_hide','Synthetic rank secret '||slot)
+           order by slot) from generate_series(4,8) slot),
+   'canonical_truth',(manuscript->'canonical_truth')
+       ||jsonb_build_object('responsibility_by_slot',
+          '{"1":0,"2":1,"3":2,"4":0,"5":1,"6":2,"7":1,"8":0}'::jsonb),
+   'revelations',jsonb_set(manuscript->'revelations',
+       '{0,editorial_provenance,human_source_review}','"verified"'::jsonb,true),
+   'status','ready','human_review_approved',true
+ )
+ where scenario_id='024';
+ if igr_private.igr_omerta_standalone_can_start('024') is not true
+ then raise exception 'approved 024 fixture denied for wrong reason';end if;
+ insert into public.igr_v4_rooms(code,scenario_id,status,cycle,phase,state)
+ values('START024','024','lobby',0,'briefing','{"match_no":1}'::jsonb)
+ returning host_token into host;
+ for i in 1..8 loop
+   insert into public.igr_v4_players(
+     room_code,pseudo,seat_index,public_role,secret_role,preferred_role)
+   values('START024','Player '||i,i,
+      case when i=1 then 'enqueteur' else 'suspect' end,
+      case i when 1 then 'enqueteur' when 2 then 'pentito'
+          when 3 then 'associato' when 4 then 'caporegime'
+          when 5 then 'consigliere' when 6 then 'contabile'
+          when 7 then 'uomo_onore' else 'suspect' end,
+      case i when 1 then 'enqueteur' when 2 then 'pentito'
+          when 3 then 'associato' when 4 then 'caporegime'
+          when 5 then 'consigliere' when 6 then 'contabile'
+          when 7 then 'uomo_onore' else 'suspect' end);
+ end loop;
+ start_result:=public.igr_omerta_start_standalone('START024',host);
+ if start_result->>'ok'<>'true' then raise exception '024 did not start';end if;
+ if (select internal_slot from public.igr_v4_players
+      where room_code='START024' and preferred_role='pentito')<>1
+   or (select internal_slot from public.igr_v4_players
+      where room_code='START024' and preferred_role='associato')<>8
+   or (select internal_slot from public.igr_v4_players
+      where room_code='START024' and preferred_role='caporegime')<>2
+   or (select count(distinct internal_slot) from public.igr_v4_players
+      where room_code='START024' and public_role='suspect')<>7
+ then raise exception '024 rank-to-character assignments inconsistent';end if;
+
 end $qa$;
 select 'PRIVATE_ROLE_CAST_8_PLAYERS_PASS' as outcome;
