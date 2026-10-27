@@ -35,6 +35,8 @@ jobs:
           node --check omerta-money-intel-v1.js
           node scripts/omerta-money-intel-021-check.mjs
           node scripts/omerta-indic-final-rule-check.mjs
+          node --check scripts/omerta-standalone-goal-scorer.mjs
+          node --input-type=module -e "import{scoreStandaloneGoal as score}from './scripts/omerta-standalone-goal-scorer.mjs';const a={playerId:'p',matchNo:2,goal:{mode:'avoid_formal_designation',goal_id:'x'},verdictLocked:true};if(!score(a).won||score({...a,designations:[{playerId:'p',matchNo:2,goalId:'x',confirmed:true,investigatorAuthorized:true}]}).won||!score({...a,informant:{accepted:true,survived:true,protectedByOfficialPact:true,intelEvents:[{matchNo:2,truthVerified:true,transmittedToInvestigation:true,nonpublicWhenSent:true}]}}).won)process.exit(1)"
 
   omerta-postgres:
     name: Isolated PostgreSQL 16 multiplayer RPC smoke test
