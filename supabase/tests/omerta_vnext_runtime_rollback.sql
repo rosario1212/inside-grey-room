@@ -66,6 +66,16 @@ BEGIN
       PERFORM public.igr_omerta_money_intel_send(room_code2,suspect.player_token,fact);
     END IF;
 
+    IF sc='022' THEN
+      -- Aucun renseignement dans l'appli. L'Enquêteur peut tout de même
+      -- officialiser une protection sur la foi de la seule discussion orale.
+      PERFORM public.igr_omerta_indic_protect(room_code2,investigator.player_token,suspect.id);
+      IF NOT EXISTS(
+        SELECT 1 FROM public.igr_v4_actions a
+        WHERE a.room_code=room_code2 AND a.action_type='omerta_protection_granted'
+          AND a.payload->>'target'=suspect.id::text
+      ) THEN RAISE EXCEPTION 'negotiated oral protection was not granted'; END IF;
+    END IF;
     UPDATE public.igr_v4_rooms SET phase='locking' WHERE code=room_code2;
     -- 021: vote NO but verified canonical card => yes; 022–023 vote YES with zero cards => yes;
     -- 024: vote NO and no card => no; 025: vote NO and unassessed card => no.
@@ -86,6 +96,13 @@ BEGIN
     IF actual_pass IS DISTINCT FROM should_pass THEN
       RAISE EXCEPTION 'wrong cooperation % expected %, got %',sc,should_pass,actual_pass;
     END IF;
+    IF sc='022' AND NOT EXISTS(
+      SELECT 1 FROM jsonb_array_elements(ending->'results') v
+      WHERE v->>'player_id'=suspect.id::text
+        AND v->>'success'='true'
+        AND v->'indic'->>'personal_condition_met'='true'
+        AND v->'indic'->>'survival_condition_met'='true'
+    ) THEN RAISE EXCEPTION 'full oral-only victory not awarded in 022'; END IF;
   END LOOP;
 END;
 $omerta_test$;
