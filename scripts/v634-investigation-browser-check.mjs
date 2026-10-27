@@ -58,8 +58,6 @@ try{
   assert.equal(await page.evaluate(()=>window.clicks.interview),1,'Original callback must survive DOM regrouping');
   assert(await page.getByText('Indice canonique').isVisible(),'Evidence must be immediately visible without expansion');
   await page.locator('#igr634-notebook > summary').click();
-  assert(await page.locator('#privateNotesV32').isVisible(),'Local scratchpad preserved');
-  assert.equal(await page.locator('#privateNotesV32').inputValue(),'déjà sauvegardé');
   assert.equal(await page.locator('#privateNotesV32').count(),0,'Duplicate local scratchpad must not be present');
   if(role==='enqueteur'){
    assert.equal(await page.locator('.igr87-note-form').count(),1,'Server notebook note form preserved');
