@@ -94,8 +94,8 @@ begin
  select * into source_player from public.igr_v4_players
  where room_code=c and public_role='suspect' order by seat_index limit 1;
  dossier:=public.igr_omerta_my_private_dossier(c,source_player.player_token);
- if dossier->>'available'<>'false'
- then raise exception 'private dossier accessible during briefing';end if;
+ if dossier->>'available'<>'true' or nullif(dossier->'card'->>'objective','') is null
+ then raise exception 'assigned private dossier missing during briefing';end if;
  update public.igr_v4_rooms set phase='interrogation',cycle=1 where code=c;
  dossier:=public.igr_omerta_my_private_dossier(c,source_player.player_token);
  if dossier->'card'->>'objective' is null
