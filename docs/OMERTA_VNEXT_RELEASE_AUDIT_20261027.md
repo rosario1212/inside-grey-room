@@ -1,5 +1,7 @@
 # OMERTÀ — vNext · audit de publication (27 octobre 2026)
 
+> **CORRECTION DE SÉCURITÉ — 27/10/2026.** Cette page contient l'historique de l'ancien vote « Oui » de l'Enquêteur ; il a été supprimé comme condition de victoire dans le correctif anti-arbitraire de la PR #379. Le contrat actif de la branche est décrit dans [OMERTA_INDIC_FINAL_EVALUATION.md](OMERTA_INDIC_FINAL_EVALUATION.md). Les variantes A/B/C restent non publiables et la règle `truth_verified` doit encore être étendue aux dossiers 022–025.
+
 **Décision : ne pas activer les variantes A/B/C ni déployer le nouveau moteur d'Indic en production avant les validations ci-dessous.**
 Ce document n'est pas un certificat de publication. Il décrit l'état du chantier GitHub et les contrôles de Supabase réellement effectués.
 
