@@ -113,3 +113,6 @@ begin
   return base;
 end;
 $function$;
+
+-- Le révélateur SECURITY DEFINER est interne : ne jamais exposer l'appel direct.
+revoke all on function public.igr_omerta_make_reveal(text) from public,anon,authenticated;
