@@ -5,6 +5,7 @@
   const original=window.mountLiveSessionControls;
   if(typeof original!=='function'||original.__igrMobileUx)return;
   function relocate(){
+    if(typeof window.matchMedia==='function'&&!window.matchMedia('(max-width:700px)').matches)return;
     const game=document.querySelector('#app .game-v11');
     if(!game)return;
     const host=game.querySelector(':scope > .phase-strip .phase-host-actions');
