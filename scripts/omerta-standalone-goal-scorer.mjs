@@ -5,7 +5,7 @@ export function scoreStandaloneGoal({
   designations = [], informant = null
 }) {
   if (!playerId || !Number.isInteger(matchNo) || matchNo < 1 ||
-      goal?.mode !== 'avoid_formal_designation' || !goal.goal_id) {
+      goal?.mode !== 'avoid_formal_designation' || !goal.goal_id || !goal.scenario_variant_id) {
     throw new Error('omerta_invalid_private_goal');
   }
   if (verdictLocked !== true) {
@@ -18,6 +18,7 @@ export function scoreStandaloneGoal({
        informant.formalReductionYears >= 3);
     const usefulFact = (informant.intelEvents || []).some(e =>
       e?.matchNo === matchNo &&
+      e?.playerId === playerId &&
       e?.truthVerified === true &&
       e?.transmittedToInvestigation === true &&
       e?.nonpublicWhenSent === true);
@@ -36,6 +37,7 @@ export function scoreStandaloneGoal({
     e?.matchNo === matchNo &&
     e?.playerId === playerId &&
     e?.goalId === goal.goal_id &&
+    e?.scenarioVariantId === goal.scenario_variant_id &&
     e?.confirmed === true &&
     e?.investigatorAuthorized === true);
   return {
