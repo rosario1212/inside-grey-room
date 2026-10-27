@@ -1,0 +1,13 @@
+{
+  "status": "PRIVATE_REVIEW_NOT_RELEASED",
+  "variants": 15,
+  "roles": 105,
+  "chronologies_enriched": 105,
+  "concealment_notes_enriched": 105,
+  "conversation_hooks": 315,
+  "human_approved": 0,
+  "verified_C3_sources": 0,
+  "canon_rewritten": false,
+  "publication_enabled": false,
+  "note": "Private manuscript files and secrets remain outside GitHub; no live storyline approval."
+}
