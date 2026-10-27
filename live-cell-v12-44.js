@@ -245,7 +245,7 @@
         setRealtimeState('live');
         startHeartbeat();
         // Rejoin can miss notifications even when the last revision is known.
-        syncSoon(0,false);
+        syncSoon(0,true);
       }else{
         console.warn('Realtime join rejected',msg.payload);
         failRealtime('join-rejected');
@@ -407,6 +407,9 @@
     if(hidden) return 30000;
 
     const room = STATE?.sync?.room;
+    // Server-state fallback for iPad: visible guests see host launch without restarting PWA.
+    if(!room || room.status==='lobby' || room.phase==='briefing' || room.phase==='role_reading')
+      return 1100;
     const end = Date.parse(room?.phase_ends_at || '');
     if(room?.status==='playing' && !room.state?.timer_paused && Number.isFinite(end)){
       const remaining = end-estimatedServerNow();
@@ -751,6 +754,6 @@
   healIntroArt();
   if(inRoom()){
     startRoomWatcher();
-    syncSoon(0,false);
+    syncSoon(0,true);
   }
 })();
