@@ -899,7 +899,7 @@ begin
  -- Core v4 sync can still contain an old Verri private_state for
  -- non-suspects, or stale rematch action logs. Replace them at source.
  game_role:=raw->'player'->>'public_role';
- if room.status in ('playing','finished') and room.phase<>'briefing' then
+ if room.status in ('playing','finished') then
    if game_role='suspect' then
      card_result:=public.igr_omerta_my_private_dossier(p_code,p_player_token);
      if card_result->>'available'<>'true'
