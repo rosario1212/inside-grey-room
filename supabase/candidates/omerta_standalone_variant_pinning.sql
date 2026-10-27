@@ -39,9 +39,11 @@ as $structure$
         where nullif(trim(card->>'identity'),'') is null
            or nullif(trim(card->>'objective'),'') is null
            or nullif(trim(card->>'what_you_know'),'') is null
-           or not coalesce(
-               (m.manuscript->'canonical_truth'->'responsibility_by_slot'
-                  ->>(card->>'slot')) ~ '^[012]
+           or coalesce(
+              (m.manuscript->'canonical_truth'->'responsibility_by_slot'
+                 ->>(card->>'slot')) not in ('0','1','2'),true)
+      )
+      and not exists (
          select 1 from jsonb_array_elements(coalesce(m.manuscript->'revelations','[]'::jsonb)) e
          where not exists(
            select 1 from jsonb_array_elements(
