@@ -89,8 +89,12 @@ begin
  if igr_private.igr_omerta_emit_c3_crosschecks('PIN021')<>0 then
    raise exception 'C3 evidence leaked in C2'; end if;
  update public.igr_v4_rooms set cycle=3 where code='PIN021';
- delivered:=igr_private.igr_omerta_emit_c3_crosschecks('PIN021');
- if delivered<>1 then raise exception 'authored C3 synthesis not delivered: %',delivered;end if;
+ -- Le trigger de transition émet sans aucun clic et uniquement en présence
+ -- d'une variante épinglée de la partie courante.
+ select count(*) into delivered from public.igr_v4_events
+  where room_code='PIN021' and event_type='omerta_c3_crosscheck'
+    and target_player_id=investigator.id;
+ if delivered<>1 then raise exception 'automatic C3 authored synthesis not delivered: %',delivered;end if;
  if not exists(
    select 1 from public.igr_v4_events e
    where e.room_code='PIN021' and e.event_type='omerta_c3_crosscheck'
@@ -112,6 +116,17 @@ begin
  then raise exception 'C3 evidence leaked to the mafia';end if;
  if has_function_privilege('anon','igr_private.igr_omerta_emit_c3_crosschecks(text)','EXECUTE')
  then raise exception 'C3 emission callable without server';end if;
+
+ -- Test de non-régression : une salle sans snapshot A/B/C ne doit
+ -- rien recevoir, même en passant au cycle III.
+ insert into public.igr_v4_rooms(code,scenario_id,status,cycle,phase,state)
+ values('UNPIN021','021','playing',2,'interrogation','{"match_no":1}'::jsonb);
+ insert into public.igr_v4_players(room_code,pseudo,seat_index,public_role)
+ values('UNPIN021','Old investigator',1,'enqueteur');
+ update public.igr_v4_rooms set cycle=3 where code='UNPIN021';
+ if exists(select 1 from public.igr_v4_events
+   where room_code='UNPIN021' and event_type='omerta_c3_crosscheck')
+ then raise exception 'legacy room incorrectly received standalone C3';end if;
 
  -- Nouveau match de la même salle -> autre variante quand elle est disponible.
  update public.igr_v4_rooms set state='{"match_no":2}'::jsonb
