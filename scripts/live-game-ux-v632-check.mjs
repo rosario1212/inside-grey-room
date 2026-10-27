@@ -16,7 +16,7 @@ assert(sw.includes('/live-game-ux-v632.js?v=v632-iphone-live-ux'));
 assert(css.includes('body:has(.igr-settings-modal) > .live-session-controls'),'modal must hide floating controls');
 assert(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'),'tabs must all be available');
 assert(css.includes('safe-area-inset-top'),'notch space must be reserved');
-let mounted=0,removed=0,appended=0,mode='game';
+let mounted=0,removed=0,appended=0,mode='none';
 const next={id:'liveAdvanceBtn'};
 const host={appendChild(el){assert.equal(el,next);appended++}};
 const dock={querySelector(){return next},remove(){removed++}};
@@ -27,6 +27,7 @@ const document={
 };
 const window={mountLiveSessionControls(){mounted++}};
 vm.runInNewContext(script,{window,document});
+mode='game';
 window.mountLiveSessionControls();
 assert.equal(mounted,1,'original mounting must still run');
 assert.equal(appended,1,'existing host action must be moved, not recreated');
