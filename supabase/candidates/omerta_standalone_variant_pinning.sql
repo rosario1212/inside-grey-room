@@ -276,3 +276,149 @@ end;
 $emit$;
 revoke all on function igr_private.igr_omerta_emit_c3_crosschecks(text)
  from public,anon,authenticated;
+
+-- Postes attribués une seule fois par salle ET par match.
+-- Ce composant reste privé et doit être appelé au démarrage dans un contrat
+-- vérifié ; ne jamais l'appeler directement depuis le navigateur.
+create table if not exists igr_private.igr_omerta_room_cast_slots (
+  room_code text not null,
+  match_no integer not null check(match_no>0),
+  player_id uuid not null,
+  internal_slot integer not null check(internal_slot>0),
+  created_at timestamptz not null default now(),
+  primary key(room_code,match_no,player_id),
+  unique(room_code,match_no,internal_slot)
+);
+alter table igr_private.igr_omerta_room_cast_slots enable row level security;
+revoke all on igr_private.igr_omerta_room_cast_slots from public,anon,authenticated;
+
+create or replace function igr_private.igr_omerta_cast_standalone_room(
+ p_room_code text
+) returns integer
+language plpgsql security definer set search_path=''
+as $cast$
+declare
+ r public.igr_v4_rooms%rowtype;
+ m jsonb;
+ match_id int;
+ total_players int;
+ investigator_count int;
+ suspects_count int;
+ already_cast int;
+ p record;
+ entry jsonb;
+ chosen_slot int;
+ selected_slots int[]:=array[]::int[];
+ n int:=0;
+begin
+ select * into r from public.igr_v4_rooms
+ where code=upper(trim(p_room_code)) for update;
+ if not found or r.scenario_id not in ('021','022','023','024','025')
+   or r.status<>'playing' or r.cycle<>0 or r.phase<>'briefing'
+ then raise exception 'omerta_cast_wrong_phase'; end if;
+ match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
+ select s.manuscript into m
+ from igr_private.igr_omerta_room_variant_snapshots s
+ where s.room_code=r.code and s.match_no=match_id
+  and s.scenario_id=r.scenario_id;
+ if m is null then raise exception 'omerta_cast_missing_pinned_variant'; end if;
+
+ select count(*),
+   count(*) filter(where public_role='enqueteur'),
+   count(*) filter(where public_role='suspect')
+ into total_players,investigator_count,suspects_count
+ from public.igr_v4_players
+ where room_code=r.code;
+ if total_players not between 4 and 8 or investigator_count<>1
+   or suspects_count=0 or
+   total_players<>(investigator_count+suspects_count+
+     (select count(*) from public.igr_v4_players
+      where room_code=r.code and public_role='analyste'))
+ then raise exception 'omerta_invalid_cast'; end if;
+ if suspects_count>jsonb_array_length(coalesce(m->'private_cards','[]'::jsonb))
+ then raise exception 'omerta_insufficient_distinct_roles'; end if;
+
+ select count(*) into already_cast
+ from igr_private.igr_omerta_room_cast_slots x
+ where x.room_code=r.code and x.match_no=match_id;
+ if already_cast>0 then
+   if already_cast<>suspects_count or exists(
+     select 1 from igr_private.igr_omerta_room_cast_slots x
+     left join public.igr_v4_players p
+       on p.id=x.player_id and p.room_code=x.room_code
+       and p.public_role='suspect'
+     where x.room_code=r.code and x.match_no=match_id and p.id is null
+   ) then raise exception 'omerta_cast_changed_during_match'; end if;
+   return already_cast;
+ end if;
+
+ for p in
+   select id from public.igr_v4_players
+   where room_code=r.code and public_role='suspect'
+   order by pg_catalog.random()
+ loop
+   select s.value,(s.value->>'slot')::int
+   into entry,chosen_slot
+   from pg_catalog.jsonb_array_elements(
+     coalesce(m->'private_cards','[]'::jsonb)) s(value)
+   where (s.value->>'slot')::int<>all(selected_slots)
+   order by pg_catalog.random() limit 1;
+   if entry is null or chosen_slot is null
+   then raise exception 'omerta_insufficient_distinct_roles'; end if;
+   insert into igr_private.igr_omerta_room_cast_slots(
+     room_code,match_no,player_id,internal_slot)
+   values(r.code,match_id,p.id,chosen_slot);
+   selected_slots:=pg_catalog.array_append(selected_slots,chosen_slot);
+   update public.igr_v4_players
+   set internal_slot=chosen_slot,
+     private_state=jsonb_build_object(
+       'identity',entry->'identity',
+       'objective',entry->'objective',
+       'position',entry->'objective',
+       'what_you_know',entry->'what_you_know',
+       'what_you_hide',entry->'what_you_hide',
+       'hide',entry->'what_you_hide',
+       'your_chronology',entry->'your_chronology',
+       'chronology',entry->'your_chronology',
+       'conversation_hooks',entry->'conversation_hooks'
+     )
+   where id=p.id and room_code=r.code;
+   n:=n+1;
+ end loop;
+ return n;
+end;
+$cast$;
+revoke all on function igr_private.igr_omerta_cast_standalone_room(text)
+ from public,anon,authenticated;
+
+-- Même pour un hôte, le seul contexte ouvert est le public_briefing
+-- de la variante de cette partie : jamais canonical_truth ni final_reveal.
+create or replace function public.igr_omerta_public_briefing(
+ p_code text,p_player_token uuid
+) returns jsonb
+language plpgsql security definer set search_path=''
+as $intro$
+declare
+ p public.igr_v4_players%rowtype;
+ r public.igr_v4_rooms%rowtype;
+ m jsonb;
+begin
+ select * into p from public.igr_v4_players
+ where room_code=upper(trim(p_code)) and player_token=p_player_token;
+ if not found then raise exception 'unauthorized'; end if;
+ select * into r from public.igr_v4_rooms where code=p.room_code;
+ if not found or r.scenario_id not in ('021','022','023','024','025')
+    or r.status<>'playing'
+ then return jsonb_build_object('available',false); end if;
+ select s.manuscript into m
+ from igr_private.igr_omerta_room_variant_snapshots s
+ where s.room_code=r.code and s.scenario_id=r.scenario_id
+    and s.match_no=greatest(1,coalesce((r.state->>'match_no')::int,1));
+ if m is null then return jsonb_build_object('available',false); end if;
+ return jsonb_build_object('available',true,'text',m->>'public_briefing');
+end;
+$intro$;
+revoke all on function public.igr_omerta_public_briefing(text,uuid)
+ from public,anon,authenticated;
+grant execute on function public.igr_omerta_public_briefing(text,uuid)
+ to anon,authenticated;
