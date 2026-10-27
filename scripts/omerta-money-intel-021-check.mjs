@@ -46,7 +46,7 @@ function simulate({role='suspect',scenario='021',cycle=2,phase='interrogation',a
   player:{id:'INDIC1',public_role:role},
   players:[{id:'S1',pseudo:'Suspect A',public_role:'suspect'}],
   my_actions:[],
-  events:[...(accepted?[{event_type:'omerta_indic_status',payload:{accepted:true,match_no:1}}]:[]),
+  events:[...(accepted?[{event_type:'omerta_indic_status',payload:{accepted:true,source_id:'INDIC1',match_no:1}}]:[]),
     ...(offered?[{event_type:'omerta_indic_offer',payload:{offer_id:10,match_no:1}}]:[])]
  };
  const doc={body,readyState:'complete',createElement:el,addEventListener(){},
@@ -101,3 +101,14 @@ await yes.events.click();
 assert.equal(investigator.calls[0].name,'igr_omerta_indic_assess');
 assert.equal(investigator.calls[0].args.p_useful,true);
 console.log('OMERTÀ : avis positif validable sans aucune carte déclarée');
+
+const protective=simulate({role:'enqueteur',accepted:true});
+const protector=protective.all.find(x=>x.tag==='button'&&x.textContent==='Protéger mon Indic');
+assert.ok(protector,'Enquêteur must be able to protect a recruited source');
+await protector.events.click();
+const grant=protective.all.find(x=>x.tag==='button'&&x.textContent==='Confirmer sa protection');
+assert.ok(grant,'Protection action must be confirmable privately');
+await grant.events.click();
+assert.equal(protective.calls[0].name,'igr_omerta_indic_protect');
+assert.equal(protective.calls[0].args.p_source,'INDIC1');
+console.log('OMERTÀ : protection indépendante des formulaires de révélation');
