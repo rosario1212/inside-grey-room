@@ -154,6 +154,44 @@ async function protectSource(){
   });
   m.footer.insertBefore(b,m.footer.firstChild);
 }
+// Appréciation finale : le Oui de l’Enquêteur compte même sans aucune carte.
+function finalReviewAvailable(d){
+  if(!d||role(d)!=='enqueteur'||d.room?.status!=='playing'
+    ||d.room?.phase!=='locking'||!OMERTA.has(d.room.scenario_id))return false;
+  if(!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true))return false;
+  if((d.my_actions||[]).some(a=>a.action_type==='omerta_indic_final_assessment'))return false;
+  if((d.my_actions||[]).some(a=>a.action_type==='final_lock'))return false;
+  return true;
+}
+function showFinalReview(){
+  const d=context();if(!finalReviewAvailable(d))return;
+  const m=modal('Bilan de votre source',
+    'Cet Indic vous a-t-il réellement été utile ? Comptez aussi les discussions orales non consignées.');
+  m.slot.appendChild(node('p','Un « Oui » valide sa condition de coopération, mais ne lui garantit ni protection, ni victoire, ni survie.'));
+  const vote=async(useful)=>{
+    yes.disabled=true;no.disabled=true;
+    try{
+      const out=await sendRpc('igr_omerta_indic_assess',{p_useful:useful});
+      if(out?.ok!==true)throw Error('assessment_unavailable');
+      m.slot.textContent=useful?'Utilité reconnue. Coopération validée.':'Avis enregistré. Le jeu vérifiera aussi les renseignements confirmés.';
+      yes.remove();no.remove();await refresh();
+    }catch(e){failure(m.slot,e);yes.disabled=false;no.disabled=false;}
+  };
+  const yes=btn('Oui, cette source m’a été utile','btn primary',()=>vote(true));
+  const no=btn('Non, elle ne m’a pas été utile','btn ghost',()=>vote(false));
+  m.footer.insertBefore(yes,m.footer.firstChild);
+  m.footer.insertBefore(no,m.footer.firstChild);
+}
+function mountFinalReview(){
+  const d=context();if(!finalReviewAvailable(d))return;
+  const panel=document.querySelector('.game-panel-v11');
+  if(!panel||panel.querySelector('.igr-indic-final-review'))return;
+  const card=node('section');card.className='igr-indic-final-review';
+  card.appendChild(node('strong','OMERTÀ · BILAN DE LA SOURCE'));
+  card.appendChild(node('p','Votre indicateur vous a-t-il été utile, y compris uniquement à l’oral ?'));
+  card.appendChild(btn('Évaluer mon Indic','btn primary',showFinalReview));
+  panel.appendChild(card);
+}
 // Une transmission déjà consignée supprime automatiquement le rappel de cycle.
 const reminderDismissed=new Set();
 function mountCycleReminder(){
