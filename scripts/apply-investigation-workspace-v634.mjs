@@ -93,7 +93,7 @@ try{
 }catch(error){if(error?.code!=='ENOENT')throw error}
 const appSourceFile=path.join(target,'app-v11.js');
 let currentApp=await readFile(appSourceFile,'utf8');
-currentApp=currentApp.replace(/\/service-worker\\.js\\?v=[A-Za-z0-9._-]+/g,
+currentApp=currentApp.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,
  '/service-worker.js?v=v636-team-investigation');
 await writeFile(appSourceFile,currentApp,'utf8');
 console.log('v636 PWA freshness seal applied: '+path.basename(target));
