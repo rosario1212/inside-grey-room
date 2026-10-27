@@ -125,3 +125,36 @@ body:has(.igr-settings-modal)>.igr-alert-stack{display:none!important}
   body .igr-settings-modal{padding:8px 10px!important}
   body .igr-settings-box{width:100%!important}
 }
+
+/* v636 briefing: natural height, no blank scroll region. An actual overflow
+   remains scrollable on very small phones or with accessibility text scaling. */
+@media(max-width:900px){
+  #app .app>.briefing-page{
+    justify-content:flex-start!important;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;
+  }
+  #app .briefing-page>.briefing-cinematic{
+    flex:0 1 auto!important;
+    align-self:center!important;
+    max-height:calc(100dvh - 180px - env(safe-area-inset-bottom,0px))!important;
+    height:max-content!important;
+    padding-bottom:0!important;
+    margin:0 auto!important;
+    overscroll-behavior:contain;
+  }
+  #app .briefing-page .briefing-poster,
+  #app .briefing-page .briefing-poster img{
+    height:clamp(78px,13svh,150px)!important;
+    max-height:clamp(78px,13svh,150px)!important;
+  }
+  #app .briefing-page .briefing-card{padding:16px 18px 20px!important}
+  #app .briefing-page .briefing-card h1{font-size:clamp(28px,7vw,50px)!important}
+  #app .briefing-page .briefing-card .briefing-line{margin:11px 0!important}
+  #app .briefing-page .briefing-card p{margin:9px 0!important}
+  #app .briefing-page .briefing-card .igr-briefing-protocol{margin:9px 0!important;padding:9px 12px!important}
+}
+@media(max-height:620px) and (max-width:900px){
+  #app .briefing-page>.briefing-cinematic{max-height:calc(100dvh - 155px)!important}
+  #app .briefing-page .briefing-poster,
+  #app .briefing-page .briefing-poster img{height:70px!important;max-height:70px!important}
+}
