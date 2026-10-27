@@ -7,7 +7,8 @@ const VERSION='v87-canonical-narrative';
 const S=()=>{try{return typeof STATE!=='undefined'?STATE:window.STATE}catch(_){return window.STATE}};
 const sync=()=>S()?.sync||null;
 const me=()=>sync()?.player||null;
-const isInvestigator=()=>me()?.public_role==='enqueteur';
+const TEAM_ROLES=new Set(['enqueteur','analyste','procureur','juge','inspecteur','expert']);
+const isInvestigator=()=>TEAM_ROLES.has(me()?.public_role);
 const room=()=>sync()?.room||null;
 const fr=()=>window.IGR_LOCALE!=='en';
 const tr=(a,b)=>fr()?a:b;
@@ -32,12 +33,12 @@ function currentNotes(id){
 }
 function noteHtml(n){
  const labels={declaration:tr('Déclaration rapportée','Reported statement'),hypothese:tr('Hypothèse personnelle','Personal hypothesis'),question:tr('À vérifier','To verify')};
- return '<li class="igr87-note"><div><b>'+esc(labels[n.kind]||labels.question)+'</b><small>'+esc(n.created_at?new Date(n.created_at).toLocaleString(fr()?'fr-CH':'en-GB'):'')+'</small></div><p>'+esc(n.text)+'</p></li>';
+ return '<li class="igr87-note"><div><b>'+esc(labels[n.kind]||labels.question)+'</b><small>'+esc(n.author||tr('Équipe Enquête','Investigation team'))+' · '+esc(n.created_at?new Date(n.created_at).toLocaleString(fr()?'fr-CH':'en-GB'):'')+'</small></div><p>'+esc(n.text)+'</p></li>';
 }
 function notesBlock(id){
  const ns=currentNotes(id);
  return ns.length?'<ul class="igr87-notes">'+ns.map(noteHtml).join('')+'</ul>':
-  '<p class="igr87-empty">'+tr('Aucune note personnelle pour le moment.','No personal notes yet.')+'</p>';
+  '<p class="igr87-empty">'+tr('Aucune annotation partagée pour le moment.','No shared annotation yet.')+'</p>';
 }
 const AUTHORITATIVE=new Set(['trame','expert','field','judge','witness','expert_result','field_result','prosecutor_result','breaking_news','reveal','evidence','investigation']);
 function releasedEvents(){
@@ -62,13 +63,13 @@ function personSection(person,linked,index){
   'Statements must be compared to officially revealed elements. No private secret is presumed known.')+'</p>'+
   (cartel029()?publicBrief029(index):'')+
   (linked.length?linked.map(evidenceHtml).join(''):'<p class="igr87-empty">'+tr('Aucun élément officiel attribué à cette personne.','No official element assigned to this person.')+'</p>')+
-  '<h4>'+tr('Tes annotations','Your annotations')+'</h4><div data-igr87-notes="'+id+'">'+notesBlock(person.id)+'</div></div></details>';
+  '<h4>'+tr('Notes du camp Enquête','Investigation team notes')+'</h4><div data-igr87-notes="'+id+'">'+notesBlock(person.id)+'</div></div></details>';
 }
 function dossierHtml(){
  const d=sync(),publicContext=d?.scenario?.context||'',people=suspects(),validIds=new Set(people.map(p=>String(p.id)));
  const ev=releasedEvents(),common=ev.filter(e=>!association(e,validIds));
- return '<section class="igr87-dossier" aria-label="'+tr('Dossier évolutif de l’enquêteur','Investigator evolving case file')+'">'+
- '<div class="igr87-title"><div><small>'+tr('CARNET D’ENQUÊTE','INVESTIGATION NOTEBOOK')+'</small><h2>'+tr('Personnes et découvertes','People and discoveries')+'</h2></div><span>'+esc(people.length)+' '+(cartel029()?tr('témoins','witnesses'):tr('suspects','suspects'))+'</span></div>'+
+ return '<section class="igr87-dossier" aria-label="'+tr('Carnet évolutif partagé du camp Enquête','Investigation team shared notebook')+'">'+
+ '<div class="igr87-title"><div><small>'+tr('CARNET PARTAGÉ · CAMP ENQUÊTE','SHARED NOTEBOOK · INVESTIGATION TEAM')+'</small><h2>'+tr('Personnes et découvertes','People and discoveries')+'</h2></div><span>'+esc(people.length)+' '+(cartel029()?tr('témoins','witnesses'):tr('suspects','suspects'))+'</span></div>'+
  '<details class="igr87-common"><summary>'+tr('Situation connue et éléments communs','Known situation and shared discoveries')+
  ' <small>'+esc(common.length)+'</small></summary><div class="igr87-person-body">'+
  '<p>'+esc(publicContext||tr('Le dossier public sera précisé par l’enquête.','Public context will become clearer during the investigation.'))+'</p>'+
@@ -86,7 +87,7 @@ function dossierHtml(){
  '<label for="igr87Text">'+tr('Contenu','Content')+'</label><textarea id="igr87Text" maxlength="800" required rows="3" placeholder="'+
  tr('Ce que la personne a déclaré, ce qui reste incertain…','What the person said, what remains uncertain…')+'"></textarea>'+
  '<button class="btn primary" type="submit" id="igr87Save">'+tr('Ajouter au carnet','Add to notebook')+'</button>'+
- '<p class="igr87-status" id="igr87Status" role="status">'+esc(loadError||tr('Notes personnelles de l’enquêteur, enregistrées dans la partie.','Investigator-only notes, saved in this session.'))+'</p>'+
+ '<p class="igr87-status" id="igr87Status" role="status">'+esc(loadError||tr('Visible par le camp Enquête uniquement. Enregistré dans cette partie ; une hypothèse ne devient pas une preuve.','Visible only to the investigation team. Saved in this match; a hypothesis does not become evidence.'))+'</p>'+
  '</form><div class="igr87-general-notes"><h4>'+tr('Notes sur l’affaire','Case-wide notes')+'</h4><div data-igr87-notes="">'+notesBlock(null)+'</div></div></section>';
 }
 function refreshNotes(){
