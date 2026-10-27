@@ -534,3 +534,76 @@ revoke all on function public.igr_omerta_standalone_closure(text,uuid)
  from public,anon,authenticated;
 grant execute on function public.igr_omerta_standalone_closure(text,uuid)
  to anon,authenticated;
+
+
+-- Démarrage contrôlé A/B/C. API séparée de l'ancien démarrage pour conserver
+-- une compatibilité stricte avec les salons historiques. Tant que les A/B/C
+-- restent non approuvés, ce RPC refuse la partie AVANT de muter la salle.
+-- Ce composant nécessite encore un client conscient des variantes.
+create or replace function public.igr_omerta_start_standalone(
+ p_code text, p_host_token uuid
+) returns jsonb
+language plpgsql security definer set search_path=''
+as $standalone_start$
+declare
+ r public.igr_v4_rooms%rowtype;
+ manuscript jsonb;
+ variant text;
+ started jsonb;
+ n integer;
+ match_id integer;
+begin
+ select * into r from public.igr_v4_rooms
+ where code=upper(trim(p_code)) and host_token=p_host_token for update;
+ if not found then raise exception 'unauthorized'; end if;
+ if r.scenario_id not in ('021','022','023','024','025')
+    or r.status<>'lobby' then raise exception 'standalone_not_in_lobby'; end if;
+ -- Check both editorial and structural invariants before any side effects.
+ if coalesce((igr_private.igr_v100_preflight(r.scenario_id)
+       ->>'release_eligible')::boolean,false) is not true
+    or igr_private.igr_omerta_structural_preflight(r.scenario_id) is not true
+ then raise exception 'standalone_variant_not_approved'; end if;
+ variant:=igr_private.igr_omerta_pin_standalone_room_variant(r.code);
+ if variant is null then raise exception 'standalone_variant_not_approved'; end if;
+ match_id:=greatest(1,coalesce((r.state->>'match_no')::integer,1));
+ select s.manuscript into manuscript
+ from igr_private.igr_omerta_room_variant_snapshots s
+ where s.room_code=r.code and s.match_no=match_id
+   and s.scenario_id=r.scenario_id;
+ if manuscript is null then raise exception 'standalone_snapshot_missing'; end if;
+
+ -- Keep the established host check, role selection and room start behaviour.
+ -- Any failure rolls the new snapshot back in the SAME transaction.
+ started:=public.igr_omerta_start_game(r.code,p_host_token);
+ if coalesce((started->>'ok')::boolean,false) is not true
+ then raise exception 'omerta_legacy_start_failed'; end if;
+
+ n:=igr_private.igr_omerta_cast_standalone_room(r.code);
+ if n<1 then raise exception 'standalone_no_assigned_characters'; end if;
+
+ -- Remove only stale public context from the legacy start. The fresh public
+ -- context never contains the canonical answer or any private character card.
+ delete from public.igr_v4_events e
+ where e.room_code=r.code and e.event_type='context';
+ insert into public.igr_v4_events(
+   room_code,cycle,event_type,visibility,payload)
+ values(r.code,0,'context','public',
+   jsonb_build_object('title','OMERTÀ · DOSSIER','text',
+     manuscript->>'public_briefing'));
+
+ update public.igr_v4_rooms
+ set state=jsonb_set(coalesce(state,'{}'::jsonb),
+       '{omerta_standalone}', 'true'::jsonb,true),
+     updated_at=now()
+ where code=r.code;
+ -- Do not return the variant letter, hidden manuscripts, role mappings or
+ -- canonical truth even to the host.
+ return jsonb_build_object('ok',true,'standalone',true,
+   'cast_suspects',n,
+   'auto_assigned_roles',coalesce(started->'auto_assigned_roles','0'::jsonb));
+end;
+$standalone_start$;
+revoke all on function public.igr_omerta_start_standalone(text,uuid)
+ from public,anon,authenticated;
+grant execute on function public.igr_omerta_start_standalone(text,uuid)
+ to anon,authenticated;
