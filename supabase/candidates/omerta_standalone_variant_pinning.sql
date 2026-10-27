@@ -14,6 +14,46 @@ create table if not exists igr_private.igr_omerta_room_variant_snapshots (
 alter table igr_private.igr_omerta_room_variant_snapshots enable row level security;
 revoke all on igr_private.igr_omerta_room_variant_snapshots from public,anon,authenticated;
 
+-- Les nouveaux manuscrits Santoro restent isolés des anciens Verri.
+-- Table de préparation PRIVÉE : les 15 récits ne doivent jamais figurer
+-- dans les migrations GitHub, ni dans public.igr_v4_scenario_packs.
+create table if not exists igr_private.igr_omerta_santoro_v25_drafts(
+ scenario_id text not null check(scenario_id in ('021','022','023','024','025')),
+ variant_id text not null check(variant_id in ('A','B','C')),
+ manuscript jsonb not null,
+ editorial_status text not null default 'review'
+  check(editorial_status in ('review','ready','rejected')),
+ approved_by text,
+ approved_at timestamptz,
+ content_md5 text,
+ staged_at timestamptz not null default now(),
+ primary key(scenario_id,variant_id),
+ check((editorial_status='ready')=(approved_by is not null and approved_at is not null))
+);
+alter table igr_private.igr_omerta_santoro_v25_drafts enable row level security;
+revoke all on igr_private.igr_omerta_santoro_v25_drafts
+ from public,anon,authenticated;
+
+-- Source unifiée: les vraies variantes Santoro privées ont priorité.
+-- Sur les anciennes installations/tests, le fallback V99 ne sert que si
+-- des brouillons explicitement marqués Santoro existent déjà.
+create or replace view igr_private.igr_omerta_standalone_manuscripts
+with (security_invoker=false) as
+ select d.scenario_id,d.variant_id,d.manuscript,
+  d.editorial_status,d.approved_by,d.approved_at,d.content_md5
+ from igr_private.igr_omerta_santoro_v25_drafts d
+ union all
+ select old.scenario_id,old.variant_id,old.manuscript,
+  old.editorial_status,old.approved_by,old.approved_at,old.content_md5
+ from igr_private.igr_v99_variant_manuscripts old
+ where old.manuscript->'saga'->>'family'='SANTORO'
+   and not exists(
+    select 1 from igr_private.igr_omerta_santoro_v25_drafts d
+    where d.scenario_id=old.scenario_id
+   );
+revoke all on igr_private.igr_omerta_standalone_manuscripts
+ from public,anon,authenticated;
+
 -- Contrôle structurel en lecture seule, distinct de l'approbation éditoriale.
 -- Vérifie les événements canon, les postes distincts et l'existence de deux
 -- ancrages documentaires sans actions facultatives pour le cycle III.
@@ -80,7 +120,7 @@ as $structure$
           )
       ) >= 1
     ),false)
-  from igr_private.igr_v99_variant_manuscripts m
+  from igr_private.igr_omerta_standalone_manuscripts m
   where m.scenario_id=p_scenario and m.variant_id in ('A','B','C');
 $structure$;
 revoke all on function igr_private.igr_omerta_structural_preflight(text)
@@ -97,7 +137,7 @@ declare
  room public.igr_v4_rooms%rowtype;
  match_id integer;
  present igr_private.igr_omerta_room_variant_snapshots%rowtype;
- picked igr_private.igr_v99_variant_manuscripts%rowtype;
+ picked record;
 begin
  select * into room from public.igr_v4_rooms
  where code=upper(trim(p_room_code)) for update;
@@ -124,7 +164,7 @@ begin
     then return null; end if;
 
  select * into picked
- from igr_private.igr_v99_variant_manuscripts m
+ from igr_private.igr_omerta_standalone_manuscripts m
  where m.scenario_id=room.scenario_id
    and m.variant_id in ('A','B','C')
    and m.editorial_status='ready'
