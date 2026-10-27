@@ -590,6 +590,7 @@ declare
  started jsonb;
  n integer;
  match_id integer;
+ previous_event_id bigint;
 begin
  select * into r from public.igr_v4_rooms
  where code=upper(trim(p_code)) and host_token=p_host_token for update;
@@ -610,6 +611,10 @@ begin
    and s.scenario_id=r.scenario_id;
  if manuscript is null then raise exception 'standalone_snapshot_missing'; end if;
 
+ -- Only remove PUBLIC context events emitted by this new start.
+ -- Historical event logs from earlier matches must be preserved.
+ select coalesce(max(e.id),0) into previous_event_id
+ from public.igr_v4_events e where e.room_code=r.code;
  -- Keep the established host check, role selection and room start behaviour.
  -- Any failure rolls the new snapshot back in the SAME transaction.
  started:=public.igr_omerta_start_game(r.code,p_host_token);
@@ -622,7 +627,8 @@ begin
  -- Remove only stale public context from the legacy start. The fresh public
  -- context never contains the canonical answer or any private character card.
  delete from public.igr_v4_events e
- where e.room_code=r.code and e.event_type='context';
+ where e.room_code=r.code and e.id>previous_event_id
+   and e.event_type='context';
  insert into public.igr_v4_events(
    room_code,cycle,event_type,visibility,payload)
  values(r.code,0,'context','public',
