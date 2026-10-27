@@ -10,8 +10,8 @@ Ce document n'est pas un certificat de publication. Il décrit l'état du chanti
 - « Je souhaite en parler » : notification d'intention à l'Enquêteur, sans transmettre le texte secret et sans crédit de coopération.
 - « J'en ai déjà parlé » : consignation volontaire d'un fait issu de la fiche personnelle, côté serveur, avec événement privé pour l'Enquêteur ; une consignation par cycle et protection contre les doublons.
 - À la fin, l'Enquêteur vote Oui / Non. **Oui valide la deuxième condition indépendamment des cartes**, même si aucun renseignement n'a été consigné. Non n'est pas un veto automatique lorsqu'un renseignement canonique éligible existe.
-- Victoire complète de la source recrutée = objectif personnel existant + coopération (Oui de l'Enquêteur OU preuve canonique éligible) + survie.
-- Le verdict des joueurs non recrutés et les règles de révélation antérieures demeurent inchangés.
+- Victoire complète de la source recrutée = **intérêt personnel** (protection officielle accordée OU remise de peine d’au moins trois ans), **coopération** (Oui de l'Enquêteur OU preuve canonique éligible), et **survie**. Ces trois axes sont indépendants ; l'ancien objectif de loyauté d'un suspect ne détermine plus une fois devenu Indic.
+- L'Enquêteur peut officialiser une **protection négociée oralement** sans utiliser les anciens points de révélation, par la nouvelle fonction protégée `igr_omerta_indic_protect` ; une seule décision par source, événements privés. Les autres rôles et règles de révélation antérieures demeurent inchangés.
 - Intégration au bundle web, au bundle mobile, au service worker et aux tests dédiés.
 
 ## Ce qui est vérifié
@@ -45,3 +45,15 @@ Les 15 variantes sont en état `review`; le verrou de saga A/B/C est dormant et 
 8. Appliquer les migrations côté Supabase AVANT la mise en ligne du client ; ne pas activer un bouton qui appellerait une RPC inexistante.
 
 **État opérationnel :** le moteur de base public 021–025 continue de fonctionner avec son canon préexistant. La nouvelle version d'Omertà n'a pas été publiée en production par ce chantier. 
+
+## Contrôle de compilation et gameplay serveur — effectué
+
+Le 27 octobre 2026, les **quatre scripts de migration** ont été chargés successivement dans une **transaction explicite `BEGIN … ROLLBACK` sur le serveur de base**. Un point-virgule manquant à la fin du moteur de verdict a été trouvé et corrigé. La compilation finale a réussi. **Aucune fonction nouvelle n'a été persistée en production.**
+
+Le test `supabase/tests/omerta_vnext_runtime_rollback.sql` a ensuite été exécuté sous la même transaction annulée : les cinq dossiers canoniques 021–025 ont passé les assertions d'authentification, recrutement, consultation des trois cartes, signal ≠ transmission, déduplication, vote final et victoire. Dans le cas 022, l'Indic n'a envoyé **aucune** carte, mais a reçu une protection négociée et l'Enquêteur a répondu « Oui » : le verdict complet a été victorieux. Dans 021, le vote « Non » n'a pas effacé une carte canonique vérifiée. Les dossiers 024 et 025 ont validé la distinction entre coopération non confirmée et fait non évalué. Lecture de contrôle après `ROLLBACK` : **0 salle fictive, 0 action fictive et 0 fonction RPC nouvelle persistées**.
+
+Cela constitue une vérification serveur significative, mais **pas** un playtest multijoueur sur téléphones ni une certification des variantes A/B/C.
+
+## Dernière condition éditoriale non franchie
+
+`igr_private.igr_v100_preflight` renvoie encore `release_eligible=false` pour les cinq dossiers, en raison de **15 approbations humaines manquantes et de 15 preuves du cycle III dont la provenance n'a pas été déclarée vérifiée**. Ne pas utiliser une signature d'approbation fictive ni injecter un `approved_by` artificiel. L'extension aux manuscrits est à différer jusqu'à leur validation réelle et au raccordement complet des lecteurs serveur.
