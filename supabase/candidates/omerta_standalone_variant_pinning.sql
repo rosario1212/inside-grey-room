@@ -460,3 +460,65 @@ for each row
 when (new.cycle=3 and old.cycle is distinct from new.cycle)
 execute function igr_private.igr_omerta_c3_on_cycle_transition();
 
+
+-- Conclusion consultable par les participants uniquement APRÈS fermeture.
+-- Le niveau 0–2 indique une implication narrative rédigée par l'auteur,
+-- JAMAIS un jugement pénal automatique ou une condition de victoire.
+create or replace function public.igr_omerta_standalone_closure(
+ p_code text,p_player_token uuid
+) returns jsonb
+language plpgsql security definer set search_path=''
+as $closure$
+declare
+ p public.igr_v4_players%rowtype;
+ r public.igr_v4_rooms%rowtype;
+ m jsonb;
+ match_id integer;
+ n_suspects integer;
+ n_mapped integer;
+ summary jsonb;
+begin
+ select * into p from public.igr_v4_players
+ where room_code=upper(trim(p_code)) and player_token=p_player_token;
+ if not found then raise exception 'unauthorized'; end if;
+ select * into r from public.igr_v4_rooms where code=p.room_code;
+ if not found or r.scenario_id not in ('021','022','023','024','025')
+   or r.status<>'finished'
+ then return jsonb_build_object('available',false); end if;
+ match_id:=greatest(1,coalesce((r.state->>'match_no')::int,1));
+ select s.manuscript into m
+ from igr_private.igr_omerta_room_variant_snapshots s
+ where s.room_code=r.code and s.match_no=match_id
+   and s.scenario_id=r.scenario_id;
+ if m is null or nullif(m->>'final_reveal','') is null
+ then return jsonb_build_object('available',false); end if;
+ select count(*) into n_suspects from public.igr_v4_players
+ where room_code=r.code and public_role='suspect';
+ select count(*),coalesce(jsonb_agg(jsonb_build_object(
+    'player_id',player.id,
+    'pseudo',player.pseudo,
+    'editorial_involvement_level',
+     (m->'canonical_truth'->'responsibility_by_slot'->>cast.internal_slot::text)::integer
+    ) order by player.seat_index),'[]'::jsonb)
+ into n_mapped,summary
+ from igr_private.igr_omerta_room_cast_slots cast
+ join public.igr_v4_players player on player.id=cast.player_id
+   and player.room_code=cast.room_code and player.public_role='suspect'
+ where cast.room_code=r.code and cast.match_no=match_id
+   and cast.internal_slot=player.internal_slot
+   and (m->'canonical_truth'->'responsibility_by_slot'->>cast.internal_slot::text)
+       ~ '^[012]$';
+ if n_mapped<>n_suspects or n_suspects=0
+ then return jsonb_build_object('available',false); end if;
+ return jsonb_build_object(
+   'available',true,
+   'story',m->>'final_reveal',
+   'involvement_levels_are_not_sentences_or_win_conditions',true,
+   'characters',summary
+ );
+end;
+$closure$;
+revoke all on function public.igr_omerta_standalone_closure(text,uuid)
+ from public,anon,authenticated;
+grant execute on function public.igr_omerta_standalone_closure(text,uuid)
+ to anon,authenticated;
