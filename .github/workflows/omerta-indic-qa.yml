@@ -29,3 +29,34 @@ jobs:
           node --check omerta-money-intel-v1.js
           node scripts/omerta-money-intel-021-check.mjs
           node scripts/omerta-indic-final-rule-check.mjs
+
+  omerta-postgres:
+    name: Isolated PostgreSQL 16 multiplayer RPC smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: omerta_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d omerta_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply production candidate functions to disposable database
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_vnext_local_harness.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261026233000_omerta_indic_recruitment_021.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261026233500_omerta_money_intel_021.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/migrations/20261027004500_omerta_indic_reveal_scoring.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d omerta_test -f supabase/tests/omerta_vnext_local_integration.sql
