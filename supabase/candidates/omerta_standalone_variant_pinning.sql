@@ -777,6 +777,17 @@ begin
  from public.igr_v4_events e where e.room_code=r.code;
  -- Keep the established host check, role selection and room start behaviour.
  -- Any failure rolls the new snapshot back in the SAME transaction.
+ if manuscript->>'private_format'='santoro_v25'
+    and exists(
+     select 1 from public.igr_v4_players p
+     where p.room_code=r.code
+       and p.preferred_role is not null
+       and p.preferred_role not in ('enqueteur','analyste','suspect')
+       and not exists(
+         select 1 from pg_catalog.jsonb_array_elements(
+           manuscript->'private_cards') c
+         where c->>'rank_code'=p.preferred_role)
+    ) then raise exception 'standalone_selected_rank_not_available';end if;
  started:=public.igr_omerta_start_game(r.code,p_host_token);
  if coalesce((started->>'ok')::boolean,false) is not true
  then raise exception 'omerta_legacy_start_failed'; end if;
