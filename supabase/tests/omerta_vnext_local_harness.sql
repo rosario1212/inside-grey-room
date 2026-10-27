@@ -82,3 +82,39 @@ select lpad(n::text,3,'0'),
  'negotiable_facts',jsonb_build_array('Une discussion'),
  'base_sentence',9)))
 from generate_series(21,25) n;
+
+
+-- Fake sync to emulate dangerous old Verri metadata in a disposable database.
+-- Real Supabase sync already filters visibility by participant; this stub
+-- reproduces that property. It is NEVER applied to production.
+create function public.igr_v4_sync(p_code text,p_player_token uuid)
+returns jsonb language plpgsql security definer set search_path=''
+as $mock_sync$
+declare r public.igr_v4_rooms%rowtype; p public.igr_v4_players%rowtype;
+ events_json jsonb;
+begin
+ select * into p from public.igr_v4_players
+ where room_code=upper(trim(p_code)) and player_token=p_player_token;
+ if not found then raise exception 'unauthorized';end if;
+ select * into r from public.igr_v4_rooms where code=p.room_code;
+ select coalesce(jsonb_agg(jsonb_build_object('id',e.id,'event_type',e.event_type,
+   'payload',e.payload,'visibility',e.visibility,
+   'target_player_id',e.target_player_id) order by e.id),'[]'::jsonb)
+ into events_json from public.igr_v4_events e
+ where e.room_code=r.code
+   and (e.visibility='public' or e.target_player_id=p.id);
+ return jsonb_build_object(
+  'server_now',clock_timestamp(),
+  'room',jsonb_build_object('code',r.code,'status',r.status,
+     'scenario_id',r.scenario_id,'cycle',r.cycle,'phase',r.phase,
+     'state',r.state),
+  'player',jsonb_build_object('id',p.id,'public_role',p.public_role,
+      'private_state',p.private_state),
+  'events',events_json,'my_actions','[]'::jsonb,
+  'scenario',jsonb_build_object(
+    'context','LEGACY VERRI PRIVATE CAMPAIGN',
+    'truth','LEGACY VERRI HIDDEN FINAL',
+    'trames',jsonb_build_array('LEGACY VERRI TRAME'))
+ );
+end;
+$mock_sync$;
