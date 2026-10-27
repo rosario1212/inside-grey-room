@@ -54,6 +54,39 @@ with (security_invoker=false) as
 revoke all on igr_private.igr_omerta_standalone_manuscripts
  from public,anon,authenticated;
 
+-- Ne jamais confondre un ancien préflight Verri avec les nouveaux
+-- brouillons Santoro : vérification éditoriale indépendante.
+create or replace function igr_private.igr_omerta_editorial_preflight(
+ p_scenario text
+) returns boolean
+language plpgsql stable security definer set search_path=''
+as $editorial$
+declare n integer; ok integer; truths integer;
+begin
+ select count(*),
+   count(*) filter(where editorial_status='ready'
+      and approved_by is not null and approved_at is not null
+      and manuscript->>'status'='ready'
+      and manuscript->>'human_review_approved'='true'
+      and manuscript->>'verdict_scoring_review'='approved'
+      and exists(
+       select 1 from pg_catalog.jsonb_array_elements(
+         coalesce(manuscript->'revelations','[]'::jsonb)) r
+       where r->>'kind'='guaranteed' and r->>'min_cycle'='3'
+          and r->'editorial_provenance'->>'human_source_review'='verified'
+      )),
+   count(distinct manuscript->'canonical_truth'->'truth_by_axis')
+ into n,ok,truths
+ from igr_private.igr_omerta_santoro_v25_drafts
+ where scenario_id=p_scenario;
+ if n>0 then return n=3 and ok=3 and truths=3; end if;
+ return coalesce((igr_private.igr_v100_preflight(p_scenario)
+   ->>'release_eligible')::boolean,false);
+end;
+$editorial$;
+revoke all on function igr_private.igr_omerta_editorial_preflight(text)
+ from public,anon,authenticated;
+
 -- Contrôle structurel en lecture seule, distinct de l'approbation éditoriale.
 -- Vérifie les événements canon, les postes distincts et l'existence de deux
 -- ancrages documentaires sans actions facultatives pour le cycle III.
@@ -159,8 +192,8 @@ begin
 
  -- Bloquer une variante dont l'auteur/provenance C3 n'a pas été certifié.
  -- Évaluation par épisode : les cinq enquêtes doivent rester indépendantes.
- if coalesce((igr_private.igr_v100_preflight(room.scenario_id)->>'release_eligible')::boolean,false)
-    is not true or igr_private.igr_omerta_structural_preflight(room.scenario_id) is not true
+ if igr_private.igr_omerta_editorial_preflight(room.scenario_id) is not true
+    or igr_private.igr_omerta_structural_preflight(room.scenario_id) is not true
     then return null; end if;
 
  select * into picked
@@ -656,8 +689,7 @@ as $can$
   select coalesce(
     (select c.enabled from igr_private.igr_omerta_standalone_release_control c
        where c.id=1),false)
-  and coalesce((igr_private.igr_v100_preflight(p_scenario)
-       ->>'release_eligible')::boolean,false)
+  and coalesce(igr_private.igr_omerta_editorial_preflight(p_scenario),false)
   and coalesce(igr_private.igr_omerta_structural_preflight(p_scenario),false);
 $can$;
 revoke all on function igr_private.igr_omerta_standalone_can_start(text)
