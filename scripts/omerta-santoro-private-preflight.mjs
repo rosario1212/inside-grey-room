@@ -7,7 +7,8 @@ export function auditSantoroDrafts(drafts) {
   const failures = [];
   const report = {
     variants: 0, characters: 0, authoredTips: 0, independentC3Sources: 0,
-    emptyPersonalChronologies: 0, humanApproved: 0, releaseEligible: 0
+    emptyPersonalChronologies: 0, emptyPersonalSecrets: 0,
+    emptyDialoguePrompts: 0, humanApproved: 0, releaseEligible: 0
   };
   const truths = new Map();
   for (const [name, m] of Object.entries(drafts)) {
@@ -32,6 +33,10 @@ export function auditSantoroDrafts(drafts) {
       if (!String(c.what_you_know||'').trim() || !String(c.objective||'').trim())
         failures.push(name + ':missing_role_context');
       if (!String(c.your_chronology||'').trim()) report.emptyPersonalChronologies++;
+      if (!String(c.what_you_hide||'').trim()) report.emptyPersonalSecrets++;
+      if (!Array.isArray(c.conversation_hooks) ||
+          c.conversation_hooks.filter(q=>typeof q==='string'&&q.trim()).length<2)
+        report.emptyDialoguePrompts++;
       const tip=c.eligible_tip;
       if (tip?.id && tip?.text && tip.truth_in_variant === true &&
           timelineIds.has(tip.corroborates_with)) report.authoredTips++;
@@ -64,7 +69,8 @@ export function auditSantoroDrafts(drafts) {
     if ((truths.get(sc)?.size || 0)!==3) failures.push(sc + ':variants_not_distinct');
   if(report.variants!==15)failures.push('missing_variants');
   return { ...report, structuralPass:failures.length===0, releasePass:failures.length===0 &&
-    report.releaseEligible===15 && report.emptyPersonalChronologies===0,
+    report.releaseEligible===15 && report.emptyPersonalChronologies===0 &&
+    report.emptyPersonalSecrets===0 && report.emptyDialoguePrompts===0,
     issueCodes:[...new Set(failures)].slice(0,60) };
 }
 
