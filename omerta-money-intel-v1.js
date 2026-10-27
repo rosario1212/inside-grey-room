@@ -126,7 +126,7 @@ async function intel(){
    });
    row.append(intent,committed);wrapper.append(title,reminder,tag,row);m.slot.appendChild(wrapper);
   }
-  const tip=node('p','Le signal de disponibilité ne compte pas comme coopération. À la fin, l’Enquêteur peut aussi reconnaître ton aide orale, même sans carte consignée.');
+  const tip=node('p','Le signal de disponibilité ne compte pas comme coopération. Un renseignement consigné est automatiquement transmis à l’Enquêteur. Il ne peut pas en nier la réception.');
   tip.className='igr-money-intel-note';m.slot.appendChild(tip);
  }catch(e){
   console.warn('[OMERTA] chargement de renseignement',e);
@@ -154,44 +154,30 @@ async function protectSource(){
   });
   m.footer.insertBefore(b,m.footer.firstChild);
 }
-function finalReviewAvailable(d){
- if(!d||d.player?.public_role!=='enqueteur'||d.room?.status!=='playing'
-  ||d.room?.phase!=='locking'||!OMERTA.has(d.room.scenario_id))return false;
- if(!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true))return false;
- if((d.my_actions||[]).some(a=>a.action_type==='omerta_indic_final_assessment'))return false;
- if((d.my_actions||[]).some(a=>a.action_type==='final_lock'))return false;
- return true;
-}
-function showFinalReview(){
- const d=context();
- if(!finalReviewAvailable(d))return;
- const m=modal('Bilan de votre source','Cet Indic vous a-t-il réellement été utile ? Les échanges oraux comptent, même si aucune des trois cartes n’a été utilisée.');
- const note=node('p','Votre réponse est confidentielle. Un « Oui » valide sa deuxième condition, mais ne garantit pas sa victoire personnelle ni sa survie.');
- m.slot.appendChild(note);
- const vote=async(useful)=>{
-  yes.disabled=true;no.disabled=true;
-  try{
-   await sendRpc('igr_omerta_indic_assess',{p_useful:useful});
-   m.slot.textContent=useful?'Utilité reconnue. Sa deuxième condition de coopération sera validée.':'Avis défavorable enregistré. Le jeu vérifiera aussi les renseignements confirmés.';
-   yes.remove();no.remove();await refresh();
-  }catch(e){failure(m.slot,e);yes.disabled=false;no.disabled=false;}
- };
- const yes=btn('Oui, cette source m’a été utile','btn primary',()=>vote(true));
- const no=btn('Non, elle ne m’a pas été utile','btn ghost',()=>vote(false));
- m.footer.insertBefore(yes,m.footer.firstChild);m.footer.insertBefore(no,m.footer.firstChild);
-}
-function mountFinalReview(){
- const d=context();if(!finalReviewAvailable(d))return;
- const panel=document.querySelector('.game-panel-v11');
- if(!panel||panel.querySelector('.igr-indic-final-review'))return;
- const wrap=node('div');wrap.className='igr-indic-final-review';
- wrap.appendChild(node('strong','OMERTÀ · ÉVALUATION DE L’INDIC'));
- wrap.appendChild(node('p','Avant votre verdict final : cette source vous a-t-elle été utile, même uniquement à l’oral ?'));
- wrap.appendChild(btn('Évaluer mon Indic','btn primary',showFinalReview));
- panel.appendChild(wrap);
+// Une transmission déjà consignée supprime automatiquement le rappel de cycle.
+const reminderDismissed=new Set();
+function mountCycleReminder(){
+ const d=context(),panel=document.querySelector('.game-panel-v11');
+ if(!panel)return;
+ const old=panel.querySelector('.igr-indic-cycle-reminder');
+ const cycle=Number(d?.room?.cycle)||0;
+ const key=[d?.room?.code,match(d),cycle].join(':');
+ const active=role(d)==='suspect'&&activated(d)&&d?.room?.status==='playing'
+   &&cycle>=2&&d.room.phase==='cycle_debrief'&&OMERTA.has(d.room.scenario_id);
+ const logged=(d?.my_actions||[]).some(a=>a.action_type==='omerta_verified_intel'
+   &&Number(a.cycle)===cycle&&Number(a.payload?.match_no||1)===match(d));
+ if(old&&(!active||logged||old._igrCycleKey!==key))old.remove();
+ if(!active||logged||reminderDismissed.has(key)||panel.querySelector('.igr-indic-cycle-reminder'))return;
+ const box=node('section');box.className='igr-indic-cycle-reminder';box._igrCycleKey=key;
+ box.appendChild(node('strong','INDIC · FIN DE CYCLE'));
+ box.appendChild(node('p','As-tu partagé une information ?'));
+ const row=node('div');row.className='igr-money-intel-actions';
+ row.appendChild(btn('Oui','btn primary',()=>{reminderDismissed.add(key);box.remove();intel();}));
+ row.appendChild(btn('Non','btn ghost',()=>{reminderDismissed.add(key);box.remove();}));
+ box.appendChild(row);panel.appendChild(box);
 }
 function mount(){
- mountFinalReview();
+ mountCycleReminder();
  const d=context(),dock=document.querySelector('.omerta-decision-dock');
  if(!dock||!isPlaying(d))return;
  if(role(d)==='enqueteur'&&!events(d,'omerta_indic_status').some(e=>e.payload?.accepted===true)&&!dock.querySelector('.igr-indic-offer-button')){
