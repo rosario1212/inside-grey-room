@@ -86,6 +86,11 @@ begin
    perform public.igr_omerta_my_private_dossier('PIN021',gen_random_uuid());
  exception when others then refused:=true; end;
  if not refused then raise exception 'invalid token accepted'; end if;
+ if igr_private.igr_omerta_emit_c3_crosschecks('PIN021')<>0 then
+   raise exception 'C3 evidence leaked in C2'; end if;
+ update public.igr_v4_rooms set cycle=3 where code='PIN021';
+ delivered:=igr_private.igr_omerta_emit_c3_crosschecks('PIN021');
+ if delivered<>1 then raise exception 'authored C3 synthesis not delivered: %',delivered;end if;
  if not exists(
    select 1 from public.igr_v4_events e
    where e.room_code='PIN021' and e.event_type='omerta_c3_crosscheck'
@@ -95,11 +100,6 @@ begin
    and e.payload::text not like '%Synthetic document A%'
    and e.payload::text not like '%Synthetic document B%'
  ) then raise exception 'raw canonical timeline leaked instead of authored document'; end if;
- if igr_private.igr_omerta_emit_c3_crosschecks('PIN021')<>0 then
-   raise exception 'C3 evidence leaked in C2'; end if;
- update public.igr_v4_rooms set cycle=3 where code='PIN021';
- delivered:=igr_private.igr_omerta_emit_c3_crosschecks('PIN021');
- if delivered<>1 then raise exception 'authored C3 synthesis not delivered: %',delivered;end if;
  if igr_private.igr_omerta_emit_c3_crosschecks('PIN021')<>0 then
     raise exception 'duplicate C3 event';end if;
  if (select count(*) from public.igr_v4_events
