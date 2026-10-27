@@ -61,12 +61,19 @@ begin
       room_code,pseudo,seat_index,public_role,secret_role)
    values(c,'Mafia '||i,i,'suspect','associato');
  end loop;
+ -- Caporegime doit correspondre au personnage canon du slot 2,
+ -- indépendamment du mélange aléatoire des joueurs.
+ update public.igr_v4_players set preferred_role='caporegime'
+ where room_code=c and seat_index=2;
  update public.igr_v4_rooms set status='playing',phase='briefing',cycle=0 where code=c;
  assigned:=igr_private.igr_omerta_cast_standalone_room(c);
  if assigned<>7 then raise exception '8-player cast failed: %',assigned; end if;
  if (select count(distinct internal_slot) from public.igr_v4_players
       where room_code=c and public_role='suspect')<>7
  then raise exception 'duplicate mafia identity'; end if;
+ if (select internal_slot from public.igr_v4_players
+     where room_code=c and seat_index=2)<>2
+ then raise exception 'caporegime lost its canonical rank slot';end if;
  if exists(select 1 from public.igr_v4_players where room_code=c
       and public_role='suspect' and
       private_state->>'objective' is null)
