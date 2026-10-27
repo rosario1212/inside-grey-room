@@ -407,7 +407,9 @@
     if(hidden) return 30000;
 
     const room = STATE?.sync?.room;
-    // Server-state fallback for iPad: visible guests see host launch without restarting PWA.
+    // All foreground clients use the same authoritative server snapshot, including
+    // phones, tablets, desktop browsers and native shells. Realtime is a fast
+    // invalidation signal; polling is the independent safety net.
     if(!room || room.status==='lobby' || room.phase==='briefing' || room.phase==='role_reading')
       return 1100;
     const end = Date.parse(room?.phase_ends_at || '');
@@ -679,23 +681,12 @@
     if((event.key==='Enter'||event.key===' ')&&event.target?.id==='introEnterBtn')reliableIntroStart();
   },true);
 
-  document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible'){
-      healIntroArt();
-      if(inRoom()){
-        const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>70000;
-        connectRealtime(stale);
-        syncSoon(0,true);
-        schedulePoll(stale?900:pollDelay());
-      }
-    }
-  });
+  // Connectivity is device-neutral: do not trust cached client phases.
   window.addEventListener('online',()=>{
-    if(inRoom()){
-      connectRealtime(true);
-      syncSoon(0,true);
-      schedulePoll(900);
-    }
+    if(!inRoom())return;
+    connectRealtime(true);
+    if(document.visibilityState!=='hidden')syncSoon(0,true);
+    schedulePoll(document.visibilityState==='hidden'?pollDelay():500);
   },{passive:true});
   window.addEventListener('offline',()=>{
     if(!inRoom())return;
@@ -708,32 +699,31 @@
     setRealtimeState('offline');
     clearAdaptivePoll();
   },{passive:true});
-  window.addEventListener('pageshow',()=>{
-    healIntroArt();
-    if(inRoom()){
-      const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>70000;
-      connectRealtime(stale);
-      syncSoon(0,true);
-      schedulePoll(stale?900:pollDelay());
-    }
-  },{passive:true});
-
-  // iOS home-screen apps can resume with an apparently-open but suspended
-  // WebSocket. Reconcile the authoritative room, not the locally cached phase.
+  // When the OS suspends an app, none of the foreground timers is guaranteed
+  // to execute. The next resume must fetch the current authoritative state.
   let lastForegroundRepair=0;
   function foregroundRepair(){
     if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
     if(Date.now()-lastForegroundRepair<750)return;
     lastForegroundRepair=Date.now();
     const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>20000;
-    if(stale)connectRealtime(true);
+    connectRealtime(stale);
     syncSoon(0,true);
-    schedulePoll(stale?500:pollDelay());
+    // A sleeping client gets a prompt fallback even with a reportedly healthy socket.
+    schedulePoll(stale?500:Math.min(1100,pollDelay()));
   }
+  // One deduplicated recovery path for web tabs, installed home-screen PWAs,
+  // Android WebView, iOS WKWebView, browser back/forward cache and desktops.
   window.addEventListener('focus',foregroundRepair,{passive:true});
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')foregroundRepair()},{passive:true});
-  // Independent of websocket events and adaptive polling, recover a sleeping
-  // client that has not successfully rendered a server snapshot in 10 seconds.
+  window.addEventListener('pageshow',()=>{healIntroArt();foregroundRepair()},{passive:true});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible'){healIntroArt();foregroundRepair()}
+  },{passive:true});
+  document.addEventListener('resume',foregroundRepair,{passive:true});
+  window.addEventListener('resume',foregroundRepair,{passive:true});
+  try{navigator.connection?.addEventListener?.('change',foregroundRepair,{passive:true})}catch{}
+  // Device-neutral rescue watchdog: if a foreground snapshot failed to render,
+  // retry without a manual reload, independently of socket state.
   setInterval(()=>{
     if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
     const since=Date.now()-Number(STATE.lastSuccessfulSyncAt||0);
