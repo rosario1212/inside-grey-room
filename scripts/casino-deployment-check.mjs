@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 const clientVersion='v631-espion-mission-corrections';
-const cacheVersion='v632-iphone-live-ux';
+const cacheVersion='v634-investigation-workspace';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
@@ -71,6 +71,12 @@ assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI
 const cartelWorker=await get('/service-worker.js?v='+cacheVersion);
 assert.equal(cartelWorker.status,200);
 assert((await cartelWorker.text()).includes("const CACHE='igr-"+cacheVersion+"';"),'Deployed cache version must match the latest mobile UX release');
+const workspaceCss=await get('/investigation-workspace-v634.css?v='+cacheVersion);
+assert.equal(workspaceCss.status,200);
+assert((await workspaceCss.text()).includes('igr634-interviews'),'Investigation workspace CSS missing');
+const workspaceJs=await get('/investigation-workspace-v634.js?v='+cacheVersion);
+assert.equal(workspaceJs.status,200);
+assert((await workspaceJs.text()).includes('renderNotesTabV32'),'Integrated notes workspace missing');
 const liveUxStyle=await get('/live-game-ux-v632.css?v='+cacheVersion);
 assert.equal(liveUxStyle.status,200);
 assert((await liveUxStyle.text()).includes('safe-area-inset-top'),'Live iPhone layout patch missing from production');
