@@ -14,14 +14,14 @@ begin
     scenario_id,variant_id,manuscript,editorial_status)
    values(sc,variant.letter,
     jsonb_build_object(
-      'canonical_truth',jsonb_build_object('synthetic',sc||variant.letter),
-      'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only')),
+      'canonical_truth',jsonb_build_object('synthetic',sc||variant.letter, 'timeline', jsonb_build_array(jsonb_build_object('id','qa-t1'),jsonb_build_object('id','qa-t2'))),
+      'private_cards',jsonb_build_array(jsonb_build_object('slot',1,'objective','QA only'),jsonb_build_object('slot',2,'objective','QA only'),jsonb_build_object('slot',3,'objective','QA only')),
       'saga',jsonb_build_object('collection','OMERTA','branch',variant.letter,
         'chapter',sc::int-20),
       'revelations',jsonb_build_array(jsonb_build_object(
-        'kind','guaranteed','min_cycle','3',
+        'kind','guaranteed','min_cycle','3','canonical_event_id','qa-t2',
         'editorial_provenance',jsonb_build_object(
-          'human_source_review','unverified',
+          'human_source_review','unverified','source_material','synthetic manuscript fixture','existing_events',jsonb_build_array('qa-t1','qa-t2'),
           'independent_of_optional_actions','true'))),
       'status','review','human_review_approved',false),
     'review');
@@ -30,6 +30,8 @@ begin
   if selected is not null then raise exception 'unapproved % activated',sc; end if;
  end loop;
 
+ if igr_private.igr_omerta_structural_preflight('021') is not true
+ then raise exception 'valid synthetic crosschecks rejected'; end if;
  -- Approuver une variante imaginaire UNIQUEMENT dans PostgreSQL jetable.
  -- 022–025 restent des brouillons ; 021 doit pouvoir démarrer indépendamment.
  update igr_private.igr_v99_variant_manuscripts
