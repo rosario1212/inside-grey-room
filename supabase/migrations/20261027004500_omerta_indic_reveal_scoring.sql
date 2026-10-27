@@ -47,6 +47,21 @@ begin
       and coalesce((a.payload->>'match_no')::int,1)=indic_match_id
     ) into indic_matched;
     if indic_matched then
+      -- Ne pas hériter d'une protection obtenue dans un ancien match :
+      -- les anciennes actions omerta_protection_granted n'ont parfois
+      -- aucun match_no. L'identifiant de recrutement actif fait autorité.
+      select exists(
+        select 1 from public.igr_v4_actions a
+        where a.room_code=r.code and a.action_type='omerta_protection_granted'
+        and a.payload->>'target'=p.id::text
+        and a.id > (
+          select max(b.id) from public.igr_v4_actions b
+          where b.room_code=r.code and b.player_id=p.id
+          and b.action_type='omerta_indic_response'
+          and b.payload->>'accepted'='true'
+          and coalesce((b.payload->>'match_no')::int,1)=indic_match_id
+        )
+      ) into protected;
 
       select exists(
         select 1 from public.igr_v4_actions a
