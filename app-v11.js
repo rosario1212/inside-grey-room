@@ -1887,7 +1887,16 @@ async function lockFinal(){
 function responsibilityLabel(level){return ({0:'Aucune responsabilité',1:'Responsabilité secondaire',2:'Responsabilité principale'})[+level]||'Non renseignée'}
 function revealSummaryWithNames(summary,responsibilities=[]){
  let out=String(summary||'');
- responsibilities.slice(0,26).forEach((x,i)=>{const letter=String.fromCharCode(65+i);out=out.replace(new RegExp(`\\b${letter}\\b`,'g'),x.pseudo||letter)});
+ // S1, S2... are internal suspect slots. This runs only after the public reveal;
+ // the server provides responsibilities in slot order, not player seat order.
+ out=out.replace(/\bS([1-9][0-9]?)\b/g,(match,slot)=>{
+  const name=responsibilities[Number(slot)-1]?.pseudo;
+  return typeof name==='string'&&name.trim()?name:match;
+ });
+ responsibilities.slice(0,26).forEach((x,i)=>{
+  const letter=String.fromCharCode(65+i);
+  out=out.replace(new RegExp(`\\b${letter}\\b`,'g'),x.pseudo||letter);
+ });
  return out;
 }
 function responsibilityDelta(truth,guess){
