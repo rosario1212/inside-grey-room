@@ -37,9 +37,9 @@ export async function runNotificationChecks({page,read,check,css}){
    assert.equal(await suspect.locator('.igr-notify-count').textContent(),'','A different player receives no confidential event');
    assert.equal(await suspect.locator('[data-unread]').count(),0);
    assert.equal(await enq.locator('[onclick="setTab(\'channel\')"] .igr-tab-unread').textContent(),'•','Navigation uses a discreet unread indicator');
-   assert.equal(await enq.locator('[onclick="setTab(\'channel\')"]').getAttribute('data-unread'),'2','The exact unread total remains available as structured metadata');
+   assert.equal(await enq.locator('.tabs-v11 .tab[onclick="setTab(\'channel\')"]').getAttribute('data-unread'),'2','The exact unread total remains available as structured metadata');
    assert.equal(await enq.locator('[onclick="setTab(\'investigation\')"] .igr-tab-unread').textContent(),'•','Navigation uses a discreet unread indicator');
-   assert.equal(await enq.locator('[onclick="setTab(\'investigation\')"]').getAttribute('data-unread'),'1','The exact unread total remains available as structured metadata');
+   assert.equal(await enq.locator('.tabs-v11 .tab[onclick="setTab(\'investigation\')"]').getAttribute('data-unread'),'1','The exact unread total remains available as structured metadata');
    await enq.waitForTimeout(1400);assert.equal(await enq.locator('.igr-event-alert').count(),1,'A banner is still visible after the former 1.1-second removal');
    await enq.locator('.igr-alert-close').click();assert.equal(await enq.evaluate(()=>STATE.tab),'card','Dismiss must not navigate');
   });
