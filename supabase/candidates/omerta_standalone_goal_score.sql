@@ -28,7 +28,7 @@ begin
   if p_player_id is null or p_match_no is null or p_match_no < 1
       or p_goal->>'mode' is distinct from 'avoid_formal_designation'
       or nullif(g,'') is null
-      or nullif(v,'') is null or coalesce(v !~ '^02[1-5]-[ABC]
+      or nullif(v,'') is null or coalesce(v !~ '^02[1-5]-[ABC]$',true)
   then raise exception 'omerta_invalid_private_goal'; end if;
 
   if p_verdict_locked is distinct from true then
