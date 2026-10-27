@@ -39,3 +39,30 @@ let app=await readFile(core,'utf8');
 app=app.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,`/service-worker.js?v=${VERSION}`);
 await writeFile(core,app,'utf8');
 console.log('Investigation workspace '+VERSION+': scenario-neutral hierarchy applied to '+path.basename(target));
+
+
+/* v635 final UI layer: loaded after every gameplay and investigation stylesheet.
+   No changes to room state, private access rules, scenario variants or scoring. */
+const polishVersion='v635-reading-stability';
+const polishFile='reading-stability-v635.css';
+await stat(path.join(root,polishFile));
+await copyFile(path.join(root,polishFile),path.join(target,polishFile));
+for(const name of ['index.html','en.html']){
+ const filename=path.join(target,name);
+ let html=await readFile(filename,'utf8');
+ html=html.replace(/\s*<link[^>]+href=["']reading-stability-v635\.css[^"']*["'][^>]*>/gi,'');
+ html=html.replace('</head>','  <link rel="stylesheet" href="reading-stability-v635.css?v=v635-reading-stability">\n</head>');
+ html=html.replace(/app-v11\.js\?v=[^"']+/g,'app-v11.js?v=v635-reading-stability');
+ html=html.replace(/notifications-v12\.js\?v=[^"']+/g,'notifications-v12.js?v=v635-reading-stability');
+ await writeFile(filename,html,'utf8');
+}
+try{
+ const swFile=path.join(target,'service-worker.js');
+ let sw=await readFile(swFile,'utf8');
+ sw=sw.replace(/const CACHE='[^']*';/,"const CACHE='igr-v635-reading-stability';");
+ sw=sw.replace('const SHELL=[',"const SHELL=[\n  '/reading-stability-v635.css?v=v635-reading-stability',");
+ sw=sw.replace(/\/app-v11\.js\?v=[^'"]+/g,'/app-v11.js?v=v635-reading-stability');
+ sw=sw.replace(/\/notifications-v12\.js\?v=[^'"]+/g,'/notifications-v12.js?v=v635-reading-stability');
+ await writeFile(swFile,sw,'utf8');
+}catch(err){if(err.code!=='ENOENT')throw err}
+console.log('v635 ergonomic reading/notifications/settings layer applied: '+path.basename(target));
