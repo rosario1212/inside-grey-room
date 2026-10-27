@@ -1,6 +1,6 @@
 # OMERTÀ — vNext · audit de publication (27 octobre 2026)
 
-> **CORRECTION DE SÉCURITÉ — 27/10/2026.** Cette page contient l'historique de l'ancien vote « Oui » de l'Enquêteur ; il a été supprimé comme condition de victoire dans le correctif anti-arbitraire de la PR #379. Le contrat actif de la branche est décrit dans [OMERTA_INDIC_FINAL_EVALUATION.md](OMERTA_INDIC_FINAL_EVALUATION.md). Les variantes A/B/C restent non publiables et la règle `truth_verified` doit encore être étendue aux dossiers 022–025.
+> **Contrat de publication vérifié sur la PR #380 :** le « Oui » final de l'Enquêteur valide la coopération, même sans carte ; un « Non » n'annule pas un renseignement canonique vérifié. La condition personnelle et la survie demeurent distinctes. Le garde-fou anti-arbitraire est à sens unique.
 
 **Décision : ne pas activer les variantes A/B/C ni déployer le nouveau moteur d'Indic en production avant les validations ci-dessous.**
 Ce document n'est pas un certificat de publication. Il décrit l'état du chantier GitHub et les contrôles de Supabase réellement effectués.
@@ -59,3 +59,8 @@ Cela constitue une vérification serveur significative, mais **pas** un playtest
 ## Dernière condition éditoriale non franchie
 
 `igr_private.igr_v100_preflight` renvoie encore `release_eligible=false` pour les cinq dossiers, en raison de **15 approbations humaines manquantes et de 15 preuves du cycle III dont la provenance n'a pas été déclarée vérifiée**. Ne pas utiliser une signature d'approbation fictive ni injecter un `approved_by` artificiel. L'extension aux manuscrits est à différer jusqu'à leur validation réelle et au raccordement complet des lecteurs serveur.
+
+
+## Rectification des branches et sécurité de publication
+
+La branche de publication candidate est **PR #380**. Une autre PR historique a modifié la règle en supprimant le jugement positif, ce qui ne correspond pas à la demande de ce chantier. Les fichiers SQL et les contrôles de cette PR #380 rétablissent la règle demandée. Une suite de tests transactionnels sur les cinq scénarios a confirmé l'évaluation positive sans carte ; le scénario 022 intègre une protection négociée, un avis favorable et une victoire de l'Indic. Aucun script n'a été persisté dans Supabase et les variantes A/B/C ne sont toujours pas déverrouillées.
