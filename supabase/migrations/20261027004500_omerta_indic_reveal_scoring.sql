@@ -107,5 +107,4 @@ begin
   end if;
   return base;
 end;
-$function$
-
+$function$;
