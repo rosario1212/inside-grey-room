@@ -12,6 +12,7 @@ on:
       - 'supabase/migrations/20261027*omerta*.sql'
       - 'supabase/candidates/omerta_standalone_variant_pinning.sql'
       - 'supabase/candidates/omerta_core_sync_seal.sql'
+      - 'supabase/candidates/omerta_standalone_goal_score.sql'
       - 'supabase/tests/omerta_*.sql'
       - 'supabase/tests/omerta_vnext_*.sql'
       - 'scripts/build-web.mjs'
