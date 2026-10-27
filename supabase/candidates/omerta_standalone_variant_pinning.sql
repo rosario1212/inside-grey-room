@@ -574,6 +574,56 @@ grant execute on function public.igr_omerta_standalone_closure(text,uuid)
  to anon,authenticated;
 
 
+-- Interrupteur privé de publication : FALSE par défaut.
+-- Ni le client ni l'hôte ne peuvent lever le verrou éditorial.
+create table if not exists igr_private.igr_omerta_standalone_release_control(
+  id integer primary key check(id=1),
+  enabled boolean not null default false,
+  updated_at timestamptz not null default now()
+);
+alter table igr_private.igr_omerta_standalone_release_control enable row level security;
+revoke all on igr_private.igr_omerta_standalone_release_control from public,anon,authenticated;
+insert into igr_private.igr_omerta_standalone_release_control(id,enabled)
+values(1,false) on conflict(id) do nothing;
+
+create or replace function igr_private.igr_omerta_standalone_can_start(
+ p_scenario text
+) returns boolean
+language sql stable security definer set search_path=''
+as $can$
+  select coalesce(
+    (select c.enabled from igr_private.igr_omerta_standalone_release_control c
+       where c.id=1),false)
+  and coalesce((igr_private.igr_v100_preflight(p_scenario)
+       ->>'release_eligible')::boolean,false)
+  and coalesce(igr_private.igr_omerta_structural_preflight(p_scenario),false);
+$can$;
+revoke all on function igr_private.igr_omerta_standalone_can_start(text)
+ from public,anon,authenticated;
+
+-- Statut public NON narratif, uniquement après contrôle du jeton d'hôte.
+-- N'expose ni la lettre, ni les fiches, ni la vérité des variantes.
+create or replace function public.igr_omerta_standalone_release_status(
+ p_code text, p_host_token uuid
+) returns jsonb
+language plpgsql security definer set search_path=''
+as $availability$
+declare r public.igr_v4_rooms%rowtype;
+begin
+ select * into r from public.igr_v4_rooms
+ where code=upper(trim(p_code)) and host_token=p_host_token;
+ if not found then raise exception 'unauthorized';end if;
+ return jsonb_build_object('available',
+  r.status='lobby'
+   and r.scenario_id in ('021','022','023','024','025')
+   and igr_private.igr_omerta_standalone_can_start(r.scenario_id));
+end;
+$availability$;
+revoke all on function public.igr_omerta_standalone_release_status(text,uuid)
+ from public,anon,authenticated;
+grant execute on function public.igr_omerta_standalone_release_status(text,uuid)
+ to anon,authenticated;
+
 -- Démarrage contrôlé A/B/C. API séparée de l'ancien démarrage pour conserver
 -- une compatibilité stricte avec les salons historiques. Tant que les A/B/C
 -- restent non approuvés, ce RPC refuse la partie AVANT de muter la salle.
@@ -598,10 +648,8 @@ begin
  if r.scenario_id not in ('021','022','023','024','025')
     or r.status<>'lobby' then raise exception 'standalone_not_in_lobby'; end if;
  -- Check both editorial and structural invariants before any side effects.
- if coalesce((igr_private.igr_v100_preflight(r.scenario_id)
-       ->>'release_eligible')::boolean,false) is not true
-    or igr_private.igr_omerta_structural_preflight(r.scenario_id) is not true
- then raise exception 'standalone_variant_not_approved'; end if;
+ if igr_private.igr_omerta_standalone_can_start(r.scenario_id) is not true
+ then raise exception 'standalone_variant_not_released'; end if;
  variant:=igr_private.igr_omerta_pin_standalone_room_variant(r.code);
  if variant is null then raise exception 'standalone_variant_not_approved'; end if;
  match_id:=greatest(1,coalesce((r.state->>'match_no')::integer,1));
