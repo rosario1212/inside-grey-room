@@ -57,7 +57,7 @@ function categorize(node,buckets,leading){
    buckets.evidence.push(el);return;
  }
  if(cl.contains('igr016-ledger')){buckets.notebook.push(el);return}
- if(cl.contains('action-section')&&el.querySelector('button')&&/investigations? complémentaires|pistes|recherches complémentaires|enquête complémentaire/i.test(el.querySelector('h3,h2')?.textContent||'')){
+ if(cl.contains('action-section')&&el.querySelector('button')&&(/investigations? complémentaires|pistes|recherches complémentaires|enquête complémentaire/i.test(el.querySelector('h3,h2')?.textContent||'') || !!el.querySelector('[onclick*="investigate"],[onclick*="Investigation"]'))){
    buckets.priority.push(el);return;
  }
  if(el.querySelector('[onclick*="startInterrogation"],[onclick*="endInterrogation"],#igrV41InterTarget,#igrV41ConfrontA,#igrV41ConfrontB')||
@@ -108,8 +108,9 @@ function organize(raw){
  };
  if(!bucket.actions.length)bucket.actions.push(makeEl('p','igr634-empty',tr('Aucune décision supplémentaire à prendre dans cette phase.','No additional decision in this phase.')));
  makeGroup('actions',lead?tr('Actions du cycle','Cycle actions'):tr('Mes commandes officielles','My official controls'),tr('À EFFECTUER','TO DO'),bucket.actions,true);
+ const hasEvidence=bucket.evidence.length>0;
  if(!bucket.evidence.length)bucket.evidence.push(makeEl('p','igr634-empty',tr('Aucun nouvel élément disponible ici. Consulte aussi le Dossier commun.','No additional finding here. Also check the Shared case file.')));
- makeGroup('evidence',tr('Éléments reçus · preuves et découvertes','Received evidence and findings'),tr('CONSULTABLES MAINTENANT','AVAILABLE TO READ'),bucket.evidence,bucket.evidence.length>0);
+ makeGroup('evidence',tr('Éléments reçus · preuves et découvertes','Received evidence and findings'),tr('CONSULTABLES MAINTENANT','AVAILABLE TO READ'),bucket.evidence,hasEvidence);
  const noteInfo=makeEl('p','igr634-notice',tr('Carnet partagé : seules les personnes du camp Enquête peuvent lire et ajouter ces notes. Contrairement au Canal (messages rapides), elles restent classées par personne ou par affaire. Une note n’est jamais une preuve.','Shared notebook: only the investigation team can read and add notes. Unlike the Channel (quick messages), they remain organized by person or case. A note is never evidence.'));
  bucket.notebook.unshift(noteInfo);
  makeGroup('notebook',tr('Carnet partagé · camp Enquête','Shared investigation notebook'),tr('NOTES DURABLES · CAMP ENQUÊTE','SAVED TEAM NOTES'),bucket.notebook,false);
