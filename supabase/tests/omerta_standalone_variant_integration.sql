@@ -60,8 +60,15 @@ begin
  -- Nouveau match de la même salle -> autre variante quand elle est disponible.
  update public.igr_v4_rooms set state='{"match_no":2}'::jsonb
  where code='PIN021';
+ -- La version rééditée sans ligne chronologique est invalide pour un
+ -- NOUVEAU match. Le match précédent doit rester immuable.
  next_variant:=igr_private.igr_omerta_pin_standalone_room_variant('PIN021');
- if next_variant not in ('A','B','C') or next_variant=selected
+ if next_variant is not null then raise exception 'broken amended manuscript activated'; end if;
+ -- Restaurer dans le TEST la rédaction certifiée afin d'exercer le rematch.
+ update igr_private.igr_v99_variant_manuscripts set manuscript=pristine
+ where scenario_id='021' and variant_id=selected;
+ next_variant:=igr_private.igr_omerta_pin_standalone_room_variant('PIN021');
+ if next_variant is null or next_variant not in ('A','B','C') or next_variant=selected
  then raise exception 'rematch did not rotate ABC'; end if;
  select count(*) into next_no
  from igr_private.igr_omerta_room_variant_snapshots
