@@ -85,7 +85,32 @@ window.submitDebrief=submitDebrief=async function(){
 function eventOption(key){return (room()?.state?.event_options||[]).find(x=>x.key===key)}
 function optionButton(o){return `<button class="btn v13-event-btn" onclick="igr13StartEvent('${esc(o.key)}')"><b>${esc(o.label||CFG.eventLabels[o.key]||o.key)}</b><small>${esc(o.hint||'Événement annexe')}</small></button>`}
 function suspectOptions(exclude){return (STATE.sync?.suspects||[]).filter(x=>x.id!==exclude).map(x=>`<option value="${esc(x.id)}">${esc(x.pseudo)}</option>`).join('')}
-function renderConfrontationPicker(o){const ss=STATE.sync?.suspects||[];if(ss.length<2)return'';return `<div class="v13-target-picker"><b>${esc(o.label||'CONFRONTATION')}</b><select id="v13ConfrontA">${suspectOptions()}</select><select id="v13ConfrontB">${suspectOptions(ss[0]?.id)}</select><button class="btn primary" onclick="igr13StartConfrontation()">Convoquer les deux joueurs · 3 min</button></div>`}
+function confrPair(a,b){return [String(a||''),String(b||'')].sort().join(':')}
+function confrUsed(a,b){
+ const st=room()?.state||{},match=+(st.match_no||1),cycle=+(room()?.cycle||0);
+ return (st.confrontation_pairs_v636||[]).some(x=>x?.pair===confrPair(a,b)&&+x.cycle===cycle&&+(x.match||1)===match);
+}
+function confrontationPairs(){
+ const people=STATE.sync?.suspects||[],pairs=[];
+ people.forEach((a,i)=>people.slice(i+1).forEach(b=>{if(!confrUsed(a.id,b.id))pairs.push([a,b])}));
+ return pairs;
+}
+function renderConfrontationPicker(o){
+ const pairs=confrontationPairs();
+ if(!pairs.length)return '<div class="locked-state">Tous les duos ont déjà été confrontés pendant ce cycle. Choisis un autre événement.</div>';
+ const first=pairs[0];
+ const opts=(STATE.sync?.suspects||[]).filter(p=>pairs.some(q=>q.some(x=>x.id===p.id))).map(p=>`<option value="${esc(p.id)}">${esc(p.pseudo)}</option>`).join('');
+ const other=(STATE.sync?.suspects||[]).filter(p=>p.id!==first[0].id&&!confrUsed(first[0].id,p.id)).map(p=>`<option value="${esc(p.id)}">${esc(p.pseudo)}</option>`).join('');
+ return `<div class="v13-target-picker"><b>${esc(o.label||'CONFRONTATION')}</b><p class="choice-helper">Deux joueurs différents, une seule confrontation par duo et par cycle · 4 minutes. Maximum 3 confrontations par cycle.</p><label for="v13ConfrontA">Première personne</label><select id="v13ConfrontA" onchange="igr13UpdateConfrontationTargets()">${opts}</select><label for="v13ConfrontB">Seconde personne</label><select id="v13ConfrontB">${other}</select><button class="btn primary" onclick="igr13StartConfrontation()">Confronter ces deux personnes · 4 min</button></div>`;
+}
+window.igr13UpdateConfrontationTargets=function(){
+ const a=byId('v13ConfrontA')?.value,b=byId('v13ConfrontB');
+ if(!b)return;
+ const old=b.value,people=STATE.sync?.suspects||[];
+ b.innerHTML=people.filter(p=>a!==p.id&&!confrUsed(a,p.id)).map(p=>`<option value="${esc(p.id)}">${esc(p.pseudo)}</option>`).join('');
+ if([...b.options].some(x=>x.value===old))b.value=old;
+ const valid=!!b.value;const button=b.closest('.v13-target-picker')?.querySelector('button.primary');if(button)button.disabled=!valid;
+};
 function renderInterrogationEvent(o){return `<div class="v13-target-picker"><b>${esc(o.label||'INTERROGATOIRE')}</b><select id="v13EventInterTarget">${suspectOptions()}</select><button class="btn primary" onclick="igr13StartEventInterrogation()">Convoquer · 6 min</button></div>`}
 function assemblyEligible(){return (STATE.sync?.players||[]).filter(p=>['analyste','procureur','juge','inspecteur','expert','journaliste'].includes(p.public_role))}
 function renderAssembly(o){if(+room()?.cycle<3)return optionButton(o);const people=assemblyEligible();return `<div class="v13-target-picker"><b>ASSEMBLÉE FINALE</b><p class="choice-helper">Cycle 3 : l’Enquêteur peut restreindre l’accès. L’Analyste reste requis s’il existe.</p><div class="v13-assembly-list">${people.map(p=>`<label class="v13-assembly-person"><input type="checkbox" data-v13-assembly value="${esc(p.id)}" ${p.public_role==='analyste'?'checked disabled':''}><span>${esc(p.pseudo)} · ${esc(p.public_role)}</span></label>`).join('')}</div><button class="btn primary" onclick="igr13StartAssembly()">Ouvrir l’Assemblée</button></div>`}
@@ -97,7 +122,7 @@ function renderEventSelect(){
  return `<div class="v13-event-panel"><div class="v13-cold-banner"><strong>ÉVÉNEMENTS</strong>${eventSlotsText()} utilisés. Le téléphone choisit la scène ; les joueurs la jouent.</div>${buttons.length?`<div class="v13-event-grid">${buttons.join('')}</div>`:''}${special}</div>`;
 }
 window.igr13StartEvent=async function(key,targets=[]){try{await rpc('igr_v13_start_event',{p_code:STATE.room,p_player_token:STATE.token,p_event:key,p_targets:targets});await syncNow(true)}catch(e){console.error(e);toast(e?.message||'Événement impossible.')}};
-window.igr13StartConfrontation=function(){const a=byId('v13ConfrontA')?.value,b=byId('v13ConfrontB')?.value;if(!a||!b||a===b){toast('Choisis deux personnes différentes.');return}return window.igr13StartEvent('confrontation',[a,b])};
+window.igr13StartConfrontation=function(){const a=byId('v13ConfrontA')?.value,b=byId('v13ConfrontB')?.value;if(!a||!b||a===b){toast('Choisis deux personnes différentes.');return}if(confrUsed(a,b)){toast('Ce duo a déjà été confronté durant ce cycle.');return}return window.igr13StartEvent('confrontation',[a,b])};
 window.igr13StartEventInterrogation=function(){const t=byId('v13EventInterTarget')?.value;if(!t)return;return window.igr13StartEvent('interrogation',[t])};
 window.igr13StartAssembly=function(){const ids=[...document.querySelectorAll('[data-v13-assembly]:checked')].map(x=>x.value);return window.igr13StartEvent('assembly',ids)};
 
