@@ -26,7 +26,7 @@ function publicBrief029(index){
  return '<div class="igr87-first-brief" style="border:1px solid rgba(196,166,133,.24);border-radius:10px;padding:12px 14px;margin:10px 0;background:rgba(127,89,67,.08)"><small>'+tr('DÉCLARATION DE DÉPART · À VÉRIFIER','INITIAL ACCOUNT · TO VERIFY')+'</small><p>'+esc(tr(b.fr,b.en))+'</p><strong>'+tr('Point utile à éclaircir','Point to clarify')+'</strong><p>'+esc(tr(b.qFr,b.qEn))+'</p></div>';
 }
 
-const key=()=>String(room()?.code||'')+':'+String(me()?.id||'');
+const key=()=>String(room()?.code||'')+':'+String(room()?.state?.match_no||1)+':'+String(me()?.id||'');
 let keySeen='',notes=[],loading=false,lastFetch=0,loadError='';
 function currentNotes(id){
  return notes.filter(n=>String(n.suspect_id||'')===String(id||''));
