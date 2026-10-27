@@ -69,3 +69,15 @@ Corrections faites et testées après la clôture technique initiale :
 - **Décision : ne pas fusionner pour une publication intégrale** tant que le canon Santoro et le calcul définitif des objectifs de 15 variantes ne sont pas rédigés/validés et tant qu'un test de bout en bout avec le vrai schéma et les RPCs existants n'a pas réussi. L'interrupteur privé de release reste `false` par défaut.
 - Aucune branche Supabase payante, aucun coût supplémentaire demandé, aucune modification du service en production.
 
+
+
+## Préparation vérifiée — 27 octobre, étape staging verrouillé
+
+- **Base de production** : migration `omerta_santoro_private_staging_locked_20261027` appliquée avec succès ; table privée `igr_private.igr_omerta_santoro_v25_drafts` créée et protégée par RLS. Les rôles `anon` et `authenticated` n'ont aucun droit SELECT, le schéma privé n'est pas exposé et `igr_omerta_standalone_release_control.enabled=false`.
+- **Aucune diffusion de l'intrigue** : table réelle contenant **0** manuscrit (import narratif non réalisé), archive privée des 15 sources conservée dans la Library et non copiée dans le dépôt GitHub public.
+- **Audit des sources privées hors GitHub** : 15 variantes, 105 cartes, 105 objectifs individuels concordant avec leur slot, 105 renseignements éligibles avec ancrages canoniques, 30 références C3 indépendantes, cinq ensembles de vérités A/B/C distinctes. Aucun dossier approuvé.
+- **Nouveaux défauts éditoriaux confirmés** : 105/105 champs `your_chronology` vides ; 105/105 renseignements `source_review=pending` ; les sources C3 restent `human_source_review=pending`. Ce sont des brouillons, pas une version « 10/10 » prête.
+- **Verrou de publication** : le client ne doit pas accéder au démarrage autonome tant que le moteur de verdict réel, les renseignements de l'indic et les manuscrits validés n'ont pas passé les tests multiappareils et les contrôles de compatibilité. Le composant JS de verdict est déterministe mais n'est pas le RPC de clôture du match.
+- **Qualité du candidat** : corrections du briefing et test PostgreSQL ont été validés ; voir le statut du dernier commit, qui peut évoluer après les nouvelles améliorations.
+
+Aucune affirmation de fusion, de jeu Santoro en production ou de certification humaine ne doit être faite sur la base du seul succès de la CI.
