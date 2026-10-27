@@ -1,5 +1,7 @@
 # OMERTÀ — vNext · audit de publication (27 octobre 2026)
 
+> **Mise à jour du 27 octobre — tests sans branche payante :** la branche contient désormais un barème vérifiable pour les cartes canoniques 021–025 et refuse les pactes sans renseignement admissible (notamment 024/2, 024/4, 024/6). Une suite PostgreSQL 16 éphémère exécute les vraies migrations en GitHub Actions, sans nouvelle branche Supabase. Les cinq dossiers historiques passent la suite d'intégration. **Les variantes A/B/C restent non certifiées et non publiées.** Les anciens constats « cartes 022–025 non éligibles » et « aucune base de test » ci-dessous sont des constats historiques remplacés par cette mise à jour ; il n'y a pas de test en production, ni de certification de provenance.
+
 > **CORRECTION DE SÉCURITÉ — 27/10/2026.** Cette page contient l'historique de l'ancien vote « Oui » de l'Enquêteur ; il a été supprimé comme condition de victoire dans le correctif anti-arbitraire de la PR #379. Le contrat actif de la branche est décrit dans [OMERTA_INDIC_FINAL_EVALUATION.md](OMERTA_INDIC_FINAL_EVALUATION.md). Les variantes A/B/C restent non publiables et la règle `truth_verified` doit encore être étendue aux dossiers 022–025.
 
 **Décision : ne pas activer les variantes A/B/C ni déployer le nouveau moteur d'Indic en production avant les validations ci-dessous.**
