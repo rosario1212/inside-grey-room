@@ -116,6 +116,8 @@ as $structure$
            or nullif(trim(card->>'objective'),'') is null
            or nullif(trim(card->>'what_you_know'),'') is null
            or case when m.manuscript->>'private_format'='santoro_v25'
+               and exists(select 1 from igr_private.igr_omerta_santoro_v25_drafts d
+                 where d.scenario_id=m.scenario_id and d.variant_id=m.variant_id)
               then coalesce(
                 m.manuscript->'canonical_truth'->'verdict_goal_by_slot'
                   ->(card->>'slot')->>'mode'
