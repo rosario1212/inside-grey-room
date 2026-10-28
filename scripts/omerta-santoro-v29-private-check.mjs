@@ -44,4 +44,14 @@ for(const p of ['index.html','service-worker.js','scripts/build-web.mjs','script
  assert.ok(contents.includes('omerta-santoro-indic-v29.css'),p+' lacks Indic CSS');
 }
 assert.ok(!indic.includes('innerHTML'),'Never interpolate secret testimony into HTML');
+const rankStart=load('supabase/migrations/20261028020200_omerta_v29_parallel_ranks_start.sql');
+for(const invariant of [
+ 'santoro_rank_capacity_exceeded',
+ 'row_number() OVER (PARTITION BY p.preferred_role',
+ "SET preferred_role='suspect'",
+ 'SET preferred_role=picked->>\'rank\',secret_role=picked->>\'rank\'',
+ 'igr_omerta_cast_standalone_room(r.code)'
+]) assert.ok(rankStart.includes(invariant),'Santoro duplicate-rank start guard missing '+invariant);
+assert.ok(rankStart.includes('public.igr_omerta_start_game(r.code,p_host_token)'),
+  'Legacy starter must remain unchanged in Verri');
 console.log('OMERTA V29 INDIC/VERDICT SECURITY, ACCESS AND BUNDLING: PASS');
