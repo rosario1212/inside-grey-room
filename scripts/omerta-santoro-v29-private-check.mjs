@@ -43,6 +43,9 @@ for(const p of ['index.html','service-worker.js','scripts/build-web.mjs','script
  assert.ok(contents.includes('omerta-santoro-indic-v29.js'),p+' lacks Indic JS');
  assert.ok(contents.includes('omerta-santoro-indic-v29.css'),p+' lacks Indic CSS');
 }
+const titlePrivacy=load('supabase/migrations/20261028020300_omerta_v29_silent_unannounced_indic_topics.sql');
+assert.ok(titlePrivacy.includes('AND (coalesce(report.intent_only,false) OR coalesce(report.told_to_investigator,false))'),
+  'An investigator must not see a topic title before the source signals it');
 assert.ok(!indic.includes('innerHTML'),'Never interpolate secret testimony into HTML');
 const rankStart=load('supabase/migrations/20261028020200_omerta_v29_parallel_ranks_start.sql');
 for(const invariant of [
