@@ -1209,7 +1209,7 @@ function igr82RelationLink(entry,fact) {
 /* v637 — Clear, non-presumptive prompts; canonical game facts stay unchanged. */
 function igr82RelationPrompt(raw){
  const question=String(raw||'').trim();
- if(String(STATE?.sync?.room?.scenario_id||'')!=='001')return question;
+ if(String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'')!=='001')return question;
  const clarity={
  "Pourquoi l’ancien ami a-t-il quitté Maël dans cet état ?":"À quelle heure as-tu quitté Maël, et dans quel état était-il à ton départ ?",
  "Pourquoi le visiteur n’a-t-il pas prévenu les secours ?":"Étais-tu présent dans la chambre 222 ? As-tu entendu quelqu’un appeler à l’aide ?",
