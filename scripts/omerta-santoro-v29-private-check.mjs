@@ -34,7 +34,10 @@ assert.ok(scoring.includes("source_id=own.id AND accepted=true"));
 assert.ok(sequence.includes('indic_final_review_required'));
 assert.ok(precise.includes('igr_omerta_v29_precise_act_review'));
 assert.ok(!precise.includes("responsibility_by_act' ? (e->>'act_axis')"),'Broad V28 act validation remains active');
-assert.ok(gate.includes("3*(SELECT count(*)"),'Three verified topics per role required');
+assert.ok(gate.includes("3*(SELECT count(*)"),'Initial three-topic gate must exist');
+const uniqueTopics=load('supabase/migrations/20261028020100_omerta_v29_unique_indic_topics_guard.sql');
+assert.ok(uniqueTopics.includes('count(DISTINCT lower(btrim(i.topic_text)))=3'),'Different intelligence details required');
+assert.ok(uniqueTopics.includes('count(DISTINCT i.source_event_id)>=2'),'Independent documentary anchors required');
 for(const p of ['index.html','service-worker.js','scripts/build-web.mjs','scripts/build-mobile.mjs']){
  const contents=load(p);
  assert.ok(contents.includes('omerta-santoro-indic-v29.js'),p+' lacks Indic JS');
