@@ -107,7 +107,7 @@ for(const page of ['index.html','en.html']){
 const roleStart=app.indexOf('function igr82RelationLink(');
 const roleEnd=app.indexOf('function privateCardHtml(){',roleStart);
 assert(roleStart>=0&&roleEnd>roleStart,'Context-aware relationship renderer must be bundled');
-const roleContext={h:context.h,window:{IGR_LOCALE:'fr'}};
+const roleContext={h:context.h,window:{IGR_LOCALE:'fr'},STATE:{sync:{room:{scenario_id:'021'}}}};
 vm.runInNewContext(app.slice(roleStart,roleEnd),roleContext);
 const renderRel=text=>roleContext.valueBlock('TES RELATIONS',[{pseudo:'ipad',text}]);
 const unknown=renderRel('Ton point de départ — Tu ne le connais pas. Tu ignores ce qu’il a pu voir.\n\nÀ mettre sur la table — À quelle heure ?');
