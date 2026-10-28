@@ -7,7 +7,7 @@
 - La victime s'appelle **Maël** dans le dossier actuel.
 - Enquêteur : attribuer exactement un niveau 2, puis répondre à **« Comment Maël a-t-il été mortellement blessé ? »**
 - Trois réponses déjà prises en charge par la reconstruction `reconstruction_001.gesture` : premier visiteur avec couteau volontaire (`s1_intentional`), visiteur rémunéré avec couteau volontaire (`s2_intentional`), client qui provoque involontairement la blessure en voulant séparer deux hommes (`s3_accident`).
-- La réponse doit correspondre au pseudonyme du **seul suspect désigné au niveau 2**. Elle est conservée dans `final_lock.reconstruction_001.gesture`.
+- La question précise que le geste doit concerner le **seul suspect désigné au niveau 2**. Elle est conservée dans `final_lock.reconstruction_001.gesture`. **Attention :** les slots secrets sont attribués aléatoirement et ne correspondent pas nécessairement à l'ordre public des pseudonymes. La cohérence entre le niveau 2 et le slot du geste doit être validée côté serveur, sans révéler les slots privés ; elle n'est pas encore contrôlée par le moteur de production.
 - La chronologie (`moment`) et la circonstance qui explique les apparences (`reframe`) restent nécessaires.
 - **Limitation actuelle** : le moteur de victoire calcule d'abord les niveaux. La correction de `gesture` apparaît dans le score de reconstruction mais ne constitue pas encore un objectif distinct par suspect. Ne pas l'annoncer comme une victoire automatique.
 - Les neuf fiches du dossier 001 ont été validées narrativement ; les objectifs du second personnage B et du premier personnage C exigent un arbitrage formel entre se disculper et faire constater sa responsabilité exacte.
@@ -57,4 +57,4 @@
 6. Si l'intention est indémontrable, ne pas demander au joueur de la deviner : établir les seuls actes et connaissances démontrés.
 7. Écrire toujours comme la variante 001-B : simple, direct, tutoiement, sans induire de fausses suspicions.
 
-**État** : interface du scénario 001 adaptée sur une branche de révision ; extension des choix spécifiques et du scoring des autres dossiers non encore publiée, à réaliser pendant leur audit et leur validation.
+**État** : interface du scénario 001 adaptée sur une branche de révision et choix déjà sérialisé côté serveur ; contrôle sécurisé slot/niveau 2 et scoring de la victoire à intégrer avant publication ; extension des choix spécifiques des autres dossiers non encore publiée, à réaliser pendant leur audit et leur validation.
