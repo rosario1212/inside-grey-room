@@ -1234,12 +1234,12 @@ function igr82RelationPrompt(raw){
 }
 function igr82RelationFact(raw){
  const fact=String(raw||'').trim();
- if(String(STATE?.sync?.room?.scenario_id||'')==='001'&&fact==="Tu ignores que ce client est intervenu dans la lutte.")
+ if(String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'')==='001'&&fact==="Tu ignores que ce client est intervenu dans la lutte.")
    return "Tu ne sais pas ce que ce client a réellement fait près de la chambre 222.";
  return fact;
 }
 function igr82RelationPlayerTag(person){
- const roster=STATE?.sync?.players||[];
+ const roster=typeof STATE==='undefined'?[]:(STATE?.sync?.players||[]);
  const norm=x=>String(x||'').normalize('NFKC').toLocaleLowerCase();
  const near=roster.some(p=>{
   const a=norm(person),b=norm(p?.pseudo);
