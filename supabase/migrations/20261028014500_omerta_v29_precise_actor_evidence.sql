@@ -4,9 +4,15 @@ ALTER TABLE igr_private.igr_omerta_v29_precise_act_review
  ADD COLUMN IF NOT EXISTS actual_actor_slots integer[] NOT NULL DEFAULT ARRAY[]::integer[],
  ADD COLUMN IF NOT EXISTS evidence_ids jsonb NOT NULL DEFAULT '[]'::jsonb,
  ADD COLUMN IF NOT EXISTS review_notes text;
-ALTER TABLE igr_private.igr_omerta_v29_precise_act_review
- ADD CONSTRAINT omerta_v29_evidence_is_array
- CHECK(jsonb_typeof(evidence_ids)='array');
+DO $safe_constraint$ BEGIN
+ IF NOT EXISTS(SELECT 1 FROM pg_catalog.pg_constraint
+   WHERE conname='omerta_v29_evidence_is_array'
+     AND conrelid='igr_private.igr_omerta_v29_precise_act_review'::regclass)
+ THEN
+  ALTER TABLE igr_private.igr_omerta_v29_precise_act_review
+   ADD CONSTRAINT omerta_v29_evidence_is_array CHECK(jsonb_typeof(evidence_ids)='array');
+ END IF;
+END $safe_constraint$;
 CREATE OR REPLACE FUNCTION igr_private.igr_omerta_v29_precise_goals_ready(p_scenario text)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=''
 AS $precise$
