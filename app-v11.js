@@ -1209,7 +1209,7 @@ function igr82RelationLink(entry,fact) {
 /* v637 — Clear, non-presumptive prompts; canonical game facts stay unchanged. */
 function igr82RelationPrompt(raw){
  const question=String(raw||'').trim();
- if(String(STATE?.sync?.room?.scenario_id||'')!=='001')return question;
+ if(String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'')!=='001')return question;
  const clarity={
  "Pourquoi l’ancien ami a-t-il quitté Maël dans cet état ?":"À quelle heure as-tu quitté Maël, et dans quel état était-il à ton départ ?",
  "Pourquoi le visiteur n’a-t-il pas prévenu les secours ?":"Étais-tu présent dans la chambre 222 ? As-tu entendu quelqu’un appeler à l’aide ?",
@@ -1234,12 +1234,12 @@ function igr82RelationPrompt(raw){
 }
 function igr82RelationFact(raw){
  const fact=String(raw||'').trim();
- if(String(STATE?.sync?.room?.scenario_id||'')==='001'&&fact==="Tu ignores que ce client est intervenu dans la lutte.")
+ if(String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'')==='001'&&fact==="Tu ignores que ce client est intervenu dans la lutte.")
    return "Tu ne sais pas ce que ce client a réellement fait près de la chambre 222.";
  return fact;
 }
 function igr82RelationPlayerTag(person){
- const roster=STATE?.sync?.players||[];
+ const roster=typeof STATE==='undefined'?[]:(STATE?.sync?.players||[]);
  const norm=x=>String(x||'').normalize('NFKC').toLocaleLowerCase();
  const near=roster.some(p=>{
   const a=norm(person),b=norm(p?.pseudo);
@@ -1275,7 +1275,7 @@ function igr82RelationsHtml(value) {
     seen.add(key);
     const playerTag=igr82RelationPlayerTag(person);
     const initial=person.trim().slice(0,1).toUpperCase()||'?';
-    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b>${playerTag?`<small class="igr82-player-tag">${h(playerTag)}</small>`:''}${link?`<small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p>`:''}</div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DÉJÀ','WHAT YOU ALREADY KNOW')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('QUESTION POSSIBLE · PAS UNE PREUVE','POSSIBLE QUESTION · NOT EVIDENCE')}</span>${h(opening)}</p>`:''}</div></article>`;
+    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b>${playerTag?`<small class="igr82-player-tag">${h(playerTag)}</small>`:''}${link?`<small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p>`:''}</div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE LUI','WHAT YOU KNOW ABOUT THEM')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('À ÉCLAIRCIR ENTRE VOUS · QUESTION POSSIBLE, PAS UNE PREUVE','TO CLARIFY BETWEEN YOU · POSSIBLE QUESTION, NOT EVIDENCE')}</span>${h(opening)}</p>`:''}</div></article>`;
   });
   return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><p class="igr82-relation-hint">${tr('Une carte par personne. Tes informations ne prouvent pas ses actes.','One card per person. What you know does not prove what they did.')}</p><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
