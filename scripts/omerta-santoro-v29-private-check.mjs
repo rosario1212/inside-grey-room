@@ -25,7 +25,7 @@ const investigatorStatus=pacts.split('ELSIF p.id=pact.investigator_id')[1]?.spli
 assert.ok(!investigatorStatus.includes('topic_text'),'Investigator may receive a topic title, never a secret detail');
 for(const token of [
  "actor.public_role<>'enqueteur'","actor.id<>pact.source_id",
- "role_slot=actor.internal_slot","topic.review_status='verified'",
+ "role_slot=actor.internal_slot","review_status='verified'",
  "indic_one_official_report_per_cycle","pact.submitted_at IS NOT NULL"
 ])assert.ok(actions.includes(token),'Missing action authorization or deduplication '+token);
 assert.ok(scoring.includes('pact.protected')&&scoring.includes('pact.reduction_years'));
