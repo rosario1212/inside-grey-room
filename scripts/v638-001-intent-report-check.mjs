@@ -5,11 +5,19 @@ import {readFileSync} from 'node:fs';
 const src=readFileSync('app-v11.js','utf8');
 assert(src.includes('Qualification de l’intention au vu des pièces'));
 assert(src.includes('id="igr001Intent"'));
-assert(src.includes('intent_to_kill'));
+assert(!src.includes('value="intent_to_kill"'));
+assert(src.includes('Geste volontaire</option>'));
+assert(src.includes('Geste involontaire</option>'));
+assert(src.includes('Intention impossible à déterminer</option>'));
 assert(src.includes('voluntary_act'));
 assert(src.includes('involuntary_act'));
 assert(src.includes('undetermined'));
 assert(src.includes('payload.reconstruction_001={moment,gesture,reframe,intent}'));
+assert(src.includes('l’intention vaut un point dans le pourcentage global'));
+assert(src.includes('report_score_percent'));
+assert(src.includes('Math.round(100*recScore/recAxes.length)'));
+const intentOptions=src.match(/<select id="igr001Intent">([\s\S]*?)<\/select>/)?.[1]||'';
+assert.equal((intentOptions.match(/<option value="(?:voluntary_act|involuntary_act|undetermined)"/g)||[]).length,3);
 assert(src.includes("['enqueteur','analyste'].includes(role)&&STATE.sync?.room?.scenario_id==='001'"));
 assert(!src.includes('Le geste mortel doit concerner la personne que tu as désignée au niveau 2.'));
 assert(!src.includes('Choisis une seule personne au niveau 2 pour expliquer le geste mortel.'));
@@ -18,8 +26,8 @@ const cases=[
  {truth:'s1_intentional',intent:'voluntary_act',expected:true},
  {truth:'s2_intentional',intent:'voluntary_act',expected:true},
  {truth:'s3_accident',intent:'involuntary_act',expected:true},
- {truth:'s3_accident',intent:'intent_to_kill',expected:false},
- {truth:'s1_intentional',intent:'intent_to_kill',expected:false},
+ {truth:'s3_accident',intent:'voluntary_act',expected:false},
+ {truth:'s1_intentional',intent:'involuntary_act',expected:false},
  {truth:'s2_intentional',intent:'undetermined',expected:false}
 ];
 for(const c of cases){
