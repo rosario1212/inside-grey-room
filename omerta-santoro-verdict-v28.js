@@ -44,7 +44,7 @@ function overlay(title,description){
  document.body.append(m);
  return {outer:m,content,foot,cancel};
 }
-function error(container,e){container.append(el('p',String(e?.message||'Action indisponible').replace(/^[a-z_]+$/i,'Vérifie le statut de la partie.'),'igr-santoro-verdict-error'));}
+function error(container,e){const raw=String(e?.message||'');const msg=raw.includes('indic_final_review_required')?'Enregistre d’abord le bilan final de l’Indic dans l’onglet Source confidentielle.':raw.includes('omerta_designation_unfounded')?'Cet acte n’est pas étayé par les deux pièces validées.':raw.replace(/^[a-z_]+$/i,'Vérifie le statut de la partie.');container.append(el('p',msg||'Action indisponible','igr-santoro-verdict-error'));}
 async function openVerdict(){
  if(!canLock(current()))return;
  const m=overlay('Verdict final','Désigne uniquement un joueur et un acte précis. Les deux pièces C3 sont les références du dossier, pas une preuve automatique de la culpabilité.');
@@ -69,7 +69,7 @@ async function openVerdict(){
    const choice=el('select',undefined,'igr-santoro-verdict-select');
    const none=el('option','Ne pas désigner');none.value='';choice.append(none);
    for(const act of acts){
-    const option=el('option',LABELS[act.code]||act.code);
+    const option=el('option',act.label||LABELS[act.code]||act.code);
     option.value=act.code;choice.append(option);
    }
    name.append(choice);field.append(name);m.content.append(field);
@@ -112,7 +112,7 @@ async function openPersonalResult(){
   }
   m.content.append(el('h3',data.result?.won===true?'Objectif atteint':'Objectif non atteint'));
   m.content.append(el('p',data.canonical_goal||''));
-  m.content.append(el('p','Acte associé : '+(LABELS[data.act_axis]||data.act_axis||'non renseigné')));
+  m.content.append(el('p','Acte associé : '+(data.act_label||LABELS[data.act_axis]||data.act_axis||'non renseigné')));
  }catch(e){m.content.replaceChildren();error(m.content,e);}
 }
 function mount(){
