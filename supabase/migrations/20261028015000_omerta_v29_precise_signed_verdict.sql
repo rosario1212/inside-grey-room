@@ -34,7 +34,7 @@ BEGIN
   coalesce(m->'canonical_truth'->'timeline','[]'::jsonb)) event;
  RETURN jsonb_build_object('available',true,'suspects',suspects,'acts',acts,
   'evidence',proof,'single_submission',true,'max_designations',jsonb_array_length(suspects));
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION public.igr_omerta_standalone_lock_verdict(p_code text, p_player_token uuid, p_designations jsonb)
  RETURNS jsonb
@@ -126,7 +126,7 @@ BEGIN
  'text','La conclusion du dossier peut être consultée. Les objectifs privés restent confidentiels.'));
  RETURN jsonb_build_object('ok',true,'finished',true,
  'designations_recorded',n,'match_no',mid);
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION public.igr_omerta_standalone_my_verdict(p_code text, p_player_token uuid)
  RETURNS jsonb
@@ -196,7 +196,7 @@ BEGIN
   'goal_id',g.goal_id),true,events,'{}'::jsonb);
  RETURN jsonb_build_object('available',true,'result',result,
   'act_axis',g.act_code,'act_label',g.public_act_label,'canonical_goal',card->'verdict_goal'->>'description');
-END $function$
+END $function$;
 
 
 CREATE OR REPLACE FUNCTION igr_private.igr_omerta_standalone_can_start(p_scenario text)
