@@ -39,8 +39,9 @@ BEGIN
       AND p.public_role IN ('enqueteur','analyste')
     ORDER BY CASE WHEN p.public_role='enqueteur' THEN 0 ELSE 1 END,a.id DESC
     LIMIT 1;
-  IF submitted IS NULL OR jsonb_typeof(submitted)<>'object' THEN
-    RETURN p_reveal;
+  IF submitted IS NULL OR jsonb_typeof(submitted)<>'object'
+     OR coalesce(submitted->>'intent','') NOT IN ('voluntary_act','involuntary_act','undetermined') THEN
+    RETURN p_reveal; -- Old/ongoing rooms: do not change an existing final score.
   END IF;
 
   camp:=coalesce(p_reveal->'camp_investigation','{}'::jsonb);
@@ -48,16 +49,14 @@ BEGIN
   level_total:=coalesce((camp->>'total')::integer,0);
   IF level_total=0 THEN RETURN p_reveal; END IF;
 
-  rec_exact:=(submitted->>'moment'=canonical->>'moment')::integer
-            +(submitted->>'gesture'=canonical->>'gesture')::integer
-            +(submitted->>'reframe'=canonical->>'reframe')::integer;
+  rec_exact:=(CASE WHEN submitted->>'moment'=canonical->>'moment' THEN 1 ELSE 0 END)
+            +(CASE WHEN submitted->>'gesture'=canonical->>'gesture' THEN 1 ELSE 0 END)
+            +(CASE WHEN submitted->>'reframe'=canonical->>'reframe' THEN 1 ELSE 0 END);
   canonical_intent:=CASE WHEN canonical->>'gesture'='s3_accident'
     THEN 'involuntary_act' ELSE 'voluntary_act' END;
   stated_intent:=submitted->>'intent';
-  IF stated_intent IN ('voluntary_act','involuntary_act','undetermined') THEN
-    rec_total:=4;
-    rec_exact:=rec_exact+CASE WHEN stated_intent=canonical_intent THEN 1 ELSE 0 END;
-  END IF;
+  rec_total:=4;
+  rec_exact:=rec_exact+CASE WHEN stated_intent=canonical_intent THEN 1 ELSE 0 END;
 
   score_exact:=level_exact+rec_exact;
   score_total:=level_total+rec_total;
