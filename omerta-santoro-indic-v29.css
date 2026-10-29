@@ -1,0 +1,13 @@
+/* Signed Santoro Indic: clear oral-first workflow with no cross-player clues. */
+.igr-santoro-indic-modal{z-index:15100}
+.igr-santoro-indic-panel{width:min(95vw,530px);max-height:88dvh;overflow-y:auto;overscroll-behavior:contain}
+.igr-santoro-indic-inner{display:flex;flex-direction:column;gap:12px}
+.igr-santoro-indic-entry{min-height:46px;white-space:normal;margin-block:8px}
+.igr-santoro-indic-select{width:100%;min-height:46px;max-width:100%;padding:10px;border-radius:8px;background:#28231f;color:#f7eee1;border:1px solid rgba(237,221,190,.55);font:inherit}
+.igr-santoro-indic-topic{display:flex;flex-direction:column;gap:10px;border:1px solid rgba(220,192,147,.33);border-radius:10px;padding:12px;background:rgba(32,28,25,.4);line-height:1.5}
+.igr-santoro-indic-topic details{padding:3px 0;overflow-wrap:anywhere}
+.igr-santoro-indic-topic summary{cursor:pointer;min-height:38px;display:flex;align-items:center}
+.igr-santoro-indic-topic p{margin:4px 0;white-space:pre-wrap}
+.igr-santoro-indic-topic button{width:100%;min-height:44px;white-space:normal}
+.igr-santoro-indic-error{color:#ffc6bd}
+@media(max-width:500px){.igr-santoro-indic-panel{width:calc(100vw - 18px);padding:18px 15px}}

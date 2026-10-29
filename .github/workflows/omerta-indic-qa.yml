@@ -43,6 +43,7 @@ jobs:
           node scripts/omerta-santoro-card-completeness-check.mjs
           node scripts/omerta-indic-final-review-v27-check.mjs
           node scripts/omerta-santoro-verdict-v28-check.mjs
+          node scripts/omerta-santoro-v29-private-check.mjs
 
   omerta-postgres:
     name: Isolated PostgreSQL 16 multiplayer RPC smoke test

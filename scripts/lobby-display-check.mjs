@@ -107,14 +107,14 @@ for(const page of ['index.html','en.html']){
 const roleStart=app.indexOf('function igr82RelationLink(');
 const roleEnd=app.indexOf('function privateCardHtml(){',roleStart);
 assert(roleStart>=0&&roleEnd>roleStart,'Context-aware relationship renderer must be bundled');
-const roleContext={h:context.h,window:{IGR_LOCALE:'fr'}};
+const roleContext={h:context.h,window:{IGR_LOCALE:'fr'},STATE:{sync:{room:{scenario_id:'021'}}}};
 vm.runInNewContext(app.slice(roleStart,roleEnd),roleContext);
 const renderRel=text=>roleContext.valueBlock('TES RELATIONS',[{pseudo:'ipad',text}]);
 const unknown=renderRel('Ton point de départ — Tu ne le connais pas. Tu ignores ce qu’il a pu voir.\n\nÀ mettre sur la table — À quelle heure ?');
 assert(unknown.includes('Tu ne le connais pas.'),'Unknown persons must remain unknown');
 assert(unknown.includes('Tu ignores ce qu’il a pu voir.'),'Canonical factual details must remain visible');
-assert(unknown.includes('CE QUE TU SAIS DE LUI'),'A clear factual label is required');
-assert(unknown.includes('À ÉCLAIRCIR ENTRE VOUS'),'A clear, optional conversation label is required');
+assert(unknown.includes('CE QUE TU SAIS DÉJÀ'),'A clear factual label is required');
+assert(unknown.includes('QUESTION POSSIBLE · PAS UNE PREUVE'),'A clear, optional conversation label is required');
 assert(!unknown.includes('Ton point de départ')&&!unknown.includes('À mettre sur la table'),'Old opaque markers must not leak into the role UI');
 assert(unknown.includes('À quelle heure ?'),'Open-ended conversation prompts must remain visible');
 assert(!unknown.includes('Vous avez déjà été en contact.'),'Unknown persons must not inherit a fictional encounter');
