@@ -3,7 +3,15 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const src=readFileSync('app-v11.js','utf8');
-assert(src.includes('Qualification de l’intention au vu des pièces'));
+assert(src.includes('Le geste ayant directement provoqué la blessure mortelle était-il volontaire ?'));
+assert(src.includes('igr001-intent-help'));
+assert(src.includes('responsabilités 60 %'));
+assert(src.includes('reconstitution 40 %'));
+assert(src.includes('10 % pour l’intention'));
+assert(src.includes('report_score_percent'));
+assert(src.includes('responsibility_score_percent'));
+assert(src.includes('reconstruction_score_percent'));
+assert(!src.includes('l’intention vaut un point dans le pourcentage global'));
 assert(src.includes('id="igr001Intent"'));
 assert(!src.includes('value="intent_to_kill"'));
 assert(src.includes('Geste volontaire</option>'));
