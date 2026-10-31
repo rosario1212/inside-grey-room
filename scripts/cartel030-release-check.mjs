@@ -7,7 +7,7 @@ const target=path.resolve(process.argv[2]||'dist');
 const read=name=>readFile(path.join(target,name),'utf8');
 const [html,app,release]=await Promise.all(['index.html','app-v11.js','cartel030-release.json'].map(read));
 const meta=JSON.parse(release);
-const clientVersion='v644-relations-facts-only';
+const clientVersion='v645-005-short-cards-120-160';
 assert.equal(meta.scenario,'030');
 assert.match(meta.commit,/^[a-f0-9]{40}$/);
 assert.equal((html.match(new RegExp(`app-v11\\.js\\?v=${clientVersion}`,'g'))||[]).length,1);

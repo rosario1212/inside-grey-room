@@ -7,16 +7,16 @@ const target=path.resolve(process.argv[2]||'dist');
 const fetch=async x=>readFile(path.join(target,x),'utf8');
 const html=await fetch('index.html'),js=await fetch('investigation-workspace-v634.js'),css=await fetch('investigation-workspace-v634.css');
 const sw=await fetch('service-worker.js').catch(e=>e.code==='ENOENT'?null:Promise.reject(e));
-assert(html.includes('investigation-workspace-v634.js?v=v644-relations-facts-only'));
-assert(html.includes('investigation-workspace-v634.css?v=v644-relations-facts-only'));
+assert(html.includes('investigation-workspace-v634.js?v=v645-005-short-cards-120-160'));
+assert(html.includes('investigation-workspace-v634.css?v=v645-005-short-cards-120-160'));
 assert(html.lastIndexOf('investigation-workspace-v634.js')>html.lastIndexOf('common-dossier-v106.js'));
 assert(html.lastIndexOf('investigation-workspace-v634.js')>html.lastIndexOf('live-game-ux-v632.js'));
 assert(html.lastIndexOf('investigation-workspace-v634.css')>html.lastIndexOf('live-game-ux-v632.css'));
 if(sw){
- assert(sw.includes("const CACHE='igr-v644-relations-facts-only';"),'Latest ergonomic bundle must invalidate old PWA cache');
- assert(sw.includes('/reading-stability-v635.css?v=v644-relations-facts-only'),'Reading CSS must be precached');
- assert(sw.includes('/investigation-workspace-v634.js?v=v644-relations-facts-only'));
- assert(sw.includes('/investigation-workspace-v634.css?v=v644-relations-facts-only'));
+ assert(sw.includes("const CACHE='igr-v645-005-short-cards-120-160';"),'Latest ergonomic bundle must invalidate old PWA cache');
+ assert(sw.includes('/reading-stability-v635.css?v=v645-005-short-cards-120-160'),'Reading CSS must be precached');
+ assert(sw.includes('/investigation-workspace-v634.js?v=v645-005-short-cards-120-160'));
+ assert(sw.includes('/investigation-workspace-v634.css?v=v645-005-short-cards-120-160'));
 }
 for(const key of ['igr634-interviews',"makeGroup('actions'","makeGroup('evidence'","makeGroup('notebook'",'igr87-note-form','igr634-priority','data-igr634-group','igr87-dossier','igr634-channel-help']){
  assert(js.includes(key)||css.includes(key),'Missing essential UX component: '+key);
