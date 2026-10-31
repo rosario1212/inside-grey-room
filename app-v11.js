@@ -1206,36 +1206,26 @@ function igr82RelationLink(entry,fact) {
   return ''; // No established relationship: do not invent familiarity or absence of it.
 }
 
-/* v637 — Clear, non-presumptive prompts; canonical game facts stay unchanged. */
-function igr82RelationPrompt(raw){
- const question=String(raw||'').trim();
- if(String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'')!=='001')return question;
- const clarity={
- "Pourquoi l’ancien ami a-t-il quitté Maël dans cet état ?":"À quelle heure as-tu quitté Maël, et dans quel état était-il à ton départ ?",
- "Pourquoi le visiteur n’a-t-il pas prévenu les secours ?":"Étais-tu présent dans la chambre 222 ? As-tu entendu quelqu’un appeler à l’aide ?",
- "Dans quel état l’ancien ami a-t-il quitté Maël ?":"Dans quel état Maël était-il lorsque tu as quitté sa chambre ?",
- "A-t-il entendu une voix lorsque Maël était déjà blessé ?":"À quelle heure as-tu entendu des voix près de la chambre 222 ?",
- "Qu’a-t-il réellement entendu dans le couloir après ton départ ?":"À quelle heure étais-tu dans le couloir, et qu’as-tu entendu ?",
- "À quelle heure était-il au palier et quelle voix a-t-il réellement entendue ?":"Étais-tu au palier cette nuit-là ? Si oui, qu’as-tu entendu et à quelle heure ?",
- "Quand est-il parti, selon des éléments vérifiables ?":"À quelle heure as-tu quitté la chambre ou l’étage ?",
- "Pourquoi y avait-il une demande d’effacement et un appel à l’aide ?":"As-tu entendu une demande d’effacement ou des appels à l’aide ?",
- "Pourquoi nie-t-il avoir franchi la porte et touché Maël ?":"Es-tu entré dans la chambre et as-tu touché Maël ? Que s’est-il passé ?",
- "Pourquoi un autre homme menaçait-il Maël ?":"Que sais-tu des menaces adressées à Maël ?",
- "Qui retenait Maël et où était le couteau lors de ton geste ?":"Qu’as-tu vu pendant la lutte, et où se trouvait le couteau ?",
- "Qu’a trouvé ce visiteur en entrant dans 222 après ton départ ?":"Que sais-tu des allées et venues devant la chambre 222 ?",
- "Le client pouvait-il entendre la dispute depuis le couloir ?":"Étais-tu dans le couloir pendant la dispute ? Qu’as-tu entendu ?",
- "Quelles menaces ont été proférées après ton départ ?":"As-tu entendu des menaces ? Lesquelles et à quel moment ?",
- "Que faisait-il près de 222 au moment des cris ?":"Étais-tu près de la chambre 222 au moment des cris ?",
- "Quel conflit justifiait cette intimidation ?":"Quel était ton différend avec Maël ?",
- "Que s’est-il passé avec le couteau après 02 h 55 ?":"Que sais-tu du couteau et de ce qui s’est passé après 02 h 55 ?",
- "À qui appartiennent les premiers dégâts de la chambre ?":"Que sais-tu du désordre constaté dans la chambre ?"
- };
- return clarity[question]||question;
+/* v644: only established facts in relation cards; no suggested questions. */
+function igr82RelationKnownOnly(raw){
+ const text=String(raw||'').trim();
+ return text.split(/\s*(?:Ce que tu peux lui demander|À mettre sur la table|Question à poser|À confronter|À lui demander|À éclaircir entre vous)\s*[—–:-]\s*/i)[0]
+   .replace(/^\s*(?:Ce que tu sais|Ton point de départ)\s*[—–:-]\s*/i,'').trim();
 }
 function igr82RelationFact(raw){
- const fact=String(raw||'').trim();
- if(String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'')==='001'&&fact==="Tu ignores que ce client est intervenu dans la lutte.")
-   return "Tu ne sais pas ce que ce client a réellement fait près de la chambre 222.";
+ const fact=String(raw||'').trim()
+  .replace(/\s*Tu ignores[^.!?]*[.!?]?/gi,'')
+  .replace(/\s*Tu ne sais pas[^.!?]*[.!?]?/gi,'').trim();
+ if(/^tu ignores que\b/i.test(fact)||/^tu ne sais pas que\b/i.test(fact))return '';
+ const scenario=String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'');
+ if(scenario==='004'){
+   const match=fact.match(/^tu connais la relation du suspect ([123]) avec Sofia, mais n.as pas lu ses échanges privés\.$/i);
+   if(match)return {
+     '1':'Tu sais que cette personne est l’ex-partenaire de Sofia.',
+     '2':'Tu sais que cette personne est un ami proche de Sofia.',
+     '3':'Tu sais que cette personne est un proche de Sofia qui habite le quartier.'
+   }[match[1]];
+ }
  return fact;
 }
 function igr82RelationPlayerTag(person){
@@ -1256,28 +1246,23 @@ function igr82RelationsHtml(value) {
   const seen=new Set();
   const entries=value.map((entry,index)=>{
     if(typeof entry==='string'){
-      const text=entry.trim(),key='plain:'+text.toLocaleLowerCase();
+      const text=igr82RelationFact(igr82RelationKnownOnly(entry)),key='plain:'+text.toLocaleLowerCase();
       if(!text||seen.has(key))return'';
       seen.add(key);
       return `<div class="igr82-relation igr82-relation-plain"><p>${h(text)}</p></div>`;
     }
     const person=String(entry?.pseudo||entry?.label||tr('Personne '+(index+1),'Person '+(index+1)));
-    const original=String(entry?.text||'').trim();
-    // Facts remain canonical; suggested interview questions are not facts.
-    const normalized=original.replace(/^\s*(?:Ce que tu sais|Ton point de départ)\s*[—–:-]\s*/i,'');
-    const split=normalized.split(/\s*(?:Ce que tu peux lui demander|À mettre sur la table|Question à poser)\s*[—–:-]\s*/i);
-    const fact=igr82RelationFact(split.shift());
-    const opening=igr82RelationPrompt(split.join(' '));
+    const fact=igr82RelationFact(igr82RelationKnownOnly(entry?.text));
     const link=igr82RelationLink(entry,fact);
     // A repeated piece of the dossier must not create a second suspect card.
-    const key=[person,fact,opening,link].map(x=>x.toLocaleLowerCase().replace(/\s+/g,' ').trim()).join('|');
+    const key=[person,fact,link].map(x=>x.toLocaleLowerCase().replace(/\s+/g,' ').trim()).join('|');
     if(seen.has(key))return'';
     seen.add(key);
     const playerTag=igr82RelationPlayerTag(person);
     const initial=person.trim().slice(0,1).toUpperCase()||'?';
-    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b>${playerTag?`<small class="igr82-player-tag">${h(playerTag)}</small>`:''}${link?`<small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p>`:''}</div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE LUI','WHAT YOU KNOW ABOUT THEM')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}${opening?`<p class="igr82-relation-question"><span>${tr('À ÉCLAIRCIR ENTRE VOUS · QUESTION POSSIBLE, PAS UNE PREUVE','TO CLARIFY BETWEEN YOU · POSSIBLE QUESTION, NOT EVIDENCE')}</span>${h(opening)}</p>`:''}</div></article>`;
+    return `<article class="igr82-relation"><div class="igr82-relation-person"><span class="igr82-relation-avatar" aria-hidden="true">${h(initial)}</span><div class="igr82-relation-id"><b>${h(person)}</b>${playerTag?`<small class="igr82-player-tag">${h(playerTag)}</small>`:''}${link?`<small>${tr('VOTRE LIEN','YOUR CONNECTION')}</small><p class="igr82-relation-link">${h(link)}</p>`:''}</div></div><div class="igr82-relation-body">${fact?`<small class="igr82-relation-eyebrow">${tr('CE QUE TU SAIS DE LUI','WHAT YOU KNOW ABOUT THEM')}</small><p class="igr82-relation-fact">${h(fact)}</p>`:''}</div></article>`;
   });
-  return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><p class="igr82-relation-hint">${tr('Une carte par personne. Tes informations ne prouvent pas ses actes.','One card per person. What you know does not prove what they did.')}</p><div class="igr82-relation-list">${entries.join('')}</div></section>`;
+  return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><p class="igr82-relation-hint">${tr('Une carte par personne. À toi de choisir les questions à poser.','One card per person. You decide which questions to ask.')}</p><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
 
 function valueBlock(title,value,cls=''){

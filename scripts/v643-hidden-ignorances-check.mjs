@@ -4,7 +4,7 @@ const app=readFileSync('app-v11.js','utf8');
 const html=readFileSync('index.html','utf8');
 const sw=readFileSync('service-worker.js','utf8');
 const standard=readFileSync('docs/standard-fiches-personnages.md','utf8');
-const version='v643-unknowns-hidden-001-004';
+const version='v644-relations-facts-only';
 assert(!app.includes("valueBlock('CE QUE TU IGNORES'"),'The player must never see an ignorance section');
 assert(app.includes("valueBlock('CE QUE TU SAIS',ps.anchors)"),'Knowledge section must remain');
 assert(standard.includes('Ignorances réservées à l\'édition'),'Internal-only unknowns policy must be documented');
