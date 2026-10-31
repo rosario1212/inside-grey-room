@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
-const clientVersion='v636-team-investigation';
-const cacheVersion='v636-team-investigation';
+const clientVersion='v641-shortcards-001-003';
+const cacheVersion='v641-shortcards-001-003';
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
@@ -41,7 +41,7 @@ if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deplo
 assert.deepEqual(cartel.moles,{'7':1,'8':1,'9':2});
 assert.deepEqual(cartel.evidence_per_cycle,[6,7,10]);
 const cartelHome=await get('/?release='+encodeURIComponent(cartel.version));
-assert((await cartelHome.text()).includes('app-v11.js?v='+clientVersion),'Client JS cache must match the current v636 production bundle');
+assert((await cartelHome.text()).includes('app-v11.js?v='+clientVersion),'Client JS cache must match the current v641 production bundle');
 const cartelApp=await get('/app-v11.js?v='+clientVersion);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
