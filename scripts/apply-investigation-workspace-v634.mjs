@@ -69,7 +69,7 @@ console.log('v635 ergonomic reading/notifications/settings layer applied: '+path
 
 // v637 release seal: invalidate installed home-screen PWA scripts consistently.
 // Prevent an older iPad asset graph from pairing with the freshly-started host phase.
-const release='v643-unknowns-hidden-001-004';
+const release='v644-relations-facts-only';
 const changedAssets=['investigation-workspace-v634.js','investigation-workspace-v634.css',
  'reading-stability-v635.css','gameplay-flow-v13.js','live-cell-v12-44.js',
  'narrative-dossier-v87.js','app-v11.js'];
@@ -88,12 +88,12 @@ for(const page of ['index.html','en.html']){
 try{
  const swFile=path.join(target,'service-worker.js');
  let sw=versioned(await readFile(swFile,'utf8'));
- sw=sw.replace(/const CACHE='[^']*';/,"const CACHE='igr-v643-unknowns-hidden-001-004';");
+ sw=sw.replace(/const CACHE='[^']*';/,"const CACHE='igr-v644-relations-facts-only';");
  await writeFile(swFile,sw,'utf8');
 }catch(error){if(error?.code!=='ENOENT')throw error}
 const appSourceFile=path.join(target,'app-v11.js');
 let currentApp=await readFile(appSourceFile,'utf8');
 currentApp=currentApp.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,
- '/service-worker.js?v=v643-unknowns-hidden-001-004');
+ '/service-worker.js?v=v644-relations-facts-only');
 await writeFile(appSourceFile,currentApp,'utf8');
 console.log('v641 PWA freshness seal applied: '+path.basename(target));
