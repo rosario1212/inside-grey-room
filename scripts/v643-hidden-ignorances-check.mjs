@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const app=readFileSync('app-v11.js','utf8');
+const html=readFileSync('index.html','utf8');
+const sw=readFileSync('service-worker.js','utf8');
+const standard=readFileSync('docs/standard-fiches-personnages.md','utf8');
+const version='v643-unknowns-hidden-001-004';
+assert(!app.includes("valueBlock('CE QUE TU IGNORES'"),'The player must never see an ignorance section');
+assert(app.includes("valueBlock('CE QUE TU SAIS',ps.anchors)"),'Knowledge section must remain');
+assert(standard.includes('Ignorances réservées à l\'édition'),'Internal-only unknowns policy must be documented');
+assert(html.includes('app-v11.js?v='+version),'Client cache version mismatch');
+assert(sw.includes("const CACHE='igr-"+version+"'"),'PWA cache version mismatch');
+assert(sw.includes('/app-v11.js?v='+version),'PWA precache version mismatch');
+console.log('Hidden unknowns: visible cards, standard and cache OK');

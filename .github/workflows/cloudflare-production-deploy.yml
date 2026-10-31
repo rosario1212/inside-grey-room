@@ -45,6 +45,7 @@ jobs:
           node --check cloudflare-worker.mjs
           node scripts/public-access-check.mjs
           npm run build
+          node scripts/v643-hidden-ignorances-check.mjs
           node scripts/v87-narrative-check.mjs
           node scripts/v99-private-release-check.mjs
           node scripts/v380-011-release-integration-check.mjs
