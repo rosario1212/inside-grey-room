@@ -9,7 +9,7 @@ const hooks=read('supabase/migrations/20261025235520_igr_v580_019_gameplay_hooks
 const sync=read('supabase/migrations/20261025235530_igr_v580_019_private_sync.sql');
 const check=read('.github/workflows/cloudflare-build-check.yml');
 const deploy=read('.github/workflows/cloudflare-production-deploy.yml');
-const v='v631-espion-mission-corrections';
+const v='v641-shortcards-001-003';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+v),'HTML app revision mismatch');
 assert(sw.includes("const CACHE='igr-"+v+"'"),'Service worker cache mismatch');
