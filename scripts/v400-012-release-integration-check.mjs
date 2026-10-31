@@ -26,6 +26,6 @@ for(const term of ['igr_v395_012_investigate','investigation_012','igr012Directi
 assert.match(app,/currentCase==='012'\?\['directive','violence','reaction'\]/);
 assert.match(app,/STATE\.sync\?\.room\?\.scenario_id==='012'/);
 const html=await readFile('index.html','utf8'),sw=await readFile('service-worker.js','utf8');
-assert(['20261024-012-variants','20261024-013-variants','20261024-014-variants','v631-espion-mission-corrections'].some(v=>html.includes(v)));
-assert(["igr-v40-012-variants","igr-v42-013-variants","igr-v44-014-variants","igr-v631-espion-mission-corrections"].some(v=>sw.includes(v)));
+assert(['20261024-012-variants','20261024-013-variants','20261024-014-variants','v641-shortcards-001-003'].some(v=>html.includes(v)));
+assert(["igr-v40-012-variants","igr-v42-013-variants","igr-v44-014-variants","igr-v641-shortcards-001-003"].some(v=>sw.includes(v)));
 console.log('012 integration contracts: PASS (structural; live server multiplayer checks required).');
