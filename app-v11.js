@@ -1335,7 +1335,7 @@ function privateCardHtml(){
    valueBlock('TON OBJECTIF PERSONNEL',ps.objective)
  ].join(''):'';
  const readableDossier=['001','002'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect';
- const conciseDossier=['001','002','003'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect'&&typeof ps.story==='string'&&!!ps.story.trim();
+ const conciseDossier=['001','002','003','004'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect'&&typeof ps.story==='string'&&!!ps.story.trim();
  const authoredObjective=String(ps.position||ps.objective||'').trim();
  const privateWin=santoroMyCard?ps.objective:((readableDossier||conciseDossier)&&authoredObjective?authoredObjective:roleInfo(secret==='espion'?'espion':pub).win);
  const concisePrivateCard=conciseDossier?[valueBlock('FONCTION',ps.place),valueBlock('TON HISTOIRE',ps.story),valueBlock('CETTE JOURNÉE-LÀ',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU IGNORES',ps.ignorances),valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft'),valueBlock('TON OBJECTIF',authoredObjective),valueBlock('TES RELATIONS',ps.relations)].join(''):'';
