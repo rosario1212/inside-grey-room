@@ -1214,8 +1214,8 @@ function igr82RelationKnownOnly(raw){
 }
 function igr82RelationFact(raw){
  const fact=String(raw||'').trim()
-  .replace(/\s*Tu ignores (?:ce que|que|si|pourquoi|quand|où|le contenu|les raisons)[^.!?]*[.!?]?/gi,'')
-  .replace(/\s*Tu ne sais pas (?:ce que|que|si|pourquoi|quand|où|le contenu|les raisons)[^.!?]*[.!?]?/gi,'').trim();
+  .replace(/\s*Tu ignores[^.!?]*[.!?]?/gi,'')
+  .replace(/\s*Tu ne sais pas[^.!?]*[.!?]?/gi,'').trim();
  if(/^tu ignores que\b/i.test(fact)||/^tu ne sais pas que\b/i.test(fact))return '';
  const scenario=String(typeof STATE==='undefined'?'':STATE?.sync?.room?.scenario_id||'');
  if(scenario==='004'){
