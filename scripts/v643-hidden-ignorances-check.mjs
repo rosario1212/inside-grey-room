@@ -4,7 +4,7 @@ const app=readFileSync('app-v11.js','utf8');
 const html=readFileSync('index.html','utf8');
 const sw=readFileSync('service-worker.js','utf8');
 const standard=readFileSync('docs/standard-fiches-personnages.md','utf8');
-const version='v645-005-short-cards-120-160';
+const version='v646-005-final-simple-220';
 assert(!app.includes("valueBlock('CE QUE TU IGNORES'"),'The player must never see an ignorance section');
 assert(app.includes("valueBlock('CE QUE TU SAIS',ps.anchors)"),'Knowledge section must remain');
 assert(standard.includes('Ignorances réservées à l\'édition'),'Internal-only unknowns policy must be documented');
