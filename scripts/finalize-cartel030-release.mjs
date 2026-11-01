@@ -6,7 +6,7 @@ const target=path.resolve(process.argv[2]||'dist');
 const version='v173-cartel031-negotiation';
 // CARTEL release metadata stays v173; the public app/SW gets its own
 // cache revision so new scenario roles reach installed PWAs.
-const clientVersion='v645-005-short-cards-120-160';
+const clientVersion='v646-005-final-simple-220';
 await copyFile(path.resolve('cartel031-v171.js'),path.join(target,'cartel031-v171.js'));
 const nativeBundle=(await readFile(path.join(target,'index.html'),'utf8')).includes('native-store-boundary-v14.js');
 // Run after all historical patchers: none may restore an older app URL or cache.
