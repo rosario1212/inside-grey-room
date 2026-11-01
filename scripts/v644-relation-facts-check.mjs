@@ -4,7 +4,7 @@ const app=readFileSync('app-v11.js','utf8');
 const docs=readFileSync('docs/standard-fiches-personnages.md','utf8');
 const html=readFileSync('index.html','utf8');
 const service=readFileSync('service-worker.js','utf8');
-const version='v645-005-short-cards-120-160';
+const version='v646-005-final-simple-220';
 const section=app.slice(app.indexOf('function igr82RelationsHtml(value)'),app.indexOf('\nfunction valueBlock'));
 assert(section.includes('igr82RelationKnownOnly(entry?.text)'),'The relation parser must use only known facts');
 assert(section.includes('igr82RelationKnownOnly(entry)'),'Plain text relations must filter questions');
