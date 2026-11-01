@@ -25,6 +25,6 @@ assert(sql.includes("old_achievement <> to_jsonb('espion_ombre'::text)"),'Obsole
 assert(sql.includes("achievements:=achievements||jsonb_build_array(old_achievement)"),'Unrelated achievements are not preserved');
 assert(sql.includes("r.phase LIKE 'final_%'"),'Final audience still permits spy signal');
 assert(sql.includes("route_:=CASE WHEN random()<0.5")&&sql.includes("VALUES(NEW.code,actor.id,match_num"),'Per-match secret contact route not pinned');
-assert(html.includes('v646-005-final-simple-220')&&sw.includes('v646-005-final-simple-220'),'PWA version mismatch');
+assert(html.includes('v647-006-fiches-220')&&sw.includes('v647-006-fiches-220'),'PWA version mismatch');
 assert(build.includes('node scripts/v631-spy-audit-regression-check.mjs')&&deploy.includes('node scripts/v631-spy-audit-regression-check.mjs'),'Release gates missing');
 console.log('PASS v631: audited spy victory, absence/Cartel precedence, irreversible choices, secured phases and PWA');
