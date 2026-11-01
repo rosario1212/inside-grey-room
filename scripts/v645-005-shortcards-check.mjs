@@ -4,8 +4,8 @@ const app=readFileSync('app-v11.js','utf8');
 const index=readFileSync('index.html','utf8');
 const sw=readFileSync('service-worker.js','utf8');
 const standard=readFileSync('docs/standard-fiches-personnages.md','utf8');
-const cache='v646-005-final-simple-220';
-assert(app.includes("const conciseDossier=['001','002','003','004','005'].includes("),
+const cache='v647-006-fiches-220';
+assert(app.includes("const conciseDossier=['001','002','003','004','005','006'].includes("),
   'Scenario 005 must use the same short-card layout as 001–004');
 assert(app.includes("valueBlock('CE QUE TU SAIS',ps.anchors)"),'Known facts must remain visible');
 assert(!app.includes("valueBlock('CE QUE TU IGNORES'"),'Unknown facts must stay internal');
@@ -22,3 +22,5 @@ console.log('v645: scenario 005 short cards, safe knowledge and cache all verifi
 assert(app.includes('Porté lors des coups, puis posé près du corps'),'A mask label');
 assert(app.includes('Porté pendant le meurtre, puis abandonné sur place'),'B mask label');
 assert(app.includes('Laissé avant les coups, puis déplacé ensuite'),'C mask label');
+
+assert(app.includes("const conciseDossier=['001','002','003','004','005','006'].includes("),'Scenario 006 must also use the concise three-event private card');
