@@ -16,3 +16,6 @@ Toutes les nouvelles fiches et les fiches révisées suivent ces règles :
 - **Secret :** ne jamais mettre de fiches privées, de vérités canoniques ou de solutions dans le dépôt public. Elles sont conservées uniquement dans la base privée protégée.
 
 Avant toute publication : valider les neuf fiches, les relations, les trois cycles, les preuves, le verdict du serveur, les objectifs, le caractère non accessible des secrets et un essai multijoueur. Distinguer « rédigé », « intégré », « testé » et « publié ».
+
+## Exception pour le dossier 005
+Les neuf fiches du Masque Blanc comptent au plus **220 mots, relations comprises**. Les autres scénarios conservent la règle 120–160 mots hors relations. Les fonctions des trois suspects restent constantes : directeur artistique, agent de sécurité et veuf de Mara. Les noms sont remplacés par les pseudonymes des joueurs ; chaque fiche contient trois faits datés, un rôle clair, des connaissances vérifiables, ses propres secrets et deux relations factuelles. Aucun indice ne suggère ce que le personnage ignore. Les niveaux 0/1/2 concernent la mort de Keller, sans préjuger des meurtres antérieurs. Les textes secrets et les solutions restent dans la base privée.

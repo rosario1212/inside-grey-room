@@ -6,7 +6,7 @@ const app=read('app-v11.js'),html=read('index.html'),sw=read('service-worker.js'
 const sql=read('supabase/migrations/20261026013500_igr_v630_hidden_spies.sql');
 const build=read('.github/workflows/cloudflare-build-check.yml'),deploy=read('.github/workflows/cloudflare-production-deploy.yml');
 execFileSync(process.execPath,['--check','app-v11.js']);
-assert(html.includes('v645-005-short-cards-120-160')&&sw.includes('v645-005-short-cards-120-160'),'PWA cache mismatch');
+assert(html.includes('v646-005-final-simple-220')&&sw.includes('v646-005-final-simple-220'),'PWA cache mismatch');
 assert(app.includes("igr_v631_spy_decide")&&app.includes("secret==='espion'"),'Mission UI is not private');
 assert(sql.includes("'003','011','013','014','016','019','020','030','031'"),'Eligible scenario set missing');
 assert(sql.includes("NEW.scenario_id='030' AND n=9"),'030 9 player 0-2 spy variants missing');
