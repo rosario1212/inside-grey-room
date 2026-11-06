@@ -50,4 +50,28 @@ if(await exists(builtSw)){
   requireMatch(sw,/const CACHE='igr-v46-2-six-minute-long';/,'Built service worker must use the v46.2 cache namespace');
   requireMatch(sw,/\/timer-runtime-v46\.js\?v=v46-2-six-minute-long/,'Built service worker must precache the v46.2 timer runtime');
 }
+const finalRulesSql=await readFile(path.join(root,'supabase','migrations','20261106164500_timer_lawyer_consultations_150s_sync.sql'),'utf8');
+const lawyerClient=await readFile(path.join(root,'judicial-runtime-v44.js'),'utf8');
+const rulebook=await readFile(path.join(root,'self-guided-rules-v51.js'),'utf8');
+const legacyUi=await readFile(path.join(root,'app-v11.js'),'utf8');
+for(const [pattern,reason] of [
+ [/v_kind:=case new\.phase[\s\S]*?when 'final_debrief' then 'final_debrief'/,'Final-debrief trigger must use canonical helper for judge/non-judge'],
+ [/perform public\.igr_v44_maintain\(r\.code\)/,'Room synchronization must maintain lawyer consultation deadlines'],
+ [/status in \('pending','active'\) and ends_at<=now\(\)/,'Unanswered lawyer requests must expire'],
+ [/ends_at=now\(\)\+interval '150 seconds'/,'Lawyer consultation must last 150 seconds'],
+ [/consultation_scope/,'RPC must declare official-client/non-client usage scope'],
+ [/oldc\.cycle=r\.cycle/,'Official client once-per-cycle guard missing'],
+ [/NOT official OR oldc\.cycle=r\.cycle/,'Non-client once-per-game guard missing'],
+ [/interrogation timer unavailable/,'Do not pause an already expired or paused interrogation'],
+ [/Enquêteur \+ Analyste : '\|\|public\.igr_v35_seconds_label/,'Initial-debrief events must follow server seconds'],
+ [/cycle_debrief'\)\)\|\|/,'Cycle debrief messages must derive server duration'],
+ [/final_debrief'\)\)\|\|/,'Final debrief messages must derive server duration'],
+ ])requireMatch(finalRulesSql,pattern,reason);
+forbidMatch(finalRulesSql,/when v_mode='short' then 180 else 240/,'Judge special-case 3m SHORT debrief must be removed');
+requireMatch(lawyerClient,/CONSULTATION · 02:30/,'Lawyer client UI must display 2:30');
+requireMatch(lawyerClient,/consultation_scope==='per_cycle'/,'Lawyer client UI must distinguish scope');
+requireMatch(rulebook,/une seule fois par partie/,'Rulebook must specify non-client one-per-game cap');
+requireMatch(rulebook,/2 min 30/,'Rulebook must specify consultation length');
+requireMatch(legacyUi,/Dernier débrief : \$\{STATE\.sync\?\.room/,'Legacy final debrief copy must derive room duration');
+
 console.log('v46.2 timer audit passed: LONG interrogation=360s, final debrief=240s, server start paths and cache propagation verified.');
