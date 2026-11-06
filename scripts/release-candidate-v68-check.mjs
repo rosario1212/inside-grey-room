@@ -83,7 +83,7 @@ ok(cardUi.includes("valueBlock('TON RANG ET TA PLACE',ps.story)"),'Omerta suspec
 ok(cardUi.includes("valueBlock('TES RELATIONS',ps.relations)"),'Omerta suspect card shows personal relationships');
 ok(cardUi.includes("const santoroMyCard=santoroStandalone&&pub==='suspect'"),'Omerta hierarchy remains suspect-only in card UI');
 const omertaCatalog=read('omerta-v12.js');
-ok(omertaCatalog.includes("Une enveloppe remplie d’argent manque à l’appel"),'Omerta 021 catalogue uses the approved case premise');
+ok(/une enveloppe remplie d’argent manque à l’appel/i.test(omertaCatalog),'Omerta 021 catalogue uses the approved case premise');
 ok(!omertaCatalog.includes("disparaît avant d’atteindre Enzo Rinaldi"),'Omerta 021 catalogue does not falsely assert theft');
 const swPath=path.join(target,'service-worker.js');
 if(fs.existsSync(swPath)){
