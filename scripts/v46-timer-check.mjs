@@ -76,6 +76,8 @@ for(const [pattern,message] of [
  [/lawyer_attendance/,'Official and ad-hoc attendance must persist to interrogation end'],
  [/event_participants/,'Confrontation must include the official Lawyer as a participant'],
  [/rep\.client_id=any\(p_targets\)/,'Confrontation Lawyer must belong to a selected client'],
+ [/secs:=public\.igr_v35_room_seconds\(r\.code,'confrontation'\)/,'Confrontation starts with mode-accurate duration'],
+ [/igr_v35_room_seconds\(r\.code,'confrontation'\)/,'Confrontation options must show accurate time'],
  [/DELETE FROM public\.igr_v4_signals/,'Private consultation must invalidate live-media signaling']
 ])requireMatch(lawyerPrivateSql,pattern,message);
 forbidMatch(lawyerPrivateSql,/ends_at=now\(\)\+interval '150 seconds'/,'Private break must not last 150s');
