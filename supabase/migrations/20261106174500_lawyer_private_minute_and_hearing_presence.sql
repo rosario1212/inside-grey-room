@@ -215,6 +215,7 @@ begin
   end if;
 
   if p_event='confrontation' then
+    secs:=public.igr_v35_room_seconds(r.code,'confrontation');
     if coalesce(array_length(p_targets,1),0)<>2 or p_targets[1]=p_targets[2] then raise exception 'two distinct targets required'; end if;
     select count(*) into target_count from public.igr_v4_players where room_code=r.code and id=any(p_targets) and public_role in ('suspect','temoin');
     if target_count<>2 then raise exception 'invalid targets'; end if;
@@ -430,3 +431,23 @@ begin
   );
 end
 $function$;
+
+-- Match confrontation option labels to the active SHORT/LONG server duration.
+CREATE OR REPLACE FUNCTION public.igr_v13_event_options(p_room text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare r public.igr_v4_rooms%rowtype; q jsonb:='[]'::jsonb; used jsonb; suspect_count int; inter_used int; inter_max int; confront_used int; inter_seconds int; inter_label text;
+begin
+ select * into r from public.igr_v4_rooms where code=p_room;
+ if not found or not public.igr_v13_is_core_scenario(r.scenario_id) or r.cycle not in (2,3) then return q; end if;
+ used:=coalesce(r.state->'event_types_used','[]'::jsonb); inter_used:=coalesce((r.state->>'event_interrogations')::int,0); confront_used:=coalesce((r.state->>'confrontations_used')::int,0); inter_max:=public.igr_v13_interrogation_limit(r.code,r.cycle); inter_seconds:=coalesce(public.igr_v35_room_seconds(r.code,'interrogation'),360); inter_label:=public.igr_v35_seconds_label(inter_seconds);
+ select count(*) into suspect_count from public.igr_v4_players where room_code=r.code and public_role='suspect';
+ if inter_used<inter_max then q:=q||jsonb_build_array(jsonb_build_object('key','interrogation','label','INTERROGATOIRE','seconds',inter_seconds,'hint',inter_label||'. Convocation officielle dans la Grey Room.')); end if;
+ if suspect_count>=2 and confront_used<3 then q:=q||jsonb_build_array(jsonb_build_object('key','confrontation','label','CONFRONTATION','seconds',public.igr_v35_room_seconds(r.code,'confrontation'),'hint','Confrontation de '||public.igr_v35_seconds_label(public.igr_v35_room_seconds(r.code,'confrontation'))||'. L’Avocat officiel accompagne son client.')); end if;
+ if r.scenario_id between '021' and '034' and not (used ? 'signature') then q:=q||jsonb_build_array(jsonb_build_object('key','signature','label',case when r.scenario_id between '021' and '025' then 'EXPLOITER LA FAMIGLIA' when r.scenario_id between '026' and '028' then 'CELLULE DE CRISE' when r.scenario_id between '029' and '031' then 'PRESSION DU RÉSEAU' else 'CARTE DU POUVOIR' end,'seconds',240,'hint','Mécanique propre au scénario.')); end if;
+ if public.igr_v13_has_role(r.code,'temoin') and not (used ? 'temoin') then q:=q||jsonb_build_array(jsonb_build_object('key','temoin','label','TÉMOIN','seconds',240,'hint','Audition formelle du témoin dans le cadre du cycle.')); end if;
+ return q;
+end $function$;
