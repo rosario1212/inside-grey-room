@@ -43,8 +43,8 @@ ok(['top','left','right'].every(side=>entrance.includes('safe-area-inset-'+side)
 for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
-    for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js']){
-      ok(html.includes(asset+'?v=v70-fluidity1'),`${page}: fresh fluidity asset ${asset}`);
+    for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js','judicial-runtime-v44.js','self-guided-rules-v51.js','app-v11.js','qa-fixes-v12.js']){
+      ok(html.includes(asset+'?v=v70-timerlawyer150-20261106'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
   ok(html.includes('release-polish-v68.css?v=v68-rc1'),`${page}: RC polish loaded last`);
@@ -81,7 +81,7 @@ if(runtimeFiles.some(rel=>/\.js$/i.test(rel) && /event_select/.test(fs.readFileS
 const swPath=path.join(target,'service-worker.js');
 if(fs.existsSync(swPath)){
   const sw=fs.readFileSync(swPath,'utf8');
-  ok(sw.includes("const CACHE='igr-v70-fluidity1';"),'service worker cache bumped for fluidity runtime');
+  ok(sw.includes("const CACHE='igr-v70-timerlawyer150-20261106';"),'service worker cache bumped for fluidity runtime');
 }
 
 console.log('\nInside Grey Room — Release Candidate v68 gate');
