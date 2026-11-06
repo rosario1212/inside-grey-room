@@ -44,7 +44,7 @@ for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
     for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js','judicial-runtime-v44.js','self-guided-rules-v51.js','app-v11.js','qa-fixes-v12.js']){
-      ok(html.includes(asset+'?v=v70-omerta-roleprivacy-20261106'),`${page}: fresh fluidity asset ${asset}`);
+      ok(html.includes(asset+'?v=v71-omerta021-enveloppe-20261106'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
   ok(html.includes('release-polish-v68.css?v=v68-rc1'),`${page}: RC polish loaded last`);
@@ -82,10 +82,13 @@ const cardUi=read('app-v11.js');
 ok(cardUi.includes("valueBlock('TON RANG ET TA PLACE',ps.story)"),'Omerta suspect card explains hierarchy');
 ok(cardUi.includes("valueBlock('TES RELATIONS',ps.relations)"),'Omerta suspect card shows personal relationships');
 ok(cardUi.includes("const santoroMyCard=santoroStandalone&&pub==='suspect'"),'Omerta hierarchy remains suspect-only in card UI');
+const omertaCatalog=read('omerta-v12.js');
+ok(/une enveloppe remplie d’argent manque à l’appel/i.test(omertaCatalog),'Omerta 021 catalogue uses the approved case premise');
+ok(!omertaCatalog.includes("disparaît avant d’atteindre Enzo Rinaldi"),'Omerta 021 catalogue does not falsely assert theft');
 const swPath=path.join(target,'service-worker.js');
 if(fs.existsSync(swPath)){
   const sw=fs.readFileSync(swPath,'utf8');
-  ok(sw.includes("const CACHE='igr-v70-omerta-roleprivacy-20261106';"),'service worker cache bumped for fluidity runtime');
+  ok(sw.includes("const CACHE='igr-v71-omerta021-enveloppe-20261106';"),'service worker cache bumped for fluidity runtime');
 }
 
 console.log('\nInside Grey Room — Release Candidate v68 gate');
