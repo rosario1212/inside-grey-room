@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
 const VERSION='v68-rc1';
-const RUNTIME_VERSION='v70-lawyerpriv60-attend-20261106';
+const RUNTIME_VERSION='v70-omerta-roleprivacy-20261106';
 const POLISH='release-polish-v68.css';
 const FRESH_ASSETS=['startup-stability-v13-3.css','gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js','judicial-runtime-v44.js','self-guided-rules-v51.js','app-v11.js','qa-fixes-v12.js'];
 
