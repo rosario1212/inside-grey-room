@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION public.igr_v35_apply_room_duration()
  LANGUAGE plpgsql
  SET search_path TO ''
 AS $function$
-declare v_mode text; v_kind text; v_seconds integer; begin if tg_op='INSERT' then if coalesce(new.state->>'duration_mode','') not in ('short','long') then new.state:=jsonb_set(coalesce(new.state,'{}'::jsonb),'{duration_mode}',to_jsonb('long'::text),true); end if; return new; end if; if coalesce(new.state->>'duration_mode','') not in ('short','long') and coalesce(old.state->>'duration_mode','') in ('short','long') then new.state:=jsonb_set(coalesce(new.state,'{}'::jsonb),'{duration_mode}',old.state->'duration_mode',true);end if; v_mode:=new.state->>'duration_mode'; if coalesce(v_mode,'') not in ('short','long') then return new; end if; if not (new.phase is distinct from old.phase or new.phase_started_at is distinct from old.phase_started_at) or new.phase_started_at is null then return new; end if; v_kind:=case new.phase when 'initial_debrief' then 'pre_investigation' when 'interrogation' then 'interrogation' when 'cycle_debrief' then 'cycle_debrief' when 'event_confrontation' then 'confrontation' when 'event_assembly' then 'assembly' when 'event_requete' then 'judicial_short' when 'event_saisine' then 'judicial_short' when 'annex_juge' then 'judicial_long' when 'annex_temoin' then 'witness' when 'final_debrief' then 'final_debrief' else null end; if v_kind is not null then v_seconds:=public.igr_v35_duration_seconds(v_mode,v_kind); end if; if v_seconds is not null then new.phase_ends_at:=new.phase_started_at+make_interval(secs=>v_seconds); end if; return new; end $function$
+declare v_mode text; v_kind text; v_seconds integer; begin if tg_op='INSERT' then if coalesce(new.state->>'duration_mode','') not in ('short','long') then new.state:=jsonb_set(coalesce(new.state,'{}'::jsonb),'{duration_mode}',to_jsonb('long'::text),true); end if; return new; end if; if coalesce(new.state->>'duration_mode','') not in ('short','long') and coalesce(old.state->>'duration_mode','') in ('short','long') then new.state:=jsonb_set(coalesce(new.state,'{}'::jsonb),'{duration_mode}',old.state->'duration_mode',true);end if; v_mode:=new.state->>'duration_mode'; if coalesce(v_mode,'') not in ('short','long') then return new; end if; if not (new.phase is distinct from old.phase or new.phase_started_at is distinct from old.phase_started_at) or new.phase_started_at is null then return new; end if; v_kind:=case new.phase when 'initial_debrief' then 'pre_investigation' when 'interrogation' then 'interrogation' when 'cycle_debrief' then 'cycle_debrief' when 'event_confrontation' then 'confrontation' when 'event_assembly' then 'assembly' when 'event_requete' then 'judicial_short' when 'event_saisine' then 'judicial_short' when 'annex_juge' then 'judicial_long' when 'annex_temoin' then 'witness' when 'final_debrief' then 'final_debrief' else null end; if v_kind is not null then v_seconds:=public.igr_v35_duration_seconds(v_mode,v_kind); end if; if v_seconds is not null then new.phase_ends_at:=new.phase_started_at+make_interval(secs=>v_seconds); end if; return new; end $function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v50_tick_legacy(p_room text)
@@ -109,7 +109,7 @@ begin
     insert into public.igr_v4_events(room_code,event_type,payload) values(r.code,'phase',jsonb_build_object('title','FIN DES ÉCHANGES','text','Chaque rôle concerné verrouille son choix final.'));
   end if;
 end
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v44_maintain(p_room text)
@@ -127,7 +127,7 @@ begin
    update public.igr_v44_lawyer_consultations set status='completed',ended_at=now() where room_code=c.room_code and suspect_id=c.suspect_id;
    update public.igr_v4_rooms r set phase_ends_at=case when r.phase='interrogation' and r.state->>'current_target'=c.suspect_id::text then now()+make_interval(secs=>c.remaining_seconds) else r.phase_ends_at end, state=case when r.state->>'lawyer_consultation_suspect'=c.suspect_id::text then (r.state-'lawyer_consultation_suspect'-'lawyer_consultation_remaining') else r.state end, updated_at=now() where r.code=c.room_code;
  end if;
-end $function$
+end $function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v4_tick(p_room text)
@@ -156,7 +156,7 @@ begin
  select * into r from public.igr_v4_rooms where code=p_room for update;
  if r.phase='cycle_debrief' then perform public.igr_v4_emit_trame(r.code);update public.igr_v4_rooms set phase='trame',phase_started_at=now(),phase_ends_at=now()+interval '22 seconds',updated_at=now() where code=r.code;
  elsif r.phase='final_debrief' then perform public.igr_v52_begin_stage(r.code,'locking');end if;
-end$function$
+end$function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v44_request_lawyer_consultation(p_code text,p_player_token uuid)
@@ -231,7 +231,7 @@ CREATE OR REPLACE FUNCTION public.igr_v44_start_lawyer_consultation(p_code text,
  SET search_path TO ''
 AS $function$
 declare me public.igr_v4_players%rowtype; c public.igr_v44_lawyer_consultations%rowtype;
-begin select * into me from public.igr_v4_players where room_code=upper(trim(p_code)) and player_token=p_player_token; if not found or me.public_role<>'maitre' then raise exception 'forbidden'; end if; select * into c from public.igr_v44_lawyer_consultations where room_code=me.room_code and suspect_id=p_suspect and lawyer_id=me.id for update; if not found or c.status<>'pending' or c.ends_at<=now() then raise exception 'consultation unavailable'; end if; update public.igr_v44_lawyer_consultations set status='active',started_at=now(),ends_at=now()+interval '150 seconds' where room_code=c.room_code and suspect_id=c.suspect_id; return jsonb_build_object('ok',true,'status','active','seconds',150); end $function$
+begin select * into me from public.igr_v4_players where room_code=upper(trim(p_code)) and player_token=p_player_token; if not found or me.public_role<>'maitre' then raise exception 'forbidden'; end if; select * into c from public.igr_v44_lawyer_consultations where room_code=me.room_code and suspect_id=p_suspect and lawyer_id=me.id for update; if not found or c.status<>'pending' or c.ends_at<=now() then raise exception 'consultation unavailable'; end if; update public.igr_v44_lawyer_consultations set status='active',started_at=now(),ends_at=now()+interval '150 seconds' where room_code=c.room_code and suspect_id=c.suspect_id; return jsonb_build_object('ok',true,'status','active','seconds',150); end $function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v44_role_state(p_code text, p_player_token uuid)
@@ -302,7 +302,7 @@ begin
     'judge_integrity',integrity
   );
 end
-$function$
+$function$;
 
 
 -- Existing RPC execute grants and existing tables are preserved.
