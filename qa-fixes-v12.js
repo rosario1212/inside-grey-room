@@ -1,6 +1,6 @@
 /* Inside Grey Room V12.2 — cross-platform media/runtime fixes
    - one stable WebRTC session per interrogation activation
-   - camera + microphone only during the 8-minute interrogation phase
+   - camera + microphone only during the 6-minute interrogation phase
    - no repeated srcObject assignment (removes the ~1s preview hiccup)
    - bounded reconnects, no renegotiation storms
    - explicit remote-audio unlock for iOS/PWA autoplay rules
