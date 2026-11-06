@@ -1312,11 +1312,13 @@ function privateCardHtml(){
  const santoroQuestions=santoroMyCard&&Array.isArray(ps.conversation_hooks)
    ?ps.conversation_hooks.filter(x=>typeof x==='string'&&x.trim()).slice(0,4):[];
  const santoroPrivateCard=santoroMyCard?[
-   valueBlock('TON IDENTITÉ DANS LA FAMILLE',ps.identity),
+   valueBlock('TA FONCTION',ps.identity),
+   valueBlock('TON RANG ET TA PLACE',ps.story),
    valueBlock('CE QUE TU SAIS',ps.what_you_know),
    valueBlock('CE QUE TU GARDES POUR TOI',ps.what_you_hide,'danger-soft'),
    valueBlock('TA CHRONOLOGIE PERSONNELLE',santoroChronology),
    valueBlock('CE QUE TU PEUX DEMANDER',santoroQuestions),
+   valueBlock('TES RELATIONS',ps.relations),
    valueBlock('TON OBJECTIF PERSONNEL',ps.objective)
  ].join(''):'';
  const readableDossier=['001','002'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect';
