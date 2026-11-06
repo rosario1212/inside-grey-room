@@ -27,7 +27,8 @@
 
   const phaseAllowsVideo = () =>
     STATE.sync?.room?.status === 'playing' &&
-    STATE.sync?.room?.phase === 'interrogation';
+    STATE.sync?.room?.phase === 'interrogation' &&
+    !STATE.sync?.room?.state?.lawyer_consultation_suspect;
 
   const currentVideoSession = () => {
     const st = videoState();
