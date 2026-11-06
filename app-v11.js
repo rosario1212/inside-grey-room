@@ -1639,7 +1639,7 @@ function phaseInstruction(role,ph,target){
  if(ph==='provisional_orals')return renderOralStatus();
  if(ph==='provisional_lock')return role==='enqueteur'?`<p>Attribue à chaque suspect un degré provisoire. Ces accusations déterminent qui dispose d’une dernière défense.</p>`:`<p>L’Enquêteur verrouille les accusations provisoires. Elles seront suivies des défenses.</p>`;
  if(ph==='defense')return renderDefenseStatus(role);
- if(ph==='final_debrief')return ['enqueteur','analyste','procureur'].includes(role)?`<p>Dernier débrief : 3 minutes. Aucun fait nouveau ne peut entrer dans le dossier.</p>`:`<p>Le dernier débrief se déroule sans toi. Le Juge reste à l’extérieur.</p>`;
+ if(ph==='final_debrief')return ['enqueteur','analyste','procureur'].includes(role)?`<p>Dernier débrief : ${STATE.sync?.room?.state?.duration_mode==='long'?'4':'2'} minutes. Aucun fait nouveau ne peut entrer dans le dossier.</p>`:`<p>Le dernier débrief se déroule sans toi. Le Juge reste à l’extérieur.</p>`;
  if(ph==='locking')return ['enqueteur','analyste','procureur','juge','journaliste'].includes(role)?`<p>Fin des échanges. Verrouille ton choix final sur ton téléphone. Il ne pourra plus être modifié.</p>`:`<p>Les verdicts finaux sont en cours de verrouillage. Attends la révélation.</p>`;
  if(ph==='reveal')return`<p>La vérité canonique et les responsabilités reconstruites sont révélées.</p>`;
  return`<p>La partie est synchronisée par le serveur.</p>`;
