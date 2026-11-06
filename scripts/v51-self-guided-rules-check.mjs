@@ -9,11 +9,13 @@ if(!(await exists(runtime)))throw new Error('v51 runtime missing');
 const js=await readFile(runtime,'utf8');
 for(const marker of [
   'v51-self-guided-rules',
-  'Tous les suspects',
+  'Chaque suspect',
   'une fois par cycle',
-  '2 min 30',
+  'minute privée',
+  'reste jusqu’à la fin',
+  'confrontation',
   'une seule fois par partie',
-  '02:30',
+  '01:00',
   'Hors Grey Room',
   'Client officiel',
   'QUE FAIRE MAINTENANT ?',
@@ -43,5 +45,5 @@ if(await exists(sw)){
  if(!s.includes("const CACHE='igr-v51-self-guided-rules';"))throw new Error('v51 cache namespace missing');
  if(!s.includes('/self-guided-rules-v51.js?v=v51-self-guided-rules'))throw new Error('v51 runtime not precached');
 }
-if(js.includes('1 minute privée')||js.includes('1-minute pause'))throw new Error('Obsolete 1-minute consultation still documented');
+if(js.includes('2 min 30')||js.includes('2-minute 30-second'))throw new Error('Obsolete 2m30 confidential consultation still documented');
 console.log('Inside Grey Room v51 rules checks: OK');

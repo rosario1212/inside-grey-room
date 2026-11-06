@@ -68,10 +68,26 @@ for(const [pattern,reason] of [
  [/final_debrief'\)\)\|\|/,'Final debrief messages must derive server duration'],
  ])requireMatch(finalRulesSql,pattern,reason);
 forbidMatch(finalRulesSql,/when v_mode='short' then 180 else 240/,'Judge special-case 3m SHORT debrief must be removed');
-requireMatch(lawyerClient,/CONSULTATION · 02:30/,'Lawyer client UI must display 2:30');
+const lawyerPrivateSql=await readFile(path.join(root,'supabase','migrations','20261106174500_lawyer_private_minute_and_hearing_presence.sql'),'utf8');
+for(const [pattern,message] of [
+ [/interval '60 seconds'/,'Confidential Lawyer minute must last 60s only'],
+ [/camera blocked during confidential lawyer minute/,'Server must block camera during private minute'],
+ [/video_active.*false/,'Private request must stop active video'],
+ [/lawyer_attendance/,'Official and ad-hoc attendance must persist to interrogation end'],
+ [/event_participants/,'Confrontation must include the official Lawyer as a participant'],
+ [/rep\.client_id=any\(p_targets\)/,'Confrontation Lawyer must belong to a selected client'],
+ [/secs:=public\.igr_v35_room_seconds\(r\.code,'confrontation'\)/,'Confrontation starts with mode-accurate duration'],
+ [/igr_v35_room_seconds\(r\.code,'confrontation'\)/,'Confrontation options must show accurate time'],
+ [/DELETE FROM public\.igr_v4_signals/,'Private consultation must invalidate live-media signaling']
+])requireMatch(lawyerPrivateSql,pattern,message);
+forbidMatch(lawyerPrivateSql,/ends_at=now\(\)\+interval '150 seconds'/,'Private break must not last 150s');
+requireMatch(lawyerClient,/APARTÉ PRIVÉ · 01:00/,'Lawyer request UI must display 1:00');
+requireMatch(lawyerClient,/cache\?\.lawyer_attendance/,'UI must show counsel attendance after private minute');
+requireMatch(lawyerClient,/CONFRONTATION · AVOCAT OFFICIEL/,'UI must admit Lawyer to official-client confrontation');
 requireMatch(lawyerClient,/consultation_scope==='per_cycle'/,'Lawyer client UI must distinguish scope');
 requireMatch(rulebook,/une seule fois par partie/,'Rulebook must specify non-client one-per-game cap');
-requireMatch(rulebook,/2 min 30/,'Rulebook must specify consultation length');
+requireMatch(rulebook,/minute privée/,'Rulebook must specify private-minute length');
+requireMatch(rulebook,/jusqu’à la fin de l’interrogatoire/,'Rulebook must specify Lawyer stays until end');
 requireMatch(legacyUi,/Dernier débrief : \$\{STATE\.sync\?\.room/,'Legacy final debrief copy must derive room duration');
 
 console.log('v46.2 timer audit passed: LONG interrogation=360s, final debrief=240s, server start paths and cache propagation verified.');
