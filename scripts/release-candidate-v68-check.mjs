@@ -44,7 +44,7 @@ for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
     for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js','judicial-runtime-v44.js','self-guided-rules-v51.js','app-v11.js','qa-fixes-v12.js']){
-      ok(html.includes(asset+'?v=v72-omerta022-caruso-20261107'),`${page}: fresh fluidity asset ${asset}`);
+      ok(html.includes(asset+'?v=v73-omerta023-la-table-20261107'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
   ok(html.includes('release-polish-v68.css?v=v68-rc1'),`${page}: RC polish loaded last`);
@@ -87,10 +87,13 @@ ok(/une enveloppe remplie d’argent manque à l’appel/i.test(omertaCatalog),'
 ok(!omertaCatalog.includes("disparaît avant d’atteindre Enzo Rinaldi"),'Omerta 021 catalogue does not falsely assert theft');
 ok(/Deux témoins racontent ensuite le même alibi/i.test(omertaCatalog),'Omerta 022 catalogue explains contested Caruso alibis');
 ok(!omertaCatalog.includes('Un meurtre interne fragilise la Famiglia Santoro'),'Omerta 022 catalogue does not disclose the internal mafia hierarchy');
+ok(/Une chaise reste vide : Domenico Falco/i.test(omertaCatalog),'Omerta 023 public briefing establishes the empty seat');
+ok(/Adriano Santoro est attaqué sur la route/i.test(omertaCatalog),'Omerta 023 public briefing connects the attack to the meeting');
+ok(!omertaCatalog.includes('Le septième ne viendra jamais'),'Omerta 023 does not falsely imply Falco was killed');
 const swPath=path.join(target,'service-worker.js');
 if(fs.existsSync(swPath)){
   const sw=fs.readFileSync(swPath,'utf8');
-  ok(sw.includes("const CACHE='igr-v72-omerta022-caruso-20261107';"),'service worker cache bumped for fluidity runtime');
+  ok(sw.includes("const CACHE='igr-v73-omerta023-la-table-20261107';"),'service worker cache bumped for fluidity runtime');
 }
 
 console.log('\nInside Grey Room — Release Candidate v68 gate');
