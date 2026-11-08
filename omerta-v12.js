@@ -237,23 +237,29 @@
     if(!isOmerta(STATE.scenarioId||STATE.sync?.room?.scenario_id))return baseStartGame();
     if(!STATE.hostToken)return toast('Seul l’hôte peut lancer.');
     const autoCount=(STATE.sync?.players||[]).filter(p=>!p.preferred_role).length;cancelBriefingVoice();stopAmbient();
-    try{let startRpc='igr_omerta_start_game';
-    // Compatibilité : n'utiliser Santoro que si le serveur a explicitement
-    // ouvert son interrupteur ET certifié les trois variantes.
     try{
+      // Santoro est le seul nouveau parcours de jeu. Ne jamais démarrer
+      // le manuscrit Verri, même en cas d'ancienne API ou de panne réseau.
       const status=await rpc('igr_omerta_standalone_release_status',{
         p_code:STATE.room,p_host_token:STATE.hostToken
       });
-      if(status?.available===true)startRpc='igr_omerta_start_standalone';
+      if(status?.available!==true){
+        toast('OMERTÀ Santoro : la certification des variantes est encore en cours.');
+        return;
+      }
+      const result=await rpc('igr_omerta_start_standalone',{
+        p_code:STATE.room,p_host_token:STATE.hostToken
+      });
+      await syncNow(true);startRoomWatcher();
+      if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`);
     }catch(e){
-      // Seule une ancienne API sans ce RPC peut revenir au moteur historique.
-      // Une panne réseau ou une autorisation refusée ne doit jamais lancer
-      // une autre histoire à la place de la variante attendue.
-      if(e.code!=='PGRST202'&&!(e.status===404&&/function|not found/i.test(e.message||'')))
-        throw e;
-      console.info('OMERTÀ standalone RPC absent; legacy mode retained');
+      console.error(e);
+      if(/standalone_variant_not_released|standalone_variant_not_approved/.test(String(e?.message||e))){
+        toast('OMERTÀ Santoro : variante en attente de certification.');
+        return;
+      }
+      toast('Impossible de lancer OMERTÀ : vérifie les rôles, les joueurs et la connexion.');
     }
-    const result=await rpc(startRpc,{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer OMERTÀ : minimum 4 joueurs et un rôle valide par joueur.')}
   };
 
   function omertaRole(){const p=STATE.sync?.player,ps=p?.private_state||{};return ps.omerta_preferred_role||p?.secret_role||p?.public_role||''}
