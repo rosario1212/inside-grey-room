@@ -1,7 +1,20 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
-const clientVersion='santoro-display-audit-20261108';
-const cacheVersion='santoro-display-audit-20261108';
+// The final Cartel/RC postprocessors may rewrite app and SW revisions. Compare
+// the deployed Worker against the ACTUAL finished dist bundle, never a guessed
+// version string from an earlier build stage.
+const [publishedHtml,publishedSw]=await Promise.all([
+  readFile('dist/index.html','utf8'),readFile('dist/service-worker.js','utf8')
+]);
+const clientVersion=publishedHtml.match(/app-v11\\.js\\?v=([^"'<>\\s]+)/)?.[1]||'';
+const cacheVersion=publishedSw.match(/const CACHE='igr-([^']+)'/)?.[1]||'';
+assert(clientVersion.includes('santoro-display-audit-20261108'),
+ 'The bundled public app is not the certified Santoro UI revision');
+assert(cacheVersion.includes('santoro-display-audit-20261108'),
+ 'The bundled PWA cache is not the certified Santoro revision');
+assert(publishedSw.includes('/app-v11.js?v='+clientVersion),
+ 'Bundled app URL and service-worker cache disagree');
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 const home=await get('/');assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
@@ -40,8 +53,18 @@ assert.equal(cartel.version,'v173-cartel031-negotiation');
 if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deployed commit');
 assert.deepEqual(cartel.moles,{'7':1,'8':1,'9':2});
 assert.deepEqual(cartel.evidence_per_cycle,[6,7,10]);
-const cartelHome=await get('/?release='+encodeURIComponent(cartel.version));
-assert((await cartelHome.text()).includes('app-v11.js?v='+clientVersion),'Client JS cache must match the current v641 production bundle');
+let liveHomeVersion='';
+for(let attempt=0;attempt<(expected?12:1);attempt++){
+  const releaseQuery='?release='+encodeURIComponent(cartel.version)+'&commit='+encodeURIComponent(expected)+'&probe='+attempt;
+  const cartelHome=await get('/'+releaseQuery);
+  assert.equal(cartelHome.status,200);
+  const text=await cartelHome.text();
+  liveHomeVersion=text.match(/app-v11\\.js\\?v=([^"'<>\\s]+)/)?.[1]||'';
+  if(liveHomeVersion===clientVersion)break;
+  if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
+}
+assert.equal(liveHomeVersion,clientVersion,
+  'Deployed HTML app cache does not match the fully built local bundle');
 const cartelApp=await get('/app-v11.js?v='+clientVersion);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
