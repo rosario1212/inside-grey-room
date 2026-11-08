@@ -25,7 +25,10 @@ export function auditSantoroDrafts(drafts) {
       failures.push(name + ':missing_or_duplicate_character');
     }
     const goals = m.canonical_truth?.verdict_goal_by_slot || {};
-    const timelineIds = new Set((m.canonical_truth?.timeline || []).map(e=>e.id));
+    const timeline = m.canonical_truth?.timeline || [];
+    const timelineIds = new Set(timeline.map(e => e.id));
+    const timelineOriginById = new Map(timeline.map(e => [e.id, e.origin]));
+    if (timelineIds.size !== timeline.length) failures.push(name + ':duplicate_timeline_id');
     for (const c of cards) {
       const goal = goals[String(c.slot)];
       if (!goal || c.verdict_goal?.goal_id !== goal.goal_id ||
@@ -44,10 +47,18 @@ export function auditSantoroDrafts(drafts) {
     }
     const c3=(m.revelations||[]).filter(r =>
       r.kind==='guaranteed' && String(r.min_cycle)==='3' && r.audience==='investigation');
-    if (c3.length!==1) failures.push(name + ':missing_guaranteed_crosscheck');
+    if (c3.length<1) failures.push(name + ':missing_guaranteed_crosscheck');
+    const c3Ids = new Set();
+    for (const r of c3) {
+      if (!r.id || c3Ids.has(r.id)) failures.push(name + ':duplicate_crosscheck_id');
+      c3Ids.add(r.id);
+    }
     for(const r of c3) {
       const events=r.editorial_provenance?.existing_events || [];
-      if (events.length<2 || new Set(events).size<2 || events.some(x=>!timelineIds.has(x)) ||
+      if (events.length!==2 || new Set(events).size!==2 ||
+          events.some(x => !timelineIds.has(x)) ||
+          new Set(events.map(x => timelineOriginById.get(x))).size!==2 ||
+          events.some(x => !timelineOriginById.get(x)) ||
           String(r.editorial_provenance?.independent_of_optional_actions)!=='true') {
         failures.push(name + ':nonindependent_crosscheck');
       } else report.independentC3Sources+=new Set(events).size;
@@ -59,7 +70,8 @@ export function auditSantoroDrafts(drafts) {
     truths.get(match[1]).add(truth);
     const tipsApproved=cards.every(c=>c.eligible_tip?.source_review==='verified');
     const goalApproved=cards.every(c=>c.verdict_goal?.scoring_review==='approved');
-    const c3Approved=c3.length===1 && c3[0].editorial_provenance?.human_source_review==='verified';
+    const c3Approved=c3.length>=1 && c3.every(r =>
+      r.editorial_provenance?.human_source_review==='verified');
     const approved=m.status==='ready' && m.human_review_approved===true &&
       m.verdict_scoring_review==='approved' && tipsApproved && goalApproved && c3Approved;
     if (m.human_review_approved===true) report.humanApproved++;
