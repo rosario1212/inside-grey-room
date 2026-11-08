@@ -305,7 +305,7 @@
       const role=card.omerta_preferred_role||STATE.sync?.player?.secret_role||STATE.sync?.player?.public_role;
       const title=String(card.identity||roleInfo(role).label||'Personnage Santoro');
       const note=`<div class="omerta-private-role omerta-santoro-private-role"><span>DOSSIER SANTORO · PERSONNAGE</span><h3>${h(title)}</h3><p>Ta fiche, tes relations et ton objectif ci-dessous sont ceux de la variante attribuée par le serveur.</p></div>`;
-      const dock=`<div class="omerta-decision-dock omerta-santoro-actions"><span><b>PAROLES ET DÉCISIONS</b>L’Indic et le verdict final utilisent les commandes propres à Santoro. Aucune action historique Verri n'est enregistrée.</span></div>`;
+      const dock=`<div class="omerta-decision-dock omerta-santoro-actions"><span><b>PAROLES ET DÉCISIONS</b>L’Indic et le verdict final utilisent les commandes propres à Santoro. Seules les actions du dossier Santoro sont enregistrées.</span></div>`;
       html=html.replace('<div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div>',`<div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div>${note}`);
       return html+dock;
     }
