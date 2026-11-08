@@ -7,7 +7,7 @@ const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 const [publishedHtml,publishedSw]=await Promise.all([
   readFile('dist/index.html','utf8'),readFile('dist/service-worker.js','utf8')
 ]);
-const clientVersion=publishedHtml.match(/app-v11\\.js\\?v=([^"'<>\\s]+)/)?.[1]||'';
+const clientVersion=publishedHtml.match(/app-v11\.js\?v=([^"'<>\s]+)/)?.[1]||'';
 const cacheVersion=publishedSw.match(/const CACHE='igr-([^']+)'/)?.[1]||'';
 assert(clientVersion.includes('santoro-display-audit-20261108'),
  'The bundled public app is not the certified Santoro UI revision');
@@ -59,7 +59,7 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   const cartelHome=await get('/'+releaseQuery);
   assert.equal(cartelHome.status,200);
   const text=await cartelHome.text();
-  liveHomeVersion=text.match(/app-v11\\.js\\?v=([^"'<>\\s]+)/)?.[1]||'';
+  liveHomeVersion=text.match(/app-v11\.js\?v=([^"'<>\s]+)/)?.[1]||'';
   if(liveHomeVersion===clientVersion)break;
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
 }
