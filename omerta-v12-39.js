@@ -89,8 +89,12 @@
   scenarioThumbArt = function(id){ return isOmerta(id) ? v53LightThumb(String(id)) : previousThumb(id); };
   scenarioArt = function(id){ return isOmerta(id) ? ART[String(id)] : previousArt(id); };
 
-  const HERO_IMAGE_SELECTOR = '.scenario-hero img,.scenario-hero-art img,.confirm-art img,.section-cover img,.briefing-poster img';
+  const HERO_IMAGE_SELECTOR = '.scenario-thumb img,.scenario-hero img,.scenario-hero-art img,.confirm-art img,.section-cover img,.briefing-poster img';
   function findOmertaImageId(img){
+    // A lobby avatar lives under .lobby-v11[data-igr-scenario-id],
+    // but is NEVER the scenario poster. Do not rewrite personal photos.
+    if(img.closest?.('.avatar,.player-ident,.lobby-player-live,.game-player-ident')
+       || !img.matches?.(HERO_IMAGE_SELECTOR))return null;
     const closestCard = img.closest?.('[id^="scenario-"]');
     if(closestCard){
       const id = String(closestCard.id || '').replace('scenario-','');
