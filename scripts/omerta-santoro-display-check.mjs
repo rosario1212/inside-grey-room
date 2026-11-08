@@ -54,7 +54,7 @@ const standalone=render(true),legacy=render(false);
 assert.match(standalone,/DOSSIER SANTORO/);
 assert.match(standalone,/Secrétaire du Don/);
 assert.match(standalone,/omerta-decision-dock/);
-assert.doesNotMatch(standalone,/igrOmertaOpenDecision\(\)|Valider une décision|omerta_power/,
+assert.doesNotMatch(standalone,/igrOmertaOpenDecision\(\)|Valider une décision|omerta_power|Verri/,
   'No historical Verri decision button in Santoro card');
 assert.match(legacy,/igrOmertaOpenDecision/, 'Legacy display must remain isolated for historical games');
 for(const asset of ['app-v11.js','omerta-v12.js','omerta-money-intel-v1.js']){
