@@ -34,8 +34,8 @@ assert.ok(truthfulScorer.includes('own.internal_slot=ANY(truth.actual_slots)'));
 assert.ok(ui.includes('editorial_actor_truth_pending'));
 assert.ok(seal.includes('omerta_signed_verdict_required'));
 for (const [path,ref] of [
- ['index.html','omerta-santoro-verdict-v28.js?v=santoro-verdict-v28'],
- ['service-worker.js','omerta-santoro-verdict-v28.js?v=santoro-verdict-v28'],
+ ['index.html','omerta-santoro-verdict-v28.js?v=omerta-023-spy-v1'],
+ ['service-worker.js','omerta-santoro-verdict-v28.js?v=omerta-023-spy-v1'],
  ['scripts/build-web.mjs',"'omerta-santoro-verdict-v28.js'"],
 ]) assert.ok(file(path).includes(ref),path+' is missing the verdict entrypoint');
 console.log('OMERTA V28 signed goal-scoped verdict: source/asset/security invariants OK');

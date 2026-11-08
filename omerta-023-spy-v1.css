@@ -1,0 +1,17 @@
+/* Omertà 023 — role-private and investigator documentary interface */
+.igr-023-spy-card{width:min(92vw,630px)!important;max-height:min(86dvh,850px);overflow-y:auto;padding:clamp(18px,4vw,30px)!important;border:1px solid rgba(167,58,63,.5)!important;background:linear-gradient(145deg,#151116,#080b0f)!important;color:#f1eaea}
+.igr-023-spy-content{display:flex;flex-direction:column;gap:12px;min-width:0}
+.igr-023-spy-section,.igr-023-spy-option{padding:13px 15px;border:1px solid rgba(173,77,79,.28);border-radius:12px;background:rgba(104,35,42,.1)}
+.igr-023-spy-section h3,.igr-023-spy-content h3{font-size:14px;letter-spacing:.02em;margin:0 0 7px}
+.igr-023-spy-section p,.igr-023-spy-option p{font-size:13px;line-height:1.6;margin:0;white-space:pre-line;overflow-wrap:anywhere}
+.igr-023-spy-section small{color:#d8bfc2;font-size:12px;display:block;margin-top:8px}
+.igr-023-spy-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.igr-023-spy-option{display:flex;flex-direction:column;gap:12px;justify-content:space-between}
+.igr-023-spy-option .btn,.igr-023-spy-content>.btn,.igr-023-spy-entry{min-height:44px!important;white-space:normal!important}
+.igr-023-spy-content label{display:flex;flex-direction:column;gap:7px;font-size:13px}
+.igr-023-spy-select{color:#f4efef;background:#1b151a;border:1px solid #86595c;border-radius:10px;min-height:44px;padding:9px;width:100%}
+.igr-023-spy-note,.igr-023-spy-sealed,.igr-023-spy-progress{font-size:12px;line-height:1.5;color:#dcc8cd}
+.igr-023-spy-progress{font-weight:700;color:#f1dee1}
+.igr-023-spy-error{color:#ffbcbf;font-size:13px;overflow-wrap:anywhere}
+@media(max-width:390px){.igr-023-spy-card{padding:16px!important}.igr-023-spy-option{padding:11px}.igr-023-spy-section{padding:11px}}
+@media(prefers-reduced-motion:reduce){.igr-023-spy-card *{scroll-behavior:auto!important;transition:none!important}}

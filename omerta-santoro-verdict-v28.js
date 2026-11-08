@@ -15,7 +15,8 @@ const LABELS={
  'corroboration':'Comptabilité et preuves','false_or_old':'Déclarations fausses ou anciennes',
  'justice':'Déclarations aux autorités','new_info':'Extorsion et faits nouveaux',
  'aggression':'Agression du propriétaire','money':'Prélèvements forcés',
- 'origin':'Origine de la consigne','relay':'Transmission de la consigne'
+ 'origin':'Origine de la consigne','relay':'Transmission de la consigne',
+ 'secret_intelligence':'Mission de la taupe'
 };
 function current(){try{return typeof STATE!=='undefined'?STATE.sync:null;}catch{return null;}}
 function room(d){return d?.room||{};}
