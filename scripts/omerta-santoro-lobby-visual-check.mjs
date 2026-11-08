@@ -16,7 +16,7 @@ const css=file('omerta-polish-v12.css');
 for(const [name,source] of Object.entries({canonical,polish,hotfix,art30,art39,sw})){
   new vm.Script(source,{filename:name+'.js'});
 }
-assert.match(canonical,/Vittorio Santoro, le Don intouchable/);
+assert.match(canonical,/Vittorio Santoro est le Don que personne n'arrive à faire tomber/);
 const start=canonical.indexOf('  const SCENARIO_DATA = [');
 const finish=canonical.indexOf('  const ART_FALLBACK = ',start);
 assert(start>=0&&finish>start,'Missing Omerta public catalog');
