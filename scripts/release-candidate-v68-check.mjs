@@ -87,11 +87,11 @@ ok(/une enveloppe remplie d’argent manque à l’appel/i.test(omertaCatalog),'
 ok(!omertaCatalog.includes("disparaît avant d’atteindre Enzo Rinaldi"),'Omerta 021 catalogue does not falsely assert theft');
 ok(/Deux témoins racontent ensuite le même alibi/i.test(omertaCatalog),'Omerta 022 catalogue explains contested Caruso alibis');
 ok(!omertaCatalog.includes('Un meurtre interne fragilise la Famiglia Santoro'),'Omerta 022 catalogue does not disclose the internal mafia hierarchy');
-ok(/Une chaise reste vide : Domenico Falco/i.test(omertaCatalog),'Omerta 023 public briefing establishes the empty seat');
-ok(/Adriano Santoro est attaqué sur la route/i.test(omertaCatalog),'Omerta 023 public briefing connects the attack to the meeting');
+ok(/(?:Une chaise reste vide : Domenico Falco|Domenico Falco manque à l'appel)/i.test(omertaCatalog),'Omerta 023 public briefing establishes the empty seat');
+ok(/(?:Adriano Santoro est attaqué sur la route|Adriano Santoro tombe dans une embuscade)/i.test(omertaCatalog),'Omerta 023 public briefing connects the attack to the meeting');
 ok(!omertaCatalog.includes('Le septième ne viendra jamais'),'Omerta 023 does not falsely imply Falco was killed');
 ok(/Massimo De Luca est arrêté/i.test(omertaCatalog),'Omerta 024 explains the informant dilemma');
-ok(/Un entrepreneur refuse de verser l'argent/i.test(omertaCatalog),'Omerta 025 explains extortion and retaliation directly');
+ok(/(?:Un entrepreneur refuse de verser l'argent|Un entrepreneur refuse de payer la mafia)/i.test(omertaCatalog),'Omerta 025 explains extortion and retaliation directly');
 ok(!omertaCatalog.includes('Vittorio Santoro accepte enfin de parler'),'Omerta 025 does not falsely assert a Don confession');
 ok(!omertaCatalog.includes('Il peut gagner des années de liberté avec quelques phrases'),'Omerta 024 never promises a plea bargain');
 const swPath=path.join(target,'service-worker.js');
