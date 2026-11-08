@@ -65,6 +65,17 @@ jobs:
           node scripts/v560-018-release-integrity-check.mjs
           node scripts/v580-019-release-integrity-check.mjs
           node scripts/v620-020-release-integrity-check.mjs
+          # Release hygiene: Omerta standalone checks must pass before any live Worker deploy.
+          # These are synthetic/structural tests, never human editorial certification.
+          node scripts/omerta-money-intel-021-check.mjs
+          node scripts/omerta-indic-final-rule-check.mjs
+          node scripts/omerta-standalone-goal-scorer-check.mjs
+          node scripts/omerta-santoro-private-ui-check.mjs
+          node scripts/omerta-santoro-private-preflight-check.mjs
+          node scripts/omerta-santoro-indic-ui-check.mjs
+          node scripts/omerta-santoro-card-completeness-check.mjs
+          node scripts/omerta-indic-final-review-v27-check.mjs
+          node scripts/omerta-santoro-verdict-v28-check.mjs
           node scripts/v630-hidden-spy-release-check.mjs
           node scripts/v631-spy-audit-regression-check.mjs
           node scripts/casino-runtime-check.mjs
