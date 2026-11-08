@@ -10,13 +10,9 @@
     '024':'assets/omerta-024-il-pentito.webp?v=12.27',
     '025':'assets/omerta-025-il-don.webp?v=12.27'
   };
-  const COPY = {
-    '021':{short:'Une enveloppe disparaît. Parler réduit une peine. Parler peut aussi faire tuer.',context:'Une enveloppe issue des rackets disparaît avant d’atteindre Enzo Rinaldi. Certains faits sont déjà prouvés. Il reste à savoir qui parlera pour sauver des années de prison — et qui le découvrira.',mood:'Rue · racket · dette · loyauté.',mechanics:['Peine','Omertà','Sanction']},
-    '022':{short:'Un homme est mort. Plusieurs savent pourquoi. Personne ne veut être le premier à parler.',context:'Un meurtre interne fissure la Famiglia Verri. Chacun détient une partie de la vérité. Chacun a une raison de se taire. Une phrase peut faire tomber un homme — ou désigner celui qui l’a prononcée.',mood:'Meurtre · silence · omertà.',mechanics:['Silence','Mensonge','Loyauté']},
-    '023':{short:'Sept sièges. Six hommes. Une chaise vide. Une guerre peut commencer autour de cette table.',context:'Une réunion doit empêcher une guerre. Un siège reste vide. Pouvoir, territoire et succession se négocient à voix basse. Puis un appel tombe : Adriano Verri a été touché.',mood:'Commission · pouvoir · guerre interne.',mechanics:['Négociation','Succession','Attaque']},
-    '024':{short:'Il peut acheter des années de liberté avec quelques phrases. La Famiglia cherche déjà qui parle.',context:'Un membre arrêté risque des décennies de prison. Il peut réduire sa peine, livrer des noms et demander une protection. Plus il parle, plus la justice l’aide. Plus il parle, plus la Famiglia se rapproche.',mood:'Interrogatoire · coopération · chasse à l’homme.',mechanics:['Peine','Protection','Chasse à l’homme']},
-    '025':{short:'Vittorio Verri parle enfin. Il reste à savoir quels morts portent réellement son ordre.',context:'Quatre dossiers ont laissé des morts, des dettes et des trahisons. Vittorio Verri accepte enfin de parler. La question n’est plus de savoir qui est le Don. Elle est de savoir ce qu’il a réellement ordonné — et ce que ses hommes ont fait en son nom.',mood:'Le Don · ordres · exécutions · conséquences.',mechanics:['Audiences','Ordres','Conséquences']}
-  };
+  // Scenario titles, previews and cinematic copy belong exclusively to
+  // the Santoro canonical SCENARIO_DATA in omerta-v12.js. Never override
+  // them with historical Verri-era COPY from this optional UI polish layer.
   const ROLE_COPY = {
     associato:{label:'Associato',win:'Reste utile. Reste vivant.',body:'Tu n’es pas initié. Tu peux parler, mentir ou rester loyal. Chaque mot peut te coûter.'},
     uomo_onore:{label:'Uomo d’Onore',win:'Tiens l’omertà.',body:'Tu peux dire vrai. Une vérité de trop suffit.'},
@@ -29,8 +25,27 @@
   };
 
   function isOmerta(id){ return OMERTA_IDS.has(String(id||'')); }
-  function currentScenario(){ return STATE.sync?.room?.scenario_id || STATE.scenarioId || STATE.selectedScenario; }
-  for(const id of OMERTA_IDS){ const sc=typeof scenario==='function'?scenario(id):null; if(sc&&COPY[id])Object.assign(sc,COPY[id]); }
+  function currentScenario(){
+    return document.querySelector('.lobby-v11[data-igr-scenario-id]')?.dataset.igrScenarioId
+      || (STATE.view==='create-confirm'?STATE.selectedScenario:null)
+      || STATE.sync?.room?.scenario_id || STATE.selectedScenario || STATE.scenarioId || '';
+  }
+  // Public rank topology only: do not expose private A/B/C actors, kinship,
+  // evidence or the clandestine role while the room is in the lobby.
+  window.igrOmertaPublicFamilyTree=function(scenarioId){
+    const sid=String(scenarioId||currentScenario());
+    if(!isOmerta(sid))return [];
+    return [
+      {id:'famiglia',name:'Famiglia Santoro',rank:'Direction · le Don',structural:true},
+      {id:'consigliere',parent:'famiglia',name:'Consigliere',rank:'Conseil',structural:true},
+      {id:'sottocapo',parent:'famiglia',name:'Sottocapo',rank:'Coordination',structural:true},
+      {id:'contabile',parent:'famiglia',name:'Contabile',rank:'Comptabilité',structural:true},
+      {id:'caporegime',parent:'sottocapo',name:'Caporegime',rank:'Équipes',structural:true},
+      {id:'uomini',parent:'caporegime',name:'Uomini d’Onore',rank:'Membres initiés',structural:true},
+      {id:'associati',parent:'uomini',name:'Associati',rank:'Contacts',structural:true}
+    ];
+  };
+  // No scenario copy mutation: one canonical public text per Santoro dossier.
   try{Object.assign(ROLE_INFO,ROLE_COPY)}catch(_){}
 
   const prevThumb=scenarioThumbArt,prevArt=scenarioArt;
@@ -68,18 +83,21 @@
     const st=statuses[n.name]||'actif';
     const blood=n.blood&&!String(n.rank||'').toUpperCase().includes('SANG')?' · SANG':'';
     const kids=(children[n.id]||[]).map(x=>familyNode(x,statuses,children)).join('');
-    return `<li><div class="omerta-family-node status-${h(st)}"><b>${h(n.name)}</b><small>${h(n.rank)}${blood}</small><em>${h(statusLabel(st))}</em></div>${kids?`<ul>${kids}</ul>`:''}</li>`;
+    return `<li><div class="omerta-family-node status-${h(n.structural?'structure':st)}"><b>${h(n.name)}</b><small>${h(n.rank)}${blood}</small><em>${n.structural?'RANG PUBLIC':h(statusLabel(st))}</em></div>${kids?`<ul>${kids}</ul>`:''}</li>`;
   }
   function familyTreeHtml(){
-    const c=campaignState(),tree=Array.isArray(c?.family_tree)?c.family_tree:[],statuses=c?.character_status||{};
-    if(!tree.length)return'<div class="empty-state">L’arbre apparaîtra avec la campagne.</div>';
+    const id=currentScenario(),c=campaignState(),
+      tree=isOmerta(id)?window.igrOmertaPublicFamilyTree(id)
+       :(Array.isArray(c?.family_tree)?c.family_tree:[]),
+      statuses=isOmerta(id)?{}:c?.character_status||{};
+    if(!tree.length)return'<div class="empty-state">Aucune structure publique disponible pour ce dossier.</div>';
     const children={};for(const n of tree){const key=n.parent||'__root__';(children[key]||(children[key]=[])).push(n)}
     const roots=children.__root__||tree.filter(n=>!n.parent);
-    return `<div class="omerta-org-scroll"><div class="omerta-org-tree"><ul class="omerta-org-root">${roots.map(n=>familyNode(n,statuses,children)).join('')}</ul></div></div><div class="omerta-tree-legend"><span><i class="active"></i>Actif</span><span><i class="protected"></i>Protégé</span><span><i class="dead"></i>Mort</span></div>`;
+    return `<div class="omerta-org-scroll"><div class="omerta-org-tree"><ul class="omerta-org-root">${roots.map(n=>familyNode(n,statuses,children)).join('')}</ul></div></div>${isOmerta(id)?'<p class="omerta-tree-public-note">Hiérarchie publique indicative : aucun personnage, lien de sang ou rôle secret n’est révélé avant la partie.</p>':'<div class="omerta-tree-legend"><span><i class="active"></i>Actif</span><span><i class="protected"></i>Protégé</span><span><i class="dead"></i>Mort</span></div>'}`;
   }
   window.igrOmertaOpenFamilyTree=function(){
     document.querySelector('.omerta-tree-modal')?.remove();const c=campaignState(),modal=document.createElement('div');modal.className='modal omerta-tree-modal';
-    modal.innerHTML=`<div class="modal-box omerta-tree-box"><div class="omerta-eyebrow">OMERTÀ · DOSSIER DE FAMILLE</div><div class="omerta-tree-head"><div><h2>Arbre de la Famiglia</h2><p>Le sang, le rang et les conséquences ne sont pas la même chose.</p></div><div class="omerta-dossier-progress">${dossierProgress()}</div></div>${familyTreeHtml()}<div class="omerta-tree-current"><span>PROCHAIN DOSSIER</span><b>${h(c?.current_dossier||STATE.sync?.room?.scenario_id||'021')}</b></div><div class="modal-actions"><button class="btn ghost" onclick="this.closest('.modal').remove()">Fermer</button></div></div>`;
+    modal.innerHTML=`<div class="modal-box omerta-tree-box"><div class="omerta-eyebrow">OMERTÀ · DOSSIER DE FAMILLE</div><div class="omerta-tree-head"><div><h2>Arbre de la Famiglia</h2><p>Le sang, le rang et les conséquences ne sont pas la même chose.</p></div><div class="omerta-dossier-progress">${dossierProgress()}</div></div>${familyTreeHtml()}<div class="omerta-tree-current"><span>DOSSIER SÉLECTIONNÉ</span><b>${h(currentScenario()||'—')}</b></div><div class="modal-actions"><button class="btn ghost" onclick="this.closest('.modal').remove()">Fermer</button></div></div>`;
     modal.addEventListener('click',e=>{if(e.target===modal)modal.remove()});document.body.appendChild(modal);
     queueMicrotask(()=>{const s=modal.querySelector('.omerta-org-scroll');if(s)s.scrollLeft=Math.max(0,(s.scrollWidth-s.clientWidth)/2)});
   };

@@ -53,26 +53,37 @@
     }
   }
 
-  function getCampaign(){return window.STATE?.sync?.room?.state?.omerta_campaign||null}
+  function activeState(){try{return typeof STATE!=='undefined'?STATE:null}catch(_){return null}}
+  function currentId(){
+    const state=activeState();
+    return document.querySelector('.lobby-v11[data-igr-scenario-id]')?.dataset.igrScenarioId
+      ||(state?.view==='create-confirm'?state.selectedScenario:null)
+      ||state?.sync?.room?.scenario_id||state?.selectedScenario||state?.scenarioId||'';
+  }
+  function getCampaign(){return activeState()?.sync?.room?.state?.omerta_campaign||null}
   function esc(v){try{return window.h?window.h(String(v??'')):String(v??'')}catch{return String(v??'')}}
   function statusLabel(v){if(v==='mort')return'MORT';if(v==='protégé')return'PROTÉGÉ';return'ACTIF'}
-  function progress(){const c=getCampaign(),done=c?.dossiers||{};return IDS.map(id=>`<span class="${done[id]?'done':''}">${id}</span>`).join('')}
+  function progress(){const id=currentId();return IDS.map(x=>`<span class="${x===id?'current':''}" ${x===id?'aria-current="true"':''}>${x}</span>`).join('')}
   function renderNode(n,statuses,children){
     const st=statuses[n.name]||'actif',kids=children[n.id]||[];
     const blood=n.blood&&!String(n.rank||'').toUpperCase().includes('SANG')?' · SANG':'';
-    return `<li><div class="omerta-family-node status-${esc(st)}"><b>${esc(n.name)}</b><small>${esc(n.rank)}${blood}</small><em>${statusLabel(st)}</em></div>${kids.length?`<ul>${kids.map(x=>renderNode(x,statuses,children)).join('')}</ul>`:''}</li>`;
+    return `<li><div class="omerta-family-node status-${esc(n.structural?'structure':st)}"><b>${esc(n.name)}</b><small>${esc(n.rank)}${blood}</small><em>${n.structural?'RANG PUBLIC':statusLabel(st)}</em></div>${kids.length?`<ul>${kids.map(x=>renderNode(x,statuses,children)).join('')}</ul>`:''}</li>`;
   }
   function treeHtml(){
-    const c=getCampaign(),tree=Array.isArray(c?.family_tree)?c.family_tree:[],statuses=c?.character_status||{};
-    if(!tree.length)return'<div class="empty-state">L’arbre apparaîtra avec la campagne.</div>';
+    const id=currentId(),c=getCampaign(),publicTree=window.igrOmertaPublicFamilyTree;
+    const santoro=SET.has(id);
+    const tree=santoro&&typeof publicTree==='function'?publicTree(id)
+      :(Array.isArray(c?.family_tree)?c.family_tree:[]);
+    const statuses=santoro?{}:c?.character_status||{};
+    if(!tree.length)return'<div class="empty-state">Aucun arbre public disponible pour ce dossier.</div>';
     const children={};for(const n of tree){const k=n.parent||'__root__';(children[k]||(children[k]=[])).push(n)}
     const roots=children.__root__||tree.filter(n=>!n.parent);
-    return `<div class="omerta-org-scroll"><div class="omerta-org-tree"><ul class="omerta-org-root">${roots.map(n=>renderNode(n,statuses,children)).join('')}</ul></div></div><div class="omerta-tree-legend"><span><i></i>Actif</span><span><i class="protected"></i>Protégé</span><span><i class="dead"></i>Mort</span></div>`;
+    return `<div class="omerta-org-scroll"><div class="omerta-org-tree"><ul class="omerta-org-root">${roots.map(n=>renderNode(n,statuses,children)).join('')}</ul></div></div>${santoro?'<p class="omerta-tree-public-note">Structure des rangs de la Famiglia. Les identités, les relations individuelles et les secrets restent dans les fiches privées.</p>':'<div class="omerta-tree-legend"><span><i></i>Actif</span><span><i class="protected"></i>Protégé</span><span><i class="dead"></i>Mort</span></div>'}`;
   }
   window.igrOmertaOpenFamilyTree=function(){
     document.querySelector('.omerta-tree-modal')?.remove();
-    const c=getCampaign(),modal=document.createElement('div');modal.className='modal omerta-tree-modal';
-    modal.innerHTML=`<div class="modal-box omerta-tree-box"><div class="omerta-eyebrow">OMERTÀ · DOSSIER DE FAMILLE</div><div class="omerta-tree-head"><div><h2>Arbre de la Famiglia</h2><p>Le sang, le rang et les conséquences ne sont pas la même chose.</p></div><div class="omerta-dossier-progress">${progress()}</div></div>${treeHtml()}<div class="omerta-tree-current"><span>PROCHAIN DOSSIER</span><b>${esc(c?.current_dossier||window.STATE?.sync?.room?.scenario_id||'021')}</b></div><div class="modal-actions"><button class="btn ghost" onclick="this.closest('.modal').remove()">Fermer</button></div></div>`;
+    const id=currentId(),modal=document.createElement('div');modal.className='modal omerta-tree-modal';
+    modal.innerHTML=`<div class="modal-box omerta-tree-box"><div class="omerta-eyebrow">OMERTÀ · DOSSIER DE FAMILLE</div><div class="omerta-tree-head"><div><h2>Arbre de la Famiglia</h2><p>Le sang, le rang et les conséquences ne sont pas la même chose.</p></div><div class="omerta-dossier-progress">${progress()}</div></div>${treeHtml()}<div class="omerta-tree-current"><span>DOSSIER SÉLECTIONNÉ</span><b>${esc(id||'—')}</b></div><div class="modal-actions"><button class="btn ghost" onclick="this.closest('.modal').remove()">Fermer</button></div></div>`;
     modal.addEventListener('click',e=>{if(e.target===modal)modal.remove()});document.body.appendChild(modal);
     requestAnimationFrame(()=>{const s=modal.querySelector('.omerta-org-scroll');if(s)s.scrollLeft=Math.max(0,(s.scrollWidth-s.clientWidth)/2)});
   };

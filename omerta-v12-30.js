@@ -36,6 +36,10 @@
   function repairArtwork(root=document){
     if(!root?.querySelectorAll)return;
     root.querySelectorAll('img').forEach(img=>{
+      // Only scenario artwork is eligible. Never mutate player portraits
+      // even if a previous cached client accidentally gave them a poster URL.
+      if(!img.closest?.('.scenario-thumb,.scenario-hero,.scenario-hero-art,.confirm-art,.section-cover,.briefing-poster')
+        || img.closest?.('.avatar,.player-ident,.lobby-player-live,.game-player-ident'))return;
       const src=String(img.getAttribute('src')||'');
       let id=IDS.find(x=>img.closest?.(`#scenario-${x}`)||src.includes(`omerta-${x}-`)||src.includes(`omerta-${x}.`));
       if(!id){
