@@ -7,6 +7,8 @@ on:
     paths:
       - 'omerta-money-intel-v1.js'
       - 'omerta-v12.js'
+      - 'omerta-023-spy-v1.js'
+      - 'omerta-023-spy-v1.css'
       - 'app-v11.js'
       - 'omerta-money-intel-v1.css'
       - 'scripts/omerta-*.mjs'
@@ -42,6 +44,7 @@ jobs:
           node scripts/omerta-standalone-goal-scorer-check.mjs
           node scripts/omerta-santoro-private-ui-check.mjs
           node scripts/omerta-santoro-display-check.mjs
+          node scripts/omerta-023-spy-ui-check.mjs
           node --check scripts/omerta-santoro-private-preflight.mjs
           node scripts/omerta-santoro-private-preflight-check.mjs
           node scripts/omerta-santoro-indic-ui-check.mjs
