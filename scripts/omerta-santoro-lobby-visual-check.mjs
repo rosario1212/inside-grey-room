@@ -17,10 +17,10 @@ for(const [name,source] of Object.entries({canonical,polish,hotfix,art30,art39,s
   new vm.Script(source,{filename:name+'.js'});
 }
 assert.match(canonical,/Vittorio Santoro est le Don que personne n'arrive à faire tomber/);
-const start=canonical.indexOf('  const SCENARIO_DATA = [');
-const finish=canonical.indexOf('  const ART_FALLBACK = ',start);
-assert(start>=0&&finish>start,'Missing Omerta public catalog');
-const synopses=vm.runInNewContext(canonical.slice(start,finish)+'\nSCENARIO_DATA;');
+const synopsisStart=canonical.indexOf('  const SCENARIO_DATA = [');
+const synopsisEnd=canonical.indexOf('  const ART_FALLBACK = ',synopsisStart);
+assert(synopsisStart>=0&&synopsisEnd>synopsisStart,'Missing Omerta public catalog');
+const synopses=vm.runInNewContext(canonical.slice(synopsisStart,synopsisEnd)+'\nSCENARIO_DATA;');
 assert.equal(synopses.length,5,'All five Santoro dossiers must be represented');
 const details=new Map([
  ['021',['Brooklyn','enveloppe','coursier','coups']],
