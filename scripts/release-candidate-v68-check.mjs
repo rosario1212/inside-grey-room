@@ -44,7 +44,7 @@ for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
     for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js','judicial-runtime-v44.js','self-guided-rules-v51.js','app-v11.js','qa-fixes-v12.js']){
-      ok(html.includes(asset+'?v=v74-omerta024025-readability-20261107'),`${page}: fresh fluidity asset ${asset}`);
+      ok(html.includes(asset+'?v=v75-santoro-display-audit-20261108'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
   ok(html.includes('release-polish-v68.css?v=v68-rc1'),`${page}: RC polish loaded last`);
@@ -97,7 +97,7 @@ ok(!omertaCatalog.includes('Il peut gagner des années de liberté avec quelques
 const swPath=path.join(target,'service-worker.js');
 if(fs.existsSync(swPath)){
   const sw=fs.readFileSync(swPath,'utf8');
-  ok(sw.includes("const CACHE='igr-v74-omerta024025-readability-20261107';"),'service worker cache bumped for fluidity runtime');
+  ok(sw.includes("const CACHE='igr-v75-santoro-display-audit-20261108';"),'service worker cache bumped for fluidity runtime');
 }
 
 console.log('\nInside Grey Room — Release Candidate v68 gate');
