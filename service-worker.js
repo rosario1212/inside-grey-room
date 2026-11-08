@@ -1,4 +1,4 @@
-const CACHE='igr-v647-006-fiches-220-omerta-indic-v30';
+const CACHE='igr-v647-006-fiches-220';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
