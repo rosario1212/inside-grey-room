@@ -258,6 +258,10 @@
         toast('OMERTÀ Santoro : variante en attente de certification.');
         return;
       }
+      if(String(e?.message||e).includes('spy_023_requires_associato_or_generic_suspect')){
+        toast('La Table : il faut un Associato ou un Suspect sans rang attribué pour la mission clandestine.');
+        return;
+      }
       toast('Impossible de lancer OMERTÀ : vérifie les rôles, les joueurs et la connexion.');
     }
   };
