@@ -25,11 +25,11 @@ for(const scenario of ['021','022','023','024','025']){
       human_review_approved:true,verdict_scoring_review:'approved',
       canonical_truth:{
         truth_by_axis:{variant},
-        timeline:[{id:'event-a'},{id:'event-b'}],
+        timeline:[{id:'event-a',origin:'external accounting custodian'},{id:'event-b',origin:'civil transport archive'}],
         verdict_goal_by_slot:Object.fromEntries(cards.map(c=>[String(c.slot),
           {goal_id:c.verdict_goal.goal_id,mode:'avoid_formal_designation'}]))
       },
-      revelations:[{kind:'guaranteed',min_cycle:'3',audience:'investigation',
+      revelations:[{id:prefix+'-C3-CROSSCHECK',kind:'guaranteed',min_cycle:'3',audience:'investigation',
         editorial_provenance:{existing_events:['event-a','event-b'],
           independent_of_optional_actions:true,human_source_review:'verified'}}]
     };
