@@ -58,7 +58,9 @@ for(const key of [
 ])assert.ok(standalone.includes(key),'standalone server guard missing: '+key);
 assert.ok(omertaClient.includes('igr_omerta_standalone_release_status'));
 assert.ok(omertaClient.includes('igr_omerta_start_standalone'));
-assert.ok(omertaClient.includes("if(e.code!=='PGRST202'"));
+assert.ok(omertaClient.includes("status?.available!==true"));
+assert.doesNotMatch(omertaClient,/igr_omerta_start_game/,'New Omerta rooms must never fall back to Verri');
+assert.doesNotMatch(omertaClient,/PGRST202/,'A missing Santoro RPC must fail closed');
 assert.ok(baseClient.includes('igr_omerta_standalone_safe_sync'));
 // Une fiche Santoro doit remplacer les objectifs Verri génériques dans la vue
 // uniquement lorsque la salle autonome est marquée par le serveur.
