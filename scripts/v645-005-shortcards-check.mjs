@@ -4,7 +4,7 @@ const app=readFileSync('app-v11.js','utf8');
 const index=readFileSync('index.html','utf8');
 const sw=readFileSync('service-worker.js','utf8');
 const standard=readFileSync('docs/standard-fiches-personnages.md','utf8');
-const cache='v647-006-fiches-220';
+const cache='santoro-display-audit-20261108';
 assert(app.includes("const conciseDossier=['001','002','003','004','005','006'].includes("),
   'Scenario 005 must use the same short-card layout as 001–004');
 assert(app.includes("valueBlock('CE QUE TU SAIS',ps.anchors)"),'Known facts must remain visible');
