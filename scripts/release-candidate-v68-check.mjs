@@ -44,7 +44,7 @@ for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
     for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js','judicial-runtime-v44.js','self-guided-rules-v51.js','app-v11.js','qa-fixes-v12.js']){
-      ok(html.includes(asset+'?v=v74-omerta024025-readability-20261107'),`${page}: fresh fluidity asset ${asset}`);
+      ok(html.includes(asset+'?v=v75-santoro-display-audit-20261108'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
   ok(html.includes('release-polish-v68.css?v=v68-rc1'),`${page}: RC polish loaded last`);
@@ -87,17 +87,17 @@ ok(/une enveloppe remplie d’argent manque à l’appel/i.test(omertaCatalog),'
 ok(!omertaCatalog.includes("disparaît avant d’atteindre Enzo Rinaldi"),'Omerta 021 catalogue does not falsely assert theft');
 ok(/Deux témoins racontent ensuite le même alibi/i.test(omertaCatalog),'Omerta 022 catalogue explains contested Caruso alibis');
 ok(!omertaCatalog.includes('Un meurtre interne fragilise la Famiglia Santoro'),'Omerta 022 catalogue does not disclose the internal mafia hierarchy');
-ok(/Une chaise reste vide : Domenico Falco/i.test(omertaCatalog),'Omerta 023 public briefing establishes the empty seat');
-ok(/Adriano Santoro est attaqué sur la route/i.test(omertaCatalog),'Omerta 023 public briefing connects the attack to the meeting');
+ok(/(?:Une chaise reste vide : Domenico Falco|Domenico Falco manque à l'appel)/i.test(omertaCatalog),'Omerta 023 public briefing establishes the empty seat');
+ok(/(?:Adriano Santoro est attaqué sur la route|Adriano Santoro tombe dans une embuscade)/i.test(omertaCatalog),'Omerta 023 public briefing connects the attack to the meeting');
 ok(!omertaCatalog.includes('Le septième ne viendra jamais'),'Omerta 023 does not falsely imply Falco was killed');
 ok(/Massimo De Luca est arrêté/i.test(omertaCatalog),'Omerta 024 explains the informant dilemma');
-ok(/Un entrepreneur refuse de verser l'argent/i.test(omertaCatalog),'Omerta 025 explains extortion and retaliation directly');
+ok(/(?:Un entrepreneur refuse de verser l'argent|Un entrepreneur refuse de payer la mafia)/i.test(omertaCatalog),'Omerta 025 explains extortion and retaliation directly');
 ok(!omertaCatalog.includes('Vittorio Santoro accepte enfin de parler'),'Omerta 025 does not falsely assert a Don confession');
 ok(!omertaCatalog.includes('Il peut gagner des années de liberté avec quelques phrases'),'Omerta 024 never promises a plea bargain');
 const swPath=path.join(target,'service-worker.js');
 if(fs.existsSync(swPath)){
   const sw=fs.readFileSync(swPath,'utf8');
-  ok(sw.includes("const CACHE='igr-v74-omerta024025-readability-20261107';"),'service worker cache bumped for fluidity runtime');
+  ok(sw.includes("const CACHE='igr-v75-santoro-display-audit-20261108';"),'service worker cache bumped for fluidity runtime');
 }
 
 console.log('\nInside Grey Room — Release Candidate v68 gate');

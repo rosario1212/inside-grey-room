@@ -380,7 +380,11 @@ function mountCycleReminder(){
 }
 function mount(){
  mountCycleReminder();
- const d=context(),dock=document.querySelector('.omerta-decision-dock');
+ const d=context();
+ // In Santoro, the default tab is Investigation: expose the canonical
+ // informant action there even when the private-card dock is not mounted.
+ const dock=document.querySelector('.omerta-decision-dock')||
+  (d?.room?.state?.omerta_standalone===true?document.querySelector('.game-panel-v11'):null);
  if(!dock||!isPlaying(d))return;
  if(d?.room?.state?.omerta_standalone===true){
   const oldSelectors='.igr-indic-offer-button,.igr-indic-final-assess-button,.igr-indic-protect-button,.igr-indic-accept-button,.igr-indic-reject-button,.igr-money-intel-entry';

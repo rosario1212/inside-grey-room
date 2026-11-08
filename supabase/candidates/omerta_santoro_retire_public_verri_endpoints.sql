@@ -10,6 +10,10 @@
 BEGIN;
 REVOKE EXECUTE ON FUNCTION public.igr_omerta_start_game(text,uuid)
   FROM PUBLIC, anon, authenticated;
+-- The old level-based revelation, arbitrary sanction and protection API does
+-- not score against the independently sourced Santoro canon.
+REVOKE EXECUTE ON FUNCTION public.igr_omerta_action(text,uuid,text,uuid,integer)
+  FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.igr_omerta_legacy_sync_core(text,uuid)
   FROM PUBLIC, anon, authenticated;
 -- Legacy Verri informant and money-intel entrypoints are not used by
@@ -53,6 +57,9 @@ BEGIN
   IF NOT has_function_privilege('anon','public.igr_omerta_santoro_indic_action(text,uuid,text,uuid,text,boolean,integer)','EXECUTE')
    OR NOT has_function_privilege('authenticated','public.igr_omerta_santoro_indic_status(text,uuid)','EXECUTE')
   THEN RAISE EXCEPTION 'Santoro informant API unavailable'; END IF;
+  IF has_function_privilege('anon','public.igr_omerta_action(text,uuid,text,uuid,integer)','EXECUTE')
+     OR has_function_privilege('authenticated','public.igr_omerta_action(text,uuid,text,uuid,integer)','EXECUTE')
+  THEN RAISE EXCEPTION 'Legacy arbitrary action still exposed'; END IF;
   IF NOT has_function_privilege('anon','public.igr_omerta_start_standalone(text,uuid)','EXECUTE')
    OR NOT has_function_privilege('authenticated','public.igr_omerta_standalone_safe_sync(text,uuid)','EXECUTE')
   THEN RAISE EXCEPTION 'Santoro entrypoint unavailable'; END IF;
