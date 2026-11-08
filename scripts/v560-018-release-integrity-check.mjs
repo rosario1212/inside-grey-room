@@ -14,7 +14,7 @@ const names=[
  '.github/workflows/cloudflare-production-deploy.yml'
 ];
 const [app,html,sw,core,actions,hooks,sync,inspector,check,deploy]=await Promise.all(names.map(get));
-const cache='v647-006-fiches-220';
+const cache='santoro-display-audit-20261108';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+cache),'HTML cache version mismatch');
 assert(sw.includes("const CACHE='igr-"+cache+"'"),'service worker cache mismatch');
