@@ -71,6 +71,7 @@ jobs:
           node scripts/omerta-indic-final-rule-check.mjs
           node scripts/omerta-standalone-goal-scorer-check.mjs
           node scripts/omerta-santoro-private-ui-check.mjs
+          node scripts/omerta-santoro-display-check.mjs
           node scripts/omerta-santoro-private-preflight-check.mjs
           node scripts/omerta-santoro-indic-ui-check.mjs
           node scripts/omerta-santoro-card-completeness-check.mjs
