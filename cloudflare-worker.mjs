@@ -59,7 +59,12 @@ export default {
   if(url.pathname==='/api/casino')return casino(req);
   // Existing bookmarks for the old private gate now lead straight to the game.
   if(url.pathname==='/__igr-private')return Response.redirect(new URL('/',url),302);
-  const asset=await env.ASSETS.fetch(req);
+  // Versioned HTML avoids stale cached home pages after a successful Worker deployment.
+  const shellPath=url.pathname==='/'||url.pathname==='/index.html'
+    ?'/index-omerta-editorial-20261109.html'
+    :url.pathname==='/en.html' ?'/en-omerta-editorial-20261109.html' : null;
+  const assetRequest=shellPath?new Request(new URL(shellPath,url).toString(),req):req;
+  const asset=await env.ASSETS.fetch(assetRequest);
   const headers=new Headers(asset.headers);
   if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
   // Opaque release marker; narrative and variant IDs remain server-side.
