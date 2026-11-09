@@ -90,6 +90,20 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: npx --yes wrangler@4.102.0 deploy
+      - name: Diagnose active Worker and published metadata
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          echo "Expected repository commit: ${GITHUB_SHA}"
+          node --input-type=module -e "import {readFileSync} from 'node:fs'; for(const f of ['casino-release.json','cartel030-release.json','cartel031-release.json']){const d=JSON.parse(readFileSync('dist/'+f));console.log('Bundled '+f+' commit: '+d.commit)}"
+          npx --yes wrangler@4.102.0 deployments list --name inside-grey-room-last || true
+          curl --silent --show-error --max-time 15 --dump-header /tmp/igr-meta-headers \
+            "https://inside-grey-room-last.alial-khafaji2002.workers.dev/casino-release.json?verify=${GITHUB_SHA}" \
+            --output /tmp/igr-meta || true
+          grep -Ei '^(HTTP/|cf-cache-status:|age:|cache-control:|cf-ray:|etag:)' /tmp/igr-meta-headers || true
+          head -c 240 /tmp/igr-meta || true
+          echo
       - name: Verify deployed game and commit
         env:
           IGR_EXPECTED_COMMIT: ${{ github.sha }}
