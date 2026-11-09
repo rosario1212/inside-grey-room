@@ -1,4 +1,4 @@
-const CACHE='igr-omerta-plaincopy-20261109';
+const CACHE='igr-omerta-full-intros-20261109';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
@@ -16,7 +16,7 @@ const SHELL=[
   '/heritage-maitre-data-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-assets-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-online-v34-4.js?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-mobile-v34-5.js?v=v34.9-maitre-theme-posters',
   '/language-v12.js?v=v12.22-mobile-ui','/i18n-en-v12.js?v=v12.22-mobile-ui',
   '/rules-v12.js?v=20261018-grey-room-protocol','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui','/locale-runtime-v12-23.js?v=v12.23-locale-home',
-  '/omerta-v12.js?v=omerta-plaincopy-20261109','/omerta-polish-v12.js?v=santoro-visual-fix-20261108','/omerta-hotfix-v12.js?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.js?v=v12.29-role-tree','/omerta-v12-30.js?v=santoro-visual-fix-20261108',
+  '/omerta-v12.js?v=omerta-full-intros-20261109','/omerta-polish-v12.js?v=santoro-visual-fix-20261108','/omerta-hotfix-v12.js?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.js?v=v12.29-role-tree','/omerta-v12-30.js?v=santoro-visual-fix-20261108',
   '/omerta-v12-39.js?v=santoro-visual-fix-20261108','/omerta-money-intel-v1.js?v=santoro-display-audit-20261108','/omerta-santoro-verdict-v28.js?v=omerta-023-spy-v1','/omerta-023-spy-v1.js?v=omerta-023-spy-v1','/terror-v12-37.js?v=v56-dlc-posters','/dlc-suite-v12-37.js?v=20261018-cartel-029-santa-ceniza-v1','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=v12.46-copy',
   '/manifest.webmanifest','/privacy.html','/terms.html','/delete-account.html','/support.html',
   '/assets/intro-v10-16.webp?v=20261018-intro-v16','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png',
