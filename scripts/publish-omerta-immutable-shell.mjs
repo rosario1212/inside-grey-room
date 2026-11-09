@@ -22,7 +22,7 @@ for(const page of ['index.html','en.html']){
   oldScript.lastIndex=0;
   html=html.replace(oldScript,newScript);
   await writeFile(file,html,'utf8');
-  await writeFile(path.join(dest,page.replace('.html','-'+tag+'.html')),html,'utf8');
+  await writeFile(path.join(dest,page.replace('.html','-'+tag+'.txt')),html,'utf8');
 }
 const swPath=path.join(dest,'service-worker.js');
 let sw=await readFile(swPath,'utf8');
