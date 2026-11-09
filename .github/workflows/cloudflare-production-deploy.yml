@@ -104,6 +104,14 @@ jobs:
           grep -Ei '^(HTTP/|cf-cache-status:|age:|cache-control:|cf-ray:|etag:)' /tmp/igr-meta-headers || true
           head -c 240 /tmp/igr-meta || true
           echo
+          for asset in / /index-omerta-editorial-20261109.html /omerta-v12-omerta-editorial-20261109.js; do
+            echo "Inspecting edge asset: ${asset}"
+            curl --silent --show-error --max-time 15 --dump-header /tmp/igr-edge-headers \
+              "https://inside-grey-room-last.alial-khafaji2002.workers.dev${asset}?diagnostic=${GITHUB_SHA}" \
+              --output /tmp/igr-edge-body || true
+            grep -Ei '^(HTTP/|cf-cache-status:|content-type:|cache-control:|cf-ray:)' /tmp/igr-edge-headers || true
+            node --input-type=module -e "import {readFileSync} from 'node:fs';const s=readFileSync('/tmp/igr-edge-body','utf8');console.log('Bytes:',s.length,'Fresh script URL:',s.includes('omerta-v12-omerta-editorial-20261109.js'),'New 021:',s.includes('Chaque vendredi, des commerçants du quartier remettent leur contribution'),'New 025:',s.includes('Vittorio Santoro dirige une famille dont l’autorité repose sur des règles'))" || true
+          done
       - name: Verify deployed game and commit
         env:
           IGR_EXPECTED_COMMIT: ${{ github.sha }}
