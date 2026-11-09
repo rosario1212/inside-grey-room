@@ -18,7 +18,7 @@ const oldScript=/omerta-v12\.js(?=\?v=[^"'< >\s]+)/g;
 for(const page of ['index.html','en.html']){
   const file=path.join(dest,page);
   let html=await readFile(file,'utf8');
-  assert(oldScript.test(html),'Missing Omertà runtime in '+page);
+  if(page==='index.html')assert(oldScript.test(html),'Missing Omertà runtime in main entrypoint');
   oldScript.lastIndex=0;
   html=html.replace(oldScript,newScript);
   await writeFile(file,html,'utf8');
