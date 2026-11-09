@@ -27,7 +27,7 @@ for(const page of ['index.html','en.html']){
 const swPath=path.join(dest,'service-worker.js');
 let sw=await readFile(swPath,'utf8');
 const omertaCachePath='/'+newScript+'?v=omerta-full-intros-20261109';
-sw=sw.replace(/\\/omerta-v12\\.js\\?v=[^'"]+/g,omertaCachePath);
+sw=sw.replace(/\/omerta-v12\.js\?v=[^'"]+/g,omertaCachePath);
 if(!sw.includes(omertaCachePath)){
   assert(sw.includes('const SHELL=['),'Missing service worker asset manifest');
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${omertaCachePath}',`);
