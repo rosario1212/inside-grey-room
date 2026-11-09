@@ -61,11 +61,12 @@ export default {
   if(url.pathname==='/__igr-private')return Response.redirect(new URL('/',url),302);
   // Versioned HTML avoids stale cached home pages after a successful Worker deployment.
   const shellPath=url.pathname==='/'||url.pathname==='/index.html'
-    ?'/index-omerta-editorial-20261109.html'
-    :url.pathname==='/en.html' ?'/en-omerta-editorial-20261109.html' : null;
+    ?'/index-omerta-editorial-20261109.txt'
+    :url.pathname==='/en.html' ?'/en-omerta-editorial-20261109.txt' : null;
   const assetRequest=shellPath?new Request(new URL(shellPath,url).toString(),req):req;
   const asset=await env.ASSETS.fetch(assetRequest);
   const headers=new Headers(asset.headers);
+  if(shellPath)headers.set('Content-Type','text/html; charset=utf-8');
   if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
   // Opaque release marker; narrative and variant IDs remain server-side.
   headers.set('X-IGR-Release','igr-003-008-009-011-secure-20261025');
