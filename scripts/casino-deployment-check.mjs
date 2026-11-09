@@ -22,7 +22,7 @@ assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'n
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
 const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.5/);
-assert.match(html,/omerta-v12\.js\?v=omerta-full-intros-20261109/,
+assert.match(html,/omerta-v12-omerta-editorial-20261109\.js\?v=omerta-full-intros-20261109/,
  'The live homepage has not loaded the rewritten Omertà opening script');
 const catalog=await get('/heritage-casino-v91.js');assert.equal(catalog.status,200);
 assert.match(await catalog.text(),/launchReady:true/);
@@ -112,8 +112,8 @@ const assertDeployedAsset=async (name,marker)=>{
   assert(content.includes(marker),'Deployed asset has not propagated: '+name+' ('+cacheVersion+')');
 };
 await assertDeployedAsset('service-worker.js',"const CACHE='igr-"+cacheVersion+"';");
-await assertDeployedAsset('omerta-v12.js','Chaque vendredi, des commerçants du quartier remettent leur contribution');
-await assertDeployedAsset('omerta-v12.js','Vittorio Santoro dirige une famille dont l’autorité repose sur des règles');
+await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Chaque vendredi, des commerçants du quartier remettent leur contribution');
+await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Vittorio Santoro dirige une famille dont l’autorité repose sur des règles');
 await assertDeployedAsset('investigation-workspace-v634.css','igr634-interviews');
 await assertDeployedAsset('investigation-workspace-v634.js','igr634-priority');
 await assertDeployedAsset('reading-stability-v635.css','igr82-relation:nth-child(odd)');
