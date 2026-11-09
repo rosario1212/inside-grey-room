@@ -30,10 +30,14 @@ for(const name of ['index.html','en.html',...(!nativeBundle?['service-worker.js'
 }
 const git=spawnSync('git',['rev-parse','HEAD'],{encoding:'utf8'});
 const commit=process.env.GITHUB_SHA||git.stdout?.trim()||'';
-await writeFile(path.join(target,'cartel030-release.json'),JSON.stringify({
+const cartel030Payload=JSON.stringify({
   scenario:'030',version,commit,bundle:nativeBundle?'native':'web',players:[7,8,9],moles:{7:1,8:1,9:2},
   evidence_per_cycle:[6,7,10]
-},null,2)+'\n');
+},null,2)+'\n';
+await writeFile(path.join(target,'cartel030-release.json'),cartel030Payload);
+await writeFile(path.join(target,`cartel030-release-${commit.slice(0,12)}.json`),cartel030Payload);
 console.log('CARTEL 030 release finalized: core application and PWA cache agree.');
 
-await writeFile(path.join(target,'cartel031-release.json'),JSON.stringify({scenario:'031',version,commit,players:[6,7,8],variants:['A','B','C'],cycles:3,evidence_per_cycle:[4,5,4],private_votes:true,local_mode:true},null,2)+'\n');
+const cartel031Payload=JSON.stringify({scenario:'031',version,commit,players:[6,7,8],variants:['A','B','C'],cycles:3,evidence_per_cycle:[4,5,4],private_votes:true,local_mode:true},null,2)+'\n';
+await writeFile(path.join(target,'cartel031-release.json'),cartel031Payload);
+await writeFile(path.join(target,`cartel031-release-${commit.slice(0,12)}.json`),cartel031Payload);
