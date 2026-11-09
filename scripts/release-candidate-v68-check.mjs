@@ -44,7 +44,7 @@ for(const page of ['index.html','en.html']){
   const html=read(page);
   if(page==='index.html'){
     for(const asset of ['gameplay-clean-v12.js','gameplay-flow-v13.js','lobby-ui-fix-v13.js','authoritative-runtime-v41.js','judicial-runtime-v44.js','self-guided-rules-v51.js','app-v11.js','qa-fixes-v12.js']){
-      ok(html.includes(asset+'?v=santoro-display-audit-20261108'),`${page}: fresh fluidity asset ${asset}`);
+      ok(html.includes(asset+'?v=omerta-full-intros-20261109'),`${page}: fresh fluidity asset ${asset}`);
     }
   }
   ok(html.includes('release-polish-v68.css?v=v68-rc1'),`${page}: RC polish loaded last`);
