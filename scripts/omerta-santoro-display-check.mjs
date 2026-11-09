@@ -14,11 +14,11 @@ new vm.Script(app);new vm.Script(omerta);new vm.Script(indic);new vm.Script(sw);
 assert.match(app,/if\(\['021','022','023','024','025'\]\.includes\(String\(id\)\)\)return scenario\(id\)\.context/,
   'The cinematic briefing must display the whole canonical Santoro public context');
 for(const [id,text] of [
-  ['021','Chaque vendredi, les commerçants paient la mafia'],
+  ['021','Chaque vendredi, des commerçants du quartier remettent leur contribution'],
   ['022','Nino Caruso, qui tient des paris clandestins'],
-  ['023','Les familles Santoro, Bellomo et Russo se disputent les revenus des transports'],
-  ['024','Un chauffeur, Sandro Vitale, est retrouvé couvert de sang'],
-  ['025','Vittorio Santoro est le Don que personne n\'arrive à faire tomber']
+  ['023','Les Santoro, Bellomo et Russo se réunissent pour négocier'],
+  ['024','Sandro Vitale, un chauffeur accusé de renseigner la police'],
+  ['025','Vittorio Santoro dirige une famille dont l’autorité repose sur des règles']
 ]){
   const line=omerta.split('\n').find(l=>l.includes("{id:'"+id+"',title:"));
   assert.ok(line?.includes(text),'Outdated public briefing for '+id);
