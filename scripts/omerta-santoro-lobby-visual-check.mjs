@@ -16,18 +16,18 @@ const css=file('omerta-polish-v12.css');
 for(const [name,source] of Object.entries({canonical,polish,hotfix,art30,art39,sw})){
   new vm.Script(source,{filename:name+'.js'});
 }
-assert.match(canonical,/Vittorio Santoro est le Don que personne n'arrive à faire tomber/);
+assert.match(canonical,/Vittorio Santoro dirige une famille dont l’autorité repose sur des règles/);
 const synopsisStart=canonical.indexOf('  const SCENARIO_DATA = [');
 const synopsisEnd=canonical.indexOf('  const ART_FALLBACK = ',synopsisStart);
 assert(synopsisStart>=0&&synopsisEnd>synopsisStart,'Missing Omerta public catalog');
 const synopses=vm.runInNewContext(canonical.slice(synopsisStart,synopsisEnd)+'\nSCENARIO_DATA;');
 assert.equal(synopses.length,5,'All five Santoro dossiers must be represented');
 const details=new Map([
- ['021',['Brooklyn','enveloppe','coursier','coups']],
- ['022',['Newark','Nino Caruso','témoins','alibi']],
+ ['021',['Brooklyn','enveloppe','coursier','interrogatoire']],
+ ['022',['Newark','Nino Caruso','témoins','horaires']],
  ['023',['Santoro','Bellomo','Russo','embuscade','chauffeur']],
- ['024',['Massimo De Luca','racket','enquêteurs','chauffeur']],
- ['025',['entrepreneur','Vittorio Santoro','blessé','ordonné']]
+ ['024',['Massimo De Luca','enquêteurs','chauffeur','soupçons']],
+ ['025',['entrepreneur','Vittorio Santoro','blessé','autorité']]
 ]);
 for(const entry of synopses){
  const sid=entry.id;
@@ -35,15 +35,16 @@ for(const entry of synopses){
  assert(entry.short.length>=125&&entry.short.length<=190,
   'Card synopsis must be concrete but mobile-readable for '+sid);
  for(const term of details.get(sid)){
-  assert(entry.short.includes(term),'Missing material public fact '+term+' from '+sid);
+  // The short card stays restrained; full context must retain the material case facts.
+  assert((entry.short+' '+entry.context).includes(term),'Missing material public fact '+term+' from '+sid);
  }
  assert(!/Verri|quelques phrases|un argent qui reste|au bord de la guerre/i.test(entry.short),
   'Legacy or vague copy must not return for '+sid);
  assert(/[.?]$/.test(entry.short),'Synopsis must end in natural punctuation for '+sid);
 }
-assert(html.includes('omerta-v12.js?v=santoro-shortcopy-20261108'));
-assert(sw.includes('/omerta-v12.js?v=santoro-shortcopy-20261108'));
-assert.match(canonical,/Domenico Falco manque à l'appel/);
+assert(html.includes('omerta-v12.js?v=omerta-full-intros-20261109'));
+assert(sw.includes('/omerta-v12.js?v=omerta-full-intros-20261109'));
+assert.match(canonical,/Domenico Falco ne se présente pas/);
 assert.doesNotMatch(polish,/Vittorio Verri|Adriano Verri|Famiglia Verri/);
 assert.doesNotMatch(polish,/Object\.assign\(sc,COPY\[id\]\)/);
 assert.doesNotMatch(hotfix,/L’arbre apparaîtra avec la campagne|PROCHAIN DOSSIER/);
