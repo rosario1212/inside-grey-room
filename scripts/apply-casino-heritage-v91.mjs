@@ -32,5 +32,8 @@ for(const page of ['index.html','en.html']){
   await writeFile(name,html,'utf8');
 }
 const commit=process.env.GITHUB_SHA||execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
-await writeFile(path.join(dest,'casino-release.json'),JSON.stringify({version:'105.5',commit,campaign:'casino',chapters:3,phases:8}));
+const releasePayload=JSON.stringify({version:'105.5',commit,campaign:'casino',chapters:3,phases:8});
+await writeFile(path.join(dest,'casino-release.json'),releasePayload);
+// An immutable, commit-addressed metadata URL bypasses stale edge cache entries.
+await writeFile(path.join(dest,`casino-release-${commit.slice(0,12)}.json`),releasePayload);
 console.log('HÉRITAGE / CASINO: trois scénarios et reprise serveur intégrés');
