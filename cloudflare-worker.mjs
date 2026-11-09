@@ -67,7 +67,8 @@ export default {
   const asset=await env.ASSETS.fetch(assetRequest);
   const headers=new Headers(asset.headers);
   if(shellPath)headers.set('Content-Type','text/html; charset=utf-8');
-  if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
+  if(shellPath)headers.set('Cache-Control','no-store, max-age=0');
+  else if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
   // Opaque release marker; narrative and variant IDs remain server-side.
   headers.set('X-IGR-Release','igr-003-008-009-011-secure-20261025');
   headers.set('X-Content-Type-Options','nosniff');

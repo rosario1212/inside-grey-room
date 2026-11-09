@@ -16,7 +16,10 @@ assert(cacheVersion.includes('santoro-display-audit-20261108'),
 assert(publishedSw.includes('/app-v11.js?v='+clientVersion),
  'Bundled app URL and service-worker cache disagree');
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
-const home=await get('/');assert.equal(home.status,200);
+// The unversioned edge cache can retain an earlier homepage after a Worker deploy.
+// Verify the explicit current release URL (also used for direct beta invitations).
+const versionedHome='/?release=omerta-editorial-20261109'+(process.env.IGR_EXPECTED_COMMIT?'&commit='+encodeURIComponent(process.env.IGR_EXPECTED_COMMIT):'');
+const home=await get(versionedHome);assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
 assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'none'/);
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
