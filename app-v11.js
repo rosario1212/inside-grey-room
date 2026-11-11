@@ -1574,9 +1574,13 @@ function renderInvestigationTab(){
    const choices=d.scenario?.[evidenceTag]||[];
    const mountain006Investigations=r.scenario_id==='006'&&String(d.scenario?.context||'').includes('randonnée');
    const collectedIds=new Set(reports.filter(e=>Number(e.cycle)===Number(r.cycle)).map(e=>e.payload?.id).filter(Boolean));
-   const visibleChoices=mountain006Investigations?choices.filter(o=>!collectedIds.has(o.id)):choices;
-   const used=mountain006Investigations?collectedIds.size>=3:d.scenario?.[evidenceTag+'_used'];
-   body+=`<section class="action-section igr001-actions"><h3>Investigations complémentaires · Cycle ${h(r.cycle)}</h3><p class="choice-helper">${mountain006Investigations?'Trois pièces complémentaires distinctes sont accessibles à chaque cycle. L’équipe peut les consulter sans confession.':'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Toutes les pièces de ce cycle ont été consultées.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>Examiner</b></button>`).join('')}</section>`;
+   const adaptive006=mountain006Investigations&&d.scenario?.investigation_006_adaptive===true;
+   const limit006=adaptive006?4:3;
+   const optionalUsed006=[...collectedIds].some(id=>/^006_(1[0-9]|20)$/.test(String(id)));
+   const visibleChoices=mountain006Investigations?choices.filter(o=>!collectedIds.has(o.id)&&!(adaptive006&&optionalUsed006&&/^006_(1[0-9]|20)$/.test(String(o.id)))):choices;
+   const used=mountain006Investigations?collectedIds.size>=limit006:d.scenario?.[evidenceTag+'_used'];
+   const instruction006=adaptive006?'Trois vérifications principales et une piste facultative au maximum par cycle. Les pistes proposées s’adaptent à l’axe d’enquête sélectionné dans le dossier. Une piste peut brouiller un soupçon sans modifier les faits.':'Trois pièces complémentaires distinctes sont accessibles à chaque cycle. L’équipe peut les consulter sans confession.';
+   body+=`<section class="action-section igr001-actions"><h3>Investigations complémentaires · Cycle ${h(r.cycle)}</h3><p class="choice-helper">${mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Toutes les pièces de ce cycle ont été consultées.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${adaptive006&&/^006_(1[0-9]|20)$/.test(String(o.id))?'Piste facultative':'Examiner'}</b></button>`).join('')}</section>`;
   }
  }
 
