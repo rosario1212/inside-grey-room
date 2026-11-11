@@ -7,13 +7,13 @@ const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 const [publishedHtml,publishedSw]=await Promise.all([
   readFile('dist/index.html','utf8'),readFile('dist/service-worker.js','utf8')
 ]);
-const clientVersion=publishedHtml.match(/app-v11\.js\?v=([^"'<>\s]+)/)?.[1]||'';
+const clientAsset='app-v11-006-adaptive-v283-20261112.js';
+const clientVersion=publishedHtml.match(/app-v11-006-adaptive-v283-20261112\.js\?v=([^"'<>\s]+)/)?.[1]||'';
 const cacheVersion=publishedSw.match(/const CACHE='igr-([^']+)'/)?.[1]||'';
-assert(clientVersion.includes('santoro-display-audit-20261108'),
- 'The bundled public app is not the certified Santoro UI revision');
+assert.equal(clientVersion,'006-adaptive-v283-20261112','The bundled 006 app release path is not current');
 assert(cacheVersion.includes('santoro-display-audit-20261108'),
  'The bundled PWA cache is not the certified Santoro revision');
-assert(publishedSw.includes('/app-v11.js?v='+clientVersion),
+assert(publishedSw.includes('/'+clientAsset+'?v='+clientVersion),
  'Bundled app URL and service-worker cache disagree');
 const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(15000)});
 // The unversioned edge cache can retain an earlier homepage after a Worker deploy.
@@ -25,6 +25,7 @@ assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'n
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
 const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.5/);
+assert.match(html,/app-v11-006-adaptive-v283-20261112\.js\?v=006-adaptive-v283-20261112/,'The edge homepage is using a stale Scenario 006 client');
 assert.match(html,/omerta-v12-omerta-editorial-20261109\.js\?v=omerta-full-intros-20261109/,
  'The live homepage has not loaded the rewritten Omertà opening script');
 const catalog=await get('/heritage-casino-v91.js');assert.equal(catalog.status,200);
@@ -67,13 +68,13 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   const cartelHome=await get('/'+releaseQuery);
   assert.equal(cartelHome.status,200);
   const text=await cartelHome.text();
-  liveHomeVersion=text.match(/app-v11\.js\?v=([^"'<>\s]+)/)?.[1]||'';
+  liveHomeVersion=text.match(/app-v11-006-adaptive-v283-20261112\.js\?v=([^"'<>\s]+)/)?.[1]||'';
   if(liveHomeVersion===clientVersion)break;
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
 }
 assert.equal(liveHomeVersion,clientVersion,
   'Deployed HTML app cache does not match the fully built local bundle');
-const cartelApp=await get('/app-v11.js?v='+clientVersion);
+const cartelApp=await get('/'+clientAsset+'?v='+clientVersion);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
 const optionalRoles=await get('/natural-role-gameplay-v50.js?verify=003-008-009-011');
@@ -115,6 +116,7 @@ const assertDeployedAsset=async (name,marker)=>{
   assert(content.includes(marker),'Deployed asset has not propagated: '+name+' ('+cacheVersion+')');
 };
 await assertDeployedAsset('service-worker.js',"const CACHE='igr-"+cacheVersion+"';");
+await assertDeployedAsset(clientAsset,'investigation_006_adaptive');
 await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Chaque vendredi, des commerçants du quartier remettent leur contribution');
 await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Vittorio Santoro dirige une famille dont l’autorité repose sur des règles');
 await assertDeployedAsset('investigation-workspace-v634.css','igr634-interviews');
