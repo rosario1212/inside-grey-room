@@ -1,0 +1,17 @@
+// Zero-spoiler release guard for scenario 006. Run on the built bundle.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
+const dist=process.argv[2]||'dist';
+const app=readFileSync(path.join(dist,'app-v11.js'),'utf8');
+assert.match(app,/isMountain006Final/,'Mountain UI is missing');
+assert.match(app,/String\(STATE\.sync\?\.scenario\?\.context\|\|''\)\.includes\('randonnée'\)/,'Mountain choice routing is missing');
+assert.match(app,/Trois pièces complémentaires distinctes sont accessibles/,'Three investigations per cycle are missing');
+assert.match(app,/collectedIds\.has\(o\.id\)/,'Duplicate evidence must be filtered');
+assert.match(app,/Un contact physique précède et provoque la chute/,'Mountain reconstruction labels missing');
+assert.match(app,/Les amis ont supposé que Noé était mort/,'Legacy 006 room labels missing');
+assert.match(app,/Aucun contact final n’est établi/,'Mountain statements missing');
+assert.match(app,/Aucun coup n'a précédé la chute/,'Legacy 006 statements missing');
+assert.match(app,/Cinq ans après la mort de Noé lors d’une randonnée/,'Public case description not updated');
+assert.doesNotMatch(app,/Tu as organisé ce week-end entre quatre vrais amis/,'Private card leaked into public assets');
+console.log('Scenario 006 mountain UI and legacy pinned-room compatibility: PASS');
