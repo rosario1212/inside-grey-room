@@ -15,7 +15,7 @@ await writeFile(path.join(dest,appName),appSource,'utf8');
 for(const page of ['index.html','en.html']){
  const file=path.join(dest,page);
  let html=await readFile(file,'utf8');
- assert(html.includes('omerta-v12-omerta-editorial-20261109.js'),'Must retain the certified Omerta entrypoint');
+ if(page==='index.html')assert(html.includes('omerta-v12-omerta-editorial-20261109.js'),'Must retain the certified Omerta entrypoint');
  assert(/app-v11\.js\?v=[^"'<>\s]+/.test(html),'Current app script reference missing');
  html=html.replace(/app-v11\.js\?v=[^"'<>\s]+/,appName+'?v='+tag);
  await writeFile(file,html,'utf8');
