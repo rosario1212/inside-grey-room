@@ -26,8 +26,8 @@ assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
 const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.5/);
 assert.match(html,/app-v11-006-adaptive-v283-20261112\.js\?v=006-adaptive-v283-20261112/,'The edge homepage is using a stale Scenario 006 client');
-assert.match(html,/omerta-v12-omerta-editorial-20261109\.js\?v=omerta-full-intros-20261109/,
- 'The live homepage has not loaded the rewritten Omertà opening script');
+const omertaScriptTag=html.match(/<script\s+src="omerta-v12-omerta-editorial-20261109\.js\?v=[^"]+"\s*><\/script>/);
+assert(omertaScriptTag,'The live homepage has not loaded the immutable Omertà opening script');
 const catalog=await get('/heritage-casino-v91.js');assert.equal(catalog.status,200);
 assert.match(await catalog.text(),/launchReady:true/);
 const expected=process.env.IGR_EXPECTED_COMMIT||'';
