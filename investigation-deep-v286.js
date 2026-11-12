@@ -1,4 +1,4 @@
-/* IGR 001–005 v286 · Detailed, individually sealed, scenario-specific investigation hypotheses.
+/* IGR 001–005 v287 · Detailed, individually sealed, scenario-specific investigation hypotheses.
    No truth values, secret variant IDs, grades or steering logic may be placed in the browser.
    A server-only comparison of two independent reports influences next-cycle optional evidence. */
 (() => {
@@ -89,7 +89,7 @@
  const html=()=>`<section class="igr286-sheet">
   <small>LECTURE DES PIÈCES · RÉPONSES INDIVIDUELLES SCELLÉES</small>
   <h3>Que crois-tu pouvoir démontrer ?</h3>
-  <p>L’enquêteur et l’analyste répondent séparément, d’après les pièces accessibles. Le MJ peut faire apparaître au cycle suivant un recoupement différent, mais ne donne jamais le score de justesse. « Impossible à établir » reste un choix valable.</p>
+  <p>L’enquêteur et l’analyste répondent séparément, d’après les pièces accessibles. Le MJ peut proposer au cycle suivant des preuves ou vérifications différentes, sans révéler ta justesse. « Impossible à établir » reste un choix valable.</p>
   ${Q[STATE.sync.room.scenario_id][Number(STATE.sync.room.cycle)].map((q,i)=>`
    <div class="field"><label for="igr286_q${i+1}">${i+1} · ${q[0]}</label>
     <select id="igr286_q${i+1}">

@@ -1584,7 +1584,7 @@ function renderInvestigationTab(){
    const visibleChoices=adaptiveMulti?choices.filter(o=>!collectedIds.has(o.id)&&!(optionalUsed006&&isOptionalInvestigation(o.id))):choices;
    const used=adaptiveMulti?collectedIds.size>=limit:d.scenario?.[evidenceTag+'_used'];
    const instruction006=adaptive006?'Trois vérifications principales et une piste facultative au maximum par cycle. Les pistes proposées sont variables, sans changer la vérité.': 'Trois pièces complémentaires distinctes sont accessibles à chaque cycle.';
-   const instructionDeep='Trois vérifications principales et une seule piste de recoupement facultative au maximum par cycle. Les recoupements changent selon les réponses privées du cycle précédent, sans score ni confirmation de la bonne hypothèse.';
+   const instructionDeep='Trois vérifications principales et une piste facultative au maximum par cycle. Les nouvelles pièces et vérifications proposées dépendent discrètement des réponses précédentes, sans score ni indication de vérité.';
    body+=`<section class="action-section igr001-actions"><h3>Investigations complémentaires · Cycle ${h(r.cycle)}</h3><p class="choice-helper">${deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Toutes les pièces de ce cycle ont été consultées.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations)&&isOptionalInvestigation(o.id)?'Piste facultative':'Examiner'}</b></button>`).join('')}</section>`;
   }
  }
