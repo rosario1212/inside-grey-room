@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='nine-cases-v340-20261112';
+const tag='nine-cases-v341-20261112';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -32,7 +32,7 @@ for(const page of ['index.html','en.html']){
  if(page==='index.html'){
  assert(html.includes('omerta-v12-omerta-editorial-20261109.js'),'Must retain the certified Omerta entrypoint');
  assert(html.includes('investigation-accuracy-v284.js?v=006-detail-v284-20261112'),'006 accuracy client not present in entrypoint');
- assert(html.includes('investigation-deep-v286.js?v=nine-cases-v340-20261112'),'Five-case questionnaire not present in entrypoint');
+ assert(html.includes('investigation-deep-v286.js?v=nine-cases-v341-20261112'),'Five-case questionnaire not present in entrypoint');
 }
  if(page==='index.html')assert(/app-v11\.js\?v=[^"'<>\s]+/.test(html),'Current app script reference missing');
  html=html.replace(/app-v11\.js\?v=[^"'<>\s]+/,appName+'?v='+tag);
@@ -51,27 +51,27 @@ if(!sw.includes(questionCachePath)){
  assert(sw.includes('const SHELL=['),'Service worker manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${questionCachePath}',`);
 }
-const nineCachePath='/investigation-009-v340.js?v=nine-cases-v340-20261112';
+const nineCachePath='/investigation-009-v340.js?v=nine-cases-v341-20261112';
 if(!sw.includes(nineCachePath)){
  assert(sw.includes('const SHELL=['),'PWA shell missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${nineCachePath}',`);
 }
-const eightCachePath='/investigation-008-v310.js?v=nine-cases-v340-20261112';
+const eightCachePath='/investigation-008-v310.js?v=nine-cases-v341-20261112';
 if(!sw.includes(eightCachePath)){
  assert(sw.includes('const SHELL=['),'PWA shell missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${eightCachePath}',`);
 }
-const sevenCachePath='/investigation-007-v289.js?v=nine-cases-v340-20261112';
+const sevenCachePath='/investigation-007-v289.js?v=nine-cases-v341-20261112';
 if(!sw.includes(sevenCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${sevenCachePath}',`);
 }
-const fiveCachePath='/investigation-deep-v286.js?v=nine-cases-v340-20261112';
+const fiveCachePath='/investigation-deep-v286.js?v=nine-cases-v341-20261112';
 if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-nine-cases-v340-20261112'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-nine-cases-v340-20261112'"),'PWA cache version did not advance');
+sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-nine-cases-v341-20261112'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-nine-cases-v341-20261112'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
