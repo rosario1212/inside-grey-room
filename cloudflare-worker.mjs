@@ -61,8 +61,8 @@ export default {
   if(url.pathname==='/__igr-private')return Response.redirect(new URL('/',url),302);
   // Versioned HTML avoids stale cached home pages after a successful Worker deployment.
   const shellPath=url.pathname==='/'||url.pathname==='/index.html'
-    ?'/index-five-cases-v287-20261112.txt'
-    :url.pathname==='/en.html' ?'/en-five-cases-v287-20261112.txt' : null;
+    ?'/index-seven-cases-v289-20261112.txt'
+    :url.pathname==='/en.html' ?'/en-seven-cases-v289-20261112.txt' : null;
   const assetRequest=shellPath?new Request(new URL(shellPath,url).toString(),req):req;
   const asset=await env.ASSETS.fetch(assetRequest);
   const headers=new Headers(asset.headers);
