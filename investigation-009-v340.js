@@ -26,14 +26,14 @@
     'Oui, si la personne paraît sincère']]
   ],
   2:[
-   ['Quelle décision les pièces attribuent-elles à la direction ou au médecin ?',[
-    'La direction a donné un ordre de poursuite',
-    'Le médecin a signé la poursuite contre une demande d’arrêt',
-    'La direction a fait réécrire le retrait et maintenu le programme']],
-   ['Quelle question éclaire le mieux le responsable principal ?',[
-    'Qui a signé ou validé le maintien après le retrait ?',
-    'Qui a subi la chute et perdu certains souvenirs ?',
-    'Qui est apparu le plus inquiet pendant l’entretien ?']],
+   ['Quelle conclusion est réellement appuyée par les pièces à ce stade ?',[
+    'ORPHÉE a continué après le retrait ; il reste à attribuer précisément les validations',
+    'Le retrait n’a d’effet que si le médecin s’en souvient après la chute',
+    'L’ouverture d’une porte de service identifie l’auteur de la décision de poursuite']],
+   ['Comment distinguer une directive institutionnelle et son exécution clinique ?',[
+    'Elles peuvent engager des responsabilités distinctes selon les décisions et actes établis',
+    'Seule la personne qui transmet la directive peut être responsable',
+    'Une amnésie postérieure supprime automatiquement toute responsabilité clinique']],
    ['Une démarche d’aide non autorisée prouve-t-elle la poursuite du protocole ?',[
     'Non, l’accès irrégulier et la décision de poursuivre sont distincts',
     'Oui, toute irrégularité désigne le responsable',
