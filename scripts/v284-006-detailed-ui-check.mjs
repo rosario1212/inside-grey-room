@@ -8,7 +8,7 @@ const js=readFileSync(path.join(dist,'investigation-accuracy-v284.js'),'utf8');
 const sw=readFileSync(path.join(dist,'service-worker.js'),'utf8');
 const worker=readFileSync('cloudflare-worker.mjs','utf8');
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'Detailed debrief script missing');
-assert.match(html,/app-v11-006-detailed-v284-20261112\.js/,'Immutable 006 app missing');
+assert.match(html,/app-v11-five-cases-v286-20261112\.js/,'Immutable 006 app missing');
 assert.match(js,/igr_v284_006_submit_detail/,'No server-validated sealed questionnaire call');
 assert.match(js,/previousSubmit\.apply/,'Legacy debrief submission must remain available');
 assert.match(js,/alreadySubmitted\('006_detail_report'\)/,'Duplicate sealed submission must be prevented');
@@ -17,6 +17,6 @@ assert.match(js,/enqueteur','analyste/,'Only investigator and analyst can submit
 assert.match(js,/unsure/,'Uncertainty must be a neutral answer');
 assert.doesNotMatch(js,/v284_006_prior_alignment|canonical_truth|true_variant|score *=/i,'Client cannot contain scoring logic or truth');
 assert.match(sw,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'PWA must precache questionnaire');
-assert.match(sw,/const CACHE='igr-santoro-display-audit-20261108-006-detail-v284-20261112'/,'PWA cache must refresh');
-assert.match(worker,/index-006-detailed-v284-20261112\.txt/,'Worker must serve the new immutable page');
+assert.match(sw,/const CACHE='igr-santoro-display-audit-20261108-five-cases-v286-20261112'/,'PWA cache must refresh');
+assert.match(worker,/index-five-cases-v286-20261112\.txt/,'Worker must serve the new immutable page');
 console.log('Scenario 006 v284 detailed questionnaire and immutable release: PASS');
