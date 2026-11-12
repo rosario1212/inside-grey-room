@@ -36,29 +36,36 @@ const expected=process.env.IGR_EXPECTED_COMMIT||'';
 // A unique immutable URL per commit defeats cross-deployment edge cache reuse.
 // The legacy endpoint remains available for clients not running production verification.
 const releasePath=(name)=>expected?`/${name}-${expected.slice(0,12)}.json`:`/${name}.json`;
-let meta=null;
-for(let attempt=0;attempt<(expected?12:1);attempt++){
-  // Edge assets can temporarily resolve to the previous Worker version.
-  // Never accept an old commit; use a unique query and retry propagation.
-  const suffix=expected?'?commit='+encodeURIComponent(expected)+'&probe='+attempt:'';
-  const release=await get(releasePath('casino-release')+suffix);
-  assert.equal(release.status,200);
-  meta=await release.json();
-  assert.equal(meta.version,'105.5');
-  if(!expected||meta.commit===expected)break;
-  console.log('Waiting for deployed assets: expected '+expected.slice(0,9)+' got '+String(meta.commit).slice(0,9));
-  if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
-}
-if(expected)assert.equal(meta.commit,expected,'The deployed assets must match this commit');
-let cartel=null;
-for(let attempt=0;attempt<(expected?12:1);attempt++){
-  const cartelResponse=await get(releasePath('cartel030-release')+'?commit='+encodeURIComponent(expected)+'&probe='+attempt);
-  assert.equal(cartelResponse.status,200);
-  cartel=await cartelResponse.json();
-  if(!expected||(cartel.commit===expected&&cartel.version==='v173-cartel031-negotiation'))break;
-  console.log('Waiting for CARTEL assets: expected '+expected.slice(0,9)+' got '+String(cartel.commit).slice(0,9));
-  if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
-}
+// Cloudflare assets may temporarily return the HTML fallback for a new,
+// commit-addressed metadata path before propagation. Never parse that fallback
+// as JSON, never accept a different commit, and fail closed after bounded retries.
+const readVersionedRelease=async (name,accept)=>{
+  const attempts=expected?18:1;
+  let last='not fetched';
+  for(let attempt=0;attempt<attempts;attempt++){
+    const suffix='?commit='+encodeURIComponent(expected)+'&probe='+attempt;
+    let response,parsed=null;
+    try{
+      response=await get(releasePath(name)+suffix);
+      const body=await response.text();
+      if(response.status===200&&body.trimStart().startsWith('{')){
+        try{parsed=JSON.parse(body)}catch(_){parsed=null;}
+      }
+      last='HTTP '+response.status+', content-type '+String(response.headers.get('content-type'))+
+        ', commit '+String(parsed?.commit||'unavailable').slice(0,12);
+      if(parsed&&accept(parsed))return parsed;
+    }catch(error){last=String(error?.message||error).slice(0,200);}
+    if(attempt+1<attempts){
+      console.log(name+' not propagated: '+last+'; retry '+(attempt+1)+'/'+attempts);
+      await new Promise(resolve=>setTimeout(resolve,2200));
+    }
+  }
+  throw new Error(name+' not verified for commit '+expected.slice(0,12)+': '+last);
+};
+const meta=await readVersionedRelease('casino-release',v=>v.version==='105.5'&&
+ (!expected||v.commit===expected));
+const cartel=await readVersionedRelease('cartel030-release',v=>
+ v.version==='v173-cartel031-negotiation'&&(!expected||v.commit===expected));
 assert.equal(cartel.scenario,'030');
 assert.equal(cartel.version,'v173-cartel031-negotiation');
 if(expected)assert.equal(cartel.commit,expected,'CARTEL 030 must match the deployed commit');
@@ -143,7 +150,7 @@ assert.equal(anonymous.status,400);assert.deepEqual(await anonymous.json(),{erro
 console.log('Deployed Casino verified: public game, playable catalog, four posters, authenticated service; commit '+meta.commit);
 console.log('Deployed CARTEL 030 verified: current application, private dossiers, evidence view, fresh PWA cache and commit '+cartel.commit);
 
-const debtMetaResponse=await get(releasePath('cartel031-release')+'?commit='+encodeURIComponent(expected));assert.equal(debtMetaResponse.status,200);const debtMeta=await debtMetaResponse.json();assert.equal(debtMeta.version,'v173-cartel031-negotiation');if(expected)assert.equal(debtMeta.commit,expected);assert.deepEqual(debtMeta.evidence_per_cycle,[4,5,4]);assert.deepEqual(debtMeta.variants,['A','B','C']);const debtRuntime=await get('/cartel031-v171.js?v='+debtMeta.version);assert.equal(debtRuntime.status,200);const debtSource=await debtRuntime.text();assert(debtSource.includes('igr_v171_031_act'));assert(debtSource.includes('igr_v171_031_state'));assert(debtSource.includes('renderLocal'));assert(!debtSource.includes('"canonical_truth":{'));console.log('Deployed CARTEL 031 verified: matching commit, private decisions and local runtime.');
+const debtMeta=await readVersionedRelease('cartel031-release',v=>v.version==='v173-cartel031-negotiation'&&(!expected||v.commit===expected));assert.deepEqual(debtMeta.evidence_per_cycle,[4,5,4]);assert.deepEqual(debtMeta.variants,['A','B','C']);const debtRuntime=await get('/cartel031-v171.js?v='+debtMeta.version);assert.equal(debtRuntime.status,200);const debtSource=await debtRuntime.text();assert(debtSource.includes('igr_v171_031_act'));assert(debtSource.includes('igr_v171_031_state'));assert(debtSource.includes('renderLocal'));assert(!debtSource.includes('"canonical_truth":{'));console.log('Deployed CARTEL 031 verified: matching commit, private decisions and local runtime.');
 
 const apiUrl=cartelSource.match(/const SUPABASE_URL = '([^']+)'/)?.[1];
 const apiKey=cartelSource.match(/const SUPABASE_KEY = '([^']+)'/)?.[1];
