@@ -8,12 +8,12 @@
  let pending=false;
  const Q={
   1:[
-   ['Que prouve une signature authentifiée ?',[
-    'Que le défunt avait librement consenti',
-    'Que la signature est réelle, pas que le consentement était libre',
-    'Que le signataire a provoqué la chute']],
-   ['Qui les premières traces situent-elles hors de la dernière rencontre ?',[
-    'Le bénéficiaire du projet','Le gardien des documents','Le proche endetté']],
+   ['Le testament suffit-il à désigner l’auteur de la chute ?',[
+    'Oui, puisque son bénéficiaire avait un mobile financier',
+    'Non, il faut distinguer le projet et les preuves du dernier geste',
+    'Oui, si plusieurs versions du projet existent']],
+   ['Que montre le registre des sorties concernant le bénéficiaire apparent ?',[
+    'Il est parti avant le dernier entretien','Il est resté présent pendant la chute','Il est revenu dans la bibliothèque après l’alerte']],
    ['Que suggèrent les premiers dossiers retrouvés ?',[
     'Un seul conflit, celui du testament',
     'Des conflits distincts dont les mobiles peuvent se recouper',
