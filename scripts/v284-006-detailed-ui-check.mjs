@@ -8,7 +8,7 @@ const js=readFileSync(path.join(dist,'investigation-accuracy-v284.js'),'utf8');
 const sw=readFileSync(path.join(dist,'service-worker.js'),'utf8');
 const worker=readFileSync('cloudflare-worker.mjs','utf8');
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'Detailed debrief script missing');
-const release=html.match(/app-v11-(five-cases-v\\d+-\\d{8})\\.js\\?v=/)?.[1];
+const release=html.match(/app-v11-(five-cases-v\d+-\d{8})\.js\?v=/)?.[1];
 assert.ok(release,'Immutable 006 app missing');
 assert.match(js,/igr_v284_006_submit_detail/,'No server-validated sealed questionnaire call');
 assert.match(js,/previousSubmit\.apply/,'Legacy debrief submission must remain available');
