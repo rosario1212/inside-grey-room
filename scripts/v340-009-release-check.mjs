@@ -14,7 +14,7 @@ assert.match(app,/deepNineInvestigations/,'009 new pinned room gate missing');
 assert.match(app,/investigation_009_adaptive===true/,'009 room contract missing');
 assert.match(app,/igr_v340_009_investigate/,'009 server authoritative RPC missing');
 assert.match(app,/\^00\[1-9\]_\(1\[0-9\]\|20\)/,'009 optional ids must be recognized');
-assert.match(app,/deepEightInvestigations\?instructionNine/,'009 new instructional flow missing');
+assert.match(app,/deepNineInvestigations\?instructionNine/,'009 new instructional flow missing');
 assert.match(client,/igr_v340_009_submit_detail/,'009 sealed questionnaire RPC missing');
 assert.match(client,/\['enqueteur','analyste'\]/,'suspects must never submit private reports');
 assert.match(client,/priorSubmit\.apply/,'previous 009 sessions must retain debrief');
