@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='eight-cases-v310-20261112';
+const tag='nine-cases-v340-20261112';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -14,6 +14,9 @@ const questionnaire=await readFile(path.join(dest,'investigation-accuracy-v284.j
 const detailedFive=await readFile(path.join(dest,'investigation-deep-v286.js'),'utf8');
 const detailedSeven=await readFile(path.join(dest,'investigation-007-v289.js'),'utf8');
 const detailedEight=await readFile(path.join(dest,'investigation-008-v310.js'),'utf8');
+const detailedNine=await readFile(path.join(dest,'investigation-009-v340.js'),'utf8');
+assert(detailedNine.includes('igr_v340_009_submit_detail'),'009 sealed questionnaire missing');
+assert(appSource.includes('investigation_009_adaptive'),'009 adaptive UI missing');
 assert(detailedEight.includes('igr_v310_008_submit_detail'),'008 sealed questionnaire missing');
 assert(appSource.includes('investigation_008_adaptive'),'008 adaptive UI missing');
 assert(detailedSeven.includes('igr_v289_007_submit_detail'),'007 adaptive sealed questionnaire missing');
@@ -29,7 +32,7 @@ for(const page of ['index.html','en.html']){
  if(page==='index.html'){
  assert(html.includes('omerta-v12-omerta-editorial-20261109.js'),'Must retain the certified Omerta entrypoint');
  assert(html.includes('investigation-accuracy-v284.js?v=006-detail-v284-20261112'),'006 accuracy client not present in entrypoint');
- assert(html.includes('investigation-deep-v286.js?v=eight-cases-v310-20261112'),'Five-case questionnaire not present in entrypoint');
+ assert(html.includes('investigation-deep-v286.js?v=nine-cases-v340-20261112'),'Five-case questionnaire not present in entrypoint');
 }
  if(page==='index.html')assert(/app-v11\.js\?v=[^"'<>\s]+/.test(html),'Current app script reference missing');
  html=html.replace(/app-v11\.js\?v=[^"'<>\s]+/,appName+'?v='+tag);
@@ -48,22 +51,27 @@ if(!sw.includes(questionCachePath)){
  assert(sw.includes('const SHELL=['),'Service worker manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${questionCachePath}',`);
 }
-const eightCachePath='/investigation-008-v310.js?v=eight-cases-v310-20261112';
+const nineCachePath='/investigation-009-v340.js?v=nine-cases-v340-20261112';
+if(!sw.includes(nineCachePath)){
+ assert(sw.includes('const SHELL=['),'PWA shell missing');
+ sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${nineCachePath}',`);
+}
+const eightCachePath='/investigation-008-v310.js?v=nine-cases-v340-20261112';
 if(!sw.includes(eightCachePath)){
  assert(sw.includes('const SHELL=['),'PWA shell missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${eightCachePath}',`);
 }
-const sevenCachePath='/investigation-007-v289.js?v=eight-cases-v310-20261112';
+const sevenCachePath='/investigation-007-v289.js?v=nine-cases-v340-20261112';
 if(!sw.includes(sevenCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${sevenCachePath}',`);
 }
-const fiveCachePath='/investigation-deep-v286.js?v=eight-cases-v310-20261112';
+const fiveCachePath='/investigation-deep-v286.js?v=nine-cases-v340-20261112';
 if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-eight-cases-v310-20261112'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-eight-cases-v310-20261112'"),'PWA cache version did not advance');
+sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-nine-cases-v340-20261112'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-nine-cases-v340-20261112'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
