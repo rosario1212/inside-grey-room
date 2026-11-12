@@ -49,6 +49,7 @@ jobs:
           node scripts/v284-006-detailed-ui-check.mjs dist
           node scripts/v287-five-case-ui-release-check.mjs dist
           node scripts/v289-007-release-check.mjs dist
+          node scripts/v310-008-release-check.mjs dist
           node scripts/v643-hidden-ignorances-check.mjs
           node scripts/v644-relation-facts-check.mjs
           node scripts/v645-005-shortcards-check.mjs
