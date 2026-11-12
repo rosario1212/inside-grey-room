@@ -38,5 +38,7 @@ if(!sw.includes(questionCachePath)){
  assert(sw.includes('const SHELL=['),'Service worker manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${questionCachePath}',`);
 }
+sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-006-detail-v284-20261112'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-006-detail-v284-20261112'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
