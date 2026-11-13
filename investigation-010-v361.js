@@ -9,69 +9,69 @@
  const Q={
   "1": [
     [
-      "Que faut-il confronter pour établir comment le local est devenu inaccessible ?",
+      "Selon les premières pièces, quel enchaînement décrit le mieux la fermeture vers 12 h 18 ?",
       [
-        "Les déclarations des proches suffisent à prouver la cause",
-        "Les états du mécanisme, les commandes et leurs horaires doivent être recoupés",
-        "Le porteur d’un badge est automatiquement responsable de tout le verrouillage"
+        "Une porte rabattue à l'issue d'un essai extérieur, malgré une poignée intérieure signalée défectueuse",
+        "Une anomalie de registres d'accès suivie d'un conflit, puis d'une fermeture physique",
+        "Une fermeture physique suivie d'une restriction exceptionnelle des droits de badges"
       ]
     ],
     [
-      "Une utilisation de badge permet-elle, à elle seule, d’identifier un geste précis ?",
+      "Quel dossier d'accès permet le mieux d'attribuer les premières interventions ?",
       [
-        "Oui, puisqu’un badge ne peut jamais être utilisé par quelqu’un d’autre",
-        "Non, l’accès doit être confronté aux autres traces disponibles",
-        "Oui, seulement si une personne est partie avant la ronde"
+        "La fiche d'essai de la porte et les présences de l'équipe technique",
+        "L'historique de la console et les modifications de droits des badges",
+        "Le journal électronique des entrées et le cahier papier des visiteurs"
       ]
     ],
     [
-      "Pourquoi vérifier également la sortie intérieure du local ?",
+      "Quel élément matériel empêchait Nora de sortir après la fermeture ?",
       [
-        "Pour déterminer si Nora pouvait ouvrir elle-même",
-        "Pour démontrer à elle seule une intention de séquestration",
-        "Pour rendre inutiles les autres documents"
+        "Un logiciel qui neutralisait une poignée intérieure en bon état",
+        "Une béquille intérieure qui ne rétractait plus le pêne mécanique",
+        "Un pêne qui se bloquait spontanément alors que le vantail restait ouvert"
       ]
     ],
     [
-      "Comment interpréter des coups étouffés sans origine localisée ?",
+      "Quelle personne ou trace complémentaire les premiers éléments invitent-ils à confronter ?",
       [
-        "Comme une preuve que le témoin connaissait la victime",
-        "Comme un élément dénué de toute valeur",
-        "Comme un signal à recouper avec le contexte et les informations reçues ensuite"
+        "La personne ayant modifié une note d'occupation lors de la restriction d'accès",
+        "Le prestataire dont l'entrée ne correspond pas au cahier des visiteurs",
+        "L'auteur du contrôle d'ouverture intérieure pourtant déclaré conforme"
       ]
     ]
   ],
   "2": [
     [
-      "Comment distinguer ce qui s’est passé avant et pendant l’ouverture de 13 h 54 ?",
+      "Quel enchaînement des faits recoupe le mieux le second cycle d'investigation ?",
       [
-        "Il faut traiter les deux fermetures comme un seul acte",
-        "Il faut confronter horaires, sources et acteurs pour chaque décision",
-        "Il faut attribuer automatiquement la seconde fermeture au premier responsable du site"
+        "Fermeture du vantail, restriction des badges, puis ouverture d'astreinte et communication interne",
+        "Contrôle extérieur de la porte, demande de vérification consultée, puis passage d'astreinte",
+        "Anomalie d'accès la veille, fermeture de la réserve, puis nouvelle ouverture hors mission"
       ]
     ],
     [
-      "Quelle preuve permet de juger si une personne savait Nora présente et consciente ?",
+      "Quelle information attribuable à un acteur doit être confrontée en priorité ?",
       [
-        "Son poste ou sa fonction suffisent",
-        "Une perception directe, un message consulté ou des traces concordantes",
-        "Le simple fait d’avoir entendu un bruit indéterminé"
+        "Une consigne de maintien donnée pendant une communication à 13 h 54",
+        "Le passage sans mission d'un agent d'astreinte près de la réserve",
+        "La consultation à 13 h 37 d'un message demandant de vérifier la présence de Nora"
       ]
     ],
     [
-      "Pour qualifier l’absence de secours, que faut-il vérifier ?",
+      "Quelle trace fait douter qu'une aide réelle avait été organisée ?",
       [
-        "Le moment de connaissance, la possibilité d’agir et les traces d’alerte",
-        "Uniquement les rumeurs entre collègues",
-        "Uniquement l’identité de la personne chargée du bâtiment"
+        "Un brouillon de libération jamais transmis et une tournée sans vérification de la réserve",
+        "Une équipe de sécurité annoncée, mais sans confirmation indépendante de son intervention",
+        "Un message de vérification ouvert, sans signalement transmis à la sécurité"
       ]
     ],
     [
-      "Deux fermetures du même local impliquent-elles nécessairement le même responsable ?",
+      "Quelle hypothèse sur la fermeture de 13 h 54 reste compatible avec les preuves de ce cycle ?",
       [
-        "Oui, parce que le verrou est unique",
-        "Impossible de les distinguer quelle que soit la qualité des preuves",
-        "Non, il faut distinguer les décisions et les connaissances successives"
+        "Le rappel mécanique du vantail peut expliquer la fermeture, sans justifier le silence ensuite",
+        "Une consigne hiérarchique peut expliquer la fermeture, sans interdire matériellement d'appeler la sécurité",
+        "Une fermeture effectuée hors mission par un autre intervenant, sans ordre établi à ce stade"
       ]
     ]
   ]
@@ -86,8 +86,8 @@
    &&Number(a.cycle)===Number(STATE?.sync?.room?.cycle));
  const sheet=()=>`<section class="igr310-sheet">
   <small>LE LOCAL · HYPOTHÈSES SCELLÉES</small>
-  <h3>Quels faits peux-tu soutenir ?</h3>
-  <p>L’Enquêteur et l’Analyste répondent séparément. Les pistes facultatives du prochain cycle peuvent changer en fonction de vos lectures, mais aucune correction ni note de justesse n’apparaîtra. Une piste est sélectionnée indépendamment de vos réponses.</p>
+  <h3>Que révèlent les faits du dossier ?</h3>
+  <p>L’Enquêteur et l’Analyste confrontent séparément leurs hypothèses aux preuves déjà disponibles. Les pistes du prochain cycle peuvent aider sur les faits mal interprétés ou encore incertains. Aucune solution ni note de justesse n’est dévoilée pendant la partie ; l’une des pistes reste indépendante de vos réponses.</p>
   ${Q[Number(STATE.sync.room.cycle)].map((q,i)=>`<div class="field">
    <label for="igr310_010_q${i+1}">${i+1} · ${q[0]}</label>
    <select id="igr310_010_q${i+1}">
