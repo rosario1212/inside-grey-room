@@ -26,14 +26,14 @@
     'Oui, s’il cache une relation privée']]
   ],
   2:[
-   ['Quel fait central est déjà documenté à ce stade ?',[
-    'Un retrait autorisé sans altération établie',
-    'Un défaut de garde pendant treize minutes',
-    'Un second passage inexpliqué vers D-14']],
-   ['Quelle question est prioritaire pour reconstruire le fait principal ?',[
-    'Qui devait assurer le relais de surveillance ?',
-    'Qui a demandé l’omission d’une information à l’audience ?',
-    'Qui peut être relié à un déplacement de D-14 ?']],
+   ['Comment reconstruire la chronologie de D-14 malgré des déclarations contradictoires ?',[
+    'Retenir l’horaire répété par le plus grand nombre de témoins',
+    'Comparer les registres, les accès et les contrôles indépendants avant de qualifier l’incident',
+    'Conserver l’horaire de la personne qui reconnaît une faute secondaire']],
+   ['Quelle distinction est indispensable avant d’attribuer la responsabilité principale ?',[
+    'Traiter toute déclaration inexacte comme une preuve de manipulation du dossier',
+    'Distinguer les actes matériellement établis, les défauts de contrôle et les pressions sur les dépositions',
+    'Attribuer le fait principal au témoin qui possède le plus de secrets']],
    ['Un badge enregistré identifie-t-il à lui seul un geste précis ?',[
     'Non, il localise un accès à recouper',
     'Oui, il prouve la manipulation des scellés',
