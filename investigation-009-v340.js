@@ -68,7 +68,7 @@
   const base=priorRender.apply(this,args);
   if(!active()||hasReport('debrief'))return base;
   const block=hasReport('v340_009_detail_report')
-   ?'<div class="locked-state">Ta lecture de D-14 a été scellée.</div>':sheet();
+   ?'<div class="locked-state">Tes hypothèses sur ORPHÉE ont été scellées.</div>':sheet();
   const button='<button class="btn primary block" onclick="submitDebrief()">';
   return base.includes(button)?base.replace(button,block+button):base+block;
  };
