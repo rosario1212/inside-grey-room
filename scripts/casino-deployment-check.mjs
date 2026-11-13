@@ -19,12 +19,28 @@ const get=path=>fetch(origin+path,{cache:'no-store',signal:AbortSignal.timeout(1
 // The unversioned edge cache can retain an earlier homepage after a Worker deploy.
 // Verify the explicit current release URL (also used for direct beta invitations).
 const versionedHome='/?release=omerta-editorial-20261109'+(process.env.IGR_EXPECTED_COMMIT?'&commit='+encodeURIComponent(process.env.IGR_EXPECTED_COMMIT):'');
-const home=await get(versionedHome);assert.equal(home.status,200);
+// Cloudflare may briefly serve a previous Worker at the edge after Wrangler deploys.
+// Require the exact current client in the live HTML, with bounded retries rather
+// than treating the first stale cached response as a permanent deployment failure.
+const homepageAttempts=process.env.IGR_EXPECTED_COMMIT?18:1;
+let home,html='',observedClientVersion='';
+for(let attempt=0;attempt<homepageAttempts;attempt++){
+  home=await get(versionedHome+'&edge_probe='+attempt);
+  html=await home.text();
+  observedClientVersion=html.match(/app-v11-nine-cases-v[0-9]+-[0-9]+\.js\?v=[^"'<>\s]+/)?.[0]||'missing';
+  if(home.status===200&&html.includes(clientAsset+'?v='+clientVersion))break;
+  if(attempt+1<homepageAttempts){
+    console.log('Homepage propagation: observed '+observedClientVersion+
+      ', expected '+clientVersion+'; retry '+(attempt+1)+'/'+homepageAttempts);
+    await new Promise(resolve=>setTimeout(resolve,2200));
+  }
+}
+assert.equal(home.status,200);
 assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block external UI framing');
 assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'none'/);
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
-const html=await home.text();assert.match(html,/casino-client-v105\.js\?v=105\.5/);
+assert.match(html,/casino-client-v105\.js\?v=105\.5/);
 assert.match(html,/app-v11-nine-cases-v347-20261113\.js\?v=nine-cases-v347-20261113/,'The edge homepage is using a stale Scenario 006 client');
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'The live questionnaire is missing');
 assert.match(html,/investigation-deep-v286\.js\?v=nine-cases-v347-20261113/,'The live five-case questionnaire is missing');
@@ -128,6 +144,8 @@ await assertDeployedAsset('service-worker.js',"const CACHE='igr-"+cacheVersion+"
 await assertDeployedAsset(clientAsset,'investigation_006_adaptive');
 await assertDeployedAsset('investigation-accuracy-v284.js','igr_v284_006_submit_detail');
 await assertDeployedAsset('investigation-deep-v286.js','igr_v286_submit_detail');
+await assertDeployedAsset('investigation-007-v289.js','Que permet d’identifier le document utilisé lors du dernier rendez-vous');
+await assertDeployedAsset('investigation-008-v310.js','Distinguer les actes matériellement établis');
 await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Chaque vendredi, des commerçants du quartier remettent leur contribution');
 await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Vittorio Santoro dirige une famille dont l’autorité repose sur des règles');
 await assertDeployedAsset('investigation-workspace-v634.css','igr634-interviews');
