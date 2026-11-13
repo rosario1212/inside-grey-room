@@ -24,6 +24,7 @@ on:
       - 'app-v11.js'
       - 'qa-fixes-v12.js'
       - 'investigation-sheet-v12.js'
+      - 'investigation-010-v361.js'
       - 'video-v12-3.js'
       - 'turn-v12-4.js'
       - 'profile-dossier-v12.js'
@@ -88,6 +89,8 @@ jobs:
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: npm run build
+      - name: Validate Scenario 010 adaptive build and security
+        run: node scripts/v361-010-adaptive-release-check.mjs dist
       - name: Validate generated CARTEL posters
         run: node scripts/cartel-posters-check.mjs dist
       - name: Validate Los Salcedo canon and public fear arc
