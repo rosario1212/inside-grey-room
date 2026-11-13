@@ -18,11 +18,14 @@ assert(client.includes('igr_v361_010_submit_detail'),'010 sealed report submissi
 assert(client.includes("['enqueteur','analyste']"),'010 must exclude suspects from sealed reports');
 assert(client.includes('priorSubmit.apply'),'010 legacy debrief remains functional');
 assert(client.includes('Impossible à établir actuellement'),'010 survey must permit uncertainty');
-assert(client.includes('Que faut-il confronter pour établir comment le local est devenu inaccessible'),'010 factual questionnaire missing');
-assert(client.includes('Deux fermetures du même local impliquent-elles nécessairement le même responsable'),'010 independent-accountability question missing');
+assert(client.includes('Quel enchaînement décrit le mieux la fermeture vers 12 h 18'),'010 cycle-one factual question missing');
+assert(client.includes('Quel élément matériel empêchait Nora de sortir'),'010 technical evidence question missing');
+assert(client.includes('Quelle hypothèse sur la fermeture de 13 h 54 reste compatible'),'010 cycle-two factual question missing');
+assert(client.includes('Une équipe de sécurité annoncée, mais sans confirmation indépendante'),'010 competing-evidence options missing');
+assert(!/Quel faut-il confronter pour établir|Deux fermetures du même local impliquent-elles nécessairement/.test(client),'legacy methodology-only quiz present');
 assert(!/v350_verdict|canonical_truth|answer_keys|private_variant|prior_alignment|source_ids/i.test(client),'private truth or scoring leaked to client');
 assert(!/La panne du pêne|une restriction administrative préalable|Le porteur d’un badge a refermé après un ordre/.test(client),'010 questionnaire reveals alternative variants');
 assert(sw.includes('/investigation-010-v361.js?v='+release),'010 PWA pre-cache missing');
 assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+release+"'"),'010 PWA version stale');
 assert(worker.includes('index-'+release+'.txt'),'010 Cloudflare entrypoint version stale');
-console.log('010 v361: adaptive 3+1, sealed questionnaires, private keys, cache-safe UI PASS');
+console.log('010 v366: factual sealed questionnaires, adaptive 3+1, private keys, cache-safe UI PASS');
