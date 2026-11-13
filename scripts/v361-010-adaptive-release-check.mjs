@@ -18,7 +18,7 @@ assert(client.includes('igr_v361_010_submit_detail'),'010 sealed report submissi
 assert(client.includes("['enqueteur','analyste']"),'010 must exclude suspects from sealed reports');
 assert(client.includes('priorSubmit.apply'),'010 legacy debrief remains functional');
 assert(client.includes('Impossible à établir actuellement'),'010 survey must permit uncertainty');
-assert(client.includes('Quel enchaînement décrit le mieux la fermeture vers 12 h 18'),'010 cycle-one factual question missing');
+assert(client.includes('quel enchaînement décrit le mieux la fermeture vers 12 h 18'),'010 cycle-one factual question missing');
 assert(client.includes('Quel élément matériel empêchait Nora de sortir'),'010 technical evidence question missing');
 assert(client.includes('Quelle hypothèse sur la fermeture de 13 h 54 reste compatible'),'010 cycle-two factual question missing');
 assert(client.includes('Une équipe de sécurité annoncée, mais sans confirmation indépendante'),'010 competing-evidence options missing');
