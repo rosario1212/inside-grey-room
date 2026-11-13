@@ -1,0 +1,28 @@
+// Scenario 010 v361: role-safe adaptive case, non-spoiler questionnaires, four-per-cycle cap.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import path from 'node:path';
+const dist=process.argv[2]||'dist',release='nine-cases-v362-20261113';
+const html=readFileSync(path.join(dist,'index.html'),'utf8');
+const app=readFileSync(path.join(dist,'app-v11-'+release+'.js'),'utf8');
+const client=readFileSync(path.join(dist,'investigation-010-v361.js'),'utf8');
+const sw=readFileSync(path.join(dist,'service-worker.js'),'utf8');
+const worker=readFileSync('cloudflare-worker.mjs','utf8');
+assert(html.includes('investigation-010-v361.js?v='+release),'010 questionnaire not loaded in homepage');
+assert(html.includes('app-v11-'+release+'.js?v='+release),'010 client bundle stale');
+assert(app.includes('deepTenInvestigations'),'010 adaptive room UI missing');
+assert(app.includes('investigation_010_adaptive===true'),'010 private-room feature gate missing');
+assert(app.includes('igr_v361_010_investigate'),'010 authenticated adaptive RPC missing');
+assert(app.includes('(00[1-9]|010)_(1[0-9]|20)'),'010 optional ID regex missing');
+assert(client.includes('igr_v361_010_submit_detail'),'010 sealed report submission missing');
+assert(client.includes("['enqueteur','analyste']"),'010 must exclude suspects from sealed reports');
+assert(client.includes('priorSubmit.apply'),'010 legacy debrief remains functional');
+assert(client.includes('Impossible à établir actuellement'),'010 survey must permit uncertainty');
+assert(client.includes('Que faut-il confronter pour établir comment le local est devenu inaccessible'),'010 factual questionnaire missing');
+assert(client.includes('Deux fermetures du même local impliquent-elles nécessairement le même responsable'),'010 independent-accountability question missing');
+assert(!/v350_verdict|canonical_truth|answer_keys|private_variant|prior_alignment|source_ids/i.test(client),'private truth or scoring leaked to client');
+assert(!/La panne du pêne|une restriction administrative préalable|Le porteur d’un badge a refermé après un ordre/.test(client),'010 questionnaire reveals alternative variants');
+assert(sw.includes('/investigation-010-v361.js?v='+release),'010 PWA pre-cache missing');
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+release+"'"),'010 PWA version stale');
+assert(worker.includes('index-'+release+'.txt'),'010 Cloudflare entrypoint version stale');
+console.log('010 v361: adaptive 3+1, sealed questionnaires, private keys, cache-safe UI PASS');
