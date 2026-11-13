@@ -25,8 +25,10 @@
   2:[
    ['Qui les pièces rapprochent-elles du dernier affrontement ?',[
     'Le bénéficiaire (S1)','Le gardien (S2)','Le proche endetté (S3)']],
-   ['Quel document est au cœur de la dernière confrontation ?',[
-    'Le testament signé','Une autre pièce familiale (lettre ou filiation)','Le dossier d’une dette']],
+   ['Que permet d’identifier le document utilisé lors du dernier rendez-vous ?',[
+    'Le document le plus récent remplace toutes les traces d’accès',
+    'Son identification précise l’objet du dernier différend, sans déterminer à elle seule le geste fatal',
+    'L’identité de son détenteur révèle nécessairement une intention homicide']],
    ['Que permettent les passages et traces matérielles ?',[
     'De décrire une présence et des contacts sans lire l’intention',
     'De connaître automatiquement le projet homicide',
