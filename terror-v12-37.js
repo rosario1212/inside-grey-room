@@ -4,7 +4,7 @@
   const IDS = new Set(['026','027','028']);
   const DATA = [
     {id:'026',title:'LA VILLE TOMBE',short:'La ville perd ses secteurs un à un. Trois prisonniers sont interrogés pendant qu’un groupe terroriste continue d’avancer vers la Grey Room.',context:'Trois membres présumés d’une organisation terroriste sont capturés alors que la ville commence à tomber. L’enquête porte sur des atrocités déjà commises et sur un groupe terroriste encore actif. La pression monte, mais la vérité judiciaire reste distincte de l’urgence.',mood:'Ville assiégée · pression · renseignement incomplet.',min:6,max:7,sound:'war',mechanics:['Périmètre dynamique','Renseignement','Menace extérieure']},
-    {id:'027',title:'LA ZONE ROUGE',short:'Une zone contestée pourrait abriter le commandement ennemi. Des civils y sont encore possibles. Le verdict pèsera sur une décision irréversible.',context:'Après plusieurs massacres, trois suspects donnent des versions incompatibles sur la présence du commandement et des civils dans une zone contestée. L’enquête doit distinguer faits, manipulation et coopération intéressée avant qu’une cellule de crise ne prenne une décision abstraite.',mood:'Cellule de crise · responsabilité · risque civil.',min:7,max:8,sound:'intelligence',mechanics:['Officier de liaison','Verdict sous pression','Vérité instrumentalisée']},
+    {id:'027',title:'LA ZONE ROUGE',short:'Une zone contestée pourrait abriter le commandement ennemi. Des civils y sont encore possibles. Le verdict pèsera sur une décision irréversible.',context:'Après plusieurs massacres, trois suspects donnent des versions incompatibles sur la présence du commandement et des civils dans une zone contestée. L’enquête doit distinguer faits, manipulation et coopération intéressée avant qu’une cellule de crise ne prenne une décision abstraite.',mood:'Cellule de crise · responsabilité · risque civil.',min:7,max:8,sound:'intelligence',mechanics:['Officier des opérations','Verdict sous pression','Renseignement manipulé par le FDR']},
     {id:'028',title:'DERNIER PÉRIMÈTRE',short:'Le bâtiment tient encore. Deux prisonniers veulent parler ; le troisième semble seulement attendre que le périmètre cède.',context:'Une grande partie de la ville échappe aux autorités. Deux prisonniers comprennent que leur propre organisation les a abandonnés ; le troisième reste étrangement calme. L’enquête doit séparer coopération sincère, calcul et responsabilité avant que le dernier périmètre ne devienne symbolique.',mood:'Dernière ligne · abandon · coopération sous menace.',min:6,max:8,sound:'pulse',mechanics:['Périmètre critique','Cellule intérieure','Coopération']}
   ];
   const ART = Object.freeze({
@@ -17,9 +17,9 @@
 
   for(const sc of DATA) if(!SCENARIOS.some(x => x.id === sc.id)) SCENARIOS.push(sc);
   Object.assign(SCENARIO_ROLES, {
-    '026':{required:['Enquêteur','Analyste','Expert','3 suspects'],optional:['Procureur']},
-    '027':{required:['Enquêteur','Analyste','Procureur','Inspecteur','3 suspects'],optional:['Expert']},
-    '028':{required:['Enquêteur','Analyste','Expert','3 suspects'],optional:['Inspecteur','Procureur']}
+    '026':{required:['Enquêteur','Analyste','Officier des opérations','3 suspects'],optional:['Expert']},
+    '027':{required:['Enquêteur','Analyste','Inspecteur','Officier des opérations','3 suspects'],optional:['Procureur']},
+    '028':{required:['Enquêteur','Analyste','Officier des opérations','3 suspects'],optional:['Inspecteur','Expert']}
   });
   Object.assign(PUBLIC_LOBBY_SUMMARIES, {
     '026':'La ville perd ses secteurs pendant l’interrogatoire. Trois prisonniers possèdent chacun une partie de la structure encore active ; la Grey Room doit comprendre sans laisser la panique remplacer la preuve.',
@@ -35,7 +35,7 @@
   roleInfo = function(id){
     const info = oldRoleInfo(id), sid = String(STATE?.sync?.room?.scenario_id || STATE?.scenarioId || STATE?.selectedScenario || '');
     if(!isTerror(sid)) return info;
-    if(id === 'inspecteur') return {...info,label:'Officier de liaison',body:'Tu relies la Grey Room à la cellule de crise. Tu portes des décisions extérieures abstraites sans transformer une hypothèse en certitude ni recevoir d’options tactiques.'};
+    if(id === 'inspecteur') return {...info,label:'Inspecteur de terrain',body:'Tu vérifies sur place les informations liées au FDR et leurs contradictions. Dans le 027, tu peux formuler un avis non contraignant, mais seul l’Officier des opérations décide de l’action militaire.'};
     if(id === 'expert') return {...info,label:'Agent de renseignement',body:'Tu recoupes des sources, des chronologies et des liens de structure. Tu produis des niveaux de confiance, jamais une procédure opérationnelle.'};
     return info;
   };
