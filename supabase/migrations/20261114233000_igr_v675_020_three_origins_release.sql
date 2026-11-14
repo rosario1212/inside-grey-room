@@ -48,7 +48,7 @@ BEGIN
   THEN RAISE EXCEPTION '020 corrupt candidate %',d.variant_id;END IF;
   FOR cy IN 1..3 LOOP
    IF (SELECT count(*) FROM jsonb_array_elements(d.m->'v670_investigations') e WHERE (e->>'cycle')::int=cy)
-     <>CASE WHEN cy=1 THEN 6 ELSE 7 END
+     <>(7-(cy=1)::integer)
    OR (SELECT count(*) FROM jsonb_array_elements(d.m->'v670_investigations') e WHERE (e->>'cycle')::int=cy AND (e->>'core')::boolean)<>3
    OR (SELECT count(*) FROM jsonb_array_elements(d.m->'v670_runtime_trames') e WHERE (e->>'min_cycle')::int=cy AND (e->>'guaranteed')::boolean)<>2
    THEN RAISE EXCEPTION '020 evidence invalid: variant % cycle %',d.variant_id,cy;END IF;
