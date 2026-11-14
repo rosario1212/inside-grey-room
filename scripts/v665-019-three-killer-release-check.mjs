@@ -5,6 +5,7 @@ const read=p=>readFileSync(p,'utf8');
 const app=read('app-v11.js');
 const runtime=read('supabase/migrations/20261114214500_igr_v665_019_adaptive_runtime.sql');
 const release=read('supabase/migrations/20261114221000_igr_v665_019_guarded_release.sql');
+const anon=read('supabase/migrations/20261114224000_igr_v665_019_sealed_variant_identity.sql');
 const shell=read('scripts/publish-006-adaptive-shell.mjs');
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(app.includes('payload.reconstruction_019={killer,security_role,cover}'),'019 wrong final payload');
@@ -22,5 +23,7 @@ assert(release.includes("array['killer','security_role','cover']"),'019 three-ax
 assert(release.includes("''investigation_019'')=20"),'019 release must have exactly 20 leads per variant');
 assert(release.includes("'truth','{}'::jsonb"),'019 legacy single-killer public truth not scrubbed');
 assert(release.includes('igr_v665_019_base_pack_backup'),'019 public baseline rollback missing');
+assert(anon.includes("regexp_replace(item->>''id''") || anon.includes('regexp_replace(item->>'), '019 offered IDs must conceal A/B/C');
+assert(anon.includes('igr_v570_019_safe_pack') && anon.includes('v570_journal_news'), '019 journalist news IDs must conceal A/B/C');
 assert(shell.includes('nineteen-three-killers-v665-20261114'),'019 immutable web asset revision missing');
 console.log('PASS 019 v665: three private murders, twenty authored investigations per variant, sealed hypotheses, anti-spoiler verdict, reversible release.');
