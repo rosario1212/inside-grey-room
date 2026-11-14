@@ -42,16 +42,16 @@
     div.className='terror-v682-front';
     div.id='terrorV682Front';
     div.setAttribute('aria-label','Organisation responsable du siège');
-    div.innerHTML='<div class="terror-v682-kicker"><span>CRISE NATIONALE · RÉPUBLIQUE DE VALTREN</span><span>FDR · DOSSIER '+e(scen())+'</span></div>'+
+    div.innerHTML='<div class="terror-v682-kicker"><span>CRISE NATIONALE · RÉPUBLIQUE D’ALMIZIA</span><span>FDR · DOSSIER '+e(scen())+'</span></div>'+
        '<div class="terror-v682-name"><b>FRONT DE LA RESTAURATION</b><span>LE FDR</span></div>'+
-       '<p><b>Le FDR est une coalition rebelle armée.</b> Après l’effondrement de la garnison de Heliox, il a pris sa base militaire, récupéré des véhicules blindés et d’importantes réserves. D’anciens soldats ont rejoint ses factions. La capitale '+city+' est la dernière grande ville du pays encore défendue par l’État. Toutes les autres grandes villes sont tombées. La Grey Room conserve des preuves des crimes du FDR.</p>'+
-       '<p>'+e(epis.detail)+' La capitale '+city+' tient encore grâce aux forces gouvernementales et à leurs réserves mobiles. Ses douze secteurs représentent une ville fictive de Valtren, sans correspondance géographique réelle.</p>'+
+       '<p><b>Le FDR est une coalition rebelle armée.</b> Après l’effondrement de la garnison de Ferra, il a pris sa base militaire, récupéré des véhicules blindés et d’importantes réserves. D’anciens soldats ont rejoint ses factions. La capitale '+city+' est la dernière grande ville du pays encore défendue par l’État. Toutes les autres grandes villes sont tombées. La Grey Room conserve des preuves des crimes du FDR.</p>'+
+       '<p>'+e(epis.detail)+' La capitale '+city+' tient encore grâce aux forces gouvernementales et à leurs réserves mobiles. Ses douze secteurs représentent une ville fictive de Almizia, sans correspondance géographique réelle.</p>'+
        '<details><summary>Comprendre le pays, la guerre et l’ascension du FDR</summary>'+
        '<p><strong>Il y a quatorze ans.</strong> Un cessez-le-feu met fin à une guerre intérieure, mais les anciennes milices ne sont pas complètement démobilisées. La corruption, les salaires impayés et l’abandon des services publics brisent peu à peu la confiance envers l’État.</p>'+
        '<p><strong>Il y a trois ans.</strong> Des protestations contre l’autorité centrale sont récupérées par une coalition radicalisée. Elle prend le nom de Front de la Restauration. Les habitants l’appellent le FDR. Le groupe promet de rétablir l’ordre, puis impose persécutions, enlèvements et répression.</p>'+
-       '<p><strong>Il y a neuf mois.</strong> Le commandement de la base militaire de Heliox se désorganise. Une partie de la garnison déserte et le FDR s’empare de véhicules blindés, de matériel et de réserves. Cette prise le transforme en force armée capable de conquérir les grandes villes.</p>'+
-       '<p><strong>Aujourd’hui.</strong> Les autres grandes villes sont tombées. Les forces armées de Valtren résistent dans leur capitale, appuyées par des unités isolées et des réserves hors de la ville. Une synthèse judiciaire vérifiée peut leur permettre de sécuriser puis reprendre un secteur, sans victoire miraculeuse.</p></details>'+
-       '<div class="terror-v682-liaison"><small>DERNIÈRE CAPITALE LIBRE · '+city+' · FORCES ARMÉES DE VALTREN</small>'+
+       '<p><strong>Il y a neuf mois.</strong> Le commandement de la base militaire de Ferra se désorganise. Une partie de la garnison déserte et le FDR s’empare de véhicules blindés, de matériel et de réserves. Cette prise le transforme en force armée capable de conquérir les grandes villes.</p>'+
+       '<p><strong>Aujourd’hui.</strong> Les autres grandes villes sont tombées. Les forces armées de Almizia résistent dans leur capitale, appuyées par des unités isolées et des réserves hors de la ville. Une synthèse judiciaire vérifiée peut leur permettre de sécuriser puis reprendre un secteur, sans victoire miraculeuse.</p></details>'+
+       '<div class="terror-v682-liaison"><small>DERNIÈRE CAPITALE LIBRE · '+city+' · FORCES ARMÉES DE ALMIZIA</small>'+
        '<strong>'+e(liaisonStatus==='lost'?'DERNIÈRE LIAISON ROMPUE':nationalCounterpush>0?'CONTRE-OFFENSIVE EN COURS':'RECOUPEMENT DES INFORMATIONS')+'</strong>'+
        '<p>Vos décisions comptent pour la dernière capitale libre. À chaque cycle, des analyses recoupées donnent aux forces nationales une information à vérifier puis à exploiter ; des conclusions insuffisantes freinent leur réponse, et des erreurs majeures accélèrent le FDR. Chaque perte ou reconquête est rendue publique.</p></div>';
     board.insertAdjacentElement('beforebegin',div);
@@ -116,7 +116,7 @@
       if(!inDlc())return;
       const summary=document.querySelector('.lobby-case-preview');
       if(summary&&!summary.querySelector('.terror-v682-lobby-label'))summary.insertAdjacentHTML('beforeend',
-        '<p class="terror-v682-lobby-label">MENACE COMMUNE · LE FDR, UNE RÉBELLION ARMÉE NÉE EN VALTREN. Les chutes et reprises de secteurs seront visibles de tous ; une défaite amène le FDR aux portes de la Grey Room.</p>');
+        '<p class="terror-v682-lobby-label">MENACE COMMUNE · LE FDR, UNE RÉBELLION ARMÉE NÉE EN ALMIZIA. Les chutes et reprises de secteurs seront visibles de tous ; une défaite amène le FDR aux portes de la Grey Room.</p>');
     };
   }
 })();
