@@ -23,7 +23,7 @@
     section.className='terror-v681-city-lobby';section.id='terrorV681CityLobby';
     section.innerHTML='<div class="terror-v681-city-head"><span>TERREUR · LOCALISATION DU DOSSIER</span><b>Quel nom portera la dernière capitale libre ?</b></div>'+
       '<p>Le nom choisi désigne la capitale de la République fictive de Almizia. Le FDR a déjà pris les autres grandes villes. Cette dernière capitale résiste avec douze secteurs de jeu. Aucune géolocalisation.</p>'+
-      (city?'<div class="terror-v681-current-city">CAPITALE DE ALMIZIA · <strong>'+esc(city)+'</strong></div>':
+      (city?'<div class="terror-v681-current-city">CAPITALE D’ALMIZIA · <strong>'+esc(city)+'</strong></div>':
        '<div class="terror-v681-warning">Nomme la capitale avant de lancer cette partie.</div>')+
       (canSet?'<div class="terror-v681-city-entry"><label for="terrorV681CityName">Nom de la ville (2 à 36 caractères)</label>'+
        '<div class="terror-v681-input-row"><input id="terrorV681CityName" maxlength="36" autocomplete="off" placeholder="Ex. : Bagdad, Genève, Paris" value="'+esc(city)+'"><button type="button" class="btn primary" onclick="terrorV681SetCity()">Valider la ville</button></div></div>':
@@ -71,7 +71,7 @@
     const stage=safeNum(w.last_scored_cycle,0,3);
     const history=Array.isArray(w.history)?w.history:[];
     const last=history.length?history[history.length-1]:null;
-    const consequence=last?.correct_answers!==undefined?'<div class="terror-v681-consequence"><small>IMPACT DE VOS RÉPONSES · CYCLE '+Number(last.cycle)+'</small><strong>'+Number(last.correct_answers)+'/6 RÉPONSES EXACTES · '+esc(last.band||'')+'</strong><p>'+esc(last.decision_effect==='national_reconquest'?'Une synthèse du camp d’enquête a été authentifiée puis recoupée par la liaison nationale. Les défenseurs de Almizia ont rétabli leur présence dans un secteur contesté.':last.decision_effect==='fdr_breakthrough'?'Les conclusions trop incertaines n’ont pas pu être validées. Les défenseurs ont perdu du temps et le FDR progresse plus rapidement.':'Les vérifications sont partielles : les forces nationales maintiennent une partie des protections, mais aucun recoupement n’a justifié de reconquête.')+'</p></div>':'';
+    const consequence=last?.correct_answers!==undefined?'<div class="terror-v681-consequence"><small>IMPACT DE VOS RÉPONSES · CYCLE '+Number(last.cycle)+'</small><strong>'+Number(last.correct_answers)+'/6 RÉPONSES EXACTES · '+esc(last.band||'')+'</strong><p>'+esc(last.decision_effect==='national_reconquest'?'Une synthèse du camp d’enquête a été authentifiée puis recoupée par la liaison nationale. Les défenseurs d’Almizia ont rétabli leur présence dans un secteur contesté.':last.decision_effect==='fdr_breakthrough'?'Les conclusions trop incertaines n’ont pas pu être validées. Les défenseurs ont perdu du temps et le FDR progresse plus rapidement.':'Les vérifications sont partielles : les forces nationales maintiennent une partie des protections, mais aucun recoupement n’a justifié de reconquête.')+'</p></div>':'';
     const section=document.createElement('section');section.id='terrorV681Board';
     section.className='terror-v681-live'+(changed?' terror-v681-breakthrough':'')+(reclaimed?' terror-v681-recovered':'');
     section.innerHTML='<div class="terror-v681-head"><div><small>TERREUR · '+esc(title)+'</small>'+
@@ -81,7 +81,7 @@
        '<div><small>PRESSION DU SIÈGE</small><strong>'+Math.round(pressure)+'<em> / 100</em></strong></div>'+
        '<div><small>MENACE ACTUELLE</small><strong class="terror-v681-level">'+esc(statusLabel({controlled,pressure}))+'</strong></div></div>'+
        '<div class="terror-v681-meter" role="progressbar" aria-valuenow="'+Math.round(pressure)+'" aria-valuemin="0" aria-valuemax="100" aria-label="Pression du siège"><div style="width:'+pressure+'%"></div></div>'+
-       '<div class="terror-v681-map-title"><b>CAPITALE DE ALMIZIA · '+esc(city)+' · LES 12 SECTEURS+'</b><small>Schéma fictif partagé, sans géographie réelle</small></div>'+
+       '<div class="terror-v681-map-title"><b>CAPITALE D’ALMIZIA · '+esc(city)+' · LES 12 SECTEURS</b><small>Schéma fictif partagé, sans géographie réelle</small></div>'+
        '<div class="terror-v681-map" role="list" aria-label="Les douze secteurs de '+esc(city)+'">'+squares+'</div>'+
        '<div class="terror-v681-status"><span>Grey Room · centre judiciaire</span><strong>'+esc(last?.band||'La menace se rapproche à chaque cycle')+'</strong>'+
        '<small>Cycle évalué : '+stage+'/3 · Vos réponses influencent la chute ou la reprise des secteurs.</small></div>'+consequence;
