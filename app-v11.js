@@ -1613,7 +1613,7 @@ function renderInvestigationTab(){
   const used=!!d.scenario?.investigation_018_used||thisCycle.length>=2;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>LES ASSIETTES VIDES · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux investigations au maximum par cycle pour tout le camp Enquête. Les pistes évoluent discrètement selon les hypothèses scellées, sans révéler la solution. Trois constatations essentielles restent garanties.</p>${used?'<div class="locked-state">Les deux investigations de ce cycle ont été réalisées.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Index(${i+1})"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux investigations au maximum par cycle pour tout le camp Enquête. Les pistes évoluent discrètement selon les hypothèses scellées, sans révéler la solution. Trois constatations essentielles restent garanties.</p>${used?'<div class="locked-state">Les deux investigations de ce cycle ont été réalisées.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
 
   if(ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
    const answered=(d.my_actions||[]).some(a=>a.action_type==='hypothesis_018'&&+a.cycle===+r.cycle);
@@ -1791,6 +1791,11 @@ async function submit018Hypothesis(){
   await rpc('igr_v650_018_hypothesis_submit',{p_code:STATE.room,p_player_token:STATE.token,p_killer:killer,p_tableau:tableau,p_prior_plan:plan});
   await syncNow(true);
  }catch(e){console.error(e);toast('Impossible de consigner ces hypothèses pour ce cycle.')}
+}
+
+async function investigate018Choice(id){
+ try{await rpc('igr_v650_018_investigate_choice',{p_code:STATE.room,p_player_token:STATE.token,p_choice:id});await syncNow(true)}
+ catch(e){console.error(e);toast('Cette investigation ne peut plus être examinée pendant ce cycle.')}
 }
 async function investigate018Index(i){try{await rpc('igr_v546_018_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette piste n’est plus accessible pendant ce cycle.')}}
 async function investigate017Index(i){try{await rpc('igr_v526_017_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est plus disponible pour ce cycle.')}}
