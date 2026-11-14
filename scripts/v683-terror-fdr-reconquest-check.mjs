@@ -12,7 +12,7 @@ const mobile=read('scripts/build-mobile.mjs');
 const publish=read('scripts/publish-006-adaptive-shell.mjs');
 execFileSync(process.execPath,['--check','terror-front-v682.js'],{stdio:'pipe'});
 execFileSync(process.execPath,['--check','terror-live-v681.js'],{stdio:'pipe'});
-assert(country.includes('RÉPUBLIQUE DE DARYANE')&&country.includes('base militaire de Kalem'),'Daryane and Kalem lore missing');
+assert(country.includes('RÉPUBLIQUE D'ALMIZIA')&&country.includes('base militaire de Ferra'),'Almizia and Ferra lore missing');
 assert(country.includes('LE FDR')&&country.includes('Forces armées daryanes'),'Rebel and national forces not distinguished');
 assert(country.includes('Il y a quatorze ans')&&country.includes('Il y a trois ans')&&country.includes('Il y a neuf mois'),'Country timeline incomplete');
 assert(country.includes('terror_v683_sector_recovered'),'Public recovery bulletin not surfaced for all players');
