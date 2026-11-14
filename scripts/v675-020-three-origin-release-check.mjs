@@ -21,7 +21,7 @@ assert(runtime.includes('two-choice cycle limit'),'020 server optional cap missi
 assert(runtime.includes('igr_v675_020_hypothesis_submit') && runtime.includes('already sealed'),'020 hypotheses must not be overwritten');
 assert(runtime.includes('REVOKE ALL ON FUNCTION igr_private.igr_v675_020_offered'),'020 private selector should not be callable');
 assert(release.includes('igr_v675_020_live_backup') && release.includes('igr_v675_020_public_backup'),'020 reversible migration missing');
-assert(release.includes('jsonb_array_length(choices'),'020 validator must use full authored array');
+assert(release.includes("jsonb_array_length(coalesce(choices,'[]'::jsonb))<>20"),'020 validator must use all 20 authored leads');
 assert(release.includes('jsonb_array_length(b->\'investigation_020\')=20'),'020 private release gate must allow 20 leads');
 assert(release.includes('authorized_stage_effect'),'020 stage origin must be accepted by lock');
 assert(release.includes("'truth','{}'::jsonb"),'020 obsolete activist-always-ignites solution remains public');
