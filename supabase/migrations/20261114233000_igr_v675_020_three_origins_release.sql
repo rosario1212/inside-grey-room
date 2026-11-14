@@ -173,7 +173,7 @@ BEGIN
        'La cause du foyer et les causes du bilan humain doivent être dissociées.',
        'Les actes et les connaissances de chaque responsable ne se confondent pas.'))
   ));
-END $fn$;
+END; $fn$;
 CREATE OR REPLACE FUNCTION igr_private.igr_v600_020_safe_pack(p_variant text)
 RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path TO 'pg_catalog'
 AS $fn$
@@ -191,7 +191,7 @@ BEGIN
    'news',m->'v600_journalist_leads',
    'journalist_leads',m->'v600_journalist_leads'
  );
-END $fn$;
+END; $fn$;
 REVOKE ALL ON FUNCTION igr_private.igr_v600_020_safe_pack(text) FROM public,anon,authenticated;
 
 CREATE OR REPLACE FUNCTION igr_private.igr_v601_020_release_status()
@@ -230,7 +230,7 @@ BEGIN
   'found',n,'approved',approved,'valid_distinct',coalesce(array_length(seen,1),0),
   'private_secure',secure,'human_playtest_verified',false
  );
-END $fn$;
+END; $fn$;
 CREATE OR REPLACE FUNCTION public.igr_v605_020_investigate(p_code text,p_player_token uuid,p_choice text)
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
 AS $function$
@@ -262,13 +262,13 @@ BEGIN
  VALUES(r.code,'investigation_020','roles',ARRAY['enqueteur','analyste']::text[],r.cycle,
  jsonb_build_object('title',item->>'title','text',item->>'result','author','Enquête de terrain'));
  RETURN jsonb_build_object('ok',true,'cycle',r.cycle);
-END $function$;
+END; $function$;
 REVOKE ALL ON FUNCTION public.igr_v605_020_investigate(text,uuid,text) FROM public,anon,authenticated;
 
 CREATE OR REPLACE FUNCTION public.igr_v675_020_investigate_choice(p_code text,p_player_token uuid,p_choice text)
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
 AS $function$
-BEGIN RETURN public.igr_v605_020_investigate(p_code,p_player_token,p_choice);END $function$;
+BEGIN RETURN public.igr_v605_020_investigate(p_code,p_player_token,p_choice);END; $function$;
 REVOKE ALL ON FUNCTION public.igr_v675_020_investigate_choice(text,uuid,text) FROM public,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_v675_020_investigate_choice(text,uuid,text) TO anon,authenticated;
 
@@ -288,7 +288,7 @@ BEGIN
  WHERE ord=p_index LIMIT 1;
  IF choice IS NULL THEN RAISE EXCEPTION 'no choice';END IF;
  RETURN public.igr_v605_020_investigate(p_code,p_player_token,choice);
-END $function$;
+END; $function$;
 REVOKE ALL ON FUNCTION public.igr_v606_020_investigate_index(text,uuid,integer) FROM public,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_v606_020_investigate_index(text,uuid,integer) TO anon,authenticated;
 DO $replace_fn$ DECLARE old_def text;new_def text;BEGIN SELECT pg_get_functiondef('public.igr_v4_sync(text,uuid)'::regprocedure) INTO old_def; IF old_def IS NULL THEN RAISE EXCEPTION '020 existing function missing';END IF;new_def:=old_def;
