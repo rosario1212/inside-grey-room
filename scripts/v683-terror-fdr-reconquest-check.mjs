@@ -5,6 +5,7 @@ const read=f=>readFileSync(f,'utf8');
 const siege=read('supabase/migrations/20261114235910_igr_v682_front_at_the_gates.sql');
 const military=read('supabase/migrations/20261115003000_igr_v688_terror_military_decisions.sql');
 const app=read('app-v11.js');
+const legacyTerror=read('terror-v12-37.js');
 const front=read('terror-front-v682.js');
 const command=read('terror-command-v688.js');
 const live=read('terror-live-v681.js');
@@ -32,6 +33,8 @@ assert(military.includes('terror_v688_captivity')&&military.includes("WHEN '026'
 assert(military.includes("'front_at_gates'")&&military.includes("'evidence_preserved'"),'Both war outcomes must remain achievable');
 for(const sid of ['026','027','028'])assert(app.includes("'"+sid+"':{required:")&&app.includes('Officier des opérations'),'Three role rosters missing');
 assert(app.includes("'Officier des opérations':'officier_liaison'"),'Role selection must map the officer to server role');
+for(const sid of ['026','027','028'])assert(legacyTerror.includes("'"+sid+"':{required:")&&legacyTerror.includes('Officier des opérations'),'Legacy Terror overlay must preserve the new commander roster');
+assert(!legacyTerror.includes("label:'Officier de liaison'"),'Inspector cannot masquerade as the military commander');
 assert(command.includes('terrorV688Choose')&&command.includes('igr_v688_terror_operations'),'Commander choices must be usable in the game');
 assert(command.includes('function')&&command.includes('renderReveal=function'),'Distinct defeat finales must appear in reveal');
 assert(css.includes('.terror-v688-command')&&css.includes('.terror-v688-capture'),'Military and defeat UI must be styled');
