@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='nine-cases-v347-20261113';
+const tag='integrated-seventeen-v650-20261114';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -71,7 +71,7 @@ if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-nine-cases-v347-20261113'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-nine-cases-v347-20261113'"),'PWA cache version did not advance');
+sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-integrated-seventeen-v650-20261114'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-integrated-seventeen-v650-20261114'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
