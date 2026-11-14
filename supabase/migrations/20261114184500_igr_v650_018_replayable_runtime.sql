@@ -220,7 +220,7 @@ begin
   )
  );
 end;
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION igr_private.igr_v540_018_safe_pack(p_variant text)
  RETURNS jsonb
@@ -247,7 +247,7 @@ BEGIN
   jsonb_build_object('id','018-news-3','title','TROIS MENSONGES','text','Une anomalie financière, des rancœurs et des visites distinctes ne prouvent pas une action collective.')
  ),
  'journalist_leads','[]'::jsonb);
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION igr_private.igr_v541_018_release_status()
  RETURNS jsonb
@@ -286,7 +286,7 @@ begin
   'found',n,'approved',ok,'valid_distinct',coalesce(array_length(seen,1),0),
   'private_secure',secure,'human_playtest_verified',false);
 end;
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.igr_v4_sync(p_code text, p_player_token uuid)
  RETURNS jsonb
@@ -346,7 +346,7 @@ begin
  raw:=jsonb_set(raw,'{scenario,investigation_006_adaptive}','true'::jsonb,true);
 if exists(select 1 from igr_private.igr_v99_room_canons c where c.room_code=room.code and c.scenario_id='006' and coalesce((c.manuscript->'v284_detailed_questionnaire'->>'enabled')::boolean,false)) then raw:=jsonb_set(raw,'{scenario,investigation_006_detailed}','true'::jsonb,true);end if;
  return raw;
-end $function$
+end $function$;
 
 
 UPDATE igr_private.igr_v99_variant_manuscripts
