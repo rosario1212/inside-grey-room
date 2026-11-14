@@ -19,7 +19,7 @@ assert(runtime.includes('two-choice cycle limit'),'019 optional investigation ca
 assert(runtime.includes('REVOKE ALL ON FUNCTION igr_private.igr_v665_019_offered'),'019 selector must not be public');
 assert(release.includes('igr_v665_019_live_backup'),'019 rollback snapshot missing');
 assert(release.includes("array['killer','security_role','cover']"),'019 three-axes private verdict not validated');
-assert(release.includes("'investigation_019')=20"),'019 release must have exactly 20 leads per variant');
+assert(release.includes("''investigation_019'')=20"),'019 release must have exactly 20 leads per variant');
 assert(release.includes("'truth','{}'::jsonb"),'019 legacy single-killer public truth not scrubbed');
 assert(release.includes('igr_v665_019_base_pack_backup'),'019 public baseline rollback missing');
 assert(shell.includes('nineteen-three-killers-v665-20261114'),'019 immutable web asset revision missing');
