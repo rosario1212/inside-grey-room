@@ -104,7 +104,7 @@ WITH prepared AS (
 )
 UPDATE igr_private.igr_v99_variant_manuscripts live
 SET manuscript=prepared.new_manuscript,
- content_md5=md5(prepared.new_manuscript::text),
+
  editorial_status='ready',approved_by='owner_authorized_release_020',
  approved_at=now(),updated_at=now()
 FROM prepared WHERE live.scenario_id='020' AND live.variant_id=prepared.variant_id;
