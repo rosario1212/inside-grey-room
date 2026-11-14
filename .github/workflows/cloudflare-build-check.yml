@@ -150,8 +150,10 @@ jobs:
         run: node scripts/v491-016-release-integrity-check.mjs
       - name: Audit 017 private variants, release and full cache
         run: node scripts/v532-017-release-integrity-check.mjs
-      - name: Audit 018 secure variants, Inspector, roles and cache
-        run: node scripts/v560-018-release-integrity-check.mjs
+      - name: Audit 018 secure variants and v651 adaptive replayability
+        run: |
+          node scripts/v560-018-release-integrity-check.mjs
+          node scripts/v651-018-adaptive-release-check.mjs
       - name: Audit 019 three-variant private runtime, verdict, and production cache
         run: node scripts/v580-019-release-integrity-check.mjs
       - name: Verify 020 sealed finale, roles, forensic proof and cache
