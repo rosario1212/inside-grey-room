@@ -291,6 +291,22 @@ BEGIN
  EXECUTE new_fn;
 END; $patch$;
 
+
+-- Prevent older clients from bypassing the sealed factual debrief in Terror.
+DO $debrief_guard$
+DECLARE previous text;patched text;
+BEGIN
+ SELECT pg_get_functiondef('public.igr_v4_submit_debrief(text,uuid,integer,integer,text)'::regprocedure) INTO previous;
+ patched:=previous;
+ IF position('if v_room.phase<>''cycle_debrief'' then' in patched)=0
+ THEN RAISE EXCEPTION 'v4 debrief guard source changed';END IF;
+ patched:=replace(patched,
+  'if v_room.phase<>''cycle_debrief'' then',
+  'if v_room.scenario_id in (''026'',''027'',''028'') then raise exception ''Terror factual quiz required'';end if;
+   if v_room.phase<>''cycle_debrief'' then');
+ EXECUTE patched;
+END; $debrief_guard$;
+
 DO $audit$
 DECLARE n integer;
 BEGIN
