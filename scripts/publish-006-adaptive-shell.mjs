@@ -9,6 +9,14 @@ const tag='integrated-seventeen-v650-20261114';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
+assert(appSource.includes('igr_v650_case_quiz_get') && appSource.includes('igr_v650_case_quiz_submit'),
+  'v650 sealed factual debrief must survive all build passes');
+assert(appSource.includes("tenCaseV361?'igr_v361_010_investigate'"),
+  '010 adaptive investigations must survive all build passes');
+assert(appSource.includes("investigate017Choice('${h(choice.id)}')"),
+  '017 direct evidence-choice buttons must survive all build passes');
+assert(appSource.includes("['010','012','013','014','015','016','017'].includes(sid)"),
+  'v650 debrief must not duplicate the existing 007–009 specialist forms');
 assert(appSource.includes('optionalUsed006'),'Scenario 006 optional limit missing');
 const questionnaire=await readFile(path.join(dest,'investigation-accuracy-v284.js'),'utf8');
 const detailedFive=await readFile(path.join(dest,'investigation-deep-v286.js'),'utf8');
