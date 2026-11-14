@@ -1577,12 +1577,13 @@ function renderInvestigationTab(){
     const deepSevenInvestigations=r.scenario_id==='007'&&d.scenario?.investigation_007_adaptive===true;
     const deepEightInvestigations=r.scenario_id==='008'&&d.scenario?.investigation_008_adaptive===true;
     const deepNineInvestigations=r.scenario_id==='009'&&d.scenario?.investigation_009_adaptive===true;
-   const adaptiveMulti=mountain006Investigations||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations;
+    const deepTenInvestigations=r.scenario_id==='010'&&d.scenario?.investigation_010_adaptive===true;
+   const adaptiveMulti=mountain006Investigations||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations;
    const collectedIds=new Set(reports.filter(e=>Number(e.cycle)===Number(r.cycle)).map(e=>e.payload?.id).filter(Boolean));
    const adaptive006=mountain006Investigations&&d.scenario?.investigation_006_adaptive===true;
    const limit006=adaptive006?4:3;
-   const limit=(deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations)?4:limit006;
-   const isOptionalInvestigation=id=>/^00[1-9]_(1[0-9]|20)$/.test(String(id));
+   const limit=(deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?4:limit006;
+   const isOptionalInvestigation=id=>/^0(0[1-9]|10)_(1[0-9]|20)$/.test(String(id));
    const optionalUsed006=[...collectedIds].some(isOptionalInvestigation);
    const visibleChoices=adaptiveMulti?choices.filter(o=>!collectedIds.has(o.id)&&!(optionalUsed006&&isOptionalInvestigation(o.id))):choices;
    const used=adaptiveMulti?collectedIds.size>=limit:d.scenario?.[evidenceTag+'_used'];
@@ -1591,7 +1592,8 @@ function renderInvestigationTab(){
     const instructionSeven='Trois trames principales et une trame facultative au maximum par cycle. Deux pistes facultatives sont proposées sans indiquer si l’une répond à une erreur de raisonnement.';
     const instructionEight='Trois vérifications principales et une seule trame facultative au maximum par cycle. L’enquêteur et l’analyste répondent séparément pour orienter les choix futurs, sans recevoir de correction.';
     const instructionNine='Trois vérifications principales et une seule trame facultative au maximum par cycle. Vos hypothèses scellées orientent les pistes futures sans exposer les solutions ou les variantes.';
-   body+=`<section class="action-section igr001-actions"><h3>${deepNineInvestigations||deepEightInvestigations||deepSevenInvestigations?'Trames d’enquête':'Investigations complémentaires'} · Cycle ${h(r.cycle)}</h3><p class="choice-helper">${deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Toutes les pièces de ce cycle ont été consultées.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
+    const instructionTen='Trois preuves principales et une recherche facultative au maximum par cycle. Les réponses scellées orientent une piste complémentaire sans afficher la solution.';
+   body+=`<section class="action-section igr001-actions"><h3>${deepNineInvestigations||deepEightInvestigations||deepSevenInvestigations||deepTenInvestigations?'Trames d’enquête':'Investigations complémentaires'} · Cycle ${h(r.cycle)}</h3><p class="choice-helper">${deepTenInvestigations?instructionTen:deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Toutes les pièces de ce cycle ont été consultées.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
   }
  }
 
@@ -1678,7 +1680,58 @@ async function endInterrogation(){try{await rpc('igr_v4_end_interrogation',{p_co
 function myAction(type,cycle=STATE.sync?.room?.cycle){return (STATE.sync?.my_actions||[]).find(a=>a.action_type===type&&(cycle==null||a.cycle===cycle))}
 function renderDebriefForm(){
  if(myAction('debrief'))return`<div class="locked-state">Tes réponses sont envoyées. Le MJ attend l’autre rôle d’enquête éventuel.</div>`;
+
+ const sid=STATE.sync?.room?.scenario_id;
+ const cycle=Number(STATE.sync?.room?.cycle||0);
+ if(['007','008','009','010','012','013','014','015','016','017'].includes(sid)&&cycle>=1&&cycle<=2){
+   const quizKey=[STATE.room,STATE.token,sid,cycle].join('|');
+   if(STATE._caseQuizLoadKey!==quizKey){
+     STATE._caseQuizLoadKey=quizKey;
+     STATE._caseQuizData=null;
+     rpc('igr_v650_case_quiz_get',{p_code:STATE.room,p_player_token:STATE.token})
+       .then(response=>{
+         if(STATE._caseQuizLoadKey!==quizKey)return;
+         STATE._caseQuizData=response?.enabled?response:{enabled:false};
+         if(STATE.view==='game')renderCurrent();
+       })
+       .catch(err=>{
+         console.warn('Questionnaire factuel non disponible',err);
+         if(STATE._caseQuizLoadKey!==quizKey)return;
+         STATE._caseQuizData={enabled:false};
+         if(STATE.view==='game')renderCurrent();
+       });
+   }
+   if(STATE._caseQuizData?.enabled&&Array.isArray(STATE._caseQuizData.questions)){
+     const quizFields=STATE._caseQuizData.questions.map((question,i)=>{
+       const opts=Array.isArray(question.options)?question.options:[];
+       return `<div class="field"><label for="igr650Answer_${i+1}">${i+1} · ${h(question.title||'Question factuelle')}</label><select id="igr650Answer_${i+1}"><option value="">Choisir une réponse…</option>${opts.map((option,j)=>`<option value="${'abc'[j]}">${h(option)}</option>`).join('')}<option value="u">Je ne sais pas</option></select></div>`;
+     }).join('');
+     return `<div class="qcm-v11"><p class="choice-helper">Réponds individuellement à partir des pièces disponibles. Les réponses sont scellées : aucune correction n'est affichée avant la révélation. Les zones d'incertitude peuvent orienter les investigations suivantes.</p>${quizFields}
+       <div class="field"><label for="qConvergence">Convergence actuelle du groupe</label><select id="qConvergence"><option value="0">Non</option><option value="1">Partielle</option><option value="2">Forte</option></select></div>
+       <div class="field"><label for="qConfusion">Niveau de difficulté ressenti</label><select id="qConfusion"><option value="0">Faible</option><option value="1">Modéré</option><option value="2">Important</option></select></div>
+       <div class="field"><label for="qAxis">Axe à approfondir</label><select id="qAxis"><option value="chronologie">Chronologie</option><option value="acces">Accès / déplacements</option><option value="mobile">Mobile / relations</option><option value="materiel">Matériel / technique</option><option value="responsabilite">Responsabilités</option></select></div>
+       <button class="btn primary block" onclick="submitCaseQuiz()">Sceller mes réponses</button></div>`;
+   }
+   if(STATE._caseQuizData===null)return `<div class="locked-state">Chargement des questions du dossier…</div>`;
+ }
  return `<div class="qcm-v11"><div class="field"><label for="qConvergence">1 · Le groupe converge-t-il déjà fortement ?</label><select id="qConvergence"><option value="0">Non</option><option value="1">Un peu</option><option value="2">Oui, très fortement</option></select></div><div class="field"><label for="qConfusion">2 · Le groupe est-il perdu ?</label><select id="qConfusion"><option value="0">Non</option><option value="1">Un peu</option><option value="2">Oui, fortement</option></select></div><div class="field"><label for="qAxis">3 · Quel axe manque le plus ?</label><select id="qAxis"><option value="chronologie">Chronologie</option><option value="acces">Accès / déplacements</option><option value="mobile">Mobile / relations</option><option value="materiel">Matériel / technique</option><option value="responsabilite">Degré de responsabilité</option></select></div><button class="btn primary block" onclick="submitDebrief()">Envoyer au MJ automatique</button></div>`;
+}
+async function submitCaseQuiz(){
+ const answers={};
+ for(let i=1;i<=4;i++){
+   const value=byId('igr650Answer_'+i)?.value;
+   if(!['a','b','c','u'].includes(value)){toast('Réponds aux quatre questions ou choisis « Je ne sais pas ».');return;}
+   answers['q'+i]=value;
+ }
+ try{
+   await rpc('igr_v650_case_quiz_submit',{
+     p_code:STATE.room,p_player_token:STATE.token,p_answers:answers,
+     p_convergence:+byId('qConvergence').value,
+     p_confusion:+byId('qConfusion').value,
+     p_axis:byId('qAxis').value
+   });
+   await syncNow(true);
+ }catch(e){console.error(e);toast('Questionnaire déjà scellé ou débrief terminé.');}
 }
 async function submitDebrief(){try{await rpc('igr_v4_submit_debrief',{p_code:STATE.room,p_player_token:STATE.token,p_convergence:+byId('qConvergence').value,p_confusion:+byId('qConfusion').value,p_axis:byId('qAxis').value});await syncNow(true)}catch(e){console.error(e);toast('Réponse déjà envoyée ou phase terminée.')}}
 function renderSpecialChoices(kind,items,title){
@@ -1726,7 +1779,8 @@ async function investigateByScenario(choice){
   const sevenCaseV289=STATE.sync?.room?.scenario_id==='007'&&STATE.sync?.scenario?.investigation_007_adaptive===true;
   const eightCaseV310=STATE.sync?.room?.scenario_id==='008'&&STATE.sync?.scenario?.investigation_008_adaptive===true;
   const nineCaseV340=STATE.sync?.room?.scenario_id==='009'&&STATE.sync?.scenario?.investigation_009_adaptive===true;
- try{await rpc(nineCaseV340?'igr_v340_009_investigate':eightCaseV310?'igr_v310_008_investigate':sevenCaseV289?'igr_v289_007_investigate':fiveCaseV286?'igr_v286_investigate':STATE.sync?.room?.scenario_id==='016'?'igr_v485_016_investigate':STATE.sync?.room?.scenario_id==='015'?'igr_v455_015_investigate':STATE.sync?.room?.scenario_id==='014'?'igr_v435_014_investigate':STATE.sync?.room?.scenario_id==='013'?'igr_v415_013_investigate':STATE.sync?.room?.scenario_id==='012'?'igr_v395_012_investigate':STATE.sync?.room?.scenario_id==='011'?'igr_v375_011_investigate':STATE.sync?.room?.scenario_id==='010'?'igr_v355_010_investigate':STATE.sync?.room?.scenario_id==='009'?'igr_v335_009_investigate':STATE.sync?.room?.scenario_id==='008'?'igr_v305_008_investigate':STATE.sync?.room?.scenario_id==='007'?'igr_v292_007_investigate':STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
+  const tenCaseV361=STATE.sync?.room?.scenario_id==='010'&&STATE.sync?.scenario?.investigation_010_adaptive===true;
+ try{await rpc(tenCaseV361?'igr_v361_010_investigate':nineCaseV340?'igr_v340_009_investigate':eightCaseV310?'igr_v310_008_investigate':sevenCaseV289?'igr_v289_007_investigate':fiveCaseV286?'igr_v286_investigate':STATE.sync?.room?.scenario_id==='016'?'igr_v485_016_investigate':STATE.sync?.room?.scenario_id==='015'?'igr_v455_015_investigate':STATE.sync?.room?.scenario_id==='014'?'igr_v435_014_investigate':STATE.sync?.room?.scenario_id==='013'?'igr_v415_013_investigate':STATE.sync?.room?.scenario_id==='012'?'igr_v395_012_investigate':STATE.sync?.room?.scenario_id==='011'?'igr_v375_011_investigate':STATE.sync?.room?.scenario_id==='010'?'igr_v355_010_investigate':STATE.sync?.room?.scenario_id==='009'?'igr_v335_009_investigate':STATE.sync?.room?.scenario_id==='008'?'igr_v305_008_investigate':STATE.sync?.room?.scenario_id==='007'?'igr_v292_007_investigate':STATE.sync?.room?.scenario_id==='006'?'igr_v262_006_investigate':STATE.sync?.room?.scenario_id==='005'?'igr_v252_005_investigate':STATE.sync?.room?.scenario_id==='004'?'igr_v232_004_investigate':STATE.sync?.room?.scenario_id==='003'?'igr_v223_003_investigate':STATE.sync?.room?.scenario_id==='002'?'igr_v203_002_investigate':'igr_v187_001_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}
  catch(e){console.error(e);toast('Investigation indisponible, déjà demandée ou phase terminée.')}
 }
 async function specialAction(kind,choice){try{await rpc('igr_v4_special_action',{p_code:STATE.room,p_player_token:STATE.token,p_kind:kind,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Action impossible ou déjà utilisée.')}}
