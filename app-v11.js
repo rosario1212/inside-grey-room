@@ -1603,7 +1603,7 @@ function renderInvestigationTab(){
  const used=!!d.scenario?.investigation_017_used||reports.some(e=>+e.cycle===+r.cycle);
  const allowed=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
  if(reports.length)body+=`<section class="private-block"><h3>PIÈCES COMPLÉMENTAIRES · ${reports.length}</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Constat')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
- if(allowed&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>LE PRIX DU SILENCE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste par cycle pour tout le camp Enquête. Les trois pièces garanties restent automatiques. Le témoignage du survivant est un récit à recouper, pas une preuve de complicité.</p>${used?'<div class="locked-state">Investigation réalisée · résultat disponible ci-dessus.</div>':choices.map((choice,i)=>`<button type="button" class="choice-row" onclick="investigate017Index(${i+1})"><span>${h(choice.title||'Vérifier cette piste')}</span><b>Examiner</b></button>`).join('')}</section>`;
+ if(allowed&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>LE PRIX DU SILENCE · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste par cycle pour tout le camp Enquête. Les trois pièces garanties restent automatiques. Le témoignage du survivant est un récit à recouper, pas une preuve de complicité.</p>${used?'<div class="locked-state">Investigation réalisée · résultat disponible ci-dessus.</div>':choices.map((choice,i)=>`<button type="button" class="choice-row" onclick="investigate017Choice('${h(choice.id)}')"><span>${h(choice.title||'Vérifier cette piste')}</span><b>Examiner</b></button>`).join('')}</section>`;
 }
 
  if(r.scenario_id==='018'&&['enqueteur','analyste'].includes(role)){
@@ -1774,6 +1774,7 @@ async function investigate020Index(i){try{await rpc('igr_v606_020_investigate_in
 async function investigate019Index(i){try{await rpc('igr_v576_019_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est pas disponible pour ce cycle.')}}
 async function investigate018Index(i){try{await rpc('igr_v546_018_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette piste n’est plus accessible pendant ce cycle.')}}
 async function investigate017Index(i){try{await rpc('igr_v526_017_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est plus disponible pour ce cycle.')}}
+async function investigate017Choice(choice){try{await rpc('igr_v525_017_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est plus disponible pour ce cycle.')}}
 async function investigateByScenario(choice){
  const fiveCaseV286=['001','002','003','004','005'].includes(STATE.sync?.room?.scenario_id)&&STATE.sync?.scenario?.investigation_deep_v286===true;
   const sevenCaseV289=STATE.sync?.room?.scenario_id==='007'&&STATE.sync?.scenario?.investigation_007_adaptive===true;
