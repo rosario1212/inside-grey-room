@@ -11,6 +11,7 @@ on:
       - 'scripts/**'
       - 'supabase/migrations/**'
       - 'index.html'
+      - 'terror-live-v681.*'
       - 'en.html'
       - 'service-worker.js'
       - 'manifest.webmanifest'
@@ -122,6 +123,8 @@ jobs:
         run: node scripts/v90-private-variant-check.mjs --self-test
       - name: Verify scenario 007 remains fail-closed until full editorial release
         run: node scripts/v284-007-guard-check.mjs
+      - name: Validate Terror v681 shared live siege, city prompt and factual questionnaire
+        run: node scripts/v681-terror-live-city-qa.mjs
       - name: Verify private 007 audit tool syntax without shipping story data
         run: python3 -m py_compile scripts/v285-007-private-pack-audit.py
       - name: Verify confidential variant staging and bundle exclusion
