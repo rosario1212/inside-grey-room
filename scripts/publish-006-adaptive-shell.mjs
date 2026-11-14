@@ -46,6 +46,8 @@ for(const page of ['index.html','en.html']){
  html=html.replace(/app-v11\.js\?v=[^"'<>\s]+/,appName+'?v='+tag);
  await writeFile(file,html,'utf8');
  await writeFile(path.join(dest,page.replace('.html','-'+tag+'.txt')),html,'utf8');
+ // Stable internal shell alias: the Worker never needs to guess a build tag.
+ await writeFile(path.join(dest,page.replace('.html','-latest-release.txt')),html,'utf8');
 }
 const swFile=path.join(dest,'service-worker.js');
 let sw=await readFile(swFile,'utf8');

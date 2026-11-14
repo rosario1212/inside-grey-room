@@ -7,10 +7,21 @@ const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 const [publishedHtml,publishedSw]=await Promise.all([
   readFile('dist/index.html','utf8'),readFile('dist/service-worker.js','utf8')
 ]);
-const clientAsset='app-v11-nine-cases-v347-20261113.js';
-const clientVersion=publishedHtml.match(/app-v11-nine-cases-v347-20261113\.js\?v=([^"'<>\s]+)/)?.[1]||'';
+// Every build receives a unique immutable JS asset. Verify the asset actually
+// referenced by the completed bundle, not a previous generation's filename.
+const clientMatch=publishedHtml.match(/\b(app-v11-[A-Za-z0-9._-]+\.js)\?v=([A-Za-z0-9._-]+)/);
+assert(clientMatch,'Built homepage must reference a versioned application asset');
+const clientAsset=clientMatch[1],clientVersion=clientMatch[2];
+assert.equal(clientAsset,'app-v11-'+clientVersion+'.js',
+ 'Application asset filename and cache version must agree');
+const publishedApp=await readFile('dist/'+clientAsset,'utf8');
+for(const marker of ['investigation_006_adaptive','igr_v650_case_quiz_get',
+ 'igr_v650_case_quiz_submit',"tenCaseV361?'igr_v361_010_investigate'",
+ "investigate017Choice('${h(choice.id)}')"]){
+  assert(publishedApp.includes(marker),'Built app is missing current runtime contract: '+marker);
+}
 const cacheVersion=publishedSw.match(/const CACHE='igr-([^']+)'/)?.[1]||'';
-assert.equal(clientVersion,'nine-cases-v347-20261113','The bundled 006 app release path is not current');
+assert(clientVersion.length>12,'The bundled application version is not current');
 assert(cacheVersion.includes('santoro-display-audit-20261108'),
  'The bundled PWA cache is not the certified Santoro revision');
 assert(publishedSw.includes('/'+clientAsset+'?v='+clientVersion),
@@ -27,7 +38,7 @@ let home,html='',observedClientVersion='';
 for(let attempt=0;attempt<homepageAttempts;attempt++){
   home=await get(versionedHome+'&edge_probe='+attempt);
   html=await home.text();
-  observedClientVersion=html.match(/app-v11-nine-cases-v[0-9]+-[0-9]+\.js\?v=[^"'<>\s]+/)?.[0]||'missing';
+  observedClientVersion=html.match(/app-v11-[A-Za-z0-9._-]+\.js\?v=[^"'<>\s]+/)?.[0]||'missing';
   if(home.status===200&&html.includes(clientAsset+'?v='+clientVersion))break;
   if(attempt+1<homepageAttempts){
     console.log('Homepage propagation: observed '+observedClientVersion+
@@ -41,7 +52,7 @@ assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'n
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
 assert.match(html,/casino-client-v105\.js\?v=105\.5/);
-assert.match(html,/app-v11-nine-cases-v347-20261113\.js\?v=nine-cases-v347-20261113/,'The edge homepage is using a stale Scenario 006 client');
+assert(html.includes(clientAsset+'?v='+clientVersion),'The edge homepage is using an outdated application');
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'The live questionnaire is missing');
 assert.match(html,/investigation-deep-v286\.js\?v=nine-cases-v347-20261113/,'The live five-case questionnaire is missing');
 const omertaScriptTag=html.match(/<script\s+src="omerta-v12-omerta-editorial-20261109\.js\?v=[^"]+"\s*><\/script>/);
@@ -93,7 +104,7 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   const cartelHome=await get('/'+releaseQuery);
   assert.equal(cartelHome.status,200);
   const text=await cartelHome.text();
-  liveHomeVersion=text.match(/app-v11-nine-cases-v347-20261113\.js\?v=([^"'<>\s]+)/)?.[1]||'';
+  liveHomeVersion=text.match(/app-v11-[A-Za-z0-9._-]+\.js\?v=([^"'<>\s]+)/)?.[1]||'';
   if(liveHomeVersion===clientVersion)break;
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
 }
@@ -142,6 +153,10 @@ const assertDeployedAsset=async (name,marker)=>{
 };
 await assertDeployedAsset('service-worker.js',"const CACHE='igr-"+cacheVersion+"';");
 await assertDeployedAsset(clientAsset,'investigation_006_adaptive');
+await assertDeployedAsset(clientAsset,'igr_v650_case_quiz_get');
+await assertDeployedAsset(clientAsset,'igr_v650_case_quiz_submit');
+await assertDeployedAsset(clientAsset,"tenCaseV361?'igr_v361_010_investigate'");
+await assertDeployedAsset(clientAsset,"investigate017Choice('${h(choice.id)}')");
 await assertDeployedAsset('investigation-accuracy-v284.js','igr_v284_006_submit_detail');
 await assertDeployedAsset('investigation-deep-v286.js','igr_v286_submit_detail');
 await assertDeployedAsset('investigation-007-v289.js','Que permet d’identifier le document utilisé lors du dernier rendez-vous');
