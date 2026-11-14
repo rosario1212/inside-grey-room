@@ -30,6 +30,7 @@
     document.getElementById('terrorV682Front')?.remove();
     document.getElementById('terrorV682Immediate')?.remove();
     document.getElementById('terrorV682Private')?.remove();
+    document.getElementById('terrorV682Gates')?.remove();
     const t=state(),city=e(t.city||'la ville'),controlled=Number(t.controlled??12);
     const atGates=controlled<=0||t.terminal_outcome==='front_at_gates';
     const outcome=String(t.terminal_outcome||'');
