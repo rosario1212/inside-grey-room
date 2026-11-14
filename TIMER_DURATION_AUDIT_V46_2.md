@@ -2,7 +2,7 @@
 
 Date : 2026-10-05
 
-> Ce document **remplace la référence canonique de `TIMER_DURATION_AUDIT_V46_1.md`**. Le document v46.1 reste conservé uniquement comme historique de la régression 6 ↔ 8 minutes.
+> Ce document **remplace la référence canonique de `TIMER_DURATION_AUDIT_V46_1.md`**. Le rapport v46.1, obsolète, a été retiré de l'arborescence courante et demeure consultable dans l'historique Git pour comprendre la régression 6 ↔ 8 minutes.
 
 ## Référence canonique actuelle
 
