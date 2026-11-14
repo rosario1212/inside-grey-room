@@ -22,7 +22,7 @@
       detail:'Le FDR est presque aux portes. Les enquêteurs doivent confirmer ou réfuter une présence intérieure sans céder à une fausse alerte.',
       risk:'La fidélité au Front ne dit pas qui contrôlera la porte ni si l’un des captifs sera épargné.'}
   };
-  const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v682_at_gates','terror_v682_final_status']);
+  const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v688_military_order','terror_v682_at_gates','terror_v682_final_status','terror_v688_captivity']);
   function frontBoard(){
     if(!inDlc()||STATE?.view!=='game')return;
     const d=STATE?.sync,board=document.getElementById('terrorV681Board');
