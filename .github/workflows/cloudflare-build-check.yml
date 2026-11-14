@@ -159,7 +159,9 @@ jobs:
           node scripts/v580-019-release-integrity-check.mjs
           node scripts/v665-019-three-killer-release-check.mjs
       - name: Verify 020 sealed finale, roles, forensic proof and cache
-        run: node scripts/v620-020-release-integrity-check.mjs
+        run: |
+          node scripts/v620-020-release-integrity-check.mjs
+          node scripts/v675-020-three-origin-release-check.mjs
       - name: Audit v631 corrected spy scoring, irreversible penalties and two-stage decisions
         run: node scripts/v631-spy-audit-regression-check.mjs
       - name: Audit v630 optional secret spy role and secure mission
