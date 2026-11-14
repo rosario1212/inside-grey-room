@@ -94,16 +94,23 @@ n:=replace(n,' select * into room from public.igr_v4_rooms where code=upper(trim
  select * into room from public.igr_v4_rooms where code=upper(trim(p_code));');
 IF n=d THEN RAISE EXCEPTION '019 canonical function unchanged';END IF;EXECUTE n;END $patch$;
 
--- Sanitise the publicly queryable legacy generic pack: it must not retain a false one-killer finale.
+-- Sanitise publicly queryable legacy spoiler material while retaining core-pack validation.
 UPDATE public.igr_v4_scenario_packs a SET pack=
  (a.pack-'truth'-'trames'-'news')||jsonb_build_object(
- 'truth','{}'::jsonb,'trames','[]'::jsonb,'news','[]'::jsonb,
+ 'truth','{}'::jsonb,
+ 'news','[]'::jsonb,
  'context','Un ancien responsable financier est tué pendant un gala avant de remettre un dossier complet sur des détournements auxquels il avait participé. Le mécène, la sécurité et un intermédiaire institutionnel cachent des décisions différentes.',
+ 'trames',jsonb_build_array(
+  jsonb_build_object('title','LE DOSSIER ATTENDU','text','La victime avait annoncé une remise de pièces financières; les copies disponibles ne coïncident pas toutes.','min_cycle',1,'kind','balanced','axes',jsonb_build_array('mobile')),
+  jsonb_build_object('title','LE DISPOSITIF MODIFIÉ','text','Des déplacements et accès techniques ont changé pendant la soirée. Leur origine doit être vérifiée.','min_cycle',2,'kind','balanced','axes',jsonb_build_array('acces')),
+  jsonb_build_object('title','LES COPIES CONTRADICTOIRES','text','Plusieurs versions des registres et des documents circulent; elles nécessitent des recoupements.','min_cycle',3,'kind','balanced','axes',jsonb_build_array('materiel'))
+ ),
  'suspects',jsonb_build_array(
-  jsonb_build_object('place','Figure influente qui finançait le gala','position','Justifier la pression commandée'),
-  jsonb_build_object('place','Chef de sécurité chargé des accès','position','Justifier les rondes et décisions de surveillance'),
-  jsonb_build_object('place','Intermédiaire institutionnel chargé des contrôles','position','Justifier la circulation des documents')
- )) WHERE scenario_id='019';
+  jsonb_build_object('place','Figure influente qui finançait le gala','position','Justifier la pression commandée','chronology','Tu as participé à l organisation du gala et contesté une remise de pièces.','hide','Tu n as pas décrit l ensemble de tes contacts avec la victime.','anchors','Tu connaissais certains risques financiers liés au dossier.','objective_main','Expliquer ton intérêt à contenir le scandale sans inventer de faits.'),
+  jsonb_build_object('place','Chef de sécurité chargé des accès','position','Justifier les rondes et décisions de surveillance','chronology','Tu as coordonné les accès et les agents pendant le gala.','hide','Certaines modifications de service sont absentes du premier rapport.','anchors','Les journaux de sécurité ne précisent pas le motif de chaque accès.','objective_main','Défendre tes actes et distinguer tes responsabilités de celles des autres.'),
+  jsonb_build_object('place','Intermédiaire institutionnel chargé des contrôles','position','Justifier la circulation des documents','chronology','Tu as pris part aux décisions sur le dossier et les archives du gala.','hide','Tu n as pas déclaré toutes les démarches administratives.','anchors','Tu disposais de documents sur les contrôles de la fondation.','objective_main','Expliquer tes interventions sur les documents sans te substituer aux enquêteurs.')
+ )
+) WHERE scenario_id='019';
 UPDATE igr_private.igr_v99_variant_manuscripts a
 SET manuscript=(d.proposed_manuscript-'v665_editorial_status')||
  jsonb_build_object('v665_editorial_version','019-v665-20261114-three-killers',
