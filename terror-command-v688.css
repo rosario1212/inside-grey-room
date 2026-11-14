@@ -1,0 +1,21 @@
+/* v688 Military council / common captivity finale. */
+.terror-v688-command{margin:12px 0;border:1px solid #8b7661;border-radius:11px;padding:14px;background:linear-gradient(145deg,#23251e,#15191c 70%,#1b201b);color:#eae7dc}
+.terror-v688-command-head{display:flex;gap:7px;flex-direction:column}
+.terror-v688-command-head small{font-size:10px;letter-spacing:.11em;color:#c8ba99}
+.terror-v688-command-head strong{font-size:18px;line-height:1.25;color:#f2e0bc}
+.terror-v688-command>p{margin:9px 0;font-size:12px;color:#cfccbe;line-height:1.5}
+.terror-v688-intel{background:rgba(88,102,80,.2);border:1px solid rgba(151,174,132,.26);border-radius:7px;padding:8px 10px;font-size:12px;margin:10px 0;color:#e0e8cf}
+.terror-v688-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.terror-v688-option{text-align:left;padding:12px;border-radius:9px;color:#eee9df;background:rgba(35,43,34,.82);border:1px solid rgba(182,161,113,.55);cursor:pointer;font:inherit}
+.terror-v688-option:hover:not(:disabled){background:rgba(65,76,54,.82);border-color:#e1c992}
+.terror-v688-option:focus-visible{outline:3px solid #fff5c8;outline-offset:2px}
+.terror-v688-option:disabled{opacity:.45;cursor:not-allowed}
+.terror-v688-option b{display:block;font-size:13px;line-height:1.35}
+.terror-v688-option small{display:block;font-size:11px;color:#cbc6b5;margin-top:7px;line-height:1.45}
+.terror-v688-confirm{padding:10px;border-radius:8px;border-left:4px solid #a6be8c;background:rgba(102,137,85,.18);font-weight:700;font-size:12px}
+.terror-v688-note{display:block;color:#b7afa1;font-size:10px;line-height:1.5;margin-top:11px}
+.terror-v688-capture{padding:18px 15px;margin:12px 0 22px;background:radial-gradient(circle at 75% 10%,rgba(153,54,48,.4),transparent 65%),#1b1216;border:1px solid #ba6656;border-radius:12px;color:#faf1ec}
+.terror-v688-capture>small{font-size:11px;color:#f4baa2;letter-spacing:.09em}
+.terror-v688-capture h2{margin:10px 0;font-size:clamp(21px,5vw,30px);line-height:1.15}
+.terror-v688-capture p{font-size:13px;line-height:1.62;color:#eee0da}
+.terror-v688-surrender{font-size:11px;letter-spacing:.07em;font-weight:800;color:#ffbaaa;padding-top:10px;border-top:1px solid rgba(231,129,103,.28)}

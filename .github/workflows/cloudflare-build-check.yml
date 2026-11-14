@@ -12,6 +12,7 @@ on:
       - 'supabase/migrations/**'
       - 'index.html'
       - 'terror-live-v681.*'
+      - 'terror-front-v682.*'
       - 'en.html'
       - 'service-worker.js'
       - 'manifest.webmanifest'
@@ -125,6 +126,8 @@ jobs:
         run: node scripts/v284-007-guard-check.mjs
       - name: Validate Terror v681 shared live siege, city prompt and factual questionnaire
         run: node scripts/v681-terror-live-city-qa.mjs
+      - name: Validate FDR country and national counteroffensive with public recovered sectors
+        run: node scripts/v683-terror-fdr-reconquest-check.mjs
       - name: Verify private 007 audit tool syntax without shipping story data
         run: python3 -m py_compile scripts/v285-007-private-pack-audit.py
       - name: Verify confidential variant staging and bundle exclusion

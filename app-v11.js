@@ -53,7 +53,10 @@ const SCENARIO_ROLES = {
 '017':{required:['Enquêteur','Analyste','Procureur','3 suspects','1 témoin'],optional:['2e témoin','Avocat','Expert']},
 '018':{required:['Enquêteur','Analyste','Inspecteur','3 suspects'],optional:['Expert','Avocat','Journaliste']},
 '019':{required:['Enquêteur','Analyste','Procureur','Juge','Journaliste','Avocat','3 suspects'],optional:[]},
-'020':{required:['Enquêteur','Analyste','Inspecteur','Procureur','Juge','Expert','4 suspects','Avocat','Journaliste','Témoin'],optional:['2e Avocat','2e Journaliste','2e Témoin']}
+'020':{required:['Enquêteur','Analyste','Inspecteur','Procureur','Juge','Expert','4 suspects','Avocat','Journaliste','Témoin'],optional:['2e Avocat','2e Journaliste','2e Témoin']},
+'026':{required:['Enquêteur','Analyste','Officier des opérations','3 suspects'],optional:['Expert']},
+'027':{required:['Enquêteur','Analyste','Inspecteur','Officier des opérations','3 suspects'],optional:['Procureur']},
+'028':{required:['Enquêteur','Analyste','Officier des opérations','3 suspects'],optional:['Inspecteur','Expert']}
 };
 
 function playerCountLabel(sc){
@@ -76,7 +79,7 @@ function rolesBlock(sc){
 const ROLE_LABEL_TO_ID={
  'Enquêteur':'enqueteur','Analyste':'analyste','Suspect':'suspect','suspect':'suspect','suspects':'suspect',
  'Procureur':'procureur','Juge':'juge','Journaliste':'journaliste','Avocat':'maitre','Maître':'maitre',
- 'Inspecteur':'inspecteur','Expert':'expert','Témoin':'temoin','témoin':'temoin','témoins':'temoin'
+ 'Inspecteur':'inspecteur','Expert':'expert','Officier des opérations':'officier_liaison','Témoin':'temoin','témoin':'temoin','témoins':'temoin'
 };
 function expandRoleLabel(label){
  const x=String(label||'').trim();
@@ -108,6 +111,7 @@ function roleChoiceSummary(sc,count,players){
 }
 
 const ROLE_INFO = {
+officier_liaison:{label:'Officier des opérations',win:'Décide des opérations nationales avec les moyens rendus disponibles par les renseignements authentifiés.',body:'À chaque cycle, choisis une opération militaire parmi les options autorisées : défendre, protéger les civils ou reprendre un secteur si les données le permettent. Tu ne disposes ni du corrigé ni du verdict judiciaire.'},
 enqueteur:{label:'Enquêteur',win:'Reconstruis correctement les faits, les responsabilités et le degré réel d’implication.',body:'Tu diriges les interrogatoires, choisis certaines décisions d’enquête et portes la reconstruction factuelle finale.'},
 analyste:{label:'Analyste',win:'Produis la reconstruction psychologique la plus juste.',body:'Tu observes les interrogatoires, utilises le Canal Enquête et participes aux entretiens annexes avec l’Enquêteur.'},
 suspect:{label:'Suspect',win:'Fais respecter la frontière réelle de ta responsabilité.',body:'Tu peux mentir, manipuler, accuser, minimiser ou admettre partiellement. Être compromis ne signifie pas automatiquement perdre.'},

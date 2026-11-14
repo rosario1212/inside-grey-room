@@ -1,0 +1,53 @@
+/* DLC Terror v682: credible public panic without depicting real military movement. */
+.terror-v682-front{margin:10px 0 13px;border:1px solid rgba(190,102,66,.45);border-radius:11px;padding:13px 15px;background:linear-gradient(105deg,rgba(47,23,19,.95),rgba(13,17,22,.98));color:#eee5dd}
+.terror-v682-kicker{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:10px;letter-spacing:.12em;color:#d2a88c}
+.terror-v682-name{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:9px}
+.terror-v682-name b{font-size:15px;font-weight:800;letter-spacing:.03em}
+.terror-v682-name span{font-size:10px;color:#e8bfa2;border:1px solid rgba(227,163,128,.35);border-radius:4px;padding:4px 6px}
+.terror-v682-front p{color:#c3bbb6;font-size:12px;line-height:1.55;margin:9px 0}
+.terror-v682-front summary{cursor:pointer;color:#dcb99d;font-size:12px;min-height:30px}
+.terror-v682-front details p{color:#bdb5ae}
+.terror-v682-breaking{margin:10px 0;padding:13px;display:flex;align-items:flex-start;gap:10px;border:1px solid rgba(221,135,80,.5);border-radius:9px;background:rgba(68,34,25,.28);color:#f5e6de}
+.terror-v682-breaking small{color:#daae8b;display:block;font-size:10px;letter-spacing:.08em;margin-bottom:5px}
+.terror-v682-breaking b{display:block;font-size:14px;line-height:1.3}
+.terror-v682-breaking p{font-size:12px;line-height:1.5;color:#d3bdb4;margin:7px 0 0}
+.terror-v682-live-dot{flex:none;margin-top:4px;width:10px;height:10px;border-radius:50%;background:#e47f58;box-shadow:0 0 0 4px rgba(229,121,75,.14);animation:terror-v682-beacon 1.8s infinite}
+.terror-v682-urgent{border-color:#d46252;background:linear-gradient(100deg,rgba(103,26,25,.4),rgba(13,17,22,.95))}
+.terror-v682-gates{position:relative;overflow:hidden;margin:13px 0;border:1px solid rgba(248,117,86,.8);border-radius:12px;padding:20px 15px;background:radial-gradient(circle at 70% 10%,rgba(164,42,37,.35),transparent 64%),#1a0c10;color:#fff;box-shadow:0 0 0 1px rgba(164,58,42,.15),0 0 28px rgba(158,43,36,.13)}
+.terror-v682-gates:before{content:'';height:3px;background:#db5f50;position:absolute;top:0;left:0;right:0}
+.terror-v682-gate-label{font-size:10px;color:#eeb29b;letter-spacing:.14em;margin-bottom:8px}
+.terror-v682-gates strong{font-size:clamp(24px,5vw,38px);font-weight:900;display:block;letter-spacing:.01em;line-height:1.05;color:#fff0e7}
+.terror-v682-gates p{margin:12px 0;line-height:1.6;font-size:13px;color:#ead8d1}
+.terror-v682-gate-sub{border-top:1px solid rgba(244,155,121,.25);padding-top:9px;font-size:11px;font-weight:800;letter-spacing:.055em;color:#f2b49e}
+.terror-v682-personal{margin:10px 0 16px;padding:12px 13px;background:rgba(40,36,31,.7);border:1px solid rgba(219,179,125,.26);border-radius:9px;color:#eee}
+.terror-v682-personal b{color:#e9bd88;font-size:11px;letter-spacing:.045em}
+.terror-v682-personal p{color:#d0c6bb;line-height:1.55;margin:7px 0 0;font-size:12px}
+.terror-v682-lobby-label{font-size:12px;font-weight:600;color:#dfb399}
+@keyframes terror-v682-beacon{50%{opacity:.4;transform:scale(.86)}}
+@media (prefers-reduced-motion:reduce){.terror-v682-live-dot{animation:none}}
+@media (max-width:440px){.terror-v682-name{align-items:flex-start;flex-direction:column}.terror-v682-front{padding:12px}.terror-v682-gates{padding:17px 12px}}
+
+
+.terror-v682-liaison{border-left:3px solid rgba(115,170,151,.85);margin-top:12px;padding:10px 11px;background:rgba(48,78,73,.2);border-radius:3px 8px 8px 3px}
+.terror-v682-liaison small{display:block;color:#bcd2c5;font-size:10px;letter-spacing:.075em;margin-bottom:5px}
+.terror-v682-liaison strong{color:#cee9d9;font-size:13px}
+.terror-v682-liaison p{color:#c2d0c4;line-height:1.5;font-size:11px;margin:6px 0 0}
+.terror-v681-recovered{border-color:rgba(110,167,142,.55);box-shadow:0 0 0 1px rgba(110,167,142,.18),0 0 23px rgba(61,143,108,.12)}
+.terror-v681-district.is-recovered{animation:terror-v683-regain 1.7s ease;border-color:#a9ceac;background:linear-gradient(155deg,rgba(72,141,102,.4),rgba(23,49,35,.75))}
+@keyframes terror-v683-regain{0%{filter:brightness(1.85);transform:scale(1.035)}100%{filter:brightness(1);transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.terror-v681-district.is-recovered{animation:none!important}}
+
+/* Valtren's last capital — public action-to-consequence ledger. */
+.terror-v681-consequence{margin:12px 0 0;padding:12px 13px;border-left:3px solid #9ab6a0;border-radius:3px 8px 8px 3px;background:linear-gradient(100deg,rgba(43,82,65,.23),rgba(12,18,19,.62));color:#e7eadf}
+.terror-v681-consequence small{display:block;color:#b7d2b9;font-size:10px;letter-spacing:.095em;margin-bottom:6px}
+.terror-v681-consequence strong{font-size:13px;color:#f3e8d7;line-height:1.5}
+.terror-v681-consequence p{color:#d2d1c8;font-size:12px;line-height:1.56;margin:7px 0 0}
+.terror-v686-chronicle{margin:10px 0 14px;padding:11px;border:1px solid rgba(194,146,98,.25);border-radius:10px;background:rgba(16,19,20,.82);color:#e9e4de}
+.terror-v686-chronicle-title{font-size:10px;color:#dfc5a5;letter-spacing:.1em;padding:0 0 9px;border-bottom:1px solid rgba(210,164,125,.18)}
+.terror-v686-news{padding:9px 4px 9px 10px;margin:5px 0 0;border-left:2px solid rgba(204,150,118,.5)}
+.terror-v686-news.is-good{border-left-color:#89b896;background:rgba(58,97,69,.12)}
+.terror-v686-news.is-bad{border-left-color:#d48c7c;background:rgba(99,41,37,.15)}
+.terror-v686-news span{display:block;font-size:12px;font-weight:700;line-height:1.45;color:#f1e7dd}
+.terror-v686-news small{display:block;color:#c7bdb2;font-size:11px;line-height:1.43;margin-top:4px;letter-spacing:0}
+.terror-v682-recapture{border-color:rgba(123,183,147,.62);background:linear-gradient(120deg,rgba(35,77,55,.35),rgba(15,27,20,.8))}
+.terror-v682-score{font-size:12px;color:#f3d4aa;font-weight:700;margin-top:8px}

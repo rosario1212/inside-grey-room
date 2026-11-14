@@ -21,10 +21,10 @@
     const city=cityName(),canSet=!!STATE.hostToken;
     const section=document.createElement('section');
     section.className='terror-v681-city-lobby';section.id='terrorV681CityLobby';
-    section.innerHTML='<div class="terror-v681-city-head"><span>TERREUR · LOCALISATION DU DOSSIER</span><b>Quelle ville le groupe défendra-t-il ?</b></div>'+
-      '<p>Une seule ville choisie collectivement. Son nom sera affiché à tous les joueurs pendant la chute fictive de douze secteurs. Aucune géolocalisation.</p>'+
-      (city?'<div class="terror-v681-current-city">VILLE DU DOSSIER · <strong>'+esc(city)+'</strong></div>':
-       '<div class="terror-v681-warning">La ville doit être indiquée avant de lancer cette partie.</div>')+
+    section.innerHTML='<div class="terror-v681-city-head"><span>TERREUR · LOCALISATION DU DOSSIER</span><b>Quel nom portera la dernière capitale libre ?</b></div>'+
+      '<p>Le nom choisi désigne la capitale de la République fictive de Almizia. Le FDR a déjà pris les autres grandes villes. Cette dernière capitale résiste avec douze secteurs de jeu. Aucune géolocalisation.</p>'+
+      (city?'<div class="terror-v681-current-city">CAPITALE D’ALMIZIA · <strong>'+esc(city)+'</strong></div>':
+       '<div class="terror-v681-warning">Nomme la capitale avant de lancer cette partie.</div>')+
       (canSet?'<div class="terror-v681-city-entry"><label for="terrorV681CityName">Nom de la ville (2 à 36 caractères)</label>'+
        '<div class="terror-v681-input-row"><input id="terrorV681CityName" maxlength="36" autocomplete="off" placeholder="Ex. : Bagdad, Genève, Paris" value="'+esc(city)+'"><button type="button" class="btn primary" onclick="terrorV681SetCity()">Valider la ville</button></div></div>':
        '<p class="terror-v681-muted">L’hôte valide la ville retenue par les joueurs. Elle devient commune à toute la partie.</p>');
@@ -35,7 +35,7 @@
     if(city.length<2||city.length>36){toast('Entre un nom de ville de 2 à 36 caractères.');return;}
     try{
       await rpc('igr_v681_terror_set_city',{p_code:STATE.room,p_host_token:STATE.hostToken,p_city:city});
-      await syncNow(true);toast('Ville du dossier enregistrée pour tous.');
+      await syncNow(true);toast('Capitale enregistrée pour tous les joueurs.');
     }catch(e){console.error('terror city',e);toast('Impossible de valider ce nom de ville.');}
   };
 
@@ -59,10 +59,11 @@
     const city=w.city||'VILLE NON CONFIGURÉE',r=d.room;
     const [title,subtitle]=mood(sid()),key=r.code+':'+(w.last_scored_cycle||0)+':'+controlled;
     const changed=previousCityKey===r.code && previousControlled!==null && controlled<previousControlled;
+    const reclaimed=previousCityKey===r.code && previousControlled!==null && controlled>previousControlled;
     if(previousCityKey!==r.code){previousCityKey=r.code;previousControlled=null;}
     const squares=Array.from({length:total},(_,i)=>{
-      const held=i<controlled,fallen=changed&&i>=controlled&&i<previousControlled;
-      return '<div class="terror-v681-district '+(held?'is-held':'is-lost')+(fallen?' is-falling':'')+
+      const held=i<controlled,fallen=changed&&i>=controlled&&i<previousControlled,restored=reclaimed&&i>=previousControlled&&i<controlled;
+      return '<div class="terror-v681-district '+(held?'is-held':'is-lost')+(fallen?' is-falling':'')+(restored?' is-recovered':'')+
        '" role="listitem" aria-label="Secteur '+String(i+1)+' : '+(held?'encore administré':'hors de contrôle')+'">'+
        '<span>SECTEUR '+String(i+1).padStart(2,'0')+'</span><b>'+(held?'SOUS CONTRÔLE':'PERDU')+'</b></div>';
     }).join('');
@@ -70,19 +71,20 @@
     const stage=safeNum(w.last_scored_cycle,0,3);
     const history=Array.isArray(w.history)?w.history:[];
     const last=history.length?history[history.length-1]:null;
+    const consequence=last?.correct_answers!==undefined?'<div class="terror-v681-consequence"><small>IMPACT DE VOS RÉPONSES · CYCLE '+Number(last.cycle)+'</small><strong>'+Number(last.correct_answers)+'/6 RÉPONSES EXACTES · '+esc(last.band||'')+'</strong><p>'+esc(last.decision_effect==='national_reconquest'?'Une synthèse du camp d’enquête a été authentifiée puis recoupée par la liaison nationale. Les défenseurs d’Almizia ont rétabli leur présence dans un secteur contesté.':last.decision_effect==='fdr_breakthrough'?'Les conclusions trop incertaines n’ont pas pu être validées. Les défenseurs ont perdu du temps et le FDR progresse plus rapidement.':'Les vérifications sont partielles : les forces nationales maintiennent une partie des protections, mais aucun recoupement n’a justifié de reconquête.')+'</p></div>':'';
     const section=document.createElement('section');section.id='terrorV681Board';
-    section.className='terror-v681-live'+(changed?' terror-v681-breakthrough':'');
+    section.className='terror-v681-live'+(changed?' terror-v681-breakthrough':'')+(reclaimed?' terror-v681-recovered':'');
     section.innerHTML='<div class="terror-v681-head"><div><small>TERREUR · '+esc(title)+'</small>'+
-       '<h2>'+esc(city.toUpperCase())+' <span>SE DÉSAGRÈGE</span></h2><p>'+esc(subtitle)+'</p></div>'+
-       '<div class="terror-v681-synch"><span class="terror-v681-dot"></span> ÉTAT COMMUN · DIRECT</div></div>'+
+       '<h2>'+esc(city.toUpperCase())+' <span>'+esc(w.band==='CONTRE-OFFENSIVE NATIONALE'?'REPOUSSE LE FDR':'ASSIÉGÉE PAR LE FDR')+'</span></h2><p>'+esc(subtitle)+'</p></div>'+
+       '<div class="terror-v681-synch"><span class="terror-v681-dot"></span> DERNIÈRE CAPITALE · DIRECT</div></div>'+
        '<div class="terror-v681-stats"><div><small>SECTEURS ADMINISTRÉS</small><strong>'+controlled+'<em> / 12</em></strong></div>'+
        '<div><small>PRESSION DU SIÈGE</small><strong>'+Math.round(pressure)+'<em> / 100</em></strong></div>'+
        '<div><small>MENACE ACTUELLE</small><strong class="terror-v681-level">'+esc(statusLabel({controlled,pressure}))+'</strong></div></div>'+
        '<div class="terror-v681-meter" role="progressbar" aria-valuenow="'+Math.round(pressure)+'" aria-valuemin="0" aria-valuemax="100" aria-label="Pression du siège"><div style="width:'+pressure+'%"></div></div>'+
-       '<div class="terror-v681-map-title"><b>ÉTAT DES 12 SECTEURS · '+esc(city)+'</b><small>Schéma fictif partagé, sans géographie réelle</small></div>'+
+       '<div class="terror-v681-map-title"><b>CAPITALE D’ALMIZIA · '+esc(city)+' · LES 12 SECTEURS</b><small>Schéma fictif partagé, sans géographie réelle</small></div>'+
        '<div class="terror-v681-map" role="list" aria-label="Les douze secteurs de '+esc(city)+'">'+squares+'</div>'+
        '<div class="terror-v681-status"><span>Grey Room · centre judiciaire</span><strong>'+esc(last?.band||'La menace se rapproche à chaque cycle')+'</strong>'+
-       '<small>Cycle évalué : '+stage+'/3 · Les réponses déterminent l’accélération à la fin du débrief.</small></div>';
+       '<small>Cycle évalué : '+stage+'/3 · Vos réponses influencent la chute ou la reprise des secteurs.</small></div>'+consequence;
     strip.insertAdjacentElement('afterend',section);
     const legacy=document.getElementById('terrorRuntimeV33');
     if(legacy){
