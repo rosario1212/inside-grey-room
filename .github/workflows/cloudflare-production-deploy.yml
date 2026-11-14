@@ -69,6 +69,7 @@ jobs:
           node scripts/v491-016-release-integrity-check.mjs
           node scripts/v532-017-release-integrity-check.mjs
           node scripts/v560-018-release-integrity-check.mjs
+          node scripts/v651-018-adaptive-release-check.mjs
           node scripts/v580-019-release-integrity-check.mjs
           node scripts/v620-020-release-integrity-check.mjs
           # Release hygiene: Omerta standalone checks must pass before any live Worker deploy.
