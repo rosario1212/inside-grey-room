@@ -144,36 +144,226 @@ END $function$;
 REVOKE ALL ON FUNCTION public.igr_v650_018_investigate_choice(text,uuid,text) FROM public,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_v650_018_investigate_choice(text,uuid,text) TO anon,authenticated;
 
--- Patch existing canonical readers without replacing unrelated scenarios.
-DO $patch$
-DECLARE d text; n text;
+
+CREATE OR REPLACE FUNCTION igr_private.igr_v540_018_build_pack(p_variant text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE
+ SET search_path TO 'pg_catalog'
+AS $function$
+declare m jsonb; base jsonb; t jsonb; choices jsonb; witness_cards jsonb; private_cards jsonb; relation_map jsonb; lvl jsonb; num int;
+begin
+ if p_variant not in ('A','B','C') then raise exception 'Invalid 018 variant';end if;
+ select manuscript into m from igr_private.igr_v99_variant_manuscripts
+ where scenario_id='018' and variant_id=p_variant;
+ if m is null then raise exception 'Private manuscript missing';end if;
+ t=m->'v540_runtime_trames';choices=m->'v540_investigations';witness_cards=m->'witnesses';
+ if jsonb_array_length(coalesce(t,'[]'::jsonb))<>3 or
+   jsonb_array_length(coalesce(choices,'[]'::jsonb))<>20 or
+
+   jsonb_typeof(m->'v540_verdict')<>'object' or
+   not ((m->'v540_verdict') ?& array['killer','tableau','prior_plan']) or
+   (select count(*) from jsonb_object_keys(m->'v540_verdict'))<>3
+ then raise exception 'Private evidence pack is incomplete';end if;
+ for num in 1..3 loop
+  if (select count(*) from jsonb_array_elements(t) e
+    where (e->>'min_cycle')::int=num
+    and coalesce((e->>'guaranteed')::boolean,false)=true
+    and length(coalesce(e->>'source',''))>20)<>1
+    or (select count(*) from jsonb_array_elements(choices) e where (e->>'cycle')::int=num)<>(case when num=1 then 6 else 7 end)
+  then raise exception '018 unsolvable cycle %',num;end if;
+ end loop;
+ if (select count(distinct e->>'id') from jsonb_array_elements(choices) e)<>20
+ then raise exception '018 duplicate investigation IDs';end if;
+ select pack into base from public.igr_v4_scenario_packs where scenario_id='018';
+ if base is null or jsonb_array_length(coalesce(base->'suspects','[]'::jsonb))<>3 then
+   raise exception '018 base case missing';end if;
+ select jsonb_agg(
+   jsonb_build_object(
+    'place',e->>'identity',
+    'chronology',e->>'your_chronology',
+    'hide',e->>'what_you_hide',
+    'anchors',e->>'what_you_know',
+    'position',e->>'objective',
+    'slot',(e->>'slot')::int
+   ) order by (e->>'slot')::int
+ ) into private_cards from jsonb_array_elements(m->'private_cards') e;
+ if jsonb_array_length(coalesce(private_cards,'[]'::jsonb))<>3 then
+   raise exception '018 incomplete suspect cards';end if;
+ select jsonb_object_agg(k,
+  (select jsonb_agg(jsonb_build_object(
+     'slot',(a->>'target_slot')::int,
+     'text',coalesce(a->>'known_fact','')||' · '||coalesce(a->>'conversation_tension',''))
+     order by (a->>'target_slot')::int)
+   from jsonb_array_elements(v) a)
+ ) into relation_map
+ from jsonb_each(m->'relationships') z(k,v);
+ if (select count(*) from jsonb_object_keys(relation_map))<>3 then
+   raise exception '018 missing private relationships';end if;
+ lvl=jsonb_build_array(
+  (m#>>'{canonical_truth,responsibility_by_slot,1}')::int,
+  (m#>>'{canonical_truth,responsibility_by_slot,2}')::int,
+  (m#>>'{canonical_truth,responsibility_by_slot,3}')::int);
+ return base || jsonb_build_object(
+  'context',m->>'public_briefing',
+  'suspects',private_cards,
+  'witnesses',coalesce(witness_cards,'[]'::jsonb),
+  'relations',relation_map,
+  'trames',t,
+  'investigation_018',choices,
+  'field_actions',coalesce(m->'v650_field_actions',base->'field_actions'),
+  'truth',(base->'truth')||jsonb_build_object(
+    'summary',m->'canonical_truth'->>'summary',
+    'levels',lvl,
+    'reconstruction_018',m->'v540_verdict',
+    'cinematic',jsonb_build_object('final_line',m->>'final_reveal')
+  )
+ );
+end;
+$function$
+
+CREATE OR REPLACE FUNCTION igr_private.igr_v540_018_safe_pack(p_variant text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO 'pg_catalog'
+AS $function$
+DECLARE p jsonb;m jsonb;
 BEGIN
- SELECT pg_get_functiondef('igr_private.igr_v540_018_build_pack(text)'::regprocedure) INTO d;
- n:=replace(d,'jsonb_array_length(coalesce(choices,''[]''::jsonb))<>9',
-   'jsonb_array_length(coalesce(choices,''[]''::jsonb))<>20');
- n:=replace(n,'(e->>''cycle'')::int=num)<>3',
-   '(e->>''cycle'')::int=num)<>(case when num=1 then 6 else 7 end)');
- n:=replace(n,')<>9' || E'\n' || ' then raise exception ''017 duplicate',')<>20'||E'\n'||' then raise exception ''018 duplicate');
- n:=replace(n,'then raise exception ''017', 'then raise exception ''018');
- n:=replace(n,'''investigation_018'',choices,',
-   '''investigation_018'',choices,'||E'\n'||'  ''field_actions'',coalesce(m->''v650_field_actions'',base->''field_actions''),');
- IF n=d OR position('field_actions' IN n)=0 OR position('<>20' IN n)=0 THEN
-  RAISE EXCEPTION '018 build pack patch failed';
+ p:=igr_private.igr_v540_018_build_pack(p_variant);
+ SELECT manuscript INTO m FROM igr_private.igr_v99_variant_manuscripts
+ WHERE scenario_id='018' AND variant_id=p_variant;
+ IF m IS NULL OR jsonb_typeof(m->'v540_verdict')<>'object'
+  OR NOT (m->'v540_verdict') ?& ARRAY['killer','tableau','prior_plan']
+  OR (SELECT count(*) FROM jsonb_object_keys(m->'v540_verdict'))<>3
+  OR jsonb_array_length(coalesce(m->'v540_expert_actions','[]'::jsonb))<>3
+ THEN RAISE EXCEPTION '017 incomplete narrative or expert evidence';END IF;
+ p:=jsonb_set(p,'{truth,reconstruction_018}',m->'v540_verdict',true);
+ RETURN p || jsonb_build_object(
+ 'expert_actions',m->'v540_expert_actions',
+ 'news',jsonb_build_array(
+  jsonb_build_object('id','018-news-1','title','NEUF ABSENTS','text','Neuf assiettes, neuf noms, mais aucun témoin ne peut parler à la place des absents.'),
+  jsonb_build_object('id','018-news-2','title','DEUX SCÈNES POSSIBLES','text','Les traces matérielles doivent dissocier la mort de la composition du tableau.'),
+  jsonb_build_object('id','018-news-3','title','TROIS MENSONGES','text','Une anomalie financière, des rancœurs et des visites distinctes ne prouvent pas une action collective.')
+ ),
+ 'journalist_leads','[]'::jsonb);
+END $function$
+
+CREATE OR REPLACE FUNCTION igr_private.igr_v541_018_release_status()
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO 'pg_catalog'
+AS $function$
+declare r record; n int:=0; ok int:=0; seen text[]:=array[]::text[];b jsonb;secure boolean;
+begin
+ for r in select variant_id,editorial_status,approved_at,approved_by,manuscript,content_md5
+ from igr_private.igr_v99_variant_manuscripts where scenario_id='018' and variant_id in ('A','B','C') loop
+  n:=n+1;
+  begin
+   b=igr_private.igr_v540_018_safe_pack(r.variant_id);
+   if r.content_md5=md5(r.manuscript::text)
+     and jsonb_array_length(b->'trames')=3
+     and jsonb_array_length(b->'investigation_018')=20
+     and jsonb_array_length(b->'suspects')=3
+     and jsonb_typeof(b->'truth'->'reconstruction_018')='object'
+     and not ((b->'truth'->'reconstruction_018')::text=any(seen)) then
+      seen=array_append(seen,(b->'truth'->'reconstruction_018')::text);
+      if r.editorial_status='ready' and r.approved_at is not null
+        and r.approved_by='owner_authorized_release_018'
+        and r.manuscript->'v541_approval'->>'owner_authorized'='true'
+        then ok:=ok+1;
+      end if;
+   end if;
+  exception when others then null;
+  end;
+ end loop;
+ secure=not has_function_privilege('anon','igr_private.igr_v540_018_safe_pack(text)','EXECUTE')
+  and not has_function_privilege('authenticated','igr_private.igr_v540_018_safe_pack(text)','EXECUTE');
+ return jsonb_build_object(
+  'eligible',n=3 and ok=3 and array_length(seen,1)=3 and secure
+    and public.igr_v4_min_players('018')=6 and public.igr_v4_max_players('018')=9,
+  'found',n,'approved',ok,'valid_distinct',coalesce(array_length(seen,1),0),
+  'private_secure',secure,'human_playtest_verified',false);
+end;
+$function$
+
+CREATE OR REPLACE FUNCTION public.igr_v4_sync(p_code text, p_player_token uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare
+ raw jsonb;
+ room public.igr_v4_rooms%rowtype;
+ pack jsonb;
+ originals jsonb;
+ extras jsonb;
+begin
+ raw:=public.igr_omerta_standalone_safe_sync(p_code,p_player_token);
+ if raw->'room'->>'scenario_id' in ('001','002','003','004','005') and
+    raw->'player'->>'public_role' in ('enqueteur','analyste')
+    and coalesce(igr_private.igr_v286_enabled(p_code),false)
+ then return igr_private.igr_v286_sync_overlay(p_code,p_player_token,raw);end if;
+ if raw->'room'->>'scenario_id'='007'
+ and coalesce(igr_private.igr_v289_007_enabled(p_code),false)
+ then return igr_private.igr_v289_007_sync_overlay(p_code,p_player_token,raw);end if;
+ if raw->'room'->>'scenario_id'='008'
+ and coalesce(igr_private.igr_v310_008_enabled(p_code),false)
+ then return igr_private.igr_v310_008_sync_overlay(p_code,p_player_token,raw);end if;
+ if raw->'room'->>'scenario_id'='010'
+ and coalesce(igr_private.igr_v361_010_enabled(p_code),false)
+ then return igr_private.igr_v361_010_sync_overlay(p_code,p_player_token,raw);end if;
+ if raw->'room'->>'scenario_id'='009'
+ and coalesce(igr_private.igr_v340_009_enabled(p_code),false)
+ then return igr_private.igr_v340_009_sync_overlay(p_code,p_player_token,raw);end if;
+
+ if raw->'room'->>'scenario_id'='018' and raw->'room'->>'status'='playing'
+    and raw->'player'->>'public_role' in ('enqueteur','analyste') then
+  raw:=jsonb_set(raw,'{scenario,investigation_018}',igr_private.igr_v650_018_offered(p_code,(raw#>>'{room,cycle}')::int),true);
+  raw:=jsonb_set(raw,'{scenario,investigation_018_used}',
+    to_jsonb((select count(*)>=2 from public.igr_v4_actions a
+      where a.room_code=upper(trim(p_code)) and a.cycle=(raw#>>'{room,cycle}')::int
+      and a.action_type='investigation_018')),true);
+  raw:=jsonb_set(raw,'{scenario,investigation_018_adaptive}','true'::jsonb,true);
+ end if;
+ select * into room from public.igr_v4_rooms where code=upper(trim(p_code));
+ if not found or room.scenario_id<>'006' or room.status<>'playing'
+    or raw->'player'->>'public_role' not in ('enqueteur','analyste')
+ then return raw;end if;
+ pack:=igr_private.igr_v260_006_pinned_pack(room.code);
+ if coalesce(pack->'truth'->'reconstruction_006'->>'mode','')<>'mountain_v1'
+    or jsonb_array_length(coalesce(pack->'investigation_006','[]'::jsonb))<>20
+ then return raw;end if;
+ select coalesce(jsonb_agg(jsonb_set(e,'{id}',to_jsonb(regexp_replace(e->>'id','^006_[ABC]_','006_')),true) order by e->>'id'),'[]'::jsonb)
+ into originals
+ from jsonb_array_elements(coalesce(raw->'scenario'->'investigation_006','[]'::jsonb)) e
+ where (e->>'id') ~ '^006_[ABC]_[1-9]$';
+ extras:=igr_private.igr_v283_006_offered(room.code,room.cycle);
+ raw:=jsonb_set(raw,'{scenario,investigation_006}',originals||extras,true);
+ raw:=jsonb_set(raw,'{scenario,investigation_006_limit}',to_jsonb(4),true);
+ raw:=jsonb_set(raw,'{scenario,investigation_006_adaptive}','true'::jsonb,true);
+if exists(select 1 from igr_private.igr_v99_room_canons c where c.room_code=room.code and c.scenario_id='006' and coalesce((c.manuscript->'v284_detailed_questionnaire'->>'enabled')::boolean,false)) then raw:=jsonb_set(raw,'{scenario,investigation_006_detailed}','true'::jsonb,true);end if;
+ return raw;
+end $function$
+
+
+UPDATE igr_private.igr_v99_variant_manuscripts
+SET manuscript=(manuscript - 'v650_staging') || (manuscript->'v650_staging'),
+    editorial_status='ready',approved_by='owner_authorized_release_018',
+    approved_at=now(),updated_at=now()
+WHERE scenario_id='018' AND manuscript ? 'v650_staging';
+DO $verify$
+DECLARE v text;p jsonb;
+BEGIN
+ FOR v IN SELECT variant_id FROM igr_private.igr_v99_variant_manuscripts WHERE scenario_id='018' LOOP
+  p:=igr_private.igr_v540_018_safe_pack(v);
+  IF jsonb_array_length(p->'investigation_018')<>20 OR jsonb_array_length(p->'trames')<>3 THEN
+   RAISE EXCEPTION '018 manuscript failed checks for variant %',v;
+  END IF;
+ END LOOP;
+ IF NOT coalesce((igr_private.igr_v541_018_release_status()->>'eligible')::boolean,false) THEN
+  RAISE EXCEPTION '018 not eligible for release';
  END IF;
- EXECUTE n;
- SELECT pg_get_functiondef('igr_private.igr_v541_018_release_status()'::regprocedure) INTO d;
- n:=replace(d,'jsonb_array_length(b->''investigation_018'')=9','jsonb_array_length(b->''investigation_018'')=20');
- IF n=d THEN RAISE EXCEPTION '018 release status patch failed';END IF;
- EXECUTE n;
- SELECT pg_get_functiondef('public.igr_v4_sync(text,uuid)'::regprocedure) INTO d;
- n:=replace(d,
-  ' select * into room from public.igr_v4_rooms where code=upper(trim(p_code));',
-  ' if raw->''room''->>''scenario_id''=''018'' and raw->''room''->>''status''=''playing'' and raw->''player''->>''public_role'' in (''enqueteur'',''analyste'') then' || E'\n' ||
-  '  raw:=jsonb_set(raw,''{scenario,investigation_018}'',igr_private.igr_v650_018_offered(p_code,(raw#>>''{room,cycle}'')::int),true);'||E'\n'||
-  '  raw:=jsonb_set(raw,''{scenario,investigation_018_used}'',to_jsonb((select count(*)>=2 from public.igr_v4_actions a where a.room_code=upper(trim(p_code)) and a.cycle=(raw#>>''{room,cycle}'')::int and a.action_type=''investigation_018'')),true);'||E'\n'||
-  '  raw:=jsonb_set(raw,''{scenario,investigation_018_adaptive}'',''true''::jsonb,true);'||E'\n'||
-  ' end if;'||E'\n'||
-  ' select * into room from public.igr_v4_rooms where code=upper(trim(p_code));');
- IF n=d OR position('igr_v650_018_offered' IN n)=0 THEN RAISE EXCEPTION '018 sync overlay patch failed';END IF;
- EXECUTE n;
-END $patch$;
+END $verify$;
