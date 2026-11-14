@@ -358,34 +358,7 @@ BEGIN
    SELECT pack->'truth'->'levels' INTO truth_levels FROM public.igr_v4_scenario_packs
     WHERE scenario_id=new.scenario_id;
    SELECT count(*)::int,
-    count(*) FILTER(WHERE (locked_levels->>pp.id::text) ~ '^[0-2]
- display_perimeter:=CASE WHEN controlled=0 THEN 'collapsed'
-    WHEN pressure>=75 THEN 'isolated'
-    WHEN pressure>=48 THEN 'critical'
-    WHEN pressure>=25 THEN 'strained'
-    ELSE 'stable' END;
- new_liaison:=CASE WHEN new.scenario_id='028' AND controlled=0 THEN 'lost'
-    WHEN new.scenario_id='028' AND controlled<=1 THEN 'last'
-    WHEN pressure>=50 THEN 'degraded'
-    ELSE 'active' END;
- t:=t||jsonb_build_object(
-  'city',city_name,'pressure',pressure,'controlled',controlled,'total',12,
-  'country','Almizia','base','Ferra','capital',true,'last_free_city',true,'armed_group','FDR','counteroffensive',counterpush,
-  'band',CASE WHEN t->>'terminal_outcome'='front_at_gates' THEN 'DÉFAITE · LE FDR AUX PORTES' WHEN t->>'terminal_outcome'='evidence_preserved' THEN 'SURVIE · PREUVES PRÉSERVÉES' ELSE coalesce(band,t->>'band','DÉBUT DU SIÈGE') END,
-  'last_scored_cycle',latest_cycle,'history',history,'perimeter',display_perimeter,
-  'liaison',new_liaison);
- new.state:=jsonb_set(coalesce(new.state,'{}'::jsonb),'{terror_v681}',t,true);
- new.state:=jsonb_set(new.state,'{dlc_world}',
-  coalesce(new.state->'dlc_world','{}'::jsonb)||jsonb_build_object(
-    'kind','terror','country','Almizia','capital',true,'districts_total',12,'districts_controlled',controlled,
-    'perimeter',display_perimeter,'liaison',new_liaison,'city',city_name),true);
- new.state:=jsonb_set(new.state,'{terror}',
-  coalesce(new.state->'terror','{}'::jsonb)||jsonb_build_object(
-    'enabled',true,'perimeter',greatest(0,100-pressure),
-    'band',band,'city',city_name),true);
- RETURN new;
-END; $function$
-
+    count(*) FILTER(WHERE (locked_levels->>pp.id::text) ~ '^[0-2]$'
       AND (locked_levels->>pp.id::text)::int=
       coalesce((truth_levels->>(pp.internal_slot-1))::int,-2))::int
    INTO total_suspects,precise
