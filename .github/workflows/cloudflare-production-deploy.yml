@@ -75,6 +75,7 @@ jobs:
           node scripts/v620-020-release-integrity-check.mjs
           node scripts/v675-020-three-origin-release-check.mjs
           node scripts/v681-terror-live-city-qa.mjs
+          node scripts/v683-terror-fdr-reconquest-check.mjs
           # Release hygiene: Omerta standalone checks must pass before any live Worker deploy.
           # These are synthetic/structural tests, never human editorial certification.
           node scripts/omerta-money-intel-021-check.mjs
