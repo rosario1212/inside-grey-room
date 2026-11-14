@@ -88,6 +88,14 @@ jobs:
           node scripts/ui-regression-check.mjs
       - name: Build canonical web bundle
         run: npm run build
+      - name: Validate full production release preflight
+        run: |
+          node --check scripts/casino-deployment-check.mjs
+          node scripts/v284-006-detailed-ui-check.mjs dist
+          node scripts/v287-five-case-ui-release-check.mjs dist
+          node scripts/v289-007-release-check.mjs dist
+          node scripts/v310-008-release-check.mjs dist
+          node scripts/v340-009-release-check.mjs dist
       - name: Validate generated CARTEL posters
         run: node scripts/cartel-posters-check.mjs dist
       - name: Validate Los Salcedo canon and public fear arc
