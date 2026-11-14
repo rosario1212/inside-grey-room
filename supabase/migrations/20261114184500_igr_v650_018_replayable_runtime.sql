@@ -103,7 +103,7 @@ BEGIN
  AND a.action_type='investigation_018')>=2 THEN RAISE EXCEPTION 'cycle limit';END IF;
  pack:=igr_private.igr_v541_018_pinned_pack(r.code);
  IF pack IS NULL THEN RAISE EXCEPTION 'sealed dossier missing';END IF;
- SELECT e INTO item FROM jsonb_array_elements(coalesce(pack->'investigation_018','[]'::jsonb)) e
+ SELECT e.value INTO item FROM jsonb_array_elements(coalesce(pack->'investigation_018','[]'::jsonb)) e
  WHERE e->>'id'=p_choice AND (e->>'cycle')::int=r.cycle LIMIT 1;
  IF item IS NULL THEN RAISE EXCEPTION 'invalid choice';END IF;
  IF NOT EXISTS (SELECT 1 FROM jsonb_array_elements(igr_private.igr_v650_018_offered(r.code,r.cycle)) e
@@ -133,6 +133,16 @@ BEGIN
 END $function$;
 REVOKE ALL ON FUNCTION public.igr_v546_018_investigate_index(text,uuid,integer) FROM public,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_v546_018_investigate_index(text,uuid,integer) TO anon,authenticated;
+
+
+CREATE OR REPLACE FUNCTION public.igr_v650_018_investigate_choice(p_code text,p_player_token uuid,p_choice text)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $function$
+BEGIN
+ RETURN public.igr_v545_018_investigate(p_code,p_player_token,p_choice);
+END $function$;
+REVOKE ALL ON FUNCTION public.igr_v650_018_investigate_choice(text,uuid,text) FROM public,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.igr_v650_018_investigate_choice(text,uuid,text) TO anon,authenticated;
 
 -- Patch existing canonical readers without replacing unrelated scenarios.
 DO $patch$
