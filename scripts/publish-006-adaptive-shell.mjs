@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='twenty-three-origins-v675-20261114';
+const tag='terror-city-pressure-v681-20261114';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -22,6 +22,10 @@ assert(appSource.includes('igr_v650_018_hypothesis_submit') && appSource.include
 assert(appSource.includes('igr_v665_019_hypothesis_submit') && appSource.includes('igr_v665_019_investigate_choice'), '019 three-killer adaptive UI missing');
 assert(appSource.includes('igr_v675_020_hypothesis_submit') && appSource.includes('igr_v675_020_investigate_choice'), '020 three-origin adaptive UI missing');
 assert(appSource.includes('authorized_stage_effect'), '020 stage accident verdict option missing');
+const terrorCity=await readFile(path.join(dest,'terror-live-v681.js'),'utf8');
+assert(terrorCity.includes('igr_v681_terror_set_city') && terrorCity.includes('igr_v681_terror_submit_quiz'), 'terror live city + sealed quiz missing');
+const terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
+assert(terrorHtml.includes('terror-live-v681.js') && terrorHtml.includes('terror-live-v681.css'), 'terror shared city widget not included in published entrypoint');
 const questionnaire=await readFile(path.join(dest,'investigation-accuracy-v284.js'),'utf8');
 const detailedFive=await readFile(path.join(dest,'investigation-deep-v286.js'),'utf8');
 const detailedSeven=await readFile(path.join(dest,'investigation-007-v289.js'),'utf8');
