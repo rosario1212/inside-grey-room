@@ -78,6 +78,55 @@ BEGIN
  EXECUTE nextdef;
 END; $v682_dynamic$;
 
+
+-- v683: Correct answers produce an independently validated national counteroffensive,
+-- not merely a smaller loss. Wrong answers still accelerate the rebel advance.
+DO $v683_counterpush$
+DECLARE prior text;nextdef text;
+BEGIN
+ SELECT pg_get_functiondef('igr_private.igr_v681_terror_dynamic_room()'::regprocedure) INTO prior;
+ nextdef:=prior;
+ IF position('held_before_final int;group_survives boolean;' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 1 absent';END IF;
+ nextdef:=replace(nextdef,'held_before_final int;group_survives boolean;','held_before_final int;group_survives boolean;counterpush int;');
+ IF position('history:=coalesce(t->''history'',''[]''::jsonb);' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 2 absent';END IF;
+ nextdef:=replace(nextdef,'history:=coalesce(t->''history'',''[]''::jsonb);','history:=coalesce(t->''history'',''[]''::jsonb);
+ counterpush:=greatest(0,least(2,coalesce((t->>''counteroffensive'')::int,0)));');
+ IF position('band:=CASE WHEN correct_count>=5 THEN ''PROGRESSION RALENTIE''
+              WHEN correct_count>=3 THEN ''PRESSION RENFORCÉE''
+              ELSE ''PERCÉE RAPIDE'' END;' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 3 absent';END IF;
+ nextdef:=replace(nextdef,'band:=CASE WHEN correct_count>=5 THEN ''PROGRESSION RALENTIE''
+              WHEN correct_count>=3 THEN ''PRESSION RENFORCÉE''
+              ELSE ''PERCÉE RAPIDE'' END;','band:=CASE WHEN correct_count>=5 THEN ''CONTRE-OFFENSIVE NATIONALE''
+              WHEN correct_count>=3 THEN ''PRESSION CONTENUE''
+              ELSE ''PERCÉE DU FDR'' END;');
+ IF position('delta:=CASE WHEN correct_count>=5 THEN 9 WHEN correct_count>=3 THEN 17 ELSE 27 END;' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 4 absent';END IF;
+ nextdef:=replace(nextdef,'delta:=CASE WHEN correct_count>=5 THEN 9 WHEN correct_count>=3 THEN 17 ELSE 27 END;','delta:=CASE WHEN correct_count>=5 THEN -9 WHEN correct_count>=3 THEN 14 ELSE 27 END;');
+ IF position('pressure:=least(100,pressure+delta);' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 5 absent';END IF;
+ nextdef:=replace(nextdef,'pressure:=least(100,pressure+delta);','pressure:=greatest(0,least(100,pressure+delta));
+ IF correct_count>=5 THEN counterpush:=least(2,counterpush+1);
+ ELSIF correct_count<3 THEN counterpush:=greatest(0,counterpush-1);END IF;');
+ IF position('''cycle'',latest_cycle,''band'',band,''delta'',delta,''submissions'',submitted_count' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 6 absent';END IF;
+ nextdef:=replace(nextdef,'''cycle'',latest_cycle,''band'',band,''delta'',delta,''submissions'',submitted_count','''cycle'',latest_cycle,''band'',band,''delta'',delta,''submissions'',submitted_count,
+     ''national_liaison'',CASE WHEN correct_count>=5 THEN ''verified_intelligence_transmitted'' WHEN correct_count>=3 THEN ''partial_corroboration'' ELSE ''information_unreliable'' END');
+ IF position('controlled:=greatest(0,initial_control-floor(pressure::numeric/threshold)::integer);' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 7 absent';END IF;
+ nextdef:=replace(nextdef,'controlled:=greatest(0,initial_control-floor(pressure::numeric/threshold)::integer);','controlled:=least(12,greatest(0,initial_control-floor(pressure::numeric/threshold)::integer+counterpush));');
+ IF position('pressure:=100;
+     t:=t||jsonb_build_object(''terminal_outcome''' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 8 absent';END IF;
+ nextdef:=replace(nextdef,'pressure:=100;
+     t:=t||jsonb_build_object(''terminal_outcome''','pressure:=100;
+     counterpush:=0;
+     t:=t||jsonb_build_object(''terminal_outcome''');
+ IF position('''city'',city_name,''pressure'',pressure,''controlled'',controlled,''total'',12,' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 9 absent';END IF;
+ nextdef:=replace(nextdef,'''city'',city_name,''pressure'',pressure,''controlled'',controlled,''total'',12,','''city'',city_name,''pressure'',pressure,''controlled'',controlled,''total'',12,
+  ''country'',''République de Daryane'',''armed_group'',''FDR'',
+  ''counteroffensive'',counterpush,''national_forces'',''Forces armées daryanes'',');
+ IF position('''Les certitudes du camp sont insuffisantes : l encerclement s accélère. La dernière liaison peut disparaître.'' END END;' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 10 absent';END IF;
+ nextdef:=replace(nextdef,'''Les certitudes du camp sont insuffisantes : l encerclement s accélère. La dernière liaison peut disparaître.'' END END;','''Les certitudes du camp sont insuffisantes : l encerclement s accélère. La dernière liaison peut disparaître.'' END END;
+ IF correct_count>=5 THEN msg:=''La liaison judiciaire a transmis des informations recoupées. Les forces armées daryanes rétablissent le contrôle d un secteur contesté et repoussent temporairement le FDR.'';END IF;');
+ IF nextdef=prior THEN RAISE EXCEPTION 'v683 country and counteroffensive not applied';END IF;
+ EXECUTE nextdef;
+END; $v683_counterpush$;
+
 -- Make the judicial victory and the siege outcome a single contract for the camp.
 DO $v682_reveal$
 DECLARE prior text;nextdef text;
@@ -138,14 +187,38 @@ BEGIN
  IF old.status='lobby' AND new.status='playing' THEN
   INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
   VALUES(new.code,'terror_v682_front_briefing','public',0,
-   jsonb_build_object('title','LE FRONT DE LA RESTAURATION',
-    'text','Le Front prétend restaurer l ordre, mais ses factions contrôlent des services civils et sont accusées de persécutions, de disparitions et de crimes graves. La Grey Room conserve des dossiers et des témoignages qui le menacent. Ses forces approchent de '||city_name||'.',
-    'city',city_name,'enemy','Front de la Restauration','sectors',12));
+   jsonb_build_object('title','LE FDR · FRONT DE LA RESTAURATION',
+    'text','La République de Daryane sort d une longue guerre civile. Après des années de corruption et de soldes impayées, le Front de la Restauration (FDR), une coalition rebelle, a profité de l effondrement de la garnison de Kalem pour s emparer de sa base militaire et de matériel lourd. Désormais, les forces armées daryanes défendent les derniers secteurs de '||city_name||'. Le FDR approche de la Grey Room, qui détient des preuves de ses persécutions et de ses crimes.',
+    'city',city_name,'enemy','FDR','sectors',12));
  END IF;
  IF old.status<>'playing' THEN RETURN new;END IF;
  prior_held:=coalesce((old.state#>>'{terror_v681,controlled}')::int,
    CASE new.scenario_id WHEN '026' THEN 9 WHEN '027' THEN 6 ELSE 3 END);
  current_held:=coalesce((new.state#>>'{terror_v681,controlled}')::int,prior_held);
+ IF old.status='playing' AND new.status='finished' THEN
+  front_status:=new.state#>>'{terror_v681,terminal_outcome}';
+  INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
+  VALUES(new.code,'terror_v682_final_status','public',new.cycle,
+   jsonb_build_object('title',CASE WHEN front_status='front_at_gates' THEN
+      'DÉFAITE · LE FRONT DEVANT LA GREY ROOM' ELSE
+      'DOSSIER SAUVÉ · LE FRONT DEMEURE ACTIF' END,
+     'text',CASE WHEN front_status='front_at_gates'
+      THEN 'Le camp d enquête n a pas contenu la crise. La Grey Room est encerclée; les vies restent menacées et leur issue n est pas déterminée.'
+      ELSE 'Les preuves ont été sécurisées avant la rupture totale. La menace demeure et les populations ne sont pas hors de danger.' END,
+     'city',city_name,'terminal',front_status));
+ END IF;
+
+ -- The military counteroffensive is reported publicly in exactly the same way as losses.
+ IF current_held>prior_held THEN
+   FOR sector IN prior_held+1..current_held LOOP
+     INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
+     VALUES(new.code,'terror_v683_sector_recovered','public',new.cycle,
+       jsonb_build_object('title','SECTEUR '||lpad(sector::text,2,'0')||' · REPRIS · '||upper(city_name),
+         'text','Les preuves judiciaires recoupées ont été validées par la liaison nationale. Les forces armées daryanes ont rétabli le contrôle de ce secteur contesté. Le FDR recule, mais les habitants restent exposés à la crise.',
+         'city',city_name,'sector',sector,'held',sector,'total',12,'enemy','FDR',
+         'national_forces','Forces armées daryanes','front_pushed_back',true));
+   END LOOP;
+ END IF;
  IF current_held>=prior_held THEN RETURN new;END IF;
  messages:=ARRAY[
    'Les familles se regroupent devant des services fermés. Personne ne peut confirmer combien ont pu partir.',
@@ -167,27 +240,16 @@ BEGIN
    VALUES(new.code,'terror_v682_sector_lost','public',new.cycle,
     jsonb_build_object('title','SECTEUR '||lpad(sector::text,2,'0')||' · PERDU · '||upper(city_name),
     'text',message,'city',city_name,'sector',sector,
-    'held',sector-1,'total',12,'enemy','Front de la Restauration'));
+    'held',sector-1,'total',12,'enemy','FDR'));
  END LOOP;
  IF current_held=0 AND prior_held>0 THEN
    INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
    VALUES(new.code,'terror_v682_at_gates','public',new.cycle,
     jsonb_build_object('title','ALERTE · LE FRONT AUX PORTES DE LA GREY ROOM',
       'text','Les derniers secteurs administrés ont cessé de répondre. Les assaillants sont désormais devant le bâtiment. Les issues sont verrouillées; personne ne dispose d une garantie d extraction. Les interrogatoires et les preuves ne sont pas effacés.',
-      'city',city_name,'enemy','Front de la Restauration','at_gates',true));
+      'city',city_name,'enemy','FDR','at_gates',true));
  END IF;
- IF old.status='playing' AND new.status='finished' THEN
-  front_status:=new.state#>>'{terror_v681,terminal_outcome}';
-  INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
-  VALUES(new.code,'terror_v682_final_status','public',new.cycle,
-   jsonb_build_object('title',CASE WHEN front_status='front_at_gates' THEN
-      'DÉFAITE · LE FRONT DEVANT LA GREY ROOM' ELSE
-      'DOSSIER SAUVÉ · LE FRONT DEMEURE ACTIF' END,
-     'text',CASE WHEN front_status='front_at_gates'
-      THEN 'Le camp d enquête n a pas contenu la crise. La Grey Room est encerclée; les vies restent menacées et leur issue n est pas déterminée.'
-      ELSE 'Les preuves ont été sécurisées avant la rupture totale. La menace demeure et les populations ne sont pas hors de danger.' END,
-     'city',city_name,'terminal',front_status));
- END IF;
+
  RETURN new;
 END; $fn$;
 REVOKE ALL ON FUNCTION igr_private.igr_v682_terror_sector_bulletins() FROM PUBLIC,anon,authenticated;
