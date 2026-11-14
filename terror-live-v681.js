@@ -59,10 +59,11 @@
     const city=w.city||'VILLE NON CONFIGURÉE',r=d.room;
     const [title,subtitle]=mood(sid()),key=r.code+':'+(w.last_scored_cycle||0)+':'+controlled;
     const changed=previousCityKey===r.code && previousControlled!==null && controlled<previousControlled;
+    const reclaimed=previousCityKey===r.code && previousControlled!==null && controlled>previousControlled;
     if(previousCityKey!==r.code){previousCityKey=r.code;previousControlled=null;}
     const squares=Array.from({length:total},(_,i)=>{
-      const held=i<controlled,fallen=changed&&i>=controlled&&i<previousControlled;
-      return '<div class="terror-v681-district '+(held?'is-held':'is-lost')+(fallen?' is-falling':'')+
+      const held=i<controlled,fallen=changed&&i>=controlled&&i<previousControlled,restored=reclaimed&&i>=previousControlled&&i<controlled;
+      return '<div class="terror-v681-district '+(held?'is-held':'is-lost')+(fallen?' is-falling':'')+(restored?' is-recovered':'')+
        '" role="listitem" aria-label="Secteur '+String(i+1)+' : '+(held?'encore administré':'hors de contrôle')+'">'+
        '<span>SECTEUR '+String(i+1).padStart(2,'0')+'</span><b>'+(held?'SOUS CONTRÔLE':'PERDU')+'</b></div>';
     }).join('');
@@ -71,9 +72,9 @@
     const history=Array.isArray(w.history)?w.history:[];
     const last=history.length?history[history.length-1]:null;
     const section=document.createElement('section');section.id='terrorV681Board';
-    section.className='terror-v681-live'+(changed?' terror-v681-breakthrough':'');
+    section.className='terror-v681-live'+(changed?' terror-v681-breakthrough':'')+(reclaimed?' terror-v681-recovered':'');
     section.innerHTML='<div class="terror-v681-head"><div><small>TERREUR · '+esc(title)+'</small>'+
-       '<h2>'+esc(city.toUpperCase())+' <span>SE DÉSAGRÈGE</span></h2><p>'+esc(subtitle)+'</p></div>'+
+       '<h2>'+esc(city.toUpperCase())+' <span>'+esc(w.band==='CONTRE-OFFENSIVE NATIONALE'?'REPOUSSE LE FDR':'SOUS LA MENACE DU FDR')+'</span></h2><p>'+esc(subtitle)+'</p></div>'+
        '<div class="terror-v681-synch"><span class="terror-v681-dot"></span> ÉTAT COMMUN · DIRECT</div></div>'+
        '<div class="terror-v681-stats"><div><small>SECTEURS ADMINISTRÉS</small><strong>'+controlled+'<em> / 12</em></strong></div>'+
        '<div><small>PRESSION DU SIÈGE</small><strong>'+Math.round(pressure)+'<em> / 100</em></strong></div>'+
