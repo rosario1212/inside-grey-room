@@ -22,7 +22,7 @@ La référence actuelle pour le mode LONG est :
 - interrogatoire : **06:00** ;
 - dernier débrief / délibération correspondante : **04:00**.
 
-`TIMER_DURATION_AUDIT_V46_2.md` remplace l’ancienne référence v46.1 qui documentait temporairement 08:00 pour l’interrogatoire LONG.
+`TIMER_DURATION_AUDIT_V46_2.md` est la seule référence canonique pour les durées ; l’ancien rapport v46.1 (qui préconisait temporairement 08:00 pour l’interrogatoire LONG) reste accessible dans l’historique Git.
 
 ## Contenu
 
