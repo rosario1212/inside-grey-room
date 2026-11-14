@@ -25,7 +25,7 @@ assert(appSource.includes('authorized_stage_effect'), '020 stage accident verdic
 const terrorCity=await readFile(path.join(dest,'terror-live-v681.js'),'utf8');
 assert(terrorCity.includes('igr_v681_terror_set_city') && terrorCity.includes('igr_v681_terror_submit_quiz'), 'terror live city + sealed quiz missing');
 const terrorFront=await readFile(path.join(dest,'terror-front-v682.js'),'utf8');
-assert(terrorFront.includes('RÉPUBLIQUE DE DARYANE') && terrorFront.includes('terror_v683_sector_recovered') && terrorFront.includes('base militaire de Kalem'), 'FDR country/base/reconquest UI missing');
+assert(terrorFront.includes('RÉPUBLIQUE D'ALMIZIA') && terrorFront.includes('terror_v683_sector_recovered') && terrorFront.includes('base militaire de Ferra'), 'FDR country/base/reconquest UI missing');
 const terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
 assert(terrorHtml.includes('terror-live-v681.js') && terrorHtml.includes('terror-live-v681.css'), 'terror shared city widget not included in published entrypoint');
 assert(terrorHtml.includes('terror-front-v682.js') && terrorHtml.includes('terror-front-v682.css'),'FDR public story and siege assets missing');
