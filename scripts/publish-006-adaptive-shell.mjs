@@ -5,10 +5,18 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='nine-cases-v347-20261113';
+const tag='integrated-seventeen-v650-20261114';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
+assert(appSource.includes('igr_v650_case_quiz_get') && appSource.includes('igr_v650_case_quiz_submit'),
+  'v650 sealed factual debrief must survive all build passes');
+assert(appSource.includes("tenCaseV361?'igr_v361_010_investigate'"),
+  '010 adaptive investigations must survive all build passes');
+assert(appSource.includes("investigate017Choice('${h(choice.id)}')"),
+  '017 direct evidence-choice buttons must survive all build passes');
+assert(appSource.includes("['010','012','013','014','015','016','017'].includes(sid)"),
+  'v650 debrief must not duplicate the existing 007–009 specialist forms');
 assert(appSource.includes('optionalUsed006'),'Scenario 006 optional limit missing');
 const questionnaire=await readFile(path.join(dest,'investigation-accuracy-v284.js'),'utf8');
 const detailedFive=await readFile(path.join(dest,'investigation-deep-v286.js'),'utf8');
@@ -71,7 +79,7 @@ if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-nine-cases-v347-20261113'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-nine-cases-v347-20261113'"),'PWA cache version did not advance');
+sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-integrated-seventeen-v650-20261114'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-integrated-seventeen-v650-20261114'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);

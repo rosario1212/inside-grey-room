@@ -1683,7 +1683,7 @@ function renderDebriefForm(){
 
  const sid=STATE.sync?.room?.scenario_id;
  const cycle=Number(STATE.sync?.room?.cycle||0);
- if(['007','008','009','010','012','013','014','015','016','017'].includes(sid)&&cycle>=1&&cycle<=2){
+ if(['010','012','013','014','015','016','017'].includes(sid)&&cycle>=1&&cycle<=2){
    const quizKey=[STATE.room,STATE.token,sid,cycle].join('|');
    if(STATE._caseQuizLoadKey!==quizKey){
      STATE._caseQuizLoadKey=quizKey;
