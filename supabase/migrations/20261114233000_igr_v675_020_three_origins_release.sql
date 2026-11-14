@@ -128,7 +128,7 @@ BEGIN
  FOR i IN 1..3 LOOP
   IF (SELECT count(*) FROM jsonb_array_elements(t) e WHERE (e->>'min_cycle')::int=i AND coalesce((e->>'guaranteed')::boolean,false)
    AND length(coalesce(e->>'source',''))>20)<>2
-  OR (SELECT count(*) FROM jsonb_array_elements(choices) e WHERE (e->>'cycle')::int=i)<>CASE WHEN i=1 THEN 6 ELSE 7 END
+  OR (SELECT count(*) FROM jsonb_array_elements(choices) e WHERE (e->>'cycle')::int=i)<>(7-(i=1)::integer)
   THEN RAISE EXCEPTION '020 unsolvable cycle %',i;END IF;
  END LOOP;
  IF (SELECT count(distinct e->>'id') FROM jsonb_array_elements(choices) e)<>20
