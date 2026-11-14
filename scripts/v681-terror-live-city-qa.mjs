@@ -37,5 +37,5 @@ assert(css.includes('.terror-v681-map')&&css.includes('prefers-reduced-motion'),
 assert(index.includes('terror-live-v681.js')&&index.includes('terror-live-v681.css'),'live widget absent from canonical page');
 assert(builder.includes("'terror-live-v681.js'")&&builder.includes("'terror-live-v681.css'"),'new assets omitted from Cloudflare build');
 assert(publisher.includes("terror-city-pressure-v681-20261114"),'PWA revision not advanced');
-assert(publisher.includes('igr-terror-live-city-v681-20261114'),'offline cache not invalidated');
+assert(publisher.includes("const CACHE='igr-santoro-display-audit-20261108-"),'offline cache must match active immutable release tag');
 console.log('PASS DLC Terror v681: selected city, server-scored shared pressure, public live 12-sector board, sealed independent 3x2 answers, once-per-cycle advancement and no old debrief bypass.');
