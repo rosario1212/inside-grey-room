@@ -95,7 +95,7 @@ for(const asset of ['/terror-live-v681.js?v=terror-city-v681-20261114','/terror-
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
  }
 }
-sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-terror-live-city-v681-20261114'");
-assert(sw.includes("const CACHE='igr-terror-live-city-v681-20261114'"),'PWA cache version did not advance');
+sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+"'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+"'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
