@@ -11,7 +11,7 @@
   const episodeCopy={
     '026':{
       title:'LE FDR PREND LA VILLE',
-      detail:'L'enquête révèle comment le FDR a capturé les institutions. Les pièces authentifiées peuvent aider à restaurer des services civils.',
+      detail:'L’enquête révèle comment le FDR a capturé les institutions. Les pièces authentifiées peuvent aider à restaurer des services civils.',
       risk:'Les anciens membres du Front n’obtiendront aucune protection automatique si ses forces prennent le bâtiment.'},
     '027':{
       title:'LE FDR RESSERRE L’ÉTAU',
