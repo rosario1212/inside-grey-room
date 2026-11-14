@@ -22,7 +22,7 @@
       detail:'La dernière liaison est fragile. Une présence intérieure est soupçonnée, mais son existence doit rester prouvée.',
       risk:'La fidélité au Front ne dit pas qui contrôlera la porte ni si l’un des captifs sera épargné.'}
   };
-  const fallEvents=new Set(['terror_v682_front_briefing','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v682_at_gates','terror_v682_final_status']);
+  const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v682_at_gates','terror_v682_final_status']);
   function frontBoard(){
     if(!inDlc()||STATE?.view!=='game')return;
     const d=STATE?.sync,board=document.getElementById('terrorV681Board');
@@ -41,28 +41,28 @@
     div.className='terror-v682-front';
     div.id='terrorV682Front';
     div.setAttribute('aria-label','Organisation responsable du siège');
-    div.innerHTML='<div class="terror-v682-kicker"><span>CRISE NATIONALE · RÉPUBLIQUE DE DARYANE</span><span>FDR · DOSSIER '+e(scen())+'</span></div>'+
+    div.innerHTML='<div class="terror-v682-kicker"><span>CRISE NATIONALE · RÉPUBLIQUE DE VESPER</span><span>FDR · DOSSIER '+e(scen())+'</span></div>'+
        '<div class="terror-v682-name"><b>FRONT DE LA RESTAURATION</b><span>LE FDR</span></div>'+
-       '<p><b>Le FDR est une coalition rebelle armée.</b> Après l’effondrement de la garnison de Kalem, il a pris sa base militaire, récupéré des véhicules blindés et d’importantes réserves. D’anciens soldats ont rejoint ses factions. Il avance maintenant vers la Grey Room de '+city+', où sont conservées des preuves de ses crimes.</p>'+
-       '<p>'+e(epis.detail)+' La République de Daryane est un pays fictif : les douze secteurs de '+city+' sont un schéma narratif, sans correspondance géographique réelle.</p>'+
+       '<p><b>Le FDR est une coalition rebelle armée.</b> Après l’effondrement de la garnison de Meridian, il a pris sa base militaire, récupéré des véhicules blindés et d’importantes réserves. D’anciens soldats ont rejoint ses factions. La capitale '+city+' est la dernière grande ville du pays encore défendue par l’État. Toutes les autres grandes villes sont tombées. La Grey Room conserve des preuves des crimes du FDR.</p>'+
+       '<p>'+e(epis.detail)+' La capitale '+city+' tient encore grâce aux forces gouvernementales et à leurs réserves mobiles. Ses douze secteurs représentent une ville fictive de Vesper, sans correspondance géographique réelle.</p>'+
        '<details><summary>Comprendre le pays, la guerre et l’ascension du FDR</summary>'+
        '<p><strong>Il y a quatorze ans.</strong> Un cessez-le-feu met fin à une guerre intérieure, mais les anciennes milices ne sont pas complètement démobilisées. La corruption, les salaires impayés et l’abandon des services publics brisent peu à peu la confiance envers l’État.</p>'+
        '<p><strong>Il y a trois ans.</strong> Des protestations contre l’autorité centrale sont récupérées par une coalition radicalisée. Elle prend le nom de Front de la Restauration. Les habitants l’appellent le FDR. Le groupe promet de rétablir l’ordre, puis impose persécutions, enlèvements et répression.</p>'+
-       '<p><strong>Il y a neuf mois.</strong> Le commandement de la base militaire de Kalem se désorganise. Le FDR s’empare du matériel laissé sur place. Les désertions et ralliements de combattants lui donnent une capacité militaire sans précédent.</p>'+
-       '<p><strong>Aujourd’hui.</strong> Les forces armées daryanes défendent encore des secteurs et peuvent tenter de les reprendre. La liaison judiciaire transmet uniquement des synthèses vérifiées : de bonnes déductions permettent une contre-offensive limitée, mais ne donnent jamais une connaissance automatique de la situation militaire.</p></details>'+
-       '<div class="terror-v682-liaison"><small>FORCES ARMÉES DARYANES · LIAISON JUDICIAIRE</small>'+
+       '<p><strong>Il y a neuf mois.</strong> Le commandement de la base militaire de Meridian se désorganise. Une partie de la garnison déserte et le FDR s’empare de véhicules blindés, de matériel et de réserves. Cette prise le transforme en force armée capable de conquérir les grandes villes.</p>'+
+       '<p><strong>Aujourd’hui.</strong> Les autres grandes villes sont tombées. Les forces armées de Vesper résistent dans leur capitale, appuyées par des unités isolées et des réserves hors de la ville. Une synthèse judiciaire vérifiée peut leur permettre de sécuriser puis reprendre un secteur, sans victoire miraculeuse.</p></details>'+
+       '<div class="terror-v682-liaison"><small>DERNIÈRE CAPITALE LIBRE · '+city+' · FORCES ARMÉES DE VESPER</small>'+
        '<strong>'+e(liaisonStatus==='lost'?'DERNIÈRE LIAISON ROMPUE':nationalCounterpush>0?'CONTRE-OFFENSIVE EN COURS':'RECOUPEMENT DES INFORMATIONS')+'</strong>'+
-       '<p>Les réponses fondées sur des preuves authentifiées peuvent être vérifiées par la liaison et contribuer à la reprise de secteurs contestés. Une conclusion erronée prive au contraire les forces nationales d’informations fiables. Les résultats territoriaux sont publics.</p></div>';
+       '<p>Vos décisions comptent pour la dernière capitale libre. À chaque cycle, des analyses recoupées donnent aux forces nationales une information à vérifier puis à exploiter ; des conclusions insuffisantes freinent leur réponse, et des erreurs majeures accélèrent le FDR. Chaque perte ou reconquête est rendue publique.</p></div>';
     board.insertAdjacentElement('beforebegin',div);
     const events=Array.isArray(d.events)?d.events:[];
     const latest=events.slice().reverse().find(x=>fallEvents.has(x.event_type));
     if(latest){
       const card=document.createElement('aside');card.id='terrorV682Immediate';
-      card.className='terror-v682-breaking'+(latest.event_type==='terror_v682_at_gates'?' terror-v682-urgent':'');
+      card.className='terror-v682-breaking'+(latest.event_type==='terror_v682_at_gates'?' terror-v682-urgent':'')+(latest.event_type==='terror_v683_sector_recovered'?' terror-v682-recapture':'');
       card.innerHTML='<div class="terror-v682-live-dot" aria-hidden="true"></div><div>'+
       '<small>DERNIER BULLETIN · PUBLIC POUR TOUS LES JOUEURS</small>'+
       '<b>'+e(latest.payload?.title||'SITUATION EN COURS')+'</b>'+
-      '<p>'+e(latest.payload?.text||'')+'</p></div>';
+      '<p>'+e(latest.payload?.text||'')+'</p>'+(latest.event_type==='terror_v681_city_fall'&&latest.payload?.correct_answers!==undefined?'<p class="terror-v682-score">Réponses exactes : '+Number(latest.payload.correct_answers)+' / 6 · '+e(latest.payload.effect==='reconquest'?'RECONQUÊTE NATIONALE':latest.payload.effect==='fdr_breakthrough'?'LE FDR ACCÉLÈRE':'DÉFENSE SOUS PRESSION')+'</p>':'')+'</div>';
       board.insertAdjacentElement('afterend',card);
     }
     if(atGates){
@@ -79,7 +79,7 @@
       (document.getElementById('terrorV682Immediate')||board).insertAdjacentElement('afterend',gate);
     }else document.getElementById('terrorV682Gates')?.remove();
     const pressure=Number(t.pressure||0);
-    if(pressure>=25){
+    if(pressure>=25||(Array.isArray(t.history)&&t.history.length>0)){
       const personal=document.createElement('aside');
       personal.id='terrorV682Private';
       personal.className='terror-v682-personal';
@@ -102,7 +102,7 @@
       if(!inDlc())return;
       const summary=document.querySelector('.lobby-case-preview');
       if(summary&&!summary.querySelector('.terror-v682-lobby-label'))summary.insertAdjacentHTML('beforeend',
-        '<p class="terror-v682-lobby-label">MENACE COMMUNE · LE FDR, UNE RÉBELLION ARMÉE NÉE EN DARYANE. Les chutes et reprises de secteurs seront visibles de tous ; une défaite amène le FDR aux portes de la Grey Room.</p>');
+        '<p class="terror-v682-lobby-label">MENACE COMMUNE · LE FDR, UNE RÉBELLION ARMÉE NÉE EN VESPER. Les chutes et reprises de secteurs seront visibles de tous ; une défaite amène le FDR aux portes de la Grey Room.</p>');
     };
   }
 })();
