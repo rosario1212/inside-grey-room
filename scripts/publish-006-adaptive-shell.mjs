@@ -25,7 +25,7 @@ assert(appSource.includes('authorized_stage_effect'), '020 stage accident verdic
 const terrorCity=await readFile(path.join(dest,'terror-live-v681.js'),'utf8');
 assert(terrorCity.includes('igr_v681_terror_set_city') && terrorCity.includes('igr_v681_terror_submit_quiz'), 'terror live city + sealed quiz missing');
 const terrorFront=await readFile(path.join(dest,'terror-front-v682.js'),'utf8');
-assert(terrorFront.includes('RÉPUBLIQUE D'ALMIZIA') && terrorFront.includes('terror_v683_sector_recovered') && terrorFront.includes('base militaire de Ferra'), 'FDR country/base/reconquest UI missing');
+assert(terrorFront.includes("RÉPUBLIQUE D’ALMIZIA") && terrorFront.includes('terror_v683_sector_recovered') && terrorFront.includes('base militaire de Ferra'), 'FDR country/base/reconquest UI missing');
 const terrorCommand=await readFile(path.join(dest,'terror-command-v688.js'),'utf8');
 assert(terrorCommand.includes('igr_v688_terror_choose_operation') && terrorCommand.includes('terror-v688-capture'), 'Terror commander and captivity presentation missing');
 const terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
