@@ -18,5 +18,5 @@ assert(sql.includes('count(*)>=2'),'018 backend cap must be two per cycle');
 assert(sql.includes('v650_staging'),'018 private staged manuscripts not activated');
 assert(sql.includes("REVOKE ALL ON FUNCTION igr_private.igr_v650_018_offered"),'018 secret scoring must not be public');
 assert(!app.includes('v540_verdict'),'private spoiler names exposed in client');
-assert(pub.includes('eighteen-adaptive-v651-20261114'),'immutable v651 release tag missing');
+assert(/const tag='[a-z0-9-]+v[0-9]+-[0-9]{8}'/.test(pub),'immutable release tag missing after later scenario publication');
 console.log('PASS 018 v651: sealed private A/B/C, 20 authored leads each, two per cycle, anti-spoiler adaptive scoring, immutable PWA.');

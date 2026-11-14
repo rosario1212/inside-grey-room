@@ -154,8 +154,10 @@ jobs:
         run: |
           node scripts/v560-018-release-integrity-check.mjs
           node scripts/v651-018-adaptive-release-check.mjs
-      - name: Audit 019 three-variant private runtime, verdict, and production cache
-        run: node scripts/v580-019-release-integrity-check.mjs
+      - name: Audit 019 sealed three-killer adaptive runtime and production cache
+        run: |
+          node scripts/v580-019-release-integrity-check.mjs
+          node scripts/v665-019-three-killer-release-check.mjs
       - name: Verify 020 sealed finale, roles, forensic proof and cache
         run: node scripts/v620-020-release-integrity-check.mjs
       - name: Audit v631 corrected spy scoring, irreversible penalties and two-stage decisions

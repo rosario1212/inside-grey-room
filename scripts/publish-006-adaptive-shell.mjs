@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='eighteen-adaptive-v651-20261114';
+const tag='nineteen-three-killers-v665-20261114';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -19,6 +19,7 @@ assert(appSource.includes("['010','012','013','014','015','016','017'].includes(
   'v650 debrief must not duplicate the existing 007–009 specialist forms');
 assert(appSource.includes('optionalUsed006'),'Scenario 006 optional limit missing');
 assert(appSource.includes('igr_v650_018_hypothesis_submit') && appSource.includes('thisCycle.length>=2'), '018 adaptive client missing');
+assert(appSource.includes('igr_v665_019_hypothesis_submit') && appSource.includes('igr_v665_019_investigate_choice'), '019 three-killer adaptive UI missing');
 const questionnaire=await readFile(path.join(dest,'investigation-accuracy-v284.js'),'utf8');
 const detailedFive=await readFile(path.join(dest,'investigation-deep-v286.js'),'utf8');
 const detailedSeven=await readFile(path.join(dest,'investigation-007-v289.js'),'utf8');
@@ -82,7 +83,7 @@ if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-eighteen-adaptive-v651-20261114'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-eighteen-adaptive-v651-20261114'"),'PWA cache version did not advance');
+sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-nineteen-three-killers-v665-20261114'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-nineteen-three-killers-v665-20261114'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
