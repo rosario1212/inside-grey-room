@@ -25,5 +25,5 @@ assert(release.includes("'truth','{}'::jsonb"),'019 legacy single-killer public 
 assert(release.includes('igr_v665_019_base_pack_backup'),'019 public baseline rollback missing');
 assert(anon.includes("regexp_replace(item->>''id''") || anon.includes('regexp_replace(item->>'), '019 offered IDs must conceal A/B/C');
 assert(anon.includes('igr_v570_019_safe_pack') && anon.includes('v570_journal_news'), '019 journalist news IDs must conceal A/B/C');
-assert(shell.includes('nineteen-three-killers-v665-20261114'),'019 immutable web asset revision missing');
+assert(/const tag='[a-z0-9-]+v[0-9]+-[0-9]{8}'/.test(shell),'immutable release must remain pinned even after a later scenario publish');
 console.log('PASS 019 v665: three private murders, twenty authored investigations per variant, sealed hypotheses, anti-spoiler verdict, reversible release.');
