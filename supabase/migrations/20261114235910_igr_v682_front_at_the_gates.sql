@@ -190,6 +190,7 @@ BEGIN
  END IF;
  RETURN new;
 END; $fn$;
+REVOKE ALL ON FUNCTION igr_private.igr_v682_terror_sector_bulletins() FROM PUBLIC,anon,authenticated;
 DROP TRIGGER IF EXISTS zz_igr_v682_terror_public_losses ON public.igr_v4_rooms;
 CREATE TRIGGER zz_igr_v682_terror_public_losses
 AFTER UPDATE OF status,phase,cycle,state ON public.igr_v4_rooms
