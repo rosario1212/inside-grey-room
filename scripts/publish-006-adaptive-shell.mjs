@@ -89,7 +89,13 @@ if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-sw=sw.replace("const CACHE='igr-santoro-display-audit-20261108'", "const CACHE='igr-santoro-display-audit-20261108-twenty-three-origins-v675-20261114'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-twenty-three-origins-v675-20261114'"),'PWA cache version did not advance');
+for(const asset of ['/terror-live-v681.js?v=terror-city-v681-20261114','/terror-live-v681.css?v=terror-city-v681-20261114']){
+ if(!sw.includes(asset)){
+  assert(sw.includes('const SHELL=['),'PWA shell missing');
+  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
+ }
+}
+sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-terror-live-city-v681-20261114'");
+assert(sw.includes("const CACHE='igr-terror-live-city-v681-20261114'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
