@@ -56,7 +56,7 @@ BEGIN
  END LOOP;
  IF has_table_privilege('anon','igr_private.igr_v670_020_editorial_drafts','select')
  THEN RAISE EXCEPTION '020 draft exposed publicly';END IF;
-END $verify$;
+END; $verify$;
 -- Remove the obsolete public single-cause spoiler, retaining required base-core metadata.
 UPDATE public.igr_v4_scenario_packs p
 SET pack=(p.pack-'truth'-'trames'-'news')||jsonb_build_object(
@@ -305,11 +305,11 @@ new_def:=replace(new_def,' select * into room from public.igr_v4_rooms where cod
   raw:=jsonb_set(raw,''{scenario,investigation_020_adaptive}'',''true''::jsonb,true);
  end if;
  select * into room from public.igr_v4_rooms where code=upper(trim(p_code));');
-IF new_def=old_def THEN RAISE EXCEPTION '020 function not patched';END IF;EXECUTE new_def; END $replace_fn$;
+IF new_def=old_def THEN RAISE EXCEPTION '020 function not patched';END IF;EXECUTE new_def; END; $replace_fn$;
 DO $replace_fn$ DECLARE old_def text;new_def text;BEGIN SELECT pg_get_functiondef('public.igr_v4_lock_final(text,uuid,jsonb)'::regprocedure) INTO old_def; IF old_def IS NULL THEN RAISE EXCEPTION '020 existing function missing';END IF;new_def:=old_def;
 IF position('not (p_payload->''reconstruction_020'' ?& array[''ignition'',''exits'',''maintenance'',''evacuation''])) then raise exception ''invalid 020 reconstruction'';end if;' in new_def)=0 THEN RAISE EXCEPTION '020 patch anchor absent'; END IF;
 new_def:=replace(new_def,'not (p_payload->''reconstruction_020'' ?& array[''ignition'',''exits'',''maintenance'',''evacuation''])) then raise exception ''invalid 020 reconstruction'';end if;','not (p_payload->''reconstruction_020'' ?& array[''ignition'',''exits'',''maintenance'',''evacuation'']) or coalesce(p_payload->''reconstruction_020''->>''ignition'','''') not in (''intentional_diversion'',''accidental_equipment_fault'',''authorized_stage_effect'') or coalesce(p_payload->''reconstruction_020''->>''exits'','''') not in (''known_restrictions'',''final_check_waived'',''restrictions_kept_after_warnings'') or coalesce(p_payload->''reconstruction_020''->>''maintenance'','''') not in (''known_repairs_deferred'',''overoptimistic_signoff'') or coalesce(p_payload->''reconstruction_020''->>''evacuation'','''') not in (''risk_underestimated'',''false_assurance_delay'',''deliberate_delay'')) then raise exception ''invalid 020 reconstruction'';end if;');
-IF new_def=old_def THEN RAISE EXCEPTION '020 function not patched';END IF;EXECUTE new_def; END $replace_fn$;
+IF new_def=old_def THEN RAISE EXCEPTION '020 function not patched';END IF;EXECUTE new_def; END; $replace_fn$;
 
 UPDATE igr_private.igr_v670_020_editorial_drafts SET editorial_status='published_verified',updated_at=now();
 DO $post$
@@ -335,5 +335,5 @@ BEGIN
  OR has_function_privilege('authenticated','igr_private.igr_v675_020_offered(text,integer)','EXECUTE')
  OR has_table_privilege('anon','igr_private.igr_v670_020_editorial_drafts','SELECT')
  THEN RAISE EXCEPTION '020 protected solutions exposed';END IF;
-END $post$;
+END; $post$;
 COMMIT;
