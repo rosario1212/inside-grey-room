@@ -118,11 +118,11 @@ BEGIN
      t:=t||jsonb_build_object(''terminal_outcome''');
  IF position('''city'',city_name,''pressure'',pressure,''controlled'',controlled,''total'',12,' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 9 absent';END IF;
  nextdef:=replace(nextdef,'''city'',city_name,''pressure'',pressure,''controlled'',controlled,''total'',12,','''city'',city_name,''pressure'',pressure,''controlled'',controlled,''total'',12,
-  ''country'',''République de Vesper'',''armed_group'',''FDR'',
-  ''counteroffensive'',counterpush,''national_forces'',''Forces armées de Vesper'',');
+  ''country'',''République de Valtren'',''armed_group'',''FDR'',
+  ''counteroffensive'',counterpush,''national_forces'',''Forces armées de Valtren'',');
  IF position('''Les certitudes du camp sont insuffisantes : l encerclement s accélère. La dernière liaison peut disparaître.'' END END;' in nextdef)=0 THEN RAISE EXCEPTION 'v683 scoring patch point 10 absent';END IF;
  nextdef:=replace(nextdef,'''Les certitudes du camp sont insuffisantes : l encerclement s accélère. La dernière liaison peut disparaître.'' END END;','''Les certitudes du camp sont insuffisantes : l encerclement s accélère. La dernière liaison peut disparaître.'' END END;
- IF correct_count>=5 THEN msg:=''La liaison judiciaire a transmis des informations recoupées. Les forces armées de Vesper rétablissent le contrôle d un secteur contesté et repoussent temporairement le FDR.'';END IF;');
+ IF correct_count>=5 THEN msg:=''La liaison judiciaire a transmis des informations recoupées. Les forces armées de Valtren rétablissent le contrôle d un secteur contesté et repoussent temporairement le FDR.'';END IF;');
  IF position('''cycle'',latest_cycle,''band'',band,''delta'',delta,''submissions'',submitted_count,
      ''national_liaison'',CASE WHEN correct_count>=5 THEN ''verified_intelligence_transmitted'' WHEN correct_count>=3 THEN ''partial_corroboration'' ELSE ''information_unreliable'' END' in nextdef)=0 THEN RAISE EXCEPTION 'v684 1 patch anchor missing';END IF;
  nextdef:=replace(nextdef,'''cycle'',latest_cycle,''band'',band,''delta'',delta,''submissions'',submitted_count,
@@ -130,11 +130,11 @@ BEGIN
      ''correct_answers'',correct_count,''possible_answers'',6,
      ''decision_effect'',CASE WHEN correct_count>=5 THEN ''national_reconquest'' WHEN correct_count>=3 THEN ''defensive_hold'' ELSE ''fdr_breakthrough'' END,
      ''national_liaison'',CASE WHEN correct_count>=5 THEN ''verified_intelligence_transmitted'' WHEN correct_count>=3 THEN ''partial_corroboration'' ELSE ''information_unreliable'' END');
- IF position('IF correct_count>=5 THEN msg:=''La liaison judiciaire a transmis des informations recoupées. Les forces armées de Vesper rétablissent le contrôle d un secteur contesté et repoussent temporairement le FDR.'';END IF;' in nextdef)=0 THEN RAISE EXCEPTION 'v684 2 patch anchor missing';END IF;
- nextdef:=replace(nextdef,'IF correct_count>=5 THEN msg:=''La liaison judiciaire a transmis des informations recoupées. Les forces armées de Vesper rétablissent le contrôle d un secteur contesté et repoussent temporairement le FDR.'';END IF;','msg:=CASE WHEN correct_count>=5 THEN CASE new.scenario_id
-  WHEN ''026'' THEN ''Vos recoupements ont authentifié une partie des archives et des décisions. Après vérification par la liaison judiciaire, les forces de Vesper rétablissent un service public et reprennent un secteur de la capitale. Le FDR recule.''
-  WHEN ''027'' THEN ''Vos réponses ont permis de distinguer les faits anciens des renseignements actuels. La liaison nationale confirme ces limites aux forces de Vesper, qui sécurisent un secteur disputé. Le FDR recule sans que le sort des civils soit présumé.''
-  ELSE ''Vos vérifications empêchent de traiter une trace périmée comme une présence certaine. Les forces de Vesper préservent une liaison et reprennent un secteur contesté aux abords du centre. L éventuelle cellule intérieure reste à établir.'' END
+ IF position('IF correct_count>=5 THEN msg:=''La liaison judiciaire a transmis des informations recoupées. Les forces armées de Valtren rétablissent le contrôle d un secteur contesté et repoussent temporairement le FDR.'';END IF;' in nextdef)=0 THEN RAISE EXCEPTION 'v684 2 patch anchor missing';END IF;
+ nextdef:=replace(nextdef,'IF correct_count>=5 THEN msg:=''La liaison judiciaire a transmis des informations recoupées. Les forces armées de Valtren rétablissent le contrôle d un secteur contesté et repoussent temporairement le FDR.'';END IF;','msg:=CASE WHEN correct_count>=5 THEN CASE new.scenario_id
+  WHEN ''026'' THEN ''Vos recoupements ont authentifié une partie des archives et des décisions. Après vérification par la liaison judiciaire, les forces de Valtren rétablissent un service public et reprennent un secteur de la capitale. Le FDR recule.''
+  WHEN ''027'' THEN ''Vos réponses ont permis de distinguer les faits anciens des renseignements actuels. La liaison nationale confirme ces limites aux forces de Valtren, qui sécurisent un secteur disputé. Le FDR recule sans que le sort des civils soit présumé.''
+  ELSE ''Vos vérifications empêchent de traiter une trace périmée comme une présence certaine. Les forces de Valtren préservent une liaison et reprennent un secteur contesté aux abords du centre. L éventuelle cellule intérieure reste à établir.'' END
  WHEN correct_count>=3 THEN
   ''Certaines analyses sont exactes, mais le dossier reste trop incomplet pour confirmer une contre-offensive. Les forces nationales tiennent plusieurs positions; le FDR gagne du terrain dans les secteurs disputés.''
  ELSE
@@ -144,15 +144,15 @@ BEGIN
       ''pressure'',pressure,''pace'',band' in nextdef)=0 THEN RAISE EXCEPTION 'v684 3 patch anchor missing';END IF;
  nextdef:=replace(nextdef,'''text'',msg,''city'',city_name,''controlled'',controlled,''total'',12,
       ''pressure'',pressure,''pace'',band','''text'',msg,''city'',city_name,''controlled'',controlled,''total'',12,
-      ''country'',''République de Vesper'',''capital'',true,''capital_last_free_city'',true,
+      ''country'',''République de Valtren'',''capital'',true,''capital_last_free_city'',true,
       ''correct_answers'',correct_count,''possible_answers'',6,
       ''source'',''liaison_judiciaire_validee_par_commandement_national'',
       ''effect'',CASE WHEN correct_count>=5 THEN ''reconquest'' WHEN correct_count>=3 THEN ''hold_under_pressure'' ELSE ''fdr_breakthrough'' END,
       ''pressure'',pressure,''pace'',band');
- IF position('''country'',''République de Vesper'',''armed_group'',''FDR'',' in nextdef)=0 THEN RAISE EXCEPTION 'v684 4 patch anchor missing';END IF;
- nextdef:=replace(nextdef,'''country'',''République de Vesper'',''armed_group'',''FDR'',','''country'',''République de Vesper'',''capital'',true,''last_free_city'',true,''armed_group'',''FDR'',');
+ IF position('''country'',''République de Valtren'',''armed_group'',''FDR'',' in nextdef)=0 THEN RAISE EXCEPTION 'v684 4 patch anchor missing';END IF;
+ nextdef:=replace(nextdef,'''country'',''République de Valtren'',''armed_group'',''FDR'',','''country'',''République de Valtren'',''capital'',true,''last_free_city'',true,''armed_group'',''FDR'',');
  IF position('''city'',city_name,''pressure'',0,''controlled'',initial_control,' in nextdef)=0 THEN RAISE EXCEPTION 'v684 5 patch anchor missing';END IF;
- nextdef:=replace(nextdef,'''city'',city_name,''pressure'',0,''controlled'',initial_control,','''city'',city_name,''pressure'',0,''controlled'',initial_control,''country'',''République de Vesper'',''capital'',true,''last_free_city'',true,');
+ nextdef:=replace(nextdef,'''city'',city_name,''pressure'',0,''controlled'',initial_control,','''city'',city_name,''pressure'',0,''controlled'',initial_control,''country'',''République de Valtren'',''capital'',true,''last_free_city'',true,');
  IF nextdef=prior THEN RAISE EXCEPTION 'v683 country and counteroffensive not applied';END IF;
  EXECUTE nextdef;
 END; $v683_counterpush$;
@@ -218,8 +218,8 @@ BEGIN
   INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
   VALUES(new.code,'terror_v682_front_briefing','public',0,
    jsonb_build_object('title','LE FDR · FRONT DE LA RESTAURATION',
-    'text','La République de Vesper sort d une longue guerre civile. Après des années de corruption et de soldes impayées, le Front de la Restauration (FDR), une coalition rebelle, a profité de l effondrement de la garnison de Meridian pour s emparer de sa base militaire et de matériel lourd. Désormais, les forces armées de Vesper défendent les derniers secteurs de '||city_name||'. Le FDR approche de la Grey Room, qui détient des preuves de ses persécutions et de ses crimes.',
-    'city',city_name,'country','République de Vesper','capital',true,'last_free_city',true,'enemy','FDR','sectors',12));
+    'text','La République de Valtren sort d une longue guerre civile. Après des années de corruption et de soldes impayées, le Front de la Restauration (FDR), une coalition rebelle, a profité de l effondrement de la garnison de Heliox pour s emparer de sa base militaire et de matériel lourd. Désormais, les forces armées de Valtren défendent les derniers secteurs de '||city_name||'. Le FDR approche de la Grey Room, qui détient des preuves de ses persécutions et de ses crimes.',
+    'city',city_name,'country','République de Valtren','capital',true,'last_free_city',true,'enemy','FDR','sectors',12));
  END IF;
  IF old.status<>'playing' THEN RETURN new;END IF;
  prior_held:=coalesce((old.state#>>'{terror_v681,controlled}')::int,
@@ -244,9 +244,9 @@ BEGIN
      INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
      VALUES(new.code,'terror_v683_sector_recovered','public',new.cycle,
        jsonb_build_object('title','SECTEUR '||lpad(sector::text,2,'0')||' · REPRIS · '||upper(city_name),
-         'text','Les preuves judiciaires recoupées ont été validées par la liaison nationale. Les forces armées de Vesper ont rétabli le contrôle de ce secteur contesté. Le FDR recule, mais les habitants restent exposés à la crise.',
-         'city',city_name,'country','République de Vesper','capital',true,'sector',sector,'held',sector,'total',12,'enemy','FDR',
-         'national_forces','Forces armées de Vesper','front_pushed_back',true));
+         'text','Les preuves judiciaires recoupées ont été validées par la liaison nationale. Les forces armées de Valtren ont rétabli le contrôle de ce secteur contesté. Le FDR recule, mais les habitants restent exposés à la crise.',
+         'city',city_name,'country','République de Valtren','capital',true,'sector',sector,'held',sector,'total',12,'enemy','FDR',
+         'national_forces','Forces armées de Valtren','front_pushed_back',true));
    END LOOP;
  END IF;
  IF current_held>=prior_held THEN RETURN new;END IF;
@@ -269,14 +269,14 @@ BEGIN
    INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
    VALUES(new.code,'terror_v682_sector_lost','public',new.cycle,
     jsonb_build_object('title','SECTEUR '||lpad(sector::text,2,'0')||' · PERDU · '||upper(city_name),
-    'text',message,'city',city_name,'country','République de Vesper','capital',true,'sector',sector,
+    'text',message,'city',city_name,'country','République de Valtren','capital',true,'sector',sector,
     'held',sector-1,'total',12,'enemy','FDR'));
  END LOOP;
  IF current_held=0 AND prior_held>0 THEN
    INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
    VALUES(new.code,'terror_v682_at_gates','public',new.cycle,
     jsonb_build_object('title','ALERTE · LE FRONT AUX PORTES DE LA GREY ROOM',
-      'text','La capitale, dernière grande ville libre de Vesper, a perdu son dernier secteur administré. Le FDR est désormais devant le bâtiment. Les issues sont verrouillées; personne ne dispose d une garantie d extraction. Les interrogatoires et les preuves ne sont pas effacés.',
+      'text','La capitale, dernière grande ville libre de Valtren, a perdu son dernier secteur administré. Le FDR est désormais devant le bâtiment. Les issues sont verrouillées; personne ne dispose d une garantie d extraction. Les interrogatoires et les preuves ne sont pas effacés.',
       'city',city_name,'enemy','FDR','at_gates',true));
  END IF;
 
