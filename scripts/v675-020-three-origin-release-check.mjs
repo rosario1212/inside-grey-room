@@ -27,5 +27,5 @@ assert(release.includes('authorized_stage_effect'),'020 stage origin must be acc
 assert(release.includes("'truth','{}'::jsonb"),'020 obsolete activist-always-ignites solution remains public');
 assert(release.includes("regexp_replace(e->>'id','^020_[ABC]_','020_')"),'020 offered IDs must not reveal manuscript variant');
 assert(release.includes('igr_v675_020_offered(p_code'),'020 authenticated sync must offer filtered leads');
-assert(publisher.includes('twenty-three-origins-v675-20261114'),'020 immutable cache revision missing');
+assert(/const tag='[a-z0-9-]+v[0-9]+-[0-9]{8}'/.test(publisher),'immutable release tag must remain valid after later DLC updates');
 console.log('PASS 020 v675: three distinct ignitions, protected 20-lead adaptive runtime, six mandatory proofs, four-axis verdict and reversible publication.');
