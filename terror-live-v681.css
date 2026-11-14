@@ -1,0 +1,50 @@
+/* TERREUR · v681 · live city control board */
+.terror-v681-city-lobby,.terror-v681-live{margin:12px 0 16px;padding:15px;border:1px solid rgba(242,174,85,.32);border-radius:14px;background:linear-gradient(155deg,#17130f,#0b0d10 65%,#140d0c);color:#eae6df;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.terror-v681-city-lobby{padding:18px}
+.terror-v681-city-head{display:flex;flex-direction:column;gap:4px}
+.terror-v681-city-head span,.terror-v681-head small,.terror-v681-map-title small,.terror-v681-stats small,.terror-v681-synch,.terror-v681-status small{color:#ae9a86;font-size:11px;letter-spacing:.11em}
+.terror-v681-city-head b{font-size:18px}
+.terror-v681-city-lobby p{color:#b8b0a5;line-height:1.48;font-size:13px;margin:9px 0}
+.terror-v681-current-city{padding:9px 12px;border-left:3px solid #b77738;background:rgba(202,137,67,.1)}
+.terror-v681-current-city strong{display:block;margin-top:3px;font-size:20px}
+.terror-v681-warning{margin:8px 0;background:rgba(183,92,51,.12);border:1px solid rgba(183,92,51,.3);border-radius:8px;padding:8px;font-size:13px}
+.terror-v681-city-entry{margin-top:10px}
+.terror-v681-city-entry label{display:block;color:#bfb4a9;font-size:12px;margin-bottom:7px}
+.terror-v681-input-row{display:flex;gap:8px;flex-wrap:wrap}
+.terror-v681-input-row input{flex:1;min-width:180px;padding:12px;border:1px solid #765c43;border-radius:8px;background:#080a0d;color:#eee;font-size:16px}
+.terror-v681-muted{font-size:12px}
+.terror-v681-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.terror-v681-head h2{font-family:inherit;font-size:clamp(21px,4.8vw,30px);line-height:1.12;letter-spacing:.02em;margin:5px 0 8px;color:#f5e6d5;overflow-wrap:anywhere}
+.terror-v681-head h2 span{color:#e1a362}
+.terror-v681-head p{color:#b5aca1;font-size:12px;margin:0 0 14px;line-height:1.4}
+.terror-v681-synch{flex-shrink:0;border:1px solid #4f4334;padding:6px 8px;border-radius:20px;white-space:nowrap;font-size:10px}
+.terror-v681-dot{display:inline-block;width:6px;height:6px;border-radius:100%;background:#e3a66f;box-shadow:0 0 8px #d89157;animation:terror-v681-beacon 2s ease-in-out infinite}
+.terror-v681-stats{display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:8px;margin-bottom:11px}
+.terror-v681-stats>div{padding:10px;border:1px solid rgba(228,188,124,.15);border-radius:8px;background:rgba(0,0,0,.28);min-width:0}
+.terror-v681-stats small{display:block;font-size:10px;line-height:1.4;letter-spacing:.05em}
+.terror-v681-stats strong{font-size:22px;display:block;margin-top:5px;color:#efc58e}
+.terror-v681-stats strong em{font-style:normal;color:#9f938b;font-size:13px}
+.terror-v681-stats .terror-v681-level{font-size:12px;line-height:1.45;color:#f2d1ae}
+.terror-v681-meter{height:7px;background:#24272c;border-radius:12px;overflow:hidden;border:1px solid #343236}
+.terror-v681-meter>div{height:100%;border-radius:8px;background:linear-gradient(90deg,#a17b46,#e48e52,#bf493e);transition:width 1s ease}
+.terror-v681-map-title{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;margin:17px 0 9px}
+.terror-v681-map-title b{font-size:11px;letter-spacing:.065em}
+.terror-v681-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.terror-v681-district{border-radius:6px;padding:8px 5px;min-height:49px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:5px;min-width:0;position:relative;overflow:hidden}
+.terror-v681-district>span{font-size:9px;letter-spacing:.04em;white-space:nowrap}
+.terror-v681-district>b{font-size:9px;letter-spacing:.02em}
+.terror-v681-district.is-held{background:rgba(102,117,96,.18);border:1px solid rgba(132,151,115,.45);color:#cbd8bf}
+.terror-v681-district.is-lost{background:linear-gradient(160deg,rgba(134,57,37,.3),rgba(34,26,28,.75));border:1px solid rgba(184,93,69,.42);color:#d9a99a}
+.terror-v681-district.is-falling{animation:terror-v681-fall 1.8s ease-in-out}
+.terror-v681-status{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;margin-top:12px;padding-top:11px;border-top:1px solid #40362b;font-size:12px}
+.terror-v681-status>span{color:#d9c5a8}.terror-v681-status strong{color:#f2b47c;font-size:11px}
+.terror-v681-status small{flex-basis:100%;font-size:10px}
+.terror-v681-legacy{margin-top:8px}
+.terror-v681-legacy-label{font-size:10px;letter-spacing:.12em;color:#e7b77d;margin-bottom:9px}
+.terror-v681-quiz h3{font-size:17px;color:#f2cf9f}
+.terror-v681-quiz .field{margin-bottom:12px}
+.terror-v681-breakthrough{box-shadow:0 0 0 1px rgba(223,108,75,.24),0 0 24px rgba(213,66,47,.15)}
+@keyframes terror-v681-fall{0%{filter:brightness(2.2);transform:scale(1.04)}30%{filter:brightness(1.7)}100%{filter:brightness(1);transform:scale(1)}}
+@keyframes terror-v681-beacon{0%,100%{opacity:.5}50%{opacity:1}}
+@media(max-width:480px){.terror-v681-stats{grid-template-columns:1fr 1fr}.terror-v681-stats>div:last-child{grid-column:span 2}.terror-v681-synch{font-size:8px;padding:6px}.terror-v681-district{padding:7px 2px}.terror-v681-district>span,.terror-v681-district>b{font-size:8px}.terror-v681-head h2{font-size:21px}}
+@media(prefers-reduced-motion:reduce){.terror-v681-district.is-falling,.terror-v681-dot{animation:none!important}.terror-v681-meter>div{transition:none}}
