@@ -142,8 +142,8 @@ BEGIN
   INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
   VALUES(new.code,'terror_v682_front_briefing','public',0,
    jsonb_build_object('title','LE FDR · FRONT DE LA RESTAURATION',
-    'text','La République d'Almizia sort d une longue guerre civile. Après des années de corruption et de soldes impayées, le Front de la Restauration (FDR), une coalition rebelle, a profité de l effondrement de la garnison de Ferra pour s emparer de sa base militaire et de matériel lourd. Désormais, les forces armées de Almizia défendent les derniers secteurs de '||city_name||'. Le FDR approche de la Grey Room, qui détient des preuves de ses persécutions et de ses crimes.',
-    'city',city_name,'country','République d'Almizia','capital',true,'last_free_city',true,'enemy','FDR','sectors',12));
+    'text','La République d''Almizia sort d une longue guerre civile. Après des années de corruption et de soldes impayées, le Front de la Restauration (FDR), une coalition rebelle, a profité de l effondrement de la garnison de Ferra pour s emparer de sa base militaire et de matériel lourd. Désormais, les forces armées d Almizia défendent les derniers secteurs de '||city_name||'. Le FDR approche de la Grey Room, qui détient des preuves de ses persécutions et de ses crimes.',
+    'city',city_name,'country','République d''Almizia','capital',true,'last_free_city',true,'enemy','FDR','sectors',12));
  END IF;
  IF old.status<>'playing' THEN RETURN new;END IF;
  prior_held:=coalesce((old.state#>>'{terror_v681,controlled}')::int,
@@ -168,8 +168,8 @@ BEGIN
      INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
      VALUES(new.code,'terror_v683_sector_recovered','public',new.cycle,
        jsonb_build_object('title','SECTEUR '||lpad(sector::text,2,'0')||' · REPRIS · '||upper(city_name),
-         'text','Les preuves judiciaires recoupées ont été validées par la liaison nationale. Les forces armées de Almizia ont rétabli le contrôle de ce secteur contesté. Le FDR recule, mais les habitants restent exposés à la crise.',
-         'city',city_name,'country','République d'Almizia','capital',true,'sector',sector,'held',sector,'total',12,'enemy','FDR',
+         'text','Les preuves judiciaires recoupées ont été validées par la liaison nationale. Les forces armées d Almizia ont rétabli le contrôle de ce secteur contesté. Le FDR recule, mais les habitants restent exposés à la crise.',
+         'city',city_name,'country','République d''Almizia','capital',true,'sector',sector,'held',sector,'total',12,'enemy','FDR',
          'national_forces','Forces armées de Almizia','front_pushed_back',true));
    END LOOP;
  END IF;
@@ -193,7 +193,7 @@ BEGIN
    INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
    VALUES(new.code,'terror_v682_sector_lost','public',new.cycle,
     jsonb_build_object('title','SECTEUR '||lpad(sector::text,2,'0')||' · PERDU · '||upper(city_name),
-    'text',message,'city',city_name,'country','République d'Almizia','capital',true,'sector',sector,
+    'text',message,'city',city_name,'country','République d''Almizia','capital',true,'sector',sector,
     'held',sector-1,'total',12,'enemy','FDR'));
  END LOOP;
  IF current_held=0 AND prior_held>0 THEN
