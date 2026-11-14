@@ -410,6 +410,38 @@ END; $function$
 
 
 
+
+-- The officer shares the fate of the capital and must have exercised command,
+-- without displacing an investigator or claiming a suspect's judicial victory.
+DO $v688_officer_victory$
+DECLARE previous text;patched text;
+BEGIN
+ SELECT pg_get_functiondef('public.igr_v4_make_reveal(text)'::regprocedure) INTO previous;
+ IF position($marker$    if success then
+      winners := winners || jsonb_build_array(p.id);$marker$ in previous)=0
+ THEN RAISE EXCEPTION 'reveal role scoring insertion point unavailable';END IF;
+ patched:=replace(previous,
+ $marker$    if success then
+      winners := winners || jsonb_build_array(p.id);$marker$,
+ $replacement$    if p.public_role='officier_liaison' AND r.scenario_id in ('026','027','028') then
+      select count(*) into action_count from public.igr_v4_actions cmd
+       where cmd.room_code=r.code AND cmd.player_id=p.id
+       AND cmd.action_type='terror_v688_military';
+      success:=exact>=threshold
+       AND coalesce((r.state#>>'{terror_v681,controlled}')::int,0)>0
+       AND action_count>=1;
+      result_text:=CASE WHEN success THEN
+        'Tes ordres ont contribué à préserver les défenses de la capitale d Almizia, appuyés par un dossier suffisamment exact. La Grey Room tient encore.'
+       WHEN action_count=0 THEN
+        'Tu n as transmis aucun ordre militaire avant l issue de la crise. Le FDR prend la capitale ou les preuves ne permettent pas de conclure.'
+       ELSE
+        'Malgré tes décisions, les informations disponibles et le dernier verdict ne permettent pas d empêcher le FDR de prendre la Grey Room.' END;
+    end if;
+    if success then
+      winners := winners || jsonb_build_array(p.id);$replacement$);
+ EXECUTE patched;
+END; $v688_officer_victory$;
+
 -- The common failure is capture, imprisonment and mistreatment by the FDR.
 -- The pressure on the captives is unique to each dossier; never detail abusive acts graphically.
 CREATE OR REPLACE FUNCTION igr_private.igr_v688_terror_captivity()
