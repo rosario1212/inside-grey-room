@@ -2,18 +2,20 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import path from 'node:path';
-const dist=process.argv[2]||'dist',release='nine-cases-v347-20261113';
+const dist=process.argv[2]||'dist';
 const html=readFileSync(path.join(dist,'index.html'),'utf8');
+const release=html.match(/app-v11-([A-Za-z0-9_-]+)\.js\?v=/)?.[1];
+assert(release&&html.includes('app-v11-'+release+'.js?v='+release),'008 current immutable release missing');
 const app=readFileSync(path.join(dist,'app-v11-'+release+'.js'),'utf8');
 const client=readFileSync(path.join(dist,'investigation-008-v310.js'),'utf8');
 const sw=readFileSync(path.join(dist,'service-worker.js'),'utf8');
 const worker=readFileSync('cloudflare-worker.mjs','utf8');
-assert.match(html,/app-v11-nine-cases-v347-20261113\.js\?v=nine-cases-v347-20261113/);
+assert(html.includes('app-v11-'+release+'.js?v='+release));
 assert.match(html,/investigation-008-v310\.js\?v=nine-cases-v347-20261113/);
 assert.match(app,/deepEightInvestigations/,'008 new pinned room gate missing');
 assert.match(app,/investigation_008_adaptive===true/,'008 room contract missing');
 assert.match(app,/igr_v310_008_investigate/,'008 server authoritative RPC missing');
-assert.match(app,/\^00\[1-9\]_\(1\[0-9\]\|20\)/,'008 optional ids must be recognized');
+assert(app.includes("const isOptionalInvestigation=id=>/^0(0[1-9]|10)_(1[0-9]|20)$/.test(String(id));"), '008 and 010 optional identifiers must remain recognized');
 assert.match(app,/deepEightInvestigations\?instructionEight/,'008 new instructional flow missing');
 assert.match(client,/igr_v310_008_submit_detail/,'008 sealed questionnaire RPC missing');
 assert.match(client,/\['enqueteur','analyste'\]/,'suspects must never submit private reports');
@@ -22,8 +24,8 @@ assert.match(client,/Impossible à établir actuellement/,'uncertainty must be p
 assert.doesNotMatch(client,/answer_keys|canonical_truth|private_variant|prior_alignment|score_by_variant|v300_verdict|source_ids/i,
  'Correct answers or variant truth must never be bundled');
 assert.match(sw,/investigation-008-v310\.js\?v=nine-cases-v347-20261113/,'008 PWA precache missing');
-assert.match(sw,/const CACHE='igr-santoro-display-audit-20261108-nine-cases-v347-20261113'/);
-assert.match(worker,/index-nine-cases-v347-20261113\.txt/);
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+release+"'"),'Current PWA cache missing');
+assert(worker.includes('index-latest-release.txt'),'Worker must serve active release alias');
 assert.match(client,/Comparer les registres, les accès et les contrôles indépendants/,'008 neutral factual question required');
 assert.match(client,/Distinguer les actes matériellement établis/,'008 principal-responsibility distinction required');
 assert.doesNotMatch(client,/Un retrait autorisé sans altération établie|Un défaut de garde pendant treize minutes|Un second passage inexpliqué vers D-14/,'008 questionnaire must not reveal all variant endings');
