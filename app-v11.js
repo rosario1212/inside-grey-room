@@ -1609,10 +1609,20 @@ function renderInvestigationTab(){
  if(r.scenario_id==='018'&&['enqueteur','analyste'].includes(role)){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_018');
   const choices=Array.isArray(d.scenario?.investigation_018)?d.scenario.investigation_018:[];
-  const used=!!d.scenario?.investigation_018_used||reports.some(e=>+e.cycle===+r.cycle);
+  const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
+  const used=!!d.scenario?.investigation_018_used||thisCycle.length>=2;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>LES ASSIETTES VIDES · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>TROIS PISTES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste par cycle pour le camp Enquête. Sépare l'auteur du meurtre, l'auteur des assiettes et l'existence d'un éventuel projet commun. Les trois preuves essentielles arrivent automatiquement.</p>${used?'<div class="locked-state">Une piste a été examinée pendant ce cycle.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Index(${i+1})"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux investigations au maximum par cycle pour tout le camp Enquête. Les pistes évoluent discrètement selon les hypothèses scellées, sans révéler la solution. Trois constatations essentielles restent garanties.</p>${used?'<div class="locked-state">Les deux investigations de ce cycle ont été réalisées.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Index(${i+1})"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+
+  if(ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
+   const answered=(d.my_actions||[]).some(a=>a.action_type==='hypothesis_018'&&+a.cycle===+r.cycle);
+   const suspects=(d.suspects||[]).slice(0,3);
+   const opts='<option value="undetermined">Je ne peux pas conclure</option>'+suspects.map((s,i)=>'<option value="resident_'+(i+1)+'">'+h(s.pseudo)+'</option>').join('');
+   const field=(id,label)=>'<div class="field"><label for="'+id+'">'+label+'</label><select id="'+id+'">'+opts+'</select></div>';
+   const plan='<div class="field"><label for="igr018Plan">Le projet antérieur</label><select id="igr018Plan"><option value="undetermined">Je ne peux pas conclure</option><option value="isolated_confrontation">Confrontation individuelle</option><option value="joint_intimidation">Intimidation concertée</option></select></div>';
+   body+='<section class="action-section"><h3>HYPOTHÈSES SCELLÉES</h3><p class="choice-helper">Enquêteur et Analyste répondent séparément. Aucun score ni correction ne sont communiqués. Les hypothèses orienteront les pistes ultérieures.</p>'+(answered?'<div class="locked-state">Tes hypothèses ont été consignées.</div>':field('igr018Killer','Qui a causé la mort ?')+field('igr018Tableau','Qui a dressé les assiettes ?')+plan+'<button type="button" class="btn block" onclick="submit018Hypothesis()">Sceller mes hypothèses</button>')+'</section>';
+  }
  }
 if(r.scenario_id==='019'&&['enqueteur','analyste'].includes(role)){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_019');
@@ -1772,6 +1782,16 @@ async function submit006Statement(){
 }
 async function investigate020Index(i){try{await rpc('igr_v606_020_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Enquête indisponible pour ce cycle.')}}
 async function investigate019Index(i){try{await rpc('igr_v576_019_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est pas disponible pour ce cycle.')}}
+
+async function submit018Hypothesis(){
+ const killer=byId('igr018Killer')?.value||'undetermined';
+ const tableau=byId('igr018Tableau')?.value||'undetermined';
+ const plan=byId('igr018Plan')?.value||'undetermined';
+ try{
+  await rpc('igr_v650_018_hypothesis_submit',{p_code:STATE.room,p_player_token:STATE.token,p_killer:killer,p_tableau:tableau,p_prior_plan:plan});
+  await syncNow(true);
+ }catch(e){console.error(e);toast('Impossible de consigner ces hypothèses pour ce cycle.')}
+}
 async function investigate018Index(i){try{await rpc('igr_v546_018_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette piste n’est plus accessible pendant ce cycle.')}}
 async function investigate017Index(i){try{await rpc('igr_v526_017_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est plus disponible pour ce cycle.')}}
 async function investigate017Choice(choice){try{await rpc('igr_v525_017_investigate',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});await syncNow(true)}catch(e){console.error(e);toast('Cette investigation n’est plus disponible pour ce cycle.')}}
