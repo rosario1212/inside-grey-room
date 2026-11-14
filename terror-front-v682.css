@@ -26,3 +26,13 @@
 @keyframes terror-v682-beacon{50%{opacity:.4;transform:scale(.86)}}
 @media (prefers-reduced-motion:reduce){.terror-v682-live-dot{animation:none}}
 @media (max-width:440px){.terror-v682-name{align-items:flex-start;flex-direction:column}.terror-v682-front{padding:12px}.terror-v682-gates{padding:17px 12px}}
+
+
+.terror-v682-liaison{border-left:3px solid rgba(115,170,151,.85);margin-top:12px;padding:10px 11px;background:rgba(48,78,73,.2);border-radius:3px 8px 8px 3px}
+.terror-v682-liaison small{display:block;color:#bcd2c5;font-size:10px;letter-spacing:.075em;margin-bottom:5px}
+.terror-v682-liaison strong{color:#cee9d9;font-size:13px}
+.terror-v682-liaison p{color:#c2d0c4;line-height:1.5;font-size:11px;margin:6px 0 0}
+.terror-v681-recovered{border-color:rgba(110,167,142,.55);box-shadow:0 0 0 1px rgba(110,167,142,.18),0 0 23px rgba(61,143,108,.12)}
+.terror-v681-district.is-recovered{animation:terror-v683-regain 1.7s ease;border-color:#a9ceac;background:linear-gradient(155deg,rgba(72,141,102,.4),rgba(23,49,35,.75))}
+@keyframes terror-v683-regain{0%{filter:brightness(1.85);transform:scale(1.035)}100%{filter:brightness(1);transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.terror-v681-district.is-recovered{animation:none!important}}
