@@ -1645,11 +1645,22 @@ if(r.scenario_id==='019'&&['enqueteur','analyste'].includes(role)&&ph==='cycle_d
 if(r.scenario_id==='020'&&['enqueteur','analyste'].includes(role)){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_020');
   const choices=Array.isArray(d.scenario?.investigation_020)?d.scenario.investigation_020:[];
-  const used=!!d.scenario?.investigation_020_used||reports.some(e=>+e.cycle===+r.cycle);
+  const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
+  const used=!!d.scenario?.investigation_020_used||thisCycle.length>=2;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>L’APOTHÉOSE · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>QUATRE PISTES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste par cycle pour le camp Enquête. Compare le commandement, les actes de la sécurité et la suppression du dossier. Les preuves principales sont automatiques. Les six preuves garanties arrivent automatiquement.</p>${used?'<div class="locked-state">Une piste a été examinée pendant ce cycle.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate020Index(${i+1})"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux pistes facultatives par cycle, adaptées aux hypothèses scellées. Les six preuves indispensables arrivent toujours automatiquement, même si les enquêteurs se trompent.</p>${used?'<div class="locked-state">Deux pistes ont été examinées pendant ce cycle.</div>':choices.map(o=>`<button type="button" class="choice-row" onclick="investigate020Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
  }
+
+if(r.scenario_id==='020'&&['enqueteur','analyste'].includes(role)&&ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
+ const answered=(d.my_actions||[]).some(a=>a.action_type==='hypothesis_020'&&+a.cycle===+r.cycle);
+ const field=(id,label,items)=>'<div class="field"><label for="'+id+'">'+label+'</label><select id="'+id+'"><option value="undetermined">Je ne peux pas conclure</option>'+items.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('')+'</select></div>';
+ const forms=field('igr020HypIgnition','Origine du feu',[['intentional_diversion','Diversion volontaire'],['accidental_equipment_fault','Défaillance technique'],['authorized_stage_effect','Effet scénique autorisé']])+
+ field('igr020HypExits','Situation des issues',[['known_restrictions','Restrictions connues'],['final_check_waived','Vérification finale abandonnée'],['restrictions_kept_after_warnings','Restrictions maintenues après les alertes']])+
+ field('igr020HypMaintenance','État des protections',[['known_repairs_deferred','Réparation différée'],['overoptimistic_signoff','Rapport trop rassurant']])+
+ field('igr020HypEvacuation','Décision d’évacuation',[['risk_underestimated','Gravité sous-estimée'],['false_assurance_delay','Retard fondé sur un rapport rassurant'],['deliberate_delay','Retard volontaire après alerte urgente']]);
+ body+='<section class="action-section"><h3>HYPOTHÈSES SCELLÉES · 020</h3><p class="choice-helper">Enquêteur et Analyste proposent chacun une reconstitution. Leurs réponses orientent les prochaines pistes sans correction affichée.</p>'+(answered?'<div class="locked-state">Tes hypothèses sont enregistrées.</div>':forms+'<button type="button" class="btn block" onclick="submit020Hypothesis()">Sceller mes hypothèses</button>')+'</section>';
+}
  if(['030','031'].includes(currentScenario()?.id)&&canInvestigationChannel(role)){const pieces=(d.events||[]).filter(e=>e.event_type==='trame'&&e.payload?.evidence_id);if(pieces.length)body+=`<section class="private-block igr82-known"><h3>PIÈCES D’ENQUÊTE · ${pieces.length} reçues</h3><div class="timeline">${pieces.slice().reverse().map(e=>`<details class="event trame"><summary>${h(e.payload?.title||'Pièce')} · Cycle ${h(e.cycle||'')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;}
  if((d.pending_requests||[]).length)body+=renderPendingRequests();
  if(ph==='interrogation_select'&&role==='enqueteur')body+=renderInterrogationSelect();
@@ -1789,6 +1800,19 @@ async function submit006Statement(){
  else await rpc('igr_v263_006_statement',{p_code:STATE.room,p_token:STATE.token,p_text:statement});
  await syncNow(true)}
  catch(e){console.error(e);toast('Déclaration indisponible ou déjà enregistrée.')}
+}
+
+async function investigate020Choice(id){
+ try{await rpc('igr_v675_020_investigate_choice',{p_code:STATE.room,p_player_token:STATE.token,p_choice:id});await syncNow(true)}
+ catch(e){console.error(e);toast('Cette piste n’est pas accessible pendant ce cycle.')}
+}
+async function submit020Hypothesis(){
+ const ignition=byId('igr020HypIgnition')?.value||'undetermined',
+ exits=byId('igr020HypExits')?.value||'undetermined',
+ maintenance=byId('igr020HypMaintenance')?.value||'undetermined',
+ evacuation=byId('igr020HypEvacuation')?.value||'undetermined';
+ try{await rpc('igr_v675_020_hypothesis_submit',{p_code:STATE.room,p_player_token:STATE.token,p_ignition:ignition,p_exits:exits,p_maintenance:maintenance,p_evacuation:evacuation});await syncNow(true)}
+ catch(e){console.error(e);toast('Impossible de sceller les hypothèses pendant cette phase.')}
 }
 async function investigate020Index(i){try{await rpc('igr_v606_020_investigate_index',{p_code:STATE.room,p_player_token:STATE.token,p_index:i});await syncNow(true)}catch(e){console.error(e);toast('Enquête indisponible pour ce cycle.')}}
 
@@ -1938,7 +1962,7 @@ function renderFinalLockForm(){
 <div class="field"><label for="igr019Killer">Qui a personnellement tué le lanceur d'alerte ?</label><select id="igr019Killer"><option value="">Choisir…</option><option value="influencer">La figure d'influence</option><option value="security">Le chef de sécurité</option><option value="institutional">L'intermédiaire institutionnel</option></select></div>
 <div class="field"><label for="igr019SecurityRole">Quel rôle a joué la sécurité ?</label><select id="igr019SecurityRole"><option value="">Choisir…</option><option value="actual_killer">Le chef de sécurité a lui-même commis le meurtre</option><option value="scene_facilitator">Il a facilité une rencontre sans connaître le projet homicide</option><option value="misled_operator">Il a exécuté une consigne de confidentialité trompeuse sans prendre part au meurtre</option></select></div>
 <div class="field"><label for="igr019Cover">Quelles manipulations des preuves sont établies ?</label><select id="igr019Cover"><option value="">Choisir…</option><option value="postmortem_institutional">Des archives institutionnelles sont supprimées après la mort</option><option value="altered_security_log">La sécurité modifie ses propres horaires après la mort</option><option value="fabricated_access_log">Un registre transmis après coup est falsifié pour incriminer la sécurité</option></select></div></section>`:'';
- const twentyReconstruction=STATE.sync?.room?.scenario_id==='020'&&['enqueteur','analyste'].includes(role)?`<section class="action-section"><h3>L’APOTHÉOSE · VERDICT</h3><p class="choice-helper">Reconstitue les quatre facteurs, indépendamment des responsabilités individuelles.</p><div class="field"><label for="igr020Ignition">Origine du feu</label><select id="igr020Ignition"><option value="">Choisir…</option><option value="intentional_diversion">Diversion volontaire</option><option value="accidental_equipment_fault">Défaillance accidentelle</option></select></div>
+ const twentyReconstruction=STATE.sync?.room?.scenario_id==='020'&&['enqueteur','analyste'].includes(role)?`<section class="action-section"><h3>L’APOTHÉOSE · VERDICT</h3><p class="choice-helper">Reconstitue les quatre facteurs, indépendamment des responsabilités individuelles.</p><div class="field"><label for="igr020Ignition">Origine du feu</label><select id="igr020Ignition"><option value="">Choisir…</option><option value="intentional_diversion">Diversion volontaire</option><option value="accidental_equipment_fault">Défaillance technique accidentelle</option><option value="authorized_stage_effect">Effet scénique autorisé à l’origine accidentelle du feu</option></select></div>
 <div class="field"><label for="igr020Exits">Issues</label><select id="igr020Exits"><option value="">Choisir…</option><option value="known_restrictions">Restrictions connues maintenues</option><option value="final_check_waived">Dernier contrôle abandonné</option><option value="restrictions_kept_after_warnings">Restrictions maintenues malgré les alertes</option></select></div>
 <div class="field"><label for="igr020Maintenance">Maintenance</label><select id="igr020Maintenance"><option value="">Choisir…</option><option value="known_repairs_deferred">Réparations différées</option><option value="overoptimistic_signoff">Rapport de conformité trompeur</option></select></div>
 <div class="field"><label for="igr020Evacuation">Évacuation</label><select id="igr020Evacuation"><option value="">Choisir…</option><option value="risk_underestimated">Danger initial sous-estimé</option><option value="false_assurance_delay">Risque minimisé par un rapport rassurant</option><option value="deliberate_delay">Évacuation sciemment retardée</option></select></div></section>`:'';
