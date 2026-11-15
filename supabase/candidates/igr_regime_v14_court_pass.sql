@@ -18,7 +18,7 @@ BEGIN
  THEN RAISE EXCEPTION 'suspect identity required';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
- IF NOT FOUND OR r.phase<>'regime_court' THEN RAISE EXCEPTION 'not in court';END IF;
+ IF NOT FOUND THEN RAISE EXCEPTION 'not in court';END IF;
  IF length(coalesce(p_request_id,'')) NOT BETWEEN 8 AND 128
  THEN RAISE EXCEPTION 'invalid request';END IF;
  SELECT * INTO old FROM igr_private.igr_regime_v13_ledger
@@ -28,6 +28,7 @@ BEGIN
   THEN RAISE EXCEPTION 'request conflict';END IF;
   RETURN old.response;
  END IF;
+ IF r.phase<>'regime_court' THEN RAISE EXCEPTION 'courtroom closed';END IF;
  secs:=CASE WHEN (m.play_state->'court'->>'duration_minutes')::integer=14
  THEN 120 ELSE 60 END;
  elapsed:=floor(extract(epoch FROM now()-
