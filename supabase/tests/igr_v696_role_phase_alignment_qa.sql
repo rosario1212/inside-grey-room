@@ -1,3 +1,6 @@
+-- IMPORTANT: run this rollback-only behavioral QA AFTER v696 migration has COMMITTED.
+-- A CREATE OR REPLACE FUNCTION inside the same open transaction can leave a PL/pgSQL
+-- call in this test bound to the previous function body.
 -- v696 rollback-only smoke test: no early officer timer and no post-verdict initiative.
 BEGIN;
 INSERT INTO public.igr_v4_rooms(code,scenario_id,status,cycle,phase,phase_started_at,phase_ends_at,state)
