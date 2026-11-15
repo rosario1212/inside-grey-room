@@ -11,9 +11,10 @@ assert.ok(game.includes(marker),'CENDRES game boot missing');
 assert.ok(online.includes("routeHOnline(d);hLastSig=sig;"),'A failed render could freeze the online watcher');
 
 const storageMap=new Map(),app={innerHTML:''};
+let heritageWrites=0;
 const storage={
   getItem:k=>storageMap.has(k)?storageMap.get(k):null,
-  setItem:(k,v)=>storageMap.set(k,String(v)),
+  setItem:(k,v)=>{if(k==='igr_heritage_v1')heritageWrites++;storageMap.set(k,String(v))},
   removeItem:k=>storageMap.delete(k)
 };
 const document={readyState:'loading',documentElement:{},addEventListener(){},querySelector(){return null},getElementById:id=>id==='app'?app:null};
@@ -37,13 +38,27 @@ assert.doesNotMatch(goodFiveLate,/ni la base ni le dépôt ne possèdent de reç
 const room={campaign_id:'cendres',chapter:1,decision_id:'alias',stage:'finished',campaign_carry:goodCarry};
 assert.equal(window.IGR_HERITAGE_PLAY.finishOnlineConfirmed({...room,stage:'decision'},false),false,'Unfinished server stage persisted');
 assert.equal(window.IGR_HERITAGE_PLAY.finishOnlineConfirmed({...room,decision_id:'forged'},false),false,'Invalid server option persisted');
+const writesBefore=heritageWrites;
 assert.equal(window.IGR_HERITAGE_PLAY.finishOnlineConfirmed(room,false),true,'Lost result did not recover');
+assert.equal(heritageWrites-writesBefore,1,'A complete CENDRES verdict must persist in exactly one campaign write');
 let state=window.IGR_HERITAGE.get('cendres');
 assert.equal(state.completed.length,1,'Recovered chapter was not committed');
 assert.equal(state.cendres.network.nodes.length,1,'Recovered chapter graph was not saved');
 const snapshot=JSON.stringify(state);
 assert.equal(window.IGR_HERITAGE_PLAY.finishOnlineConfirmed(room,false),true,'Second server confirmation refused');
 assert.equal(JSON.stringify(window.IGR_HERITAGE.get('cendres')),snapshot,'Duplicate confirmation altered saved campaign');
+assert.equal(heritageWrites-writesBefore,1,'Repeat confirmation rewrote canonical state');
+
+// Quota or storage access errors must leave chapter two uncommitted and recoverable.
+const second={...room,chapter:2,decision_id:'transfer'};
+const originalSetItem=storage.setItem;
+storage.setItem=(key,val)=>{if(key==='igr_heritage_v1')throw new Error('quota exceeded');originalSetItem(key,val)};
+assert.equal(window.IGR_HERITAGE_PLAY.finishOnlineConfirmed(second,false),false,'Save failure reported a completed chapter');
+assert.equal(window.IGR_HERITAGE.get('cendres').completed.length,1,'A failed write advanced the chapter');
+storage.setItem=originalSetItem;
+assert.equal(window.IGR_HERITAGE_PLAY.finishOnlineConfirmed(second,false),true,'Quota recovery did not retry chapter two');
+assert.equal(window.IGR_HERITAGE.get('cendres').completed.length,2,'Recovery did not finish chapter two');
+assert.equal(window.IGR_HERITAGE.get('cendres').cendres.network.links.length,1,'Atomic recovery lost the dossier connection');
 
 // Return to a private pass-and-play ballot after a navigation/reload: the answer choices must be masked.
 storageMap.clear();window.IGR_HERITAGE.begin('cendres',false);
