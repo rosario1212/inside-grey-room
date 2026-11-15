@@ -38,11 +38,11 @@ Culte de la personnalité : portraits partout, hymnes à l'école, communiqués 
 
 La violence est grave, adulte et directe par les faits : prisonniers frappés et torturés, exécutions sommaires, villages incendiés, fosses collectives, déplacements forcés, familles disparues. **Éviter la gore-fiction décorative** : aucune scène ne se résume à une liste de supplices. La terreur prend son sens par les personnes, les décisions, les preuves et le caractère irréversible des pertes.
 
-Surnoms attribués par des survivants ou utilisés dans les papiers clandestins : **Le Boucher de Darsen** (surnom public attaché à la présidence), **Le Notaire**, **La Tour**, **L'Héritier** (codes fonctionnels dont les porteurs et pouvoirs doivent être établis acte par acte). Un pseudonyme seul n'établit aucune responsabilité pénale. Ne pas multiplier les surnoms fantaisistes.
+Surnoms attribués par des survivants ou utilisés dans les papiers clandestins : **Le Boucher de Darsen** (surnom public attaché à la présidence), **Le Portrait**, **Le Sceau**, **Le Rempart** (codes fonctionnels dont les porteurs et pouvoirs doivent être établis acte par acte). Un pseudonyme seul n'établit aucune responsabilité pénale. Ne pas multiplier les surnoms fantaisistes.
 
 ## Contrat de traques doubles (v2)
 
-Les dossiers 032, 033 et 034 comportent chacun **deux dirigeants recherchés**, incarnés dès le premier cycle par deux des trois suspects-joueurs. Le troisième suspect reste interrogeable dès C1. La réussite collective de l'enquête repose sur deux captures, sans capture prédéterminée. Les fugitifs peuvent commencer **ensemble, séparés, ou ensemble avec rupture possible selon la variante A/B/C**. Chaque capture signifie **défaite personnelle immédiate**, avec issue fatale décrite à l'épilogue ; le joueur continue à intervenir à l'audience. Une arrestation n'établit pas la culpabilité. Le Juge est requis dans chaque dossier et le Procureur facultatif. Les formes de responsabilité remplacent la grille 0/1/2 exclusivement pour ce DLC. La référence de conception est `docs/REGIME_TRAQUES_IDENTITES_VICTOIRES_RESPONSABILITES_V3.md`.
+Les dossiers 032, 033 et 034 comportent chacun **deux dirigeants recherchés**, incarnés dès le premier cycle par deux des trois suspects-joueurs. Le troisième suspect reste interrogeable dès C1. La réussite collective de l'enquête repose sur deux captures, sans capture prédéterminée. Les fugitifs peuvent commencer **ensemble, séparés, ou ensemble avec rupture possible selon la variante A/B/C**. Chaque capture signifie **défaite personnelle immédiate**, avec issue fatale décrite à l'épilogue ; le joueur continue à intervenir à l'audience. Une arrestation n'établit pas la culpabilité. Le Juge est requis dans chaque dossier et le Procureur facultatif. Les formes de responsabilité remplacent la grille 0/1/2 exclusivement pour ce DLC. La référence de conception est `docs/REGIME_ALLIANCE_MANDATS_VERDICT_V5.md`.
 
 ## Trois dossiers, trois portes sur le même système
 
@@ -59,7 +59,7 @@ Les dossiers 032, 033 et 034 comportent chacun **deux dirigeants recherchés**, 
 ### 034 — LES NOMS QU'ILS PORTAIENT
 **La chute et la traque du sommet.** Le président déchu est en fuite au début de l'enquête, ainsi que son gendre Ilyas Sayegh. Les joueurs peuvent capturer les deux, une seule ou aucune cible selon les décisions et preuves recoupées. Le tribunal confronte témoignages, archives, responsabilités de commandement et langage codé des opérations. L'ancien président est directement incarné par un suspect-joueur actif dès C1 : tant qu'il est en fuite, il agit à distance ; une fois capturé, il peut être interrogé et défendu devant le Juge. Ce n'est pas un PNJ dispensateur de réponses.
 
-**Signature :** double traque de Harb Kassar (alias de joueur) et du chef de la sécurité Ilyas Sayegh, plus matrice identité-fonction par opération. Une capture peut se produire en C1, C2 ou C3, sans résultat garanti. Les noms de code Notaire / Tour / Héritier ne prouvent jamais à eux seuls l'identité ou le lieu des dirigeants.
+**Signature :** double traque de Harb Kassar (alias de joueur) et du chef de la sécurité Ilyas Sayegh, plus matrice identité-fonction par opération. Une capture peut se produire en C1, C2 ou C3, sans résultat garanti. Les noms de code Portrait / Sceau / Rempart ne prouvent jamais à eux seuls l'identité ou le lieu des dirigeants.
 
 ## Contraintes de continuité et de jouabilité
 
