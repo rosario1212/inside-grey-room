@@ -10,6 +10,8 @@ on:
       - 'supabase/tests/igr_regime_*_qa.sql'
       - 'supabase/tests/igr_regime_nine_playability_matrix_v12.sql'
       - 'supabase/candidates/igr_regime_v13_*.sql'
+      - 'supabase/candidates/igr_regime_v14_*.sql'
+      - 'supabase/tests/igr_regime_v14_*.sql'
       - 'regime-live-v13.js'
       - 'regime-live-v13.css'
       - 'index.html'
@@ -53,6 +55,12 @@ jobs:
           grep -q 'REVOKE ALL ON igr_private.igr_regime_v13_rooms' supabase/candidates/igr_regime_v13_private_runtime.sql
           test -s supabase/tests/igr_regime_v13_release_lifecycle_qa.sql
           test -s supabase/tests/igr_regime_v13_court_exchanges_qa.sql
+          test -s supabase/candidates/igr_regime_v14_tracks.sql
+          test -s supabase/candidates/igr_regime_v14_court_pass.sql
+          test -s supabase/tests/igr_regime_v14_location_inference_qa.sql
+          test -s supabase/tests/igr_regime_v14_captured_defense_qa.sql
+          test -s supabase/tests/igr_regime_v14_speech_rights_qa.sql
+          test -s supabase/tests/igr_regime_v14_reconnect_replay_qa.sql
       - name: Verify that secret manuscripts are not bundled
         run: |
           if grep -En 'canonical_truth|private_cards|variant_secret' scripts/regime-rules-v10.mjs; then
