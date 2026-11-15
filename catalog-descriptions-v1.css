@@ -1,0 +1,99 @@
+/* Public catalogue: complete, spoiler-safe descriptions on every dossier.
+   Avoid the legacy 62–77-character JS cutoff and 3-line mobile CSS clamps.
+   This shared rule covers BASE, OMERTÀ, TERREUR, CARTEL and LE RÉGIME. */
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
+  display:grid!important;
+  grid-template-columns:clamp(104px,28vw,132px) minmax(0,1fr)!important;
+  gap:0!important;
+  align-items:stretch!important;
+  height:auto!important;
+  min-height:214px!important;
+  max-height:none!important;
+  overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-thumb,
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-thumb{
+  position:relative!important;
+  display:block!important;
+  align-self:stretch!important;
+  height:auto!important;
+  min-height:214px!important;
+  max-height:none!important;
+  width:100%!important;
+  aspect-ratio:auto!important;
+  overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-thumb img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  object-fit:cover!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact,
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-body.compact{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  align-self:stretch!important;
+  min-width:0!important;
+  min-height:0!important;
+  width:auto!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+  padding:15px 14px 14px!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
+  max-height:none!important;
+  overflow:visible!important;
+  overflow-wrap:break-word;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact > p.igr-card-excerpt,
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-body.compact > p.igr-card-excerpt{
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
+  max-height:none!important;
+  min-height:0!important;
+  height:auto!important;
+  flex:0 0 auto!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  margin:2px 0 14px!important;
+  font-size:clamp(.81rem,2.75vw,.94rem)!important;
+  line-height:1.51!important;
+  color:#bec5cd!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact .tag-row{
+  position:static!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-end!important;
+  min-width:0!important;
+  margin-top:auto!important;
+  padding-top:6px!important;
+}
+@media(max-width:390px){
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
+    grid-template-columns:clamp(96px,27vw,108px) minmax(0,1fr)!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact{
+    padding:12px 11px 13px!important;
+  }
+}
+@media(min-width:700px){
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
+    grid-template-columns:132px minmax(0,1fr)!important;
+  }
+}
