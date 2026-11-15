@@ -47,12 +47,77 @@ const ROLE_TIPS={
   'Cycle 2 : priorise les contradictions testables, sans confondre stress et preuve.',
   'Cycle 3 : confie des tâches de vérification aux autres rôles avant de verrouiller.'
  ],
+ officier_liaison:[
+  'Cycle 1 : surveille trois alertes militaires et rejoins un suspect en interrogatoire.',
+  'Cycle 2 : confirme trois ordres, interroge un autre suspect et rejoins une confrontation si possible.',
+  'Cycle 3 : tes trois derniers ordres influencent la capitale; interroge un troisième suspect distinct.'
+ ],
  suspect:[
   'Cycle 1 : établis une version cohérente sans révéler automatiquement tous tes secrets.',
   'Cycle 2 : adapte ta défense aux preuves déjà publiées; n’invente pas de preuve officielle.',
   'Cycle 3 : défends la frontière réelle de ta responsabilité et prépare les objections.'
  ]
 };
+
+const ROLE_TIPS_EN={
+ analyste:[
+  'Cycle 1: identify two dated contradictions and separate observations from interpretations.',
+  'Cycle 2: challenge your leading hypothesis using a second independent source.',
+  'Cycle 3: state what remains uncertain before recommending responsibility levels.'
+ ],
+ expert:[
+  'Cycle 1: choose a technical question and explain what your analysis can establish.',
+  'Cycle 2: select a useful analysis; your counter-analysis is limited to once per game.',
+  'Cycle 3: clarify technical limits and share only authorized conclusions.'
+ ],
+ inspecteur:[
+  'Cycle 1: explore up to three distinct locations and share actionable findings.',
+  'Cycle 2: investigate unresolved areas without revisiting locations.',
+  'Cycle 3: rank the physical findings relevant to the final assessment.'
+ ],
+ temoin:[
+  'Cycle 1: clearly separate what you witnessed from what you only heard.',
+  'Cycle 2: correct misinterpretations without adding facts absent from your card.',
+  'Cycle 3: request a hearing or publish a statement when your account is distorted.'
+ ],
+ juge:[
+  'Cycle 1: assess requests; your three protection points are limited.',
+  'Cycle 2: settle procedural disputes without directing interrogations.',
+  'Cycle 3: ensure every final responsibility level has evidentiary support.'
+ ],
+ procureur:[
+  'Cycle 1: identify conflicting interests. Informal negotiations are untimed.',
+  'Cycle 2: seek cooperation grounded in facts, never binding the Judge.',
+  'Cycle 3: separate defensible allegations from suspicion before locking.'
+ ],
+ maitre:[
+  'Cycle 1: choose one official client; that choice is final.',
+  'Cycle 2: challenge the precise allegations against your client.',
+  'Cycle 3: prepare the final defense and the limits of your client’s responsibility.'
+ ],
+ journaliste:[
+  'Cycle 1: follow an independent lead and record the source behind your reports.',
+  'Cycle 2: seek a second source before making a serious public allegation.',
+  'Cycle 3: prepare your personal final angle; a publication is not a verdict.'
+ ],
+ enqueteur:[
+  'Cycle 1: organize comparable interrogations and involve specialists.',
+  'Cycle 2: prioritize testable contradictions; stress is not proof.',
+  'Cycle 3: delegate verification before locking your conclusion.'
+ ],
+ suspect:[
+  'Cycle 1: tell a consistent story without revealing all your secrets.',
+  'Cycle 2: adapt your defense to evidence already disclosed, not invented evidence.',
+  'Cycle 3: defend your actual responsibility level and anticipate objections.'
+ ],
+ officier_liaison:[
+  'Cycle 1: monitor your three military alerts and interview one suspect.',
+  'Cycle 2: make three further orders, interview a new suspect and join one confrontation if available.',
+  'Cycle 3: your final three orders affect the capital; interview a third distinct suspect.'
+ ]
+};
+const isEnglish=()=>window.IGR_LOCALE==='en';
+const tr=(f,e)=>isEnglish()?e:f;
 const escapeText=v=>typeof h==='function'?h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cache={key:'',value:null,time:0,receivedAt:0,pending:false,error:false};
 const room=()=>typeof STATE!=='undefined'?STATE?.sync?.room:null;
@@ -123,40 +188,46 @@ window.igr694Order=async(choice)=>{
 };
 function guide(){
  const r=room(),p=player();if(!r||r.status!=='playing'||STATE?.view!=='game')return;
- document.getElementById('igr694RoleTip')?.remove();
- const tips=ROLE_TIPS[p?.public_role];if(!tips)return;
+ const tips=(isEnglish()?ROLE_TIPS_EN:ROLE_TIPS)[p?.public_role];if(!tips)return;
+ const roleKey=[p?.public_role,Number(r.cycle),isEnglish()?'en':'fr'].join('|');
+ const previousTip=document.getElementById('igr694RoleTip');
+ if(previousTip?.dataset.roleKey===roleKey)return;
+ previousTip?.remove();
  const host=document.getElementById('igr51Now')||document.querySelector('.phase-strip');
  if(!host)return;
- const el=document.createElement('aside');el.id='igr694RoleTip';el.className='igr694-role-tip';
+ const el=document.createElement('aside');el.id='igr694RoleTip';el.dataset.roleKey=roleKey;el.className='igr694-role-tip';
  const c=Math.max(1,Math.min(3,Number(r.cycle)||1));
- el.innerHTML='<small>REPÈRE DE RÔLE · CYCLE '+c+'/3</small><p>'+escapeText(tips[c-1])+'</p>';
+ el.innerHTML='<small>'+tr('REPÈRE DE RÔLE · CYCLE ','ROLE GUIDE · CYCLE ')+c+'/3</small><p>'+escapeText(tips[c-1])+'</p>';
  host.insertAdjacentElement('afterend',el);
 }
 
-let workingText='';
+let workingText='',workingKey='';
 function initiative(){
  const d=STATE?.sync,role=d?.player?.public_role,cycle=Number(d?.room?.cycle)||1;
- if(STATE?.view!=='game'||d?.room?.status!=='playing'||!['analyste','temoin'].includes(role))return;
+ const k=[STATE?.room,d?.player?.id,cycle].join('|');
+ if(workingKey!==k){workingKey=k;workingText='';}
+ const forbidden=['briefing','role_reading','pre_investigation','investigation_assembly','cycle_debrief','trame','provisional_orals','provisional_lock','defense','locking','reveal','closed','final_audience','final_suspect_defenses','final_debrief','judge_speech','judge_integrity_vote'];
+ if(STATE?.view!=='game'||d?.room?.status!=='playing'||forbidden.includes(String(d?.room?.phase||''))||!['analyste','temoin'].includes(role)) {document.getElementById('igr694Initiative')?.remove();return;}
  const used=Array.isArray(d.my_actions)&&d.my_actions.some(a=>a.action_type==='igr_v694_role_initiative'&&Number(a.cycle)===cycle);
  const old=document.getElementById('igr694Initiative');
- if(old&&old.dataset.cycle===String(cycle)&&old.dataset.used===String(used))return;
+ if(old&&old.dataset.cycle===String(cycle)&&old.dataset.used===String(used)&&old.dataset.locale===(isEnglish()?'en':'fr'))return;
  old?.remove();
  const host=document.getElementById('igr694RoleTip')||document.getElementById('igr51Now')||document.querySelector('.phase-strip');
  if(!host)return;
  const area=document.createElement('section');area.id='igr694Initiative';area.className='igr694-role-tip igr694-initiative';
- area.dataset.cycle=String(cycle);area.dataset.used=String(used);
- if(used){area.innerHTML='<small>INITIATIVE DU CYCLE</small><p>Votre intervention a été enregistrée pour ce cycle.</p>';host.insertAdjacentElement('afterend',area);return;}
+ area.dataset.cycle=String(cycle);area.dataset.used=String(used);area.dataset.locale=isEnglish()?'en':'fr';
+ if(used){area.innerHTML='<small>'+tr('INITIATIVE DU CYCLE','CYCLE INITIATIVE')+'</small><p>'+tr('Ton intervention a été enregistrée pour ce cycle.','Your initiative has been recorded for this cycle.')+'</p>';host.insertAdjacentElement('afterend',area);return;}
  const analyst=role==='analyste';
- area.innerHTML='<small>'+ (analyst?'NOTE DE RECOUPEMENT':'PAROLE DU TÉMOIN')+
-  ' · 1 intervention par cycle</small>'+
-  '<p>'+(analyst?'Formule une contradiction précise à tester. Cette note est rendue publique et ne constitue pas une preuve.':
-   'Tu peux demander à être entendu ou formuler une déclaration personnelle. Rien n’est présenté comme une vérité confirmée par le système.')+'</p>'+
-  '<textarea id="igr694InitiativeText" rows="3" maxlength="220" placeholder="'+(analyst?'Indique un horaire, une source ou un propos à vérifier…':
-   'Indique seulement ce que ton personnage est autorisé à savoir…')+'"></textarea>'+
+ area.innerHTML='<small>'+ (analyst?tr('NOTE DE RECOUPEMENT','CROSS-CHECK NOTE'):tr('PAROLE DU TÉMOIN','WITNESS STATEMENT'))+
+  tr(' · 1 intervention par cycle',' · 1 initiative per cycle')+'</small>'+
+  '<p>'+(analyst?tr('Formule une contradiction précise à tester. Cette note est publique et ne constitue pas une preuve.','Submit a specific contradiction to test. This note is public and is not evidence.'):
+   tr('Tu peux demander à être entendu ou formuler une déclaration personnelle. Rien n’est confirmé automatiquement par le système.','You may request a hearing or make a personal statement. The system does not automatically verify your account.'))+'</p>'+
+  '<textarea id="igr694InitiativeText" rows="3" maxlength="220" placeholder="'+(analyst?tr('Indique un horaire, une source ou un propos à vérifier…','Specify a time, source or statement to verify…'):
+   tr('Indique seulement ce que ton personnage peut savoir…','State only what your character may know…'))+'"></textarea>'+
   '<div class="igr694-initiative-actions">'+(analyst?
-   '<button type="button" onclick="igr694Initiative(\'recoupement\')">Partager ce point à vérifier</button>':
-   '<button type="button" onclick="igr694Initiative(\'demande_audition\')">Demander à être entendu</button>'+
-   '<button type="button" onclick="igr694Initiative(\'declaration\')">Déposer une déclaration</button>')+'</div>';
+   '<button type="button" onclick="igr694Initiative(\'recoupement\')">'+tr('Partager ce point à vérifier','Share this cross-check')+'</button>':
+   '<button type="button" onclick="igr694Initiative(\'demande_audition\')">'+tr('Demander à être entendu','Request a hearing')+'</button>'+
+   '<button type="button" onclick="igr694Initiative(\'declaration\')">'+tr('Déposer une déclaration','Publish a statement')+'</button>')+'</div>';
  host.insertAdjacentElement('afterend',area);
  const ta=area.querySelector('textarea');ta.value=workingText;ta.addEventListener('input',()=>{workingText=ta.value;});
 }
@@ -169,12 +240,12 @@ window.igr694Initiative=async action=>{
   const result=await rpc('igr_v694_role_initiative',{p_code:STATE.room,p_player_token:STATE.token,p_action:action,p_note:note});
   workingText='';pane.remove();
   if(typeof syncNow==='function')await syncNow(true);
-  if(typeof toast==='function')toast(result?.notice||'Intervention enregistrée.');
+  if(typeof toast==='function')toast(tr('Intervention enregistrée.','Initiative recorded.'));
   if(typeof renderCurrent==='function')renderCurrent();
  }catch(e){
   console.warn('v694 role initiative rejected',e);
   pane.querySelectorAll('button').forEach(x=>x.disabled=false);
-  if(typeof toast==='function')toast('Action refusée : texte trop court, phase close ou initiative déjà utilisée.');
+  if(typeof toast==='function')toast(tr('Action refusée : texte trop court, phase close ou initiative déjà utilisée.','Action rejected: text too short, phase closed or initiative already used.'));
  }
 };
 if(typeof renderGame==='function'){
