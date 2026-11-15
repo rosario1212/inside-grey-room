@@ -20,7 +20,7 @@ AS $function$
  when p_scenario in ('007','010','012') then 5
  when p_scenario in ('013','014') then 6 when p_scenario='015' then 7 when p_scenario='016' then 9
  when p_scenario='017' then 10 when p_scenario='018' then 9 when p_scenario='019' then 9 when p_scenario='020' then 16 else 5 end
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v4_role_for_seat(p_scenario text, p_seat integer, p_count integer)
@@ -91,7 +91,7 @@ elsif p_scenario in ('007','010','012') then return (array['enqueteur','analyste
  end if;
  return 'suspect';
 end
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v4_role_capacity(p_scenario text, p_count integer, p_role text)
@@ -208,7 +208,7 @@ begin
  end if;
  return 0;
 end
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION igr_private.igr_regime_v13_begin_court(p_code text)
@@ -243,5 +243,5 @@ BEGIN
    'text','Tous les joueurs rejoignent la salle commune. Le Juge appelle les personnes présentes à la barre. L audience finale ne sera pas rejouée.',
    'duration_minutes',minutes));
  RETURN true;
-END $function$
+END $function$;
 

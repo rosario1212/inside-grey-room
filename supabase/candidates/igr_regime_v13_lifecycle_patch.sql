@@ -49,7 +49,7 @@ AS $function$
  when p_scenario in ('007','010','012') then 5
  when p_scenario in ('013','014') then 6 when p_scenario='015' then 7 when p_scenario='016' then 9
  when p_scenario='017' then 10 when p_scenario='018' then 9 when p_scenario='019' then 9 when p_scenario='020' then 16 else 5 end
-$function$
+$function$;
 
 
 -- PATCH igr_v4_role_for_seat
@@ -121,7 +121,7 @@ elsif p_scenario in ('007','010','012') then return (array['enqueteur','analyste
  end if;
  return 'suspect';
 end
-$function$
+$function$;
 
 
 -- PATCH igr_v4_start_game

@@ -240,7 +240,7 @@ BEGIN
          WHERE j.ord<=least(3,greatest(0,r.cycle))),'[]'::jsonb)||
          coalesce(m.play_state->'events','[]'::jsonb),
       'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb))));
-END $function$
+END $function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_regime_v13_court_exchange(p_code text, p_player_token uuid, p_request_id text, p_kind text, p_message text, p_reply_to text DEFAULT NULL::text)
@@ -338,7 +338,7 @@ BEGIN
  (room_code,request_id,actor_player,action_kind,cycle,response)
  VALUES(m.room_code,p_request_id,p.id,'court_exchange',r.cycle,response);
  RETURN response;
-END $function$
+END $function$;
 
 
 -- Each optional civic participant can frame one already-published document per cycle.
