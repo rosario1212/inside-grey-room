@@ -118,22 +118,28 @@ function evidence(){
  '<details><summary>Ouvrir les documents publiés</summary>'+
  docs.map(d=>'<div class="igr-rg13-proof"><small>'+esc(d.kind==='capture'?'PISTE DE TRAQUE':'PIÈCE D’ENQUÊTE')+
  ' · '+esc(d.source||d.origin||'Document public')+'</small><strong>'+esc(d.title||'Document')+'</strong>'+
- '<p>'+esc(d.text||'')+'</p></div>').join('')+'</details>');
+ '<p>'+esc(d.text||'')+'</p>'+(d.kind==='capture'&&d.network_label?'<p><b>Refuge : '+esc(d.network_label)+'</b></p>':'')+'</div>').join('')+'</details>');
 }
 function warrants(){
  if(!isRole('enqueteur'))return '';
  const suspects=cast().slice(0,2);
- const ids=(cache?.public_evidence||[]).filter(x=>x.kind==='capture');
+ const clues=(cache?.public_evidence||[]).filter(x=>x.kind==='capture'&&x.network_id);
+ const hideouts=Array.isArray(cache?.public_networks)?cache.public_networks:[];
+ const choices=clues.map(x=>'<option value="'+esc(x.id)+'" data-target="'+
+  esc(x.target_id)+'" data-network="'+esc(x.network_id)+'">'+
+  esc(person(x.target_id))+' · '+esc(x.network_label||x.network_id)+
+  ' · '+esc(x.source||x.id)+'</option>').join('');
  return section('MANDATS D’INTERPELLATION',
- '<p>Deux sources indépendantes par cible. Un mandat, par dirigeant et par cycle. Le Juge vérifie la demande avant sa résolution.</p>'+
+ '<p>Choisis un refuge réel et deux traces datées de sources indépendantes, concernant le même fugitif et ce refuge. Les lieux possibles sont connus, mais pas les cachettes utilisées.</p>'+
  '<div class="igr-rg13-form"><label>Cible<select id="igrRgTarget">'+
- suspects.map(s=>'<option value="'+esc(s.actor_id)+'">'+esc(s.pseudo)+'</option>').join('')+'</select></label>'+
- '<label>Hypothèse de fuite<select id="igrRgTrack"><option value="apart">Séparés</option><option value="together">Ensemble</option></select></label>'+
- '<label>Première pièce<select id="igrRgE1">'+
- ids.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id)+' · '+esc(person(x.target_id))+'</option>').join('')+'</select></label>'+
- '<label>Deuxième pièce<select id="igrRgE2">'+
- ids.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id)+' · '+esc(person(x.target_id))+'</option>').join('')+'</select></label>'+
- button('DÉPOSER UN MANDAT','warrant')+'</div>');
+ suspects.map(x=>'<option value="'+esc(x.actor_id)+'">'+esc(x.pseudo)+'</option>').join('')+'</select></label>'+
+ '<label>Refuge à vérifier<select id="igrRgTrack">'+
+ hideouts.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.label)+'</option>').join('')+'</select></label>'+
+ '<label>Première trace<select id="igrRgE1"><option value="">— Première source —</option>'+
+ choices+'</select></label>'+
+ '<label>Deuxième trace<select id="igrRgE2"><option value="">— Seconde source indépendante —</option>'+
+ choices+'</select></label>'+
+ button('SOUMETTRE LE MANDAT AU JUGE','warrant')+'</div>');
 }
 function judge(){
  if(!isRole('juge'))return '';
@@ -267,7 +273,7 @@ function render(){
  const previous=document.getElementById('igr-regime-v13');
  const preserved=new Map();
  if(previous){
-  previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement').forEach(el=>{
+  previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2').forEach(el=>{
    const k=el.hasAttribute('data-court-act')?
      el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
    preserved.set(k,el.value);
@@ -284,7 +290,7 @@ function render(){
  scene()+(phase==='regime_court'?court()+capturedDefense():myCard()+alliance()+actions()+capturedDefense()+investigations()+third()+warrants()+judge())+
  evidence()+events();
  after.insertAdjacentElement('afterend',root);
- root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement').forEach(el=>{
+ root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2').forEach(el=>{
   const k=el.hasAttribute('data-court-act')?
    el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
   if(preserved.has(k))el.value=preserved.get(k);
@@ -325,7 +331,13 @@ document.addEventListener('click',async(ev)=>{
    await call('igr_regime_v13_action',{...args,p_kind:'third_submission',p_payload:{defense:control('igrRgDefense')}});
   }else if(action==='warrant'){
    const e1=control('igrRgE1'),e2=control('igrRgE2'),target=control('igrRgTarget');
-   if(!e1||!e2||e1===e2){toast('Sélectionne deux pièces distinctes.');return}
+   if(!e1||!e2||e1===e2){toast('Sélectionne deux traces distinctes.');return}
+   const doc1=(cache.public_evidence||[]).find(x=>x.id===e1),doc2=(cache.public_evidence||[]).find(x=>x.id===e2);
+   if(!doc1||!doc2||doc1.target_id!==target||doc2.target_id!==target||
+      doc1.network_id!==control('igrRgTrack')||doc2.network_id!==control('igrRgTrack')||
+      doc1.source===doc2.source){
+     toast('Les deux traces doivent concerner la même personne et le même refuge, avec deux sources indépendantes.');return;
+   }
    await call('igr_regime_v13_warrant',{...args,p_target_id:target,p_track_choice:control('igrRgTrack'),p_evidence_ids:[e1,e2]});
   }else if(action==='judge-allow'||action==='judge-contest'){
    await call('igr_regime_v13_judge_review',{...args,p_mandate_id:el.dataset.mandateId,
