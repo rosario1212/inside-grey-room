@@ -70,7 +70,7 @@ BEGIN
  fn:=replace(fn,'r.cycle NOT IN (2,3)','r.cycle NOT BETWEEN 1 AND 3');
  fn:=replace(fn,'r.phase NOT IN (''interrogation'',''event_confrontation'')',
                  'r.phase <> ''interrogation''');
- fn:=replace(fn,'  question_text:=CASE focus_',
+ fn:=replace(fn,' question_text:=CASE focus_',
  $distinct$  IF EXISTS (
     SELECT 1 FROM public.igr_v4_actions a
     WHERE a.room_code=r.code AND a.player_id=p.id
