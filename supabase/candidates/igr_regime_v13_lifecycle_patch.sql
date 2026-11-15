@@ -63,9 +63,9 @@ begin
  if p_scenario in ('032','033','034') AND igr_private.igr_regime_v13_release_eligible() then
    if p_count<6 OR p_count>public.igr_v4_max_players(p_scenario)
      OR p_seat<0 OR p_seat>=p_count THEN
-       raise exception 'Regime requires a valid six-to-nine-player configuration';
+       raise exception 'Regime requires six players, or seven with prosecutor';
    end if;
-   return (array['enqueteur','analyste','juge','suspect','suspect','suspect','procureur','temoin','journaliste']::text[])[p_seat+1];
+   return (array['enqueteur','analyste','juge','suspect','suspect','suspect','procureur']::text[])[p_seat+1];
  end if;
  if p_scenario='029' and igr_private.igr_v108_029_is_enabled() then
    if p_count not between 6 and 11 then raise exception 'four witness roster requires 6 to 11 participants'; end if;
@@ -589,7 +589,7 @@ begin
      perform igr_private.igr_regime_v13_finish_court(r.code);return;
    end if;
  end if;
- if r.phase='closed' then if r.phase_ends_at is not null and now()>=r.phase_ends_at then perform public.igr_v52_begin_stage(r.code,'audience');end if;return;end if;
+ if r.phase='closed' then if r.phase_ends_at is not null and now()>=r.phase_ends_at then perform public.igr_v52_begin_stage(r.code,case when public.igr_v44_judge_present(r.code) then 'courtroom' else 'audience' end);end if;return;end if;
  if r.phase in ('final_audience','final_suspect_defenses','final_lawyer_opinions') then status:=coalesce(r.state->>'v52_status','waiting');if r.phase_ends_at is not null and now()>=r.phase_ends_at then if status='active' then perform public.igr_v52_advance(r.code,'timeout'); elsif status='waiting' and public.igr_v44_judge_present(r.code) then
      if r.phase='final_audience' then perform public.igr_v52_advance(r.code,'waiting_timeout');
      else update public.igr_v4_rooms set phase_started_at=now(),phase_ends_at=now()+make_interval(secs=>coalesce((r.state->'v52_queue'->coalesce((r.state->>'v52_index')::int,0)->>'seconds')::int,180)),state=jsonb_set(jsonb_set(r.state,'{v52_status}',to_jsonb('active'::text),true),'{v705_defense_done}','false'::jsonb,true),updated_at=now() where code=r.code;
