@@ -10,7 +10,7 @@ AS $$
 DECLARE
  r public.igr_v4_rooms%rowtype; p public.igr_v4_players%rowtype;
  m igr_private.igr_regime_v13_rooms%rowtype;
- e jsonb; evidence jsonb; origins text[]:=ARRAY[]::text[];
+ e jsonb; evidence jsonb; origins text[]:=ARRAY[]::text[];trace_id text;origin_name text;published boolean; from_extra boolean;
  eid text; ids text[]:=ARRAY[]::text[];
  old igr_private.igr_regime_v13_ledger%rowtype;
  warrants jsonb; result jsonb; target1 text;target2 text;
@@ -34,22 +34,61 @@ BEGIN
  target2:=m.private_pack->'private_cards'->1->>'actor_id';
  IF p_target_id NOT IN (target1,target2) THEN RAISE EXCEPTION 'unknown fugitive';END IF;
  IF m.play_state->'arrests' ? p_target_id THEN RAISE EXCEPTION 'fugitive already captured';END IF;
- IF p_track_choice NOT IN ('together','apart') THEN RAISE EXCEPTION 'invalid trace hypothesis';END IF;
+ IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(
+   m.private_pack->'first_cycle'->'public_networks') loc
+   WHERE loc->>'id'=p_track_choice)
+   THEN RAISE EXCEPTION 'unknown proposed refuge';END IF;
+ IF r.cycle=1 AND r.phase='role_reading' AND
+    (NOT (m.play_state->'alliance' ? target1) OR
+     NOT (m.play_state->'alliance' ? target2)) THEN
+   RAISE EXCEPTION 'initial alliance has not been locked';END IF;
+ IF (m.play_state->'lead_delay'->p_target_id->>'cycle')::int=r.cycle
+    AND now()<coalesce((m.play_state->'lead_delay'->p_target_id->>'until')::timestamptz,now()) THEN
+    RAISE EXCEPTION 'this contact lead is under independent verification';END IF;
  IF jsonb_typeof(p_evidence_ids)<>'array' OR jsonb_array_length(p_evidence_ids)<>2
  THEN RAISE EXCEPTION 'two independent pieces required';END IF;
  SELECT ARRAY(SELECT jsonb_array_elements_text(p_evidence_ids)) INTO ids;
  IF ids[1]=ids[2] THEN RAISE EXCEPTION 'two distinct pieces required';END IF;
  FOREACH eid IN ARRAY ids LOOP
-   SELECT value INTO e FROM jsonb_array_elements(m.private_pack->'capture_evidence') value
-   WHERE value->>'id'=eid AND value->>'targetId'=p_target_id
-     AND (value->>'cycle')::integer<=r.cycle LIMIT 1;
-   IF NOT FOUND OR NOT ((e->>'revealed_at'='cycle_start') OR
-       (coalesce(m.play_state->'disclosed','[]'::jsonb) ? eid)
-       OR EXISTS(SELECT 1 FROM jsonb_array_elements(
-         coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) x
-         WHERE x->>'id'=eid AND (x->>'cycle')::integer<=r.cycle)) THEN
-     RAISE EXCEPTION 'unpublished or unrelated capture evidence';END IF;
-   origins:=origins||ARRAY[e->>'origin'];
+   e:=NULL;
+   from_extra:=false;
+   SELECT value INTO e FROM jsonb_array_elements(
+     m.private_pack->'capture_evidence') value
+     WHERE value->>'id'=eid AND value->>'targetId'=p_target_id
+       AND (value->>'cycle')::integer<=r.cycle LIMIT 1;
+   IF e IS NULL THEN
+     from_extra:=true;
+     SELECT value INTO e FROM jsonb_array_elements(
+       coalesce(m.play_state->'extra_capture_leads','[]'::jsonb)) value
+       WHERE value->>'id'=eid AND value->>'target_id'=p_target_id
+         AND (value->>'cycle')::integer<=r.cycle LIMIT 1;
+   END IF;
+   IF e IS NULL THEN RAISE EXCEPTION 'unpublished or unrelated trace';END IF;
+   IF from_extra THEN
+      origin_name:=e->>'source';
+      trace_id:=e->>'network_id';
+   ELSE
+     published:=
+       ((e->>'revealed_at'='cycle_start'
+         AND (e->>'cycle')::integer<=r.cycle)
+        OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? eid)
+        OR EXISTS(SELECT 1 FROM jsonb_array_elements(
+         coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
+         WHERE sd->>'id'=eid AND (sd->>'cycle')::integer<=r.cycle));
+     IF NOT published THEN RAISE EXCEPTION 'private trace not revealed';END IF;
+     origin_name:=e->>'origin';
+     trace_id:=coalesce(
+       m.play_state->'capture_clue_tracks'->>eid,
+       (SELECT sd->>'track_id' FROM jsonb_array_elements(
+         coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
+         WHERE sd->>'id'=eid LIMIT 1),
+       CASE WHEN (e->>'cycle')::integer=1
+         THEN igr_private.igr_regime_v14_base_track(m.room_code,p_target_id)
+         ELSE igr_private.igr_regime_v14_active_track(m.room_code,p_target_id) END);
+   END IF;
+   IF trace_id IS DISTINCT FROM p_track_choice THEN
+      RAISE EXCEPTION 'the two documents must point to the chosen refuge';END IF;
+   origins:=origins||ARRAY[origin_name];
  END LOOP;
  IF origins[1] IS NULL OR origins[1]=origins[2] THEN RAISE EXCEPTION 'dependent sources';END IF;
  warrants:=coalesce(m.play_state->'mandates','[]'::jsonb);
@@ -115,12 +154,7 @@ BEGIN
   reviewed:='automatic_fallback';
  ELSE RAISE EXCEPTION 'judge review not permitted or too early'; END IF;
  target:=w->>'target_id';
- party:=CASE WHEN coalesce(m.play_state->'alliance'->>
-   (m.private_pack->'private_cards'->0->>'actor_id'),'apart')='together'
-  AND coalesce(m.play_state->'alliance'->>
-   (m.private_pack->'private_cards'->1->>'actor_id'),'apart')='together'
- THEN 'together' ELSE 'apart' END;
- actual:=party;
+ actual:=igr_private.igr_regime_v14_active_track(m.room_code,target);
  outcome:=CASE WHEN w->>'track_choice'=actual THEN 'captured' ELSE 'not_found' END;
  IF m.play_state->'arrests' ? target THEN outcome:='already_captured';END IF;
  w:=jsonb_set(w,'{status}',to_jsonb(outcome),true);
