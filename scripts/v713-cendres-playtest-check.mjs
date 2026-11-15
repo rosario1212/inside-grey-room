@@ -104,4 +104,4 @@ assert.ok(test.cendresLateEvidence(guest,2,hostCarry).includes('incomplet'));
 assert.ok(test.cendresFinalConsequence(guest,test.PACKS.cendres.chapters[5].options[0]).includes('compromission institutionnelle majeure'));
 assert.equal(test.cendresLateEvidence({...guest,online:false},2,window.IGR_HERITAGE.get('cendres')).includes('incomplet'),false,'Local/remote state isolation missing');
 
-console.log('CENDRES v713: '+cases+' end-to-end local runs (5/6/7 players × 3 paths), 30 chapters, 120 phases, replay and online carry projections OK');
+console.log('CENDRES v713: '+cases+' end-to-end local runs (5/6/7 players × 3 paths), 45 chapters, 180 phases, replay and online carry projections OK');
