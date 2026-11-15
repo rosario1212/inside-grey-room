@@ -97,7 +97,8 @@ export function evaluateReconstruction({sealedActs,answers,publicEvidence,minimu
     if(!response)return {actId:act.id,correct:false,reason:'missing'};
     const independent=(Array.isArray(response.evidenceIds)?response.evidenceIds:[])
       .map(id=>publicEvidence.find(e=>e.id===id))
-      .filter(e=>e&&e.revealed===true&&e.actId===act.id);
+      .filter(e=>e&&e.revealed===true&&
+        (e.actId===act.id||(Array.isArray(e.act_ids)&&e.act_ids.includes(act.id))));
     const origins=new Set(independent.map(e=>e.origin).filter(Boolean));
     const supported=origins.size>=2;
     const matching=fields.every(k=>Object.hasOwn(response,k)&&Object.hasOwn(act,k)&&response[k]===act[k]);
