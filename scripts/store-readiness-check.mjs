@@ -103,9 +103,20 @@ requireMatch('store-catalog-v69.js', /heritage:\{[\s\S]{0,420}?priceChf:15/, 'mu
 requireMatch('scripts/build-mobile.mjs', /legacyStoreExcluded/, 'must explicitly separate private beta unlock tooling from native store bundles');
 requireMatch('scripts/build-mobile.mjs', /native-store-boundary-v14\.js/, 'must load the native commerce boundary');
 for (const page of ['www/index.html', 'www/en.html']) {
-  requireMatch(page, /release-polish-v68\.css\?v=v68-rc1/, 'must load the commercial RC polish layer');
   requireNoMatch(page, /Inside Grey Room\s*·\s*B(?:ê|e)ta\s*12\.11\.0/i, 'must not expose the obsolete beta version label');
   requireNoMatch(page, /dlc-invites-v12-45\.(?:js|css)/i, 'native bundle must not reference legacy DLC invite/code unlock UI');
+  if(page==='www/en.html' && fs.existsSync(path.join(root,page)) &&
+     /location\.replace\('\.\/'\)/.test(fs.readFileSync(path.join(root,page),'utf8')) &&
+     !/<script\s+src=/.test(fs.readFileSync(path.join(root,page),'utf8'))){
+    // English is a redirect-only shell. The destination (index.html) must
+    // contain the commercial assets; the source locale cannot load them twice.
+    requireMatch(page,/localStorage\.setItem\('igr_locale','en'\)/,
+      'must preserve the English locale before redirecting to the commercial runtime');
+    continue;
+  }
+  // v702 provenance comments enumerate every original dependency; the v702
+  // byte-identity gate independently verifies actual inclusion in the bundles.
+  requireMatch(page, /release-polish-v68\.css\?v=v68-rc1/, 'must load the commercial RC polish layer');
   requireMatch(page, /native-store-boundary-v14\.js/, 'must include native store commerce boundary');
 }
 requireAbsent('www/dlc-invites-v12-45.js', 'legacy code unlock JavaScript must not ship in the native bundle');
