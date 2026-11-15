@@ -180,7 +180,13 @@ begin
     if status<>'active' then raise exception 'not active'; end if;
     if stage='defenses' and public.igr_v44_judge_present(r.code) then
       if me.public_role<>'juge' then raise exception 'only the judge can close this appearance';end if;
-      if not coalesce((r.state->>'v705_defense_done')::boolean,false) and now()<r.phase_started_at+case when r.state->>'duration_mode'='short' then interval '90 seconds' else interval '2 minutes' end then raise exception 'suspect defense time protected unless explicitly waived';end if;
+      if not coalesce((r.state->>'v705_defense_done')::boolean,false) then
+        if r.state->>'duration_mode'='short' then
+          if now()<r.phase_started_at+interval '90 seconds' then raise exception 'suspect defense time protected unless explicitly waived';end if;
+        else
+          if now()<r.phase_started_at+interval '2 minutes' then raise exception 'suspect defense time protected unless explicitly waived';end if;
+        end if;
+      end if;
     end if;
     perform public.igr_v52_advance(r.code,'manual');
   else raise exception 'invalid action'; end if;
