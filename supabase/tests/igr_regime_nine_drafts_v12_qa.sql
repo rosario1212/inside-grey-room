@@ -79,7 +79,7 @@ WITH ids(sid,variant_id) AS (
  r->'editorial_provenance'->>'human_source_review'='pending')=1 FROM drafts
  UNION ALL SELECT sid,variant_id,'case-specific narrative title and no legacy codes',
  d->>'title'=CASE sid WHEN '032' THEN 'LES ARCHIVES DU PALAIS'
- WHEN '033' THEN 'LA DYNASTIE' ELSE 'LES NOMS QU’ILS PORTAIENT' END
+ WHEN '033' THEN 'LA DYNASTIE' ELSE 'LES NOMS QU''ILS PORTAIENT' END
  AND (sid<>'034' OR
   (d->'setting'->'codes'='["LA TÊTE","LE SCEAU","LA TOUR"]'::jsonb
   AND d::text !~* '(notaire|rempart|portrait)')) FROM drafts
