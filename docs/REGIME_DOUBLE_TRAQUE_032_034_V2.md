@@ -1,6 +1,6 @@
 # LE RÉGIME — Traques doubles adversariales 032–034 v2
 
-**Statut : CONTRAT DE CONCEPTION, NON IMPLÉMENTÉ AU SERVEUR ET NON PUBLIÉ.** Ce document remplace le modèle de capture assurée décrit dans `REGIME_JUGE_ET_TRAQUE_V1.md`. Ne pas modifier uniquement les textes publics ni présenter les règles ci-dessous comme jouables tant qu'aucun backend n'a été adapté et testé.
+**Statut : ARCHIVE DE CONCEPTION remplacée par `docs/REGIME_TRAQUES_IDENTITES_VICTOIRES_RESPONSABILITES_V3.md` ; NON IMPLÉMENTÉE au serveur et NON PUBLIÉE.** Les variantes, la personnalisation de TOUS les noms, l'issue fatale à l'épilogue et les responsabilités par actes sont définies dans v3. Toute règle contradictoire dans v2 est supplantée. Ce document remplace le modèle de capture assurée décrit dans `REGIME_JUGE_ET_TRAQUE_V1.md`. Ne pas modifier uniquement les textes publics ni présenter les règles ci-dessous comme jouables tant qu'aucun backend n'a été adapté et testé.
 
 ## 0. Intention centrale
 
