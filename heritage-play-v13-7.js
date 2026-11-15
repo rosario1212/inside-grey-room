@@ -577,7 +577,7 @@ function renderDecision(live){
 }
 function chooseOption(id){
   const l=readLive();if(!l)return;
-  const pc=PACKS[l.campaignId].chapters[l.chapter],opt=pc.options.find(o=>o.id===id);
+  const pc=PACKS[l.campaignId].chapters[l.chapter];let opt=pc.options.find(o=>o.id===id);
   if(!opt)return;
   if(l.campaignId==='cendres'&&!l.online){
     const b=ensureCendresBallot(l);
