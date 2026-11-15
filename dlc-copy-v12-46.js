@@ -18,7 +18,7 @@
     },
     regime: {
       eyebrow: 'DLC APRÈS LA CHUTE',
-      text: 'Dix-neuf ans de dictature, une guerre d’agression et des milliers de détenus. Le pouvoir s’est effondré : six hauts responsables sont traqués dans trois enquêtes distinctes.'
+      text: 'Dix-neuf ans de dictature, une guerre d’agression et des milliers de prisonniers. Chaque dossier oppose deux dirigeants joués en fuite aux enquêteurs : les deux captures donnent la victoire, chaque capture condamne le fugitif à un destin fatal.'
     }
   });
 
