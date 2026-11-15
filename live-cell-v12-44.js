@@ -753,7 +753,16 @@
     if(!inRoom()||!roomScreenActive()||document.visibilityState==='hidden'||!isOnline())return;
     const since=Date.now()-Number(STATE.lastSuccessfulSyncAt||0);
     if(since>10000){
-      if(!RT.ready||Date.now()-RT.lastMessageAt>35000)connectRealtime(true);
+      // A failed snapshot must not trigger a second fast retry loop via the
+      // rescue watchdog. Keep the existing scheduled backoff intact.
+      if((!RT.ready||Date.now()-RT.lastMessageAt>35000)&&!RT.joining&&!RT.reconnect)
+        connectRealtime(true);
+      if(RT.failures>0){
+        if(!RT.syncRunning&&!RT.syncTimer)
+          syncSoon(Math.min(16000,Math.round(800*Math.pow(1.8,Math.max(0,RT.failures-1)))),true);
+        if(!RT.pollTimer)schedulePoll(pollDelay());
+        return;
+      }
       syncSoon(0,true);
       schedulePoll(900);
     }
