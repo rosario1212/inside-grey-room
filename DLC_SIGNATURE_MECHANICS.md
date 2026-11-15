@@ -58,7 +58,9 @@ Le joueur voit progressivement diverger l’organigramme officiel et l’influen
 
 ### Surnoms rotatifs — règle fondamentale du RÉGIME
 
-`LA TÊTE`, `LE SCEAU`, `LA TOUR`, etc. peuvent changer de porteur entre opérations. Un même surnom peut également être utilisé de façon prestigieuse ou trompeuse sans refléter un pouvoir réel. La résolution exige donc de distinguer :
+`LA TÊTE`, `LE SCEAU`, `LA TOUR`, etc. peuvent changer de porteur entre opérations. Un même surnom peut également être utilisé de façon prestigieuse ou trompeuse sans refléter un pouvoir réel. Le Régime comporte aussi un **Journal de Karsane** fictionnel déclenché par les événements publics confirmés ; une capture du président en 034 déclenche des scènes de liesse à Darsen, mais n'établit pas sa culpabilité. La deuxième capture seulement au C3 déclenche une audience prolongée (10–12 min à tester), tandis que les captures plus précoces laissent C2/C3 aux confrontations. Le troisième suspect possède une mission privée à deux conditions vérifiables selon `docs/REGIME_JOURNAL_TROISIEME_SUSPECT_AUDIENCE_V6.md`.
+
+La résolution exige donc de distinguer :
 
 1. nom utilisé ;
 2. personne ;
