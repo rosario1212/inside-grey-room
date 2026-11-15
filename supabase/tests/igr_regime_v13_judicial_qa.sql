@@ -60,7 +60,7 @@ BEGIN
  result:=public.igr_regime_v13_reconstruct('QA13SAFE',investigator,'qa-judicial-0001',answer_pack);
  IF result->>'final_score_sealed'<>'true' OR result ? 'accurate' THEN RAISE EXCEPTION 'judicial result should remain sealed';END IF;
  SELECT play_state INTO state FROM igr_private.igr_regime_v13_rooms WHERE room_code='QA13SAFE';
- IF (SELECT (v->>'accurate')::int FROM jsonb_each(state->'reconstructions') x(k,v) LIMIT 1)<>4
+ IF coalesce((SELECT (v->>'accurate')::int FROM jsonb_each(state->'reconstructions') x(k,v) LIMIT 1),-1)<>4
  THEN RAISE EXCEPTION 'accurate judicial score missing';END IF;
  -- Expire the common court clock. The final step must go DIRECTLY to v52 locking.
  UPDATE public.igr_v4_rooms SET phase_ends_at=now()-interval '1 second'
