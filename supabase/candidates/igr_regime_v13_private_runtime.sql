@@ -97,7 +97,7 @@ DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
-  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean; scene jsonb; defense_objective jsonb; defense_used boolean; trace_id text; trace_label text; public_trace_ready boolean;
+  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean; court_slot integer;court_speaker text;scene jsonb; defense_objective jsonb; defense_used boolean; trace_id text; trace_label text; public_trace_ready boolean;
   public_clues jsonb='[]'::jsonb; clue jsonb; saved jsonb;
   a jsonb='[]'::jsonb; item jsonb; chosen text;
 BEGIN
@@ -205,8 +205,18 @@ BEGIN
       THEN current_stage:='closing';stage_end:=CASE WHEN long_court THEN 780 ELSE 420 END;
     ELSE current_stage:='vote';stage_end:=CASE WHEN long_court THEN 840 ELSE 480 END;
     END IF;
+    court_slot:=NULL;court_speaker:=NULL;
+    IF current_stage='defenses' THEN
+      court_slot:=least(2,(court_elapsed-60)/
+        (CASE WHEN long_court THEN 120 ELSE 60 END));
+      court_speaker:=m.private_pack->'private_cards'->court_slot->>'actor_id';
+      IF court_slot IN (0,1) AND
+        NOT coalesce(m.play_state->'arrests','{}'::jsonb) ? court_speaker
+      THEN court_speaker:=NULL;END IF;
+    END IF;
     court_view:=court_view||jsonb_build_object('stage_actual',current_stage,
-       'stage_seconds_remaining',greatest(0,stage_end-court_elapsed));
+       'stage_seconds_remaining',greatest(0,stage_end-court_elapsed),
+       'slot_actor_id',court_speaker,'slot_number',court_slot);
   END IF;
   SELECT x.value INTO scene FROM jsonb_array_elements(
     coalesce(m.private_pack->'scene_beats','[]'::jsonb)) x
