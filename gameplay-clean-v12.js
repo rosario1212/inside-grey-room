@@ -16,6 +16,9 @@
 
   async function cleanSync(force=false){
     if(syncBusy||typeof STATE==='undefined'||!STATE.room||!STATE.token)return;
+    // Keep an existing room resumable without querying it while the player
+    // browses the catalog, profile or settings outside the active session.
+    if(['home','create-list','create-confirm','join','rules','profile'].includes(STATE.view))return;
     // The live-cell scheduler owns polling, reconnects and phase deadlines.
     // Legacy heartbeats must not race its invalidations or reset its server clock.
     if(window.__IGR_REALTIME__){
