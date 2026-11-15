@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 // The final Cartel/RC postprocessors may rewrite app and SW revisions. Compare
 // the deployed Worker against the ACTUAL finished dist bundle, never a guessed
@@ -56,7 +57,31 @@ assert(html.includes(clientAsset+'?v='+clientVersion),'The edge homepage is usin
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'The live questionnaire is missing');
 assert.match(html,/investigation-deep-v286\.js\?v=nine-cases-v347-20261113/,'The live five-case questionnaire is missing');
 const omertaScriptTag=html.match(/<script\s+src="omerta-v12-omerta-editorial-20261109\.js\?v=[^"]+"\s*><\/script>/);
-assert(omertaScriptTag,'The live homepage has not loaded the immutable Omertà opening script');
+if(!omertaScriptTag){
+  // v702 combines self-contained classic scripts in content-addressed chunks.
+  // Check both the release manifest and the actual chunk served by Cloudflare:
+  // a source name in an HTML provenance comment alone is not proof of loading.
+  const optimized=JSON.parse(await readFile('dist/igr-v702-optimization-report.json','utf8'));
+  const candidates=optimized.bundles.filter(item=>item.kind==='js'&&
+    item.sourceUrls.some(url=>url.split('?')[0]==='omerta-v12-omerta-editorial-20261109.js'));
+  assert.equal(candidates.length,1,'The certified Omertà opening must be packaged exactly once');
+  const chunk=candidates[0];
+  assert(html.includes('<script src="'+chunk.file+'"></script>'),
+    'The live homepage is not loading the certified Omertà chunk');
+  const local=await readFile('dist/'+chunk.file,'utf8');
+  const source=await readFile('dist/omerta-v12-omerta-editorial-20261109.js','utf8');
+  assert(local.includes(source.trim()),'The packaged Omertà script differs from its immutable source');
+  const remoteResponse=await get('/'+chunk.file+'?production_verify='+encodeURIComponent(process.env.IGR_EXPECTED_COMMIT||''));
+  assert.equal(remoteResponse.status,200,'The published Omertà chunk is inaccessible');
+  const remote=await remoteResponse.text();
+  const digest=text=>createHash('sha256').update(text).digest('hex');
+  assert.equal(digest(remote),digest(local),'The live Omertà chunk does not match the built release');
+  assert(remote.includes('Chaque vendredi, des commerçants du quartier remettent leur contribution'),
+    'Certified Omertà 021 introduction missing from deployed chunk');
+  assert(remote.includes('Vittorio Santoro dirige une famille dont l’autorité repose sur des règles'),
+    'Certified Omertà 025 introduction missing from deployed chunk');
+  console.log('Deployed Omertà chunk verified:',chunk.file,'SHA-256',digest(remote).slice(0,16));
+}
 const catalog=await get('/heritage-casino-v91.js');assert.equal(catalog.status,200);
 assert.match(await catalog.text(),/launchReady:true/);
 const expected=process.env.IGR_EXPECTED_COMMIT||'';
