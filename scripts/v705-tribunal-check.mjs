@@ -12,7 +12,7 @@ need(sql, "then 90 when r.state->>'duration_mode'");
 need(sql, "and r.state->>'duration_mode'='short' then 180");
 need(sql, "then 240 when r.state->>'duration_mode'");
 need(sql, "'required',false");
-need(sql, "public.igr_v44_judge_present(p_room) or public_role in");
+need(sql, "then public.igr_v52_investigation_role(public_role) else public_role in");
 need(sql, "then now()+interval '25 seconds'");
 need(sql, "waiting_timeout");
 need(sql, "only the judge can close this appearance");
@@ -41,12 +41,15 @@ assert.ok(!sql.includes('CREATE OR REPLACE FUNCTION public.igr_v52_make_reveal')
 const players = ['enqueteur','analyste','procureur','juge','maitre','suspect','suspect','suspect'];
 assert.equal(players.length, 8);
 assert.equal(players.filter(r => r === 'suspect').length, 3);
-const maxAudience = players.length * 90;
+const eligible = players.filter(role => ['enqueteur','analyste','inspecteur','expert','procureur','juge'].includes(role));
+assert.equal(eligible.length,4);
+assert.equal(players.filter(role=>['suspect','maitre'].includes(role)).length,4);
+const maxAudience = eligible.length * 90;
 const maxCourtroom = 3 * 240;
 const maxVoting = 120; // design budget; not an enforced server-side deadline
-assert.ok(players.length*60+3*180+maxVoting<=20*60,'SHORT mode must stay compact');
+assert.ok(eligible.length*60+3*180+maxVoting<=20*60,'SHORT mode must stay compact');
 assert.ok(maxAudience + maxCourtroom + maxVoting <= 28 * 60);
-const actualAudience = [90,80,45,0,75,75,60,55].reduce((a,b)=>a+b,0);
+const actualAudience = [90,80,45,0].reduce((a,b)=>a+b,0);
 const actualCourtroom = [220,240,200].reduce((a,b)=>a+b,0);
 const actualVoting = 100;
 assert.ok(actualAudience <= maxAudience && actualCourtroom <= maxCourtroom);
