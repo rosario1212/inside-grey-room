@@ -10,17 +10,34 @@
   const scen=()=>String(STATE?.sync?.room?.scenario_id||'');
   const episodeCopy={
     '026':{
-      title:'LE FDR PREND LA VILLE',
+      title:'LA VILLE TOMBE',
       detail:'L’enquête révèle comment le FDR a capturé les institutions. Les pièces authentifiées peuvent aider à restaurer des services civils.',
       risk:'Les anciens membres du Front n’obtiendront aucune protection automatique si ses forces prennent le bâtiment.'},
     '027':{
-      title:'LE FDR RESSERRE L’ÉTAU',
+      title:'LA ZONE ROUGE',
       detail:'Les factions du FDR manipulent le renseignement. Les enquêteurs doivent séparer faits, omissions et informations périmées pour protéger les civils.',
       risk:'Les détenus disposent de renseignements dont l’actualité est incertaine; un mauvais choix peut aggraver leur situation.'},
     '028':{
-      title:'LE FDR AUX ABORDS DU CENTRE',
+      title:'DERNIER PÉRIMÈTRE',
       detail:'Le FDR est presque aux portes. Les enquêteurs doivent confirmer ou réfuter une présence intérieure sans céder à une fausse alerte.',
       risk:'La fidélité au Front ne dit pas qui contrôlera la porte ni si l’un des captifs sera épargné.'}
+  };
+  const publicBeats={
+    '026':[
+      {title:'LES LISTES QUI S’EFFACENT',text:'Des bureaux municipaux ont cessé de répondre. Les registres du FDR ne correspondent pas aux témoignages des familles. Une copie authentifiée pourrait encore protéger des victimes.'},
+      {title:'UN ORDRE SANS VISAGE',text:'Des décisions de coercition portent des dates contradictoires. Les discours du FDR ne prouvent pas qui a réellement signé ni qui avait été averti des abus.'},
+      {title:'LA DERNIÈRE COPIE',text:'Un dossier conservé hors du contrôle du FDR pourrait rendre les victimes identifiables. La capitale tient encore, mais la dernière possibilité de rétablir ses services civils est en jeu.'}
+    ],
+    '027':[
+      {title:'LES AVEUX TROP UTILES',text:'Un détenu du FDR livre des faits vérifiables sur ses rivaux. Son récit peut être vrai sans décrire la situation actuelle ni les personnes qui se trouvent encore dans la zone rouge.'},
+      {title:'UN QUARTIER PEUT-IL ÊTRE VIDE ?',text:'Des annonces répétées affirment que les civils ont quitté la zone rouge. Elles reposent peut-être sur une seule source intéressée; l’Inspecteur exige des dates et une origine indépendante.'},
+      {title:'LE SILENCE N’EST PAS UNE PREUVE',text:'Une dernière comparaison distingue les crimes connus du FDR et le sort encore inconnu des familles. L’état-major doit décider sans transformer l’absence de nouvelles en certitude.'}
+    ],
+    '028':[
+      {title:'LE MESSAGE DERRIÈRE LA PORTE',text:'Le FDR affirme être déjà dans la Grey Room. Un ancien accès apparaît dans des archives, mais aucune source contemporaine ne confirme encore la présence d’un relais intérieur.'},
+      {title:'UN REGISTRE QUI NE DIT PAS TOUT',text:'Les copies de permissions ne concordent pas. Une date de révocation pourrait tout changer. Les prisonniers réagissent différemment à l’approche du FDR, sans que leur peur soit une preuve.'},
+      {title:'LA DERNIÈRE LIAISON',text:'L’état-major ne peut transmettre qu’une confirmation limitée. Le centre doit choisir ce qui mérite une dernière vérification et garder les dossiers à l’abri de la panique.'}
+    ]
   };
   const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v688_military_order','terror_v682_at_gates','terror_v682_final_status','terror_v688_captivity']);
   function frontBoard(){
@@ -32,6 +49,7 @@
     document.getElementById('terrorV682Private')?.remove();
     document.getElementById('terrorV682Gates')?.remove();
     document.getElementById('terrorV686Chronicle')?.remove();
+    document.getElementById('terrorV690PublicBeat')?.remove();
     const t=state(),city=e(t.city||'la ville'),controlled=Number(t.controlled??12);
     const atGates=controlled<=0||t.terminal_outcome==='front_at_gates';
     const outcome=String(t.terminal_outcome||'');
@@ -55,6 +73,17 @@
        '<strong>'+e(liaisonStatus==='lost'?'DERNIÈRE LIAISON ROMPUE':nationalCounterpush>0?'CONTRE-OFFENSIVE EN COURS':'RECOUPEMENT DES INFORMATIONS')+'</strong>'+
        '<p>Vos décisions comptent pour la dernière capitale libre. À chaque cycle, des analyses recoupées donnent aux forces nationales une information à vérifier puis à exploiter ; des conclusions insuffisantes freinent leur réponse, et des erreurs majeures accélèrent le FDR. Chaque perte ou reconquête est rendue publique.</p></div>';
     board.insertAdjacentElement('beforebegin',div);
+    const cycleNumber=Math.max(1,Math.min(3,Number(d.room.cycle)||1));
+    const beat=publicBeats[scen()]?.[cycleNumber-1];
+    if(beat){
+      const moment=document.createElement('aside');
+      moment.id='terrorV690PublicBeat';
+      moment.className='terror-v690-public-beat';
+      moment.innerHTML='<small>ALMIZIA · '+city+' · CYCLE '+cycleNumber+'/3 · BULLETIN PUBLIC</small>'+
+        '<strong>'+e(beat.title)+'</strong><p>'+e(beat.text)+'</p>'+
+        '<span>Les événements sont fictifs. Aucun bulletin ne confirme à lui seul la responsabilité d’un suspect.</span>';
+      div.insertAdjacentElement('afterend',moment);
+    }
     const events=Array.isArray(d.events)?d.events:[];
     const latest=events.slice().reverse().find(x=>fallEvents.has(x.event_type));
     const chronicle=events.filter(x=>fallEvents.has(x.event_type)).slice(-5).reverse();

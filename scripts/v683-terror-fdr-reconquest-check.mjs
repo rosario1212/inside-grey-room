@@ -40,5 +40,14 @@ assert(command.includes('function')&&command.includes('renderReveal=function'),'
 assert(css.includes('.terror-v688-command')&&css.includes('.terror-v688-capture'),'Military and defeat UI must be styled');
 assert(index.includes('terror-command-v688.js')&&index.includes('terror-command-v688.css'),'Military UI missing in canonical HTML');
 for(const bundle of [builder,mobile])assert(bundle.includes("'terror-command-v688.js'")&&bundle.includes("'terror-command-v688.css'"),'Military UI missing from a release bundle');
-assert(pub.includes('terror-military-council-v688-20261115')&&pub.includes('terror-command-v688.js?v=terror-ops-v688-20261115'),'Cache version and new assets missing');
+assert(pub.includes('terror-story-finales-v691-20261115')&&pub.includes('terror-command-v688.js?v=terror-capital-v691-20261115'),'Cache version and new assets missing');
+const fatal=read('supabase/migrations/20261115011300_igr_v690_terror_executions_and_evidence_guard.sql');
+const civilian=read('supabase/migrations/20261115011500_igr_v691_terror_civilian_protection_and_officer.sql');
+assert(fatal.includes('exécutés sommairement')&&fatal.includes('executed_summarily'),'All defeated captives must be executed in every scenario');
+assert(fatal.includes('igr_v33_terror_confirm_028'),'False infiltration confirmation must be neutralized');
+assert(civilian.includes('civilian_services_after')&&civilian.includes('civilian_effect'),'Humanitarian protection cannot be cosmetic');
+assert(front.includes('publicBeats')&&front.includes('LA DERNIÈRE COPIE')&&front.includes('LA DERNIÈRE LIAISON'),'Three story-specific real-time arcs missing');
+assert(live.includes('SERVICES CIVILS SOUTENUS')&&live.includes('military_operation'),'Public outcome must show military and humanitarian choices');
+assert(command.includes('EXÉCUTIONS SOMMAIRES')&&command.includes('exécutés sommairement'),'Client endings contradict server endings');
+assert(!command.includes('AUCUNE SURVIE GARANTIE'),'Ending may not imply possible survival');
 console.log('PASS Terror v688: Almizia/Ferra, essential military commander, constrained operations, public military impact and three differentiated captivity endings.');

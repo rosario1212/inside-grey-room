@@ -12,14 +12,14 @@ const currentPhase=()=>String(context()?.room?.phase||'');
 const canChoose=()=>!['cycle_debrief','trame','locking','reveal'].includes(currentPhase());
 const failTexts={
 '026':{
-  title:'LE FDR VOUS FORCE AU SILENCE',
-  text:'La Grey Room est prise. Les prisonniers sont détenus, soumis à des interrogatoires coercitifs et à de graves mauvais traitements. Le FDR cherche à effacer les preuves de ses crimes et à obtenir de fausses déclarations. Certaines copies conservées à l’extérieur peuvent encore sauver la mémoire des victimes.'},
+  title:'LA VILLE TOMBE · LE FDR EFFACE LES PREUVES',
+  text:'Le dernier secteur de la capitale cesse de répondre. Le FDR prend la Grey Room, saisit les archives et fait sortir tous les occupants de leurs cellules. Enquêteurs et détenus sont maltraités et forcés de signer de faux aveux. Au matin, ils sont exécutés sommairement. Les rebelles annoncent que le tribunal n’a jamais existé. Les copies sauvegardées hors de la capitale sont les seuls éléments qui puissent encore contredire ce mensonge.'},
 '027':{
-  title:'LE FDR IMPOSE SA VERSION',
-  text:'Les occupants sont faits prisonniers et séparés. Le FDR recourt aux menaces et aux mauvais traitements pour imposer une version manipulée du renseignement. Les omissions et les informations périmées de l’enquête deviennent des moyens de pression contre les captifs.'},
+  title:'LA ZONE ROUGE · LE MENSONGE DEVIENT OFFICIEL',
+  text:'La capitale tombe. Le FDR capture les occupants de la Grey Room, les sépare et les soumet à des interrogatoires coercitifs pour leur faire confirmer une version fabriquée du sort des civils. Les captifs sont maltraités, puis exécutés sommairement. Les rebelles diffusent ensuite leurs déclarations forcées comme preuve de victoire, privant les familles de toute réponse fiable.'},
 '028':{
-  title:'LE DERNIER CONTACT S’EST ÉTEINT',
-  text:'Le FDR a pris la Grey Room. Les occupants sont détenus et subissent des mauvais traitements ; la dernière liaison avec l’état-major est interrompue. Une éventuelle complicité intérieure demeure à établir selon la vérité de la partie. Aucune fidélité au FDR ne garantit d’être épargné.'}
+  title:'DERNIER PÉRIMÈTRE · PLUS AUCUNE LIAISON',
+  text:'Le dernier message de l’état-major s’interrompt. Le FDR franchit les portes, capture enquêteurs et détenus et recherche les dossiers sous la menace. Après les mauvais traitements et les interrogatoires forcés, tous les captifs sont exécutés sommairement. Le FDR affirme qu’un réseau intérieur a tout permis ; selon la vérité du dossier, ce récit peut n’être qu’une dernière intimidation.'}
 };
 function report(){
  const d=context();if(!d||!isTerror()||STATE.view!=='game'||!officer()||d.room.status!=='playing'||Number(d.room.cycle)<1)return;
@@ -78,7 +78,7 @@ const makeDefeat=()=>{
  const city=String(d.room.state?.terror_v681?.city||'la capitale');
  return '<section class="terror-v688-capture" role="status"><small>DERNIÈRE CAPITALE D’ALMIZIA · '+esc(city)+'</small>'+
   '<h2>'+esc(e.title)+'</h2><p>'+esc(e.text)+'</p>'+
-  '<div class="terror-v688-surrender">DÉFAITE COLLECTIVE · PRISONNIERS DU FDR · AUCUNE SURVIE GARANTIE</div></section>';
+  '<div class="terror-v688-surrender">DÉFAITE COLLECTIVE · EXÉCUTIONS SOMMAIRES · AUCUN SURVIVANT DANS LA GREY ROOM</div></section>';
 };
 if(typeof renderGame==='function'){
  const prior=renderGame;renderGame=function(){prior.apply(this,arguments);report();};

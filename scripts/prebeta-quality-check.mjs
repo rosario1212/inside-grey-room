@@ -53,7 +53,7 @@ ok(runtime.includes("const text=isFr()?'Retirer':'Remove'")&&runtime.includes('i
 // TERREUR 026 public copy must never regress to the placeholder wording.
 ok(!terror.includes('organisation terroriste fictive'),'terror-v12-37.js: scenario 026 still contains the word fictive');
 ok(!terror.includes('une structure extérieure continue d’avancer vers la Grey Room'),'terror-v12-37.js: scenario 026 list copy still uses structure extérieure');
-ok(terror.includes('un groupe terroriste continue d’avancer vers la Grey Room'),'terror-v12-37.js: scenario 026 list copy missing groupe terroriste');
+ok(terror.includes('La capitale, dernière grande ville libre d’Almizia, résiste au FDR.') && terror.includes('registres civils'),'terror-v12-37.js: scenario 026 must identify the FDR and the final capital story');
 
 // Mobile lifecycle: installed iPhone/Android PWAs must recover without requiring Capacitor.
 ok(lifecycle.includes("version:'12.9-pwa-resume'"),'native-lifecycle-v12.js: PWA lifecycle version marker missing');
