@@ -93,7 +93,7 @@ DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
-  actor text; card jsonb; own_mission jsonb; offered jsonb;
+  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast jsonb; used_cycle boolean;used_move boolean;
   public_clues jsonb='[]'::jsonb; clue jsonb; saved jsonb;
   a jsonb='[]'::jsonb; item jsonb; chosen text;
 BEGIN
@@ -137,10 +137,33 @@ BEGIN
     WHERE value->>'actorId'=actor AND (value->>'cycle')::int=r.cycle;
   END IF;
   chosen:=m.play_state->'alliance'->>actor;
+  SELECT coalesce(jsonb_agg(jsonb_build_object('actor_id',
+    m.private_pack->'private_cards'->(pl.internal_slot-1)->>'actor_id',
+    'pseudo',pl.pseudo,'player_id',pl.id::text) ORDER BY pl.internal_slot),'[]'::jsonb)
+  INTO cast FROM public.igr_v4_players pl WHERE pl.room_code=r.code
+    AND pl.public_role='suspect' AND pl.internal_slot BETWEEN 1 AND 3;
+  SELECT coalesce(jsonb_agg(jsonb_build_object('id',a.value->>'id',
+    'title',a.value->>'title') ORDER BY a.ordinality),'[]'::jsonb)
+  INTO court_acts FROM jsonb_array_elements(m.private_pack->'acts') WITH ORDINALITY a(value,ordinality);
+  used_cycle:=EXISTS(SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'investigations','[]'::jsonb)) x
+    WHERE (x->>'cycle')::int=r.cycle);
+  used_move:=EXISTS(SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'decisions','[]'::jsonb)) x
+    WHERE x->>'actor_id'=actor AND (x->>'cycle')::int=r.cycle);
+  IF (m.play_state->'disclosed') ? (m.private_pack->'third_suspect_mission'->>'document_id') THEN
+    clue:=m.private_pack->'third_suspect_mission'->'public_on_submission';
+    IF clue IS NOT NULL THEN public_clues:=public_clues||jsonb_build_array(clue - 'authenticated_by_server' - 'initially_private');END IF;
+  END IF;
   RETURN jsonb_build_object('enabled',true,
       'scenario_id',m.scenario_id,'cycle',r.cycle,'phase',r.phase,
       'role',p.public_role,'actor_id',actor,'my_card',card,'my_mission',own_mission,
       'my_alliance_choice',chosen,'offered_investigations',offered,
+      'investigation_used_this_cycle',used_cycle,'my_fugitive_decision_used',used_move,
+      'third_submitted',coalesce((m.play_state->'third'->>'submitted')::boolean,false),
+      'cast',cast,'court_acts',court_acts,
+      'pending_mandates',CASE WHEN p.public_role IN ('juge','enqueteur','analyste')
+         THEN (SELECT coalesce(jsonb_agg(x),'[]'::jsonb)
+             FROM jsonb_array_elements(coalesce(m.play_state->'mandates','[]'::jsonb)) x
+             WHERE x->>'status'='awaiting_judge') ELSE '[]'::jsonb END,
       'my_fugitive_options',a,
       'public_evidence',public_clues,
       'arrests',m.play_state->'arrests','court',m.play_state->'court',
@@ -162,7 +185,7 @@ DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
-  old jsonb; result jsonb;
+  old jsonb; old_actor uuid; old_kind text; result jsonb;
   actor text; option_row jsonb; choice text; piece jsonb;
   new_state jsonb; disclosed jsonb;
 BEGIN
@@ -173,13 +196,19 @@ BEGIN
   SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
   IF NOT FOUND OR r.status<>'playing' THEN RAISE EXCEPTION 'regime feature inactive'; END IF;
   IF length(coalesce(p_request_id,''))<8 OR length(p_request_id)>128 THEN RAISE EXCEPTION 'invalid request id'; END IF;
-  SELECT response INTO old FROM igr_private.igr_regime_v13_ledger
+  SELECT response,actor_player,action_kind INTO old,old_actor,old_kind
+   FROM igr_private.igr_regime_v13_ledger
    WHERE room_code=p.room_code AND request_id=p_request_id;
-  IF FOUND THEN RETURN old; END IF;
+  IF FOUND THEN
+   IF old_actor<>p.id OR old_kind<>p_kind THEN RAISE EXCEPTION 'request conflict';END IF;
+   RETURN old;
+  END IF;
   actor:=CASE WHEN p.public_role='suspect'
     THEN m.private_pack->'private_cards'->(p.internal_slot-1)->>'actor_id'
     ELSE NULL END;
   new_state:=m.play_state;
+  IF r.phase IN ('closed','regime_court','final_audience','final_suspect_defenses','locking','reveal')
+    THEN RAISE EXCEPTION 'actions closed'; END IF;
   IF p_kind='alliance' THEN
     IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2) OR r.cycle>1
       OR r.phase NOT IN ('role_reading','initial_debrief','investigation_assembly')
