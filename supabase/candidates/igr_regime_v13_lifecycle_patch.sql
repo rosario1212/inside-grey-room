@@ -27,6 +27,31 @@ AS $function$
 $function$
 ;
 
+-- PATCH igr_v4_max_players
+CREATE OR REPLACE FUNCTION public.igr_v4_max_players(p_scenario text)
+ RETURNS integer
+ LANGUAGE sql
+ STABLE
+ SET search_path TO 'public'
+AS $function$
+ select case
+ when p_scenario IN ('032','033','034') AND igr_private.igr_regime_v13_release_eligible() THEN 7
+ when p_scenario='029' and igr_private.igr_v108_029_is_enabled() then 11
+ when p_scenario between '035' and '039' then 7
+ when p_scenario between '040' and '044' then 7
+ when p_scenario in ('021','022','023','024','025') then 8
+ when p_scenario in ('026','027','028') then 6 /* v703 terror six-person maximum */
+ when p_scenario='029' then 8 when p_scenario='030' then 9 when p_scenario='031' then 8
+ when p_scenario='032' then 8 when p_scenario='033' then 8 when p_scenario='034' then 9
+ when p_scenario in ('001','004','005','006') then 5
+ when p_scenario in ('003','008','009','011') then 6
+ when p_scenario='002' then 6
+ when p_scenario in ('007','010','012') then 5
+ when p_scenario in ('013','014') then 6 when p_scenario='015' then 7 when p_scenario='016' then 9
+ when p_scenario='017' then 10 when p_scenario='018' then 9 when p_scenario='019' then 9 when p_scenario='020' then 16 else 5 end
+$function$
+;
+
 -- PATCH igr_v4_role_for_seat
 CREATE OR REPLACE FUNCTION public.igr_v4_role_for_seat(p_scenario text, p_seat integer, p_count integer)
  RETURNS text
