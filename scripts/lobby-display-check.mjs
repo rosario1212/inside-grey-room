@@ -140,7 +140,8 @@ const quitStart=app.indexOf('function liveSessionControls()'),quitEnd=app.indexO
 assert(quitStart>=0&&quitEnd>quitStart,'Persistent exit renderer must be present');
 assert(app.slice(quitStart,quitEnd).includes('confirmLeaveGame(event)'),'Bottom exit must trigger the live confirmation');
 assert(app.includes('class="phase-exit-btn"')&&app.includes('aria-label="Quitter la partie"'),'Phase header must expose an accessible exit');
-assert(/function leaveRoom\(\)\{\s*stopRoomWatcher\(\);clearSession\(\)/.test(app),'Leaving a room must erase its persisted resume token');
+assert(/function leaveRoomLocal\(\)\{\s*stopRoomWatcher\(\);clearSession\(\)/.test(app),'Confirmed exit must erase the persisted resume token');
+assert(/async function leaveRoom\(\)\{[\s\S]*?await rpc\('igr_v4_leave_room'/.test(app),'Lobby exit must free the server seat before clearing the session');
 assert((await read('screen-polish-v73.css')).includes('phase-exit-btn'),'Top exit must have a touch-sized hit area');
 assert(app.includes('function mountLiveSessionControls()')&&app.includes('document.body.appendChild(controls)'),'Viewport session controls must escape sticky header stacking contexts');
 
