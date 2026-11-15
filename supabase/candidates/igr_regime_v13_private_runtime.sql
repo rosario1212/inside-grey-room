@@ -93,7 +93,7 @@ DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
-  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean;
+  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean; scene jsonb; defense_objective jsonb; defense_used boolean;
   public_clues jsonb='[]'::jsonb; clue jsonb; saved jsonb;
   a jsonb='[]'::jsonb; item jsonb; chosen text;
 BEGIN
@@ -175,9 +175,22 @@ BEGIN
     court_view:=court_view||jsonb_build_object('stage_actual',current_stage,
        'stage_seconds_remaining',greatest(0,stage_end-court_elapsed));
   END IF;
+  SELECT x.value INTO scene FROM jsonb_array_elements(
+    coalesce(m.private_pack->'scene_beats','[]'::jsonb)) x
+    WHERE (x.value->>'cycle')::integer=r.cycle LIMIT 1;
+  IF p.public_role='suspect' AND p.internal_slot IN (1,2) AND
+    m.play_state->'arrests' ? actor THEN
+    defense_objective:=m.private_pack->'captured_defense_objectives'->actor
+       - 'expected_ordered_by';
+  END IF;
+  defense_used:=EXISTS(SELECT 1 FROM jsonb_array_elements(
+    coalesce(m.play_state->'captured_responses','[]'::jsonb)) x
+    WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle);
   RETURN jsonb_build_object('enabled',true,
       'scenario_id',m.scenario_id,'cycle',r.cycle,'phase',r.phase,
       'role',p.public_role,'actor_id',actor,'my_card',card,'my_mission',own_mission,
+      'scene',scene,'my_captured_objective',defense_objective,
+      'my_captured_response_used',defense_used,
       'my_alliance_choice',chosen,'offered_investigations',offered,
       'investigation_used_this_cycle',used_cycle,'my_fugitive_decision_used',used_move,
       'third_submitted',coalesce((m.play_state->'third'->>'submitted')::boolean,false),
@@ -213,6 +226,7 @@ DECLARE
   m igr_private.igr_regime_v13_rooms%rowtype;
   old jsonb; old_actor uuid; old_kind text; result jsonb;
   actor text; option_row jsonb; choice text; piece jsonb; future_lead jsonb; next_lead_cycle integer;
+  claim text; statement_text text; captured_exhibit_id text;
   new_state jsonb; disclosed jsonb;
 BEGIN
   SELECT * INTO p FROM public.igr_v4_players
@@ -233,7 +247,8 @@ BEGIN
     THEN m.private_pack->'private_cards'->(p.internal_slot-1)->>'actor_id'
     ELSE NULL END;
   new_state:=m.play_state;
-  IF r.phase IN ('closed','regime_court','final_audience','final_suspect_defenses','locking','reveal')
+  IF r.phase IN ('closed','final_audience','final_suspect_defenses','locking','reveal')
+    OR (r.phase='regime_court' AND p_kind<>'captured_response')
     THEN RAISE EXCEPTION 'actions closed'; END IF;
   IF p_kind='alliance' THEN
     IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2) OR r.cycle>1
@@ -316,6 +331,68 @@ BEGIN
     IF FOUND THEN new_state:=jsonb_set(new_state,'{disclosed}',
        coalesce(new_state->'disclosed','[]'::jsonb)||jsonb_build_array(piece->>'id'),true); END IF;
     result:=jsonb_build_object('ok',true,'kind',p_kind,'published',option_row->>'deliverable_id');
+  ELSIF p_kind='captured_response' THEN
+    IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2)
+      OR r.cycle NOT BETWEEN 1 AND 3
+      OR NOT (m.play_state->'arrests' ? actor) THEN
+      RAISE EXCEPTION 'only captured fugitive may present this defense';
+    END IF;
+    IF r.phase='regime_court' AND
+      coalesce(m.play_state->'court'->>'stage_actual','') IN ('closing','vote')
+    THEN RAISE EXCEPTION 'defense window closed';END IF;
+    IF EXISTS(SELECT 1 FROM jsonb_array_elements(
+         coalesce(new_state->'captured_responses','[]'::jsonb)) x
+      WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle)
+      THEN RAISE EXCEPTION 'only one captured defense action per cycle';END IF;
+    IF EXISTS(SELECT 1 FROM jsonb_array_elements(
+         coalesce(new_state->'decisions','[]'::jsonb)) x
+      WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle)
+      THEN RAISE EXCEPTION 'you already acted as a fugitive this cycle';END IF;
+    option_row:=m.private_pack->'captured_defense_objectives'->actor;
+    IF option_row IS NULL OR option_row->>'act_id' IS NULL THEN
+      RAISE EXCEPTION 'no sealed captured defense objective';END IF;
+    choice:=p_payload->>'mode';
+    claim:=p_payload->>'claimed_orderer';
+    statement_text:=btrim(coalesce(p_payload->>'statement',''));
+    IF choice NOT IN ('authentic_exhibit','contested_declaration') OR
+       length(statement_text) NOT BETWEEN 30 AND 350 THEN
+      RAISE EXCEPTION 'a precise 30-350 character defense is required';END IF;
+    IF claim NOT IN (SELECT x.value->>'actor_id' FROM
+       jsonb_array_elements(m.private_pack->'private_cards') x) OR claim=actor
+       THEN RAISE EXCEPTION 'choose another named potential author'; END IF;
+    captured_exhibit_id:=NULL;
+    IF choice='authentic_exhibit' THEN
+      SELECT value INTO piece FROM jsonb_array_elements(m.private_pack->'revelations') value
+       WHERE value->>'kind'='optional' AND
+         value->'act_ids' ? (option_row->>'act_id')
+         AND (value->>'min_cycle')::integer<=r.cycle
+       ORDER BY (value->>'min_cycle')::integer,value->>'id' LIMIT 1;
+      IF NOT FOUND THEN RAISE EXCEPTION 'authentic excerpt unavailable this cycle';END IF;
+      captured_exhibit_id:=piece->>'id';
+      new_state:=jsonb_set(new_state,'{disclosed}',
+        coalesce(new_state->'disclosed','[]'::jsonb)||
+        jsonb_build_array(captured_exhibit_id),true);
+    END IF;
+    new_state:=jsonb_set(new_state,'{captured_responses}',
+      coalesce(new_state->'captured_responses','[]'::jsonb)||
+      jsonb_build_array(jsonb_build_object(
+        'actor_id',actor,'cycle',r.cycle,
+        'act_id',option_row->>'act_id','mode',choice,
+        'claimed_orderer',claim,'statement',statement_text,
+        'published_evidence_id',captured_exhibit_id)),true);
+    new_state:=jsonb_set(new_state,'{events}',
+      coalesce(new_state->'events','[]'::jsonb)||
+      jsonb_build_array(jsonb_build_object(
+        'type','captured_defense','cycle',r.cycle,
+        'id','captured-defense:'||p_request_id,
+        'title','DÉCLARATION D’UN DIRIGEANT CAPTURÉ',
+        'text',statement_text,'actor_id',actor,
+        'challenged_act',option_row->>'act_title',
+        'claim_ordered_by',claim,
+        'authentic_document_id',captured_exhibit_id,
+        'not_a_verdict',true)),true);
+    result:=jsonb_build_object('ok',true,'kind',p_kind,
+      'accepted',true,'document_published',captured_exhibit_id);
   ELSIF p_kind='third_submission' THEN
     IF p.public_role<>'suspect' OR p.internal_slot<>3 OR r.cycle>2
       THEN RAISE EXCEPTION 'third suspect submission unavailable'; END IF;
