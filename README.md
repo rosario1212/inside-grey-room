@@ -1,6 +1,6 @@
-# Inside Grey Room — état courant v52
+# Inside Grey Room — état courant v712
 
-Inside Grey Room est un jeu social d’enquête multijoueur piloté par une application autonome. La version courante du gameplay principal utilise la couche **v52** et couvre les dossiers **001 à 034**.
+Inside Grey Room est un jeu social d’enquête multijoueur piloté par une application autonome. Le gameplay principal utilise la couche **v52**, enrichie par le tribunal et le verdict collectif **v711–v712** et couvre les dossiers **001 à 034**.
 
 ## Structure de partie actuelle
 
@@ -11,7 +11,7 @@ Inside Grey Room est un jeu social d’enquête multijoueur piloté par une appl
 5. Cycle 2.
 6. Assemblée III — 04:00.
 7. Cycle 3 — dernières procédures et conclusions.
-8. Audience finale, défenses, réévaluation et révélation.
+8. **Avec Juge :** tribunal unique non chronométré, vote secret à majorité collective, révélation. **Sans Juge :** audience et défenses chronométrées, puis même vote collectif et révélation.
 
 L’application fait autorité pour les phases officielles, convocations, chronomètres, preuves, quotas, résultats canoniques et scoring. Les interactions ordinaires entre joueurs restent libres hors procédure officielle.
 
@@ -33,7 +33,9 @@ La référence actuelle pour le mode LONG est :
 - Assemblées du camp Enquête ;
 - Grey Room et procédures officielles ;
 - interactions physiques libres hors procédure ;
-- Audience finale v52 avec échelle de responsabilité 0–2 ;
+- audience sans Juge, tribunal unique avec Juge (plan facultatif, débats libres, guide visuel) ;
+- responsabilité 0–2 soumise à la majorité absolue par suspect, sans veto du Juge ou du Procureur ;
+- échelle d'activité des rôles sur cinq étoiles, variable selon la présence d'un Juge ;
 - interface FR / EN ;
 - PWA web et builds Capacitor iOS / Android ;
 - modes et contenus additionnels présents dans le dépôt, dont HÉRITAGE et DLC thématiques.
@@ -51,7 +53,7 @@ Prérequis : Node.js 22+.
 - `npm run store:check` : valide le bundle mobile et les prérequis de publication ;
 - `npm run deploy` : construit puis déploie via Wrangler / Cloudflare.
 
-Le service worker concerne le bundle web/PWA. Le bundle natif `www` n’a pas besoin d’embarquer un service worker.
+Pour la finale, consultez `TRIBUNAL_UNIQUE_V708.md` (v712) et `REGLEMENT_ROLES_V696.md` (consolidé). Le service worker concerne le bundle web/PWA. Le bundle natif `www` n’a pas besoin d’embarquer un service worker.
 
 ## Playtests
 
