@@ -262,7 +262,7 @@ function court(){
      (myPresent?button('RÉPONDRE','court-reply'):'')+
      (isWitness?button('TÉMOIGNER À LA BARRE','court-testimony'):'')+
      (isPress?button('QUESTION DE PRESSE','court-press'):'')+
-     ((myAccusation||myPresent)?button('SOULEVER UNE OBJECTION','court-objection'):'')+
+     ((myAccusation||myPresent)?button('SOULEVER UNE OBJECTION','court-objection'):''):'')+
    (isRole('juge')?
      exchanges.filter(x=>x.kind==='objection'&&!ruled.has(x.id)).map(x=>
       '<article class="igr-rg13-ruling"><strong>Objection de '+esc(x.pseudo)+'</strong>'+
