@@ -306,10 +306,49 @@ BEGIN
       jsonb_build_array(jsonb_build_object('actor_id',actor,'cycle',r.cycle,
          'option_id',option_row->>'id',
          'effect',option_row->'effect','cost',option_row->'cost')),true);
+    active_refuge:=igr_private.igr_regime_v14_active_track(m.room_code,actor);
+    fallback_refuge:=NULL;
+    IF option_row->'effect'->>'kind'='shift_network' THEN
+      fallback_refuge:=m.private_pack->'first_cycle'->'fallback_tracks'->
+        (CASE WHEN p.internal_slot=1 THEN 'first' ELSE 'second' END);
+      SELECT net->>'label' INTO refuge_label FROM jsonb_array_elements(
+         m.private_pack->'first_cycle'->'public_networks') net
+         WHERE net->>'id'=fallback_refuge LIMIT 1;
+      IF fallback_refuge IS NULL THEN RAISE EXCEPTION 'relocation network not authored';END IF;
+      new_state:=jsonb_set(new_state,ARRAY['track_overrides',actor],
+          to_jsonb(fallback_refuge),true);
+      clue_to_publish:=jsonb_build_object(
+        'id','movement:'||p_request_id,'kind','capture',
+        'cycle',r.cycle,'source','checkpoint_surveillance',
+        'target_id',actor,'network_id',fallback_refuge,
+        'network_label',refuge_label,'title','TRACE DE RELOCALISATION',
+        'text','Une source indépendante a observé un changement de relais. La piste suit un refuge de repli; elle doit être recoupée avant un mandat.');
+      new_state:=jsonb_set(new_state,'{extra_capture_leads}',
+        coalesce(new_state->'extra_capture_leads','[]'::jsonb)||
+          jsonb_build_array(clue_to_publish),true);
+    ELSIF option_row->'effect'->>'kind'='delay_lead' THEN
+      new_state:=jsonb_set(new_state,ARRAY['lead_delay',actor],
+        jsonb_build_object('cycle',r.cycle,
+          'until',now()+interval '60 seconds'),true);
+    END IF;
     IF option_row ? 'reveals_capture_evidence_id' THEN
+      SELECT value INTO clue_to_publish FROM jsonb_array_elements(
+       m.private_pack->'capture_evidence') value
+       WHERE value->>'id'=option_row->>'reveals_capture_evidence_id' LIMIT 1;
+    ELSIF option_row->'cost'->>'kind' IN ('create_contradiction','expose_trace') THEN
+      SELECT value INTO clue_to_publish FROM jsonb_array_elements(
+       m.private_pack->'capture_evidence') value
+       WHERE value->>'targetId'=actor AND (value->>'cycle')::integer=r.cycle
+       ORDER BY value->>'id' DESC LIMIT 1;
+    ELSE clue_to_publish:=NULL;
+    END IF;
+    IF clue_to_publish IS NOT NULL THEN
       disclosed:=coalesce(new_state->'disclosed','[]'::jsonb)||
-          jsonb_build_array(option_row->>'reveals_capture_evidence_id');
+        jsonb_build_array(clue_to_publish->>'id');
       new_state:=jsonb_set(new_state,'{disclosed}',disclosed,true);
+      new_state:=jsonb_set(new_state,
+        ARRAY['capture_clue_tracks',clue_to_publish->>'id'],
+        to_jsonb(coalesce(fallback_refuge,active_refuge)),true);
     END IF;
     -- Protecting a contact now reduces immediate exposure, but costs a
     -- verified later lead. On C3, the cost is immediate (no imaginary C4).
@@ -328,7 +367,8 @@ BEGIN
           new_state:=jsonb_set(new_state,'{scheduled_disclosures}',
             coalesce(new_state->'scheduled_disclosures','[]'::jsonb)||
             jsonb_build_array(jsonb_build_object(
-            'id',future_lead->>'id','cycle',next_lead_cycle)),true);
+            'id',future_lead->>'id','cycle',next_lead_cycle,
+            'track_id',active_refuge)),true);
         END IF;
       END IF;
     END IF;
