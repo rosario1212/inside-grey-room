@@ -448,6 +448,27 @@ CREATE TRIGGER zz_igr_v694_finish_cycle
 AFTER UPDATE OF phase ON public.igr_v4_rooms
 FOR EACH ROW EXECUTE FUNCTION igr_private.igr_v694_finish_cycle();
 
+
+-- Normalize the private variant editorial proposals without activating or exposing them.
+-- Variants A/B/C remain review_ready and keep their independent truth manuscripts.
+UPDATE igr_private.igr_v680_terror_editorial_drafts d
+SET proposed_manuscript=jsonb_set(
+  jsonb_set(
+    jsonb_set(d.proposed_manuscript,'{v680_case_identity,title}',
+      to_jsonb(CASE d.scenario_id WHEN '026' THEN 'La Ville tombe'
+        WHEN '027' THEN 'La Zone rouge' ELSE 'Dernier périmètre' END::text),true),
+    '{v688_military_war_council,label}',to_jsonb('Officier'::text),true),
+  '{v688_military_war_council,policy}',
+    to_jsonb('Trois ordres militaires par cycle, sur alertes imprévisibles de 60 à 120 secondes. Chaque ordre produit ses conséquences immédiatement; renseignements de l enquête pris en compte. Trois visites distinctes de suspects et confrontations indépendantes aux cycles 2 et 3.'::text),true)
+WHERE d.scenario_id IN ('026','027','028') AND d.variant_id IN ('A','B','C')
+ AND d.editorial_status='review_ready';
+UPDATE igr_private.igr_v680_terror_editorial_drafts
+SET proposed_manuscript=jsonb_set(proposed_manuscript,'{public_briefing}',
+ to_jsonb(replace(proposed_manuscript->>'public_briefing',
+ 'L’Officier de liaison devra, après le verdict, porter la décision militaire finale.',
+ 'L’Officier intervient pendant les trois cycles : trois ordres militaires par cycle et des conséquences immédiatement visibles.')::text),true)
+WHERE scenario_id='027' AND variant_id IN ('A','B','C') AND editorial_status='review_ready';
+
 -- Read-only integrity verification of required nine scripts and separate quotas.
 DO $audit$
 DECLARE s text;
