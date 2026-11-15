@@ -15,6 +15,7 @@ assert(sql.includes('igr_v694_role_initiative')&&sql.includes("p.public_role NOT
 assert(sql.includes("'verified',false")&&sql.includes("'canonical_evidence',false"),'player declarations must not become canonical evidence');
 assert(sql.includes('EXISTS(SELECT 1 FROM public.igr_v4_actions a')&&sql.includes('igr_v694_role_initiative'),'one initiative per cycle is required');
 assert(app.includes("STATE?.sync?.player")&&app.includes('igr694OfficerOrder')===false,'check unexpected API alias');
+assert(read('terror-front-v682.js').includes("'terror_v694_order'"),'officer consequences must appear in the public front chronicle');
 assert(app.includes('igr694Order')&&app.includes('igr694Initiative'),'UI buttons missing');
 assert(!app.includes('innerHTML=note'),'never inject unsanitized role declarations');
 assert(index.includes('role-cadence-v694.js')&&index.includes('role-cadence-v694.css'),'index entrypoints missing');
