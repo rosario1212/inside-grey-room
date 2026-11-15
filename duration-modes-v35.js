@@ -28,7 +28,16 @@ function effectiveMode(id){
  if(r==='short'||r==='long')return r;
  return selected(sid);
 }
-function estimate(m){const roster=state()?.sync?.players||[];if(!roster.length)return MODES[m].estimate;const speech=m==='short'?1:2,defense=m==='short'?2:5;let audiences=0,suspects=0,lawyers=0;for(const p of roster){const role=p.public_role==='en_attente'?p.preferred_role:p.public_role;if(['enqueteur','analyste','inspecteur','expert','procureur','juge','journaliste'].includes(role))audiences++;if(role==='suspect')suspects++;if(role==='maitre')lawyers++;}if(!suspects||!audiences)return MODES[m].estimate;const delta=audiences*speech+suspects*defense+lawyers*speech-(3*speech+3*defense+speech);return `≈ ${Math.max(m==='short'?25:45,(m==='short'?40:70)+delta)}–${Math.max(m==='short'?35:55,(m==='short'?55:90)+delta)} min`}
+function estimate(m){const roster=state()?.sync?.players||[];if(!roster.length)return MODES[m].estimate;const speech=m==='short'?1:2,defense=m==='short'?2:5;let audiences=0,suspects=0,lawyers=0;for(const p of roster){const role=p.public_role==='en_attente'?p.preferred_role:p.public_role;if(['enqueteur','analyste','inspecteur','expert','procureur','juge','journaliste'].includes(role))audiences++;if(role==='suspect')suspects++;if(role==='maitre')lawyers++;}if(!suspects||!audiences)return MODES[m].estimate;let delta=audiences*speech+suspects*defense+lawyers*speech-(3*speech+3*defense+speech);
+ // v706: a Judge makes all players eligible for the preparatory hearing,
+ // followed by a real courtroom; without a Judge the legacy estimate is untouched.
+ const hasJudge=roster.some(p=>(p.public_role==='en_attente'?p.preferred_role:p.public_role)==='juge');
+ if(hasJudge){const judicialAudienceCount=roster.filter(p=>['enqueteur','analyste','inspecteur','expert','procureur','juge'].includes(p.public_role==='en_attente'?p.preferred_role:p.public_role)).length;
+  const newFinal=judicialAudienceCount*(m==='short'?1:1.5)+suspects*(m==='short'?3:4);
+  const oldFinal=audiences*speech+suspects*defense+lawyers*speech;
+  delta+=Math.ceil(newFinal-oldFinal);
+ }
+ return `≈ ${Math.max(m==='short'?25:45,(m==='short'?40:70)+delta)}–${Math.max(m==='short'?35:55,(m==='short'?55:90)+delta)} min`}
 function tabs(id){
  const sid=String(id||''),m=effectiveMode(sid),readOnly=!state()?.hostToken;
  const ownerHint=readOnly?(en()?'Selected by the host':'Choisi par l’hôte'):'';
