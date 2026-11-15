@@ -46,8 +46,8 @@ const civilian=read('supabase/migrations/20261115011500_igr_v691_terror_civilian
 assert(fatal.includes('exécutés sommairement')&&fatal.includes('executed_summarily'),'All defeated captives must be executed in every scenario');
 assert(fatal.includes('igr_v33_terror_confirm_028'),'False infiltration confirmation must be neutralized');
 assert(civilian.includes('civilian_services_after')&&civilian.includes('civilian_effect'),'Humanitarian protection cannot be cosmetic');
-assert(country.includes('publicBeats')&&country.includes('LA DERNIÈRE COPIE')&&country.includes('LA DERNIÈRE LIAISON'),'Three story-specific real-time arcs missing');
-assert(map.includes('SERVICES CIVILS SOUTENUS')&&map.includes('military_operation'),'Public outcome must show military and humanitarian choices');
+assert(front.includes('publicBeats')&&front.includes('LA DERNIÈRE COPIE')&&front.includes('LA DERNIÈRE LIAISON'),'Three story-specific real-time arcs missing');
+assert(live.includes('SERVICES CIVILS SOUTENUS')&&live.includes('military_operation'),'Public outcome must show military and humanitarian choices');
 assert(command.includes('EXÉCUTIONS SOMMAIRES')&&command.includes('exécutés sommairement'),'Client endings contradict server endings');
 assert(!command.includes('AUCUNE SURVIE GARANTIE'),'Ending may not imply possible survival');
 console.log('PASS Terror v688: Almizia/Ferra, essential military commander, constrained operations, public military impact and three differentiated captivity endings.');
