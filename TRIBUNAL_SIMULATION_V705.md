@@ -5,7 +5,7 @@ Conserver l’Audience finale pour présenter les soupçons, faire du Tribunal u
 
 ## Règles (seulement si un Juge joue)
 1. **Audience préparatoire** : tous les joueurs, y compris Suspects, Avocat et Juge, reçoivent jusqu’à **1 min 30** chacun ; chacun peut parler moins longtemps ou passer. Aucun verdict rendu et aucun niveau 0–2 verrouillé.
-2. **Tribunal** : tous physiquement réunis. Le Juge dirige la comparution de chaque Suspect, **4 min maximum** : 2 min défense avec son Avocat officiel, 1 min questions et contradictions, 1 min réponse finale. Ce sont des repères, pas trois chronomètres serveur distincts ; le tour total de 4 min est garanti par le serveur. Le Suspect peut se taire, mais **ne peut pas interrompre les questions** en clôturant lui-même la comparution. Le Juge peut ouvrir et clore ; le timeout serveur termine à 4 min.
+2. **Tribunal** : tous physiquement réunis. Le Juge dirige la comparution de chaque Suspect, **4 min maximum** : 2 min défense avec son Avocat officiel, 1 min questions et contradictions, 1 min réponse finale. Ce sont des repères, pas trois chronomètres serveur distincts ; le tour total de 4 min est garanti par le serveur. Le Suspect peut se taire et signaler **« J’ai terminé ma défense »** pour renoncer au temps restant, mais **ne peut pas interrompre les questions** en clôturant lui-même la comparution. Sans ce signal, le serveur protège les **2 premières minutes de défense** avant toute clôture anticipée par le Juge ; le timeout serveur termine au plus tard à 4 min.
 3. **Vote individuel et secret** : l’Enquêteur et tous les rôles déjà habilités par les règles existantes verrouillent 0/1/2 séparément sur leur propre appareil, sans concertation. Aucun choix présélectionné. Hiérarchie du verdict et vote d’intégrité du Juge inchangés. Révélation seulement après tous les verrouillages exigés et conditions particulières.
 4. **Anti-blocage** : si un tour n’est pas ouvert dans les 25 s, l’application peut passer automatiquement ce tour et enregistrer la raison. Les tours démarrés disposent de leur chronomètre réel.
 5. **Compatibilité** : sans Juge, la finale antérieure reste en place. Le dossier 029 garde son rapport et ses règles de résultat propres, et traite ses comparutions comme celles de témoins.
@@ -23,7 +23,7 @@ Hypothèse fictive : après l’Audience, la lecture de l’Enquêteur est A=1, 
 ## Corrections apportées dans cette branche
 - Tour de parole et bouton Passer pour le Juge et les autres joueurs à l’Audience.
 - Tribunal centré sur les Suspects, avec partage du temps de défense de l’Avocat officiel.
-- Droit de clôture du Juge, empêchant un Suspect de supprimer les questions en terminant trop tôt.
+- Droit de clôture du Juge, empêchant un Suspect de supprimer les questions en terminant trop tôt. Deux minutes de défense protégées, sauf renonciation explicite du Suspect.
 - Vote sans responsabilité 0 présélectionnée ; refus des bulletins incomplets côté client (validation serveur 0–2 conservée).
 - Timeouts en attente (25 s) et en comparution (240 s) ; cas particulier 029 maintenu.
 - Nouvelle vérification statique et simulation déterministe dans `scripts/v705-tribunal-check.mjs`.
