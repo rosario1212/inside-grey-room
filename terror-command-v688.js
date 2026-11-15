@@ -72,7 +72,7 @@ function report(){
    const oldAction=Array.isArray(d.my_actions)&&d.my_actions.some(a=>a.action_type==='terror_v693_officer_join'&&Number(a.cycle)===Number(d.room.cycle));
    const used=oldAction||(Number(visit?.cycle)===Number(d.room.cycle)&&visit?.visitor_id===d.player.id);
    const sessionCurrent=used&&visit?.visitor_id===d.player.id&&
-       Date.parse(visit.session_started_at)===Date.parse(d.room.phase_started_at);
+       Number(visit.session_epoch_ms)===Date.parse(d.room.phase_started_at);
    const hearingName=phase==='event_confrontation'?'confrontation':'interrogatoire';
    const defaultFocus=d.room.scenario_id==='026'?'source':d.room.scenario_id==='027'?'civils':'acces';
    const focusOptions=[
