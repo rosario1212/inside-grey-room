@@ -211,6 +211,8 @@ BEGIN
  'public.igr_omerta_legacy_sync_core(text,uuid)',
  'public.igr_v4_emit_trame(text)',
  'public.igr_v4_make_reveal(text)',
+ 'public.igr_v50_reveal_legacy(text)',
+ 'public.igr_v52_maybe_finish(text)',
  'igr_private.igr_v681_terror_dynamic_room()'
  ]) LOOP
   INSERT INTO igr_private.igr_v695_function_backups(signature,definition)
@@ -277,6 +279,31 @@ BEGIN
    E'\n  truth_levels := coalesce(');
  EXECUTE fn;
 
+ -- v52 makes the authoritative collective verdict through v50; the
+ -- same private room truth must be used for every player, not only v4.
+ sig:='public.igr_v50_reveal_legacy(text)';
+ SELECT pg_get_functiondef(sig::regprocedure) INTO fn;
+ IF strpos(fn,'truth_levels:=coalesce(')=0 THEN
+  RAISE EXCEPTION 'v50 truth level anchor missing'; END IF;
+ fn:=replace(fn,'truth_levels:=coalesce(',
+  'if r.scenario_id in (''026'',''027'',''028'') then '||
+  'pack:=coalesce(igr_private.igr_v695_pinned_pack(r.code),pack);end if;'||
+  E'\n truth_levels:=coalesce(');
+ EXECUTE fn;
+
+ -- The Inspector no longer signs an additional post-verdict military order.
+ -- Otherwise 027 can never finish even after all real final locks.
+ sig:='public.igr_v52_maybe_finish(text)';
+ SELECT pg_get_functiondef(sig::regprocedure) INTO fn;
+ IF strpos(fn,'IF r.scenario_id=''027'' THEN')=0 THEN
+  RAISE EXCEPTION 'legacy 027 finalization anchor missing';END IF;
+ fn:=replace(fn,'IF r.scenario_id=''027'' THEN',
+   'IF r.scenario_id=''027'' AND false THEN');
+ fn:=replace(fn,
+   'OR (r.scenario_id=''027'' AND p.public_role=''inspecteur''',
+   'OR (false AND r.scenario_id=''027'' AND p.public_role=''inspecteur''');
+ EXECUTE fn;
+
  -- The terminal war bulletin needs the same selected truth as the final verdict.
  sig:='igr_private.igr_v681_terror_dynamic_room()';
  SELECT pg_get_functiondef(sig::regprocedure) INTO fn;
@@ -291,6 +318,12 @@ BEGIN
    E'\n    WHERE scenario_id=new.scenario_id;');
  EXECUTE fn;
 END $patch$;
+
+-- Old decision endpoints are decommissioned. No parallel orders, final
+-- recommendations or Inspector-controlled military action may be submitted.
+REVOKE ALL ON FUNCTION public.igr_v33_terror_decide_027(text,uuid,text) FROM PUBLIC,anon,authenticated;
+REVOKE ALL ON FUNCTION public.igr_terror_military_decision(text,uuid,text) FROM PUBLIC,anon,authenticated;
+REVOKE ALL ON FUNCTION public.igr_v688_terror_choose_operation(text,uuid,text) FROM PUBLIC,anon,authenticated;
 
 -- The release indicator is server-side, never accessible to clients.
 DO $audit$
