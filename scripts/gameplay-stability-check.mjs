@@ -118,7 +118,7 @@ try{
   const distIndex=await read('dist/index.html');
   const distSw=await read('dist/service-worker.js');
   const presentationVersion=files.lobbyDisplayApply.match(/const VERSION='([^']+)'/)?.[1];
-  const presentationFinalized=presentationVersion&&distSw.includes(`const CACHE='igr-${presentationVersion}';`);
+  const presentationFinalized=presentationVersion&&(distSw.includes(`const CACHE='igr-${presentationVersion}';`)||distSw.includes(`const CACHE='igr-${presentationVersion}-`));
   const navigationThemeUrl='navigation-theme-v18.js?v='+(presentationFinalized?presentationVersion:'v27-role-choice-nav');
   ok(distIndex.includes(navigationThemeUrl),'dist/index.html has stale navigation-theme asset');
   ok(distIndex.includes('navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/index.html has stale navigation behavior');
