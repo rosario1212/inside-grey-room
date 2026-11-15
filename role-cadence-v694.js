@@ -53,13 +53,13 @@ const ROLE_TIPS={
   'Cycle 3 : défends la frontière réelle de ta responsabilité et prépare les objections.'
  ]
 };
-const escapeText=v=>typeof h==='function'?h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','&apos;':'&#39;'}[c]));
-const cache={key:'',value:null,time:0,pending:false,error:false};
+const escapeText=v=>typeof h==='function'?h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cache={key:'',value:null,time:0,receivedAt:0,pending:false,error:false};
 const room=()=>typeof STATE!=='undefined'?STATE?.sync?.room:null;
 const player=()=>typeof STATE!=='undefined'?STATE?.sync?.player:null;
 const key=()=>[STATE?.room,STATE?.token,room()?.cycle].join('|');
 const officer=()=>player()?.public_role==='officier_liaison'&&['026','027','028'].includes(String(room()?.scenario_id));
-const secs=(iso,serverNow)=>Math.max(0,Math.ceil((Date.parse(iso)-Date.now()+(Date.now()-Date.parse(serverNow)))/1000));
+const secs=(iso,serverNow)=>Math.max(0,Math.ceil((Date.parse(iso)-(Date.now()+Date.parse(serverNow)-cache.receivedAt))/1000));
 const clock=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
 function updateCountdown(){
  const el=document.getElementById('igr694Clock');
@@ -73,7 +73,7 @@ function fetchMilitary(){
  if(cache.pending||Date.now()-cache.time<3500)return;
  cache.pending=true;cache.time=Date.now();
  rpc('igr_v694_officer_state',{p_code:STATE.room,p_player_token:STATE.token})
-  .then(v=>{if(k!==key())return;cache.value=v;cache.error=false;
+  .then(v=>{if(k!==key())return;cache.value=v;cache.receivedAt=Date.now();cache.error=false;
    if(typeof renderCurrent==='function'&&STATE?.view==='game')renderCurrent();})
   .catch(e=>{cache.error=true;console.warn('v694 officer status',e);})
   .finally(()=>cache.pending=false);
@@ -127,8 +127,53 @@ function guide(){
  el.innerHTML='<small>REPÈRE DE RÔLE · CYCLE '+c+'/3</small><p>'+escapeText(tips[c-1])+'</p>';
  host.insertAdjacentElement('afterend',el);
 }
+
+let workingText='';
+function initiative(){
+ const d=STATE?.sync,role=d?.player?.public_role,cycle=Number(d?.room?.cycle)||1;
+ if(STATE?.view!=='game'||d?.room?.status!=='playing'||!['analyste','temoin'].includes(role))return;
+ const used=Array.isArray(d.my_actions)&&d.my_actions.some(a=>a.action_type==='igr_v694_role_initiative'&&Number(a.cycle)===cycle);
+ const old=document.getElementById('igr694Initiative');
+ if(old&&old.dataset.cycle===String(cycle)&&old.dataset.used===String(used))return;
+ old?.remove();
+ const host=document.getElementById('igr694RoleTip')||document.getElementById('igr51Now')||document.querySelector('.phase-strip');
+ if(!host)return;
+ const area=document.createElement('section');area.id='igr694Initiative';area.className='igr694-role-tip igr694-initiative';
+ area.dataset.cycle=String(cycle);area.dataset.used=String(used);
+ if(used){area.innerHTML='<small>INITIATIVE DU CYCLE</small><p>Votre intervention a été enregistrée pour ce cycle.</p>';host.insertAdjacentElement('afterend',area);return;}
+ const analyst=role==='analyste';
+ area.innerHTML='<small>'+ (analyst?'NOTE DE RECOUPEMENT':'PAROLE DU TÉMOIN')+
+  ' · 1 intervention par cycle</small>'+
+  '<p>'+(analyst?'Formule une contradiction précise à tester. Cette note est rendue publique et ne constitue pas une preuve.':
+   'Tu peux demander à être entendu ou formuler une déclaration personnelle. Rien n’est présenté comme une vérité confirmée par le système.')+'</p>'+
+  '<textarea id="igr694InitiativeText" rows="3" maxlength="220" placeholder="'+(analyst?'Indique un horaire, une source ou un propos à vérifier…':
+   'Indique seulement ce que ton personnage est autorisé à savoir…')+'"></textarea>'+
+  '<div class="igr694-initiative-actions">'+(analyst?
+   '<button type="button" onclick="igr694Initiative(\'recoupement\')">Partager ce point à vérifier</button>':
+   '<button type="button" onclick="igr694Initiative(\'demande_audition\')">Demander à être entendu</button>'+
+   '<button type="button" onclick="igr694Initiative(\'declaration\')">Déposer une déclaration</button>')+'</div>';
+ host.insertAdjacentElement('afterend',area);
+ const ta=area.querySelector('textarea');ta.value=workingText;ta.addEventListener('input',()=>{workingText=ta.value;});
+}
+window.igr694Initiative=async action=>{
+ const pane=document.getElementById('igr694Initiative');
+ if(!pane)return;
+ const ta=pane.querySelector('textarea'),note=ta?.value||'';
+ pane.querySelectorAll('button').forEach(x=>x.disabled=true);
+ try{
+  const result=await rpc('igr_v694_role_initiative',{p_code:STATE.room,p_player_token:STATE.token,p_action:action,p_note:note});
+  workingText='';pane.remove();
+  if(typeof syncNow==='function')await syncNow(true);
+  if(typeof toast==='function')toast(result?.notice||'Intervention enregistrée.');
+  if(typeof renderCurrent==='function')renderCurrent();
+ }catch(e){
+  console.warn('v694 role initiative rejected',e);
+  pane.querySelectorAll('button').forEach(x=>x.disabled=false);
+  if(typeof toast==='function')toast('Action refusée : texte trop court, phase close ou initiative déjà utilisée.');
+ }
+};
 if(typeof renderGame==='function'){
- const earlier=renderGame;renderGame=function(){earlier.apply(this,arguments);guide();showMilitary();};
+ const earlier=renderGame;renderGame=function(){earlier.apply(this,arguments);guide();showMilitary();initiative();};
 }
 window.setInterval(()=>{if(!officer()||STATE?.view!=='game')return;
  updateCountdown();if(room()?.status==='playing'&&Date.now()-cache.time>=3500)fetchMilitary();},1000);
