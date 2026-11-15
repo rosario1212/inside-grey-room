@@ -89,10 +89,11 @@ test('regime release stays opt-in and cannot be published by the QA workflow',()
 
 test('safe forward-port keeps recent security, mobile and DLC layers',async()=>{
  const mobile=await read('scripts/build-mobile.mjs');
- assert.match(mobile,/'regime-live-v13\\.js'/);
- assert.match(mobile,/'regime-live-v13\\.css'/);
- assert.match(index,/terror-crisis-v696\\.css/);
- assert.match(index,/analyst-profiling-v700\\.js/);
+ assert.ok(mobile.includes("'regime-live-v13.js'"));
+ assert.ok(mobile.includes("'regime-live-v13.css'"));
+ assert.ok(index.includes('terror-crisis-v696.css'));
+ assert.ok(index.includes('analyst-profiling-v700.js'));
+
  assert.match(sw,/function isSensitiveServicePath/);
  assert.match(sw,/igr-v702/);
 });
