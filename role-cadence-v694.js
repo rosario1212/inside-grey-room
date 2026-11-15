@@ -47,6 +47,11 @@ const ROLE_TIPS={
   'Cycle 2 : priorise les contradictions testables, sans confondre stress et preuve.',
   'Cycle 3 : confie des tâches de vérification aux autres rôles avant de verrouiller.'
  ],
+ officier_liaison:[
+  'Cycle 1 : surveille trois alertes militaires et rejoins un suspect en interrogatoire.',
+  'Cycle 2 : confirme trois ordres, interroge un autre suspect et rejoins une confrontation si possible.',
+  'Cycle 3 : tes trois derniers ordres influencent la capitale; interroge un troisième suspect distinct.'
+ ],
  suspect:[
   'Cycle 1 : établis une version cohérente sans révéler automatiquement tous tes secrets.',
   'Cycle 2 : adapte ta défense aux preuves déjà publiées; n’invente pas de preuve officielle.',
@@ -183,11 +188,14 @@ window.igr694Order=async(choice)=>{
 };
 function guide(){
  const r=room(),p=player();if(!r||r.status!=='playing'||STATE?.view!=='game')return;
- document.getElementById('igr694RoleTip')?.remove();
  const tips=(isEnglish()?ROLE_TIPS_EN:ROLE_TIPS)[p?.public_role];if(!tips)return;
+ const roleKey=[p?.public_role,Number(r.cycle),isEnglish()?'en':'fr'].join('|');
+ const previousTip=document.getElementById('igr694RoleTip');
+ if(previousTip?.dataset.roleKey===roleKey)return;
+ previousTip?.remove();
  const host=document.getElementById('igr51Now')||document.querySelector('.phase-strip');
  if(!host)return;
- const el=document.createElement('aside');el.id='igr694RoleTip';el.className='igr694-role-tip';
+ const el=document.createElement('aside');el.id='igr694RoleTip';el.dataset.roleKey=roleKey;el.className='igr694-role-tip';
  const c=Math.max(1,Math.min(3,Number(r.cycle)||1));
  el.innerHTML='<small>'+tr('REPÈRE DE RÔLE · CYCLE ','ROLE GUIDE · CYCLE ')+c+'/3</small><p>'+escapeText(tips[c-1])+'</p>';
  host.insertAdjacentElement('afterend',el);
@@ -199,15 +207,15 @@ function initiative(){
  const k=[STATE?.room,d?.player?.id,cycle].join('|');
  if(workingKey!==k){workingKey=k;workingText='';}
  const forbidden=['briefing','role_reading','pre_investigation','investigation_assembly','cycle_debrief','trame','provisional_orals','provisional_lock','defense','locking','reveal','closed','final_audience','final_suspect_defenses','final_debrief','judge_speech','judge_integrity_vote'];
- if(STATE?.view!=='game'||d?.room?.status!=='playing'||forbidden.includes(String(d?.room?.phase||''))||!['analyste','temoin'].includes(role))return;
+ if(STATE?.view!=='game'||d?.room?.status!=='playing'||forbidden.includes(String(d?.room?.phase||''))||!['analyste','temoin'].includes(role)) {document.getElementById('igr694Initiative')?.remove();return;}
  const used=Array.isArray(d.my_actions)&&d.my_actions.some(a=>a.action_type==='igr_v694_role_initiative'&&Number(a.cycle)===cycle);
  const old=document.getElementById('igr694Initiative');
- if(old&&old.dataset.cycle===String(cycle)&&old.dataset.used===String(used))return;
+ if(old&&old.dataset.cycle===String(cycle)&&old.dataset.used===String(used)&&old.dataset.locale===(isEnglish()?'en':'fr'))return;
  old?.remove();
  const host=document.getElementById('igr694RoleTip')||document.getElementById('igr51Now')||document.querySelector('.phase-strip');
  if(!host)return;
  const area=document.createElement('section');area.id='igr694Initiative';area.className='igr694-role-tip igr694-initiative';
- area.dataset.cycle=String(cycle);area.dataset.used=String(used);
+ area.dataset.cycle=String(cycle);area.dataset.used=String(used);area.dataset.locale=isEnglish()?'en':'fr';
  if(used){area.innerHTML='<small>'+tr('INITIATIVE DU CYCLE','CYCLE INITIATIVE')+'</small><p>'+tr('Ton intervention a été enregistrée pour ce cycle.','Your initiative has been recorded for this cycle.')+'</p>';host.insertAdjacentElement('afterend',area);return;}
  const analyst=role==='analyste';
  area.innerHTML='<small>'+ (analyst?tr('NOTE DE RECOUPEMENT','CROSS-CHECK NOTE'):tr('PAROLE DU TÉMOIN','WITNESS STATEMENT'))+
