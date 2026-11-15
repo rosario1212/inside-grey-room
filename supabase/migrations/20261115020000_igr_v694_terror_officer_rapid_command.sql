@@ -302,7 +302,7 @@ BEGIN
     'total',3,'active',null,'cycle_closed',true,'last_result',v->'last_result');END IF;
  IF v->'active' IS NOT NULL AND jsonb_typeof(v->'active')='object' THEN
    expires_:=(v#>>'{active,expires_at}')::timestamptz;
-   IF expires_<=clock_timestamp() THEN
+   IF expires_<=clock_timestamp() AND r.phase NOT IN ('interrogation','event_confrontation') AND v#>>'{active,paused_at}' IS NULL THEN
      PERFORM igr_private.igr_v694_commit(r.code,p.id,r.cycle,slot_,
        CASE slot_ WHEN 1 THEN 'defense' WHEN 2 THEN 'reserve' ELSE 'tenir' END,true);
      SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
@@ -354,7 +354,7 @@ BEGIN
  IF NOT FOUND OR p.public_role<>'officier_liaison' THEN RAISE EXCEPTION 'officer only';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  IF NOT FOUND OR r.status<>'playing' OR r.cycle NOT BETWEEN 1 AND 3
-  OR r.phase IN ('cycle_debrief','trame','locking','reveal') THEN RAISE EXCEPTION 'command window closed';END IF;
+  OR r.phase IN ('cycle_debrief','trame','locking','reveal','interrogation','event_confrontation') THEN RAISE EXCEPTION 'command window closed';END IF;
  v:=coalesce(r.state->'terror_v694','{}'::jsonb);
  IF (v#>>'{active,slot}')::int IS DISTINCT FROM p_slot THEN RAISE EXCEPTION 'stale military order';END IF;
  expires_:=(v#>>'{active,expires_at}')::timestamptz;
@@ -368,6 +368,83 @@ BEGIN
 END $body$;
 REVOKE ALL ON FUNCTION public.igr_v694_terror_confirm(text,uuid,integer,text) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_v694_terror_confirm(text,uuid,integer,text) TO anon,authenticated;
+
+
+-- Do not force a player to answer during an interrogation or confrontation.
+CREATE OR REPLACE FUNCTION igr_private.igr_v694_pause_hearing()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $body$
+DECLARE v jsonb;a jsonb;paused_ timestamptz;deadline_ timestamptz;
+BEGIN
+ IF new.scenario_id NOT IN ('026','027','028') OR new.status<>'playing'
+  OR old.phase IS NOT DISTINCT FROM new.phase THEN RETURN new;END IF;
+ v:=coalesce(new.state->'terror_v694','{}'::jsonb);
+ a:=v->'active';
+ IF a IS NULL OR jsonb_typeof(a)<>'object' THEN RETURN new;END IF;
+ IF new.phase IN ('interrogation','event_confrontation')
+  AND old.phase NOT IN ('interrogation','event_confrontation') THEN
+   a:=a||jsonb_build_object('paused_at',clock_timestamp());
+ ELSIF old.phase IN ('interrogation','event_confrontation')
+  AND new.phase NOT IN ('interrogation','event_confrontation')
+  AND nullif(a->>'paused_at','') IS NOT NULL THEN
+   paused_:=(a->>'paused_at')::timestamptz;
+   deadline_:=(a->>'expires_at')::timestamptz+
+      greatest(interval '0 second',clock_timestamp()-paused_);
+   a:=(a-'paused_at')||jsonb_build_object('expires_at',deadline_);
+ ELSE RETURN new;END IF;
+ UPDATE public.igr_v4_rooms SET state=jsonb_set(state,
+  '{terror_v694,active}',a,true),updated_at=clock_timestamp()
+ WHERE code=new.code;
+ RETURN new;
+END $body$;
+REVOKE ALL ON FUNCTION igr_private.igr_v694_pause_hearing() FROM PUBLIC,anon,authenticated;
+DROP TRIGGER IF EXISTS zz_igr_v694_pause_hearing ON public.igr_v4_rooms;
+CREATE TRIGGER zz_igr_v694_pause_hearing
+AFTER UPDATE OF phase ON public.igr_v4_rooms
+FOR EACH ROW EXECUTE FUNCTION igr_private.igr_v694_pause_hearing();
+
+-- Short cycles or an absent officer never deadlock the story: the three missed
+-- decisions are recorded, defaulted and publicly resolved on entry to debrief.
+CREATE OR REPLACE FUNCTION igr_private.igr_v694_finish_cycle()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $body$
+DECLARE r public.igr_v4_rooms%rowtype;o uuid;v jsonb;a jsonb;slot_ int;n int;
+BEGIN
+ IF new.scenario_id NOT IN ('026','027','028') OR new.status<>'playing'
+ OR new.phase<>'cycle_debrief' OR old.phase='cycle_debrief' THEN RETURN new;END IF;
+ SELECT id INTO o FROM public.igr_v4_players
+ WHERE room_code=new.code AND public_role='officier_liaison' LIMIT 1;
+ IF o IS NULL THEN RETURN new;END IF;
+ SELECT * INTO r FROM public.igr_v4_rooms WHERE code=new.code FOR UPDATE;
+ v:=coalesce(r.state->'terror_v694','{}'::jsonb);
+ IF coalesce((v->>'cycle')::int,0)<>r.cycle THEN
+  v:=jsonb_build_object('enabled',true,'cycle',r.cycle,
+   'started_at',clock_timestamp(),'active',null,'last_result',null);
+  UPDATE public.igr_v4_rooms SET state=jsonb_set(state,'{terror_v694}',v,true)
+  WHERE code=r.code;
+ END IF;
+ FOR slot_ IN 1..3 LOOP
+  SELECT count(*) INTO n FROM public.igr_v4_actions
+  WHERE room_code=r.code AND cycle=r.cycle AND player_id=o
+    AND action_type='terror_v694_military';
+  EXIT WHEN n>=3;
+  IF n+1<>slot_ THEN CONTINUE;END IF;
+  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=new.code FOR UPDATE;
+  v:=coalesce(r.state->'terror_v694','{}'::jsonb);
+  a:=jsonb_build_object('slot',slot_,'opened_at',clock_timestamp(),
+   'expires_at',clock_timestamp(),'duration_seconds',60);
+  UPDATE public.igr_v4_rooms SET state=jsonb_set(state,'{terror_v694,active}',a,true)
+  WHERE code=r.code;
+  PERFORM igr_private.igr_v694_commit(r.code,o,r.cycle,slot_,
+    CASE slot_ WHEN 1 THEN 'defense' WHEN 2 THEN 'reserve' ELSE 'tenir' END,true);
+ END LOOP;
+ RETURN new;
+END $body$;
+REVOKE ALL ON FUNCTION igr_private.igr_v694_finish_cycle() FROM PUBLIC,anon,authenticated;
+DROP TRIGGER IF EXISTS zz_igr_v694_finish_cycle ON public.igr_v4_rooms;
+CREATE TRIGGER zz_igr_v694_finish_cycle
+AFTER UPDATE OF phase ON public.igr_v4_rooms
+FOR EACH ROW EXECUTE FUNCTION igr_private.igr_v694_finish_cycle();
 
 -- Read-only integrity verification of required nine scripts and separate quotas.
 DO $audit$
