@@ -208,7 +208,7 @@ function handleLocalSubmit(e){if(e.target.id!=='localVerdictForm')return;e.preve
 /* ------------------------------------------------------------------
    HÉRITAGE · LOCAL + ONLINE
 ------------------------------------------------------------------ */
-let hWatcher=null,hLastSig='',hLastStage='',hVotePending=false;
+let hWatcher=null,hLastSig='',hLastStage='',hVotePending=false,hFinishPending=false;
 function hSession(){return readJSON(HNET_KEY)}
 function saveHSession(v){writeJSON(HNET_KEY,v)}
 function clearHSession(){del(HNET_KEY);hLastSig='';hLastStage='';if(hWatcher){clearInterval(hWatcher);hWatcher=null}}
@@ -257,7 +257,7 @@ async function syncHeritageOnline(force=false){
     if(/expired|unauthorized/i.test(e.message||'')){clearHSession();toastX('La cellule HÉRITAGE a expiré.')}
   }
 }
-function routeHOnline(d){const stage=d.room?.stage;if(stage==='lobby')return renderHLobby(d);if(stage==='role_reading')return renderHRole(d);if(stage==='play')return bridgeHPlay(d,'play');if(stage==='decision')return bridgeHPlay(d,'decision');if(stage==='reveal')return bridgeHPlay(d,'result');if(stage==='finished')return renderHFinished(d)}
+function routeHOnline(d){const stage=d.room?.stage;if(stage==='lobby')return renderHLobby(d);if(stage==='role_reading')return renderHRole(d);if(stage==='play')return bridgeHPlay(d,'play');if(stage==='decision')return bridgeHPlay(d,'decision');if(stage==='reveal')return bridgeHPlay(d,'result');if(stage==='finished')return hFinishPending?null:renderHFinished(d)}
 function renderHLobby(d){const s=hSession(),host=!!s?.hostToken,count=d.players?.length||0;const m=heritageMeta(d.room.campaign_id),ch=m?.chapters?.[d.room.chapter-1];shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><header class="hnet-head"><button class="btn ghost small" data-hnet="leave">← Quitter</button><span>${esc(m?.title||'HÉRITAGE')} · DOSSIER 0${d.room.chapter}</span></header><section class="hnet-lobby"><div class="hnet-code"><span>CODE DE CELLULE</span><strong>${esc(d.room.code)}</strong><small>Les autres joueurs : Rejoindre une partie → ${esc(d.room.code)}</small></div><div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(ch?.title||'')}</h1><p>${count}/7 joueurs · minimum 5</p></div><div class="hnet-players">${(d.players||[]).map((p,i)=>`<div><span>${i+1}</span><b>${esc(p.pseudo)}</b><small>${p.is_host?'HÔTE':'CONNECTÉ'}</small></div>`).join('')}</div>${host?`<button class="btn primary block" data-hnet="start" ${count<5?'disabled':''}>${count<5?`ENCORE ${5-count} JOUEUR${5-count>1?'S':''}`:'LANCER LE DOSSIER'}</button>`:`<div class="hnet-wait">En attente de l’hôte…</div>`}</section></main>`)}
 async function startHeritageOnline(){const s=hSession();if(!s?.hostToken)return;try{await rpc('igr_heritage_online_start',{p_code:s.code,p_host_token:s.hostToken});await syncHeritageOnline(true)}catch(e){console.error(e);toastX('Il faut 5 à 7 joueurs pour lancer.') }}
 function bridgeBase(d,stage){const s=hSession(),players=(d.players||[]).map(p=>({id:p.id,name:p.pseudo,roleId:p.role_id}));return {version:2,online:true,campaignCarry:d.room.campaign_carry||null,campaignId:d.room.campaign_id,chapter:Number(d.room.chapter),players,revealIndex:Math.max(0,players.findIndex(p=>p.id===d.player.id)),revealed:[],phaseIndex:Number(d.room.phase_index||0),stage,decision:d.room.decision_id||null,result:d.room.decision_id?heritageResult(d.room.campaign_id,d.room.chapter,d.room.decision_id):null,practice:!!s?.practice,startedAt:new Date().toISOString(),finished:false}}
@@ -349,7 +349,8 @@ async function leaveHeritageOnline(){
   try{renderHome()}catch{location.reload()}
 }
 async function finishHeritageOnlineHost(){
-  const s=hSession();if(!s?.hostToken)return;
+  const s=hSession();if(!s?.hostToken||hFinishPending)return;
+  hFinishPending=true;
   try{
     const out=await rpc('igr_heritage_online_finish',{p_code:s.code,p_host_token:s.hostToken});
     if(out?.ok===false)throw new Error('server finish refused');
@@ -359,9 +360,9 @@ async function finishHeritageOnlineHost(){
   }catch(e){
     console.warn('heritage online finish',e);
     toastX('Clôture non synchronisée. Réessayez depuis ce dossier.');
-  }
+  }finally{hFinishPending=false}
 }
-function renderHFinished(d){clearHSession();del(HERITAGE_LIVE_KEY);shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>PARTIE TERMINÉE</span><h1>Le dossier est clos.</h1><p>L’hôte a inscrit la conséquence dans sa campagne HÉRITAGE.</p><button class="btn primary" id="hnetHome">RETOUR À L’ACCUEIL</button></section></main>`);$('#hnetHome')?.addEventListener('click',()=>renderHome())}
+function renderHFinished(d){if(hSession()?.hostToken)window.IGR_HERITAGE_PLAY?.finishOnlineConfirmed?.();clearHSession();del(HERITAGE_LIVE_KEY);shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>PARTIE TERMINÉE</span><h1>Le dossier est clos.</h1><p>L’hôte a inscrit la conséquence dans sa campagne HÉRITAGE.</p><button class="btn primary" id="hnetHome">RETOUR À L’ACCUEIL</button></section></main>`);$('#hnetHome')?.addEventListener('click',()=>renderHome())}
 function resumeHeritageOnline(){if(!hSession())return toastX('Aucune cellule HÉRITAGE à reprendre.');startHWatcher(true)}
 
 function interceptHeritageOnline(e){const s=hSession();if(!s)return;const hp=e.target.closest?.('[data-hp-action],[data-hp-option]');if(!hp)return;const a=hp.dataset.hpAction;if(a==='hide-next'){e.preventDefault();e.stopImmediatePropagation();readyHeritageOnline();return}if(a==='phase-next'||a==='decision'){e.preventDefault();e.stopImmediatePropagation();advanceHeritageOnline();return}if(a==='phase-prev'){e.preventDefault();e.stopImmediatePropagation();return}if(hp.dataset.hpOption){e.preventDefault();e.stopImmediatePropagation();decideHeritageOnline(hp.dataset.hpOption);return}if(a==='abort'||a==='session-menu'){e.preventDefault();e.stopImmediatePropagation();leaveHeritageOnline();return}if(a==='finish'){e.preventDefault();e.stopImmediatePropagation();if(!s.hostToken){clearHSession();del(HERITAGE_LIVE_KEY);renderHome();return}void finishHeritageOnlineHost();return}}
