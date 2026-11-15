@@ -14,3 +14,7 @@
 .igr694-command footer,.igr694-hint{font-size:11px;line-height:1.4;opacity:.8;margin-top:9px}
 .igr694-role-tip{padding:9px 12px}
 .igr694-role-tip p{margin:5px 0}
+.igr694-initiative textarea{width:100%;box-sizing:border-box;border-radius:8px;resize:vertical;background:rgba(140,155,170,.10);border:1px solid rgba(160,172,190,.4);padding:10px;color:inherit;font:inherit;font-size:13px}
+.igr694-initiative-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+.igr694-initiative-actions button{padding:9px 11px;border-radius:8px;background:rgba(140,155,170,.18);border:1px solid rgba(150,166,184,.45);color:inherit;font-weight:650;font-size:12px}
+.igr694-initiative-actions button:disabled{opacity:.45}
