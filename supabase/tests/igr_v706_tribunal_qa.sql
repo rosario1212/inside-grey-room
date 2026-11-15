@@ -26,13 +26,16 @@ BEGIN
     PERFORM public.igr_v52_begin_stage(room_,'audience');
     SELECT * INTO r FROM public.igr_v4_rooms WHERE code=room_;
     q:=r.state->'v52_queue';
-    IF r.phase<>'final_audience' OR jsonb_array_length(q)<>7 THEN
+    IF r.phase<>'final_audience' OR jsonb_array_length(q)<>3 THEN
       RAISE EXCEPTION 'v706 judge hearing queue failed %: %',mode_,q;
+    END IF;
+    IF ARRAY(SELECT x->>'role' FROM jsonb_array_elements(q) x) IS DISTINCT FROM ARRAY['enqueteur','analyste','juge']::text[] THEN
+      RAISE EXCEPTION 'v706 audience included Lawyer/Suspect/Journalist or wrong order %',q;
     END IF;
     IF EXISTS(SELECT 1 FROM jsonb_array_elements(q) x WHERE (x->>'seconds')::int<>expected_speech OR (x->>'required')::boolean)
     THEN RAISE EXCEPTION 'v706 hearing duration or mandatory speech failure %',mode_;END IF;
     -- Anyone, including the Judge, may skip the hearing.
-    FOR i IN 0..6 LOOP
+    FOR i IN 0..2 LOOP
       SELECT * INTO r FROM public.igr_v4_rooms WHERE code=room_;
       current_player:=(r.state->'v52_queue'->i->>'player_id')::uuid;
       SELECT player_token INTO current_token FROM public.igr_v4_players WHERE id=current_player;
