@@ -129,31 +129,56 @@ function courtroomDefendantProgress(){
 }
 function courtroomV708(){
  const step=courtStep(),judge=role()==='juge',defendant=role()==='suspect',heard=courtArray('v708_heard'),last=courtArray('v708_last_word'),absent=courtArray('v59_absent');
- const meHeard=heard.includes(myId()),meLast=last.includes(myId()),n=courtDefendants().filter(p=>!absent.includes(String(p.id))).length;
+ const meHeard=heard.includes(myId()),meLast=last.includes(myId());
  const complete=courtDefendants().every(p=>absent.includes(String(p.id))||(heard.includes(String(p.id))&&last.includes(String(p.id))));
- const phaseLabels={seating:copy('Installation','Seating'),opening:copy('Accusations','Charges'),debate:copy('Débats libres','Open debate'),conclusions:copy('Conclusions','Final submissions')};
- const stageInfo={
- seating:copy('Installez-vous librement. Le schéma est une suggestion : il ne crée aucune obligation ni alliance.','Take your seats freely. The chart is only a suggestion.'),
- opening:copy('Le Procureur, s’il est présent, présente les accusations ; sinon l’Enquêteur. Les autres rôles complètent uniquement si nécessaire.','The Prosecutor presents charges, or the Investigator if absent. Others add relevant findings.'),
- debate:copy('Le Juge dirige les questions et confrontations, peut revenir sur un suspect et laisse chaque défense s’exprimer. Aucune limite de temps.','The Judge directs questions and confrontations, may recall a defendant and lets everyone defend themselves. No countdown.'),
- conclusions:copy('Réquisitions, réponses des avocats, puis dernier mot proposé à chaque suspect. Le vote n’ouvre qu’après leurs confirmations.','Final submissions and lawyer responses, followed by each defendant’s final word. Secret voting opens only after confirmations.')};
- let b=`<article class="igr52-card strong"><small>INSIDE GREY ROOM · ${copy('TRIBUNAL FINAL','FINAL COURTROOM')}</small>
- <h2>${esc(phaseLabels[step]||phaseLabels.seating)}</h2><p>${stageInfo[step]||''}</p>
- <div class="igr708-steps">${Object.entries(phaseLabels).map(([k,v])=>`<span class="${step===k?'current':''}">${esc(v)}</span>`).join('')}<span>${copy('Vote secret','Secret ballot')}</span></div>
- <small>${copy('Pas de chronomètre. L’application suit seulement les étapes validées par le Juge.','No countdown. The app only tracks steps confirmed by the Judge.')}</small>
- </article>`;
- b+=courtroomSeating()+courtroomRoleCue()+courtroomDefendantProgress()+courtroomAgenda();
- if(defendant&&step==='debate'&&!meHeard&&!absent.includes(myId()))b+=`<button class="btn primary block" onclick="igr708Court('defense_done')">${copy('J’AI PU ME DÉFENDRE / JE GARDE LE SILENCE','I HAVE BEEN HEARD / I CHOOSE SILENCE')}</button>`;
- if(defendant&&step==='conclusions'&&!meHeard&&!absent.includes(myId()))b+=`<button class="btn primary block" onclick="igr708Court('defense_done')">${copy('J’AI PU ME DÉFENDRE / JE GARDE LE SILENCE','I HAVE BEEN HEARD / I CHOOSE SILENCE')}</button>`;
- if(defendant&&step==='conclusions'&&meHeard&&!meLast&&!absent.includes(myId()))b+=`<button class="btn primary block" onclick="igr708Court('last_word_done')">${copy('J’AI EU MON DERNIER MOT / JE PASSE','I HAVE HAD MY FINAL WORD / I PASS')}</button>`;
- if(judge){const commands=step==='seating'?`<button class="btn primary block" onclick="igr708Court('open')">${copy('OUVRIR LE TRIBUNAL','OPEN COURT')}</button>`:
-  step==='opening'?`<button class="btn primary block" onclick="igr708Court('next')">${copy('PASSER AUX DÉBATS','OPEN DEBATE')}</button>`:
-  step==='debate'?`<button class="btn primary block" onclick="igr708Court('next')">${copy('PASSER AUX CONCLUSIONS','MOVE TO FINAL SUBMISSIONS')}</button>`:
-  `<button class="btn ghost block" onclick="igr708Court('back')">${copy('REPRENDRE LES DÉBATS','RETURN TO DEBATE')}</button>
-   <button class="btn primary block" ${complete?'':'disabled'} onclick="igr708Court('close')">${copy('CLÔTURER ET OUVRIR LE VOTE SECRET','CLOSE COURT AND OPEN SECRET BALLOT')}</button>
-   ${complete?'':`<p>${copy('Clôture indisponible : certains suspects doivent encore confirmer leur défense ou leur dernier mot.','Closure unavailable: some defendants still need to confirm defence or final word.')}</p>`}`;
- b+=`<article class="igr52-card"><small>${copy('COMMANDES DU JUGE','JUDGE CONTROLS')}</small>${commands}</article>`;}
- return b;
+ const phases=[
+  ['seating',copy('Installation','Seating')],
+  ['opening',copy('Accusations','Charges')],
+  ['debate',copy('Débats libres','Open debate')],
+  ['conclusions',copy('Conclusions','Submissions')]
+ ];
+ const stepIndex=Math.max(0,phases.findIndex(([id])=>id===step));
+ const titles={
+  seating:copy('Prenez place. Le procès commence.','Take your seats. Court is about to begin.'),
+  opening:copy('L’accusation expose les faits.','The prosecution presents the case.'),
+  debate:copy('Les versions se confrontent.','Accounts are challenged.'),
+  conclusions:copy('Les derniers arguments.','Final arguments.')
+ };
+ const descriptions={
+  seating:copy('Le plan est une suggestion. Le juge ouvre la séance lorsque les joueurs sont prêts.','Seating is optional. The Judge opens court when players are ready.'),
+  opening:copy('Le procureur présente l’accusation ou, s’il est absent, l’enquêteur.','The Prosecutor presents the charges, or the Investigator if absent.'),
+  debate:copy('Questions et confrontations libres. Le juge veille à ce que chacun puisse répondre.','Free questions and challenges. The Judge ensures everyone can respond.'),
+  conclusions:copy('Réquisitions, réponse de l’avocat, puis dernier mot de chaque suspect.','Prosecution, lawyer responses and each defendant’s final word.')
+ };
+ let html=`<section class="igr52-card igr712-hero">
+ <div class="igr712-hero-top"><span class="igr712-hero-eyebrow">⚖ ${copy('TRIBUNAL FINAL','FINAL COURTROOM')}</span><span class="igr712-unclocked">◌ ${copy('Aucun chronomètre','No countdown')}</span></div>
+ <span class="igr712-hero-number">${String(stepIndex+1).padStart(2,'0')} <span>/ 04</span></span>
+ <h2>${esc(titles[step]||titles.seating)}</h2><p>${descriptions[step]||''}</p>
+ <nav class="igr712-timeline" aria-label="${copy('Progression du tribunal','Courtroom progression')}">
+ ${phases.map(([id,name],i)=>`<div class="igr712-timeline-stage ${i<stepIndex?'is-past':i===stepIndex?'is-active':''}" ${i===stepIndex?'aria-current="step"':''}><span>${i<stepIndex?'✓':String(i+1)}</span><small>${esc(name)}</small></div>`).join('')}
+ <div class="igr712-timeline-stage is-future"><span>5</span><small>${copy('Vote secret','Secret ballot')}</small></div></nav>
+ </section>`;
+ html+=courtroomRoleCue();
+ let defendantControls='';
+ if(defendant&&!absent.includes(myId())&&['debate','conclusions'].includes(step)&&!meHeard)defendantControls=`<button type="button" class="btn primary block igr712-main-action" onclick="igr708Court('defense_done')">${copy('J’AI PU ME DÉFENDRE / JE GARDE LE SILENCE','I HAVE BEEN HEARD / I CHOOSE SILENCE')}</button>`;
+ if(defendant&&!absent.includes(myId())&&step==='conclusions'&&meHeard&&!meLast)defendantControls=`<button type="button" class="btn primary block igr712-main-action" onclick="igr708Court('last_word_done')">${copy('J’AI EU MON DERNIER MOT / JE PASSE','I HAVE HAD MY FINAL WORD / I PASS')}</button>`;
+ if(defendant&&['debate','conclusions'].includes(step)){
+  html+=`<section class="igr712-controls igr712-participant-controls"><div class="igr712-controls-heading"><small>${copy('VOTRE DÉFENSE','YOUR DEFENCE')}</small><h3>${meLast?copy('Dernier mot confirmé','Final word confirmed'):meHeard?copy('Défense confirmée','Defence confirmed'):copy('À vous de vous exprimer','Your chance to speak')}</h3></div>
+  ${defendantControls||`<p class="igr712-note">${copy('Vous avez confirmé cette étape. Les débats restent libres jusqu’à la clôture du juge.','You have confirmed this step. Discussion remains open until the Judge closes court.')}</p>`}</section>`;
+ }
+ if(judge){
+  const command=step==='seating'?`<button type="button" class="btn primary block igr712-main-action" onclick="igr708Court('open')">${copy('OUVRIR LE TRIBUNAL','OPEN COURT')}</button>`:
+   step==='opening'?`<button type="button" class="btn primary block igr712-main-action" onclick="igr708Court('next')">${copy('PASSER AUX DÉBATS','OPEN DEBATE')}</button>`:
+   step==='debate'?`<button type="button" class="btn primary block igr712-main-action" onclick="igr708Court('next')">${copy('PASSER AUX CONCLUSIONS','MOVE TO FINAL SUBMISSIONS')}</button>`:
+   `<div class="igr712-action-row"><button type="button" class="btn ghost block" onclick="igr708Court('back')">${copy('REPRENDRE LES DÉBATS','RETURN TO DEBATE')}</button>
+    <button type="button" class="btn primary block igr712-main-action" ${complete?'':'disabled'} onclick="igr708Court('close')">${copy('CLÔTURER ET OUVRIR LE VOTE SECRET','CLOSE COURT AND OPEN SECRET BALLOT')}</button></div>
+    ${complete?'':`<p class="igr712-note">${copy('La clôture sera disponible après confirmation des défenses et des derniers mots.','Closure unlocks once defendants confirm their defence and final word.')}</p>`}`;
+  html+=`<section class="igr712-controls igr712-judge-controls"><div class="igr712-controls-heading"><small>${copy('DIRECTION DES DÉBATS','PRESIDING CONTROLS')}</small><h3>${copy('La séance vous appartient','Direct the hearing')}</h3></div>${command}</section>`;
+ }
+ html+=courtroomSeating();
+ html+=courtroomAgenda();
+ html+=courtroomDefendantProgress();
+ return html;
 }
 
 function defense(){const {item,status}=qItem();if(!item)return `<div class="locked-state">${copy('Préparation de la suite…','Preparing next step…')}</div>`;const mine=String(item.player_id)===myId(),myLawyer=String(item.lawyer_id||'')===myId();const witness029=judgePresent()&&specialCartel029();if(judgePresent())return courtroomUnclocked(item,status,mine,myLawyer,witness029);let body=`<article class="igr52-card strong"><small>${witness029?copy('TRIBUNAL · TÉMOIN','COURTROOM · WITNESS'):judgePresent()?copy('TRIBUNAL · AUDITION LIBRE','COURTROOM · OPEN HEARING'):copy('DÉFENSE FINALE · FACULTATIVE','FINAL DEFENCE · OPTIONAL')}</small><h3>${esc(item.pseudo||'')}</h3><p>${item.lawyer_pseudo?copy(`Avocat officiel : ${esc(item.lawyer_pseudo)} · les ${defenseLabel()} sont partagées entre défense et avocat.`,`Official lawyer: ${esc(item.lawyer_pseudo)} · the ${defenseLabel()} are shared between defence and lawyer.`):copy('Aucun Avocat officiel rattaché.','No official Lawyer attached.')}</p></article>`;
