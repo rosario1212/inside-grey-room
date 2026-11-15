@@ -86,8 +86,8 @@ assert(out.includes('Profil non complété.'),'unfilled required profiles must b
 assert(!out.includes('<textarea'),'postgame archive must be read-only');
 for(const path of ['index.html','en.html']){
  const html=read(path);
- assert(html.includes('analyst-profiling-v700.js?v=v700-analyst-psychology'),path+' missing client script');
- assert(html.includes('analyst-profiling-v700.css?v=v700-analyst-psychology'),path+' missing styling');
+ assert(html.includes('analyst-profiling-v700.js?v=v701-progressive-psychology'),path+' missing client script');
+ assert(html.includes('analyst-profiling-v700.css?v=v701-progressive-psychology'),path+' missing styling');
 }
 for(const path of ['scripts/build-web.mjs','scripts/build-mobile.mjs']){
  const txt=read(path);assert(txt.includes("'analyst-profiling-v700.js'")&&txt.includes("'analyst-profiling-v700.css'"),path+' missing bundle assets');
@@ -97,10 +97,10 @@ if(dest){
  for(const file of ['analyst-profiling-v700.js','analyst-profiling-v700.css','index.html','en.html'])
   assert(existsSync(dest+'/'+file),'built asset not found '+dest+'/'+file);
  const html=read(dest+'/index.html');
- assert(html.includes('analyst-profiling-v700.js?v=v700-analyst-psychology'),
+ assert(html.includes('analyst-profiling-v700.js?v=v701-progressive-psychology'),
   'published entrypoint missing profiling option');
  const sw=dest+'/service-worker.js';
- if(existsSync(sw))assert(read(sw).includes('/analyst-profiling-v700.js?v=v700-analyst-psychology'),
+ if(existsSync(sw))assert(read(sw).includes('/analyst-profiling-v700.js?v=v701-progressive-psychology'),
   'PWA worker not precaching the new profiling option');
 }
 console.log('PASS v701: 10-word Analyst portraits, short cycle/event-aware questions, no other suspects affected, all-player reveal, bilingual bundles.');
