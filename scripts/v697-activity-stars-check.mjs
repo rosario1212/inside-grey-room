@@ -4,13 +4,13 @@ import {runInNewContext} from 'node:vm';
 import {execFileSync} from 'node:child_process';
 const read=p=>readFileSync(p,'utf8');
 const natural=read('natural-role-gameplay-v50.js'),rules=read('self-guided-rules-v51.js');
-const expected={enqueteur:4,suspect:4,procureur:3,juge:3,maitre:3,journaliste:4,inspecteur:4,analyste:3,expert:2,temoin:2,officier_liaison:4};
+const expected={enqueteur:5,suspect:4,procureur:3,juge:4,maitre:3,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
 const readActivity=s=>{const m=s.match(/const ACTIVITY=(\{[^;\n]+\});/);assert(m,'missing activity map');return Function('return ('+m[1]+')')();};
 assert.deepEqual(readActivity(natural),expected,'lobby activity ratings do not match v697');
 assert.deepEqual(readActivity(rules),expected,'rulebook activity ratings must match lobby');
-assert(natural.includes("ACTIVITÉ','ACTIVITY")&&natural.includes('stars(ACTIVITY[r])'),'lobby stars not wired');
-assert(rules.includes('ESTIMATED ACTIVITY')&&rules.includes('stars(ACTIVITY[r]||2)'),'rulebook stars absent');
-assert(rules.includes('Stars measure likely activity, not difficulty or importance'),'rating meaning missing');
+assert(natural.includes("ACTIVITÉ','ACTIVITY")&&natural.includes('stars(activityRating(r))'),'lobby stars not wired');
+assert(rules.includes('ESTIMATED ACTIVITY')&&rules.includes('stars(activityRating(r,global))')&&rules.includes('COURTROOM_ACTIVITY'),'rulebook stars absent');
+assert(rules.includes('Stars estimate likely activity, not difficulty or importance'),'rating meaning missing');
 for(const file of ['natural-role-gameplay-v50.js','self-guided-rules-v51.js'])execFileSync(process.execPath,['--check',file]);
 for(const lang of ['fr','en']){
  const window={IGR_LOCALE:lang,STATE:{sync:{room:{scenario_id:'026',cycle:2,status:'playing',state:{}},player:{public_role:'officier_liaison'},players:[]}},renderGameTab(){return''},renderRules(){return''},IGR_RUNTIME_COORDINATOR:{every(){}}};
@@ -19,12 +19,12 @@ for(const lang of ['fr','en']){
  const rendered=window.IGR_SELF_GUIDED_RULES_V51.rulebookHtml(true);
  assert(rendered.includes(lang==='fr'?'ACTIVITÉ ESTIMÉE':'ESTIMATED ACTIVITY'),'localized stars label absent');
  assert(rendered.includes(lang==='fr'?'Officier':'Officer'),'Terror officer missing');
- const stars=[...rendered.matchAll(/(?:ACTIVITÉ ESTIMÉE|ESTIMATED ACTIVITY) · ([★☆]{4})/g)].map(x=>x[1]);
+ const stars=[...rendered.matchAll(/(?:ACTIVITÉ ESTIMÉE|ESTIMATED ACTIVITY) · ([★☆]{5})/g)].map(x=>x[1]);
  assert.equal(stars.length,11,'expected 11 visible public role ratings');
- assert.equal(stars[10],'★★★★','Officer must have 4 stars');
- assert.equal(stars[1],'★★★☆','Analyst must have 3 stars');
- assert.equal(stars[7],'★★☆☆','Expert must have 2 stars');
- assert.equal(stars[9],'★★☆☆','Witness must have 2 stars');
+ assert.equal(stars[10],'★★★★★','Officer must have 5 stars');
+ assert.equal(stars[1],'★★★☆☆','Analyst must have 3 stars');
+ assert.equal(stars[7],'★★☆☆☆','Expert must have 2 stars');
+ assert.equal(stars[9],'★★☆☆☆','Witness must have 2 stars');
 }
 const dist=process.argv[2];
 if(dist){
@@ -33,4 +33,4 @@ if(dist){
  assert.deepEqual(readActivity(read(dist+'/natural-role-gameplay-v50.js')),expected);
  assert.deepEqual(readActivity(read(dist+'/self-guided-rules-v51.js')),expected);
 }
-console.log('PASS v697 activity stars: 11 roles, synchronized lobby/rules, FR/EN, server-independent ratings.');
+console.log('PASS v711 activity stars: 11 roles, five-star scale, synchronized lobby/rules, FR/EN.');

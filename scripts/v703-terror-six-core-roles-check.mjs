@@ -16,5 +16,5 @@ runInNewContext(rules,{window:w,document:doc,console:{info(){}},setTimeout(){},s
 const html=w.IGR_SELF_GUIDED_RULES_V51.rulebookHtml(false);
 assert.equal((html.match(/class="igr51-role /g)||[]).length,4,'in-game TERROR has only four role types');
 for(const r of ['Inspecteur','Expert','Procureur','Juge','Avocat'])assert(!html.includes('<b>'+r+'</b>'),'in-game illegal role: '+r);
-assert(html.includes('TERREUR : six rôles uniquement')&&html.includes('la conclusion officielle de l’Enquêteur'),'TERROR rulebook missing');
-console.log('PASS TERREUR v703: six roles, no specialists, correct final authority.');
+assert(html.includes('TERREUR : six rôles uniquement')&&html.includes('l’Enquêteur et l’Analyste votent chacun'),'TERROR rulebook missing');
+console.log('PASS TERREUR v703: six roles, no specialists, collective majority as final verdict.');

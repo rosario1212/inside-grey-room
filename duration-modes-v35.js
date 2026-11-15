@@ -28,20 +28,31 @@ function effectiveMode(id){
  if(r==='short'||r==='long')return r;
  return selected(sid);
 }
-function estimate(m){const roster=state()?.sync?.players||[];if(!roster.length)return MODES[m].estimate;const speech=m==='short'?1:2,defense=m==='short'?2:5;let audiences=0,suspects=0,lawyers=0;for(const p of roster){const role=p.public_role==='en_attente'?p.preferred_role:p.public_role;if(['enqueteur','analyste','inspecteur','expert','procureur','juge','journaliste'].includes(role))audiences++;if(role==='suspect')suspects++;if(role==='maitre')lawyers++;}if(!suspects||!audiences)return MODES[m].estimate;let delta=audiences*speech+suspects*defense+lawyers*speech-(3*speech+3*defense+speech);
- // v706: a Judge makes all players eligible for the preparatory hearing,
- // followed by a real courtroom; without a Judge the legacy estimate is untouched.
- const hasJudge=roster.some(p=>(p.public_role==='en_attente'?p.preferred_role:p.public_role)==='juge');
- if(hasJudge){const judicialAudienceCount=roster.filter(p=>['enqueteur','analyste','inspecteur','expert','procureur','juge'].includes(p.public_role==='en_attente'?p.preferred_role:p.public_role)).length;
-  const newFinal=judicialAudienceCount*(m==='short'?1:1.5)+suspects*(m==='short'?3:4);
-  const oldFinal=audiences*speech+suspects*defense+lawyers*speech;
-  delta+=Math.ceil(newFinal-oldFinal);
+function estimate(m){
+ const roster=state()?.sync?.players||[];
+ if(!roster.length)return MODES[m].estimate;
+ const r=p=>p.public_role==='en_attente'?p.preferred_role:p.public_role;
+ const speech=m==='short'?1:2,defense=m==='short'?2:5;
+ let audiences=0,suspects=0,lawyers=0;
+ for(const p of roster){const role=r(p);if(['enqueteur','analyste','inspecteur','expert','procureur','juge','journaliste'].includes(role))audiences++;if(role==='suspect')suspects++;if(role==='maitre')lawyers++;}
+ if(!suspects||!audiences)return MODES[m].estimate;
+ // v709: Judge-led court replaces both the hearing and timed suspect defences.
+ // 15–25 min SHORT / 20–35 min LONG are planning assumptions, NOT an enforced limit.
+ // The baseline global estimate uses a 7-player room with three defendants.
+ if(roster.some(p=>r(p)==='juge')){
+   const offset=(suspects-3)*4+Math.max(0,roster.length-7)*2;
+   const low=(m==='short'?45:70)+offset,high=(m==='short'?70:105)+offset;
+   return `≈ ${Math.max(30,low)}–${Math.max(45,high)} min`;
  }
- return `≈ ${Math.max(m==='short'?25:45,(m==='short'?40:70)+delta)}–${Math.max(m==='short'?35:55,(m==='short'?55:90)+delta)} min`}
+ // Without a Judge, preserve the existing timed final-hearing estimate.
+ const delta=audiences*speech+suspects*defense+lawyers*speech-(3*speech+3*defense+speech);
+ return `≈ ${Math.max(m==='short'?25:45,(m==='short'?40:70)+delta)}–${Math.max(m==='short'?35:55,(m==='short'?55:90)+delta)} min`;
+}
+function rosterHasJudge(){return (state()?.sync?.players||[]).some(p=>(p.public_role==='en_attente'?p.preferred_role:p.public_role)==='juge')}
 function tabs(id){
  const sid=String(id||''),m=effectiveMode(sid),readOnly=!state()?.hostToken;
  const ownerHint=readOnly?(en()?'Selected by the host':'Choisi par l’hôte'):'';
- return `<div class="igr-duration-v35 igr-duration-lobby-v35" data-duration-for="${sid}" role="group" aria-label="${en()?'Game duration':'Durée de la partie'}"><button type="button" class="igr-duration-tab-v35 ${m==='short'?'is-active':''}" data-mode="short" aria-pressed="${m==='short'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','short')"><span>${en()?'SHORT':'COURT'}</span><small>${estimate('short')}</small></button><button type="button" class="igr-duration-tab-v35 ${m==='long'?'is-active':''}" data-mode="long" aria-pressed="${m==='long'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','long')"><span>LONG</span><small>${estimate('long')}</small></button><small class="igr-duration-note">${en()?'Estimate for selected roles, excluding manual pauses and extended waiting.':'Estimation selon les rôles choisis, hors pauses et attentes prolongées.'}</small></div>`;
+ return `<div class="igr-duration-v35 igr-duration-lobby-v35" data-duration-for="${sid}" role="group" aria-label="${en()?'Game duration':'Durée de la partie'}"><button type="button" class="igr-duration-tab-v35 ${m==='short'?'is-active':''}" data-mode="short" aria-pressed="${m==='short'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','short')"><span>${en()?'SHORT':'COURT'}</span><small>${estimate('short')}</small></button><button type="button" class="igr-duration-tab-v35 ${m==='long'?'is-active':''}" data-mode="long" aria-pressed="${m==='long'}" ${readOnly?'disabled aria-disabled="true"':''} ${ownerHint?`title="${ownerHint}"`:''} onclick="igrSetDurationModeV35(event,'${sid}','long')"><span>LONG</span><small>${estimate('long')}</small></button><small class="igr-duration-note">${rosterHasJudge()?(en()?'Approximate: court may take 15–25 min in SHORT or 20–35 min in LONG. No enforced time limit.':'Estimation indicative : tribunal libre de 15–25 min en COURT ou 20–35 min en LONG, sans limite imposée.'):(en()?'Estimate for selected roles, excluding manual pauses and extended waiting.':'Estimation selon les rôles choisis, hors pauses et attentes prolongées.')}</small></div>`;
 }
 function cleanupScenarioSelectors(){
  document.querySelectorAll('.scenario-list .igr-duration-v35,.scenario-list-v10-13 .igr-duration-v35').forEach(node=>node.remove());
