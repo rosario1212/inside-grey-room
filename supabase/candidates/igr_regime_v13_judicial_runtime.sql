@@ -190,6 +190,7 @@ DECLARE
  p public.igr_v4_players%rowtype;r public.igr_v4_rooms%rowtype;
  m igr_private.igr_regime_v13_rooms%rowtype;
  called jsonb;count_seconds integer;st jsonb;res jsonb;allowed boolean;
+ elapsed_seconds integer;slot_no integer;last_called_slot integer;
 BEGIN
  SELECT * INTO p FROM public.igr_v4_players WHERE room_code=upper(trim(p_code)) AND player_token=p_player_token;
  IF NOT FOUND OR p.public_role<>'juge' THEN RAISE EXCEPTION 'Judge required';END IF;
@@ -203,7 +204,20 @@ BEGIN
  IF called ? p_actor_id THEN RAISE EXCEPTION 'already called to the bar'; END IF;
  IF length(coalesce(p_request_id,''))<8 THEN RAISE EXCEPTION 'invalid request';END IF;
  count_seconds:=CASE WHEN (m.play_state->'court'->>'duration_minutes')::int=14 THEN 120 ELSE 60 END;
+ elapsed_seconds:=floor(extract(epoch from (
+   now()-(m.play_state->'court'->>'started_at')::timestamptz)))::integer;
+ -- A judge may call only one accused in a guaranteed statement slot.
+ -- Opening is 60s; then exactly three 120s/60s defence slots.
+ IF elapsed_seconds<60 OR elapsed_seconds>=60+3*count_seconds THEN
+   RAISE EXCEPTION 'the defense statement window is not active';
+ END IF;
+ slot_no:=(elapsed_seconds-60)/count_seconds;
+ last_called_slot:=coalesce((m.play_state->'court'->>'last_called_slot')::integer,-1);
+ IF last_called_slot=slot_no THEN
+   RAISE EXCEPTION 'only one speaker may be called per defense slot';
+ END IF;
  st:=jsonb_set(m.play_state,ARRAY['court','called'],called||jsonb_build_array(p_actor_id),true);
+ st:=jsonb_set(st,ARRAY['court','last_called_slot'],to_jsonb(slot_no),true);
  st:=jsonb_set(st,ARRAY['court','current'],jsonb_build_object(
    'actor_id',p_actor_id,'started_at',now(),'seconds',count_seconds),true);
  st:=jsonb_set(st,ARRAY['court','stage'],to_jsonb('defenses'::text),true);
