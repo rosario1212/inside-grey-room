@@ -638,3 +638,60 @@ body:has(#joinCode) > .igr-beta-footer{margin-top:12px;padding-top:8px}
   height:auto!important;max-height:none!important;overflow:visible!important;
  }
 }
+
+
+/* v163: the widescreen two-column browser uses the same expanding
+   thumbnail + content rhythm as iPhone, never an intrinsic image height. */
+@media(min-width:1100px){
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact,
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact.regime-scenario{
+  display:grid!important;
+  grid-template-columns:128px minmax(0,1fr)!important;
+  height:auto!important;
+  min-height:216px!important;
+  max-height:none!important;
+  align-self:stretch!important;
+ }
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact .scenario-thumb,
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact.regime-scenario .scenario-thumb{
+  position:relative!important;
+  display:block!important;
+  width:128px!important;
+  height:auto!important;
+  min-height:216px!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+ }
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact .scenario-thumb img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+ }
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact .scenario-body.compact,
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact.regime-scenario .scenario-body.compact{
+  display:flex!important;
+  flex-direction:column!important;
+  align-self:stretch!important;
+  justify-content:flex-start!important;
+  height:auto!important;
+  max-height:none!important;
+  min-width:0!important;
+  padding:18px 18px 16px!important;
+  overflow:visible!important;
+ }
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact .scenario-body>p.igr-card-excerpt{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:3!important;
+  overflow:hidden!important;
+  margin:2px 0 12px!important;
+  line-height:1.45!important;
+  max-height:4.35em!important;
+ }
+ #app .page-create-v10-13 .scenario-list-v10-13>.scenario--compact .tag-row{
+  margin-top:auto!important;
+  padding-top:8px!important;
+ }
+}
