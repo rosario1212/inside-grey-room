@@ -31,22 +31,22 @@ BEGIN
  refused:=false;
  BEGIN
   PERFORM public.igr_v700_submit_psych_profile('V700QA1',investigator_,suspect_a,
-   'Il semble rechercher le soutien de ses proches.','Ce constat reste à vérifier avec les témoignages.');
+   'Il semble rechercher le soutien de ses proches dans le groupe.','Ce constat reste à vérifier avec les témoignages disponibles et contradictoires.');
  EXCEPTION WHEN OTHERS THEN refused:=true; END;
  IF NOT refused THEN RAISE EXCEPTION 'Investigator forged analyst profile';END IF;
  PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_a,
-  'Il semble éviter les conflits et la confrontation.','Ce point découle de sa déclaration initiale, pas d un diagnostic.');
+  'Il semble éviter les conflits et la confrontation avec les autres.','Ce point découle de sa déclaration initiale, pas d un diagnostic.');
  PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_b,
-  'Il semble minimiser la gravité de ses décisions.','Les récits publiés divergent sur l heure du départ.');
+  'Il semble minimiser la gravité de ses décisions personnelles et collectives.','Les récits publiés divergent sur l heure du départ.');
  refused:=false;
  BEGIN
   PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_a,
-   'Il cherche peut être à protéger un autre joueur.','Cette interprétation exige de nouvelles observations.');
+   'Il cherche peut être à protéger un autre joueur.','Cette interprétation exige de nouvelles observations objectives et corroborées.');
  EXCEPTION WHEN OTHERS THEN refused:=true; END;
  IF NOT refused THEN RAISE EXCEPTION 'Duplicate profile same cycle accepted';END IF;
  UPDATE public.igr_v4_rooms SET cycle=2 WHERE code='V700QA1';
  PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_a,
-  'La nouvelle chronologie évoque une hésitation.','Des éléments tardifs contredisent désormais son premier récit.');
+  'La nouvelle chronologie évoque une hésitation dans ses déclarations successives.','Des éléments tardifs contredisent désormais son premier récit sur les heures.');
  v:=public.igr_v700_psych_profiles('V700QA1',analyst_);
  IF jsonb_array_length(v->'profiles')<>3 THEN RAISE EXCEPTION 'Progressive timeline missing';END IF;
  IF (public.igr_v700_psych_profiles('V700QA1',witness_)->>'published')::boolean THEN
@@ -66,7 +66,7 @@ BEGIN
  UPDATE public.igr_v4_rooms SET phase='final_audience' WHERE code='V700QA1';
  refused:=false;
  BEGIN PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_a,
-  'Il semble chercher à obtenir une validation sociale.','Le contexte de groupe motive cette interrogation prudente.');
+  'Il semble chercher à obtenir une validation sociale au sein du groupe.','Le contexte de groupe motive cette interrogation prudente.');
  EXCEPTION WHEN OTHERS THEN refused:=true; END;
  IF NOT refused THEN RAISE EXCEPTION 'Final hearing allowed new profile';END IF;
 END $qa$;
