@@ -10,7 +10,7 @@ const sql=read('supabase/migrations/20261115123000_igr_v696_role_phase_alignment
 execFileSync(process.execPath,['--check','self-guided-rules-v51.js']);
 execFileSync(process.execPath,['--check','role-cadence-v694.js']);
 for(const marker of ['roleAgencyHtml','terrorRulesHtml','RULE_EDITION','officier_liaison',
- 'Trois ordres par cycle','Trois points','three protection points','Analyst initiative',
+ 'Trois ordres par cycle','3 points','three protection points','Analyst initiative',
  'Witness initiative','PROCEDURE','REPORT','SOMETHING']){
  // The last three are not required: preserve only observed contract tokens.
  if(['PROCEDURE','REPORT','SOMETHING'].includes(marker))continue;
@@ -41,7 +41,7 @@ for(const marker of ['Commandement de l’Officier','Trois ordres par cycle','In
  'Parole volontaire du Témoin','3 points','60, 90 ou 120 secondes','0 : aucune, 1 : secondaire, 2 : principale'])
  assert(fr.includes(marker),'French canonical rules missing: '+marker);
 for(const marker of ['Officer command: complete rules','Three orders per cycle','Analyst initiative',
- 'Witness initiative','three protection points','60, 90 or 120 seconds','0: none, 1: secondary, 2: primary',
+ 'Witness initiative','three protection points','60, 90 or 120-second','0: none, 1: secondary, 2: primary',
  'Read role cards','Assembly I'])
  assert(en.includes(marker),'English rulebook missing: '+marker);
 assert(en.includes('Officer')&&!en.includes('l’Officier de liaison'),'Officer naming regressed');
