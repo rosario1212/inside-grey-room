@@ -11,7 +11,7 @@ BEGIN
  SELECT player_token INTO interior FROM public.igr_v4_players WHERE room_code='QA13SAFE' AND internal_slot=2;
  SELECT player_token INTO third FROM public.igr_v4_players WHERE room_code='QA13SAFE' AND internal_slot=3;
  result:=public.igr_regime_v13_warrant('QA13SAFE',investigator,'qa-warrant-0001',
-   'vahran_director','apart','["032A-H11","032A-H12"]'::jsonb);
+   'vahran_director','032A-vahran','["032A-H11","032A-H12"]'::jsonb);
  IF result->>'status'<>'awaiting_judge' THEN RAISE EXCEPTION 'first warrant missing';END IF;
  result:=public.igr_regime_v13_judge_review('QA13SAFE',judge,'qa-judge-0001','qa-warrant-0001','allow');
  IF result->>'status'<>'captured' THEN RAISE EXCEPTION 'first valid fugitive not captured';END IF;
@@ -19,7 +19,7 @@ BEGIN
  result:=public.igr_regime_v13_action('QA13SAFE',interior,'fugitive_choice',
    'qa-fugitive-0002','{"option_id":"032A-interior_minister-C1-1"}'::jsonb);
  result:=public.igr_regime_v13_warrant('QA13SAFE',investigator,'qa-warrant-0002',
-   'interior_minister','apart','["032A-H21","032A-H22"]'::jsonb);
+   'interior_minister','032A-interior','["032A-H21","032A-H22"]'::jsonb);
  result:=public.igr_regime_v13_judge_review('QA13SAFE',judge,'qa-judge-0002','qa-warrant-0002','allow');
  IF result->>'status'<>'captured' THEN RAISE EXCEPTION 'second fugitive not captured';END IF;
  SELECT play_state INTO state FROM igr_private.igr_regime_v13_rooms WHERE room_code='QA13SAFE';
