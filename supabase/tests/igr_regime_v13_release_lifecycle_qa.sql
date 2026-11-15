@@ -33,6 +33,16 @@ BEGIN
  ('QA13LIFE','Suspect 1 QA',3,'en_attente','suspect',false),
  ('QA13LIFE','Suspect 2 QA',4,'en_attente','suspect',false),
  ('QA13LIFE','Suspect 3 QA',5,'en_attente','suspect',false);
+ -- Pin exactly variant A for this deterministic rollback-only lifecycle test.
+ INSERT INTO igr_private.igr_regime_v13_rooms(
+   room_code,scenario_id,variant_id,private_pack,play_state)
+ SELECT 'QA13LIFE','034','A',manuscript->'regime_vnext',
+ jsonb_build_object('alliance','{}'::jsonb,'decisions','[]'::jsonb,
+ 'investigations','[]'::jsonb,'disclosed','[]'::jsonb,'arrests','{}'::jsonb,
+ 'mandates','[]'::jsonb,'reconstructions','{}'::jsonb,
+ 'third','{}'::jsonb,'court','{}'::jsonb,'events','[]'::jsonb)
+ FROM igr_private.igr_v99_variant_manuscripts
+ WHERE scenario_id='034' AND variant_id='A';
  result:=public.igr_v4_start_game('QA13LIFE',host);
  IF result->>'ok'<>'true' THEN RAISE EXCEPTION 'legacy game failed to start';END IF;
  SELECT state INTO rstate FROM public.igr_v4_rooms WHERE code='QA13LIFE';
