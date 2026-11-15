@@ -51,15 +51,21 @@
   }
 
   async function waitForTurn(maxMs = 2800) {
+    let timer;
     try {
       await Promise.race([
         refreshManagedTurn(false),
-        new Promise(resolve => setTimeout(resolve, maxMs))
+        new Promise(resolve => { timer = setTimeout(resolve, maxMs); })
       ]);
     } catch (_) {}
+    finally { if (timer) clearTimeout(timer); }
   }
 
-  void refreshManagedTurn(false).catch(() => {});
+  // TURN credentials are unnecessary on the home screen or in text-only rooms.
+  // Request them only from a real video action. This avoids issuing billable
+  // relay credentials for every page visit and reduces network activity on iOS.
+  // startVideo/joinVideoAsViewer below still await the managed provider before
+  // creating a peer, with the existing public fallback preserved.
 
   const baseNewPeer = newPeer;
   newPeer = function(remoteId, isBroadcaster) {
