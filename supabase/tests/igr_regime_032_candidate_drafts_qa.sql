@@ -84,6 +84,18 @@ checkpoints AS (
        (SELECT count(DISTINCT e->>'origin')
         FROM jsonb_array_elements(d->'capture_evidence') e
         WHERE e->>'cycle'='1')>=2 FROM m
+ UNION ALL SELECT v,'cooperating third suspect owns an independently identifiable submission piece',
+       CASE WHEN d->'third_suspect_mission'->>'assigned_path'='cooperate'
+       THEN d->'third_suspect_mission'->'public_on_submission'->>'trigger_action'='submit_authentic_document'
+        AND d->'third_suspect_mission'->'public_on_submission'->>'origin'='secretariat_original'
+        AND d->'third_suspect_mission'->'public_on_submission'->>'initially_private'='true'
+        AND d->'third_suspect_mission'->'public_on_submission'->'act_ids'
+          @> jsonb_build_array(d->'third_suspect_mission'->>'target_act_id')
+       ELSE d->'third_suspect_mission'->'defense_form'->>'kind'='defense_statement'
+        AND d->'third_suspect_mission'->'defense_form'->>'required_before_cycle_end'='2'
+       END FROM m
+ UNION ALL SELECT v,'the legacy release preflight remains locked',
+       coalesce((igr_private.igr_v100_preflight('032')->>'release_eligible')::boolean,false)=false FROM m
  UNION ALL SELECT v,'unverified C3 proof does not claim human approval',
        (SELECT count(*) FROM jsonb_array_elements(d->'revelations') a
         WHERE a->>'kind'='guaranteed' AND a->>'min_cycle'='3'
