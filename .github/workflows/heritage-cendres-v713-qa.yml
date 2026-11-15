@@ -1,0 +1,66 @@
+name: Heritage CENDRES v713 QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'heritage-play-v13-7.js'
+      - 'play-modes-v13-8.js'
+      - 'scripts/v713-cendres-*.mjs'
+      - 'supabase/migrations/*heritage_cendres_majority_ballot_v713.sql'
+      - 'supabase/tests/igr_v713_cendres_ballot_*.sql'
+      - '.github/workflows/heritage-cendres-v713-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'heritage-play-v13-7.js'
+      - 'play-modes-v13-8.js'
+      - 'scripts/v713-cendres-*.mjs'
+      - 'supabase/migrations/*heritage_cendres_majority_ballot_v713.sql'
+      - 'supabase/tests/igr_v713_cendres_ballot_*.sql'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  runtime:
+    name: CENDRES runtime 5–7 players
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and six-campaign simulation
+        run: |
+          node --check heritage-play-v13-7.js
+          node --check play-modes-v13-8.js
+          node scripts/v713-cendres-playtest-check.mjs
+          node scripts/v713-cendres-online-check.mjs
+  postgres:
+    name: CENDRES isolated majority database
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: heritage_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d heritage_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply disposable schema and production candidate migration
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d heritage_test -f supabase/tests/igr_v713_cendres_ballot_harness.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d heritage_test -f supabase/migrations/20261115230500_heritage_cendres_majority_ballot_v713.sql
+          psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d heritage_test -f supabase/tests/igr_v713_cendres_ballot_integration.sql
