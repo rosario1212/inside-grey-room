@@ -1,4 +1,4 @@
-const CACHE='igr-santoro-display-audit-20261108-v701';
+const CACHE='igr-santoro-display-audit-20261108';
 const SHELL=[
   '/analyst-profiling-v700.css?v=v701-progressive-psychology',
   '/analyst-profiling-v700.js?v=v701-progressive-psychology',
