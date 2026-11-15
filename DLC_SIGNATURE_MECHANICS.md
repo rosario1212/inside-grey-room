@@ -54,11 +54,11 @@ Le joueur voit progressivement diverger l’organigramme officiel et l’influen
 
 - **032 LES ARCHIVES DU PALAIS — ARCHIVES FRAGMENTÉES** : ouvrir une branche à la fois (`ADMINISTRATION / SÉCURITÉ / PALAIS`). Le choix modifie l’ordre de découverte, jamais l’existence des faits.
 - **033 LA DYNASTIE — QUI DÉCIDAIT VRAIMENT ?** : quelques décisions historiques produisent une carte agrégée du pouvoir perçu. On compare titre officiel et influence réelle.
-- **034 LES NOMS QU’ILS PORTAIENT — IDENTITÉ FONCTIONNELLE** : la question n’est jamais seulement « qui utilisait le Portrait ? » mais « qui exerçait cette fonction pendant cette opération ? ».
+- **034 LES NOMS QU’ILS PORTAIENT — IDENTITÉ FONCTIONNELLE** : la question n’est jamais seulement « qui utilisait la Tête ? » mais « qui exerçait cette fonction pendant cette opération ? ».
 
 ### Surnoms rotatifs — règle fondamentale du RÉGIME
 
-`LE PORTRAIT`, `LE SCEAU`, `LE REMPART`, etc. peuvent changer de porteur entre opérations. Un même surnom peut également être utilisé de façon prestigieuse ou trompeuse sans refléter un pouvoir réel. La résolution exige donc de distinguer :
+`LA TÊTE`, `LE SCEAU`, `LA TOUR`, etc. peuvent changer de porteur entre opérations. Un même surnom peut également être utilisé de façon prestigieuse ou trompeuse sans refléter un pouvoir réel. La résolution exige donc de distinguer :
 
 1. nom utilisé ;
 2. personne ;
