@@ -49,7 +49,7 @@ const choices={
   severe:['agent','terror','source','prisoner','nadir']
 };
 let cases=0;
-for(const count of [5,7])for(const [route,answers] of Object.entries(choices)){
+for(const count of [5,6,7])for(const [route,answers] of Object.entries(choices)){
   entries.clear();window.IGR_HERITAGE.begin('cendres',false);
   for(let chapter=1;chapter<=5;chapter++){
     test.startSession('cendres',chapter,Array.from({length:count},(_,i)=>'Joueur '+(i+1)));
@@ -85,7 +85,7 @@ for(const count of [5,7])for(const [route,answers] of Object.entries(choices)){
   test.startSession('cendres',1,Array.from({length:count},(_,i)=>'Joueur '+(i+1)));
   let replay=test.readLive();
   assert.equal(replay.practice,true,'Replay should be non-canonical');
-  const split=count===5?['alias','alias','agent','agent','victim']:['alias','alias','agent','agent','victim','victim','victim'];
+  const split=count===5?['alias','alias','agent','agent','victim']:count===6?['alias','alias','agent','agent','victim','victim']:['alias','alias','agent','agent','victim','victim','victim'];
   submitLocalVotes(split);
   replay=test.readLive();
   assert.equal(replay.stage,'decision','Split vote should require a new round');
@@ -104,4 +104,4 @@ assert.ok(test.cendresLateEvidence(guest,2,hostCarry).includes('incomplet'));
 assert.ok(test.cendresFinalConsequence(guest,test.PACKS.cendres.chapters[5].options[0]).includes('compromission institutionnelle majeure'));
 assert.equal(test.cendresLateEvidence({...guest,online:false},2,window.IGR_HERITAGE.get('cendres')).includes('incomplet'),false,'Local/remote state isolation missing');
 
-console.log('CENDRES v713: '+cases+' end-to-end local runs (5/7 players × 3 paths), 30 chapters, 120 phases, replay and online carry projections OK');
+console.log('CENDRES v713: '+cases+' end-to-end local runs (5/6/7 players × 3 paths), 30 chapters, 120 phases, replay and online carry projections OK');
