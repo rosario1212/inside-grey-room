@@ -1,3 +1,4 @@
+import './v706-host-lobby-participants-check.mjs';
 import './v704-terror-final-polish-check.mjs';
 import './v703-terror-six-core-roles-check.mjs';
 import assert from 'node:assert/strict';
