@@ -29,7 +29,7 @@ need(ui, "defenseLabel=()=>judgePresent()?(short()?'3:00':'4:00')");
 need(ui, "CLÔTURER CETTE COMPARUTION");
 need(ui, "J’AI TERMINÉ MA DÉFENSE");
 need(ui, "data-igr705-close-at");
-need(ui, "TRIBUNAL · COMPARUTION");
+need(ui, "TRIBUNAL · AUDITION LIBRE");
 need(ui, "Vote final individuel et secret");
 need(ui, '<option value="" selected disabled>');
 need(ui, "!['0','1','2'].includes(el.value)");
