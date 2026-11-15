@@ -12,7 +12,8 @@ const room=()=>{try{return STATE?.sync?.room||null}catch{return null}};
 const session=()=>{try{return STATE||null}catch{return null}};
 const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const can=()=>ids.has(String(room()?.scenario_id||''))&&
- room()?.status==='playing'&&session()?.view==='game';
+ room()?.status==='playing'&&session()?.view==='game'&&
+ room()?.state?.regime_v13_active===true;
 let cache=null,lastPoll=0,lastKey='',inflight=false,lastRender='';
 function key(){return [session()?.room,session()?.token,room()?.cycle,room()?.phase].join(':')}
 function pending(){return (cache?.pending_mandates||[]).filter(x=>x.status==='awaiting_judge')}
