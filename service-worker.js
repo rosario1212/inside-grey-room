@@ -1,4 +1,4 @@
-const CACHE='igr-regime-alliance-verdict-draft-v5';
+const CACHE='igr-regime-journal-draft-v6';
 const SHELL=[
   '/', '/index.html', '/en.html',
   '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=role-balance-v694-20261115',
@@ -18,7 +18,7 @@ const SHELL=[
   '/language-v12.js?v=v12.22-mobile-ui','/i18n-en-v12.js?v=v12.22-mobile-ui',
   '/rules-v12.js?v=20261018-grey-room-protocol','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui','/locale-runtime-v12-23.js?v=v12.23-locale-home',
   '/omerta-v12.js?v=omerta-full-intros-20261109','/omerta-polish-v12.js?v=santoro-visual-fix-20261108','/omerta-hotfix-v12.js?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.js?v=v12.29-role-tree','/omerta-v12-30.js?v=santoro-visual-fix-20261108',
-  '/omerta-v12-39.js?v=santoro-visual-fix-20261108','/omerta-money-intel-v1.js?v=santoro-display-audit-20261108','/omerta-santoro-verdict-v28.js?v=omerta-023-spy-v1','/omerta-023-spy-v1.js?v=omerta-023-spy-v1','/terror-v12-37.js?v=v56-dlc-posters','/dlc-suite-v12-37.js?v=v20261115-regime-alliance-and-verdict-v5','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=v20261115-regime-copy-v5',
+  '/omerta-v12-39.js?v=santoro-visual-fix-20261108','/omerta-money-intel-v1.js?v=santoro-display-audit-20261108','/omerta-santoro-verdict-v28.js?v=omerta-023-spy-v1','/omerta-023-spy-v1.js?v=omerta-023-spy-v1','/terror-v12-37.js?v=v56-dlc-posters','/dlc-suite-v12-37.js?v=v20261115-regime-journal-v6','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=v20261115-regime-copy-v6',
   '/manifest.webmanifest','/privacy.html','/terms.html','/delete-account.html','/support.html',
   '/assets/intro-v10-16.webp?v=20261018-intro-v16','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png',
   '/assets/heritage-cendres-01-personne-n-existe.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-02-04-17.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-03-la-chambre.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-04-cendres.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-05-point-zero.webp?v=v13.6-heritage-premium',
