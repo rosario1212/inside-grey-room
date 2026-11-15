@@ -63,9 +63,9 @@ const PACKS={
           archive:['Une ancienne procédure interne décrit la création d’identités de couverture partagées pour cloisonner plusieurs opérations.','Relier V-17 à une méthode documentée sans supposer qui l’utilise aujourd’hui.']
         },
         options:[
-          {id:'alias',title:'IDENTITÉ DE COUVERTURE PARTAGÉE',detail:'V-17 est un dossier administratif utilisé par plusieurs opérations, pas une personne unique.',grade:2,consequence:'La cellule cesse de chercher un individu inexistant et conserve une piste exploitable.'},
-          {id:'agent',title:'AGENT RÉEL À RETROUVER',detail:'V-17 correspond à une seule personne opérant sous une identité récente.',grade:0,consequence:'La cellule mobilise ses moyens sur une personne qui n’existe pas sous cette forme.'},
-          {id:'victim',title:'IDENTITÉ D’UNE PERSONNE EFFACÉE',detail:'Une personne réelle a existé mais ses antécédents ont été supprimés.',grade:1,consequence:'L’hypothèse reste possible mais ne correspond pas aux traces techniques disponibles.'}
+          {id:'alias',title:'IDENTITÉ DE COUVERTURE PARTAGÉE',detail:'V-17 pourrait être un dossier partagé entre plusieurs opérations distinctes.',grade:2,consequence:'La cellule cesse de chercher un individu inexistant et conserve une piste exploitable.'},
+          {id:'agent',title:'AGENT RÉEL À RETROUVER',detail:'Une personne agirait sous cette identité administrative récemment constituée.',grade:0,consequence:'La cellule mobilise ses moyens sur une personne qui n’existe pas sous cette forme.'},
+          {id:'victim',title:'IDENTITÉ D’UNE PERSONNE EFFACÉE',detail:'Une identité civile aurait été effacée puis reconstruite dans les registres.',grade:1,consequence:'L’hypothèse reste possible mais ne correspond pas aux traces techniques disponibles.'}
         ],
         reveal:'V-17 n’est pas une personne unique. C’est une identité de couverture administrée depuis une même infrastructure et réutilisée pour plusieurs opérations du réseau hostile.',
         apply:{alias:{crisis:0,flag:'s1_correct'},agent:{crisis:1,flag:'s1_wrong'},victim:{crisis:1,flag:'s1_partial'}}
@@ -90,16 +90,16 @@ const PACKS={
           archive:['Un ancien exercice d’urgence décrit exactement la même substitution logistique : évacuer un chargement classifié pendant la saturation des contrôles.','Relier 04:17 à une procédure concrète plutôt qu’à une signature mystérieuse.']
         },
         options:[
-          {id:'transfer',title:'COUVRIR UN TRANSFERT CLASSIFIÉ',detail:'L’attaque déclenche le protocole qui permet au convoi C de sortir un chargement sans contrôle normal.',grade:2,consequence:'Vous suivez le mouvement matériel utile et préservez une piste pour la suite.'},
-          {id:'border',title:'CRÉER UN INCIDENT DIPLOMATIQUE',detail:'Le but principal est de faire accuser un État voisin et de provoquer une fermeture de frontière.',grade:1,consequence:'La pression politique est réelle, mais elle n’explique pas le trajet préparé du convoi C.'},
-          {id:'terror',title:'FRAPPER LE CENTRE LOGISTIQUE',detail:'L’attaque vise principalement les dégâts et la peur, sans objectif logistique secondaire.',grade:0,consequence:'Le convoi C et le chargement déplacé sortent de votre priorité.'}
+          {id:'transfer',title:'COUVRIR UN TRANSFERT CLASSIFIÉ',detail:'Le but principal aurait été de détourner les procédures de sécurité pendant le mouvement des convois.',grade:2,consequence:'Vous suivez le mouvement matériel utile et préservez une piste pour la suite.'},
+          {id:'border',title:'CRÉER UN INCIDENT DIPLOMATIQUE',detail:'La revendication viserait avant tout une réaction diplomatique contre l’État voisin.',grade:1,consequence:'La pression politique est réelle, mais elle n’explique pas le trajet préparé du convoi C.'},
+          {id:'terror',title:'FRAPPER LE CENTRE LOGISTIQUE',detail:'L’opération chercherait surtout à frapper le centre logistique et à imposer sa revendication.',grade:0,consequence:'Le convoi C et le chargement déplacé sortent de votre priorité.'}
         ],
         reveal:'04:17 est une diversion logistique. L’attaque a déclenché le protocole qui permettait de sortir un chargement classifié par le convoi C avec des contrôles réduits.',
         apply:{transfer:{crisis:0,flag:'s2_correct'},border:{crisis:1,flag:'s2_partial'},terror:{crisis:1,flag:'s2_wrong'}}
       },
       3:{
         title:'LA CHAMBRE',
-        briefing:'Une opératrice du réseau hostile est détenue. Trois comptes rendus de son audition circulent. Le compte rendu B contient une phrase absente de l’enregistrement audio et semble avoir été ajouté après l’entretien.',
+        briefing:'Une opératrice du réseau hostile est détenue. Trois versions de son audition circulent avec des écarts entre transcriptions, enregistrement et métadonnées. La direction veut exploiter ses déclarations sans attendre la vérification des pièces.',
         question:'Quel élément du dossier d’audition est contaminé ?',
         phases:[
           ['SOURCE','Évaluez ce que la détenue sait directement, ce qu’elle suppose et ce qu’elle peut vouloir négocier.'],
@@ -117,16 +117,16 @@ const PACKS={
           archive:['La phrase suspecte reprend mot pour mot un ancien document public sur les méthodes du réseau hostile.','Montrer qu’elle a pu être ajoutée pour rendre le témoignage artificiellement convaincant.']
         },
         options:[
-          {id:'b',title:'COMPTE RENDU B',detail:'B a été injecté dans la chaîne documentaire et doit être exclu.',grade:2,consequence:'Le témoignage reste partiellement exploitable et une compromission interne est confirmée.'},
-          {id:'source',title:'TOUT LE TÉMOIGNAGE',detail:'La détenue manipule l’ensemble du dossier et aucune de ses informations ne doit être conservée.',grade:0,consequence:'Vous perdez plusieurs éléments déjà recoupés indépendamment.'},
-          {id:'audio',title:'ENREGISTREMENT AUDIO',detail:'L’audio a été modifié et les comptes rendus écrits sont considérés comme fiables.',grade:1,consequence:'Vous identifiez une anomalie mais conservez la pièce falsifiée dans la synthèse.'}
+          {id:'b',title:'COMPTE RENDU B',detail:'La version B constituerait l’altération déterminante du dossier.',grade:2,consequence:'Le témoignage reste partiellement exploitable et une compromission interne est confirmée.'},
+          {id:'source',title:'TOUT LE TÉMOIGNAGE',detail:'Le récit de la détenue serait entièrement construit pour tromper les enquêteurs.',grade:0,consequence:'Vous perdez plusieurs éléments déjà recoupés indépendamment.'},
+          {id:'audio',title:'ENREGISTREMENT AUDIO',detail:'L’enregistrement sonore disponible aurait été tronqué ou remanié après l’audition.',grade:1,consequence:'Vous identifiez une anomalie mais conservez la pièce falsifiée dans la synthèse.'}
         ],
         reveal:'Le compte rendu B a été fabriqué à l’intérieur du service. La détenue ment sur certains éléments biographiques, mais plusieurs de ses informations opérationnelles sont confirmées par des sources indépendantes.',
         apply:{b:{crisis:0,flag:'s3_correct'},source:{crisis:1,flag:'s3_wrong'},audio:{crisis:1,flag:'s3_partial'}}
       },
       4:{
         title:'CENDRES',
-        briefing:'Les trois dossiers précédents convergent : l’identité V-17, l’itinéraire préparé du convoi C et l’injection du compte rendu B nécessitent tous un accès interne aux habilitations et aux systèmes documentaires.',
+        briefing:'Les anomalies des trois premiers dossiers semblent dépendre de droits administratifs distincts. Une délégation technique, une instruction politique et les accès d’une opératrice détenue constituent trois pistes concurrentes. La cellule doit identifier qui pouvait réellement modifier les données.',
         question:'Quel poste interne constitue le relais opérationnel du réseau hostile ?',
         phases:[
           ['CARTE','Posez uniquement les liens recoupés. Un accès possible n’est pas une participation prouvée.'],
@@ -135,18 +135,18 @@ const PACKS={
           ['CLASSIFICATION','Verrouillez le relais interne. Une erreur ici réduira les informations fiables du dernier dossier.']
         ],
         secrets:{
-          chef:['Le responsable des habilitations a signé à la fois la délégation utilisée pour le protocole d’urgence et l’autorisation du superviseur absent du dossier B.','Faire converger deux chaînes administratives vers la même fonction.'],
-          sigint:['La création de V-17 et l’accès ayant modifié le compte rendu B utilisent le même certificat racine d’administration des habilitations.','Relier les anomalies numériques à un compte privilégié concret.'],
-          terrain:['Le convoi C s’est arrêté 96 secondes dans la zone de chargement réservée au service des habilitations avant de disparaître des caméras.','Apporter le lien physique manquant.'],
-          source:['La détenue ne connaît pas le responsable par son nom mais décrit la personne qui “valide les accès et peut faire exister un dossier”.','Utiliser une description fonctionnelle seulement lorsqu’elle est recoupée.'],
-          liaison:['Le responsable des habilitations est protégé institutionnellement parce qu’il centralise les accès classifiés de plusieurs directions.','Tester si le groupe confond importance hiérarchique et innocence.'],
-          legal:['Une délégation permanente permet au service des habilitations de créer certaines identités administratives sans donnée biométrique primaire.','Fournir le mécanisme administratif de V-17.'],
-          archive:['Les journaux d’administration montrent le même identifiant opérateur lors de la création de V-17, de la préparation du convoi C et de la modification du dossier B.','Fermer la chaîne documentaire avec une trace commune.']
+          chef:['Deux opérations ont reçu une validation de second niveau commune, mais une autorité politique a demandé l’une tandis qu’un service technique a exécuté l’autre.','Faire distinguer le commanditaire de la personne qui possède réellement les droits d’écriture.'],
+          sigint:['Les traces de V-17 et du dossier d’audition renvoient à un certificat de délégation partagé entre plusieurs postes. Le journal d’écriture initial est incomplet.','Retrouver le titulaire du droit d’écriture, pas seulement un certificat commun.'],
+          terrain:['Le convoi C est resté 96 secondes dans une zone de chargement sensible; une escorte relevant du cabinet ministériel y a été aperçue la même nuit.','Distinguer une présence sur place d’une autorisation effective de transfert.'],
+          source:['La détenue parle d’un interlocuteur capable de faire créer des accès sans jamais préciser son nom ni son administration.','Ne pas transformer une description fonctionnelle vague en identification certaine.'],
+          liaison:['Le cabinet ministériel connaissait une citation du dossier d’audition avant son exploitation officielle, mais affirme avoir seulement reçu une copie.','Vérifier si cette fuite implique un accès en écriture ou une simple consultation.'],
+          legal:['Les autorisations en cause comportent trois niveaux distincts : lecture, validation et écriture. Les ordres politiques ne prouvent pas à eux seuls l’usage du dernier niveau.','Séparer pouvoir d’ordonner et capacité technique de falsifier un dossier.'],
+          archive:['Un même identifiant technique apparaît lors de la création de V-17, de la préparation du convoi C et du traitement de l’audition; le registre mentionne un profil de service, pas un nom.','Faire remonter un compte de service à son titulaire sans déduire l’identité depuis le seul identifiant.']
         },
         options:[
-          {id:'kern',title:'RESPONSABLE DES HABILITATIONS',detail:'Cette fonction dispose des accès nécessaires pour relier V-17, le convoi C et le compte rendu B.',grade:2,consequence:'Le principal relais interne est neutralisé avant le dernier dossier.'},
-          {id:'prisoner',title:'OPÉRATRICE DÉTENUE',detail:'Elle aurait organisé la contamination depuis sa capture en manipulant les enquêteurs.',grade:0,consequence:'Le compte privilégié interne reste actif et peut encore fausser le dernier dossier.'},
-          {id:'minister',title:'CABINET MINISTÉRIEL',detail:'La fuite politique montre une compromission, mais le cabinet ne possède pas les accès techniques nécessaires aux trois manipulations.',grade:1,consequence:'Vous identifiez une circulation anormale de l’information sans neutraliser le relais technique.'}
+          {id:'kern',title:'RESPONSABLE DES HABILITATIONS',detail:'Le relais serait une fonction technique dotée de droits administratifs étendus.',grade:2,consequence:'Le principal relais interne est neutralisé avant le dernier dossier.'},
+          {id:'prisoner',title:'OPÉRATRICE DÉTENUE',detail:'L’opératrice détenue aurait orchestré une partie des anomalies pour orienter la cellule.',grade:0,consequence:'Le compte privilégié interne reste actif et peut encore fausser le dernier dossier.'},
+          {id:'minister',title:'CABINET MINISTÉRIEL',detail:'Un bureau politique aurait coordonné les falsifications et la circulation des renseignements.',grade:1,consequence:'Vous identifiez une circulation anormale de l’information sans neutraliser le relais technique.'}
         ],
         reveal:'Le responsable des habilitations est le relais interne. Son compte privilégié a permis de créer V-17, de préparer la sortie du convoi C et d’injecter le compte rendu B.',
         apply:{kern:{crisis:-1,flag:'s4_correct'},prisoner:{crisis:1,flag:'s4_wrong'},minister:{crisis:0,flag:'s4_partial'}}
@@ -157,23 +157,23 @@ const PACKS={
         question:'Dans quel site l’ogive est-elle réellement stockée ?',
         phases:[
           ['SITES','Comparez accès, poids, itinéraires, responsabilités administratives et capacité physique des trois sites.'],
-          ['COMPTE À REBOURS','Le niveau de crise hérité réduit le temps disponible et peut rendre certaines informations moins fiables.'],
+          ['COMPTE À REBOURS','La crise héritée détermine la disponibilité des annexes et la solidité des vérifications complémentaires. N’inventez pas de chronomètre : hiérarchisez les pistes encore étayées.'],
           ['SYNTHÈSE','Reprenez V-17, le convoi C, le rapport B et le responsable des habilitations. La réponse doit expliquer toute la chaîne.'],
-          ['POINT ZÉRO','Choisissez le site final. Aucun nouvel indice ne sera ajouté après ce choix.']
+          ['POINT ZÉRO','Défendez le site retenu par au moins deux sources indépendantes, puis verrouillez votre décision.']
         ],
         secrets:{
-          chef:['Le responsable des habilitations avait autorité sur les anciens tunnels hydroélectriques transférés au domaine civil, mais pas sur la base aérienne active.','Faire revenir les habilitations comme fil directeur.'],
-          sigint:['Les coupures réseau observées autour de 04:17 suivent une ligne enterrée qui rejoint une ancienne galerie hydroélectrique.','Relier la trace numérique au site civil déclassé.'],
-          terrain:['Le poids estimé du convoi C rend l’itinéraire montagne vers la base aérienne incompatible avec la fenêtre de huit minutes, mais correspond à l’accès routier de la galerie.','Écarter un site par une contrainte physique vérifiable.'],
-          source:['La détenue avait décrit un stockage “sous le niveau du réservoir, dans une galerie sèche”. Une ancienne installation hydroélectrique correspond à cette configuration.','Utiliser la description seulement en combinaison avec les données techniques.'],
-          liaison:['Le gouvernement envisage d’évacuer la capitale, ce qui détournerait des moyens du site civil pourtant mieux étayé.','Protéger la décision opérationnelle de la panique politique.'],
-          legal:['L’ancienne galerie ne figure plus dans les inventaires militaires depuis son transfert administratif au ministère de l’Énergie.','Expliquer pourquoi un matériel stratégique peut y échapper aux contrôles militaires habituels.'],
-          archive:['Les documents de démantèlement mentionnent un transfert temporaire vers une infrastructure civile convertie avant destruction définitive.','Relier le dernier site à la chaîne documentaire historique.']
+          chef:['Le relais interne avait autorité sur certains ouvrages transférés au domaine civil, tandis que la base aérienne relève d’une autre chaîne. Une dérogation de transit militaire existe toutefois.','Comparer les pouvoirs de transfert aux preuves d’un stockage effectif.'],
+          sigint:['Deux interruptions réseau jalonnent le trajet du convoi : une près du dépôt et une sur une ligne enterrée menant vers un ouvrage civil. Aucun signal ne prouve à lui seul un déchargement.','Distinguer passage, relais technique et lieu de stockage.'],
+          terrain:['Le poids du convoi rend irréaliste un trajet direct par le col vers la base dans la fenêtre connue. Un transbordement ultérieur reste possible et n’a pas été observé.','Utiliser le temps de trajet pour éliminer un mouvement précis, sans exclure un transfert secondaire imaginaire par certitude.'],
+          source:['La détenue répète la formule « sous le niveau de l’eau » mais reconnaît ne jamais avoir vu le site. Son contact pouvait lui transmettre un lieu de couverture.','Tester la valeur d’un renseignement indirect plutôt que prendre une description pour une localisation.'],
+          liaison:['Le gouvernement exige l’inspection prioritaire de la base et du dépôt. Aucun compte rendu de reconnaissance n’a encore été produit pour l’ouvrage civil.','Ne pas confondre urgence politique et comparaison contradictoire des trois sites.'],
+          legal:['Un ouvrage civil a quitté les inventaires militaires, alors que le dépôt demeure sous contrôle de démantèlement. Les deux peuvent néanmoins figurer sur une chaîne de transport ancienne.','Distinguer contrôle administratif et présence physique du matériel.'],
+          archive:['Une fiche prévoit un transfert vers une infrastructure civile; une seconde fiche, sans accusé de réception, évoque un retour au dépôt.','Faire le tri entre ordre de mouvement et preuve de réception.']
         },
         options:[
-          {id:'nadir',title:'ANCIENNE GALERIE HYDROÉLECTRIQUE',detail:'Site civil déclassé, accessible par le trajet du convoi C et couvert par les habilitations du relais interne.',grade:2,consequence:'L’ogive est retrouvée et sécurisée. La qualité de la victoire dépend du niveau de crise accumulé.'},
-          {id:'airbase',title:'BASE AÉRIENNE ACTIVE',detail:'Site militaire sécurisé et évident, mais incompatible avec l’autorité du relais et le trajet du convoi.',grade:0,consequence:'La base était une fausse piste et le dispositif de recherche perd un temps critique.'},
-          {id:'depot',title:'ANCIEN DÉPÔT DE DÉMANTÈLEMENT',detail:'Lieu où l’ogive a officiellement quitté l’inventaire, mais les traces montrent qu’elle en est repartie ensuite.',grade:1,consequence:'Vous retrouvez l’origine de la disparition mais pas le stockage final.'}
+          {id:'nadir',title:'ANCIENNE GALERIE HYDROÉLECTRIQUE',detail:'L’ogive aurait été déplacée vers un ancien ouvrage civil souterrain.',grade:2,consequence:'L’ogive est retrouvée et sécurisée. La qualité de la victoire dépend du niveau de crise accumulé.'},
+          {id:'airbase',title:'BASE AÉRIENNE ACTIVE',detail:'Le chargement aurait rejoint une installation militaire toujours active.',grade:0,consequence:'La base était une fausse piste et le dispositif de recherche perd un temps critique.'},
+          {id:'depot',title:'ANCIEN DÉPÔT DE DÉMANTÈLEMENT',detail:'Le matériel serait resté dans la filière de démantèlement, sans atteindre un nouveau site.',grade:1,consequence:'Vous retrouvez l’origine de la disparition mais pas le stockage final.'}
         ],
         reveal:'L’ogive est stockée dans une ancienne galerie hydroélectrique passée sous gestion civile. Le convoi C y a livré le chargement à la faveur du protocole d’urgence.',
         apply:{nadir:{crisis:-1,flag:'s5_nadir'},airbase:{crisis:2,flag:'s5_fail'},depot:{crisis:1,flag:'s5_late'}}
