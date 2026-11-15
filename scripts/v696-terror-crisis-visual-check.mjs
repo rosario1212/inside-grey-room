@@ -32,8 +32,8 @@ assert(css.includes('body:has(#app .lobby-v11[data-igr-lobby-theme="terror"])'),
   'Document background must depend on active Terror room, not stale body theme');
 assert(!/^\s*(?:body|:root|\*|button|input)\s*\{/m.test(css),
  'Do not introduce unscoped global page/button styles');
-assert(css.includes('#a74753')&&css.includes('#7d2e3b')&&css.includes('#18212b'),
- 'Option B crisis palette is missing');
+assert(css.includes('#a74753')&&css.includes('#7d2e3b')&&css.includes('#181517'),
+ 'Black-and-crimson TERREUR palette is missing');
 assert(css.includes('grid-template-columns:minmax(0,1fr)'),
  'Small iPhone city form must stack without horizontal overflow');
 assert((css.match(/\{/g)||[]).length===(css.match(/\}/g)||[]).length,
@@ -57,8 +57,9 @@ if(process.argv[2]){
  const builtSw=read(dir+'/service-worker.js');
  assert((builtHtml.match(/terror-crisis-v696\.css\?v=/g)||[]).length===1,
   'Built page lost or duplicated crisis theme');
- assert(builtSw.includes('/terror-crisis-v696.css?v=v87-canonical-narrative'),
-  'PWA precache URL and finalizer version are not aligned');
- assert(builtSw.includes('/terror-crisis-v696.css?v=v87-canonical-narrative'),'PWA must preload immutable v696 CSS');
+ assert(builtHtml.includes('terror-crisis-v696.css?v=terror-carbon-v697-20261115'), 'Built page kept blue v696 CSS URL');
+ assert(builtSw.includes('/terror-crisis-v696.css?v=terror-carbon-v697-20261115'),
+  'PWA precache URL and carbon release version are not aligned');
+ assert(builtSw.includes('/terror-crisis-v696.css?v=terror-carbon-v697-20261115'),'PWA must preload carbon CSS');
 }
-console.log('PASS TERREUR v696 Option B: scoped crisis palette, iPhone layout, accessibility, actions, build and PWA.');
+console.log('PASS TERREUR v697: charcoal UI, muted red, scoped lobby, iPhone layout and isolated PWA cache.');
