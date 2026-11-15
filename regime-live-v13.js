@@ -171,14 +171,16 @@ function court(){
  const arrested=cache?.arrests||{};
  const present=cast().filter((person,i)=>i===2||Object.hasOwn(arrested,person.actor_id));
  const absent=cast().filter((person,i)=>i<2&&!Object.hasOwn(arrested,person.actor_id));
- const current=c.current?.actor_id,exchanges=Array.isArray(c.exchanges)?c.exchanges:[];
+ const current=c.slot_actor_id||null,exchanges=Array.isArray(c.exchanges)?c.exchanges:[];
+ const passes=Array.isArray(c.passes)?c.passes:[];
+ const myPassingAllowed=stage==='defenses'&&cache.role==='suspect'&&
+   thisActor()===current&&!passes.some(x=>x.actor_id===current&&Number(x.slot)===Number(c.slot_number));
  const stageLabels={opening:'OUVERTURE DU PROCÈS',defenses:'DÉCLARATIONS DES ACCUSÉS',
  confrontation:'CONFRONTATION · QUESTIONS ET OBJECTIONS',closing:'CLÔTURE DU JUGE',
  vote:'DÉLIBÉRATION · VOTE FINAL'};
- const judgeUI=isRole('juge')&&stage==='defenses'?
-  '<div class="igr-rg13-call"><b>APPEL À LA BARRE · UNE PERSONNE PAR CRÉNEAU</b>'+
-   present.filter(x=>!calls.includes(x.actor_id)).map(x=>
-    button('APPELER '+x.pseudo,'court-call','data-actor-id="'+esc(x.actor_id)+'"')).join('')+
+ const judgeUI=isRole('juge')&&stage==='defenses'&&current&&!calls.includes(current)?
+  '<div class="igr-rg13-call"><b>APPEL À LA BARRE · DROIT DE PAROLE GARANTI</b>'+
+    button('APPELER '+person(current),'court-call','data-actor-id="'+esc(current)+'"')+
    '</div>':'';
  const courtroomRoles=new Set(['enqueteur','analyste','procureur']);
  const myPresent=cache?.role==='suspect'&&present.some(x=>x.actor_id===thisActor());
@@ -255,7 +257,9 @@ function court(){
    absent.map(x=>'<p class="igr-rg13-absent">'+esc(x.pseudo)+' · EN FUITE (siège vide)</p>').join('')+
   '</div></div><div class="igr-rg13-bar">BARRE · '+esc(current?person(current):'En attente de l’appel')+
   '<span id="igrRgBarClock"></span></div></div>'+
-  judgeUI+discussion+thirdFinal+reconstruction+'</section>';
+  judgeUI+
+  (myPassingAllowed?button('PASSER MON TOUR','court-pass'):'')+
+  discussion+thirdFinal+reconstruction+'</section>';
 }
 function events(){
  const rows=cache?.events||[];if(!rows.length)return '';
@@ -344,6 +348,8 @@ document.addEventListener('click',async(ev)=>{
     p_decision:action==='judge-allow'?'allow':'contest'});
   }else if(action==='court-call'){
    await call('igr_regime_v13_court_call',{...args,p_actor_id:el.dataset.actorId});
+  }else if(action==='court-pass'){
+   await call('igr_regime_v14_pass_speech',args);
   }else if(action==='third-final'){
    await call('igr_regime_v13_third_final',{...args,p_ordered_by:control('igrRgThirdOrdered'),
       p_own_participation:control('igrRgThirdPart')});
