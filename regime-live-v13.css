@@ -1,0 +1,66 @@
+/* LE RÉGIME v13 — judicial chamber, dark neutral palette, no blue panels.
+   Rendered only for private-pinned Regime rooms. */
+.igr-rg13-root{--rg13-bg:#090a0b;--rg13-ink:#e8e3d9;--rg13-line:rgba(184,166,131,.24);--rg13-metal:#b4a17e;display:grid;gap:12px;margin:14px 0 24px;color:var(--rg13-ink)}
+.igr-rg13-root *{box-sizing:border-box}
+.igr-rg13-banner{background:linear-gradient(140deg,#151414,#060708);border:1px solid var(--rg13-line);border-radius:14px;padding:19px 21px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.igr-rg13-banner small,.igr-rg13-court header small,.igr-rg13-news small,.igr-rg13-proof small{font:600 10px/1.5 'IBM Plex Mono',monospace;letter-spacing:.14em;color:var(--rg13-metal)}
+.igr-rg13-banner h3,.igr-rg13-court h2{color:#e6ded0;letter-spacing:.035em;margin:5px 0 7px;text-transform:uppercase}
+.igr-rg13-banner p{color:#aca7a0;margin:0;font-size:13px;line-height:1.55}
+.igr-rg13-section{display:grid;gap:10px;padding:16px;background:linear-gradient(180deg,#131414,#0d0e0f);border:1px solid rgba(240,236,226,.09);border-radius:13px}
+.igr-rg13-section h4{font:650 13px/1.25 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#d2c3a3;margin:0}
+.igr-rg13-section p{font-size:13px;line-height:1.55;margin:4px 0;color:#c0bdb7}
+.igr-rg13-section details{border-top:1px solid rgba(255,255,255,.08);padding:10px 0}
+.igr-rg13-section summary{cursor:pointer;color:#d1cbbf}
+.igr-rg13-root button{appearance:none;border:1px solid rgba(204,184,150,.35);background:#25231f;color:#e8dfce;padding:10px 12px;border-radius:9px;min-height:40px;font-size:12px;font-weight:650;letter-spacing:.025em;cursor:pointer}
+.igr-rg13-root button:hover{border-color:rgba(224,200,162,.7);background:#332f29}
+.igr-rg13-root button:focus-visible{outline:2px solid #b9aa89;outline-offset:2px}
+.igr-rg13-root button:disabled{opacity:.5;cursor:wait}
+.igr-rg13-root input,.igr-rg13-root select,.igr-rg13-root textarea{display:block;width:100%;min-height:38px;border:1px solid rgba(231,223,200,.16);background:#0c0d0e;color:#eae4d9;border-radius:7px;padding:8px;font-size:12px}
+.igr-rg13-root textarea{min-height:82px;resize:vertical}
+.igr-rg13-root label{display:grid;gap:5px;font-size:11px;color:#beb8ac}
+.igr-rg13-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.igr-rg13-choices article,.igr-rg13-warrant,.igr-rg13-act{padding:13px;border:1px solid rgba(218,203,173,.13);border-radius:10px;background:#151515;display:grid;gap:9px}
+.igr-rg13-choices article b,.igr-rg13-warrant b{font-size:13px}
+.igr-rg13-choices article small{font-size:11px;color:#b3a796}
+.igr-rg13-choices article button{justify-self:start}
+.igr-rg13-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.igr-rg13-form button{grid-column:1/-1}
+.igr-rg13-proof{border-left:2px solid rgba(185,166,131,.65);padding:8px 12px;margin:10px 0;background:#111212;display:grid;gap:4px}
+.igr-rg13-proof strong{font-size:12px;color:#e6dfd3}
+.igr-rg13-news{padding:12px 14px;border:1px solid var(--rg13-line);border-radius:9px;background:#1c1916;display:grid;gap:5px}
+.igr-rg13-news b{letter-spacing:.03em;color:#e8dec9}
+.igr-rg13-court{display:grid;gap:14px;background:#080809;border:1px solid rgba(179,158,119,.33);border-radius:15px;padding:16px;box-shadow:0 12px 45px rgba(0,0,0,.3)}
+.igr-rg13-court header{text-align:center;padding:16px 10px;border-bottom:1px solid var(--rg13-line);background:linear-gradient(180deg,#211d19,#0f1010)}
+.igr-rg13-court header p{font-size:11px;color:#b5a792;margin:5px 0}
+.igr-rg13-court header strong{font:700 35px/1.3 'IBM Plex Mono',monospace;letter-spacing:.05em;color:#eee3cf;font-variant-numeric:tabular-nums}
+.igr-rg13-bench{display:grid;gap:8px;border:1px solid rgba(216,199,171,.12);border-radius:12px;padding:12px;min-height:230px;background:radial-gradient(ellipse at 50% -20%,#322b20 0%,#101010 55%)}
+.igr-rg13-judge{justify-self:center;text-align:center;background:#29241c;border:1px solid rgba(208,190,151,.28);border-radius:8px 8px 3px 3px;padding:15px 30px;letter-spacing:.11em;font-size:14px;min-width:50%}
+.igr-rg13-judge small{font-size:10px;letter-spacing:.015em;color:#c9b99a}
+.igr-rg13-sides{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.igr-rg13-sides>div{border:1px solid rgba(227,215,191,.13);padding:12px;background:#171717;border-radius:8px;min-height:82px}
+.igr-rg13-sides b{font-size:11px;letter-spacing:.09em;color:#dac9ab}
+.igr-rg13-sides p{font-size:12px;color:#d4ccc0;line-height:1.45;margin:6px 0}
+.igr-rg13-absent{color:#9b958b!important}
+.igr-rg13-bar{text-align:center;background:#2a241b;border:1px solid rgba(192,163,124,.3);border-radius:9px;padding:16px 12px;font-weight:650;font-size:13px;letter-spacing:.03em}
+.igr-rg13-bar span{display:inline-block;color:#d8c8aa;font:700 13px/1 'IBM Plex Mono',monospace}
+.igr-rg13-call{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.igr-rg13-call b{font-size:11px;color:#bdb3a5;flex-basis:100%}
+.igr-rg13-act h5{font-size:13px;color:#e7dac3;margin:0}
+.igr-rg13-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+@media(max-width:680px){.igr-rg13-banner{padding:15px}.igr-rg13-court{padding:10px}.igr-rg13-court header strong{font-size:29px}.igr-rg13-judge{min-width:85%}.igr-rg13-form,.igr-rg13-grid{grid-template-columns:1fr}.igr-rg13-choices{grid-template-columns:1fr}.igr-rg13-sides{gap:6px}.igr-rg13-sides>div{padding:9px}.igr-rg13-root button{min-height:44px}}
+
+.igr-rg13-stage{font:650 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#d1c0a2;margin-top:8px}
+.igr-rg13-exchanges{display:grid;gap:7px;max-height:300px;overflow-y:auto;padding:5px}
+.igr-rg13-exchanges article{display:grid;gap:4px;padding:10px 12px;background:#171614;border-left:2px solid rgba(190,172,139,.65);border-radius:6px}
+.igr-rg13-exchanges article small{color:#bca985;font:600 10px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em}
+.igr-rg13-exchanges article p{margin:0;line-height:1.5;color:#e3ddd2}
+.igr-rg13-ruling{background:#1b1915;padding:10px;border:1px solid var(--rg13-line);border-radius:8px}
+.igr-rg13-ruling button+button{margin-left:8px}
+.igr-rg13-court .igr-rg13-section{background:#101111}
+
+/* Régime v14 — restrained horror photography treatment, without decorative gore. */
+.igr-rg13-scene{display:grid;gap:8px;padding:22px 19px;border-radius:13px;border:1px solid rgba(163,130,116,.32);background:radial-gradient(ellipse at 15% 0%,#33201c 0%,#171413 44%,#090a0b 100%);box-shadow:inset 0 0 38px rgba(0,0,0,.28)}
+.igr-rg13-scene small{color:#c69b86;font:700 10px/1.5 'IBM Plex Mono',monospace;letter-spacing:.13em}
+.igr-rg13-scene h4{font-size:19px;font-weight:700;line-height:1.2;letter-spacing:-.01em;margin:0;color:#f0e6dc}
+.igr-rg13-scene p{font-size:14px;line-height:1.65;color:#dbd0c5;margin:0;max-width:68ch}
+.igr-rg13-scene span{color:#9e9188;font-size:10px;font-style:italic}
