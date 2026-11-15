@@ -7,7 +7,7 @@ SELECT s.sig,pg_get_functiondef(s.sig::regprocedure) FROM (VALUES
 ('igr_private.igr_v688_terror_captivity()'),
 ('public.igr_v4_make_reveal(text)'),
 ('public.igr_v33_terror_confirm_028(text,uuid,text)')
-) s(sig) ON CONFLICT(sig) DO NOTHING;
+) s(sig) ON CONFLICT(signature) DO NOTHING;
 CREATE OR REPLACE FUNCTION igr_private.igr_v688_terror_captivity()
  RETURNS trigger
  LANGUAGE plpgsql
