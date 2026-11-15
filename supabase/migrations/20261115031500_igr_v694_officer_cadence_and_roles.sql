@@ -217,9 +217,9 @@ DECLARE fn text;
 BEGIN
  SELECT pg_get_functiondef('public.igr_v693_terror_officer_join(text,uuid,text,timestamptz)'::regprocedure) INTO fn;
  IF position('v694 new suspect per visit' IN fn)=0 THEN
-  IF position('  visit:=jsonb_build_object(' IN fn)=0
+  IF position(' visit:=jsonb_build_object(' IN fn)=0
   THEN RAISE EXCEPTION 'officer-visit anchor changed';END IF;
-  fn:=replace(fn,'  visit:=jsonb_build_object(',
+  fn:=replace(fn,' visit:=jsonb_build_object(',
   $b$  -- v694 new suspect per visit. No target can be repeated across cycles.
   IF r.cycle=3 AND EXISTS(
    SELECT 1 FROM public.igr_v4_actions older
