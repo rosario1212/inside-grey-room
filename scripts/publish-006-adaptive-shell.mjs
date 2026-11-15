@@ -6,6 +6,8 @@ import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
 const tag='terror-live-v694-20261115';
+const crisisCssPath='/terror-crisis-v696.css?v=v87-canonical-narrative';
+const crisisCacheTag='-crisis-v696';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -31,7 +33,10 @@ assert(terrorCommand.includes('terrorV693Join') && terrorCommand.includes('terro
 assert(terrorCommand.includes('igr_v688_terror_choose_operation') && terrorCommand.includes('terror-v688-capture'), 'Terror commander and captivity presentation missing');
 const terrorV694=await readFile(path.join(dest,'terror-command-v694.js'),'utf8');
 assert(terrorV694.includes('igr_v694_terror_confirm')&&terrorV694.includes('terrorV694Join'),'v694 gameplay UI missing');
+const crisisCss=await readFile(path.join(dest,'terror-crisis-v696.css'),'utf8');
+assert(crisisCss.includes('data-igr-lobby-theme="terror"') && crisisCss.includes('terror-v681-city-lobby') && crisisCss.includes('igr-duration-tab-v35'), 'TERREUR premium crisis UI missing');
 const terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
+assert(terrorHtml.includes('terror-crisis-v696.css'), 'TERREUR crisis CSS missing from public entrypoint');
 assert(terrorHtml.includes('terror-live-v681.js') && terrorHtml.includes('terror-live-v681.css'), 'terror shared city widget not included in published entrypoint');
 assert(terrorHtml.includes('terror-front-v682.js') && terrorHtml.includes('terror-front-v682.css'),'FDR public story and siege assets missing');
 assert(terrorHtml.includes('terror-command-v688.js') && terrorHtml.includes('terror-command-v688.css'),'Terror military choice assets missing in production entrypoint');
@@ -70,6 +75,10 @@ for(const page of ['index.html','en.html']){
 const swFile=path.join(dest,'service-worker.js');
 let sw=await readFile(swFile,'utf8');
 const newCachePath='/'+appName+'?v='+tag;
+if(!sw.includes(crisisCssPath)){
+ assert(sw.includes('const SHELL=['),'PWA manifest missing for TERREUR visuals');
+ sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${crisisCssPath}',`);
+}
 if(!sw.includes(newCachePath)){
  assert(sw.includes('const SHELL=['),'Service worker precache list missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${newCachePath}',`);
@@ -105,7 +114,7 @@ for(const asset of ['/terror-command-v694.js?v=terror-live-v694-20261115','/terr
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
  }
 }
-sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+"'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+"'"),'PWA cache version did not advance');
+sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+crisisCacheTag+"'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+crisisCacheTag+"'"),'PWA crisis cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
