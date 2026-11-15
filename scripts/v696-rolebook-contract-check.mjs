@@ -53,7 +53,7 @@ if(dest){
  }
  const html=read(dest+'/index.html');
  const enHtml=read(dest+'/en.html');
- assert(html.includes('self-guided-rules-v51.js?v=v696-rolebook')&&enHtml.includes('self-guided-rules-v51.js?v=v696-rolebook'),
+ assert(html.includes('self-guided-rules-v51.js?v=v701-rolebook')&&enHtml.includes('self-guided-rules-v51.js?v=v701-rolebook'),
   'PWA/native build not using v696 rulebook revision');
  if(existsSync(dest+'/index-latest-release.txt'))assert.equal(read(dest+'/index-latest-release.txt'),html,'Cloudflare shell alias differs from rolebook homepage');
  const built=read(dest+'/self-guided-rules-v51.js');
@@ -61,7 +61,7 @@ if(dest){
  if(existsSync(dest+'/service-worker.js')){
   const sw=read(dest+'/service-worker.js');
   assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"),'Published PWA cache namespace changed unexpectedly');
-  assert(sw.includes('/self-guided-rules-v51.js?v=v696-rolebook'),'rulebook not in new precache');
+  assert(sw.includes('/self-guided-rules-v51.js?v=v701-rolebook'),'rulebook not in new precache');
  }
 }
 console.log('PASS v696 bilingual rulebook: all roles, officer, noncanonical initiatives, phase guards and cache rollout');
