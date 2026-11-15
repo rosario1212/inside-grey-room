@@ -13,7 +13,7 @@ need(sql,"'{v708_heard}','[]'::jsonb");
 need(sql,"'{v708_last_word}','[]'::jsonb");
 need(sql,"p_action='close'");
 need(sql,"defendants still need last word opportunity");
-need(sql,"if me.public_role<>'juge'");
+need(sql,"and me.public_role<>'juge'");
 need(sql,"if me.public_role<>'suspect'");
 need(sql,"igr_v59_host_recover");
 need(sql,"'final_suspect_defenses' and r.state->>'v52_stage'='courtroom'");
