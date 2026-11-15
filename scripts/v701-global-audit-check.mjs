@@ -15,7 +15,7 @@ assert.deepEqual(metadata.evidence_per_cycle,[4,5,4]);
 assert(existsSync(path.join(root,script)),'CARTEL 031 client absent from web build');
 for(const page of ['index.html','en.html']){
   const html=read(path.join(root,page));
-  if(page==='en.html' && /location\.replace\(['"]\.\/['"]\)/.test(html)){
+  if(page==='en.html' && /location\.replace\(['"]\.\/['"]\)/.test(html)&&!/<script\s+src=/.test(html)){
     // English intentionally redirects into the published main client. The
     // bilingual page must not download every gameplay module before leaving.
     assert.match(html,/localStorage\.setItem\(['"]igr_locale['"],['"]en['"]\)/,
