@@ -1,3 +1,4 @@
+import './v703-terror-six-core-roles-check.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
