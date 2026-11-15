@@ -316,7 +316,8 @@ BEGIN
       WHERE d->>'actor_id'=actor AND (d->>'cycle')::int=r.cycle)
     THEN RAISE EXCEPTION 'one decision per fugitive per cycle'; END IF;
     SELECT value INTO option_row FROM jsonb_array_elements(m.private_pack->'fugitive_actions') value
-     WHERE value->>'id'=p_payload->>'option_id'
+     WHERE igr_private.igr_regime_v14_matches_input(
+         m.room_code,p_payload->>'option_id',value->>'id')
        AND value->>'actorId'=actor AND (value->>'cycle')::int=r.cycle;
     IF NOT FOUND THEN RAISE EXCEPTION 'invalid private option'; END IF;
     new_state:=jsonb_set(new_state,'{decisions}',
@@ -406,7 +407,8 @@ BEGIN
       THEN RAISE EXCEPTION 'investigation already used in cycle'; END IF;
     SELECT x.value INTO option_row FROM
       jsonb_array_elements(m.private_pack->'investigation_choices'->(r.cycle-1)->'choices') x
-    WHERE x.value->>'id'=p_payload->>'option_id';
+    WHERE igr_private.igr_regime_v14_matches_input(
+       m.room_code,p_payload->>'option_id',x.value->>'id');
     IF NOT FOUND THEN RAISE EXCEPTION 'investigation not offered'; END IF;
     SELECT value INTO piece FROM jsonb_array_elements(m.private_pack->'revelations') value
       WHERE value->>'id'=option_row->>'deliverable_id';
