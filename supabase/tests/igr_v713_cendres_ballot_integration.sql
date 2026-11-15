@@ -14,8 +14,7 @@ declare
   blocked boolean;
 begin
   for n in 5..7 loop
-    if n=6 then continue; end if;
-    room:=case when n=5 then 'HQA05' else 'HQA07' end;
+    room:=case when n=5 then 'HQA05' when n=6 then 'HQA06' else 'HQA07' end;
     tokens:=array[]::uuid[];
     insert into public.igr_heritage_online_rooms(code,campaign_id,chapter)
       values (room,'cendres',3) returning host_token into host;
@@ -50,6 +49,12 @@ begin
       perform public.igr_heritage_online_vote_cendres(room,tokens[3],'b');
       perform public.igr_heritage_online_vote_cendres(room,tokens[4],'audio');
       out:=public.igr_heritage_online_vote_cendres(room,tokens[5],'source');
+    elsif n=6 then
+      perform public.igr_heritage_online_vote_cendres(room,tokens[2],'b');
+      perform public.igr_heritage_online_vote_cendres(room,tokens[3],'b');
+      perform public.igr_heritage_online_vote_cendres(room,tokens[4],'audio');
+      perform public.igr_heritage_online_vote_cendres(room,tokens[5],'source');
+      out:=public.igr_heritage_online_vote_cendres(room,tokens[6],'source');
     else
       perform public.igr_heritage_online_vote_cendres(room,tokens[2],'b');
       perform public.igr_heritage_online_vote_cendres(room,tokens[3],'b');
