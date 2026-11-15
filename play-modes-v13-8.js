@@ -348,11 +348,23 @@ async function leaveHeritageOnline(){
   clearHSession();del(HERITAGE_LIVE_KEY);
   try{renderHome()}catch{location.reload()}
 }
-async function finishHeritageOnlineHost(){const s=hSession();if(!s?.hostToken)return;try{await rpc('igr_heritage_online_finish',{p_code:s.code,p_host_token:s.hostToken})}catch(e){console.warn(e)}clearHSession()}
+async function finishHeritageOnlineHost(){
+  const s=hSession();if(!s?.hostToken)return;
+  try{
+    const out=await rpc('igr_heritage_online_finish',{p_code:s.code,p_host_token:s.hostToken});
+    if(out?.ok===false)throw new Error('server finish refused');
+    const stored=window.IGR_HERITAGE_PLAY?.finishOnlineConfirmed?.();
+    if(!stored)throw new Error('the local Heritage result was not ready');
+    clearHSession();del(HERITAGE_LIVE_KEY);
+  }catch(e){
+    console.warn('heritage online finish',e);
+    toastX('Clôture non synchronisée. Réessayez depuis ce dossier.');
+  }
+}
 function renderHFinished(d){clearHSession();del(HERITAGE_LIVE_KEY);shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>PARTIE TERMINÉE</span><h1>Le dossier est clos.</h1><p>L’hôte a inscrit la conséquence dans sa campagne HÉRITAGE.</p><button class="btn primary" id="hnetHome">RETOUR À L’ACCUEIL</button></section></main>`);$('#hnetHome')?.addEventListener('click',()=>renderHome())}
 function resumeHeritageOnline(){if(!hSession())return toastX('Aucune cellule HÉRITAGE à reprendre.');startHWatcher(true)}
 
-function interceptHeritageOnline(e){const s=hSession();if(!s)return;const hp=e.target.closest?.('[data-hp-action],[data-hp-option]');if(!hp)return;const a=hp.dataset.hpAction;if(a==='hide-next'){e.preventDefault();e.stopImmediatePropagation();readyHeritageOnline();return}if(a==='phase-next'||a==='decision'){e.preventDefault();e.stopImmediatePropagation();advanceHeritageOnline();return}if(a==='phase-prev'){e.preventDefault();e.stopImmediatePropagation();return}if(hp.dataset.hpOption){e.preventDefault();e.stopImmediatePropagation();decideHeritageOnline(hp.dataset.hpOption);return}if(a==='abort'||a==='session-menu'){e.preventDefault();e.stopImmediatePropagation();leaveHeritageOnline();return}if(a==='finish'){if(!s.hostToken){e.preventDefault();e.stopImmediatePropagation();clearHSession();del(HERITAGE_LIVE_KEY);renderHome();return}void finishHeritageOnlineHost();/* allow the existing Heritage result handler to persist host campaign */}}
+function interceptHeritageOnline(e){const s=hSession();if(!s)return;const hp=e.target.closest?.('[data-hp-action],[data-hp-option]');if(!hp)return;const a=hp.dataset.hpAction;if(a==='hide-next'){e.preventDefault();e.stopImmediatePropagation();readyHeritageOnline();return}if(a==='phase-next'||a==='decision'){e.preventDefault();e.stopImmediatePropagation();advanceHeritageOnline();return}if(a==='phase-prev'){e.preventDefault();e.stopImmediatePropagation();return}if(hp.dataset.hpOption){e.preventDefault();e.stopImmediatePropagation();decideHeritageOnline(hp.dataset.hpOption);return}if(a==='abort'||a==='session-menu'){e.preventDefault();e.stopImmediatePropagation();leaveHeritageOnline();return}if(a==='finish'){e.preventDefault();e.stopImmediatePropagation();if(!s.hostToken){clearHSession();del(HERITAGE_LIVE_KEY);renderHome();return}void finishHeritageOnlineHost();return}}
 function handleHNetClick(e){const b=e.target.closest?.('[data-hnet]');if(!b)return;e.preventDefault();if(b.dataset.hnet==='start')startHeritageOnline();if(b.dataset.hnet==='leave')leaveHeritageOnline()}
 
 /* ------------------------------------------------------------------
