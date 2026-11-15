@@ -16,7 +16,7 @@ BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'only the third suspect may give this declaration';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
- IF NOT FOUND OR r.phase<>'regime_court' THEN RAISE EXCEPTION 'tribunal not active';END IF;
+ IF NOT FOUND THEN RAISE EXCEPTION 'tribunal not available';END IF;
  IF length(coalesce(p_request_id,'')) NOT BETWEEN 8 AND 128 THEN RAISE EXCEPTION 'invalid request';END IF;
  SELECT * INTO prior FROM igr_private.igr_regime_v13_ledger
  WHERE room_code=p.room_code AND request_id=p_request_id;
@@ -25,6 +25,7 @@ BEGIN
      THEN RAISE EXCEPTION 'request conflict';END IF;
    RETURN prior.response;
  END IF;
+ IF r.phase<>'regime_court' THEN RAISE EXCEPTION 'tribunal not active';END IF;
  IF m.play_state->'third' ? 'final_declaration' THEN RAISE EXCEPTION 'final declaration already filed';END IF;
  mission:=m.private_pack->'third_suspect_mission';
  IF mission->>'assigned_path'<>'cooperate'
