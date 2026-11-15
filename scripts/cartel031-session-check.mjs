@@ -114,6 +114,20 @@ function harness(){
  await h.api.refresh();
  assert.equal(h.renders(),before+1,'Updated prosecutor private data did not repaint');
 }
+// A forced refresh requested during an older HTTP fetch must fetch again once it settles.
+{
+ const h=harness(),requests=[];
+ h.context.rpc=()=>new Promise(resolve=>requests.push(resolve));
+ const first=h.api.refresh();
+ await h.api.refresh(true);
+ assert.equal(requests.length,1,'Concurrent private refreshes should share the first fetch');
+ requests[0](h.state('PRIVATE OLD'));
+ await first;await Promise.resolve();await Promise.resolve();
+ assert.equal(requests.length,2,'Forced invalidation during a pending fetch was lost');
+ requests[1](h.state('PRIVATE NEW'));
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
+ assert(h.context.renderGameTab().includes('PRIVATE NEW'),'New private information was not applied after the forced refresh');
+}
 // Failed private snapshots are backed off; a player action can still force recovery.
 {
  const h=harness();let failures=0;
