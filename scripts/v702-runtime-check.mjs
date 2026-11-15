@@ -75,26 +75,29 @@ assert(start>=0&&end>start,'Cannot locate pure card teaser implementation');
 const context={window:{innerWidth:360}};
 new Script(app.slice(start,end)+'\n;globalThis.catalogueTeaser=scenarioCardTeaser;').runInNewContext(context);
 const example='Deux dirigeants en fuite. Les enquêteurs recoupent les archives et les responsabilités judiciaires.';
-const phoneTeaser=context.catalogueTeaser(example);
-assert(phoneTeaser.endsWith('…')&&phoneTeaser.length<example.length,
- 'Narrow iPhone preview must end in an explicit ellipsis and remain concise');
-assert(!phoneTeaser.endsWith(' …'),'Ellipsis should attach naturally to the last word');
+assert.equal(context.catalogueTeaser(example),example,
+  'Narrow iPhone catalogue must preserve the complete public description');
 context.window.innerWidth=1200;
-assert(context.catalogueTeaser(example).endsWith('…'),'Desktop preview still signals more detail');
-assert.equal(context.catalogueTeaser('Déposition scellée.'),'Déposition scellée…',
- 'Short previews also clearly lead into the dossier detail');
-assert(mobileCss.includes('v163 — unified mobile dossiers'),'Final universal mobile styling missing');
-assert(mobileCss.includes('min-height:202px!important'),'Cards must expand below a safe minimum');
-assert(mobileCss.includes('height:auto!important'),'Never fix the scenario card height');
+assert.equal(context.catalogueTeaser(example),example,
+  'Desktop catalogue must preserve the same full description');
+assert.equal(context.catalogueTeaser('Déposition scellée.'),'Déposition scellée.',
+  'Short public descriptions must never acquire a fabricated ellipsis');
+assert.equal(context.catalogueTeaser('  Deux  phrases.  '),'Deux phrases.',
+  'Only whitespace normalization is permitted in public summaries');
+const fullCopyCss=await read('catalog-descriptions-v1.css');
+assert(mobileCss.includes('v163 — unified mobile dossiers'),'Existing universal mobile structure missing');
+assert(mobileCss.includes('height:auto!important'),'Cards must retain fluid heights');
 assert(mobileCss.includes('.scenario--compact.regime-scenario'),'Regime must share the universal layout');
-assert(mobileCss.includes('.scenario-body>p.igr-card-excerpt'),'Multi-line previews must be clamped');
-assert(mobileCss.includes('-webkit-line-clamp:3!important'),'Preview must be at most three lines');
-assert(mobileCss.lastIndexOf('v163 — unified mobile dossiers')>
-       mobileCss.lastIndexOf('height:190px!important'),
- 'Unified overrides must be loaded after the old fixed-height rule');
 assert(desktopCss.includes('v163: the widescreen two-column browser'),
- 'Desktop must keep the same adaptive card proportions');
-console.log('PASS v163 — classic and DLC previews render explicit … and fluid cards across web/native');
+  'Desktop must keep adaptive card proportions');
+assert(fullCopyCss.includes('p.igr-card-excerpt')&&fullCopyCss.includes('-webkit-line-clamp:unset!important'),
+  'Final catalogue CSS must override the historical three-line truncation');
+assert(fullCopyCss.includes('max-height:none!important')&&fullCopyCss.includes('height:auto!important'),
+  'Cards and summary paragraphs must grow with their public copy');
+assert(html.includes('catalog-descriptions-v1.css') || report.bundles.some(b=>
+  b.sourceUrls?.some(url=>url.startsWith('catalog-descriptions-v1.css'))),
+  'Full-length dossier styles must be included in the published bundle');
+console.log('PASS v163 — complete public previews and fluid, untruncated cards across web/native');
 
 console.log('PASS v702 '+report.platform+' — CSS '+main.before.css+'→'+main.after.css+
  ' / JS '+main.before.js+'→'+main.after.js+
