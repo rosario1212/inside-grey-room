@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS igr_private.igr_regime_v13_rooms (
   room_code text PRIMARY KEY REFERENCES public.igr_v4_rooms(code) ON DELETE CASCADE,
   scenario_id text NOT NULL CHECK(scenario_id IN ('032','033','034')),
   variant_id text NOT NULL CHECK(variant_id IN ('A','B','C')),
+  alias_salt uuid NOT NULL DEFAULT gen_random_uuid(),
   private_pack jsonb NOT NULL,
   play_state jsonb NOT NULL DEFAULT '{}'::jsonb,
   pinned_at timestamptz NOT NULL DEFAULT now()
@@ -77,6 +78,7 @@ BEGIN
   VALUES(r.code,r.scenario_id,m.variant_id,m.manuscript->'regime_vnext',
     jsonb_build_object('alliance','{}'::jsonb,'decisions','[]'::jsonb,
       'investigations','[]'::jsonb,'disclosed','[]'::jsonb,
+      'strict_alias_only',true,
       'arrests','{}'::jsonb,'mandates','[]'::jsonb,'reconstructions','{}'::jsonb,
       'track_overrides','{}'::jsonb,'capture_clue_tracks','{}'::jsonb,
       'lead_delay','{}'::jsonb,'captured_responses','[]'::jsonb,
