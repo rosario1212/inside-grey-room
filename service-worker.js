@@ -1,6 +1,7 @@
-const CACHE='igr-santoro-display-audit-20261108';
+const CACHE='igr-role-balance-v694-20261115';
 const SHELL=[
   '/', '/index.html', '/en.html',
+  '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=role-balance-v694-20261115',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
   '/gameplay-flow-v13.css?v=v13.2-final','/dlc-experience-v13.css?v=v13.2-final','/lobby-ui-fix-v13.css?v=v13.2-lobby-fix',
   '/startup-stability-v13-3.css?v=20261018-cinematic-v16','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
