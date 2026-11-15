@@ -999,9 +999,9 @@ async function syncNow(force=false,fresh=false){
   do{
    STATE.syncQueued=false;STATE.syncForce=false;STATE.syncRoom=STATE.room;STATE.syncToken=STATE.token;
    result=await performSync(render);
-   // A failing RPC must release the coalesced sync promise; the scheduler
-   // retries later rather than looping indefinitely while offline.
-   if(!result)break;
+   // A failed RPC for the same session must release the promise, while
+   // a pending request from an old room must not block the new room snapshot.
+   if(!result && STATE.syncRoom===STATE.room && STATE.syncToken===STATE.token)break;
    render=STATE.syncForce;
   }while(STATE.syncQueued&&STATE.room&&STATE.token);
   return result;
