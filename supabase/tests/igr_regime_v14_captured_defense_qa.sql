@@ -42,8 +42,8 @@ BEGIN
    'statement','Je dépose une deuxième déclaration interdite dans le même cycle.'));
  RAISE EXCEPTION 'second defense was wrongly permitted';
  EXCEPTION WHEN others THEN IF SQLERRM LIKE '%wrongly permitted%' THEN RAISE;END IF;END;
- SELECT private_pack INTO private_pack FROM igr_private.igr_regime_v13_rooms
- WHERE room_code='QA13SAFE';
+ SELECT x.private_pack INTO private_pack FROM igr_private.igr_regime_v13_rooms x
+ WHERE x.room_code='QA13SAFE';
  SELECT jsonb_agg(x.value->>'id') INTO all_ids FROM
  jsonb_array_elements(private_pack->'revelations') x
  WHERE x.value->>'kind'='optional';
