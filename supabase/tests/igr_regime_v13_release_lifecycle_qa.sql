@@ -90,6 +90,10 @@ BEGIN
  IF (SELECT play_state->'court'->>'duration_minutes'
  FROM igr_private.igr_regime_v13_rooms WHERE room_code='QA13LIFE')<>'14'
  THEN RAISE EXCEPTION 'late capture not 14-minute tribunal';END IF;
+ UPDATE igr_private.igr_regime_v13_rooms
+ SET play_state=jsonb_set(play_state,ARRAY['court','started_at'],
+    to_jsonb((now()-interval '61 seconds')::text),true)
+ WHERE room_code='QA13LIFE';
  result:=public.igr_regime_v13_court_call('QA13LIFE',judge,'qa-life-call-0001','transmission_officer');
  IF result->>'seconds'<>'120' THEN RAISE EXCEPTION 'court witness time wrong';END IF;
  mission:=pack->'third_suspect_mission';
