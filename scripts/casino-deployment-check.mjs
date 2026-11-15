@@ -13,6 +13,8 @@ const [publishedHtml,publishedSw]=await Promise.all([
 const clientMatch=publishedHtml.match(/\b(app-v11-[A-Za-z0-9._-]+\.js)\?v=([A-Za-z0-9._-]+)/);
 assert(clientMatch,'Built homepage must reference a versioned application asset');
 const clientAsset=clientMatch[1],clientVersion=clientMatch[2];
+const publishedClientUrl=publishedHtml.match(/\bapp-v11-[A-Za-z0-9._-]+\.js\?v=[^"'<>\s]+/)?.[0]||'';
+assert(publishedClientUrl,'The fully versioned application URL is missing from the build');
 assert.equal(clientAsset,'app-v11-'+clientVersion+'.js',
  'Application asset filename and cache version must agree');
 const publishedApp=await readFile('dist/'+clientAsset,'utf8');
@@ -40,7 +42,7 @@ for(let attempt=0;attempt<homepageAttempts;attempt++){
   home=await get(versionedHome+'&edge_probe='+attempt);
   html=await home.text();
   observedClientVersion=html.match(/app-v11-[A-Za-z0-9._-]+\.js\?v=[^"'<>\s]+/)?.[0]||'missing';
-  if(home.status===200&&html.includes(clientAsset+'?v='+clientVersion))break;
+  if(home.status===200&&html.includes(publishedClientUrl))break;
   if(attempt+1<homepageAttempts){
     console.log('Homepage propagation: observed '+observedClientVersion+
       ', expected '+clientVersion+'; retry '+(attempt+1)+'/'+homepageAttempts);
@@ -53,7 +55,7 @@ assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'n
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
 assert.match(html,/casino-client-v105\.js\?v=105\.5/);
-assert(html.includes(clientAsset+'?v='+clientVersion),'The edge homepage is using an outdated application');
+assert(html.includes(publishedClientUrl),'The edge homepage is using an outdated application');
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'The live questionnaire is missing');
 assert.match(html,/investigation-deep-v286\.js\?v=nine-cases-v347-20261113/,'The live five-case questionnaire is missing');
 const omertaScriptTag=html.match(/<script\s+src="omerta-v12-omerta-editorial-20261109\.js\?v=[^"]+"\s*><\/script>/);
@@ -138,12 +140,12 @@ for(let attempt=0;attempt<(expected?12:1);attempt++){
   const cartelHome=await get('/'+releaseQuery);
   assert.equal(cartelHome.status,200);
   const text=await cartelHome.text();
-  liveHomeVersion=text.match(/app-v11-[A-Za-z0-9._-]+\.js\?v=([^"'<>\s]+)/)?.[1]||'';
-  if(liveHomeVersion===clientVersion)break;
+  liveHomeVersion=text.match(/\bapp-v11-[A-Za-z0-9._-]+\.js\?v=[^"'<>\s]+/)?.[0]||'';
+  if(liveHomeVersion===publishedClientUrl)break;
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
 }
-assert.equal(liveHomeVersion,clientVersion,
-  'Deployed HTML app cache does not match the fully built local bundle');
+assert.equal(liveHomeVersion,publishedClientUrl,
+  'Deployed HTML app URL (including sync revision) does not match the built release');
 const cartelApp=await get('/'+clientAsset+'?v='+clientVersion);
 assert.equal(cartelApp.status,200);
 const cartelSource=await cartelApp.text();
