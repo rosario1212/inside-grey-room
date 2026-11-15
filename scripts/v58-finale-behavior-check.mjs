@@ -16,13 +16,13 @@ const guidance=nodes.get('igr52Now');assert.ok(guidance);assert.equal(nodes.has(
 const initial=inserts;
 for(let i=0;i<120;i++)for(const f of intervals)f();
 assert.equal(nodes.get('igr52Now'),guidance,'guidance node must remain stable');assert.equal(inserts,initial,'polling must not insert new guidance');
-assert.ok(c.renderGameTab().includes('PRENDRE LA PAROLE · 1:30'));
+assert.ok(c.renderGameTab().includes('PRENDRE LA PAROLE · 1:00'));
 STATE.tab='investigation';assert.ok(c.renderGameTab().includes('igr52-page'),'Enquête must expose final actions too');
 STATE.tab='rules';c.renderGame();for(const f of timeouts.splice(0))f();assert.equal(STATE.tab,'rules','same phase must not steal selected tab');
 STATE.sync.room.state.duration_mode='long';STATE.tab='final52';assert.ok(c.renderGameTab().includes('PRENDRE LA PAROLE · 1:30'));
 STATE.sync.room.phase='final_suspect_defenses';STATE.sync.player.id='s1';STATE.sync.player.public_role='suspect';STATE.sync.room.state.v52_queue=[{player_id:'s1',pseudo:'Suspect A',role:'suspect'}];
 assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 4:00'));
-STATE.sync.room.state.duration_mode='short';assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 4:00'));
+STATE.sync.room.state.duration_mode='short';assert.ok(c.renderGameTab().includes('ME DÉFENDRE · 3:00'));
 STATE.sync.room.phase='locking';STATE.sync.player.public_role='journaliste';STATE.tab='final52';
 assert.ok(c.renderGameTab().includes('Ton angle final personnel'));
 STATE.hostToken='host-test';STATE.sync.player.id='host';STATE.sync.room.state.v59_pending=[{player_id:'absent',pseudo:'Cyrus',role:'expert'}];
