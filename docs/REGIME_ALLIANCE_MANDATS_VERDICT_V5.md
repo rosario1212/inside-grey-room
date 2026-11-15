@@ -1,6 +1,6 @@
 # LE RÉGIME — Contrat v5 : doubles traques choisies, mandats, noms de code et vérité finale
 
-**STATUT : PROPOSITION DE CONCEPTION NON IMPLÉMENTÉE.** Cette spécification prévaut sur les v1–v4 en cas de contradiction. Ne pas fusionner ou publier sans migrations serveur, cartes privées et tests complets. Le moteur actuel reste à 3 cycles et une audience finale de référence. Aucune réponse de formulaire client ne doit modifier une vérité criminelle déjà scellée.
+**STATUT : DOCUMENT HISTORIQUE, supplanté pour les noms de code, le Journal de Karsane, les missions du troisième suspect et les durées d'audience par `docs/REGIME_JOURNAL_TROISIEME_SUSPECT_AUDIENCE_V6.md`. Aucune version n'est implémentée en production.** Cette spécification prévaut sur les v1–v4 en cas de contradiction. Ne pas fusionner ou publier sans migrations serveur, cartes privées et tests complets. Le moteur actuel reste à 3 cycles et une audience finale de référence. Aucune réponse de formulaire client ne doit modifier une vérité criminelle déjà scellée.
 
 ## 1. L'identité du DLC
 
@@ -17,9 +17,9 @@ Le pays fictif de Karsane a eu 15 millions d'habitants avant la guerre, une dict
 ### Nouveaux noms du 034, définitivement proposés
 
 Remplacer **LE NOTAIRE**, **LA TOUR**, **L'HÉRITIER** dans le design courant par :
-- **LE PORTRAIT** : émis dans les communications qui se réclament du culte présidentiel ; un émetteur peut être le président, son porte-parole ou un usurpateur.
+- **LA TÊTE** : émis dans les communications qui se réclament du culte présidentiel ; un émetteur peut être le président, son porte-parole ou un usurpateur.
 - **LE SCEAU** : circuit d'authentification des décrets, visas et instructions sensibles.
-- **LE REMPART** : circuit de protection et de renseignement de l'entourage présidentiel.
+- **LA TOUR** : circuit de protection et de renseignement de l'entourage présidentiel.
 
 **Un code n'est ni un nom d'état civil ni un rang ni un coupable permanent.** Pour conclure, associer *(code, période, opération, auteur ou relais, preuve de l'identité)*. Une variante peut révéler la même appellation utilisée par plusieurs personnes à des dates différentes, mais toujours par des événements préécrits et corroborables. Éviter les changements arbitraires pour « surprendre ».
 
