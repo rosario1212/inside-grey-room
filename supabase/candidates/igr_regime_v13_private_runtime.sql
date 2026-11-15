@@ -125,7 +125,8 @@ BEGIN
       OR (m.play_state->'disclosed' ? (clue->>'id'))
     THEN public_clues:=public_clues||jsonb_build_array(
       jsonb_build_object('id',clue->>'id','kind','capture','title','PISTE DE TRAQUE',
-        'text',clue->>'description','cycle',clue->>'cycle','target_id',clue->>'targetId')); END IF;
+        'text',clue->>'description','cycle',clue->>'cycle',
+        'source',clue->>'origin','target_id',clue->>'targetId')); END IF;
   END LOOP;
   IF p.public_role IN ('enqueteur','analyste') AND r.cycle BETWEEN 1 AND 3 THEN
     offered:=m.private_pack->'investigation_choices'->(r.cycle-1)->'choices';
@@ -149,7 +150,8 @@ BEGIN
     WHERE (x->>'cycle')::int=r.cycle);
   used_move:=EXISTS(SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'decisions','[]'::jsonb)) x
     WHERE x->>'actor_id'=actor AND (x->>'cycle')::int=r.cycle);
-  IF (m.play_state->'disclosed') ? (m.private_pack->'third_suspect_mission'->>'document_id') THEN
+  IF coalesce(m.play_state->'disclosed','[]'::jsonb) ?
+    (m.private_pack->'third_suspect_mission'->'public_on_submission'->>'id') THEN
     clue:=m.private_pack->'third_suspect_mission'->'public_on_submission';
     IF clue IS NOT NULL THEN public_clues:=public_clues||jsonb_build_array(clue - 'authenticated_by_server' - 'initially_private');END IF;
   END IF;
