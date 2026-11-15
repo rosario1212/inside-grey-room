@@ -1,7 +1,7 @@
 -- Execute with v694 + v695 inside one transaction ending ROLLBACK.
 DO $test$
 DECLARE d record; pack_ jsonb;code_ text;enq_id uuid;enq_token uuid;
- s_id uuid;slot_ int;r jsonb;results_ jsonb;cnt int;guarantee int;
+ s_id uuid;host_ uuid;slot_ int;r jsonb;results_ jsonb;cnt int;guarantee int;
  needs text; actual text; expected text; k int;
 BEGIN
  IF NOT igr_private.igr_v695_release_eligible() THEN RAISE EXCEPTION 'draft release audit failed';END IF;
@@ -19,7 +19,9 @@ BEGIN
     THEN RAISE EXCEPTION 'wrong responsibilities %/%/%',d.scenario_id,d.variant_id,slot_;END IF;
   END LOOP;
   code_:='TV95'||d.scenario_id||d.variant_id;
-  INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES(code_,d.scenario_id);
+  INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES(code_,d.scenario_id)
+  RETURNING host_token INTO host_;
+  PERFORM public.igr_v681_terror_set_city(code_,host_,'Capitale QA');
   INSERT INTO igr_private.igr_v695_terror_room_packs(room_code,scenario_id,variant_id,pack,manuscript_md5)
   VALUES(code_,d.scenario_id,d.variant_id,pack_,md5(pack_::text));
   INSERT INTO public.igr_v4_players(room_code,pseudo,seat_index,public_role)
