@@ -508,7 +508,7 @@ function conditionalIntel(id,n,s){
   if(n<2||!s)return '';
   if(id==='cendres'){
     const f=s.cendres?.flags||{};
-    if(n===4){const good=['s1_correct','s2_correct','s3_correct'].filter(k=>f[k]).length;return good>=2?`Vos recoupements précédents sont solides (${good}/3). Le compte privilégié du service des habilitations peut être utilisé comme ancrage fiable.`:`Votre carte est contaminée : seulement ${good}/3 recoupements antérieurs sont fiables. Exigez deux preuves indépendantes avant toute classification.`}
+    if(n===4){const good=['s1_correct','s2_correct','s3_correct'].filter(k=>f[k]).length;return good>=2?`Vos recoupements précédents sont solides (${good}/3). Les traces techniques offrent une base solide pour distinguer les droits de consultation, de validation et d’écriture.`:`Votre carte est contaminée : seulement ${good}/3 recoupements antérieurs sont fiables. Exigez deux preuves indépendantes avant toute classification.`}
     if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne V-17 → 04:17 → accès internes est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
     return `Le niveau de crise actuel est ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}.`;
   }
@@ -525,11 +525,11 @@ function cendresLateEvidence(live,phaseIndex,carry){
   if(live.chapter===4){
     if(crisis>=3)return 'Le journal d’administration a été récupéré partiellement. Il confirme une écriture technique lors de plusieurs opérations, mais le rattachement nominal reste à recouper avec les niveaux de droit.';
     const solid=['s1_correct','s2_correct','s3_correct'].filter(k=>f[k]).length;
-    return solid>=2?'L’audit différé distingue demande politique et écriture effective : l’autorisation de modification appartient à un compte de service lié aux habilitations; le cabinet ne disposait sur ces pièces que d’un accès de consultation.':'Une délégation technique commune relie les opérations. Le relevé nominatif manque : départagez les droits de lecture, d’ordre et d’écriture à partir des cartes privées.';
+    return solid>=2?'L’audit différé distingue la transmission d’une instruction et sa traduction en écriture administrative. Un compte de service a modifié les pièces : son détenteur reste à établir à partir des délégations et des autres cartes.':'Une délégation technique commune relie les opérations. Le relevé nominatif manque : départagez les droits de lecture, d’ordre et d’écriture à partir des cartes privées.';
   }
   if(live.chapter===5){
     if(crisis>=3)return 'Le dernier contrôle de transit est incomplet. Il situe le convoi sur une route de vallée, mais aucune réception authentifiée n’a pu être obtenue. Le groupe doit s’appuyer sur ses recoupements antérieurs.';
-    if(f.s4_correct)return 'Le compte du relais neutralisé renvoie à une livraison hors inventaire sur un accès civil souterrain; ni la base ni le dépôt ne possèdent de reçu signé après le passage du convoi en vallée.';
+    if(f.s4_correct)return 'Un relevé récupéré après neutralisation du relais atteste d’un passage hors inventaire dans un circuit de maintenance civil. L’adresse est caviardée et les mentions du dépôt comme de la base sont antérieures au dernier mouvement connu.';
     return 'Une trace d’accès civil a été retrouvée sur la route du convoi, mais le dernier accusé de réception est manquant. Comparez-la avec les témoignages et les droits d’accès.';
   }
   return '';
@@ -571,8 +571,8 @@ function renderDecision(live){
   }
   shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">DÉCISION</div></header>
-    <section class="hplay-decision-head"><span class="hplay-eyebrow">CHOIX IRRÉVERSIBLE</span><h1>${esc(pc.question)}</h1><p>Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.</p></section>
-    <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>VERROUILLER →</i></button>`).join('')}</section>
+    <section class="hplay-decision-head"><span class="hplay-eyebrow">${live.campaignId==='cendres'?'VOTE COLLECTIF · UN BULLETIN PAR JOUEUR':'CHOIX IRRÉVERSIBLE'}</span><h1>${esc(pc.question)}</h1><p>${live.campaignId==='cendres'?'Votez sur votre propre téléphone. Le résultat n’est dévoilé qu’après le scrutin et une majorité absolue.':'Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.'}</p></section>
+    <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>${live.campaignId==='cendres'?'VOTER →':'VERROUILLER →'}</i></button>`).join('')}</section>
   </main>`);
 }
 function chooseOption(id){
@@ -606,10 +606,11 @@ function applyResult(live){
   if(live.result&&live.campaignId==='cendres'&&Number(live.chapter)===5)live.result.consequence=cendresFinalConsequence(live,pc.options.find(o=>o.id===live.decision));
   if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
-      const flag=out.flag;if(flag){const payload={flags:{[flag]:true},crisisDelta:Number(out.crisis||0)};api().completeChapter('cendres',live.chapter,payload)}else api().completeChapter('cendres',live.chapter,{crisisDelta:Number(out.crisis||0)});
-      const grade=live.result?.grade||0,labels=['PISTE COMPROMISE','PISTE PARTIELLE','PISTE VALIDÉE'];
-      api().cendres.upsertNode({id:`cendres-${live.chapter}-${live.decision}`,label:`D0${live.chapter} · ${labels[grade]}`,kind:'dossier',status:grade===2?'cleared':grade===1?'watch':'unknown',chapter:live.chapter,note:live.result?.consequence});
-      if(live.chapter>1)api().cendres.link(`cendres-${live.chapter-1}-${findPreviousDecision('cendres',live.chapter-1)}`,`cendres-${live.chapter}-${live.decision}`,'héritage de campagne');
+      const commit=api()?.cendres?.commitDecision?.({
+        chapter:live.chapter,decision:live.decision,grade:live.result?.grade||0,
+        consequence:live.result?.consequence||'',crisisDelta:Number(out.crisis||0),flag:out.flag||''
+      });
+      if(!commit?.ok){toastSafe('Sauvegarde impossible : le dossier reste ouvert. Réessayez.');return}
     }else{
       if(out.flag)api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}});else api().completeChapter('kuroi',live.chapter,{});
       if(live.chapter===1){
@@ -645,7 +646,7 @@ function decisionKey(id,n){return `igr_heritage_decision_${id}_${n}`}
 function rememberDecision(id,n,v){try{store().setItem(decisionKey(id,n),v)}catch{}}
 function findPreviousDecision(id,n){try{return store().getItem(decisionKey(id,n))||'archive'}catch{return 'archive'}}
 
-function resumeLive(){const l=readLive();if(!l)return renderHub();if(l.stage==='reveal')return renderReveal(l,false);if(l.stage==='play')return renderPlay(l);if(l.stage==='decision')return renderDecision(l);if(l.stage==='result')return renderResult(l);renderChapter(l.campaignId,l.chapter)}
+function resumeLive(){const l=readLive();if(!l)return renderHub();if(l.stage==='reveal')return renderReveal(l,false);if(l.stage==='play')return renderPlay(l);if(l.stage==='decision'){if(l.campaignId==='cendres'&&!l.online&&l.ballot?.show){l.ballot.show=false;saveLive(l)}return renderDecision(l)}if(l.stage==='result')return renderResult(l);renderChapter(l.campaignId,l.chapter)}
 function sessionMenu(){const l=readLive();if(!l)return;const ok=confirm('Quitter cette partie ? La session restera enregistrée et pourra être reprise depuis le dossier.');if(ok)renderChapter(l.campaignId,l.chapter)}
 function abortSession(){if(!confirm('Abandonner cette partie Héritage ? La session en cours sera effacée.'))return;const l=readLive();clearLive();if(l)renderChapter(l.campaignId,l.chapter);else renderHub()}
 
@@ -684,7 +685,7 @@ function handleClick(e){
     if(a==='phase-prev'){const l=readLive();if(l){l.phaseIndex=Math.max(0,(l.phaseIndex||0)-1);saveLive(l);renderPlay(l)}return}
     if(a==='decision'){const l=readLive();if(l){l.stage='decision';saveLive(l);renderDecision(l)}return}
     if(a==='ballot-reveal'){const l=readLive();if(l?.campaignId==='cendres'&&!l.online&&l.stage==='decision'){ensureCendresBallot(l).show=true;saveLive(l);renderDecision(l)}return}
-    if(a==='play'){const l=readLive();if(l){l.stage='play';saveLive(l);renderPlay(l)}return}
+    if(a==='play'){const l=readLive();if(l){if(l.campaignId==='cendres'&&!l.online&&l.ballot)l.ballot.show=false;l.stage='play';saveLive(l);renderPlay(l)}return}
     if(a==='finish'){const l=readLive();if(l)applyResult(l);return}
     if(a==='session-menu')return sessionMenu();
     if(a==='abort')return abortSession();
@@ -708,7 +709,35 @@ function boot(){
   patchHomeCard();
   setTimeout(maybeUpgradeOldHeritage,0);
   window.addEventListener('pageshow',()=>setTimeout(patchHomeCard,0),{passive:true});
-  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,finishOnlineConfirmed:()=>{const live=readLive();if(!live?.online||live.stage!=='result'||!live.decision)return false;applyResult(live);return true},roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
+  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,finishOnlineConfirmed:(serverRoom=null,serverPractice=false)=>{
+    // A finished room is the authority on the verdict. Recover even if the last
+    // local result screen was lost during a refresh or a reconnect.
+    const room=serverRoom&&typeof serverRoom==='object'?serverRoom:null;
+    if(!room||room.stage!=='finished')return false;
+    const saved=readLive();
+    const campaign=room?.campaign_id||saved?.campaignId;
+    const chapter=Number(room?.chapter||saved?.chapter);
+    const decision=room?.decision_id||saved?.decision;
+    const ch=PACKS[campaign]?.chapters?.[chapter];
+    const opt=ch?.options?.find(o=>o.id===decision);
+    if(!opt)return false;
+    if(!serverPractice&&!completed(campaign,chapter)&&current(campaign)!==chapter)return false;
+    const same=saved?.online&&saved.campaignId===campaign&&Number(saved.chapter)===chapter;
+    const live=same?{...saved}:{
+      version:2,online:true,campaignId:campaign,chapter,players:[],
+      decision,practice:!!serverPractice,campaignCarry:room?.campaign_carry||null,
+      result:null,stage:'result',finished:false
+    };
+    live.decision=decision;
+    live.stage='result';live.finished=false;
+    live.practice=!!serverPractice;
+    if(room)live.campaignCarry=room.campaign_carry||live.campaignCarry||null;
+    live.result={grade:opt.grade,title:opt.title,consequence:opt.consequence};
+    try{
+      applyResult(live);
+      return live.practice||!!api()?.get?.(campaign)?.completed?.includes(chapter);
+    }catch(error){console.warn('[Heritage] failed to persist confirmed result',error);return false}
+  },roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
