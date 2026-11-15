@@ -12,6 +12,18 @@ LEFT JOIN igr_private.igr_v99_variant_manuscripts m
 SELECT sid, variant_id, 'manuscript present' gate, (manuscript is not null) ok FROM draft
 UNION ALL SELECT sid,variant_id,'editorial approval',
  coalesce(editorial_status='approved' AND human_ok,false) FROM draft
+UNION ALL SELECT sid,variant_id,'Fugitive role identities use new canon',
+CASE sid
+WHEN '032' THEN lower(coalesce(manuscript->'private_cards'->0->>'identity','')) LIKE '%directeur%'
+ AND lower(coalesce(manuscript->'private_cards'->1->>'identity','')) LIKE '%ministre%'
+WHEN '033' THEN lower(coalesce(manuscript->'private_cards'->0->>'identity','')) LIKE '%fils%'
+ AND lower(coalesce(manuscript->'private_cards'->1->>'identity','')) LIKE '%défense%'
+WHEN '034' THEN lower(coalesce(manuscript->'private_cards'->0->>'identity','')) LIKE '%président%'
+ AND lower(coalesce(manuscript->'private_cards'->1->>'identity','')) LIKE '%gendre%'
+ELSE false END FROM draft
+UNION ALL SELECT sid,variant_id,'034 legacy Notaire/Heritier code names removed',
+CASE WHEN sid<>'034' THEN true ELSE
+ coalesce(manuscript::text !~* '(notaire|l[’'']héritier)',false) END FROM draft
 UNION ALL SELECT sid,NULL::text,'Judge mandatory at minimum',
  public.igr_v4_role_capacity(sid,public.igr_v4_min_players(sid),'juge')=1 FROM cases
 UNION ALL SELECT sid,NULL::text,'Six-player minimum',
