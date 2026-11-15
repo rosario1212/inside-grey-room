@@ -14,7 +14,7 @@ Ce fichier définit uniquement des invariants publics et des objectifs d'écritu
 - **Victimes de la politique d'extermination :** les Veyrins, population minoritaire fictive de la région de Veyra. L'intention de destruction d'une partie du groupe constitue un fait historique dans cet univers. Le tribunal doit encore établir, pour chaque accusé, l'intention, la connaissance, la participation, le contrôle et l'éventuel défaut de prévention ou de répression.
 - **61 villages détruits** au cours de la campagne ; chiffre de référence fictionnel et établi par les archives, à ne pas changer au hasard entre les trois dossiers.
 - **Prison de Vahran :** 14 600 personnes enregistrées sur l'ensemble de son fonctionnement répressif. Une part des registres de sortie est manquante ; les morts, tortures et disparitions sont des faits historiques, mais le bilan total doit rester méthodiquement distingué des chiffres documentés.
-- **Chute :** l'appareil central se désintègre en année 19 du régime ; l'ancien président fuit 53 jours, puis est arrêté vivant.
+- **Chute :** l'appareil central se désintègre en année 19 du régime. Le président entre en fuite. Sa capture **n'est pas garantie** : dans le dossier 034, elle peut avoir lieu dès C1 ou échouer jusqu'à la fin du troisième cycle. Les jours 49, 51 et 53 depuis la chute servent de repères de récit par cycle, non de résultat préétabli.
 - **Composition du pouvoir :** seuls des hommes occupaient les postes exécutifs, militaires et ministériels sous cette dictature fictive. Cette exclusion institutionnelle fait partie de la violence politique du régime, elle n'est pas une règle sur le genre des joueurs.
 - **Procédure :** Tribunal spécial de Karsane, juridiction internationale fictive mise en place après la transition ; auditions avec procureur, défense, juge et audience motivée. Il ne s'agit pas d'un prétendu « procès à l'ONU ».
 
@@ -23,10 +23,10 @@ Ce fichier définit uniquement des invariants publics et des objectifs d'écritu
 | Personnage canonique | Position sous le régime | Rapport à la présidence | Prétexte de défense plausible |
 | --- | --- | --- | --- |
 | Harb Kassar | Président et commandant suprême officiel | Chef du clan | Nie une partie des instructions personnelles et renvoie aux services |
-| Fouad Kassar | Ministre de la Défense | Frère du président | Sépare ordres stratégiques, opérations sur le terrain et savoir réel |
-| Mourad Kassar | Ministre de l'Intérieur | Cousin du président | Présente les arrestations comme des mesures de sécurité |
+| Fouad Kassar | Ministre de la Défense | Cousin du président | Sépare ordres stratégiques, opérations sur le terrain et savoir réel |
+| Mourad Kassar | Ministre de l'Intérieur | Frère du président | Présente les arrestations comme des mesures de sécurité |
 | Ilyas Sayegh | Chef de la sécurité présidentielle et coordinateur des renseignements | Gendre du président (époux d’une fille sans charge gouvernementale) | Se déclare simple intermédiaire et conteste son pouvoir effectif |
-| Darian Kassar | Ministre de l'Information et organisatrice du culte présidentiel | Fils du président | Distingue propagande, connaissance des crimes et autorité sur les unités |
+| Darian Kassar | Ministre de l'Information et organisateur du culte présidentiel | Fils du président | Distingue propagande, connaissance des crimes et autorité sur les unités |
 | Youssef Baran | Directeur du complexe pénitentiaire de Vahran | Fidèle sans lien familial | Affirme avoir exécuté une administration sans pouvoir sur les ordres |
 | Hamza Daher | Secrétaire général du cabinet présidentiel | Proche historique, sans parenté | Affirme que des notes ou visas n'étaient pas des instructions |
  
@@ -40,6 +40,10 @@ La violence est grave, adulte et directe par les faits : prisonniers frappés et
 
 Surnoms attribués par des survivants ou utilisés dans les papiers clandestins : **Le Boucher de Darsen** (surnom public attaché à la présidence), **Le Notaire**, **La Tour**, **L'Héritier** (codes fonctionnels dont les porteurs et pouvoirs doivent être établis acte par acte). Un pseudonyme seul n'établit aucune responsabilité pénale. Ne pas multiplier les surnoms fantaisistes.
 
+## Contrat de traques doubles (v2)
+
+Les dossiers 032, 033 et 034 comportent chacun **deux dirigeants recherchés**, incarnés dès le premier cycle par deux des trois suspects-joueurs. Le troisième suspect reste interrogeable dès C1. La réussite de l'enquête repose sur les deux captures, jamais sur une capture prédéterminée. Les deux cibles ont des choix réels d'obstruction ou de coopération avant leur arrestation, puis des actions de défense après. Le Juge est requis dans chaque dossier et le Procureur facultatif. La bible de mécanique de référence est `docs/REGIME_DOUBLE_TRAQUE_032_034_V2.md`.
+
 ## Trois dossiers, trois portes sur le même système
 
 ### 032 — LES ARCHIVES DU PALAIS
@@ -48,18 +52,18 @@ Surnoms attribués par des survivants ou utilisés dans les papiers clandestins 
 **Signature :** archives fragmentées, branches ADMINISTRATION / SÉCURITÉ / PALAIS ; choix de l'ordre d'ouverture des pièces sans suppression de preuve indispensable. C1 établir personnes et dates ; C2 transmissions et décisions ; C3 connaissance, pouvoir d'empêcher et responsabilité.
 
 ### 033 — LA DYNASTIE
-**La guerre et la destruction ciblée.** Guerre illégale contre Belvane, politique d'extermination des Veyrins, villages rasés, ressources affectées aux appareils responsables, propagande et protection du clan. Interroger le frère du président et ministre de la Défense, son gendre et une autre dignitaire de la famille. Les positions officielles ne disent pas qui approuvait réellement les décisions.
+**La guerre et la destruction ciblée.** Guerre illégale contre Belvane, politique d'extermination des Veyrins, villages rasés, ressources affectées aux appareils responsables, propagande et protection du clan. Traquer Darian, fils du président, et Fouad, son cousin ministre de la Défense. Un troisième ancien responsable accessible à l'interrogatoire peut révéler ou dissimuler les relations entre ces deux branches. Les positions officielles ne disent pas qui approuvait réellement les décisions.
 
 **Signature :** carte du pouvoir réel, récapitulatif en trois colonnes (ordre apparent / intervention corroborée / conséquences). C1 budgets et décrets ; C2 ordres, alertes et refus ; C3 responsabilités différenciées dans la guerre et les massacres. La qualification de génocide ne repose jamais sur la seule ampleur des morts : la preuve de l'intention spécifique doit être traitée par le scénario.
 
 ### 034 — LES NOMS QU'ILS PORTAIENT
-**La chute, la traque et le procès du sommet.** Le président déchu est arrêté vivant après 53 jours. Ses proches et d'anciens cadres comparaissent à ses côtés ou dans des auditions connexes. Le tribunal confronte témoignages, archives, responsabilités de commandement et langage codé des opérations. L'ancien président est un suspect véritablement interrogé par les joueurs et n'est pas un PNJ dispensateur de réponses.
+**La chute et la traque du sommet.** Le président déchu est en fuite au début de l'enquête, ainsi que son gendre Ilyas Sayegh. Les joueurs peuvent capturer les deux, une seule ou aucune cible selon les décisions et preuves recoupées. Le tribunal confronte témoignages, archives, responsabilités de commandement et langage codé des opérations. L'ancien président est directement incarné par un suspect-joueur actif dès C1 : tant qu'il est en fuite, il agit à distance ; une fois capturé, il peut être interrogé et défendu devant le Juge. Ce n'est pas un PNJ dispensateur de réponses.
 
-**Signature :** matrice identité-fonction par opération et par période, plus confrontation judiciaire. C1 traque, arrestation et identité ; C2 actes attribués, contradictions et témoins ; C3 auditions du sommet et motivation finale. Les codes Notaire / Tour / Héritier ne sont jamais des identités constantes présumées.
+**Signature :** double traque de Harb Kassar (alias de joueur) et du chef de la sécurité Ilyas Sayegh, plus matrice identité-fonction par opération. Une capture peut se produire en C1, C2 ou C3, sans résultat garanti. Les noms de code Notaire / Tour / Héritier ne prouvent jamais à eux seuls l'identité ou le lieu des dirigeants.
 
 ## Contraintes de continuité et de jouabilité
 
-1. Les chiffres de référence, la chute, la guerre, le génocide subi et la capture restent fixes d'un dossier à l'autre : on ne réécrit pas les victimes pour provoquer un retournement. Seules les responsabilités **individuelles**, les savoirs, les actes, les liens et certaines chronologies de décision varient entre les variantes dûment écrites.
+1. Les chiffres de référence, la chute, la guerre et le génocide subi restent fixes d'un dossier à l'autre ; **l'issue des captures varie par les décisions de la partie** : on ne réécrit pas les victimes pour provoquer un retournement. Seules les responsabilités **individuelles**, les savoirs, les actes, les liens et certaines chronologies de décision varient entre les variantes dûment écrites.
 2. Pour chaque dossier : minimum trois variantes scellées côté serveur, chacune avec cartes, preuves, rôles, relations, objectifs, chronologie et révélation. Ne jamais mettre la solution ou le variant_id dans le contenu public du client ou ce dépôt.
 3. Rejouabilité : 20 investigations distinctes visées par dossier et par catalogue, mais une partie ne reçoit qu'un échantillon adapté au cycle et aux réponses du camp d'enquête. Aucun indice impossible ou fabriqué.
 4. Les rôles de l'Enquêteur, Analyste, Procureur et Juge demeurent distincts. Le ministre accusé, le président ou un autre dignitaire a de vraies options de défense et de confrontation, mais aucun joueur ne peut seul imposer un verdict ou effacer une pièce indispensable.
