@@ -23,3 +23,7 @@
 .igr700-report{margin-top:14px;border:1px solid #505051;background:#0e0e10;border-radius:13px;padding:15px}
 .igr700-footer{border-top:1px solid #313136;padding-top:10px}
 @media(max-width:600px){.igr700-person{padding:12px}.igr700-report{padding:12px}.igr700-person-head{align-items:flex-start}}
+
+/* v701 short forensic prompts and required word counters */
+.igr701-counter{display:block;text-align:right;font:600 11px/1.3 ui-monospace,monospace;color:#b4b2ae;padding-top:3px}
+.igr700-panel .igr700-fields label{margin-bottom:5px}

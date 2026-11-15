@@ -1,10 +1,10 @@
 const CACHE='igr-santoro-display-audit-20261108';
 const SHELL=[
-  '/analyst-profiling-v700.css?v=v700-analyst-psychology',
-  '/analyst-profiling-v700.js?v=v700-analyst-psychology',
+  '/analyst-profiling-v700.css?v=v701-progressive-psychology',
+  '/analyst-profiling-v700.js?v=v701-progressive-psychology',
   '/terror-crisis-v696.css?v=terror-carbon-v697-20261115',
   '/', '/index.html', '/en.html',
-  '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=role-balance-v694-20261115',
+  '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=v701-analyst-guidance',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
   '/gameplay-flow-v13.css?v=v13.2-final','/dlc-experience-v13.css?v=v13.2-final','/lobby-ui-fix-v13.css?v=v13.2-lobby-fix',
   '/startup-stability-v13-3.css?v=20261018-cinematic-v16','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',

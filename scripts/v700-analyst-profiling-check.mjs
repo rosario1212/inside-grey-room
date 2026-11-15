@@ -36,7 +36,7 @@ const sandbox={
   assert.equal(name,'igr_v700_psych_profiles');
   if(sandbox.STATE.sync.room.status==='finished')
    return {enabled:true,published:true,can_write:false,profiles:[
-    {cycle:1,suspect_id:'s1',suspect_pseudo:'Suspect A',answer_one:'Sa stratégie reste prudente.',answer_two:'Un témoignage reste contradictoire.'}]};
+    {cycle:1,suspect_id:'s1',suspect_pseudo:'Suspect A',answer_one:'Sa stratégie reste prudente.',answer_two:'Un témoignage reste contradictoire.',question_one_code:'c1_base_1',question_two_code:'c1_base_2'}]};
   return {enabled:true,published:false,can_write:true,cycle:1,
    suspects:[{id:'s1',pseudo:'Suspect A'},{id:'s2',pseudo:'Suspect B'}],profiles:[]};
  }
@@ -48,7 +48,30 @@ await sandbox.window.IGR_ANALYST_PROFILING_V700.refresh(true);
 let out=sandbox.renderGameTab();
 assert.equal((out.match(/<textarea id="igr700-(?:one|two)-[^\"]+" rows="2"/g)||[]).length,4,'two questions for each of two suspects');
 assert(out.includes('Suspect A')&&out.includes('Suspect B'),'suspect panels not independent');
-assert(out.includes('Quels propos ou faits connus'),'second grounded question missing');
+assert(out.includes('Quelle peur pourrait guider ses choix ?'),'short forensic second question missing');
+assert(out.includes('0 / 10 mots minimum'),'live ten-word counter missing');
+assert(out.includes('Obligatoire'),'Analyst task must be labeled mandatory');
+const profiling=sandbox.window.IGR_ANALYST_PROFILING_V700;
+assert.equal(profiling.wordCount('Un deux trois quatre cinq six sept huit neuf'),9,'nine words expected');
+assert.equal(profiling.wordCount('Un deux trois quatre cinq six sept huit neuf dix'),10,'ten words expected');
+assert.equal(profiling.promptKind({id:'s1',pseudo:'Suspect A'},1),'base');
+sandbox.STATE.sync.events=[{cycle:1,event_type:'statement_006',payload:{pseudo:'Suspect A'}}];
+assert.equal(profiling.promptKind({id:'s1',pseudo:'Suspect A'},1),'statement', 'statement should change the affected suspect prompts');
+assert.equal(profiling.promptKind({id:'s2',pseudo:'Suspect B'},1),'base', 'other suspects must not inherit statement prompts');
+assert.equal(profiling.questionsFor({id:'s1',pseudo:'Suspect A'},1).one.text,'Quelle image veut-il imposer ?');
+sandbox.STATE.sync.room.cycle=2;
+sandbox.STATE.sync.events=[{cycle:2,event_type:'interrogation',payload:{target_id:'s1'}}];
+assert.equal(profiling.promptKind({id:'s1',pseudo:'Suspect A'},2),'interview');
+assert.equal(profiling.questionsFor({id:'s1',pseudo:'Suspect A'},2).one.text,'Comment gère-t-il les questions insistantes ?');
+sandbox.STATE.sync.room.cycle=3;
+sandbox.STATE.sync.events=[{cycle:3,event_type:'event_confrontation',payload:{targets:['s1','s2']}}];
+assert.equal(profiling.promptKind({id:'s1',pseudo:'Suspect A'},3),'confrontation');
+assert.equal(profiling.questionsFor({id:'s1',pseudo:'Suspect A'},3).two.text,'Quel conflit intérieur paraît encore plausible ?');
+sandbox.STATE.sync.room.cycle=1;
+sandbox.STATE.sync.events=[];
+sandbox.window.IGR_LOCALE='en';
+assert.equal(profiling.questionText('c1_base_1'),'What is this suspect trying to protect?');
+sandbox.window.IGR_LOCALE='fr';
 assert(!out.includes('Profils psychologiques de l’Analyste'),'profiles prematurely published');
 sandbox.STATE.sync.player.public_role='suspect';sandbox.STATE.token='SUSPECT';
 sandbox.STATE.tab='investigation';
@@ -58,11 +81,13 @@ assert(sandbox.gameTabs().some(x=>x.id==='profiling'),'postgame player access mi
 await sandbox.window.IGR_ANALYST_PROFILING_V700.refresh(true);
 out=sandbox.renderGameTab();
 assert(out.includes('Sa stratégie reste prudente.'),'completed profile not public');
+assert(out.includes('Que cherche-t-il à protéger ?'),'the saved question must appear on reveal');
+assert(out.includes('Profil non complété.'),'unfilled required profiles must be recorded as missing');
 assert(!out.includes('<textarea'),'postgame archive must be read-only');
 for(const path of ['index.html','en.html']){
  const html=read(path);
- assert(html.includes('analyst-profiling-v700.js?v=v700-analyst-psychology'),path+' missing client script');
- assert(html.includes('analyst-profiling-v700.css?v=v700-analyst-psychology'),path+' missing styling');
+ assert(html.includes('analyst-profiling-v700.js?v=v701-progressive-psychology'),path+' missing client script');
+ assert(html.includes('analyst-profiling-v700.css?v=v701-progressive-psychology'),path+' missing styling');
 }
 for(const path of ['scripts/build-web.mjs','scripts/build-mobile.mjs']){
  const txt=read(path);assert(txt.includes("'analyst-profiling-v700.js'")&&txt.includes("'analyst-profiling-v700.css'"),path+' missing bundle assets');
@@ -72,10 +97,10 @@ if(dest){
  for(const file of ['analyst-profiling-v700.js','analyst-profiling-v700.css','index.html','en.html'])
   assert(existsSync(dest+'/'+file),'built asset not found '+dest+'/'+file);
  const html=read(dest+'/index.html');
- assert(html.includes('analyst-profiling-v700.js?v=v700-analyst-psychology'),
+ assert(html.includes('analyst-profiling-v700.js?v=v701-progressive-psychology'),
   'published entrypoint missing profiling option');
  const sw=dest+'/service-worker.js';
- if(existsSync(sw))assert(read(sw).includes('/analyst-profiling-v700.js?v=v700-analyst-psychology'),
+ if(existsSync(sw))assert(read(sw).includes('/analyst-profiling-v700.js?v=v701-progressive-psychology'),
   'PWA worker not precaching the new profiling option');
 }
-console.log('PASS v700: 2 two-line questions per suspect, private during play, readable by everyone at the end, bilingual bundles.');
+console.log('PASS v701: 10-word Analyst portraits, short cycle/event-aware questions, no other suspects affected, all-player reveal, bilingual bundles.');
