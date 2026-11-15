@@ -1,0 +1,38 @@
+name: LE RÉGIME — candidate rules (non-publishing)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/regime-rules-v10.mjs'
+      - 'scripts/regime-rules-v10.test.mjs'
+      - 'supabase/tests/igr_regime_release_readiness_v9.sql'
+      - '.github/workflows/regime-candidate-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-rules:
+    name: Prototype rule contract, no secrets or deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check scripts/regime-rules-v10.mjs
+          node --check scripts/regime-rules-v10.test.mjs
+      - name: Exercise synthetic deterministic rules
+        run: node --test scripts/regime-rules-v10.test.mjs
+      - name: Verify that secret manuscripts are not bundled
+        run: |
+          if grep -En 'canonical_truth|private_cards|variant_secret' scripts/regime-rules-v10.mjs; then
+            echo "::error::Never publish private variant content in the rule engine"
+            exit 1
+          fi
+          echo "Prototype only; NO release readiness implied."
