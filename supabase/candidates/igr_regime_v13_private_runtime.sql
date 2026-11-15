@@ -279,7 +279,7 @@ BEGIN
   IF NOT FOUND THEN RAISE EXCEPTION 'unauthorized'; END IF;
   SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
   SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
-  IF NOT FOUND OR r.status<>'playing' THEN RAISE EXCEPTION 'regime feature inactive'; END IF;
+  IF NOT FOUND THEN RAISE EXCEPTION 'regime feature inactive'; END IF;
   IF length(coalesce(p_request_id,''))<8 OR length(p_request_id)>128 THEN RAISE EXCEPTION 'invalid request id'; END IF;
   SELECT response,actor_player,action_kind INTO old,old_actor,old_kind
    FROM igr_private.igr_regime_v13_ledger
@@ -288,6 +288,7 @@ BEGIN
    IF old_actor<>p.id OR old_kind<>p_kind THEN RAISE EXCEPTION 'request conflict';END IF;
    RETURN old;
   END IF;
+  IF r.status<>'playing' THEN RAISE EXCEPTION 'game no longer active';END IF;
   actor:=CASE WHEN p.public_role='suspect'
     THEN m.private_pack->'private_cards'->(p.internal_slot-1)->>'actor_id'
     ELSE NULL END;
