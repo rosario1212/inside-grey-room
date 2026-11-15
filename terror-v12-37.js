@@ -4,7 +4,7 @@
   const IDS = new Set(['026','027','028']);
   const DATA = [
     {id:'026',title:'LA VILLE TOMBE',short:'La capitale, dernière grande ville libre d’Almizia, résiste au FDR. Trois captifs peuvent révéler comment les rebelles ont conquis les institutions et falsifié les registres civils.',context:'Après la prise de la base militaire de Ferra, le FDR a fait tomber les grandes villes d’Almizia. La Grey Room, dans la dernière capitale libre, conserve des preuves de persécutions et des registres civils que les rebelles veulent effacer. Trois détenus ont participé de manière différente à ces crimes. L’état-major a besoin d’un dossier fiable pour préserver les institutions et décider de sa défense.',mood:'Ville assiégée · pression · renseignement incomplet.',min:6,max:7,sound:'war',mechanics:['Périmètre dynamique','Renseignement','Menace extérieure']},
-    {id:'027',title:'LA ZONE ROUGE',short:'Dans la zone rouge de la dernière capitale, le FDR manipule des renseignements authentiques mais incomplets. Les civils pourraient encore être présents; l’état-major doit décider sans connaître leur sort.',context:'Le FDR affirme contrôler une zone rouge de la capitale et que ses civils en sont partis. Les prisonniers livrent des informations contradictoires, parfois exactes mais intéressées ou périmées. L’Inspecteur évalue les sources et les risques humains; l’Officier des opérations décide de tenir, de protéger les civils ou de tenter une reconquête limitée si les preuves le permettent.',mood:'Cellule de crise · responsabilité · risque civil.',min:7,max:8,sound:'intelligence',mechanics:['Officier des opérations','Verdict sous pression','Renseignement manipulé par le FDR']},
+    {id:'027',title:'LA ZONE ROUGE',short:'Dans la zone rouge de la dernière capitale, le FDR manipule des renseignements authentiques mais incomplets. Les civils pourraient encore être présents; l’état-major doit décider sans connaître leur sort.',context:'Le FDR affirme contrôler une zone rouge de la capitale et que ses civils en sont partis. Les prisonniers livrent des informations contradictoires, parfois exactes mais intéressées ou périmées. L’Inspecteur évalue les sources et les risques humains; l’Officier décide de tenir, de protéger les civils ou de tenter une reconquête limitée si les preuves le permettent.',mood:'Cellule de crise · responsabilité · risque civil.',min:7,max:8,sound:'intelligence',mechanics:['Officier','Verdict sous pression','Renseignement manipulé par le FDR']},
     {id:'028',title:'DERNIER PÉRIMÈTRE',short:'La Grey Room est la dernière institution judiciaire encore accessible. Le FDR affirme déjà disposer d’un relais intérieur : menace réelle ou bluff destiné à provoquer la panique ?',context:'La capitale d’Almizia est presque encerclée; la liaison avec l’état-major devient intermittente. Un message du FDR prétend que le centre est déjà infiltré. Deux détenus cherchent à coopérer, un troisième entretient la peur. Les preuves d’accès peuvent être actuelles ou révoquées; l’enquête doit distinguer présence intérieure et intimidation sans renoncer à protéger le dernier périmètre.',mood:'Dernière ligne · abandon · coopération sous menace.',min:6,max:8,sound:'pulse',mechanics:['Périmètre critique','Cellule intérieure','Coopération']}
   ];
   const ART = Object.freeze({
@@ -17,9 +17,9 @@
 
   for(const sc of DATA) if(!SCENARIOS.some(x => x.id === sc.id)) SCENARIOS.push(sc);
   Object.assign(SCENARIO_ROLES, {
-    '026':{required:['Enquêteur','Analyste','Officier des opérations','3 suspects'],optional:['Expert']},
-    '027':{required:['Enquêteur','Analyste','Inspecteur','Officier des opérations','3 suspects'],optional:['Procureur']},
-    '028':{required:['Enquêteur','Analyste','Officier des opérations','3 suspects'],optional:['Inspecteur','Expert']}
+    '026':{required:['Enquêteur','Analyste','Officier','3 suspects'],optional:['Expert']},
+    '027':{required:['Enquêteur','Analyste','Inspecteur','Officier','3 suspects'],optional:['Procureur']},
+    '028':{required:['Enquêteur','Analyste','Officier','3 suspects'],optional:['Inspecteur','Expert']}
   });
   Object.assign(PUBLIC_LOBBY_SUMMARIES, {
     '026':'Le FDR a conquis le pays mais pas encore sa capitale. Les enquêteurs reconstituent le rôle de trois détenus dans la persécution et la prise des services civils : chaque registre authentifié peut aider à préserver la population.',
@@ -35,7 +35,7 @@
   roleInfo = function(id){
     const info = oldRoleInfo(id), sid = String(STATE?.sync?.room?.scenario_id || STATE?.scenarioId || STATE?.selectedScenario || '');
     if(!isTerror(sid)) return info;
-    if(id === 'inspecteur') return {...info,label:'Inspecteur de terrain',body:'Tu vérifies sur place les informations liées au FDR et leurs contradictions. Dans le 027, tu peux formuler un avis non contraignant, mais seul l’Officier des opérations décide de l’action militaire.'};
+    if(id === 'inspecteur') return {...info,label:'Inspecteur de terrain',body:'Tu vérifies sur place les informations liées au FDR et leurs contradictions. Dans le 027, tu peux formuler un avis non contraignant, mais seul l’Officier décide de l’action militaire.'};
     if(id === 'expert') return {...info,label:'Agent de renseignement',body:'Tu recoupes des sources, des chronologies et des liens de structure. Tu produis des niveaux de confiance, jamais une procédure opérationnelle.'};
     return info;
   };
