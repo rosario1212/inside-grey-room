@@ -61,7 +61,7 @@ BEGIN
     WHERE x.value ? 'reveals_capture_evidence_id' LIMIT 1;
    IF obj IS NULL THEN RAISE EXCEPTION 'C1 risk action absent';END IF;
    result:=public.igr_regime_v13_action(room_id,fugitive,'fugitive_choice',
-     'qa-risk-'||src.sid||src.variant||'-001',
+     'qa-risk-'||src.sid||'-'||src.variant||'-001',
      jsonb_build_object('option_id',obj->>'id'));
    IF result->>'accepted'<>'true' THEN
       RAISE EXCEPTION 'C1 decision rejected % %',src.sid,src.variant;END IF;
@@ -80,18 +80,18 @@ BEGIN
    END IF;
    correct_location:=e1->>'network_id';
    result:=public.igr_regime_v13_warrant(room_id,enq,
-       'qa-warrant-'||src.sid||src.variant||'-001',actor1,correct_location,
+       'qa-warrant-'||src.sid||'-'||src.variant||'-001',actor1,correct_location,
        jsonb_build_array(e1->>'id',e2->>'id'));
    IF result->>'status'<>'awaiting_judge' THEN RAISE EXCEPTION 'warrant failure';END IF;
    result:=public.igr_regime_v13_judge_review(room_id,jud,
-       'qa-judge-'||src.sid||src.variant||'-001',
-       'qa-warrant-'||src.sid||src.variant||'-001','allow');
+       'qa-judge-'||src.sid||'-'||src.variant||'-001',
+       'qa-warrant-'||src.sid||'-'||src.variant||'-001','allow');
    IF result->>'status'<>'captured' THEN
        RAISE EXCEPTION 'first fugitive not caught in % %',src.sid,src.variant;
    END IF;
    third_path:=d->'third_suspect_mission'->>'assigned_path';
    result:=public.igr_regime_v13_action(room_id,third,'third_submission',
-      'qa-third-'||src.sid||src.variant||'-001',
+      'qa-third-'||src.sid||'-'||src.variant||'-001',
       jsonb_build_object('defense','Je conteste la portée de ces transmissions et le degré de responsabilité qui me sont attribués.'));
    IF result->>'accepted'<>'true' THEN RAISE EXCEPTION 'third action refused % %',src.sid,src.variant;END IF;
    state:=public.igr_regime_v13_state(room_id,third);
