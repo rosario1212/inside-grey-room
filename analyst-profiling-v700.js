@@ -67,9 +67,9 @@ function tabHtml(){
    (old?tr('ENREGISTRÉ','SAVED'):tr('À REMPLIR','PENDING'))+'</span></div>'+
    (old?'<div class="igr700-saved"><p><b>1.</b> '+safe(old.answer_one)+'</p><p><b>2.</b> '+safe(old.answer_two)+'</p></div>':
     available?'<div class="igr700-fields"><label>'+safe(Q1())+
-     '<textarea rows="2" maxlength="180" data-igr700-suspect="'+safe(sid)+'" data-igr700-field="one" placeholder="'+tr('Une hypothèse courte…','A short hypothesis…')+'">'+safe(draft.one)+'</textarea></label>'+
+     '<textarea id="igr700-one-'+safe(sid)+'" rows="2" maxlength="180" data-igr700-suspect="'+safe(sid)+'" data-igr700-field="one" placeholder="'+tr('Une hypothèse courte…','A short hypothesis…')+'">'+safe(draft.one)+'</textarea></label>'+
      '<label>'+safe(Q2())+
-     '<textarea rows="2" maxlength="180" data-igr700-suspect="'+safe(sid)+'" data-igr700-field="two" placeholder="'+tr('Un fait précis, ou une limite…','A concrete fact or limitation…')+'">'+safe(draft.two)+'</textarea></label>'+
+     '<textarea id="igr700-two-'+safe(sid)+'" rows="2" maxlength="180" data-igr700-suspect="'+safe(sid)+'" data-igr700-field="two" placeholder="'+tr('Un fait précis, ou une limite…','A concrete fact or limitation…')+'">'+safe(draft.two)+'</textarea></label>'+
      '<button type="button" class="igr700-submit" data-igr700-save="'+safe(sid)+'">'+
        tr('Enregistrer ce profil','Save this profile')+'</button></div>':
     '<p class="igr700-muted">'+tr('Les réponses ne sont plus modifiables pendant cette phase.','Answers cannot be edited during this phase.')+'</p>')+
@@ -101,7 +101,8 @@ async function refresh(force=false){
  try{
   const next=await rpc('igr_v700_psych_profiles',{p_code:S().room,p_player_token:S().token});
   if(before!==key())return;
-  data=next;fetchedAt=Date.now();updatePanels();
+  const changed=JSON.stringify(data)!==JSON.stringify(next);
+  data=next;fetchedAt=Date.now();if(changed)updatePanels();
  }catch(e){
   if(before===key()&&S()?.tab==='profiling'){
    const root=document.querySelector('.game-panel-v11');
@@ -117,7 +118,8 @@ function mount(){
  activate();
  // Do not poll a new endpoint in ordinary investigation tabs.
  if(S()?.tab==='profiling'||(R()?.status==='finished'&&document.querySelector('.reveal-v11'))){
-  updatePanels();void refresh();
+  if(R()?.status==='finished')updatePanels();
+  void refresh();
  }
 }
 document.addEventListener('input',e=>{
