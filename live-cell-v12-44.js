@@ -411,6 +411,10 @@
     const healthy = RT.ready && RT.ws?.readyState===WebSocket.OPEN;
     if(!healthy) return hidden ? 15000 : Math.min(15000,Math.round(1200*Math.pow(1.7,RT.failures)));
     if(hidden) return 30000;
+    // A healthy socket is not proof that the HTTP snapshot endpoint works.
+    // Back off failed polls to avoid a room-wide request storm during an outage;
+    // incoming Realtime revisions still schedule an immediate reconciliation.
+    if(RT.failures>0) return Math.min(10000,Math.round(1200*Math.pow(1.7,Math.min(8,RT.failures))));
 
     const room = STATE?.sync?.room;
     // All foreground clients use the same authoritative server snapshot, including
