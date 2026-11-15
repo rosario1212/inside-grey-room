@@ -43,3 +43,11 @@ Le Juge a sa checklist ; Procureur/Enquêteur, Analyste, Inspecteur, Expert, Avo
 - Les migrations n'ont été appliquées que dans des **transactions annulées** pour les tests. Production inchangée.
 
 **Statut : PR #517 encore en brouillon. Pas de publication en production ni de test humain multi-appareils.**
+
+## v709 — Durées prévisionnelles et activité par rôle
+
+Le tribunal unique remplace l'audience et les comparutions minutées en présence d'un Juge ; son temps n'est pas plafonné. La sélection de durée indique une estimation globale pour une partie typique de sept joueurs avec trois Suspects : **COURT ≈45–70 min** et **LONG ≈70–105 min**. La préparation des débats est estimée à **15–25 min en COURT** et **20–35 min en LONG**, sans minuteur ni obligation de conclure à ces seuils. Les variations du nombre de Suspects et du nombre de joueurs modifient l'estimation du salon. Les anciennes estimations sont inchangées sans Juge.
+
+Les étoiles d'activité restent une estimation de participation, pas de difficulté ou de pouvoir : **avec Juge**, Enquêteur 4/4, Analyste 4/4, Procureur 4/4, Juge 4/4, Avocat 4/4, Suspect 4/4, Inspecteur 4/4, Expert 3/4, Journaliste 4/4, Témoin 3/4. Les valeurs d'avant tribunal demeurent sans Juge, et la présentation globale ne présume pas d'un Juge présent.
+
+**Clarification du verdict** : les membres du camp Enquête enregistrent chacun leur évaluation, mais il ne s'agit pas d'une majorité sur les responsabilités officielles. Le serveur applique l'autorité hiérarchique Juge > Procureur > Enquêteur, avec conditions individuelles et règles propres à certains scénarios. Aucun barème de victoire ou calcul de majorité n'a été changé dans v709.
