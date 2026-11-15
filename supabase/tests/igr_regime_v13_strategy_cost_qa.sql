@@ -26,7 +26,7 @@ BEGIN
    WHERE e->>'id'='032A-H23') THEN
    RAISE EXCEPTION 'C1 safety cost not actually applied in C2';END IF;
  response:=public.igr_regime_v13_warrant('QA13SAFE',investigator,
-  'qa-shield-warrant-02','interior_minister','apart',
+  'qa-shield-warrant-02','interior_minister','032A-interior',
   '["032A-H21","032A-H23"]'::jsonb);
  response:=public.igr_regime_v13_judge_review('QA13SAFE',judge,
   'qa-shield-review-02','qa-shield-warrant-02','allow');
