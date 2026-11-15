@@ -6,22 +6,83 @@ const ORIGINS=new Set([PROD_ORIGIN,...NATIVE]);
 function corsHeaders(req){
  const origin=req.headers.get('Origin');
  return {'Access-Control-Allow-Origin':!origin||ORIGINS.has(origin)?origin||PROD_ORIGIN:'',
-  'Access-Control-Allow-Methods':'GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type',
-  'Cache-Control':'no-store, max-age=0','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};
+  'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type, apikey',
+  'Cache-Control':'private, no-store, max-age=0','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};
 }
 function json(req,value,status=200){return new Response(JSON.stringify(value),{status,headers:corsHeaders(req)})}
 async function turn(req,env){
  const origin=req.headers.get('Origin');
  if(origin&&!ORIGINS.has(origin))return json(req,{error:'origin_not_allowed'},403);
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:corsHeaders(req)});
- if(req.method!=='GET')return json(req,{error:'method_not_allowed'},405);
- // Public web access: retain origin and method checks; TURN secrets remain server-side.
- if(!env.CF_TURN_KEY_ID||!env.CF_TURN_KEY_TOKEN)return json(req,{error:'turn_not_configured'},503);
+ // GET used to mint anonymous credentials. Retire it rather than trusting
+ // client-supplied Origin headers as an authentication mechanism.
+ if(req.method!=='POST')return json(req,{error:'method_not_allowed'},405);
+ if(!(req.headers.get('Content-Type')||'').startsWith('application/json'))
+   return json(req,{error:'json_required'},415);
+ if(+(req.headers.get('Content-Length')||0)>768)
+   return json(req,{error:'request_too_large'},413);
+ const apiKey=req.headers.get('apikey')||'';
+ if(apiKey.length>512 || !/^(?:sb_publishable_[A-Za-z0-9_-]+|eyJ[A-Za-z0-9._-]+)$/.test(apiKey))
+   return json(req,{error:'authorization_required'},401);
+ let body='',payload;
  try{
-  const upstream=await fetch('https://rtc.live.cloudflare.com/v1/turn/keys/'+encodeURIComponent(env.CF_TURN_KEY_ID)+'/credentials/generate-ice-servers',{method:'POST',headers:{Authorization:'Bearer '+env.CF_TURN_KEY_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({ttl:10800})});
-  const payload=await upstream.json().catch(()=>({}));
-  if(!upstream.ok||!Array.isArray(payload?.iceServers)||!payload.iceServers.length)return json(req,{error:'turn_upstream_failed'},502);
-  return json(req,{iceServers:payload.iceServers,ttl:10800});
+  const reader=req.body?.getReader();
+  if(!reader)return json(req,{error:'invalid_request'},400);
+  const decoder=new TextDecoder();let bytes=0;
+  while(true){
+   const part=await reader.read();if(part.done)break;
+   bytes+=part.value.byteLength;
+   if(bytes>768){await reader.cancel();return json(req,{error:'request_too_large'},413)}
+   body+=decoder.decode(part.value,{stream:true});
+  }
+  body+=decoder.decode();
+  payload=JSON.parse(body);
+ }catch{return json(req,{error:'invalid_request'},400)}
+ const pCode=String(payload?.p_code||'').trim().toUpperCase();
+ const pToken=String(payload?.p_player_token||'').trim();
+ if(!/^[A-Z0-9]{5}$/.test(pCode)||!/^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/.test(pToken))
+   return json(req,{error:'authorization_required'},401);
+ if(!env.CF_TURN_KEY_ID||!env.CF_TURN_KEY_TOKEN)
+   return json(req,{error:'turn_not_configured'},503);
+
+ try{
+  // A fixed, non-redirecting endpoint checks the player's actual room token,
+  // current interrogation phase and role before a TURN credential is issued.
+  // Never forward the player's capability to the TURN provider.
+  const ctl=new AbortController();
+  const timer=setTimeout(()=>ctl.abort(),2900);
+  let authorized;
+  try{
+   authorized=await fetch('https://jtasbdiguhiswoyvobkn.supabase.co/rest/v1/rpc/igr_v701_turn_authorize',{
+    method:'POST',
+    headers:{'apikey':apiKey,'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},
+    body:JSON.stringify({p_code:pCode,p_player_token:pToken}),
+    redirect:'manual',signal:ctl.signal
+   });
+  }finally{clearTimeout(timer)}
+  if(authorized.status>=300&&authorized.status<400)
+    return json(req,{error:'turn_authorization_unavailable'},503);
+  if(!authorized.ok){
+   if(authorized.status===429)return json(req,{error:'turn_rate_limited'},429);
+   // PostgREST may surface application rate limiting as P0001 / HTTP 400.
+   const issue=await authorized.json().catch(()=>({}));
+   if(issue?.message==='rate_limited')return json(req,{error:'turn_rate_limited'},429);
+   return json(req,{error:authorized.status>=500?'turn_authorization_unavailable':'not_authorized'},
+     authorized.status>=500?503:403);
+  }
+  if(await authorized.json().catch(()=>false)!==true)
+    return json(req,{error:'not_authorized'},403);
+
+  const upstream=await fetch('https://rtc.live.cloudflare.com/v1/turn/keys/'+encodeURIComponent(env.CF_TURN_KEY_ID)+'/credentials/generate-ice-servers',{
+   method:'POST',
+   headers:{Authorization:'Bearer '+env.CF_TURN_KEY_TOKEN,'Content-Type':'application/json'},
+   body:JSON.stringify({ttl:10800}),redirect:'manual'
+  });
+  if(upstream.status>=300&&upstream.status<400)return json(req,{error:'turn_upstream_failed'},502);
+  const ice=await upstream.json().catch(()=>({}));
+  if(!upstream.ok||!Array.isArray(ice?.iceServers)||!ice.iceServers.length)
+    return json(req,{error:'turn_upstream_failed'},502);
+  return json(req,{iceServers:ice.iceServers,ttl:10800});
  }catch(_){return json(req,{error:'turn_unavailable'},502)}
 }
 // The proxy is public; room membership and host entitlements are checked by
