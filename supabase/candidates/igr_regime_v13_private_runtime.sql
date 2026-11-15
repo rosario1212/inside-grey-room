@@ -77,7 +77,11 @@ BEGIN
   VALUES(r.code,r.scenario_id,m.variant_id,m.manuscript->'regime_vnext',
     jsonb_build_object('alliance','{}'::jsonb,'decisions','[]'::jsonb,
       'investigations','[]'::jsonb,'disclosed','[]'::jsonb,
-      'arrests','{}'::jsonb,'mandates','[]'::jsonb,'reconstructions','{}'::jsonb,'third','{}'::jsonb,
+      'arrests','{}'::jsonb,'mandates','[]'::jsonb,'reconstructions','{}'::jsonb,
+      'track_overrides','{}'::jsonb,'capture_clue_tracks','{}'::jsonb,
+      'lead_delay','{}'::jsonb,'captured_responses','[]'::jsonb,
+      'scheduled_disclosures','[]'::jsonb,'extra_capture_leads','[]'::jsonb,
+      'third','{}'::jsonb,
       'court','{}'::jsonb));
   RETURN true;
 END $$;
@@ -315,8 +319,9 @@ BEGIN
          m.private_pack->'first_cycle'->'public_networks') net
          WHERE net->>'id'=fallback_refuge LIMIT 1;
       IF fallback_refuge IS NULL THEN RAISE EXCEPTION 'relocation network not authored';END IF;
-      new_state:=jsonb_set(new_state,ARRAY['track_overrides',actor],
-          to_jsonb(fallback_refuge),true);
+      new_state:=jsonb_set(new_state,'{track_overrides}',
+          coalesce(new_state->'track_overrides','{}'::jsonb)||
+          jsonb_build_object(actor,fallback_refuge),true);
       clue_to_publish:=jsonb_build_object(
         'id','movement:'||p_request_id,'kind','capture',
         'cycle',r.cycle,'source','checkpoint_surveillance',
@@ -327,9 +332,10 @@ BEGIN
         coalesce(new_state->'extra_capture_leads','[]'::jsonb)||
           jsonb_build_array(clue_to_publish),true);
     ELSIF option_row->'effect'->>'kind'='delay_lead' THEN
-      new_state:=jsonb_set(new_state,ARRAY['lead_delay',actor],
-        jsonb_build_object('cycle',r.cycle,
-          'until',now()+interval '60 seconds'),true);
+      new_state:=jsonb_set(new_state,'{lead_delay}',
+        coalesce(new_state->'lead_delay','{}'::jsonb)||
+        jsonb_build_object(actor,jsonb_build_object('cycle',r.cycle,
+          'until',now()+interval '60 seconds')),true);
     END IF;
     IF option_row ? 'reveals_capture_evidence_id' THEN
       SELECT value INTO clue_to_publish FROM jsonb_array_elements(
@@ -346,9 +352,10 @@ BEGIN
       disclosed:=coalesce(new_state->'disclosed','[]'::jsonb)||
         jsonb_build_array(clue_to_publish->>'id');
       new_state:=jsonb_set(new_state,'{disclosed}',disclosed,true);
-      new_state:=jsonb_set(new_state,
-        ARRAY['capture_clue_tracks',clue_to_publish->>'id'],
-        to_jsonb(coalesce(fallback_refuge,active_refuge)),true);
+      new_state:=jsonb_set(new_state,'{capture_clue_tracks}',
+        coalesce(new_state->'capture_clue_tracks','{}'::jsonb)||
+        jsonb_build_object(clue_to_publish->>'id',
+          coalesce(fallback_refuge,active_refuge)),true);
     END IF;
     -- Protecting a contact now reduces immediate exposure, but costs a
     -- verified later lead. On C3, the cost is immediate (no imaginary C4).
@@ -402,10 +409,10 @@ BEGIN
     IF FOUND THEN
       new_state:=jsonb_set(new_state,'{disclosed}',
        coalesce(new_state->'disclosed','[]'::jsonb)||jsonb_build_array(piece->>'id'),true);
-      new_state:=jsonb_set(new_state,
-        ARRAY['capture_clue_tracks',piece->>'id'],
-        to_jsonb(igr_private.igr_regime_v14_active_track(
-          m.room_code,piece->>'targetId')),true);
+      new_state:=jsonb_set(new_state,'{capture_clue_tracks}',
+        coalesce(new_state->'capture_clue_tracks','{}'::jsonb)||
+        jsonb_build_object(piece->>'id',
+          igr_private.igr_regime_v14_active_track(m.room_code,piece->>'targetId')),true);
     END IF;
     result:=jsonb_build_object('ok',true,'kind',p_kind,'published',option_row->>'deliverable_id');
   ELSIF p_kind='captured_response' THEN
