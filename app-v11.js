@@ -1492,7 +1492,7 @@ function canVideo(role){
      &&r.status==='playing'&&r.phase==='interrogation'&&Number(r.cycle)>=2
      &&v?.visitor_id===d.player?.id&&Number(v.cycle)===Number(r.cycle)
      &&v.session_type==='interrogation'
-     &&Date.parse(v.session_started_at)===Date.parse(r.phase_started_at));
+     &&Number(v.session_epoch_ms)===Date.parse(r.phase_started_at));
  }
  return ['enqueteur','analyste','procureur','juge','inspecteur'].includes(role);
 }
