@@ -1086,11 +1086,11 @@ function routeFromServer(){
   if(STATE.view!=='lobby')STATE.view='lobby';renderLobby(d);return;
  }
  if(d.room.status==='finished'||d.room.phase==='reveal'){
-  STATE.view='game';STATE.tab='investigation';renderGame();return;
+  STATE.view='game';if(STATE.tab!=='profiling')STATE.tab='investigation';renderGame();return;
  }
  if(d.room.phase==='briefing'){STATE.view='briefing';renderBriefing();return;}
  if(d.room.phase==='role_reading'&&!d.player.ready){cancelBriefingVoice();STATE.view='role';renderRole();return;}
- STATE.view='game';if(!['card','investigation','channel','video','timeline','rules'].includes(STATE.tab))STATE.tab='investigation';renderGame();
+ STATE.view='game';if(!['card','investigation','channel','video','timeline','rules','profiling'].includes(STATE.tab))STATE.tab='investigation';renderGame();
 }
 function stopRoomWatcher(){if(STATE.watcher){clearInterval(STATE.watcher);STATE.watcher=null}}
 function startRoomWatcher(){
