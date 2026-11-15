@@ -123,3 +123,26 @@ test('the shared trial keeps each suspect personal file available',()=>{
  assert.ok(ui.includes("phase==='regime_court'?myCard()+court()"));
  assert.ok(ui.includes('judge()+mandateRecovery()'));
 });
+
+test('Regime 8th witness and 034-only 9th journalist are selectable and active',async()=>{
+ const catalog=await read('dlc-suite-v12-37.js');
+ assert.match(catalog,/min:6,max:9,sound:/);
+ assert.match(catalog,/Témoin \(8e\)/);
+ assert.match(catalog,/Journaliste \(9e\)/);
+ assert.match(ui,/function civicRole\(\)/);
+ assert.match(ui,/igr_regime_v16_civic_statement/);
+ assert.match(ui,/court-testimony/);
+ assert.match(ui,/court-press/);
+ assert.match(courtSql,/press_question/);
+ assert.match(courtSql,/testimony/);
+ assert.match(privateSql,/igr_regime_v16_civic_card/);
+ assert.match(lifecycleSql,/igr_regime_v16_civic_card/);
+ assert.match(index,/regime-v16-rosters-20261115/);
+});
+test('Regime expanded server capacity, tribunal and majority remain consistent',()=>{
+ assert.match(lifecycleSql,/p_scenario='034' THEN 9 ELSE 8 END/);
+ assert.match(lifecycleSql,/when 'temoin' then return case when p_count>=8/);
+ assert.match(lifecycleSql,/when 'journaliste' then return case when p_scenario='034' and p_count>=9/);
+ assert.match(lifecycleSql,/\'temoin\',\'journaliste\'/);
+ assert.match(judicialSql,/count\(\*\) FROM public\.igr_v4_players WHERE room_code=r\.code\)>=8/);
+});

@@ -5,7 +5,7 @@
  */
 (()=>{
 'use strict';
-const VERSION='regime-v15-live-audit';
+const VERSION='regime-v16-expanded';
 const ids=new Set(['032','033','034']);
 const me=()=>{try{return STATE?.sync?.player||null}catch{return null}};
 const room=()=>{try{return STATE?.sync?.room||null}catch{return null}};
@@ -121,6 +121,25 @@ function actions(){
  '<p>'+esc(a.effect_description||'')+'</p><small>CONTREPARTIE : '+esc(a.cost_description||'')+'</small>'+
  button('CONFIRMER','move','data-option-id="'+esc(a.id)+'"')+'</article>').join('')+'</div>');
 }
+function civicRole(){
+ if(!['temoin','journaliste'].includes(cache?.role)||Number(cache?.cycle)>3)return '';
+ const journalist=cache.role==='journaliste';
+ const title=journalist?'NOTE DE PRESSE':'DÉPOSITION DU TÉMOIN';
+ if(cache.my_civic_used_this_cycle){
+  return section(title,'<p>Ton intervention de ce cycle a été publiée. Elle reste un point de vue, pas une nouvelle preuve.</p>');
+ }
+ const docs=(cache.public_evidence||[]).filter(x=>x.kind!=='capture');
+ if(!docs.length)return section(title,'<p>Les premières pièces publiques ne sont pas encore disponibles. Attends leur diffusion pour intervenir.</p>');
+ return section(title,'<p>'+esc(journalist?
+   'Présente un point de vue de presse fondé sur une pièce publiée, sans attribuer une culpabilité non établie.':
+   'Rattache ton témoignage à une pièce disponible et distingue tes observations de tes déductions.')+'</p>'+
+   '<label>Document de référence<select id="igrRgCivicEvidence">'+
+   docs.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title||'Document public')+'</option>').join('')+
+   '</select></label>'+
+   '<label>'+esc(journalist?'Analyse de presse':'Déclaration circonstanciée')+
+   '<textarea id="igrRgCivicText" maxlength="280" rows="3" placeholder="20 à 280 caractères, aucune preuve inventée"></textarea></label>'+
+   button(journalist?'PUBLIER LE BULLETIN':'DÉPOSER LE TÉMOIGNAGE','civic-statement'));
+}
 function investigations(){
  if(!['enqueteur','analyste'].includes(cache?.role)||!Array.isArray(cache?.offered_investigations))return '';
  if(cache.investigation_used_this_cycle)return section('INVESTIGATION',
@@ -226,20 +245,24 @@ function court(){
  const courtroomRoles=new Set(['enqueteur','analyste','procureur']);
  const myPresent=cache?.role==='suspect'&&present.some(x=>x.actor_id===thisActor());
  const myAccusation=courtroomRoles.has(cache?.role);
+ const isWitness=cache?.role==='temoin',isPress=cache?.role==='journaliste';
+ const civicAttendees=Array.isArray(cache?.civic_attendees)?cache.civic_attendees:[];
  const ruled=new Set(exchanges.filter(x=>x.kind==='ruling').map(x=>x.reply_to));
  const discussion=stage==='confrontation'?
   section('CONTRE-INTERROGATOIRE',
    '<p>Le Juge dirige les échanges. Questions, réponses et objections sont visibles par tous; aucune intervention ne modifie les preuves scellées.</p>'+
    '<div class="igr-rg13-exchanges">'+(exchanges.length?
      exchanges.slice(-18).map(x=>'<article><small>'+esc(x.pseudo)+' · '+esc(
-      {question:'QUESTION',reply:'RÉPONSE',objection:'OBJECTION',ruling:'DÉCISION DU JUGE'}[x.kind]||x.kind)+
+      {question:'QUESTION',reply:'RÉPONSE',objection:'OBJECTION',ruling:'DÉCISION DU JUGE',testimony:'TÉMOIGNAGE',press_question:'QUESTION DE PRESSE'}[x.kind]||x.kind)+
       '</small><p>'+esc(x.text)+'</p></article>').join(''):
      '<p>Aucune intervention consignée dans cette confrontation.</p>')+'</div>'+
-   ((myAccusation||myPresent)?
+   ((myAccusation||myPresent||isWitness||isPress)?
      '<label>Intervention<textarea rows="2" maxlength="280" id="igrRgExchangeText" placeholder="Cite un fait précis et pose une question courte"></textarea></label>'+
      (myAccusation?button('POSER UNE QUESTION','court-question'):'')+
      (myPresent?button('RÉPONDRE','court-reply'):'')+
-     button('SOULEVER UNE OBJECTION','court-objection'):'')+
+     (isWitness?button('TÉMOIGNER À LA BARRE','court-testimony'):'')+
+     (isPress?button('QUESTION DE PRESSE','court-press'):'')+
+     ((myAccusation||myPresent)?button('SOULEVER UNE OBJECTION','court-objection'):'')+
    (isRole('juge')?
      exchanges.filter(x=>x.kind==='objection'&&!ruled.has(x.id)).map(x=>
       '<article class="igr-rg13-ruling"><strong>Objection de '+esc(x.pseudo)+'</strong>'+
@@ -296,7 +319,7 @@ function court(){
   '<div><b>MIS EN CAUSE</b>'+present.map(x=>
    '<p>'+esc(x.pseudo)+(current===x.actor_id?' · À LA BARRE':'')+'</p>').join('')+
    absent.map(x=>'<p class="igr-rg13-absent">'+esc(x.pseudo)+' · EN FUITE (siège vide)</p>').join('')+
-  '</div></div><div class="igr-rg13-bar">BARRE · '+esc(current?person(current):'En attente de l’appel')+
+  '</div></div>'+(civicAttendees.length?'<div class="igr-rg13-civic-attendees"><b>TÉMOINS ET PRESSE</b>'+civicAttendees.map(x=>'<p>'+esc(x.pseudo)+' · '+esc(x.role==='temoin'?'TÉMOIN':'JOURNALISTE')+'</p>').join('')+'</div>':'')+'<div class="igr-rg13-bar">BARRE · '+esc(current?person(current):'En attente de l’appel')+
   '<span id="igrRgBarClock"></span></div></div>'+
   judgeUI+
   (myPassingAllowed?button('PASSER MON TOUR','court-pass'):'')+
@@ -325,7 +348,7 @@ function render(){
  const selection=active&&typeof active.selectionStart==='number'?
    [active.selectionStart,active.selectionEnd]:null;
  if(previous){
-  previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2').forEach(el=>{
+  previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2,#igrRgCivicEvidence,#igrRgCivicText').forEach(el=>{
    const k=el.hasAttribute('data-court-act')?
      el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
    preserved.set(k,el.value);
@@ -339,10 +362,10 @@ function render(){
  root.innerHTML='<header class="igr-rg13-banner"><small>LE RÉGIME · '+esc(cache.scenario_id)+' · CYCLE '+esc(cache.cycle)+'/3</small>'+
  '<h3>'+esc(phase==='regime_court'?'LE TRIBUNAL DE KARSANE':'LA CHUTE DE KARSANE')+'</h3>'+
  '<p>Les décisions des joueurs influencent la traque. Les faits historiques restent scellés.</p></header>'+
- scene()+(phase==='regime_court'?myCard()+court()+capturedDefense()+judge()+mandateRecovery():myCard()+alliance()+actions()+capturedDefense()+investigations()+third()+warrants()+judge()+mandateRecovery())+
+ scene()+(phase==='regime_court'?myCard()+court()+capturedDefense()+judge()+mandateRecovery():myCard()+alliance()+actions()+capturedDefense()+investigations()+third()+warrants()+judge()+mandateRecovery()+civicRole())+
  evidence()+events();
  after.insertAdjacentElement('afterend',root);
- root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2').forEach(el=>{
+ root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2,#igrRgCivicEvidence,#igrRgCivicText').forEach(el=>{
   const k=el.hasAttribute('data-court-act')?
    el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
   if(preserved.has(k))el.value=preserved.get(k);
@@ -400,6 +423,13 @@ document.addEventListener('click',async(ev)=>{
       claimed_orderer:control('igrRgCapturedOrderer'),statement}});
   }else if(action==='third-submit'){
    await call('igr_regime_v13_action',{...args,p_kind:'third_submission',p_payload:{defense:control('igrRgDefense')}});
+  }else if(action==='civic-statement'){
+   const statement=control('igrRgCivicText').trim(),documentId=control('igrRgCivicEvidence');
+   if(statement.length<20||statement.length>280||!documentId){
+    toast('Choisis un document public et écris entre 20 et 280 caractères.');return;
+   }
+   await call('igr_regime_v16_civic_statement',{...args,p_kind:cache?.role==='journaliste'?'press':'testimony',
+    p_evidence_id:documentId,p_text:statement});
   }else if(action==='warrant'){
    const e1=control('igrRgE1'),e2=control('igrRgE2'),target=control('igrRgTarget');
    if(!e1||!e2||e1===e2){toast('Sélectionne deux traces distinctes.');return}
@@ -420,9 +450,10 @@ document.addEventListener('click',async(ev)=>{
   }else if(action==='third-final'){
    await call('igr_regime_v13_third_final',{...args,p_ordered_by:control('igrRgThirdOrdered'),
       p_own_participation:control('igrRgThirdPart')});
-  }else if(['court-question','court-reply','court-objection','court-sustain','court-overrule'].includes(action)){
+  }else if(['court-question','court-reply','court-objection','court-sustain','court-overrule','court-testimony','court-press'].includes(action)){
    const kinds={ 'court-question':'question','court-reply':'reply',
-    'court-objection':'objection','court-sustain':'ruling','court-overrule':'ruling'};
+    'court-objection':'objection','court-sustain':'ruling','court-overrule':'ruling',
+    'court-testimony':'testimony','court-press':'press_question'};
    const msg=action==='court-sustain'?'sustained':
       action==='court-overrule'?'overruled':control('igrRgExchangeText');
    await call('igr_regime_v13_court_exchange',{...args,p_kind:kinds[action],
