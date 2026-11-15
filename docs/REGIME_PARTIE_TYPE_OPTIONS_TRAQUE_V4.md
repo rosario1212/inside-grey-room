@@ -1,6 +1,6 @@
 # LE RÉGIME — Partie type, actions de traque et décisions des dirigeants (v4)
 
-**Statut : DOCUMENT DE CONCEPTION NON ACTIF.** Il précise et prolonge `docs/REGIME_TRAQUES_IDENTITES_VICTOIRES_RESPONSABILITES_V3.md`. Ni la traque, ni ses captures, ni le Juge obligatoire, ni les fiches de responsabilité n'ont été activés côté serveur. La PR #495 demeure en brouillon.
+**Statut : DOCUMENT HISTORIQUE DE CONCEPTION NON ACTIF ; les choix d'alliance, le mandat, les codes et la victoire finale sont supplantés par `docs/REGIME_ALLIANCE_MANDATS_VERDICT_V5.md`.** Il précise et prolonge `docs/REGIME_TRAQUES_IDENTITES_VICTOIRES_RESPONSABILITES_V3.md`. Ni la traque, ni ses captures, ni le Juge obligatoire, ni les fiches de responsabilité n'ont été activés côté serveur. La PR #495 demeure en brouillon.
 
 ## 1. Le titre doit résumer la mécanique, pas seulement l'ambiance
 
@@ -59,7 +59,7 @@ Un document ancien ne localise pas automatiquement son signataire dans le prése
 Le tableau est un **arbre de fidélité**, pas une carte de prison ni une simple liste de cachettes.
 
 ### 034 — CHOISIR UNE IDENTITÉ ET SON RÉSEAU
-- **DÉCODER UN NOM** : confronter « Notaire / Tour / Héritier » à une période et une fonction ; ne localise personne à lui seul.
+- **DÉCODER UN NOM** : confronter « Portrait / Sceau / Rempart » à une période et une fonction ; ne localise personne à lui seul.
 - **RECROISER LES RELAIS** : confronter deux contacts attribués à une même personne ; certaines pistes deviennent exploitables.
 - **CONFRONTATION DU PALAIS** : interroger le troisième suspect sur des versions incohérentes, permettant éventuellement une demande de capture au même cycle.
 
