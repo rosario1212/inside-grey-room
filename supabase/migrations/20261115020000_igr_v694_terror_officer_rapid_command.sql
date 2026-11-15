@@ -173,6 +173,7 @@ BEGIN
  fn:=replace(fn,E'exact<threshold OR\n           coalesce((r.state#>>''{terror_v681,controlled}'')::int,0)=0',
    'coalesce((r.state#>>''{terror_v681,controlled}'')::int,0)=0');
  fn:=replace(fn,'''terror_v688_military''','''terror_v694_military''');
+ fn:=replace(fn,"AND cmd.action_type='terror_v694_military';","AND cmd.action_type='terror_v694_military' AND coalesce((cmd.payload->>'auto')::boolean,false)=false;");
  fn:=replace(fn,
   'success:=exact>=threshold' || E'\n        AND coalesce((r.state#>>''{terror_v681,controlled}'')::int,0)>0' || E'\n        AND action_count>=1;',
   'success:=coalesce((r.state#>>''{terror_v681,controlled}'')::int,0)>0 AND action_count>=9;');
