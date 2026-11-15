@@ -30,7 +30,7 @@
     ],
     '027':[
       {title:'LES AVEUX TROP UTILES',text:'Un détenu du FDR livre des faits vérifiables sur ses rivaux. Son récit peut être vrai sans décrire la situation actuelle ni les personnes qui se trouvent encore dans la zone rouge.'},
-      {title:'UN QUARTIER PEUT-IL ÊTRE VIDE ?',text:'Des annonces répétées affirment que les civils ont quitté la zone rouge. Elles reposent peut-être sur une seule source intéressée; l’Inspecteur exige des dates et une origine indépendante.'},
+      {title:'UN QUARTIER PEUT-IL ÊTRE VIDE ?',text:'Des annonces répétées affirment que les civils ont quitté la zone rouge. Elles reposent peut-être sur une seule source intéressée; l’Enquêteur exige des dates et une origine indépendante.'},
       {title:'LE SILENCE N’EST PAS UNE PREUVE',text:'Une dernière comparaison distingue les crimes connus du FDR et le sort encore inconnu des familles. L’état-major doit décider sans transformer l’absence de nouvelles en certitude.'}
     ],
     '028':[
@@ -131,7 +131,7 @@
       personal.className='terror-v682-personal';
       let copy='';
       if(role()==='suspect')copy='Tu es détenu, et le Front se rapproche. Que tu lui sois encore fidèle, que tu l’aies quitté ou que tu n’y aies été lié qu’indirectement, ton sort n’est pas garanti. Joue la peur, la fidélité ou le calcul uniquement selon les informations de ta carte privée. Ton comportement n’est jamais une preuve de culpabilité.';
-      else if(['enqueteur','analyste','expert','inspecteur','procureur','juge'].includes(role()))copy='L’enquête n’est plus seulement un dossier : chaque cycle de réponses imprécises augmente le risque que le Front encercle le bâtiment. Continue à distinguer les faits des rumeurs; un suspect qui panique ne devient pas coupable pour cette raison.';
+      else if(['enqueteur','analyste'].includes(role()))copy='L’enquête n’est plus seulement un dossier : chaque cycle de réponses imprécises augmente le risque que le Front encercle le bâtiment. Continue à distinguer les faits des rumeurs; un suspect qui panique ne devient pas coupable pour cette raison.';
       else copy='Le FDR approche. Les renseignements publics sur les secteurs sont accessibles à tous, mais personne ne connaît le destin des témoins ou des détenus en l’absence de confirmation.';
       personal.innerHTML='<b>'+e(epis.title)+' · '+e(role()==='suspect'?'TON RISQUE PERSONNEL':'RISQUE COLLECTIF')+'</b><p>'+e(copy)+'</p>';
       (document.getElementById('terrorV682Gates')||document.getElementById('terrorV682Immediate')||board).insertAdjacentElement('afterend',personal);
