@@ -399,8 +399,14 @@ BEGIN
     -- release that clue too. It remains distinct from the core crime evidence.
     SELECT x.value INTO piece FROM jsonb_array_elements(m.private_pack->'capture_evidence') x
      WHERE x.value->>'alternative_investigation_id'=option_row->>'id' LIMIT 1;
-    IF FOUND THEN new_state:=jsonb_set(new_state,'{disclosed}',
-       coalesce(new_state->'disclosed','[]'::jsonb)||jsonb_build_array(piece->>'id'),true); END IF;
+    IF FOUND THEN
+      new_state:=jsonb_set(new_state,'{disclosed}',
+       coalesce(new_state->'disclosed','[]'::jsonb)||jsonb_build_array(piece->>'id'),true);
+      new_state:=jsonb_set(new_state,
+        ARRAY['capture_clue_tracks',piece->>'id'],
+        to_jsonb(igr_private.igr_regime_v14_active_track(
+          m.room_code,piece->>'targetId')),true);
+    END IF;
     result:=jsonb_build_object('ok',true,'kind',p_kind,'published',option_row->>'deliverable_id');
   ELSIF p_kind='captured_response' THEN
     IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2)
