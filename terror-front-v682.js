@@ -114,10 +114,12 @@
       gate.id='terrorV682Gates';
       gate.setAttribute('role','status');
       gate.innerHTML='<div class="terror-v682-gate-label">PÉRIMÈTRE EXTÉRIEUR ROMPU</div>'+
-       '<strong>LE FDR EST AUX PORTES</strong>'+
-       '<p>Les derniers secteurs administrés sont tombés. Les portes de la Grey Room sont fermées, les communications ne garantissent plus aucune extraction. Tous les prisonniers sont en danger, même ceux qui sont restés fidèles au Front.</p>'+
+       '<strong>'+(outcome==='front_at_gates'?'LE FDR A PRIS LA GREY ROOM':'LE FDR EST AUX PORTES')+'</strong>'+
+       '<p>'+(outcome==='front_at_gates'?
+        'La dernière capitale libre d’Almizia est tombée. Tous les occupants de la Grey Room ont été capturés, maltraités puis exécutés sommairement. Leur fidélité éventuelle au FDR ne les a pas protégés.':
+        'Les derniers secteurs administrés sont tombés. Le FDR est aux portes; les occupants sont encore menacés et les enquêtes doivent continuer.')+'</p>'+
        '<div class="terror-v682-gate-sub">'+(outcome==='front_at_gates'?
-         'DÉFAITE COLLECTIVE · LE SORT DES PRÉSENTS RESTE INCERTAIN':
+         'DÉFAITE COLLECTIVE · EXÉCUTIONS SOMMAIRES · AUCUN SURVIVANT':
          'ALERTE ACTIVE · L’ENQUÊTE ET LES PREUVES CONTINUENT')+'</div>';
       (document.getElementById('terrorV682Immediate')||board).insertAdjacentElement('afterend',gate);
     }else document.getElementById('terrorV682Gates')?.remove();
