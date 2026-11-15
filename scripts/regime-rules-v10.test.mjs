@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chooseFugitiveAlliance,resolveMandate,evaluateThirdSuspect,
- evaluateReconstruction,courtroomSchedule,classifyVictory,generatePublicNews}
+ evaluateReconstruction,courtroomSchedule,classifyVictory,generatePublicNews,resolveFugitiveTurn}
  from './regime-rules-v10.mjs';
 
 const sources=(target,track)=>[
@@ -130,4 +130,31 @@ test('duplicate acts cannot artificially inflate judicial success',()=>{
  try{evaluateReconstruction({sealedActs:Array(4).fill({id:'act'}),answers:
   ['a','b','c','d'].map(actId=>({actId})),publicEvidence:[]});}catch(e){threw=true;}
  assert.equal(threw,true);
+});
+
+test('fugitive options have one material benefit and one tradeoff',()=>{
+ const option={id:'protect_staff',actorId:'fallen_president',availableCycles:[1,2],
+  effect:{kind:'shield_contact',ref:'contact_alpha'},
+  cost:{kind:'expose_trace',ref:'trace_alpha'}};
+ const cfg={scenarioId:'034',actorId:'fallen_president',cycle:1,requestId:'req-action-one',
+  actionId:'protect_staff',options:[option],history:[]};
+ const accepted=resolveFugitiveTurn(cfg);
+ assert.equal(accepted.status,'accepted');assert.equal(accepted.commands.length,2);
+ const replay=resolveFugitiveTurn({...cfg,history:[accepted.record]});
+ assert.equal(replay.status,'replay');
+ const blocked=resolveFugitiveTurn({...cfg,requestId:'req-action-two',history:[accepted.record]});
+ assert.equal(blocked.code,'one_strategy_per_cycle');
+ assert.equal(resolveFugitiveTurn({...cfg,capturedAt:1}).code,'already_captured');
+});
+test('a fugitive cannot invent a cost-free or historically rewriting option',()=>{
+ const fake={id:'magic',actorId:'fallen_president',
+  effect:{kind:'rewrite_truth',ref:'act'},cost:{kind:'none',ref:'zero'}};
+ const r=resolveFugitiveTurn({scenarioId:'034',actorId:'fallen_president',cycle:1,
+  requestId:'req-action-magic',actionId:'magic',options:[fake]});
+ assert.equal(r.code,'unbalanced_option');
+});
+test('third suspect cannot submit the fugitive strategy',()=>{
+ const r=resolveFugitiveTurn({scenarioId:'034',actorId:'transmission_officer',cycle:1,
+  requestId:'req-not-fugitive',actionId:'x',options:[]});
+ assert.equal(r.code,'not_a_fugitive');
 });
