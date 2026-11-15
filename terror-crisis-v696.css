@@ -1,25 +1,25 @@
 /* Inside Grey Room / TERREUR — Crisis B visual system v696
-   Noir minéral • gris ardoise • rouge brique profond
+   Noir charbon • graphite neutre • rouge brique profond
    Aesthetic only: never modifies timers, input semantics or the evidence model. */
 
 /* A theme scope tied to the live scenario, not a stale body theme from a previous room. */
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]){
-  --terror-b-bg:#080b10;
-  --terror-b-surface:#10161e;
-  --terror-b-surface-hi:#161e28;
-  --terror-b-line:rgba(151,165,181,.18);
+  --terror-b-bg:#060606;
+  --terror-b-surface:#100f10;
+  --terror-b-surface-hi:#181617;
+  --terror-b-line:rgba(157,149,151,.18);
   --terror-b-red:#9c3f4b;
   --terror-b-red-strong:#b2515c;
   --terror-b-red-soft:#df9a9e;
   --terror-b-ink:#f0f2f4;
-  --terror-b-secondary:#b9c1cb;
+  --terror-b-secondary:#c0b9bc;
   color:var(--terror-b-ink);
 }
 body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
   background:
     radial-gradient(ellipse 55% 30% at 82% 5%,rgba(121,37,51,.105),transparent 75%),
-    radial-gradient(ellipse 70% 46% at -10% 60%,rgba(37,61,78,.12),transparent 75%),
-    linear-gradient(180deg,#080b10 0%,#06080c 58%,#040608 100%)!important;
+    radial-gradient(ellipse 70% 46% at -10% 60%,rgba(76,41,47,.055),transparent 75%),
+    linear-gradient(180deg,#060606 0%,#050505 58%,#030303 100%)!important;
 }
 
 /* The case title feels editorial and institutional instead of a flat H1. */
@@ -44,7 +44,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
   align-items:center;
   gap:9px;
   margin:8px 0 13px;
-  color:#aab5c0!important;
+  color:#b9b1b5!important;
   font-size:11px;
   font-weight:750;
   letter-spacing:.19em;
@@ -76,11 +76,11 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
   overflow:hidden;
   padding:clamp(19px,4vw,27px)!important;
   margin:12px 0 0;
-  border:1px solid rgba(142,160,177,.22)!important;
+  border:1px solid rgba(153,146,149,.22)!important;
   border-radius:20px!important;
   background:
     radial-gradient(circle at 100% 0%,rgba(116,48,63,.13),transparent 53%),
-    linear-gradient(135deg,rgba(22,31,42,.91),rgba(9,13,19,.96) 76%)!important;
+    linear-gradient(135deg,rgba(17,16,17,.97),rgba(7,7,8,.985) 76%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 14px 34px rgba(0,0,0,.24)!important;
   max-width:none;
 }
@@ -102,7 +102,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-case-preview .lobby-scenario-summary{
   max-width:65ch;
   margin:0;
-  color:#d8dfe6!important;
+  color:#ded8da!important;
   font-size:clamp(13px,1.75vw,15px);
   font-weight:420;
   line-height:1.69;
@@ -117,7 +117,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
   font-weight:650;
   letter-spacing:.005em;
   line-height:1.65;
-  color:#bdc7d2!important;
+  color:#c5bdc0!important;
 }
 
 /* Distinct controls — calm slate secondary actions, no opaque white bricks. */
@@ -129,16 +129,16 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head .igr-v13-lobby-actions .btn{
   min-height:46px;
   padding:10px 15px!important;
-  background:linear-gradient(160deg,#182029,#0e131a)!important;
+  background:linear-gradient(160deg,#1b191a,#0f0e10)!important;
   color:#e1e6eb!important;
-  border:1px solid rgba(150,163,180,.27)!important;
+  border:1px solid rgba(157,147,152,.27)!important;
   border-radius:13px!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
   font-weight:680;
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head .igr-v13-lobby-actions .btn:hover{
   border-color:rgba(197,122,133,.53)!important;
-  background:#1c242d!important;
+  background:#221c20!important;
 }
 
 /* Capital selection: red is the authority / danger accent, not a muddy fill. */
@@ -152,7 +152,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
   border-radius:21px!important;
   background:
     radial-gradient(ellipse at 100% 0%,rgba(145,46,65,.16),transparent 49%),
-    linear-gradient(145deg,rgba(21,29,38,.985),rgba(10,13,19,.995) 79%)!important;
+    linear-gradient(145deg,rgba(16,15,17,.99),rgba(7,7,8,.995) 79%)!important;
   box-shadow:inset 0 1px 0 rgba(243,200,202,.055),0 18px 42px rgba(0,0,0,.29),0 0 0 1px rgba(55,25,31,.12)!important;
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"])>.terror-v681-city-lobby::before{
@@ -182,7 +182,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"])>.terror-v681-city-lobby>p{
   margin:13px 0 16px;
   max-width:70ch;
-  color:#b8c1cb!important;
+  color:#c1b8bd!important;
   font-size:clamp(13px,1.6vw,14px);
   line-height:1.67;
 }
@@ -199,7 +199,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-current-city{
   border-left-color:#c46873;
   border-radius:0 11px 11px 0;
-  background:linear-gradient(90deg,rgba(144,51,66,.2),rgba(12,18,24,.18));
+  background:linear-gradient(90deg,rgba(144,51,66,.2),rgba(14,11,13,.18));
   color:#e9bfc2;
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-current-city strong{
@@ -226,9 +226,9 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
   min-width:0;
   min-height:52px;
   padding:0 14px;
-  background:rgba(6,10,15,.79)!important;
+  background:rgba(6,6,7,.85)!important;
   color:#f1f2f4!important;
-  border:1px solid rgba(158,174,190,.33)!important;
+  border:1px solid rgba(157,148,153,.33)!important;
   border-radius:12px!important;
   font-size:16px;
   font-weight:520;
@@ -237,7 +237,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
   transition:border-color .16s ease,box-shadow .16s ease;
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row input::placeholder{
-  color:#8f9aa8;
+  color:#a49ba0;
   opacity:1;
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row input:focus{
@@ -272,9 +272,9 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 
 /* Duration selection has a clear chosen state without a neon glow. */
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"])>.lobby-v11{
-  border:1px solid rgba(140,153,170,.21)!important;
+  border:1px solid rgba(155,145,151,.21)!important;
   border-radius:22px!important;
-  background:linear-gradient(165deg,rgba(15,21,29,.94),rgba(6,9,14,.985))!important;
+  background:linear-gradient(165deg,rgba(13,12,14,.97),rgba(6,6,7,.995))!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 20px 48px rgba(0,0,0,.22)!important;
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-lobby-v35{
@@ -285,15 +285,15 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-tab-v35{
   min-height:65px;
-  border:1px solid rgba(144,160,176,.24)!important;
+  border:1px solid rgba(156,146,151,.24)!important;
   border-radius:13px!important;
-  background:linear-gradient(165deg,rgba(23,31,40,.86),rgba(11,16,23,.98))!important;
-  color:#b4bdc8!important;
+  background:linear-gradient(165deg,rgba(22,19,22,.91),rgba(9,8,10,.99))!important;
+  color:#c1b8bd!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-tab-v35.is-active{
   border-color:rgba(191,94,106,.82)!important;
-  background:linear-gradient(165deg,rgba(105,41,55,.48),rgba(28,26,36,.96))!important;
+  background:linear-gradient(165deg,rgba(105,41,55,.48),rgba(22,19,22,.97))!important;
   color:#f6e7e9!important;
   box-shadow:inset 0 2px 0 rgba(201,107,118,.85),0 0 0 1px rgba(116,48,60,.1);
 }
@@ -311,7 +311,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 }
 #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-note{
   margin-top:5px;
-  color:#a8b3c0!important;
+  color:#bdb3b8!important;
   font-size:12px;
   line-height:1.48;
 }
@@ -327,22 +327,22 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 }
 #app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-zone{
   border-color:rgba(150,93,106,.25)!important;
-  background:linear-gradient(160deg,rgba(21,29,37,.9),rgba(9,14,20,.96))!important;
+  background:linear-gradient(160deg,rgba(15,14,16,.96),rgba(7,7,8,.99))!important;
 }
 #app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-card,
 #app .lobby-v11[data-igr-lobby-theme="terror"] .igr-random-role-cta{
-  border-color:rgba(143,159,175,.23)!important;
-  background:linear-gradient(160deg,#19212a,#10161e)!important;
+  border-color:rgba(156,146,151,.23)!important;
+  background:linear-gradient(160deg,#1c191c,#100f10)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.03)!important;
 }
 #app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-card.selected{
   border-color:rgba(196,93,106,.72)!important;
-  background:linear-gradient(150deg,rgba(92,37,50,.63),rgba(18,21,30,.95))!important;
+  background:linear-gradient(150deg,rgba(92,37,50,.63),rgba(18,15,18,.97))!important;
   box-shadow:inset 3px 0 0 #b25260,inset 0 1px 0 rgba(255,255,255,.035)!important;
 }
 #app .lobby-v11[data-igr-lobby-theme="terror"] .igr-choice-status{
   border-color:rgba(171,88,101,.33)!important;
-  background:linear-gradient(160deg,rgba(69,37,48,.63),rgba(14,19,26,.96))!important;
+  background:linear-gradient(160deg,rgba(69,37,48,.63),rgba(12,11,13,.98))!important;
 }
 #app .lobby-v11[data-igr-lobby-theme="terror"]>.btn.primary{
   border-color:#bd606b!important;
@@ -355,7 +355,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 /* Selection catalogue and live board share the same restrained atmosphere. */
 #app .terror-scenario{
   border-color:rgba(158,85,99,.34)!important;
-  background:linear-gradient(145deg,#151b24,#080c12)!important;
+  background:linear-gradient(145deg,#151214,#090708)!important;
   box-shadow:0 12px 26px rgba(0,0,0,.2)!important;
 }
 #app .terror-scenario:focus-visible{
@@ -364,7 +364,7 @@ body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
 }
 .terror-v681-live,.terror-v682-front,.terror-v694-command{
   border-color:rgba(156,80,92,.42)!important;
-  background:radial-gradient(circle at 100% 0%,rgba(125,41,60,.12),transparent 43%),linear-gradient(160deg,#18212b,#0b1017)!important;
+  background:radial-gradient(circle at 100% 0%,rgba(113,38,52,.09),transparent 43%),linear-gradient(160deg,#181517,#090809)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 13px 30px rgba(0,0,0,.24);
 }
 .terror-v681-live .terror-v681-head h2,.terror-v694-command header strong{color:#f0eef0}
