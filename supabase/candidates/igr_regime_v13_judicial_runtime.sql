@@ -234,12 +234,12 @@ BEGIN
  IF NOT FOUND OR p.public_role<>'juge' THEN RAISE EXCEPTION 'Judge required';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
- IF NOT FOUND OR r.phase<>'regime_court' THEN RAISE EXCEPTION 'courtroom unavailable';END IF;
+ IF NOT FOUND THEN RAISE EXCEPTION 'courtroom unavailable';END IF;
  allowed:=p_actor_id=m.private_pack->'private_cards'->2->>'actor_id'
    OR (m.play_state->'arrests' ? p_actor_id);
  IF NOT allowed THEN RAISE EXCEPTION 'person not present before court';END IF;
  called:=coalesce(m.play_state->'court'->'called','[]'::jsonb);
- IF called ? p_actor_id THEN RAISE EXCEPTION 'already called to the bar'; END IF;
+
  IF length(coalesce(p_request_id,''))<8 THEN RAISE EXCEPTION 'invalid request';END IF;
  SELECT * INTO prev FROM igr_private.igr_regime_v13_ledger
  WHERE room_code=p.room_code AND request_id=p_request_id;
@@ -248,6 +248,8 @@ BEGIN
     THEN RAISE EXCEPTION 'court request conflict';END IF;
   RETURN prev.response;
  END IF;
+ IF r.phase<>'regime_court' THEN RAISE EXCEPTION 'courtroom time has closed';END IF;
+ IF called ? p_actor_id THEN RAISE EXCEPTION 'already called to the bar';END IF;
  count_seconds:=CASE WHEN (m.play_state->'court'->>'duration_minutes')::int=14 THEN 120 ELSE 60 END;
  elapsed_seconds:=floor(extract(epoch from (
    now()-(m.play_state->'court'->>'started_at')::timestamptz)))::integer;
