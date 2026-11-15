@@ -93,7 +93,7 @@ DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
-  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean;
+  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean;
   public_clues jsonb='[]'::jsonb; clue jsonb; saved jsonb;
   a jsonb='[]'::jsonb; item jsonb; chosen text;
 BEGIN
@@ -155,6 +155,23 @@ BEGIN
     clue:=m.private_pack->'third_suspect_mission'->'public_on_submission';
     IF clue IS NOT NULL THEN public_clues:=public_clues||jsonb_build_array(clue - 'authenticated_by_server' - 'initially_private');END IF;
   END IF;
+  court_view:=coalesce(m.play_state->'court','{}'::jsonb);
+  IF r.phase='regime_court' AND court_view->>'started_at' IS NOT NULL THEN
+    court_elapsed:=greatest(0,floor(extract(epoch FROM
+       now()-(court_view->>'started_at')::timestamptz))::integer);
+    long_court:=coalesce((court_view->>'duration_minutes')::int,8)=14;
+    IF court_elapsed<60 THEN current_stage:='opening';stage_end:=60;
+    ELSIF court_elapsed<CASE WHEN long_court THEN 420 ELSE 240 END
+      THEN current_stage:='defenses';stage_end:=CASE WHEN long_court THEN 420 ELSE 240 END;
+    ELSIF court_elapsed<CASE WHEN long_court THEN 720 ELSE 360 END
+      THEN current_stage:='confrontation';stage_end:=CASE WHEN long_court THEN 720 ELSE 360 END;
+    ELSIF court_elapsed<CASE WHEN long_court THEN 780 ELSE 420 END
+      THEN current_stage:='closing';stage_end:=CASE WHEN long_court THEN 780 ELSE 420 END;
+    ELSE current_stage:='vote';stage_end:=CASE WHEN long_court THEN 840 ELSE 480 END;
+    END IF;
+    court_view:=court_view||jsonb_build_object('stage_actual',current_stage,
+       'stage_seconds_remaining',greatest(0,stage_end-court_elapsed));
+  END IF;
   RETURN jsonb_build_object('enabled',true,
       'scenario_id',m.scenario_id,'cycle',r.cycle,'phase',r.phase,
       'role',p.public_role,'actor_id',actor,'my_card',card,'my_mission',own_mission,
@@ -168,7 +185,11 @@ BEGIN
              WHERE x->>'status'='awaiting_judge') ELSE '[]'::jsonb END,
       'my_fugitive_options',a,
       'public_evidence',public_clues,
-      'arrests',m.play_state->'arrests','court',m.play_state->'court',
+      'arrests',m.play_state->'arrests','court',court_view,
+      'my_reconstruction_submitted',coalesce(
+        m.play_state->'reconstructions' ? p.id::text,false),
+      'my_third_final_submitted',coalesce(
+        m.play_state->'third' ? 'final_declaration',false),
       'events',coalesce(m.play_state->'events','[]'::jsonb),
       'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb)));
 END $$;
