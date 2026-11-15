@@ -13,7 +13,7 @@ for(const token of ['igr_v695_release_eligible','igr_v695_build_pack','igr_v695_
  'v_prior_accuracy','correct_answers','min_cycle','challenge','mixed',
  'ON DELETE CASCADE','ENABLE ROW LEVEL SECURITY','REVOKE ALL'])
  assert(migration.includes(token),'sealed variants SQL missing '+token);
-for(const token of ['variants','private suspect card','truth leaked before reveal',
+for(const token of ['variant pack wrong','private suspect card','truth leaked before reveal',
  'reveal mismatch','expected 9 guaranteed investigations','variant identifier leaked'])
  assert(sqlQA.includes(token),'sealed smoke QA missing '+token);
 assert(intro.includes('Dans la capitale encore défendue, la Grey Room détient trois personnes liées au FDR.') &&
