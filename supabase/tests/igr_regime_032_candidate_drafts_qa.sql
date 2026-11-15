@@ -61,7 +61,7 @@ checkpoints AS (
        AND (SELECT count(DISTINCT a->>'origin') FROM jsonb_array_elements(d->'capture_evidence') a
             WHERE a->>'cycle'='1')>=2
        AND (SELECT count(*) FROM jsonb_array_elements(d->'capture_evidence') a
-            WHERE a->>'cycle'='1' AND a->>'revealed_at'='fugitive_unsafe_choice_or_confirmed_investigation')=2 FROM m
+            WHERE a->>'cycle'='1' AND a->>'revealed_at'='fugitive_risky_action_or_confirmed_investigation')=2 FROM m
  UNION ALL SELECT v,'third suspect has a verifiable mission before C2',
        d->'third_suspect_mission'->>'assigned_path' IN ('cooperate','protect')
        AND d->'third_suspect_mission'->>'action_deadline_cycle'='2'
