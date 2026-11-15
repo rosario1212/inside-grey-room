@@ -45,7 +45,7 @@ const PACKS={
     chapters:{
       1:{
         title:'PERSONNE N’EXISTE',
-        briefing:'Une équipe de surveillance est retrouvée morte dans un appartement sécurisé. Dans ses dossiers apparaît l’identité V-17 : passeport valide, comptes actifs et dossier médical cohérent, mais aucune trace vérifiable avant les six derniers mois.',
+        briefing:'Une équipe de surveillance est retrouvée morte dans un appartement sécurisé. La copie hors réseau des relevés qu’elle devait remettre a disparu. Dans les dossiers restants apparaît l’identité V-17 : passeport valide, comptes actifs et dossier médical cohérent, mais aucune trace vérifiable avant les six derniers mois.',
         question:'Que représente réellement l’identité V-17 ?',
         phases:[
           ['SCÈNE','Recoupez la scène et les horaires. Ne cherchez pas encore un coupable : cherchez quelles données supposent une personne réelle et lesquelles peuvent être créées administrativement.'],
@@ -54,7 +54,7 @@ const PACKS={
           ['CLASSIFICATION','Classez V-17 avant de verrouiller le dossier. Cette conclusion sera reprise dans les dossiers suivants.']
         ],
         secrets:{
-          chef:['La cellule avait reçu un ordre interne authentique de surveiller V-17, jamais de l’arrêter.','Empêcher le groupe de confondre authenticité de l’ordre et existence réelle de la cible.'],
+          chef:['La cellule avait reçu un ordre interne authentique de surveiller V-17, jamais de l’arrêter. Les agents morts avaient demandé la veille de préserver leurs journaux d’accès.','Empêcher le groupe de confondre authenticité de l’ordre et existence réelle de la cible.'],
           sigint:['Tous les appels attribués à V-17 proviennent de trois relais différents mais présentent exactement la même dérive d’horloge de 41 ms.','Montrer qu’une identité numérique peut être administrée depuis une même infrastructure.'],
           terrain:['Deux voisins disent avoir vu V-17, mais leurs descriptions ne correspondent pas. Les deux ont reçu la même photo après les faits.','Distinguer observation directe et souvenir influencé par une image transmise ensuite.'],
           source:['Une source du réseau hostile utilise “V-17” comme code de validation, jamais comme nom de personne.','Préserver la valeur de la source sans transformer son vocabulaire en preuve unique.'],
@@ -84,7 +84,7 @@ const PACKS={
           chef:['Le protocole d’urgence déplace automatiquement certains matériels classifiés vers un site secondaire.','Faire raisonner le groupe sur les effets institutionnels de l’attaque.'],
           sigint:['La revendication a été publiée 38 secondes avant la première alerte interne officielle.','Établir qu’un acteur connaissait le calendrier avant la diffusion normale de l’alerte.'],
           terrain:['Le convoi C n’a pas utilisé sa route de secours prévue ; il a emprunté un itinéraire préparé la veille.','Faire du trajet C un indice important sans le transformer seul en conclusion.'],
-          source:['Une source interne au réseau hostile indique qu’un matériel classifié devait sortir du site pendant une alerte majeure.','Relier la crise à un transfert sans prétendre connaître encore la nature du matériel.'],
+          source:['Une source interne au réseau hostile indique qu’un matériel classifié devait sortir du site pendant une alerte majeure. Le mouvement devait être enregistré comme une simple opération d’inventaire.','Relier la crise à un transfert sans prétendre connaître encore la nature du matériel.'],
           liaison:['Le cabinet ministériel veut attribuer immédiatement l’attaque à un État voisin afin de justifier la fermeture de la frontière.','Empêcher l’intérêt politique de devenir la vérité du dossier.'],
           legal:['Deux badges du convoi C ont été activés avec des identifiants créés après minuit.','Relier les accès du convoi aux anomalies d’identité du dossier précédent.'],
           archive:['Un ancien exercice d’urgence décrit exactement la même substitution logistique : évacuer un chargement classifié pendant la saturation des contrôles.','Relier 04:17 à une procédure concrète plutôt qu’à une signature mystérieuse.']
@@ -94,7 +94,7 @@ const PACKS={
           {id:'border',title:'CRÉER UN INCIDENT DIPLOMATIQUE',detail:'La revendication viserait avant tout une réaction diplomatique contre l’État voisin.',grade:1,consequence:'La pression politique est réelle, mais elle n’explique pas le trajet préparé du convoi C.'},
           {id:'terror',title:'FRAPPER LE CENTRE LOGISTIQUE',detail:'L’opération chercherait surtout à frapper le centre logistique et à imposer sa revendication.',grade:0,consequence:'Le convoi C et le chargement déplacé sortent de votre priorité.'}
         ],
-        reveal:'04:17 est une diversion logistique. L’attaque a déclenché le protocole qui permettait de sortir un chargement classifié par le convoi C avec des contrôles réduits.',
+        reveal:'04:17 est une diversion logistique. L’attaque a déclenché le protocole qui permettait de sortir un chargement classifié par le convoi C avec des contrôles réduits. L’accusation dirigée contre l’État voisin a détourné une partie de la surveillance vers la frontière.',
         apply:{transfer:{crisis:0,flag:'s2_correct'},border:{crisis:1,flag:'s2_partial'},terror:{crisis:1,flag:'s2_wrong'}}
       },
       3:{
@@ -111,7 +111,7 @@ const PACKS={
           chef:['Le compte rendu B est le seul validé par un superviseur qui n’était pas présent cette nuit-là.','Faire auditer la chaîne de validation, pas seulement le contenu.'],
           sigint:['L’horodatage du fichier B précède de neuf minutes la création de l’enregistrement audio auquel il est censé correspondre.','Apporter une anomalie technique vérifiable.'],
           terrain:['La détenue a dessiné de mémoire un carrefour correspondant au trajet réel du convoi C.','Conserver la valeur d’une information recoupée malgré une pièce falsifiée.'],
-          source:['La détenue ment sur son ancienneté dans le réseau, mais sa description du transfert du convoi C correspond aux éléments terrain.','Éviter le raisonnement “elle ment sur un point donc tout est faux”.'],
+          source:['La détenue ment sur son ancienneté dans le réseau, mais sa description du transfert du convoi C correspond aux éléments terrain. Elle évoque un objet retiré d’inventaire sans savoir ce qu’il contenait.','Éviter le raisonnement “elle ment sur un point donc tout est faux”.'],
           liaison:['Le cabinet du ministre cite déjà la phrase du compte rendu B dans une note confidentielle diffusée avant la validation finale du dossier.','Identifier une circulation anormale de l’information.'],
           legal:['Le compte rendu B n’a pas de signature cryptographique, contrairement aux deux autres.','Isoler B sans invalider A, C et l’audio.'],
           archive:['La phrase suspecte reprend mot pour mot un ancien document public sur les méthodes du réseau hostile.','Montrer qu’elle a pu être ajoutée pour rendre le témoignage artificiellement convaincant.']
@@ -121,7 +121,7 @@ const PACKS={
           {id:'source',title:'TOUT LE TÉMOIGNAGE',detail:'Le récit de la détenue serait entièrement construit pour tromper les enquêteurs.',grade:0,consequence:'Vous perdez plusieurs éléments déjà recoupés indépendamment.'},
           {id:'audio',title:'ENREGISTREMENT AUDIO',detail:'L’enregistrement sonore disponible aurait été tronqué ou remanié après l’audition.',grade:1,consequence:'Vous identifiez une anomalie mais conservez la pièce falsifiée dans la synthèse.'}
         ],
-        reveal:'Le compte rendu B a été fabriqué à l’intérieur du service. La détenue ment sur certains éléments biographiques, mais plusieurs de ses informations opérationnelles sont confirmées par des sources indépendantes.',
+        reveal:'Le compte rendu B a été fabriqué à l’intérieur du service. La détenue ment sur certains éléments biographiques, mais plusieurs de ses informations opérationnelles sont confirmées par des sources indépendantes. Une référence d’inventaire conservée dans l’audio oriente désormais la cellule vers la destination du chargement.',
         apply:{b:{crisis:0,flag:'s3_correct'},source:{crisis:1,flag:'s3_wrong'},audio:{crisis:1,flag:'s3_partial'}}
       },
       4:{
@@ -138,7 +138,7 @@ const PACKS={
           chef:['Deux opérations ont reçu une validation de second niveau commune, mais une autorité politique a demandé l’une tandis qu’un service technique a exécuté l’autre.','Faire distinguer le commanditaire de la personne qui possède réellement les droits d’écriture.'],
           sigint:['Les traces de V-17 et du dossier d’audition renvoient à un certificat de délégation partagé entre plusieurs postes. Le journal d’écriture initial est incomplet.','Retrouver le titulaire du droit d’écriture, pas seulement un certificat commun.'],
           terrain:['Le convoi C est resté 96 secondes dans une zone de chargement sensible; une escorte relevant du cabinet ministériel y a été aperçue la même nuit.','Distinguer une présence sur place d’une autorisation effective de transfert.'],
-          source:['La détenue parle d’un interlocuteur capable de faire créer des accès sans jamais préciser son nom ni son administration.','Ne pas transformer une description fonctionnelle vague en identification certaine.'],
+          source:['La détenue parle d’un interlocuteur capable de faire créer des accès et de faire disparaître une référence d’inventaire, sans jamais préciser son nom ni son administration.','Ne pas transformer une description fonctionnelle vague en identification certaine.'],
           liaison:['Le cabinet ministériel connaissait une citation du dossier d’audition avant son exploitation officielle, mais affirme avoir seulement reçu une copie.','Vérifier si cette fuite implique un accès en écriture ou une simple consultation.'],
           legal:['Les autorisations en cause comportent trois niveaux distincts : lecture, validation et écriture. Les ordres politiques ne prouvent pas à eux seuls l’usage du dernier niveau.','Séparer pouvoir d’ordonner et capacité technique de falsifier un dossier.'],
           archive:['Un même identifiant technique apparaît lors de la création de V-17, de la préparation du convoi C et du traitement de l’audition; le registre mentionne un profil de service, pas un nom.','Faire remonter un compte de service à son titulaire sans déduire l’identité depuis le seul identifiant.']
@@ -148,7 +148,7 @@ const PACKS={
           {id:'prisoner',title:'OPÉRATRICE DÉTENUE',detail:'L’opératrice détenue aurait orchestré une partie des anomalies pour orienter la cellule.',grade:0,consequence:'Le compte privilégié interne reste actif et peut encore fausser le dernier dossier.'},
           {id:'minister',title:'CABINET MINISTÉRIEL',detail:'Un bureau politique aurait coordonné les falsifications et la circulation des renseignements.',grade:1,consequence:'Vous identifiez une circulation anormale de l’information sans neutraliser le relais technique.'}
         ],
-        reveal:'Le responsable des habilitations est le relais interne. Son compte privilégié a permis de créer V-17, de préparer la sortie du convoi C et d’injecter le compte rendu B.',
+        reveal:'Le responsable des habilitations est le relais interne. Son compte privilégié a permis de créer V-17, de préparer la sortie du convoi C et d’injecter le compte rendu B. La compromission a aussi effacé la dernière preuve administrative de réception du chargement, sans révéler sa destination.',
         apply:{kern:{crisis:-1,flag:'s4_correct'},prisoner:{crisis:1,flag:'s4_wrong'},minister:{crisis:0,flag:'s4_partial'}}
       },
       5:{
@@ -165,7 +165,7 @@ const PACKS={
           chef:['Le relais interne avait autorité sur certains ouvrages transférés au domaine civil, tandis que la base aérienne relève d’une autre chaîne. Une dérogation de transit militaire existe toutefois.','Comparer les pouvoirs de transfert aux preuves d’un stockage effectif.'],
           sigint:['Deux interruptions réseau jalonnent le trajet du convoi : une près du dépôt et une sur une ligne enterrée menant vers un ouvrage civil. Aucun signal ne prouve à lui seul un déchargement.','Distinguer passage, relais technique et lieu de stockage.'],
           terrain:['Le poids du convoi rend irréaliste un trajet direct par le col vers la base dans la fenêtre connue. Un transbordement ultérieur reste possible et n’a pas été observé.','Utiliser le temps de trajet pour éliminer un mouvement précis, sans exclure un transfert secondaire imaginaire par certitude.'],
-          source:['La détenue répète la formule « sous le niveau de l’eau » mais reconnaît ne jamais avoir vu le site. Son contact pouvait lui transmettre un lieu de couverture.','Tester la valeur d’un renseignement indirect plutôt que prendre une description pour une localisation.'],
+          source:['La détenue répète la formule « sous le niveau de l’eau » mais reconnaît ne jamais avoir vu le site. Elle a compris que le chargement devait servir à faire pression sur une autorité, sans connaître la cible. Son contact pouvait lui transmettre un lieu de couverture.','Tester la valeur d’un renseignement indirect plutôt que prendre une description pour une localisation.'],
           liaison:['Le gouvernement exige l’inspection prioritaire de la base et du dépôt. Aucun compte rendu de reconnaissance n’a encore été produit pour l’ouvrage civil.','Ne pas confondre urgence politique et comparaison contradictoire des trois sites.'],
           legal:['Un ouvrage civil a quitté les inventaires militaires, alors que le dépôt demeure sous contrôle de démantèlement. Les deux peuvent néanmoins figurer sur une chaîne de transport ancienne.','Distinguer contrôle administratif et présence physique du matériel.'],
           archive:['Une fiche prévoit un transfert vers une infrastructure civile; une seconde fiche, sans accusé de réception, évoque un retour au dépôt.','Faire le tri entre ordre de mouvement et preuve de réception.']
@@ -175,7 +175,7 @@ const PACKS={
           {id:'airbase',title:'BASE AÉRIENNE ACTIVE',detail:'Le chargement aurait rejoint une installation militaire toujours active.',grade:0,consequence:'La base était une fausse piste et le dispositif de recherche perd un temps critique.'},
           {id:'depot',title:'ANCIEN DÉPÔT DE DÉMANTÈLEMENT',detail:'Le matériel serait resté dans la filière de démantèlement, sans atteindre un nouveau site.',grade:1,consequence:'Vous retrouvez l’origine de la disparition mais pas le stockage final.'}
         ],
-        reveal:'L’ogive est stockée dans une ancienne galerie hydroélectrique passée sous gestion civile. Le convoi C y a livré le chargement à la faveur du protocole d’urgence.',
+        reveal:'L’ogive est stockée dans une ancienne galerie hydroélectrique passée sous gestion civile. Le convoi C y a livré le chargement à la faveur du protocole d’urgence. Le réseau cherchait à soustraire l’arme au démantèlement pour en faire un moyen de pression, tandis que le massacre initial, le faux drapeau et les faux documents servaient à effacer les traces de cette opération.',
         apply:{nadir:{crisis:-1,flag:'s5_nadir'},airbase:{crisis:2,flag:'s5_fail'},depot:{crisis:1,flag:'s5_late'}}
       }
     }
