@@ -90,7 +90,8 @@ assert.equal((await art.response).status,200);
 await Promise.all(art.waits);
 assert(await current.match(origin+'/assets/cover-new.webp?v=1'),'Static illustration must remain cacheable');
 
-let turnRequests=0,videoStarts=0,videoJoins=0,lastConfig=null;
+let turnRequests=0,videoStarts=0,videoJoins=0,lastConfig=null,cameraCalls=0;
+const order=[];
 const fakePlayer={
   getConfiguration:()=>({iceServers:[]}),
   setConfiguration(cfg){lastConfig=cfg}
@@ -100,11 +101,12 @@ const context={
   window:{},SUPABASE_KEY:'sb_publishable_qa_test_only',
   STATE:{room:'QA701',token:'00000000-0000-4000-8000-000000000701',sync:null},
   newPeer:()=>fakePlayer,
+  ensureLocalVideo:async()=>{cameraCalls++;order.push('camera');return {};},
   startVideo:async()=>{videoStarts++},
   activateVideo:async()=>{videoStarts++},
   joinVideoAsViewer:async()=>{videoJoins++},
   fetch:async(_url,opts)=>{
-    turnRequests++;
+    turnRequests++;order.push('turn');
     assert.equal(opts.method,'POST','TURN must use authenticated POST');
     assert.equal(opts.headers.apikey,context.SUPABASE_KEY);
     assert.equal(JSON.parse(opts.body).p_code,context.STATE.room);
@@ -116,6 +118,8 @@ vm.runInNewContext(turn,context);
 assert.equal(turnRequests,0,'TURN credentials fetched before entering video');
 await context.activateVideo();
 assert.equal(videoStarts,1);
+assert.equal(cameraCalls,1,'iOS camera capture must be requested from the initial tap');
+assert.deepEqual(order.slice(0,2),['camera','turn'],'Camera permission must precede any relay network await');
 assert.equal(turnRequests,1,'Investigator camera must preauthorize TURN');
 context.newPeer('viewer',true);
 assert(lastConfig?.iceServers?.some(x=>String(x.urls)==='turn:managed.example'),'Managed relay not configured for investigator');
