@@ -47,7 +47,7 @@ for(const build of ['scripts/build-web.mjs','scripts/build-mobile.mjs'])
 assert(finalize.includes("'terror-crisis-v696.css'"),'Final page must version the crisis stylesheet');
 assert(sw.includes('/terror-crisis-v696.css?v=terror-crisis-v696-20261115'),
  'Service worker source must preload the crisis CSS');
-assert(publisher.includes('crisisCssPath')&&publisher.includes('crisisCacheTag'),
+assert(publisher.includes('crisisCssPath')&&publisher.includes("const tag='terror-live-v694-20261115-crisis-v696'"),
  'Publish step must advance its PWA cache');
 
 if(process.argv[2]){
