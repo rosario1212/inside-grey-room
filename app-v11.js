@@ -1078,7 +1078,28 @@ async function performSync(force=false){
    if(changed&&STATE.room===room&&STATE.token===token&&STATE.sync===d){const draft=captureDrafts();routeFromServer();restoreDrafts(draft)}
   }).catch(e=>console.warn('avatars',e));
   return rendered?d:null;
- }catch(e){if(STATE.room===room&&STATE.token===token){STATE.syncFailures=(STATE.syncFailures||0)+1;STATE.lastSyncFailure={room,token,error:e};connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
+ }catch(e){
+   if(STATE.room===room&&STATE.token===token){
+    // v706: a removed player must not keep polling an inaccessible lobby forever.
+    // Verify on the server; never mistake a temporary network failure for exclusion.
+    if((STATE.view==='lobby'||STATE.sync?.room?.status==='lobby')
+       &&/unauthoriz|invalid (player|token|session)/i.test(String(e?.message||''))){
+     try{
+      const access=await rpc('igr_v706_lobby_session_status',{p_code:room,p_player_token:token});
+      if(access?.active===false&&STATE.room===room&&STATE.token===token){
+       leaveRoomLocal();
+       toast('Ta session dans le lobby a été fermée ou retirée par l’hôte.');
+       return null;
+      }
+     }catch(checkError){console.warn('lobby access verification unavailable',checkError)}
+    }
+    STATE.syncFailures=(STATE.syncFailures||0)+1;
+    STATE.lastSyncFailure={room,token,error:e};
+    connectionStatus(true);
+    console.warn('sync',e.message);
+   }
+   return null;
+  }finally{STATE.syncBusy=false}
 }
 function routeFromServer(){
  const d=STATE.sync;if(!d)return;
@@ -1122,8 +1143,32 @@ function renderLobby(prefetched=null){
  const myReservation=reservations.find(x=>String(x.player_id)===String(me.id));
  const victoryRoleNotice=myReservation
    ?`<div class="victory-privilege compact ${myReservation.awarded?'awarded':'lost'}"><b>${myReservation.awarded?'RÔLE RÉSERVÉ PAR VICTOIRE':'CONFLIT DE RÔLE'}</b><span>${myReservation.awarded?`${h(publicRoleLabel(myReservation.claimed_role))} t’est réservé · force de victoire ${h(myReservation.score)}/100.`:`Ta demande ${h(publicRoleLabel(myReservation.claimed_role))} n’a pas obtenu la priorité. Une victoire plus forte a gagné le conflit ; choisis un autre rôle disponible.`}</span></div>`:'';
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span></div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(SOUND.enabled)ensureAmbient('menu');
+}
+let LOBBY_KICK_BUSY=false;
+async function kickLobbyPlayer(playerId){
+ if(LOBBY_KICK_BUSY||!STATE.hostToken||STATE.sync?.room?.status!=='lobby')return;
+ const player=(STATE.sync?.players||[]).find(p=>String(p.id)===String(playerId));
+ if(!player||player.is_host)return;
+ const confirmed=await appConfirm({
+  title:'Exclure ce participant ?',
+  text:`${player.pseudo} sera retiré du lobby. Sa place et son rôle réservé seront libérés. La partie en cours ne peut pas être modifiée ainsi.`,
+  confirmLabel:'Exclure du lobby',danger:true
+ });
+ if(!confirmed||STATE.sync?.room?.status!=='lobby')return;
+ LOBBY_KICK_BUSY=true;
+ try{
+  const out=await rpc('igr_v706_host_kick_lobby',{
+   p_code:STATE.room,p_host_token:STATE.hostToken,p_player_id:playerId
+  });
+  if(!out?.ok)throw new Error('lobby kick not confirmed');
+  await syncNow(true);
+  toast(`${player.pseudo} a été retiré du lobby.`);
+ }catch(e){
+  console.error('kick lobby player',e);
+  toast('Exclusion impossible. Vérifie que la partie n’a pas commencé.');
+ }finally{LOBBY_KICK_BUSY=false}
 }
 async function chooseLobbyRole(role){
  try{await rpc('igr_v4_choose_role',{p_code:STATE.room,p_player_token:STATE.token,p_role:role});await syncNow(true);toast(`Rôle choisi : ${publicRoleLabel(role)}`)}catch(e){console.error(e);toast('Ce rôle vient d’être pris ou n’est pas disponible.')}
@@ -2306,8 +2351,41 @@ async function handleSignal(s){
   const pc=VIDEO.pcs.get(from);if(pc)try{await pc.addIceCandidate(payload)}catch{}
  }else if(type==='hangup')closePeer(from);
 }
-function leaveRoom(){
+function leaveRoomLocal(){
  stopRoomWatcher();clearSession();connectionStatus(false);VIDEO.lastSignalId=0;cancelBriefingVoice();AVATARS.map.clear();AVATARS.sig='';if(VIDEO.poller){clearInterval(VIDEO.poller);VIDEO.poller=null}VIDEO.localStream?.getTracks().forEach(t=>t.stop());VIDEO.localStream=null;closeAllPeers();Object.assign(STATE,{view:'home',scenarioId:STATE.selectedScenario,room:null,token:null,hostToken:null,playerId:null,playerPseudo:'',role:'suspect',players:[],tab:'card',sync:null,syncSig:'',cycle:0});renderHome();
+}
+let LOBBY_LEAVE_BUSY=false;
+async function leaveRoom(){
+ if(LOBBY_LEAVE_BUSY)return;
+ const room=STATE.room,token=STATE.token,host=!!STATE.hostToken;
+ const inLobby=!!room&&!!token&&(STATE.sync?.room?.status==='lobby'||STATE.view==='lobby');
+ if(inLobby){
+  if(host){
+   const confirmed=await appConfirm({
+    title:'Fermer le lobby ?',
+    text:'Tu es l’hôte. Quitter avant le lancement fermera la cellule pour tous les joueurs.',
+    confirmLabel:'Fermer le lobby',danger:true
+   });
+   if(!confirmed)return;
+  }
+  LOBBY_LEAVE_BUSY=true;
+  try{
+   const out=await rpc('igr_v4_leave_room',{p_code:room,p_player_token:token});
+   if(!out?.ok){
+    if(out?.reason==='game_started'){
+     await syncNow(true);
+     toast('La partie vient de commencer : quitte-la depuis l’écran de jeu.');
+    }else toast('Départ non confirmé par le serveur.');
+    return;
+   }
+  }catch(e){
+   console.warn('lobby leave failed',e);
+   toast('Impossible de quitter le lobby : connexion indisponible. Réessaie.');
+   return;
+  }finally{LOBBY_LEAVE_BUSY=false}
+ }
+ // After launch, leaving the screen is local: never delete an active role.
+ leaveRoomLocal();
 }
 
 function initAudio(){
