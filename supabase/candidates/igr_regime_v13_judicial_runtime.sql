@@ -44,7 +44,10 @@ BEGIN
    WHERE value->>'id'=eid AND value->>'targetId'=p_target_id
      AND (value->>'cycle')::integer<=r.cycle LIMIT 1;
    IF NOT FOUND OR NOT ((e->>'revealed_at'='cycle_start') OR
-       (coalesce(m.play_state->'disclosed','[]'::jsonb) ? eid)) THEN
+       (coalesce(m.play_state->'disclosed','[]'::jsonb) ? eid)
+       OR EXISTS(SELECT 1 FROM jsonb_array_elements(
+         coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) x
+         WHERE x->>'id'=eid AND (x->>'cycle')::integer<=r.cycle)) THEN
      RAISE EXCEPTION 'unpublished or unrelated capture evidence';END IF;
    origins:=origins||ARRAY[e->>'origin'];
  END LOOP;
