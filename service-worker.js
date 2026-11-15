@@ -1,5 +1,7 @@
 const CACHE='igr-santoro-display-audit-20261108';
 const SHELL=[
+  '/analyst-profiling-v700.css?v=v700-analyst-psychology',
+  '/analyst-profiling-v700.js?v=v700-analyst-psychology',
   '/terror-crisis-v696.css?v=terror-carbon-v697-20261115',
   '/', '/index.html', '/en.html',
   '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=role-balance-v694-20261115',
