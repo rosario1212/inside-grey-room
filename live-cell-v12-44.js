@@ -22,7 +22,7 @@
 
   const roomScenario = () => String(STATE?.sync?.room?.scenario_id || STATE?.scenarioId || STATE?.selectedScenario || '');
   const inRoom = () => !!(STATE?.room && STATE?.token);
-  const roomScreenActive = () => ['lobby','briefing','role','game'].includes(STATE?.view);
+  const roomScreenActive = () => !STATE?.view || ['lobby','briefing','role','game'].includes(STATE.view);
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
   const isOnline = () => navigator.onLine !== false;
   const isTerminalSessionError = error => /unauthorized|room not found|cellule introuvable|invalid player|player not found/i.test(String(error?.message || error || ''));
