@@ -57,6 +57,32 @@ function myCard(){
  out+='<p><b>Ton objectif :</b> '+esc(c.objective)+'</p>';
  return section('TON PERSONNAGE',out);
 }
+
+function scene(){
+ const beat=cache?.scene;
+ if(!beat||Number(beat.cycle)!==Number(cache.cycle))return '';
+ return '<section class="igr-rg13-scene" aria-label="Scène du cycle">'+
+  '<small>KARSANE · RECONSTITUTION DU CYCLE '+esc(beat.cycle)+'</small>'+
+  '<h4>'+esc(beat.title)+'</h4><p>'+esc(beat.text)+'</p>'+
+  '<span>Constat de contexte · pas une preuve d’identité ou de culpabilité</span></section>';
+}
+function capturedDefense(){
+ const d=cache?.my_captured_objective;
+ if(!d)return '';
+ if(cache.my_captured_response_used)return section('DÉFENSE D’UN DIRIGEANT CAPTURÉ',
+  '<p>Ton intervention pour ce cycle est enregistrée. Le tribunal pourra la confronter à des pièces indépendantes.</p>');
+ const others=cast().filter(x=>x.actor_id!==thisActor());
+ const options=others.map(x=>'<option value="'+esc(x.actor_id)+'">'+esc(x.pseudo)+'</option>').join('');
+ return section('DÉFENSE APRÈS ARRESTATION · CYCLE '+esc(cache.cycle),
+  '<p>'+esc(d.objective)+'</p>'+
+  '<p><b>Acte discuté :</b> '+esc(d.act_title)+'. Tu ne contestes ici que la personne ayant donné cet ordre précis.</p>'+
+  '<label>Qui aurait personnellement donné cet ordre ?<select id="igrRgCapturedOrderer">'+options+'</select></label>'+
+  '<label>Ta déclaration datée<textarea id="igrRgCapturedStatement" rows="3" maxlength="350" '+
+   'placeholder="Explique en quoi cet ordre ne venait pas de toi et cite un fait vérifiable"></textarea></label>'+
+  '<p>Tu disposes d’un choix par cycle après arrestation. Un extrait authentique peut aussi révéler des éléments qui t’accablent.</p>'+
+  button('PRODUIRE UN EXTRAIT AUTHENTIQUE','captured-exhibit')+
+  button('DÉPOSER UNE CONTESTATION','captured-challenge'));
+}
 function alliance(){
  if(!cache?.my_fugitive_options?.length&&!['vahran_director','interior_minister',
  'presidential_heir','defense_minister','fallen_president','presidential_security'].includes(thisActor()))return '';
@@ -241,7 +267,7 @@ function render(){
  const previous=document.getElementById('igr-regime-v13');
  const preserved=new Map();
  if(previous){
-  previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense').forEach(el=>{
+  previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement').forEach(el=>{
    const k=el.hasAttribute('data-court-act')?
      el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
    preserved.set(k,el.value);
@@ -255,10 +281,10 @@ function render(){
  root.innerHTML='<header class="igr-rg13-banner"><small>LE RÉGIME · '+esc(cache.scenario_id)+' · CYCLE '+esc(cache.cycle)+'/3</small>'+
  '<h3>'+esc(phase==='regime_court'?'LE TRIBUNAL DE KARSANE':'LA CHUTE DE KARSANE')+'</h3>'+
  '<p>Les décisions des joueurs influencent la traque. Les faits historiques restent scellés.</p></header>'+
- (phase==='regime_court'?court():myCard()+alliance()+actions()+investigations()+third()+warrants()+judge())+
+ scene()+(phase==='regime_court'?court()+capturedDefense():myCard()+alliance()+actions()+capturedDefense()+investigations()+third()+warrants()+judge())+
  evidence()+events();
  after.insertAdjacentElement('afterend',root);
- root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense').forEach(el=>{
+ root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement').forEach(el=>{
   const k=el.hasAttribute('data-court-act')?
    el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
   if(preserved.has(k))el.value=preserved.get(k);
@@ -289,6 +315,12 @@ document.addEventListener('click',async(ev)=>{
    await call('igr_regime_v13_action',{...args,p_kind:'alliance',p_payload:{choice:action.endsWith('together')?'together':'apart'}});
   }else if(action==='move'||action==='investigate'){
    await call('igr_regime_v13_action',{...args,p_kind:action==='move'?'fugitive_choice':'investigate',p_payload:{option_id:el.dataset.optionId}});
+  }else if(action==='captured-exhibit'||action==='captured-challenge'){
+   const statement=control('igrRgCapturedStatement').trim();
+   if(statement.length<30){toast('Décris précisément ton argument en au moins 30 caractères.');return;}
+   await call('igr_regime_v13_action',{...args,p_kind:'captured_response',
+    p_payload:{mode:action==='captured-exhibit'?'authentic_exhibit':'contested_declaration',
+      claimed_orderer:control('igrRgCapturedOrderer'),statement}});
   }else if(action==='third-submit'){
    await call('igr_regime_v13_action',{...args,p_kind:'third_submission',p_payload:{defense:control('igrRgDefense')}});
   }else if(action==='warrant'){
