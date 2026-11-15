@@ -3,7 +3,7 @@
 DO $court_qa$
 DECLARE
   mode_ text; room_ text; role_ text; rec record; q jsonb; r public.igr_v4_rooms%rowtype;
-  expected_speech int; expected_defense int; current_player uuid; current_token uuid; judge_token uuid; suspect_token uuid; i int; received_error boolean;
+  expected_speech int; expected_defense int; host_ uuid; current_player uuid; current_token uuid; judge_token uuid; suspect_token uuid; i int; received_error boolean;
 BEGIN
   FOREACH mode_ IN ARRAY ARRAY['short','long'] LOOP
     room_:='T706'||upper(left(mode_,1));
@@ -67,7 +67,8 @@ BEGIN
   END LOOP;
   -- Without a Judge, preserve the special TERREUR hearing and defence copy.
   room_:='T706N';
-  INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES(room_,'026');
+  INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES(room_,'026') RETURNING host_token INTO host_;
+  PERFORM public.igr_v681_terror_set_city(room_,host_,'Capitale QA');
   INSERT INTO public.igr_v4_players(room_code,pseudo,seat_index,public_role,internal_slot)
   VALUES (room_,'Enquêteur',0,'enqueteur',null),(room_,'Analyste',1,'analyste',null),(room_,'Officier',2,'officier_liaison',null),
    (room_,'Suspect 1',3,'suspect',1),(room_,'Suspect 2',4,'suspect',2),(room_,'Suspect 3',5,'suspect',3);
