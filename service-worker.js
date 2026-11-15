@@ -99,6 +99,19 @@ self.addEventListener('fetch',event=>{
     return;
   }
 
+  // Content-addressed v702 bundles cannot change at the same URL. Cache-first
+  // makes repeat opens/offline resumes fast without caching any private RPC.
+  if(/^\/igr-v702-(?:js|css)-[a-f0-9]{16}\.(?:js|css)$/.test(url.pathname)){
+    event.respondWith(caches.match(req).then(cached=>cached||fetch(req).then(response=>{
+      if(response.ok){
+        const copy=response.clone();
+        event.waitUntil(caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{}));
+      }
+      return response;
+    })));
+    return;
+  }
+
   const runtimeFile=req.mode==='navigate'||/\.(?:js|css|html)$/.test(url.pathname);
   const navigationKey=url.pathname==='/en.html'?'/en.html':'/index.html';
   const key=req.mode==='navigate'?navigationKey:req;
