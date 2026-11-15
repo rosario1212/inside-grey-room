@@ -129,6 +129,18 @@
   if (typeof activateVideo === 'function') {
     const baseActivateVideo = activateVideo;
     activateVideo = async function(...args) {
+      // iOS Safari: capture permissions must be requested in the original
+      // click/touch call stack, before any network await can lose activation.
+      // The canonical handler reuses the stream when it starts the session.
+      if (typeof ensureLocalVideo === 'function') {
+        try { await ensureLocalVideo(); }
+        catch(error) {
+          try { stopLocalCapture?.(); } catch {}
+          console.error('Camera permission denied',error);
+          try { toast('Caméra/micro refusés ou flux indisponible.'); } catch {}
+          return;
+        }
+      }
       await waitForTurn();
       return baseActivateVideo.apply(this,args);
     };
