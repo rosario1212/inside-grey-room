@@ -1,6 +1,6 @@
 # LE RÉGIME — Contrat v6 : La Tête / Le Sceau / La Tour, Journal de Karsane, audiences conditionnelles
 
-**Statut : conception sur branche brouillon, NON jouable côté serveur et NON déployée.** Ce contrat supplante `docs/REGIME_ALLIANCE_MANDATS_VERDICT_V5.md` sur les codes du 034, le rythme de l'audience et les missions du troisième suspect. Le système de capture, d'alias joueur, de variantes et de reconstruction judiciaire doit encore être écrit/testé côté serveur. Ne jamais afficher une actualité inventée comme une vraie dépêche extérieure.
+**Statut : conception sur branche brouillon, NON jouable côté serveur et NON déployée.** **Nouvelle direction v7 : la phase finale doit être un salon commun et un procès contradictoire réel, non une simple audience v52 prolongée ; lire `docs/REGIME_TRIBUNAL_SALLE_COMMUNE_V7.md`.** Ce contrat supplante `docs/REGIME_ALLIANCE_MANDATS_VERDICT_V5.md` sur les codes du 034, le rythme de l'audience et les missions du troisième suspect. Le système de capture, d'alias joueur, de variantes et de reconstruction judiciaire doit encore être écrit/testé côté serveur. Ne jamais afficher une actualité inventée comme une vraie dépêche extérieure.
 
 ## 1. Trois codes définitifs du 034, ancrés dans la dictature
 
