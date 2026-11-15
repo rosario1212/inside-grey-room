@@ -91,6 +91,37 @@ WITH ids(sid,variant_id) AS (
  AND (sid<>'034' OR
   (d->'setting'->'codes'='["LA TÊTE","LE SCEAU","LA TOUR"]'::jsonb
   AND d::text !~* '(notaire|rempart|portrait)')) FROM drafts
+
+ UNION ALL SELECT sid,variant_id,'three distinct progressively dark public scenes without culprit reveal',
+ jsonb_array_length(d->'scene_beats')=3
+ AND (SELECT count(distinct (x->>'cycle')::integer) FROM jsonb_array_elements(d->'scene_beats') x)=3
+ AND (SELECT count(*) FROM jsonb_array_elements(d->'scene_beats') x
+    WHERE x->>'visibility'='public' AND x->>'evidence'='false'
+      AND x->>'does_not_identify_culprit'='true'
+      AND length(x->>'text')>=100)=3 FROM drafts
+ UNION ALL SELECT sid,variant_id,'minimum three judicial acts with two guaranteed independent sources',
+ (SELECT count(*) FROM jsonb_array_elements(d->'acts') a
+   WHERE (SELECT count(distinct v->>'origin') FROM jsonb_array_elements(d->'revelations') v
+     WHERE v->>'kind'='guaranteed' AND v->'act_ids' ? (a->>'id'))>=2)>=3 FROM drafts
+ UNION ALL SELECT sid,variant_id,'two captured actors have real narrowly limited defense goals',
+ (SELECT count(*) FROM jsonb_object_keys(d->'captured_defense_objectives'))=2
+ AND (SELECT count(*) FROM jsonb_each(d->'captured_defense_objectives') f(actor,mission)
+    WHERE f.mission->>'expected_ordered_by'<>f.actor
+    AND EXISTS(SELECT 1 FROM jsonb_array_elements(d->'acts') a
+     WHERE a->>'id'=f.mission->>'act_id'
+      AND a->>'orderedBy'=f.mission->>'expected_ordered_by')
+    AND EXISTS(SELECT 1 FROM jsonb_array_elements(d->'revelations') e
+     WHERE e->>'kind'='optional'
+      AND e->'act_ids' ? (f.mission->>'act_id')
+      AND (e->>'min_cycle')::integer<=2))=2 FROM drafts
+ UNION ALL SELECT sid,variant_id,'five public refuges including two separately relocatable networks',
+ jsonb_array_length(d->'first_cycle'->'public_networks')=5
+ AND (SELECT count(distinct net->>'id') FROM jsonb_array_elements(
+    d->'first_cycle'->'public_networks') net)=5
+ AND (SELECT count(*) FROM jsonb_array_elements(
+    d->'first_cycle'->'public_networks') net
+    WHERE net->>'type'='relocation')=2
+ AND (d->'first_cycle'->'fallback_tracks' ?& ARRAY['first','second']) FROM drafts
  UNION ALL SELECT sid,variant_id,'secret truth remains confined to private schema',
  NOT has_table_privilege('anon','igr_private.igr_v99_variant_manuscripts','SELECT')
  AND NOT has_table_privilege('authenticated','igr_private.igr_v99_variant_manuscripts','SELECT') FROM drafts
