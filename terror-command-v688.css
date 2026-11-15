@@ -19,3 +19,18 @@
 .terror-v688-capture h2{margin:10px 0;font-size:clamp(21px,5vw,30px);line-height:1.15}
 .terror-v688-capture p{font-size:13px;line-height:1.62;color:#eee0da}
 .terror-v688-surrender{font-size:11px;letter-spacing:.07em;font-weight:800;color:#ffbaaa;padding-top:10px;border-top:1px solid rgba(231,129,103,.28)}
+
+/* Cycle 2–3: a single officer intervention in a real hearing. */
+.terror-v693-visit{margin:10px 0 15px;padding:13px 15px;background:linear-gradient(120deg,rgba(40,51,49,.94),rgba(19,26,28,.98));color:#f0ede3;border-radius:11px;border:1px solid rgba(163,182,170,.44)}
+.terror-v693-visit-head{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}
+.terror-v693-visit-head small{font-size:10px;letter-spacing:.12em;color:#b8cabe}
+.terror-v693-visit-head strong{font-size:15px;line-height:1.32;color:#f2e7d2}
+.terror-v693-visit p{font-size:12px;line-height:1.55;margin:7px 0 11px;color:#d5d9d3}
+.terror-v693-visit label{display:block;font-size:11px;color:#e1e9dc;margin:0 0 5px}
+.terror-v693-visit select{display:block;box-sizing:border-box;width:100%;min-height:43px;background:#1c2628;color:#f1f0e9;border:1px solid #859a8e;border-radius:7px;padding:9px;margin-bottom:10px;font:inherit}
+.terror-v693-button{display:block;min-height:44px;box-sizing:border-box;width:100%;font:inherit;font-weight:700;font-size:13px;border-radius:8px;border:1px solid #bcceab;color:#152118;background:#b7cca9;padding:10px 13px;cursor:pointer}
+.terror-v693-button:hover:not(:disabled){background:#d4e5c9}
+.terror-v693-button:disabled{opacity:.48;cursor:not-allowed}
+.terror-v693-button:focus-visible{outline:3px solid #f8dd9f;outline-offset:3px}
+.terror-v693-visit>small{display:block;margin-top:11px;font-size:10px;color:#b9c0b9;line-height:1.5}
+.terror-v693-question{padding:9px 11px;background:rgba(151,176,140,.12);border-left:3px solid #b4cba7;border-radius:4px;color:#e8f0e3!important}
