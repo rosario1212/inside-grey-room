@@ -37,11 +37,11 @@ BEGIN
  PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_a,
   'Il semble éviter les conflits et la confrontation avec les autres.','Ce point découle de sa déclaration initiale, pas d un diagnostic.');
  PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_b,
-  'Il semble minimiser la gravité de ses décisions personnelles et collectives.','Les récits publiés divergent sur l heure du départ.');
+  'Il semble minimiser la gravité de ses décisions personnelles et collectives.','Les récits publiés divergent sur l heure exacte du départ.');
  refused:=false;
  BEGIN
   PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_a,
-   'Il cherche peut être à protéger un autre joueur.','Cette interprétation exige de nouvelles observations objectives et corroborées.');
+   'Il cherche peut être à protéger un autre joueur.','Cette interprétation exige de nouvelles observations réellement objectives et corroborées.');
  EXCEPTION WHEN OTHERS THEN refused:=true; END;
  IF NOT refused THEN RAISE EXCEPTION 'Duplicate profile same cycle accepted';END IF;
  UPDATE public.igr_v4_rooms SET cycle=2 WHERE code='V700QA1';
@@ -66,7 +66,7 @@ BEGIN
  UPDATE public.igr_v4_rooms SET phase='final_audience' WHERE code='V700QA1';
  refused:=false;
  BEGIN PERFORM public.igr_v700_submit_psych_profile('V700QA1',analyst_,suspect_a,
-  'Il semble chercher à obtenir une validation sociale au sein du groupe.','Le contexte de groupe motive cette interrogation prudente.');
+  'Il semble chercher à obtenir une validation sociale au sein du groupe.','Le contexte de groupe motive cette interrogation prudente sur les motivations.');
  EXCEPTION WHEN OTHERS THEN refused:=true; END;
  IF NOT refused THEN RAISE EXCEPTION 'Final hearing allowed new profile';END IF;
 END $qa$;
