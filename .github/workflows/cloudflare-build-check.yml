@@ -197,6 +197,10 @@ jobs:
         run: node scripts/v103-proof-release-check.mjs
       - name: Verify multiplayer synchronization
         run: node scripts/multiplayer-sync-check.mjs dist
+      - name: Verify CARTEL 031 integration, decisions and sync backoff
+        run: |
+          node scripts/v701-global-audit-check.mjs dist
+          node scripts/cartel031-check.mjs dist
       - name: Verify Casino authority, privacy, games and durable storage boundaries
         run: |
           node scripts/casino-foundation-check.mjs
