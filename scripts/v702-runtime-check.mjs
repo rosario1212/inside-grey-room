@@ -56,6 +56,46 @@ const rawBefore=report.bundles.reduce((a,b)=>a+b.originalBytes,0);
 const rawAfter=report.bundles.reduce((a,b)=>a+b.bundledBytes,0);
 const brBefore=report.bundles.reduce((a,b)=>a+b.brotliOriginalBytes,0);
 const brAfter=report.bundles.reduce((a,b)=>a+b.brotliBundleBytes,0);
+
+// v163 visual catalogue contract: assert the *built* web or native artifacts,
+// including the source that the final v702 hash bundles into the player UI.
+const app=await read('app-v11.js');
+const dlc=await read('dlc-suite-v12-37.js');
+const premium=await read('premium-access-sync-v17.js');
+const mobileCss=await read('mobile-ui-v28.css');
+const desktopCss=await read('screen-polish-v73.css');
+assert(app.includes('function scenarioCardTeaser(raw)'), 'Missing global scenario teaser function');
+for(const [label,source] of [['classics',app],['DLC',dlc],['premium catalogue',premium]]){
+ assert(source.includes('class="igr-card-excerpt"'),label+' card must show a teaser');
+ assert(source.includes('scenarioCardTeaser(sc.short)'),label+' card must display the same teaser logic');
+}
+const start=app.indexOf('function scenarioCardTeaser(raw)');
+const end=app.indexOf('\nconst ADVANCED_SCENARIO_IDS=',start);
+assert(start>=0&&end>start,'Cannot locate pure card teaser implementation');
+const context={window:{innerWidth:360}};
+new Script(app.slice(start,end)+'\n;globalThis.catalogueTeaser=scenarioCardTeaser;').runInNewContext(context);
+const example='Deux dirigeants en fuite. Les enquêteurs recoupent les archives et les responsabilités judiciaires.';
+const phoneTeaser=context.catalogueTeaser(example);
+assert(phoneTeaser.endsWith('…')&&phoneTeaser.length<example.length,
+ 'Narrow iPhone preview must end in an explicit ellipsis and remain concise');
+assert(!phoneTeaser.endsWith(' …'),'Ellipsis should attach naturally to the last word');
+context.window.innerWidth=1200;
+assert(context.catalogueTeaser(example).endsWith('…'),'Desktop preview still signals more detail');
+assert.equal(context.catalogueTeaser('Déposition scellée.'),'Déposition scellée…',
+ 'Short previews also clearly lead into the dossier detail');
+assert(mobileCss.includes('v163 — unified mobile dossiers'),'Final universal mobile styling missing');
+assert(mobileCss.includes('min-height:202px!important'),'Cards must expand below a safe minimum');
+assert(mobileCss.includes('height:auto!important'),'Never fix the scenario card height');
+assert(mobileCss.includes('.scenario--compact.regime-scenario'),'Regime must share the universal layout');
+assert(mobileCss.includes('.scenario-body>p.igr-card-excerpt'),'Multi-line previews must be clamped');
+assert(mobileCss.includes('-webkit-line-clamp:3!important'),'Preview must be at most three lines');
+assert(mobileCss.lastIndexOf('v163 — unified mobile dossiers')>
+       mobileCss.lastIndexOf('height:190px!important'),
+ 'Unified overrides must be loaded after the old fixed-height rule');
+assert(desktopCss.includes('v163: the widescreen two-column browser'),
+ 'Desktop must keep the same adaptive card proportions');
+console.log('PASS v163 — classic and DLC previews render explicit … and fluid cards across web/native');
+
 console.log('PASS v702 '+report.platform+' — CSS '+main.before.css+'→'+main.after.css+
  ' / JS '+main.before.js+'→'+main.after.js+
  ' / resource requests −'+main.requestReduction+
