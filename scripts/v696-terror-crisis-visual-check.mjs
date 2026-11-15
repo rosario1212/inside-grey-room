@@ -34,6 +34,7 @@ assert(!/^\s*(?:body|:root|\*|button|input)\s*\{/m.test(css),
  'Do not introduce unscoped global page/button styles');
 assert(css.includes('#a74753')&&css.includes('#7d2e3b')&&css.includes('#181517'),
  'Black-and-crimson TERREUR palette is missing');
+assert(!['#18212b','#151b24','#19212a','#080b10','#10161e'].some(shade=>css.includes(shade)), 'Old navy surfaces must be removed');
 assert(css.includes('grid-template-columns:minmax(0,1fr)'),
  'Small iPhone city form must stack without horizontal overflow');
 assert((css.match(/\{/g)||[]).length===(css.match(/\}/g)||[]).length,
@@ -45,7 +46,7 @@ assert(js.includes('terrorV681SetCity')&&js.includes('igr_v681_terror_set_city')
 for(const build of ['scripts/build-web.mjs','scripts/build-mobile.mjs'])
  assert(read(build).includes("'terror-crisis-v696.css'"),'Missing asset in '+build);
 assert(finalize.includes("'terror-crisis-v696.css'"),'Final page must version the crisis stylesheet');
-assert(sw.includes('/terror-crisis-v696.css?v=terror-crisis-v696-20261115'),
+assert(sw.includes('/terror-crisis-v696.css?v=terror-carbon-v697-20261115'),
  'Service worker source must preload the crisis CSS');
 assert(publisher.includes('crisisCssPath')&&publisher.includes("const tag='terror-live-v694-20261115'"),
  'Publish step must advance its PWA cache');
