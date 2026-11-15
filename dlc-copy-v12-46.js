@@ -10,7 +10,7 @@
     },
     terror: {
       eyebrow: 'DLC DE CRISE',
-      text: 'Le FDR a renversé les autorités dans presque tout le pays. Exécutions, enlèvements, prisons clandestines, familles déplacées : la dernière capitale résiste, et la Grey Room cherche qui a ordonné, exécuté ou couvert ces crimes.'
+      text: 'Le FDR a renversé les autorités dans presque tout le pays. Exécutions, enlèvements, prisons clandestines, familles déplacées : la capitale résiste, et la Grey Room cherche qui a ordonné, exécuté ou couvert ces crimes.'
     },
     cartel: {
       eyebrow: 'DLC SOUS PRESSION',
