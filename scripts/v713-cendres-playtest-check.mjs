@@ -8,7 +8,7 @@ const engine=readFileSync(path.join(root,'heritage-v13-5.js'),'utf8');
 const source=readFileSync(path.join(root,'heritage-play-v13-7.js'),'utf8');
 const marker="if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();";
 assert.ok(source.includes(marker),'Heritage playable runtime boot missing');
-const instrumented=source.replace(marker,"window.__igrTest={startSession,secretFor,readLive,saveLive,renderPlay,chooseOption,applyResult,cendresLateEvidence,cendresFinalConsequence,missingRoleIntel,PACKS,ROLES};\n"+marker);
+const instrumented=source.replace(marker,"window.__igrTest={startSession,secretFor,readLive,saveLive,renderPlay,renderDecision,chooseOption,applyResult,cendresLateEvidence,cendresFinalConsequence,missingRoleIntel,PACKS,ROLES};\n"+marker);
 
 const entries=new Map(),dom={app:{innerHTML:''}};
 const storage={getItem:key=>entries.has(key)?entries.get(key):null,setItem:(key,val)=>entries.set(key,String(val)),removeItem:key=>entries.delete(key)};
@@ -29,6 +29,20 @@ for(const [number,chapter] of Object.entries(test.PACKS.cendres.chapters)){
   assert.equal(new Set(chapter.options.map(o=>o.id)).size,3,'Dossier '+number+' duplicate choice ids');
   for(const role of test.ROLES.cendres)assert.ok(chapter.secrets[role.id]?.[0]?.length>15,'Missing clue: '+number+' / '+role.id);
 }
+
+function submitLocalVotes(choices){
+  let live=test.readLive();
+  live.stage='decision';test.saveLive(live);test.renderDecision(live);
+  for(let i=0;i<choices.length;i++){
+    live=test.readLive();
+    assert.equal(live.ballot.index,i,'Local ballot switched player unexpectedly');
+    live.ballot.show=true;test.saveLive(live);
+    test.renderDecision(live);
+    test.chooseOption(choices[i]);
+    if(i<choices.length-1)assert.equal(test.readLive().stage,'decision','Decision revealed before everyone voted');
+  }
+}
+
 const choices={
   correct:['alias','transfer','b','kern','nadir'],
   wrong:['agent','terror','source','prisoner','airbase'],
@@ -52,7 +66,7 @@ for(const count of [5,7])for(const [route,answers] of Object.entries(choices)){
     if(chapter===5&&route==='severe'){
       assert.ok(test.cendresLateEvidence(live,2,window.IGR_HERITAGE.get('cendres')).includes('incomplet'),'High crisis should degrade late evidence');
     }
-    test.chooseOption(answers[chapter-1]);
+    submitLocalVotes(Array(count).fill(answers[chapter-1]));
     live=test.readLive();
     assert.equal(live.stage,'result');
     if(chapter===5&&route==='severe')assert.ok(dom.app.innerHTML.includes('compromission institutionnelle majeure'),'Finale does not reflect severe prior crisis');
@@ -71,7 +85,13 @@ for(const count of [5,7])for(const [route,answers] of Object.entries(choices)){
   test.startSession('cendres',1,Array.from({length:count},(_,i)=>'Joueur '+(i+1)));
   let replay=test.readLive();
   assert.equal(replay.practice,true,'Replay should be non-canonical');
-  test.chooseOption('victim');replay=test.readLive();test.applyResult(replay);
+  const split=count===5?['alias','alias','agent','agent','victim']:['alias','alias','agent','agent','victim','victim','victim'];
+  submitLocalVotes(split);
+  replay=test.readLive();
+  assert.equal(replay.stage,'decision','Split vote should require a new round');
+  assert.equal(replay.ballot.round,2,'Expected second round');
+  submitLocalVotes(Array(count).fill('victim'));
+  replay=test.readLive();test.applyResult(replay);
   assert.equal(JSON.stringify(window.IGR_HERITAGE.get('cendres')),snapshot,'Replay rewrote campaign');
   cases++;
 }
