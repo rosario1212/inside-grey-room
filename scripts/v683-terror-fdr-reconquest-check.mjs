@@ -40,7 +40,7 @@ assert(command.includes('function')&&command.includes('renderReveal=function'),'
 assert(css.includes('.terror-v688-command')&&css.includes('.terror-v688-capture'),'Military and defeat UI must be styled');
 assert(index.includes('terror-command-v688.js')&&index.includes('terror-command-v688.css'),'Military UI missing in canonical HTML');
 for(const bundle of [builder,mobile])assert(bundle.includes("'terror-command-v688.js'")&&bundle.includes("'terror-command-v688.css'"),'Military UI missing from a release bundle');
-assert(pub.includes('terror-terminal-consistency-v692-20261115')&&pub.includes('terror-command-v688.js?v=terror-capital-v691-20261115'),'Cache version and new assets missing');
+assert(pub.includes('terror-command-auditions-v693-20261115')&&pub.includes('terror-command-v688.js?v=terror-officer-v693-20261115'),'Cache version and new assets missing');
 const fatal=read('supabase/migrations/20261115011300_igr_v690_terror_executions_and_evidence_guard.sql');
 const civilian=read('supabase/migrations/20261115011500_igr_v691_terror_civilian_protection_and_officer.sql');
 assert(fatal.includes('exécutés sommairement')&&fatal.includes('executed_summarily'),'All defeated captives must be executed in every scenario');
@@ -54,4 +54,12 @@ const finalNotice=read('supabase/migrations/20261115012200_igr_v692_terror_final
 assert(finalNotice.includes('exécutés sommairement')&&!finalNotice.includes('incomplete_the_fdr'),'Terminal public bulletin must be explicit');
 assert(front.includes('LE FDR A PRIS LA GREY ROOM')&&front.includes('EXÉCUTIONS SOMMAIRES · AUCUN SURVIVANT'),'Client gate cannot contradict final verdict');
 assert(!front.includes('LE SORT DES PRÉSENTS RESTE INCERTAIN'),'Old uncertain ending is forbidden');
+const officerSql=read('supabase/migrations/20261115013500_igr_v693_officer_intervention.sql');
+assert(officerSql.includes('igr_v693_terror_officer_join')&&officerSql.includes('one officer intervention per cycle'),'One authenticated visit at cycle 2/3 must be enforced server-side');
+assert(officerSql.includes('officer did not join this interrogation'),'Live video privilege must not cross hearings');
+assert(officerSql.includes("event_participants")&&officerSql.includes("event_confrontation"),'Officer must be a real confrontation participant');
+assert(command.includes("terrorV693Join")&&command.includes("terrorV693Visit"),'Officer hearing join controls missing');
+assert(app.includes("session_epoch_ms")&&command.includes("session_epoch_ms"),'Cross-platform video grant must be session-scoped');
+assert(front.includes("Severin Voss")&&front.includes("Marek Soren"),'FDR leadership missing in public lore');
+assert(!front.includes("président Voss"),'FDR leader may not be confused with president of Almizia');
 console.log('PASS Terror v688: Almizia/Ferra, essential military commander, constrained operations, public military impact and three differentiated captivity endings.');
