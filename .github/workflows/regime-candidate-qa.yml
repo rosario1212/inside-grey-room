@@ -1,0 +1,74 @@
+name: LE RÉGIME — candidate rules (non-publishing)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/regime-rules-v10.mjs'
+      - 'scripts/regime-rules-v10.test.mjs'
+      - 'scripts/regime-v14-client-integrity.test.mjs'
+      - 'supabase/tests/igr_regime_release_readiness_v9.sql'
+      - 'supabase/tests/igr_regime_*_qa.sql'
+      - 'supabase/tests/igr_regime_nine_playability_matrix_v12.sql'
+      - 'supabase/candidates/igr_regime_v13_*.sql'
+      - 'supabase/candidates/igr_regime_v14_*.sql'
+      - 'supabase/tests/igr_regime_v14_*.sql'
+      - 'regime-live-v13.js'
+      - 'regime-live-v13.css'
+      - 'index.html'
+      - 'service-worker.js'
+      - 'scripts/build-web.mjs'
+      - '.github/workflows/regime-candidate-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-rules:
+    name: Prototype rule contract, no secrets or deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check scripts/regime-rules-v10.mjs
+          node --check scripts/regime-rules-v10.test.mjs
+          node --check scripts/regime-v14-client-integrity.test.mjs
+          node --check regime-live-v13.js
+          node --check scripts/build-web.mjs
+      - name: Exercise synthetic deterministic rules
+        run: node --test scripts/regime-rules-v10.test.mjs scripts/regime-v14-client-integrity.test.mjs
+      - name: Verify guarded presentation and shared courtroom source
+        run: |
+          grep -q 'regime_v13_active' regime-live-v13.js
+          grep -q 'igr_regime_v13_court_exchange' regime-live-v13.js
+          grep -q 'igr_regime_v13_third_final' regime-live-v13.js
+          grep -q 'regime-live-v13.js' index.html
+          grep -q 'regime-live-v13.css' scripts/build-web.mjs
+          test -s regime-live-v13.css
+      - name: Validate candidate-only SQL safety
+        run: |
+          grep -q 'enabled boolean NOT NULL DEFAULT false' supabase/candidates/igr_regime_v13_private_runtime.sql
+          grep -q 'REVOKE ALL ON igr_private.igr_regime_v13_rooms' supabase/candidates/igr_regime_v13_private_runtime.sql
+          test -s supabase/tests/igr_regime_v13_release_lifecycle_qa.sql
+          test -s supabase/tests/igr_regime_v13_court_exchanges_qa.sql
+          test -s supabase/candidates/igr_regime_v14_tracks.sql
+          test -s supabase/candidates/igr_regime_v14_court_pass.sql
+          test -s supabase/tests/igr_regime_v14_location_inference_qa.sql
+          test -s supabase/tests/igr_regime_v14_captured_defense_qa.sql
+          test -s supabase/tests/igr_regime_v14_speech_rights_qa.sql
+          test -s supabase/tests/igr_regime_v14_reconnect_replay_qa.sql
+          test -s supabase/tests/igr_regime_v14_private_aliases_qa.sql
+          test -s supabase/tests/igr_regime_v14_all_rosters_matrix_qa.sql
+      - name: Verify that secret manuscripts are not bundled
+        run: |
+          if grep -En 'canonical_truth|private_cards|variant_secret' scripts/regime-rules-v10.mjs; then
+            echo "::error::Never publish private variant content in the rule engine"
+            exit 1
+          fi
+          echo "Prototype only; NO release readiness implied."

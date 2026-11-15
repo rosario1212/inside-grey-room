@@ -1,0 +1,542 @@
+-- INSIDE GREY ROOM — LE RÉGIME v13
+-- Candidate only. Additive, isolated tables and RPCs. The actual release
+-- flag defaults FALSE. The existing 032–034 game flow is NOT replaced.
+-- Do not deploy until final audience and transitions are integrated.
+
+CREATE TABLE IF NOT EXISTS igr_private.igr_regime_v13_release (
+  release_key text PRIMARY KEY CHECK (release_key='regime'),
+  enabled boolean NOT NULL DEFAULT false,
+  approved_by text,
+  approved_at timestamptz,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+INSERT INTO igr_private.igr_regime_v13_release(release_key,enabled)
+VALUES('regime',false) ON CONFLICT(release_key) DO NOTHING;
+ALTER TABLE igr_private.igr_regime_v13_release ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON igr_private.igr_regime_v13_release FROM PUBLIC,anon,authenticated;
+
+CREATE TABLE IF NOT EXISTS igr_private.igr_regime_v13_rooms (
+  room_code text PRIMARY KEY REFERENCES public.igr_v4_rooms(code) ON DELETE CASCADE,
+  scenario_id text NOT NULL CHECK(scenario_id IN ('032','033','034')),
+  variant_id text NOT NULL CHECK(variant_id IN ('A','B','C')),
+  alias_salt uuid NOT NULL DEFAULT gen_random_uuid(),
+  private_pack jsonb NOT NULL,
+  play_state jsonb NOT NULL DEFAULT '{}'::jsonb,
+  pinned_at timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE igr_private.igr_regime_v13_rooms ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON igr_private.igr_regime_v13_rooms FROM PUBLIC,anon,authenticated;
+
+CREATE TABLE IF NOT EXISTS igr_private.igr_regime_v13_ledger (
+  room_code text NOT NULL REFERENCES igr_private.igr_regime_v13_rooms(room_code) ON DELETE CASCADE,
+  request_id text NOT NULL,
+  actor_player uuid NOT NULL,
+  action_kind text NOT NULL,
+  cycle integer NOT NULL,
+  response jsonb NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY(room_code,request_id)
+);
+ALTER TABLE igr_private.igr_regime_v13_ledger ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON igr_private.igr_regime_v13_ledger FROM PUBLIC,anon,authenticated;
+
+CREATE OR REPLACE FUNCTION igr_private.igr_regime_v13_release_eligible()
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO ''
+AS $$
+ SELECT coalesce((SELECT enabled AND approved_by IS NOT NULL
+   AND approved_at IS NOT NULL FROM igr_private.igr_regime_v13_release
+   WHERE release_key='regime'),false)
+ AND (SELECT count(*)=9 AND count(*) FILTER (
+    WHERE editorial_status='ready'
+      AND approved_by IS NOT NULL AND approved_at IS NOT NULL
+      AND manuscript->'regime_vnext'->>'status'='ready'
+      AND manuscript->'regime_vnext'->>'human_review_approved'='true')=9
+      FROM igr_private.igr_v99_variant_manuscripts
+      WHERE scenario_id IN ('032','033','034'))
+$$;
+REVOKE EXECUTE ON FUNCTION igr_private.igr_regime_v13_release_eligible() FROM PUBLIC,anon,authenticated;
+
+CREATE OR REPLACE FUNCTION igr_private.igr_regime_v13_pin(p_code text)
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $$
+DECLARE
+  r public.igr_v4_rooms%rowtype;
+  m igr_private.igr_v99_variant_manuscripts%rowtype;
+BEGIN
+  IF NOT igr_private.igr_regime_v13_release_eligible() THEN RETURN false; END IF;
+  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=upper(trim(p_code)) FOR UPDATE;
+  IF NOT FOUND OR r.scenario_id NOT IN ('032','033','034') OR r.status<>'lobby' THEN RETURN false; END IF;
+  IF EXISTS(SELECT 1 FROM igr_private.igr_regime_v13_rooms WHERE room_code=r.code) THEN RETURN true; END IF;
+  SELECT * INTO m FROM igr_private.igr_v99_variant_manuscripts
+    WHERE scenario_id=r.scenario_id AND variant_id IN ('A','B','C')
+      AND editorial_status='ready'
+      AND manuscript->'regime_vnext'->>'status'='ready'
+      AND manuscript->'regime_vnext'->>'human_review_approved'='true'
+    ORDER BY gen_random_uuid() LIMIT 1;
+  IF NOT FOUND THEN RETURN false; END IF;
+  INSERT INTO igr_private.igr_regime_v13_rooms(room_code,scenario_id,variant_id,private_pack,play_state)
+  VALUES(r.code,r.scenario_id,m.variant_id,m.manuscript->'regime_vnext',
+    jsonb_build_object('alliance','{}'::jsonb,'decisions','[]'::jsonb,
+      'investigations','[]'::jsonb,'disclosed','[]'::jsonb,
+      'strict_alias_only',true,
+      'arrests','{}'::jsonb,'mandates','[]'::jsonb,'reconstructions','{}'::jsonb,
+      'track_overrides','{}'::jsonb,'capture_clue_tracks','{}'::jsonb,
+      'lead_delay','{}'::jsonb,'captured_responses','[]'::jsonb,
+      'scheduled_disclosures','[]'::jsonb,'extra_capture_leads','[]'::jsonb,
+      'third','{}'::jsonb,
+      'court','{}'::jsonb));
+  RETURN true;
+END $$;
+REVOKE EXECUTE ON FUNCTION igr_private.igr_regime_v13_pin(text) FROM PUBLIC,anon,authenticated;
+
+-- Read only the player's private card and public facts that have actually been
+-- released. The caller NEVER receives the candidate private_pack, canonical_truth,
+-- non-public action outcomes, variant ID or other player's private choice.
+CREATE OR REPLACE FUNCTION public.igr_regime_v13_state(p_code text,p_player_token uuid)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $$
+DECLARE
+  p public.igr_v4_players%rowtype;
+  r public.igr_v4_rooms%rowtype;
+  m igr_private.igr_regime_v13_rooms%rowtype;
+  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean; court_slot integer;court_speaker text;scene jsonb; defense_objective jsonb; defense_used boolean; trace_id text; trace_label text; public_trace_ready boolean;
+  public_clues jsonb='[]'::jsonb; clue jsonb; saved jsonb;
+  a jsonb='[]'::jsonb; item jsonb; chosen text;
+BEGIN
+  SELECT * INTO p FROM public.igr_v4_players
+     WHERE room_code=upper(trim(p_code)) AND player_token=p_player_token;
+  IF NOT FOUND THEN RAISE EXCEPTION 'unauthorized'; END IF;
+  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code;
+  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code;
+  IF NOT FOUND OR r.status NOT IN ('playing','finished') THEN
+    RETURN jsonb_build_object('enabled',false);
+  END IF;
+  actor:=CASE WHEN p.public_role='suspect'
+    THEN m.private_pack->'private_cards'->(p.internal_slot-1)->>'actor_id'
+    ELSE NULL END;
+  IF p.public_role='suspect' AND actor IS NULL THEN RAISE EXCEPTION 'invalid role mapping'; END IF;
+  IF p.public_role='suspect' THEN
+    card:=m.private_pack->'private_cards'->(p.internal_slot-1);
+    IF p.internal_slot=3 THEN own_mission:=m.private_pack->'third_suspect_mission'; END IF;
+  END IF;
+  -- Only already released pieces + always-public exhibits of previous cycles.
+  FOR clue IN SELECT value FROM jsonb_array_elements(m.private_pack->'revelations') LOOP
+    IF (clue->>'kind'='guaranteed' AND (clue->>'min_cycle')::int<=r.cycle)
+       OR (m.play_state->'disclosed' ? (clue->>'id'))
+    THEN public_clues:=public_clues||jsonb_build_array(
+      clue - 'trigger_action' - 'editorial_provenance'); END IF;
+  END LOOP;
+  public_trace_ready:=NOT (
+    r.phase='role_reading' AND r.cycle=1 AND
+    (NOT (m.play_state->'alliance' ?
+      (m.private_pack->'private_cards'->0->>'actor_id'))
+     OR NOT (m.play_state->'alliance' ?
+      (m.private_pack->'private_cards'->1->>'actor_id'))));
+  FOR clue IN SELECT value FROM jsonb_array_elements(
+      m.private_pack->'capture_evidence') LOOP
+    IF public_trace_ready AND
+      ((clue->>'revealed_at'='cycle_start' AND (clue->>'cycle')::int<=r.cycle)
+      OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? (clue->>'id'))
+      OR EXISTS(SELECT 1 FROM jsonb_array_elements(
+        coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
+        WHERE sd->>'id'=clue->>'id' AND (sd->>'cycle')::integer<=r.cycle))
+    THEN
+      trace_id:=coalesce(m.play_state->'capture_clue_tracks'->>(clue->>'id'),
+        (SELECT sd->>'track_id' FROM jsonb_array_elements(
+          coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
+          WHERE sd->>'id'=clue->>'id' LIMIT 1),
+        CASE WHEN (clue->>'cycle')::integer=1
+          THEN igr_private.igr_regime_v14_base_track(m.room_code,clue->>'targetId')
+          ELSE igr_private.igr_regime_v14_active_track(m.room_code,clue->>'targetId')
+        END);
+      SELECT net->>'label' INTO trace_label FROM jsonb_array_elements(
+        m.private_pack->'first_cycle'->'public_networks') net
+        WHERE net->>'id'=trace_id LIMIT 1;
+      public_clues:=public_clues||jsonb_build_array(
+       jsonb_build_object('id',clue->>'id','kind','capture',
+         'title','PISTE DE TRAQUE','text',clue->>'description',
+         'cycle',clue->>'cycle','source',clue->>'origin',
+         'target_id',clue->>'targetId','network_id',trace_id,
+         'network_label',trace_label));
+    END IF;
+  END LOOP;
+  FOR clue IN SELECT value FROM jsonb_array_elements(
+      coalesce(m.play_state->'extra_capture_leads','[]'::jsonb)) LOOP
+    IF (clue->>'cycle')::integer<=r.cycle THEN
+      public_clues:=public_clues||jsonb_build_array(clue);
+    END IF;
+  END LOOP;
+  IF p.public_role IN ('enqueteur','analyste') AND r.cycle BETWEEN 1 AND 3 THEN
+    offered:=m.private_pack->'investigation_choices'->(r.cycle-1)->'choices';
+  ELSE offered:='[]'::jsonb; END IF;
+  IF p.public_role='suspect' AND p.internal_slot IN (1,2) AND
+    NOT (m.play_state->'arrests' ? actor) THEN
+    SELECT coalesce(jsonb_agg(value),'[]'::jsonb) INTO a
+    FROM jsonb_array_elements(m.private_pack->'fugitive_actions') value
+    WHERE value->>'actorId'=actor AND (value->>'cycle')::int=r.cycle;
+  END IF;
+  chosen:=m.play_state->'alliance'->>actor;
+  SELECT coalesce(jsonb_agg(jsonb_build_object('actor_id',
+    m.private_pack->'private_cards'->(pl.internal_slot-1)->>'actor_id',
+    'pseudo',pl.pseudo,'player_id',pl.id::text) ORDER BY pl.internal_slot),'[]'::jsonb)
+  INTO cast_list FROM public.igr_v4_players pl WHERE pl.room_code=r.code
+    AND pl.public_role='suspect' AND pl.internal_slot BETWEEN 1 AND 3;
+  SELECT coalesce(jsonb_agg(jsonb_build_object('id',a.value->>'id',
+    'title',a.value->>'title') ORDER BY a.ordinality),'[]'::jsonb)
+  INTO court_acts FROM jsonb_array_elements(m.private_pack->'acts') WITH ORDINALITY a(value,ordinality);
+  used_cycle:=EXISTS(SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'investigations','[]'::jsonb)) x
+    WHERE (x->>'cycle')::int=r.cycle);
+  used_move:=EXISTS(SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'decisions','[]'::jsonb)) x
+    WHERE x->>'actor_id'=actor AND (x->>'cycle')::int=r.cycle);
+  IF coalesce(m.play_state->'disclosed','[]'::jsonb) ?
+    (m.private_pack->'third_suspect_mission'->'public_on_submission'->>'id') THEN
+    clue:=m.private_pack->'third_suspect_mission'->'public_on_submission';
+    IF clue IS NOT NULL THEN public_clues:=public_clues||jsonb_build_array(clue - 'authenticated_by_server' - 'initially_private');END IF;
+  END IF;
+  court_view:=coalesce(m.play_state->'court','{}'::jsonb);
+  IF r.phase='regime_court' AND court_view->>'started_at' IS NOT NULL THEN
+    court_elapsed:=greatest(0,floor(extract(epoch FROM
+       now()-(court_view->>'started_at')::timestamptz))::integer);
+    long_court:=coalesce((court_view->>'duration_minutes')::int,8)=14;
+    IF court_elapsed<60 THEN current_stage:='opening';stage_end:=60;
+    ELSIF court_elapsed<(CASE WHEN long_court THEN 420 ELSE 240 END)
+      THEN current_stage:='defenses';stage_end:=CASE WHEN long_court THEN 420 ELSE 240 END;
+    ELSIF court_elapsed<(CASE WHEN long_court THEN 720 ELSE 360 END)
+      THEN current_stage:='confrontation';stage_end:=CASE WHEN long_court THEN 720 ELSE 360 END;
+    ELSIF court_elapsed<(CASE WHEN long_court THEN 780 ELSE 420 END)
+      THEN current_stage:='closing';stage_end:=CASE WHEN long_court THEN 780 ELSE 420 END;
+    ELSE current_stage:='vote';stage_end:=CASE WHEN long_court THEN 840 ELSE 480 END;
+    END IF;
+    court_slot:=NULL;court_speaker:=NULL;
+    IF current_stage='defenses' THEN
+      court_slot:=least(2,(court_elapsed-60)/
+        (CASE WHEN long_court THEN 120 ELSE 60 END));
+      court_speaker:=m.private_pack->'private_cards'->court_slot->>'actor_id';
+      IF court_slot IN (0,1) AND
+        NOT coalesce(m.play_state->'arrests','{}'::jsonb) ? court_speaker
+      THEN court_speaker:=NULL;END IF;
+    END IF;
+    court_view:=court_view||jsonb_build_object('stage_actual',current_stage,
+       'stage_seconds_remaining',greatest(0,stage_end-court_elapsed),
+       'slot_actor_id',court_speaker,'slot_number',court_slot);
+  END IF;
+  SELECT x.value INTO scene FROM jsonb_array_elements(
+    coalesce(m.private_pack->'scene_beats','[]'::jsonb)) x
+    WHERE (x.value->>'cycle')::integer=r.cycle LIMIT 1;
+  IF p.public_role='suspect' AND p.internal_slot IN (1,2) AND
+    m.play_state->'arrests' ? actor THEN
+    defense_objective:=(m.private_pack->'captured_defense_objectives'->actor)
+       - 'expected_ordered_by';
+  END IF;
+  defense_used:=EXISTS(SELECT 1 FROM jsonb_array_elements(
+    coalesce(m.play_state->'captured_responses','[]'::jsonb)) x
+    WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle);
+  RETURN igr_private.igr_regime_v14_sanitize_json(p.room_code,
+   jsonb_build_object('enabled',true,
+      'scenario_id',m.scenario_id,'cycle',r.cycle,'phase',r.phase,
+      'role',p.public_role,'actor_id',actor,'my_card',card,'my_mission',own_mission,
+      'scene',scene,'my_captured_objective',defense_objective,
+      'my_captured_response_used',defense_used,
+      'my_alliance_choice',chosen,'offered_investigations',offered,
+      'investigation_used_this_cycle',used_cycle,'my_fugitive_decision_used',used_move,
+      'third_submitted',coalesce((m.play_state->'third'->>'submitted')::boolean,false),
+      'cast',cast_list,'court_acts',court_acts,
+      'public_networks',m.private_pack->'first_cycle'->'public_networks',
+      'pending_mandates',CASE WHEN p.public_role IN ('juge','enqueteur','analyste')
+         THEN (SELECT coalesce(jsonb_agg(x),'[]'::jsonb)
+             FROM jsonb_array_elements(coalesce(m.play_state->'mandates','[]'::jsonb)) x
+             WHERE x->>'status'='awaiting_judge') ELSE '[]'::jsonb END,
+      'my_fugitive_options',a,
+      'public_evidence',public_clues,
+      'arrests',m.play_state->'arrests','court',court_view,
+      'my_reconstruction_submitted',coalesce(
+        m.play_state->'reconstructions' ? p.id::text,false),
+      'my_third_final_submitted',coalesce(
+        m.play_state->'third' ? 'final_declaration',false),
+      'events',coalesce(
+        (SELECT jsonb_agg(jsonb_build_object(
+           'type','public_news','id','journal-c'||j.ord,
+           'title','JOURNAL DE KARSANE','text',j.news,
+           'cycle',j.ord) ORDER BY j.ord)
+         FROM jsonb_array_elements_text(coalesce(
+           m.private_pack->'journal'->'events','[]'::jsonb))
+           WITH ORDINALITY j(news,ord)
+         WHERE j.ord<=least(3,greatest(0,r.cycle))),'[]'::jsonb)||
+         coalesce(m.play_state->'events','[]'::jsonb),
+      'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb))));
+END $$;
+REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) TO anon,authenticated;
+
+-- First set of role-gated, replay-safe operations: alliance,
+-- strategic choices, investigation and third-suspect submission.
+-- Mandates and the courtroom require their own transactionally reviewed
+-- functions before the release switch may be enabled.
+CREATE OR REPLACE FUNCTION public.igr_regime_v13_action(
+ p_code text,p_player_token uuid,p_kind text,p_request_id text,p_payload jsonb DEFAULT '{}'::jsonb)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $$
+DECLARE
+  p public.igr_v4_players%rowtype;
+  r public.igr_v4_rooms%rowtype;
+  m igr_private.igr_regime_v13_rooms%rowtype;
+  old jsonb; old_actor uuid; old_kind text; result jsonb;
+  actor text; option_row jsonb; choice text; piece jsonb; future_lead jsonb; next_lead_cycle integer;
+  claim text; statement_text text; captured_exhibit_id text;
+  active_refuge text;fallback_refuge text;refuge_label text;clue_to_publish jsonb;
+  new_state jsonb; disclosed jsonb;
+BEGIN
+  SELECT * INTO p FROM public.igr_v4_players
+   WHERE room_code=upper(trim(p_code)) AND player_token=p_player_token;
+  IF NOT FOUND THEN RAISE EXCEPTION 'unauthorized'; END IF;
+  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
+  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'regime feature inactive'; END IF;
+  IF length(coalesce(p_request_id,''))<8 OR length(p_request_id)>128 THEN RAISE EXCEPTION 'invalid request id'; END IF;
+  SELECT response,actor_player,action_kind INTO old,old_actor,old_kind
+   FROM igr_private.igr_regime_v13_ledger
+   WHERE room_code=p.room_code AND request_id=p_request_id;
+  IF FOUND THEN
+   IF old_actor<>p.id OR old_kind<>p_kind THEN RAISE EXCEPTION 'request conflict';END IF;
+   RETURN old;
+  END IF;
+  IF r.status<>'playing' THEN RAISE EXCEPTION 'game no longer active';END IF;
+  actor:=CASE WHEN p.public_role='suspect'
+    THEN m.private_pack->'private_cards'->(p.internal_slot-1)->>'actor_id'
+    ELSE NULL END;
+  new_state:=m.play_state;
+  IF r.phase IN ('closed','final_audience','final_suspect_defenses','locking','reveal')
+    OR (r.phase='regime_court' AND p_kind<>'captured_response')
+    THEN RAISE EXCEPTION 'actions closed'; END IF;
+  IF p_kind='alliance' THEN
+    IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2) OR r.cycle>1
+      OR r.phase NOT IN ('role_reading','initial_debrief','investigation_assembly')
+    THEN RAISE EXCEPTION 'not eligible for alliance choice'; END IF;
+    IF m.play_state->'alliance' ? actor THEN RAISE EXCEPTION 'alliance choice already locked'; END IF;
+    choice:=p_payload->>'choice';
+    IF choice NOT IN ('together','apart') THEN RAISE EXCEPTION 'invalid alliance'; END IF;
+    new_state:=jsonb_set(new_state,ARRAY['alliance',actor],to_jsonb(choice),true);
+    result:=jsonb_build_object('ok',true,'kind',p_kind,'locked',true);
+  ELSIF p_kind='fugitive_choice' THEN
+    IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2)
+      OR r.cycle NOT BETWEEN 1 AND 3 THEN RAISE EXCEPTION 'not a fugitive'; END IF;
+    IF m.play_state->'arrests' ? actor THEN RAISE EXCEPTION 'already captured'; END IF;
+    IF EXISTS(SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'decisions','[]'::jsonb)) d
+      WHERE d->>'actor_id'=actor AND (d->>'cycle')::int=r.cycle)
+    THEN RAISE EXCEPTION 'one decision per fugitive per cycle'; END IF;
+    SELECT value INTO option_row FROM jsonb_array_elements(m.private_pack->'fugitive_actions') value
+     WHERE igr_private.igr_regime_v14_matches_input(
+         m.room_code,p_payload->>'option_id',value->>'id')
+       AND value->>'actorId'=actor AND (value->>'cycle')::int=r.cycle;
+    IF NOT FOUND THEN RAISE EXCEPTION 'invalid private option'; END IF;
+    new_state:=jsonb_set(new_state,'{decisions}',
+      coalesce(new_state->'decisions','[]'::jsonb)||
+      jsonb_build_array(jsonb_build_object('actor_id',actor,'cycle',r.cycle,
+         'option_id',option_row->>'id',
+         'effect',option_row->'effect','cost',option_row->'cost')),true);
+    active_refuge:=igr_private.igr_regime_v14_active_track(m.room_code,actor);
+    fallback_refuge:=NULL;
+    IF option_row->'effect'->>'kind'='shift_network' THEN
+      fallback_refuge:=m.private_pack->'first_cycle'->'fallback_tracks'->>
+        (CASE WHEN p.internal_slot=1 THEN 'first' ELSE 'second' END);
+      SELECT net->>'label' INTO refuge_label FROM jsonb_array_elements(
+         m.private_pack->'first_cycle'->'public_networks') net
+         WHERE net->>'id'=fallback_refuge LIMIT 1;
+      IF fallback_refuge IS NULL THEN RAISE EXCEPTION 'relocation network not authored';END IF;
+      new_state:=jsonb_set(new_state,'{track_overrides}',
+          coalesce(new_state->'track_overrides','{}'::jsonb)||
+          jsonb_build_object(actor,fallback_refuge),true);
+      clue_to_publish:=jsonb_build_object(
+        'id','movement:'||p_request_id,'kind','capture',
+        'cycle',r.cycle,'source','checkpoint_surveillance',
+        'target_id',actor,'network_id',fallback_refuge,
+        'network_label',refuge_label,'title','TRACE DE RELOCALISATION',
+        'text','Une source indépendante a observé un changement de relais. La piste suit un refuge de repli; elle doit être recoupée avant un mandat.');
+      new_state:=jsonb_set(new_state,'{extra_capture_leads}',
+        coalesce(new_state->'extra_capture_leads','[]'::jsonb)||
+          jsonb_build_array(clue_to_publish),true);
+    ELSIF option_row->'effect'->>'kind'='delay_lead' THEN
+      new_state:=jsonb_set(new_state,'{lead_delay}',
+        coalesce(new_state->'lead_delay','{}'::jsonb)||
+        jsonb_build_object(actor,jsonb_build_object('cycle',r.cycle,
+          'until',now()+interval '60 seconds')),true);
+    END IF;
+    IF option_row ? 'reveals_capture_evidence_id' THEN
+      SELECT value INTO clue_to_publish FROM jsonb_array_elements(
+       m.private_pack->'capture_evidence') value
+       WHERE value->>'id'=option_row->>'reveals_capture_evidence_id' LIMIT 1;
+    ELSIF option_row->'cost'->>'kind' IN ('create_contradiction','expose_trace') THEN
+      SELECT value INTO clue_to_publish FROM jsonb_array_elements(
+       m.private_pack->'capture_evidence') value
+       WHERE value->>'targetId'=actor AND (value->>'cycle')::integer=r.cycle
+       ORDER BY value->>'id' DESC LIMIT 1;
+    ELSE clue_to_publish:=NULL;
+    END IF;
+    IF clue_to_publish IS NOT NULL THEN
+      disclosed:=coalesce(new_state->'disclosed','[]'::jsonb)||
+        jsonb_build_array(clue_to_publish->>'id');
+      new_state:=jsonb_set(new_state,'{disclosed}',disclosed,true);
+      new_state:=jsonb_set(new_state,'{capture_clue_tracks}',
+        coalesce(new_state->'capture_clue_tracks','{}'::jsonb)||
+        jsonb_build_object(clue_to_publish->>'id',
+          coalesce(fallback_refuge,active_refuge)),true);
+    END IF;
+    -- Protecting a contact now reduces immediate exposure, but costs a
+    -- verified later lead. On C3, the cost is immediate (no imaginary C4).
+    IF option_row->'cost'->>'kind'='lose_protection' THEN
+      next_lead_cycle:=least(3,r.cycle+1);
+      SELECT e.value INTO future_lead
+      FROM jsonb_array_elements(m.private_pack->'capture_evidence') e
+      WHERE e.value->>'targetId'=actor
+        AND (e.value->>'cycle')::integer=next_lead_cycle LIMIT 1;
+      IF FOUND THEN
+        IF next_lead_cycle=r.cycle THEN
+          new_state:=jsonb_set(new_state,'{disclosed}',
+            coalesce(new_state->'disclosed','[]'::jsonb)||
+            jsonb_build_array(future_lead->>'id'),true);
+        ELSE
+          new_state:=jsonb_set(new_state,'{scheduled_disclosures}',
+            coalesce(new_state->'scheduled_disclosures','[]'::jsonb)||
+            jsonb_build_array(jsonb_build_object(
+            'id',future_lead->>'id','cycle',next_lead_cycle,
+            'track_id',active_refuge)),true);
+        END IF;
+      END IF;
+    END IF;
+    new_state:=jsonb_set(new_state,'{events}',
+      coalesce(new_state->'events','[]'::jsonb)||
+      jsonb_build_array(jsonb_build_object('type','decision_confirmed','cycle',r.cycle,
+        'actor',actor,'description','Un responsable prend une décision dont les conséquences deviennent vérifiables.')),true);
+    result:=jsonb_build_object('ok',true,'kind',p_kind,'accepted',true);
+  ELSIF p_kind='investigate' THEN
+    IF p.public_role NOT IN ('enqueteur','analyste') OR r.cycle NOT BETWEEN 1 AND 3
+      THEN RAISE EXCEPTION 'investigation reserved for enquiry'; END IF;
+    IF EXISTS(SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'investigations','[]'::jsonb)) x
+      WHERE (x->>'cycle')::int=r.cycle)
+      THEN RAISE EXCEPTION 'investigation already used in cycle'; END IF;
+    SELECT x.value INTO option_row FROM
+      jsonb_array_elements(m.private_pack->'investigation_choices'->(r.cycle-1)->'choices') x
+    WHERE igr_private.igr_regime_v14_matches_input(
+       m.room_code,p_payload->>'option_id',x.value->>'id');
+    IF NOT FOUND THEN RAISE EXCEPTION 'investigation not offered'; END IF;
+    SELECT value INTO piece FROM jsonb_array_elements(m.private_pack->'revelations') value
+      WHERE value->>'id'=option_row->>'deliverable_id';
+    IF NOT FOUND THEN RAISE EXCEPTION 'investigation outcome absent'; END IF;
+    new_state:=jsonb_set(new_state,'{investigations}',
+      coalesce(new_state->'investigations','[]'::jsonb)||
+      jsonb_build_array(jsonb_build_object('cycle',r.cycle,'option_id',option_row->>'id')),true);
+    new_state:=jsonb_set(new_state,'{disclosed}',
+      coalesce(new_state->'disclosed','[]'::jsonb)||jsonb_build_array(piece->>'id'),true);
+    -- If a capture clue has been specifically linked to a confirmed investigation,
+    -- release that clue too. It remains distinct from the core crime evidence.
+    SELECT x.value INTO piece FROM jsonb_array_elements(m.private_pack->'capture_evidence') x
+     WHERE x.value->>'alternative_investigation_id'=option_row->>'id' LIMIT 1;
+    IF FOUND THEN
+      new_state:=jsonb_set(new_state,'{disclosed}',
+       coalesce(new_state->'disclosed','[]'::jsonb)||jsonb_build_array(piece->>'id'),true);
+      new_state:=jsonb_set(new_state,'{capture_clue_tracks}',
+        coalesce(new_state->'capture_clue_tracks','{}'::jsonb)||
+        jsonb_build_object(piece->>'id',
+          igr_private.igr_regime_v14_active_track(m.room_code,piece->>'targetId')),true);
+    END IF;
+    result:=jsonb_build_object('ok',true,'kind',p_kind,'published',option_row->>'deliverable_id');
+  ELSIF p_kind='captured_response' THEN
+    IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2)
+      OR r.cycle NOT BETWEEN 1 AND 3
+      OR NOT (m.play_state->'arrests' ? actor) THEN
+      RAISE EXCEPTION 'only captured fugitive may present this defense';
+    END IF;
+    IF r.phase='regime_court' THEN
+      IF m.play_state->'court'->>'started_at' IS NULL OR
+       now()>=(m.play_state->'court'->>'started_at')::timestamptz+
+        make_interval(secs=>CASE
+          WHEN (m.play_state->'court'->>'duration_minutes')::integer=14 THEN 720
+          ELSE 360 END)
+      THEN RAISE EXCEPTION 'court defendant defense window closed';END IF;
+    END IF;
+    IF EXISTS(SELECT 1 FROM jsonb_array_elements(
+         coalesce(new_state->'captured_responses','[]'::jsonb)) x
+      WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle)
+      THEN RAISE EXCEPTION 'only one captured defense action per cycle';END IF;
+    IF EXISTS(SELECT 1 FROM jsonb_array_elements(
+         coalesce(new_state->'decisions','[]'::jsonb)) x
+      WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle)
+      THEN RAISE EXCEPTION 'you already acted as a fugitive this cycle';END IF;
+    option_row:=m.private_pack->'captured_defense_objectives'->actor;
+    IF option_row IS NULL OR option_row->>'act_id' IS NULL THEN
+      RAISE EXCEPTION 'no sealed captured defense objective';END IF;
+    choice:=p_payload->>'mode';
+    claim:=p_payload->>'claimed_orderer';
+    statement_text:=btrim(coalesce(p_payload->>'statement',''));
+    IF choice NOT IN ('authentic_exhibit','contested_declaration') OR
+       length(statement_text) NOT BETWEEN 30 AND 350 THEN
+      RAISE EXCEPTION 'a precise 30-350 character defense is required';END IF;
+    IF claim NOT IN (SELECT x.value->>'actor_id' FROM
+       jsonb_array_elements(m.private_pack->'private_cards') x) OR claim=actor
+       THEN RAISE EXCEPTION 'choose another named potential author'; END IF;
+    captured_exhibit_id:=NULL;
+    IF choice='authentic_exhibit' THEN
+      SELECT value INTO piece FROM jsonb_array_elements(m.private_pack->'revelations') value
+       WHERE value->>'kind'='optional' AND
+         value->'act_ids' ? (option_row->>'act_id')
+         AND (value->>'min_cycle')::integer<=r.cycle
+       ORDER BY (value->>'min_cycle')::integer,value->>'id' LIMIT 1;
+      IF NOT FOUND THEN RAISE EXCEPTION 'authentic excerpt unavailable this cycle';END IF;
+      captured_exhibit_id:=piece->>'id';
+      new_state:=jsonb_set(new_state,'{disclosed}',
+        coalesce(new_state->'disclosed','[]'::jsonb)||
+        jsonb_build_array(captured_exhibit_id),true);
+    END IF;
+    new_state:=jsonb_set(new_state,'{captured_responses}',
+      coalesce(new_state->'captured_responses','[]'::jsonb)||
+      jsonb_build_array(jsonb_build_object(
+        'actor_id',actor,'cycle',r.cycle,
+        'act_id',option_row->>'act_id','mode',choice,
+        'claimed_orderer',claim,'statement',statement_text,
+        'published_evidence_id',captured_exhibit_id)),true);
+    new_state:=jsonb_set(new_state,'{events}',
+      coalesce(new_state->'events','[]'::jsonb)||
+      jsonb_build_array(jsonb_build_object(
+        'type','captured_defense','cycle',r.cycle,
+        'id','captured-defense:'||p_request_id,
+        'title','DÉCLARATION D’UN DIRIGEANT CAPTURÉ',
+        'text',statement_text,'actor_id',actor,
+        'challenged_act',option_row->>'act_title',
+        'claim_ordered_by',claim,
+        'authentic_document_id',captured_exhibit_id,
+        'not_a_verdict',true)),true);
+    result:=jsonb_build_object('ok',true,'kind',p_kind,
+      'accepted',true,'document_published',captured_exhibit_id);
+  ELSIF p_kind='third_submission' THEN
+    IF p.public_role<>'suspect' OR p.internal_slot<>3 OR r.cycle>2
+      THEN RAISE EXCEPTION 'third suspect submission unavailable'; END IF;
+    IF new_state->'third' ? 'submitted' THEN RAISE EXCEPTION 'third suspect already submitted'; END IF;
+    choice:=m.private_pack->'third_suspect_mission'->>'assigned_path';
+    IF choice='protect' AND length(btrim(coalesce(p_payload->>'defense','')))<10
+      THEN RAISE EXCEPTION 'defense requires at least ten characters'; END IF;
+    new_state:=jsonb_set(new_state,'{third}',
+      jsonb_build_object('submitted',true,'cycle',r.cycle,'path',choice,
+      'defense',CASE WHEN choice='protect' THEN left(p_payload->>'defense',600) ELSE NULL END),true);
+    IF choice='cooperate' THEN
+      piece:=m.private_pack->'third_suspect_mission'->'public_on_submission';
+      IF piece IS NULL THEN RAISE EXCEPTION 'authentic submission not authored'; END IF;
+      new_state:=jsonb_set(new_state,'{disclosed}',
+        coalesce(new_state->'disclosed','[]'::jsonb)||jsonb_build_array(piece->>'id'),true);
+      new_state:=jsonb_set(new_state,'{events}',
+        coalesce(new_state->'events','[]'::jsonb)||
+        jsonb_build_array(jsonb_build_object('type','third_document','title',piece->>'title',
+          'text',piece->>'text','cycle',r.cycle)),true);
+    END IF;
+    result:=jsonb_build_object('ok',true,'kind',p_kind,'accepted',true);
+  ELSE
+    RAISE EXCEPTION 'action not implemented; release gated';
+  END IF;
+
+  UPDATE igr_private.igr_regime_v13_rooms SET play_state=new_state WHERE room_code=p.room_code;
+  INSERT INTO igr_private.igr_regime_v13_ledger
+   (room_code,request_id,actor_player,action_kind,cycle,response)
+  VALUES(p.room_code,p_request_id,p.id,p_kind,r.cycle,result);
+  RETURN result;
+END $$;
+REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_action(text,uuid,text,text,jsonb) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.igr_regime_v13_action(text,uuid,text,text,jsonb) TO anon,authenticated;
