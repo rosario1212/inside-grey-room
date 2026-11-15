@@ -197,22 +197,114 @@ function renderFinal(){const ph=room()?.phase;return `<section class="igr52-page
 function finalRules(){if(judgePresent())return `<section class="igr52-rules"><h2>${copy('Tribunal unique → Vote secret','Single courtroom → Secret ballot')}</h2><ol><li>${copy('Dès la fin du cycle 3, le Juge ouvre le tribunal. Aucune Audience préalable. Disposition conseillée mais facultative.','Immediately after cycle 3 the Judge opens court. No separate hearing. Seating chart is optional.')}</li><li>${copy('Accusations du Procureur (sinon Enquêteur), débats libres et confrontations sans chronomètre, puis réquisitions, réponses des avocats et dernier mot de chaque suspect.','Charges by the Prosecutor (otherwise Investigator), free debate without a timer, then final submissions, lawyer responses and each defendant’s final word.')}</li><li>${copy('Le Juge suit un aide-mémoire facultatif. L’application enregistre les étapes et les confirmations des suspects, sans enregistrer la parole. Clôture protégée, vote secret après.','The Judge sees an optional checklist. The app tracks stages and defendants’ confirmations, not speech. Protected closure, then secret voting.')}</li></ol><p>${copy('Dossier 029 : rapport et témoins spécifiques conservés. Sans Juge : Audience et défenses habituelles inchangées.','Case 029: its special witness report remains. Without a Judge, the usual hearing and defence remain unchanged.')}</p></section>`;return `<section class="igr52-rules"><div class="igr52-rule-head"><small>${copy('FIN DU CYCLE 3','END OF CYCLE 3')}</small><h2>${copy('Audience finale','Final hearing')}</h2></div><ol><li><b>${copy('Audience des rôles','Role hearing')}</b> — ${copy('Enquêteur → Analyste → Inspecteur → Expert → Procureur → Juge → Journaliste. COURT 1 min / LONG 2 min max. Tous peuvent passer sauf le Juge.','Investigator → Analyst → Inspector → Expert → Prosecutor → Judge → Journalist. SHORT 1 min / LONG 2 min max. Everyone may skip except the Judge.')}</li><li><b>${copy('Défenses des suspects','Suspect defences')}</b> — ${copy('Chaque suspect peut parler 2 minutes en COURT ou 3 en LONG, ou passer. Son Avocat officiel partage ce temps : il n’existe plus de second plaidoyer séparé.','Each suspect may speak for 2 minutes in SHORT or 3 in LONG, or skip. Their official Lawyer shares that time: there is no second separate plea.')}</li><li><b>${copy('Décision finale','Final decision')}</b> — ${copy('Après toutes les défenses, chaque rôle du camp Enquête verrouille une seule fois 0 = aucune, 1 = secondaire, 2 = principale. Le Journaliste verrouille son angle final personnel. Puis révélation.','After all defences, each Investigation role locks once: 0 = none, 1 = secondary, 2 = primary. The Journalist locks a personal final angle. Then the reveal.')}</li></ol><p><b>${copy('Important :','Important:')}</b> ${copy('aucun nouvel élément ne peut être créé après la fermeture du cycle 3.','no new evidence can be created after cycle 3 closes.')}</p></section>`}
 function injectNow(){if(!finalPhases.has(room()?.phase)){document.getElementById('igr52Now')?.remove();return;}document.getElementById('igr51Now')?.remove();const host=document.querySelector('.phase-strip');if(!host)return;const text=room().phase==='final_audience'?copy('Suis l’ordre de passage. Parle ou passe lorsque l’application t’appelle. Tous peuvent passer, y compris le Juge.','Follow the speaking order. Speak or skip when the app calls you. Everyone may skip, including the Judge.'):room().phase==='final_suspect_defenses'?judgePresent()?copy('Tribunal unique : le Juge suit les étapes, les défenses et le dernier mot. Aucun chronomètre.','Single courtroom: the Judge directs stages, defence and final word. No countdown.'):copy('Chaque suspect choisit s’il utilise sa défense finale (COURT 2 min / LONG 3 min). L’Avocat officiel partage ce temps.','Each suspect chooses whether to use their final defence (SHORT 2 min / LONG 3 min). The official Lawyer shares that time.'):copy('Après les défenses, le camp Enquête verrouille une seule lecture définitive et le Journaliste son angle personnel.','After the defences, the Investigation side locks one final reading and the Journalist their personal angle.');const existing=document.getElementById('igr52Now');if(existing?.dataset.guidance===text)return;existing?.remove();const e=document.createElement('section');e.dataset.guidance=text;e.id='igr52Now';e.className='igr52-now';e.innerHTML=`<small>${copy('QUE FAIRE MAINTENANT ?','WHAT TO DO NOW?')}</small><p>${esc(text)}</p>`;host.insertAdjacentElement('afterend',e)}
 function tickTimers(){document.querySelectorAll('[data-igr705-close-at]').forEach(el=>el.disabled=!(room()?.state?.v705_defense_done||Date.now()>=Number(el.dataset.igr705CloseAt)));document.querySelectorAll('[data-igr59-recovery-at]').forEach(el=>{el.disabled=Date.now()<Number(el.dataset.igr59RecoveryAt)});document.querySelectorAll('[data-igr52-timer]').forEach(el=>el.textContent=clock(secsLeft()));if(finalPhases.has(room()?.phase))document.getElementById('igr51Now')?.remove()}
-const v708style=document.createElement('style');v708style.textContent=`
-.igr708-seating,.igr708-agenda{padding:15px;border:1px solid rgba(255,255,255,.14);border-radius:15px;background:#0a0f14}
-.igr708-seating summary{font-size:12px;font-weight:750;letter-spacing:.06em;cursor:pointer}
-.igr708-bench{padding:12px;border-radius:9px;text-align:center;background:#1a2025;border:1px solid rgba(255,255,255,.18);display:grid;gap:3px}
-.igr708-bench small{font-size:11px;color:#c6ced5}
-.igr708-sides{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:9px 0}
-.igr708-sides>div,.igr708-side{padding:11px;border:1px solid rgba(255,255,255,.1);border-radius:10px}
-.igr708-sides p,.igr708-side p{font-size:12px;line-height:1.6}
-.igr708-side{text-align:center}.igr708-steps{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0}
-.igr708-steps span{font-size:10px;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:5px 7px;color:#a4abb2}
-.igr708-steps .current{color:#fff;border-color:#a3afb8;background:#263038}
-.igr708-agenda h3{margin:0 0 7px}.igr708-topic{display:flex;width:100%;gap:9px;text-align:left;padding:10px;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.09);color:#e2e7e9;font:inherit;font-size:12px;cursor:pointer}
-.igr708-topic span{font-size:19px}.igr708-progress-head,.igr708-progress-row{display:grid;grid-template-columns:minmax(0,1fr) 70px 75px;gap:4px;align-items:center;padding:6px 0}
-.igr708-progress-head{font-size:10px;color:#99a5b0}.igr708-progress-row{font-size:12px;border-top:1px solid rgba(255,255,255,.08)}
-.igr708-progress-row span:not(:first-child){text-align:center}
-@media(max-width:480px){.igr708-sides{grid-template-columns:1fr}.igr708-progress-head,.igr708-progress-row{grid-template-columns:minmax(0,1fr) 54px 65px}}
+const v708style=document.createElement('style');v708style.dataset.igrCourtroom='v712';v708style.textContent=`
+/* v712 — A spacious, graphite-and-parchment courtroom, no gamified spectacle. */
+.igr52-page:has(.igr712-hero){gap:18px;max-width:1000px;margin:0 auto}
+.igr52-page .igr712-hero,.igr52-page .igr712-block,.igr52-page .igr712-controls,.igr52-page .igr712-defendants,.igr52-page .igr712-role{box-sizing:border-box;border:1px solid #292d30;border-radius:20px;background:#101214;color:#efede7;box-shadow:0 8px 28px rgba(0,0,0,.12)}
+.igr52-page .igr712-hero{padding:clamp(22px,5vw,36px);background:radial-gradient(ellipse at 94% 3%,rgba(184,151,105,.14),transparent 38%),linear-gradient(155deg,#17191a,#090b0d);border-color:#454139;display:grid;gap:15px;position:relative;overflow:hidden}
+.igr712-hero:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:#b49a72}
+.igr712-hero-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.igr52-page .igr712-hero-eyebrow{font:700 11px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#d7c09a}
+.igr712-unclocked{border:1px solid #4e473b;border-radius:999px;padding:7px 12px;color:#c4c0b7;font-size:11px;letter-spacing:.02em}
+.igr712-hero-number{font:600 clamp(38px,8vw,56px) 'IBM Plex Mono',monospace;letter-spacing:-.07em;line-height:1;color:#d5c1a1}
+.igr712-hero-number span{font-size:14px;letter-spacing:0;color:#7e8587}
+.igr52-page .igr712-hero h2{font-size:clamp(21px,5vw,30px);font-weight:600;line-height:1.2;letter-spacing:-.02em}
+.igr52-page .igr712-hero p{color:#c4c7c6;font-size:14px;line-height:1.65;max-width:640px;margin:0}
+.igr712-timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:10px}
+.igr712-timeline-stage{display:grid;align-content:start;gap:7px;min-width:0}
+.igr712-timeline-stage>span{min-width:30px;min-height:30px;display:grid;place-items:center;width:fit-content;padding:0 6px;border:1px solid #33393b;background:#1b2022;border-radius:8px;font:700 12px 'IBM Plex Mono',monospace;color:#9ba2a3}
+.igr712-timeline-stage>small{font-size:10px;line-height:1.5;color:#9ca5a7;overflow-wrap:anywhere;letter-spacing:.01em}
+.igr712-timeline-stage.is-active>span{border-color:#b89d74;background:#b89d74;color:#141414}
+.igr712-timeline-stage.is-active>small{color:#f0eee9;font-weight:650}
+.igr712-timeline-stage.is-past>span{color:#d3b991;border-color:#665844}
+.igr712-timeline-stage.is-future{opacity:.65}
+.igr52-page .igr712-role{display:grid;grid-template-columns:52px minmax(0,1fr);gap:17px;padding:21px 23px}
+.igr712-role-mark{width:52px;height:52px;display:grid;place-items:center;border:1px solid #474339;border-radius:14px;background:#24231e;font:500 28px Georgia,serif;color:#dac19c}
+.igr52-page .igr712-role h3{font-size:20px;margin:5px 0 7px}
+.igr52-page .igr712-role p{font-size:14px;line-height:1.65;color:#c4c9ca;margin:0;max-width:730px}
+.igr52-page .igr712-controls{padding:22px 24px;display:grid;gap:17px;border-color:#4c4336;background:linear-gradient(145deg,#1b1a18,#121413)}
+.igr712-controls-heading{display:grid;gap:4px}
+.igr712-controls-heading h3{font-size:18px;letter-spacing:-.01em;margin:0}
+.igr52-page .igr712-main-action{width:100%;min-height:50px!important;white-space:normal;line-height:1.35;padding:13px 16px!important;font-size:13px!important;border-radius:12px}
+.igr712-action-row{display:grid;grid-template-columns:1fr 1.45fr;gap:10px}
+.igr712-action-row .btn{min-height:50px!important;white-space:normal;line-height:1.4}
+.igr52-page .igr712-controls .btn:disabled{opacity:.45;cursor:not-allowed}
+.igr712-note,.igr712-footnote{color:#aab0b0;font-size:12px;line-height:1.6;margin:0}
+.igr52-page .igr712-block{padding:0;overflow:hidden}
+.igr708-seating>summary{list-style:none;display:grid;grid-template-columns:40px minmax(0,1fr) 20px;gap:13px;align-items:center;cursor:pointer;padding:20px 24px}
+.igr708-seating>summary::-webkit-details-marker{display:none}
+.igr708-seating>summary strong{display:block;font-size:17px;color:#efede7}
+.igr708-seating>summary small{display:block;margin-top:3px;font-size:12px;color:#a6acae}
+.igr712-summary-icon{width:40px;height:40px;border:1px solid #454039;background:#22211e;border-radius:12px;display:grid;place-items:center;color:#d3b992;font-size:24px}
+.igr712-chevron{color:#aaa;font-size:23px;transition:transform .15s ease}
+.igr708-seating[open] .igr712-chevron{transform:rotate(180deg)}
+.igr712-seating-inner{padding:2px 24px 23px;display:grid;gap:14px}
+.igr712-seating-top{display:grid;gap:8px;justify-items:center}
+.igr712-rail-label{font:700 10px 'IBM Plex Mono',monospace;color:#c0aa88;letter-spacing:.13em}
+.igr708-bench{min-width:min(280px,100%);max-width:100%;display:flex;align-items:center;justify-content:center;gap:15px;text-align:left;padding:16px 22px;border-radius:13px;background:#25231f;border:1px solid #564d40}
+.igr708-bench>span{font-size:25px;color:#dbc5a3}
+.igr708-bench strong{display:block;color:#faf5eb;font-size:15px}
+.igr708-bench small{display:block;margin-top:5px;font-size:12px;color:#c6c4c0}
+.igr708-bench .igr712-seat-person{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.igr708-bench .igr712-seat-person b{font-size:12px}
+.igr708-bench .igr712-seat-person small{margin:0;font-size:11px}
+.igr708-sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.igr712-seat-side,.igr712-seating-gallery{border:1px solid #313638;background:#15191a;border-radius:14px;padding:16px;display:grid;align-content:start;gap:14px;min-width:0}
+.igr712-seat-people{display:grid;gap:8px}
+.igr712-seat-person{min-width:0;border-radius:10px;padding:10px 11px;background:#222729;border:1px solid #363b3d;display:grid;gap:3px}
+.igr712-seat-person b{font-size:12px;color:#f4f1e9;overflow-wrap:anywhere}
+.igr712-seat-person small{font-size:11px;color:#aeb6b7}
+.igr712-seat-empty{color:#7f8a8c;font-size:12px}
+.igr712-seating-gallery .igr712-seat-people{grid-template-columns:repeat(auto-fit,minmax(125px,1fr))}
+.igr712-seat-disclaimer{margin:2px 0 0;color:#a0a6a6;font-size:12px;line-height:1.55;text-align:center}
+.igr708-agenda{padding:22px 24px!important;display:grid;gap:14px}
+.igr712-block-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.igr712-block-head h3{font-size:19px;margin:6px 0 0}
+.igr712-counter{display:inline-grid;place-items:center;min-width:55px;padding:8px 10px;border:1px solid #464038;background:#292720;border-radius:9px;font:700 12px 'IBM Plex Mono',monospace;color:#e0c69f}
+.igr712-guide-note{font-size:12px;line-height:1.6;color:#a9b0b0;margin:0}
+.igr712-topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.igr708-topic{width:100%;min-height:90px;display:grid;grid-template-columns:27px minmax(0,1fr) 18px;align-items:start;gap:10px;text-align:left;padding:15px;border:1px solid #32393b;border-radius:12px;background:#191e1f;color:#eeece6;cursor:pointer;font:inherit;transition:background .15s ease,border-color .15s ease}
+.igr708-topic:hover{background:#242929;border-color:#7a6a51}
+.igr708-topic:focus-visible,.igr712-controls button:focus-visible,.igr708-seating summary:focus-visible{outline:2px solid #d9bc8e;outline-offset:3px}
+.igr708-topic.is-complete{border-color:#75644a;background:#292720}
+.igr712-topic-index{font:700 11px 'IBM Plex Mono',monospace;color:#bbaa8d;margin-top:3px}
+.igr712-topic-content{display:grid;gap:6px}
+.igr712-topic-content b{font-size:13px;line-height:1.4}
+.igr712-topic-content small{color:#abb3b3;font-size:12px;line-height:1.5}
+.igr712-topic-check{font-size:19px;color:#d7b98d;line-height:1}
+.igr52-page .igr712-defendants{padding:22px 24px;display:grid;gap:16px}
+.igr712-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.igr712-metrics>div{background:#1d2223;border:1px solid #303739;border-radius:12px;padding:13px 16px;display:grid;gap:2px}
+.igr712-metrics b{font-size:26px;line-height:1.1;font-weight:600;color:#e6d0b0}
+.igr712-metrics b span{color:#8b9394;font-size:13px}
+.igr712-metrics small{color:#a8b0b0;font-size:11px}
+.igr712-defendant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:9px}
+.igr712-defendant{display:grid;gap:10px;padding:14px 15px;background:#161a1b;border:1px solid #303739;border-radius:12px;min-width:0}
+.igr712-defendant>strong{font-size:14px;overflow-wrap:anywhere}
+.igr712-defendant.is-absent{opacity:.62}
+.igr712-defendant-flags{display:flex;flex-wrap:wrap;gap:7px}
+.igr712-defendant-flags>span{padding:5px 7px;background:#25292a;border-radius:7px;font-size:11px;color:#a4acac}
+.igr712-defendant-flags>span.done{color:#e7ceaa;background:#373126}
+.igr52-page .igr712-footnote{margin:0}
+@media(max-width:680px){
+ .igr52-page .igr712-hero,.igr52-page .igr712-role,.igr52-page .igr712-controls,.igr52-page .igr712-defendants{padding:19px}
+ .igr708-seating>summary{padding:18px}
+ .igr712-seating-inner{padding:0 17px 18px}
+ .igr708-agenda{padding:19px!important}
+ .igr712-topic-grid{grid-template-columns:1fr}
+ .igr712-defendant-grid{grid-template-columns:1fr}
+ .igr712-timeline-stage small{font-size:9px}
+}
+@media(max-width:430px){
+ .igr708-sides{grid-template-columns:1fr}
+ .igr712-timeline{gap:3px}
+ .igr712-timeline-stage>span{min-width:25px;min-height:26px}
+ .igr712-hero-top{align-items:flex-start}
+ .igr712-action-row{grid-template-columns:1fr}
+ .igr52-page .igr712-role{grid-template-columns:40px minmax(0,1fr);gap:11px}
+ .igr712-role-mark{width:40px;height:40px;font-size:24px}
+}
+@media(prefers-reduced-motion:reduce){.igr708-topic,.igr712-chevron{transition:none}}
 `;document.head.appendChild(v708style);
 const style=document.createElement('style');style.textContent=`.igr52-page{display:grid;gap:14px}.igr52-page>header,.igr52-card,.igr52-live,.igr52-map,.igr52-rules{padding:15px;border:1px solid rgba(255,255,255,.11);border-radius:16px;background:#0a0f14}.igr52-page header small,.igr52-card small,.igr52-live small,.igr52-map small,.igr52-rules small,.igr52-now small{font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.13em;color:#8f99a2}.igr52-page h2,.igr52-page h3,.igr52-rules h2{margin:0}.igr52-page p,.igr52-rules p{color:#aeb7bf;line-height:1.48}.igr52-flow{display:flex;gap:6px;overflow:auto}.igr52-flow span{white-space:nowrap;padding:7px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.09);font-size:11px;color:#78828b}.igr52-flow .on{color:#fff;border-color:rgba(255,255,255,.28);background:#151c22}.igr52-actions{display:flex;gap:8px;flex-wrap:wrap}.igr52-actions>*{flex:1;min-width:135px}.igr52-level{display:grid;grid-template-columns:1fr minmax(150px,220px);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}.igr52-level select,.igr52-map textarea{width:100%}.igr52-map{display:grid;gap:8px}.igr52-timer{font:700 38px 'IBM Plex Mono',monospace;letter-spacing:.03em}.igr52-lawyer-note,.igr52-progress{padding:9px 11px;border:1px solid rgba(255,255,255,.08);border-radius:11px;color:#c7cdd2}.igr52-now{margin:10px 0 12px;padding:11px 13px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:#0d1318}.igr52-now p{margin:4px 0 0;color:#c2c9cf}.igr52-rules{margin-top:16px}.igr52-rules ol{padding-left:20px;color:#c8ced3;display:grid;gap:8px}@media(max-width:680px){.igr52-level{grid-template-columns:1fr}.igr52-actions>*{min-width:100%}}`;document.head.appendChild(style);
 const basePhaseLabel=typeof window.phaseLabel==='function'?window.phaseLabel:(typeof phaseLabel==='function'?phaseLabel:null);if(basePhaseLabel){const f=function(ph){const labels={final_audience:copy('AUDIENCE FINALE','FINAL HEARING'),final_suspect_defenses:judgePresent()?copy('TRIBUNAL','COURTROOM'):copy('DÉFENSES FINALES','FINAL DEFENCES')};return labels[ph]||basePhaseLabel.apply(this,arguments)};try{phaseLabel=f}catch(_){}window.phaseLabel=f}
