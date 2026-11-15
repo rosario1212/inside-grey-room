@@ -5,7 +5,7 @@
  */
 (()=>{
 'use strict';
-const VERSION='regime-v13-candidate';
+const VERSION='regime-v15-live-audit';
 const ids=new Set(['032','033','034']);
 const me=()=>{try{return STATE?.sync?.player||null}catch{return null}};
 const room=()=>{try{return STATE?.sync?.room||null}catch{return null}};
@@ -160,16 +160,38 @@ function warrants(){
  choices+'</select></label>'+
  button('SOUMETTRE LE MANDAT AU JUGE','warrant')+'</div>');
 }
+
 function judge(){
  if(!isRole('juge'))return '';
- const list=pending();
+ const list=pending(),nets=cache?.public_networks||[],docs=cache?.public_evidence||[];
  return section('CONTRÔLE JUDICIAIRE',
- list.length?list.map(x=>'<article class="igr-rg13-warrant"><b>'+esc(person(x.target_id))+'</b>'+
- '<p>Hypothèse : '+esc(x.track_choice==='together'?'Réseau commun':'Réseaux séparés')+
- ' · Pièces : '+esc((x.evidence_ids||[]).join(', '))+'</p>'+
- button('RECEVOIR LE MANDAT','judge-allow','data-mandate-id="'+esc(x.id)+'"')+
- button('ÉMETTRE UNE OBJECTION','judge-contest','data-mandate-id="'+esc(x.id)+'"')+
- '</article>').join(''):'<p>Aucun mandat en attente. Les preuves scellées demeurent inconnues du Juge.</p>');
+ list.length?list.map(x=>{
+  const refuge=nets.find(n=>n.id===x.track_choice);
+  const proofs=(x.evidence_ids||[]).map(id=>{
+   const d=docs.find(p=>p.id===id);
+   return '<li>'+esc(d?(d.title||'Pièce')+' · '+(d.source||d.origin||'Source publiée'):'Pièce jointe')+'</li>';
+  }).join('');
+  return '<article class="igr-rg13-warrant"><b>'+esc(person(x.target_id))+'</b>'+
+   '<p><b>Refuge visé :</b> '+esc(refuge?.label||'Refuge à vérifier')+'</p>'+
+   '<p>Deux pièces à vérifier :</p><ul>'+proofs+'</ul>'+
+   '<p>Le serveur vérifie les preuves et le refuge, quelle que soit la décision du Juge.</p>'+
+   button('STATUER SUR LE MANDAT','judge-allow','data-mandate-id="'+esc(x.id)+'"')+
+   button('FORMULER UNE OBJECTION','judge-contest','data-mandate-id="'+esc(x.id)+'"')+'</article>';
+ }).join(''):'<p>Aucun mandat en attente. Les preuves scellées restent inconnues du Juge.</p>');
+}
+function mandateRecovery(){
+ if(!['enqueteur','analyste'].includes(cache?.role))return '';
+ const list=pending();if(!list.length)return '';
+ return section('CONTINUITÉ DES MANDATS',
+ '<p>Si le Juge ne répond pas dans les 90 secondes, le serveur peut conclure le contrôle sans donner le pouvoir de capturer à un seul joueur.</p>'+
+ list.map(x=>{
+  const due=Date.parse(x.requested_at||'')+90000;
+  return '<article class="igr-rg13-warrant"><b>'+esc(person(x.target_id))+'</b>'+
+   '<p>Mandat déposé · réponse judiciaire en attente.</p>'+
+   button('REPRISE POSSIBLE APRÈS 90 S','judge-fallback',
+    'data-mandate-id="'+esc(x.id)+'" data-regime-recover-at="'+esc(Number.isFinite(due)?due:Date.now()+90000)+'" disabled')+
+   '</article>';
+ }).join(''));
 }
 function third(){
  if(!cache?.my_mission)return '';
@@ -317,7 +339,7 @@ function render(){
  root.innerHTML='<header class="igr-rg13-banner"><small>LE RÉGIME · '+esc(cache.scenario_id)+' · CYCLE '+esc(cache.cycle)+'/3</small>'+
  '<h3>'+esc(phase==='regime_court'?'LE TRIBUNAL DE KARSANE':'LA CHUTE DE KARSANE')+'</h3>'+
  '<p>Les décisions des joueurs influencent la traque. Les faits historiques restent scellés.</p></header>'+
- scene()+(phase==='regime_court'?court()+capturedDefense():myCard()+alliance()+actions()+capturedDefense()+investigations()+third()+warrants()+judge())+
+ scene()+(phase==='regime_court'?myCard()+court()+capturedDefense()+judge()+mandateRecovery():myCard()+alliance()+actions()+capturedDefense()+investigations()+third()+warrants()+judge()+mandateRecovery())+
  evidence()+events();
  after.insertAdjacentElement('afterend',root);
  root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2').forEach(el=>{
@@ -351,6 +373,13 @@ function tick(){
  const s=Math.max(0,Math.ceil((Date.parse(cur.started_at)+Number(cur.seconds||0)*1000-Date.now())/1000));
  bar.textContent=' · '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
  }
+ document.querySelectorAll('#igr-regime-v13 [data-regime-recover-at]').forEach(el=>{
+  const left=Math.max(0,Math.ceil((Number(el.dataset.regimeRecoverAt)-Date.now())/1000));
+  el.disabled=left>0;
+  el.textContent=left?
+   'REPRISE DANS '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0'):
+   'DÉBLOQUER LE MANDAT';
+ });
 }
 function control(id){return document.getElementById(id)?.value||''}
 document.addEventListener('click',async(ev)=>{
@@ -381,9 +410,9 @@ document.addEventListener('click',async(ev)=>{
      toast('Les deux traces doivent concerner la même personne et le même refuge, avec deux sources indépendantes.');return;
    }
    await call('igr_regime_v13_warrant',{...args,p_target_id:target,p_track_choice:control('igrRgTrack'),p_evidence_ids:[e1,e2]});
-  }else if(action==='judge-allow'||action==='judge-contest'){
+  }else if(action==='judge-allow'||action==='judge-contest'||action==='judge-fallback'){
    await call('igr_regime_v13_judge_review',{...args,p_mandate_id:el.dataset.mandateId,
-    p_decision:action==='judge-allow'?'allow':'contest'});
+    p_decision:action==='judge-contest'?'contest':'allow'});
   }else if(action==='court-call'){
    await call('igr_regime_v13_court_call',{...args,p_actor_id:el.dataset.actorId});
   }else if(action==='court-pass'){
