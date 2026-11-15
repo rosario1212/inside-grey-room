@@ -58,7 +58,7 @@ const cache={key:'',value:null,time:0,receivedAt:0,pending:false,error:false};
 const room=()=>typeof STATE!=='undefined'?STATE?.sync?.room:null;
 const player=()=>typeof STATE!=='undefined'?STATE?.sync?.player:null;
 const key=()=>[STATE?.room,STATE?.token,room()?.cycle].join('|');
-const officer=()=>player()?.public_role==='officier_liaison'&&['026','027','028'].includes(String(room()?.scenario_id));
+const officer=()=>!document.querySelector('script[src*="terror-command-v694.js"]')&&player()?.public_role==='officier_liaison'&&['026','027','028'].includes(String(room()?.scenario_id));
 const secs=(iso,serverNow)=>Math.max(0,Math.ceil((Date.parse(iso)-(Date.now()+Date.parse(serverNow)-cache.receivedAt))/1000));
 const clock=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
 function updateCountdown(){

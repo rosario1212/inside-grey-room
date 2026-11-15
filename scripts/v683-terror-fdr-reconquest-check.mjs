@@ -14,6 +14,9 @@ const index=read('index.html');
 const builder=read('scripts/build-web.mjs');
 const mobile=read('scripts/build-mobile.mjs');
 const pub=read('scripts/publish-006-adaptive-shell.mjs');
+const command694=read('terror-command-v694.js');
+const sql694=read('supabase/migrations/20261115033000_igr_v694_terror_officer_rapid_command.sql');
+execFileSync(process.execPath,['--check','terror-command-v694.js'],{stdio:'pipe'});
 for(const path of ['app-v11.js','terror-front-v682.js','terror-command-v688.js','terror-live-v681.js'])
   execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
 assert(front.includes('ALMIZIA')&&front.includes('Ferra'),'Approved Almizia and Ferra lore missing');
@@ -31,16 +34,16 @@ assert(military.includes('counterpush:=least(2,counterpush+1)'),'Reconquest must
 assert(military.includes("'correct_answers',correct_count")&&military.includes("'military_operation',military_choice"),'Cause and effect must appear in public debrief');
 assert(military.includes('terror_v688_captivity')&&military.includes("WHEN '026'")&&military.includes("WHEN '027'"),'Each scenario needs distinct FDR capture stakes');
 assert(military.includes("'front_at_gates'")&&military.includes("'evidence_preserved'"),'Both war outcomes must remain achievable');
-for(const sid of ['026','027','028'])assert(app.includes("'"+sid+"':{required:")&&app.includes('Officier des opérations'),'Three role rosters missing');
-assert(app.includes("'Officier des opérations':'officier_liaison'"),'Role selection must map the officer to server role');
-for(const sid of ['026','027','028'])assert(legacyTerror.includes("'"+sid+"':{required:")&&legacyTerror.includes('Officier des opérations'),'Legacy Terror overlay must preserve the new commander roster');
+for(const sid of ['026','027','028'])assert(app.includes("'"+sid+"':{required:")&&app.includes('Officier'),'Three role rosters missing');
+assert(app.includes("'Officier':'officier_liaison'"),'Role selection must map the officer to server role');
+for(const sid of ['026','027','028'])assert(legacyTerror.includes("'"+sid+"':{required:")&&legacyTerror.includes('Officier'),'Legacy Terror overlay must preserve the new commander roster');
 assert(!legacyTerror.includes("label:'Officier de liaison'"),'Inspector cannot masquerade as the military commander');
 assert(command.includes('terrorV688Choose')&&command.includes('igr_v688_terror_operations'),'Commander choices must be usable in the game');
 assert(command.includes('function')&&command.includes('renderReveal=function'),'Distinct defeat finales must appear in reveal');
 assert(css.includes('.terror-v688-command')&&css.includes('.terror-v688-capture'),'Military and defeat UI must be styled');
 assert(index.includes('terror-command-v688.js')&&index.includes('terror-command-v688.css'),'Military UI missing in canonical HTML');
 for(const bundle of [builder,mobile])assert(bundle.includes("'terror-command-v688.js'")&&bundle.includes("'terror-command-v688.css'"),'Military UI missing from a release bundle');
-assert(pub.includes('terror-command-auditions-v693-20261115')&&pub.includes('terror-command-v688.js?v=terror-officer-v693-20261115'),'Cache version and new assets missing');
+assert(pub.includes('terror-live-v694-20261115')&&pub.includes('terror-command-v688.js?v=terror-officer-v693-20261115'),'Cache version and new assets missing');
 const fatal=read('supabase/migrations/20261115011300_igr_v690_terror_executions_and_evidence_guard.sql');
 const civilian=read('supabase/migrations/20261115011500_igr_v691_terror_civilian_protection_and_officer.sql');
 assert(fatal.includes('exécutés sommairement')&&fatal.includes('executed_summarily'),'All defeated captives must be executed in every scenario');
@@ -62,4 +65,6 @@ assert(command.includes("terrorV693Join")&&command.includes("terrorV693Visit"),'
 assert(app.includes("session_epoch_ms")&&command.includes("session_epoch_ms"),'Cross-platform video grant must be session-scoped');
 assert(front.includes("Severin Voss")&&front.includes("Marek Soren"),'FDR leadership missing in public lore');
 assert(!front.includes("président Voss"),'FDR leader may not be confused with president of Almizia');
+assert(command694.includes('igr_v694_terror_orders')&&command694.includes('igr_v694_officer_confront'),'v694 realtime commands not wired');
+assert(sql694.includes('igr_v694_terror_confirm')&&sql694.includes('igr_v694_finish_cycle'),'v694 server command quota missing');
 console.log('PASS Terror v688: Almizia/Ferra, essential military commander, constrained operations, public military impact and three differentiated captivity endings.');

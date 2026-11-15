@@ -1,6 +1,6 @@
 # IGR v694 — Équilibrage des rôles et commandement militaire
 
-Statut : modification proposée. Les tests SQL sont transactionnels et annulés, pas des playtests humains. Publication uniquement après PR, CI, synchronisation backend/client et contrôle Cloudflare.
+Statut : contrat des rôles, amendé après fusion avec les mécaniques TERREUR v695. Les tests SQL sont transactionnels et annulés, pas des playtests humains. Publication uniquement après PR, CI, synchronisation backend/client et contrôle Cloudflare.
 
 ## Règles canoniques corrigées
 - **Juge** : trois **points** de protection maximum (certaines pièces coûtent 2), aucune convocation individuelle ordinaire chronométrée. La troisième protection peut faire échouer l'objectif personnel décrit sur la carte, sans annuler à elle seule la victoire collective.
@@ -14,19 +14,17 @@ Statut : modification proposée. Les tests SQL sont transactionnels et annulés,
 - **Enquêteur / Suspect** : pouvoirs inchangés; guides de cycle non contraignants pour prévenir monopole et passivité.
 - **Espion** : rôle secret indépendant conservé, aucun changement aux routes ni aux conditions de victoire.
 
-## DLC Terror 026–028 — Officier de liaison
-**Dénomination conservée : Officier de liaison**, représentant l'état-major national, pas Enquêteur ni Juge.
+## DLC TERREUR 026–028 — version canonique v695
 
-Trois ordres distincts par cycle, à décisions séparées :
-1. **Front :** tenir / protéger / reconquérir si la synthèse précédente le permet.
-2. **Civils :** ouvrir les abris (+1 service civil immédiat, coût territorial différé) / renforcer les positions (bénéfice territorial, aucun gain civil immédiat).
-3. **Renseignement :** vérifier la synthèse / transmettre l'alerte urgente. Leur effet final dépend des réponses factuelles (notamment le seuil 5/6 pour l'urgence).
+**Officier** : le commandement de l'armée nationale appartient à un joueur distinct de l'Enquêteur et de l'Inspecteur. L'ancien prototype « Officier de liaison » et ses commandes sont désactivés dans TERREUR v695.
 
-Une fenêtre s'ouvre immédiatement pour le premier ordre; la deuxième et la troisième apparaissent après un délai aléatoire de 25 à 85 secondes suivant la décision précédente ou la clôture de sa fenêtre. Chaque fenêtre dure **60 à 120 secondes** (horaire et verrouillage déterminés par le serveur). Les fenêtres manquées sont tracées sans ordre militaire fictif. Deux choix ne peuvent jamais être enregistrés pour un même volet.
+- Trois ordres militaires par cycle (neuf sur la partie). Les alertes sont espacées, chronométrées entre 60 et 120 secondes; leurs effets sur la capitale sont immédiatement publiés.
+- Le minuteur militaire est suspendu pendant un interrogatoire ou une confrontation; les ordres expirés basculent vers un protocole de sécurité, sans compter comme des décisions personnelles.
+- Un suspect différent peut être rejoint par cycle, dès le premier. Une confrontation indépendante est possible au cycle 2 et au cycle 3.
+- Le verdict judiciaire et la survie militaire sont évalués indépendamment; les ordres personnels comptent pour la victoire de l'Officier.
+- Chacune des trois enquêtes possède trois variantes A/B/C scellées côté serveur, chacune avec neuf investigations garanties et onze pistes facultatives; les vérités sont distinctes et ne sont dévoilées qu'à la révélation.
 
-Les ordres sont publics. Le volet « civils » change immédiatement les services civils; les volets « front » et « renseignement » publient une décision immédiate et influencent le prochain bilan territorial. Les calculs de responsabilité (0, 1, 2) et les secrets A/B/C ne sont pas modifiés.
-
-L'Officier peut en outre intervenir une fois par cycle à partir du **cycle 2** dans une audition ou confrontation déjà ouverte; l'accès reste lié à cette séance. Son intervention du cycle 3 doit viser un autre suspect que celui du cycle 2.
+Le fichier `role-cadence-v694.js` reste chargé pour les repères et initiatives des autres rôles, **mais son ancien écran militaire ne s'active pas si `terror-command-v694.js` est présent**. Les anciens RPC militaires sont révoqués pour les clients publics.
 
 ## Garde-fous
 - RPC avec jeton de joueur, vérification du rôle/scénario/cycle/phase, limitation de fréquence.

@@ -1,0 +1,25 @@
+/* TERROR v694 — responsive officer command panel */
+.terror-v694-command{position:relative;border:1px solid #6b6558;border-radius:16px;padding:16px;margin:12px 0;background:linear-gradient(160deg,#1d2524,#15191b);color:#f5f1e9;box-shadow:0 12px 26px #0003}
+.terror-v694-command header{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+.terror-v694-command header small{font-size:11px;letter-spacing:.12em;color:#d8c7a2}
+.terror-v694-command header strong{font-size:19px;letter-spacing:.06em}
+.terror-v694-command p{font-size:13px;line-height:1.6;color:#e9e5dc}
+.terror-v694-progress{padding:9px;border:1px solid #52635d;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.05em}
+.terror-v694-alert{margin-top:12px;padding:12px;background:#31291d;border:1px solid #caa76a;border-radius:12px}
+.terror-v694-alert strong{font-size:14px}
+.terror-v694-timer{font-variant-numeric:tabular-nums;font-size:34px;font-weight:800;text-align:center;margin:6px 0;color:#ffdb9d}
+.terror-v694-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.terror-v694-options button,.terror-v694-hearing-action button{background:#d6bd8a;border:0;color:#1b211e;border-radius:9px;padding:11px;font-weight:800;cursor:pointer}
+.terror-v694-options button:disabled{opacity:.5;cursor:not-allowed}
+.terror-v694-idle{padding:10px;background:#212a29;border-radius:8px}
+.terror-v694-result{margin-top:12px;padding:12px;background:#25372f;border:1px solid #5c8068;border-radius:10px}
+.terror-v694-result b{font-size:12px;letter-spacing:.02em}
+.terror-v694-result span{font-size:12px;color:#c2decb;font-variant-numeric:tabular-nums}
+.terror-v694-hearings{margin-top:12px;border-top:1px solid #646255;padding-top:12px}
+.terror-v694-hearings h4{margin:0;font-size:14px}
+.terror-v694-hearings small{font-size:11px;color:#d4cfbd}
+.terror-v694-hearing-action{display:grid;gap:7px;margin-top:9px}
+.terror-v694-hearing-action label{font-size:12px}
+.terror-v694-hearing-action select{padding:9px;border-radius:8px;background:#f8f6ef;color:#111}
+.terror-v694-confirmed{color:#d1e7d3}
+@media(max-width:550px){.terror-v694-command{padding:12px}.terror-v694-options{grid-template-columns:1fr}.terror-v694-command header strong{font-size:17px}}
