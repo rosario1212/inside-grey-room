@@ -20,13 +20,13 @@ assert.equal(res.status,302);
 assert.equal(new URL(res.headers.get('Location')).pathname,'/');
 res=await worker.fetch(req('/api/turn',{headers:{Origin:'https://malicious.example'}}),env);
 assert.equal(res.status,403,'Unknown browser origin must be blocked');
-res=await worker.fetch(req('/api/turn',{method:'POST',headers:{Origin:url}}),env);
-assert.equal(res.status,405,'TURN must remain GET only');
-res=await worker.fetch(req('/api/turn',{headers:{Origin:url}}),env);
-assert.equal(res.status,503,'Public browser TURN reaches server configuration without gate');
-res=await worker.fetch(req('/api/turn',{headers:{Origin:'capacitor://localhost'}}),env);
-assert.equal(res.status,503,'Native TURN clients remain compatible');
-console.log('Public access verified: no passcode, no cookie, legacy redirect, restricted TURN origins, native TURN.');
+res=await worker.fetch(req('/api/turn',{method:'GET',headers:{Origin:url}}),env);
+assert.equal(res.status,405,'Anonymous TURN GET must be rejected');
+res=await worker.fetch(req('/api/turn',{method:'POST',headers:{Origin:url,'Content-Type':'application/json'},body:'{}'}),env);
+assert.equal(res.status,401,'TURN requires player session credentials');
+res=await worker.fetch(req('/api/turn',{method:'OPTIONS',headers:{Origin:'capacitor://localhost'}}),env);
+assert.equal(res.status,204,'Native TURN preflight remains available');
+console.log('Public access verified: no passcode, no cookie, legacy redirect, authenticated TURN, native preflight.');
 const realFetch=globalThis.fetch;let casinoCalls=0;
 try{
  globalThis.fetch=async(endpoint,init)=>{
