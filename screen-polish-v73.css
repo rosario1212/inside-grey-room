@@ -628,3 +628,13 @@ body > .live-session-controls{max-width:100%;isolation:isolate}
 #app:has(#joinCode){min-height:0!important}
 #app:has(#joinCode) .app{padding-bottom:0}
 body:has(#joinCode) > .igr-beta-footer{margin-top:12px;padding-top:8px}
+
+/* v16.2: Regime must not inherit the fixed-height desktop catalogue row. */
+@media(min-width:1100px){
+ #app .page-create-v10-13 .scenario-list-v10-13 .scenario--compact.regime-scenario{
+  height:auto!important;max-height:none!important;min-height:206px!important;
+ }
+ #app .page-create-v10-13 .regime-scenario .scenario-body{
+  height:auto!important;max-height:none!important;overflow:visible!important;
+ }
+}

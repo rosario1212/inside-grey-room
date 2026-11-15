@@ -72,7 +72,11 @@ function rolesBlock(sc){
    '<div class="roles-row optional"><span>'+(en?'Optional':'Facultatifs')+'</span><p>'+(en?'Prosecutor · Judge · Journalist · Don · Right hand':'Procureur · Juge · Journaliste · Don · Bras droit')+'</p></div></div>';
  }
  const cfg=SCENARIO_ROLES[sc.id]||{required:[],optional:[]};
- const label=x=>h(x==='Avocat'?(cartelLawyerLabel(sc.id)||x):x);
+ // Numbered legacy labels must neither reach users nor become invalid role ids.
+ const label=x=>{
+  const clean=String(x||'').replace(/\s*\((?:7e|8e|9e)\)$/i,'');
+  return h(clean==='Avocat'?(cartelLawyerLabel(sc.id)||clean):clean);
+ };
  return `<div class="roles-availability"><div class="roles-row"><span>Obligatoires</span><p>${cfg.required.map(label).join(' · ')}</p></div>${cfg.optional.length?`<div class="roles-row optional"><span>Facultatifs</span><p>${cfg.optional.map(label).join(' · ')}</p></div>`:''}</div>`;
 }
 
@@ -82,7 +86,7 @@ const ROLE_LABEL_TO_ID={
  'Inspecteur':'inspecteur','Expert':'expert','Officier':'officier_liaison','Témoin':'temoin','témoin':'temoin','témoins':'temoin'
 };
 function expandRoleLabel(label){
- const x=String(label||'').trim();
+ const x=String(label||'').trim().replace(/\s*\((?:7e|8e|9e)\)$/i,'');
  let m=x.match(/^(\d+)\s+suspects?$/i);if(m)return Array(+m[1]).fill('suspect');
  m=x.match(/^(\d+)(?:e|er)?\s+t[ée]moin$/i);if(m)return ['temoin'];
  if(/^2e Avocat$/i.test(x))return ['maitre'];
