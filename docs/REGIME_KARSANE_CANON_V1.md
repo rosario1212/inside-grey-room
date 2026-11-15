@@ -74,3 +74,29 @@ Surnoms attribués par des survivants ou utilisés dans les papiers clandestins 
 ## Prudence de publication
 
 Il s'agit d'une **bible narrative à valider**, pas d'une migration des fiches ou du serveur. Avant de faire entrer ces noms et chiffres dans les scénarios privés, auditer les autres packs et toutes les règles actuelles. Ne pas publier un scénario partiellement réécrit.
+
+## La pièce transversale : CIRCULAIRE 17
+
+La **Circulaire 17** est un texte administratif ancien, existant et identique dans toutes les parties. Officiellement, elle porte sur la « stabilisation des territoires ». Elle ne comporte pas à elle seule de consigne explicite de tuer. Les dossiers l'exploitent à des échelles différentes :
+
+- 032 : son application bureaucratique dans les registres de détention et les transferts ;
+- 033 : les décisions de guerre et les campagnes contre les communautés visées, dont les villages inscrits comme « évacués » alors qu'ils sont détruits ;
+- 034 : la façon dont le sommet l'a préparée, diffusée, interprétée ou détournée.
+
+La circulaire est un **point commun, pas une preuve magique de culpabilité**. La démonstration repose sur des ordres complémentaires, des alertes reçues, des actes datés et les pouvoirs réels des intéressés. Elle ne doit ni résoudre les trois affaires de mémoire ni changer de texte entre variantes.
+
+## Séquences d'ambiance à écrire dans les packs privés
+
+**032 — salle des registres.** Le parquet révèle une liste de 27 personnes transférées de Vahran. Aucun établissement d'arrivée ne les a enregistrées. Le directeur connaît le formulaire ; le ministre reconnaît la procédure mais refuse d'en expliquer la finalité. Chacun doit pouvoir être interrogé sur ce qu'il savait à la date précise des transferts.
+
+**033 — villages effacés.** Des images et un inventaire concordent sur la destruction de communautés entières. Le communiqué gouvernemental de l'époque les déclarait « évacuées ». Le ministre de la Défense ne peut pas se contenter de dire qu'il ignorait les opérations : il doit répondre à l'origine et à la réception des alertes. Les autres dignitaires apportent chacun un savoir distinct et utile.
+
+**034 — salle d'audience.** Après cinquante-trois jours de fuite, le président comparaît en personne. Un procès-verbal reproduit sa formule de dénégation ; plusieurs documents permettent de tester exactement sa portée. Le joueur qui incarne le président peut choisir ses arguments, négocier et confronter, mais ne peut ni changer la vérité, ni annuler un document, ni imposer sa version au système.
+
+Aucune de ces séquences exemplaires ne constitue encore une trame active. Les chiffres et pièces spécifiques doivent être validés par variantes avant d'être présentés comme preuves.
+
+## Test central du caractère machiavélique
+
+Une scène réussit si les trois critères sont réunis : (1) un accusé admet un fait réel qui le protège tactiquement ; (2) cette admission ouvre une contradiction vérifiable, pas un retournement arbitraire ; (3) au moins un autre personnage peut tirer profit de la situation sans perdre toute possibilité de défense. Les joueurs doivent se méfier des aveux partiels autant que des dénégations.
+
+**Frontière éditoriale :** la cruauté est celle des faits. Aucun protagoniste ne doit être rendu séduisant simplement parce qu'il massacre ou torture. La dignité des victimes reste présente au travers des noms, familles, registres et témoignages. Les actes peuvent être décrits sans recherche de détails anatomiques gratuits.
