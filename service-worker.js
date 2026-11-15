@@ -1,6 +1,6 @@
 const CACHE='igr-santoro-display-audit-20261108';
 const SHELL=[
-  '/terror-crisis-v696.css?v=terror-crisis-v696-20261115',
+  '/terror-crisis-v696.css?v=terror-carbon-v697-20261115',
   '/', '/index.html', '/en.html',
   '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=role-balance-v694-20261115',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
