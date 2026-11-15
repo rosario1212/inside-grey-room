@@ -90,7 +90,7 @@ WITH ids(sid,variant_id) AS (
  WHEN '033' THEN 'LA DYNASTIE' ELSE 'LES NOMS QU''ILS PORTAIENT' END
  AND (sid<>'034' OR
   (d->'setting'->'codes'='["LA TÊTE","LE SCEAU","LA TOUR"]'::jsonb
-  AND d::text !~* '(notaire|rempart|portrait)')) FROM drafts
+  AND jsonb_array_length(d->'setting'->'codes')=3)) FROM drafts
 
  UNION ALL SELECT sid,variant_id,'three distinct progressively dark public scenes without culprit reveal',
  jsonb_array_length(d->'scene_beats')=3
