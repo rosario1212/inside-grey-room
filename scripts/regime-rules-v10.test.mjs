@@ -112,3 +112,22 @@ test('every Regime scenario supports C1 capture with two scenario-specific piece
    assert.equal(r.status,'captured');
  }
 });
+
+test('a missing sealed truth never grants the third suspect cooperation',()=>{
+ const r=evaluateThirdSuspect({path:'cooperate',actionCycle:1,actionType:'submit_authentic_document',
+  actId:'act',finalStatement:{},
+  privateTruth:{actId:'act',documentAuthenticated:true}});
+ assert.equal(r.won,false);
+});
+test('a missing canonical level never grants the third suspect protection',()=>{
+ const r=evaluateThirdSuspect({path:'protect',actionCycle:1,actionType:'file_defense',
+  actId:'act',defenseSubmitted:true,investigatorLevels:{third:1},
+  privateTruth:{actId:'act',thirdPlayerId:'third'}});
+ assert.equal(r.won,false);
+});
+test('duplicate acts cannot artificially inflate judicial success',()=>{
+ let threw=false;
+ try{evaluateReconstruction({sealedActs:Array(4).fill({id:'act'}),answers:
+  ['a','b','c','d'].map(actId=>({actId})),publicEvidence:[]});}catch(e){threw=true;}
+ assert.equal(threw,true);
+});
