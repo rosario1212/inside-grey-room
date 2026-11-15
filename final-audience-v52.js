@@ -3,7 +3,7 @@
 */
 (()=>{
 'use strict';
-const VERSION='v712-final-audience';
+const VERSION='v52-final-audience';
 const S=()=>{try{return typeof STATE!=='undefined'?STATE:(window.STATE||null)}catch(_){return window.STATE||null}};
 const sync=()=>S()?.sync||null,room=()=>sync()?.room||null,me=()=>sync()?.player||null,role=()=>me()?.public_role||S()?.role||'';
 const fr=()=>window.IGR_LOCALE!=='en',copy=(a,b)=>fr()?a:b;
