@@ -33,6 +33,20 @@ Le Juge est **obligatoire dans les 3 dossiers** et ne peut agir comme seul arbit
 
 Le camp du régime n'est pas un bloc uniforme : les deux cibles peuvent sacrifier leurs relations pour survivre, et le troisième suspect peut coopérer avec l'enquête à ses risques. La culpabilité de chacun dans les crimes passés varie uniquement selon le canon de la variante scellée, mais son statut de **personne recherchée** est fixe pour la partie.
 
+### Activité garantie aux dirigeants fugitifs
+
+**Pour éviter deux cycles à regarder un écran :** chaque fugitif reçoit, à chaque cycle, (a) **une décision stratégique** privée qui affecte une ressource ou une liaison, (b) **une réaction contextuelle** à une révélation de l'enquête, sous forme d'un questionnaire à deux réponses cohérentes avec sa variante, et (c) la possibilité d'émettre **une déclaration publique courte** préécrite ou de solliciter une confrontation à distance avec le troisième suspect. Une seule réaction par cycle, et aucune interaction ne doit bloquer le chrono d'autrui.
+
+Exemples de décisions différenciées, **pas des cartes finales** :
+- Baran (032) : conserver un lien avec son ancien ministère ou incriminer son adjoint ; en réaction, répondre ou esquiver la dernière trace de transfert révélée.
+- Mourad (032) : défendre la légalité des arrestations ou reconnaître une dérive locale ; en réaction, protéger une relation dans la chaîne hiérarchique.
+- Darian (033) : publier un appel à la fidélité au clan ou désavouer une branche du pouvoir ; en réaction, répondre à un rapprochement entre propagande et opérations de guerre.
+- Fouad (033) : confirmer un ordre militaire ou le renvoyer à un échelon précis ; en réaction, choisir quel fidèle conserver.
+- Président (034) : prendre ses distances avec un proche ou maintenir la solidarité familiale ; en réaction, nier ou préciser un contact attesté.
+- Ilyas (034) : protéger une liaison du palais ou en dénoncer l'utilisation ; en réaction, exposer ou préserver un relais du président.
+
+Les choix doivent utiliser des formulations compatibles avec la vérité de chaque variante. **Une déclaration mensongère peut être un acte de joueur, mais jamais une fausse preuve authentifiée.** Toute manœuvre laisse un indice contradictoire exploitable, et les effets sur la traque sont explicitement plafonnés. Pas de surveillance du chat vocal et pas de validation automatique de la sincérité.
+
 ### Avant capture et après capture, tous actifs
 
 | État du dirigeant | Actions et interactions |
