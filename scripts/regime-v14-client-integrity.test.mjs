@@ -127,8 +127,8 @@ test('the shared trial keeps each suspect personal file available',()=>{
 test('Regime 8th witness and 034-only 9th journalist are selectable and active',async()=>{
  const catalog=await read('dlc-suite-v12-37.js');
  assert.match(catalog,/min:6,max:9,sound:/);
- assert.match(catalog,/Témoin \(8e\)/);
- assert.match(catalog,/Journaliste \(9e\)/);
+ assert.match(catalog,/optional:\['Procureur','Témoin'\]/);
+ assert.match(catalog,/'Journaliste'\]\}/);
  assert.match(ui,/function civicRole\(\)/);
  assert.match(ui,/igr_regime_v16_civic_statement/);
  assert.match(ui,/court-testimony/);
@@ -137,7 +137,7 @@ test('Regime 8th witness and 034-only 9th journalist are selectable and active',
  assert.match(courtSql,/testimony/);
  assert.match(privateSql,/igr_regime_v16_civic_card/);
  assert.match(lifecycleSql,/igr_regime_v16_civic_card/);
- assert.match(index,/regime-v16-rosters-20261115/);
+ assert.match(index,/regime-v16-1-mobile-cards-20261115/);
 });
 test('Regime expanded server capacity, tribunal and majority remain consistent',async()=>{
  const rosterMigration=await read('supabase/migrations/20261115230900_igr_regime_v16_optional_roster_limits.sql');
@@ -146,4 +146,32 @@ test('Regime expanded server capacity, tribunal and majority remain consistent',
  assert.match(rosterMigration,/when 'journaliste' then return case when p_scenario='034' and p_count>=9/);
  assert.match(lifecycleSql,/\'temoin\',\'journaliste\'/);
  assert.match(judicialSql,/count\(\*\) FROM public\.igr_v4_players WHERE room_code=r\.code\)>=8/);
+});
+
+
+test('Regime optional roles use canonical lobby identifiers without numbered suffixes',async()=>{
+ const catalog=await read('dlc-suite-v12-37.js');
+ for(const id of ['032','033','034']){
+  const line=catalog.split('\n').find(s=>s.includes("'"+id+"':{required:"));
+  assert.ok(line,'missing role entry '+id);
+  assert.ok(line.includes("optional:['Procureur','Témoin'"),'missing optional role '+id);
+  assert.ok(!line.includes('(7e)')&&!line.includes('(8e)')&&!line.includes('(9e)'));
+ }
+ assert.ok(catalog.includes("'034':{required:['Enquêteur','Analyste','Juge','3 suspects'],optional:['Procureur','Témoin','Journaliste']}"));
+ assert.ok(catalog.includes('min:6,max:9,sound:'));
+});
+test('Regime phone cards clamp copy and keep badges beneath the text',async()=>{
+ const css=await read('dlc-suite-v12-40.css');
+ for(const selector of [
+  '.regime-scenario .scenario-body>p',
+  '-webkit-line-clamp:3!important',
+  '.regime-scenario .tag-row',
+  'margin-top:auto!important',
+  '.regime-scenario .scenario-thumb img',
+  'position:absolute!important',
+  '.roles-availability .roles-row',
+  'white-space:normal!important'
+ ])assert.ok(css.includes(selector),'missing responsive CSS: '+selector);
+ assert.ok(index.includes('regime-v16-1-mobile-cards-20261115'));
+ assert.ok(sw.includes('regime-v16-1-mobile-cards-20261115'));
 });
