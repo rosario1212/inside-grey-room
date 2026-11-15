@@ -156,7 +156,7 @@
     return `<details class="igr-regime-org-preview">
       <summary><span>ORGANIGRAMME DU RÉGIME</span><small>Clan présidentiel et appareil d’État</small></summary>
       <div class="igr-regime-org-content">
-        <p class="igr-regime-org-lead">République de Karsane · 15 millions d’habitants avant la guerre · gouvernement masculin sous la dictature.</p>
+        <p class="igr-regime-org-lead">République de Karsane · 15 millions d’habitants avant la guerre · gouvernement masculin sous la dictature. <strong>Deux joueurs incarnent les fugitifs dès C1</strong> ; le troisième suspect peut être interrogé. L’Enquêteur dirige les recherches, l’Analyste recoupe les pistes, le Juge contrôle les ordonnances et le Procureur est facultatif. Les personnages incarnés utilisent les noms de leurs joueurs en partie.</p>
         <div class="igr-regime-org-head"><strong>PRÉSIDENT DÉCHU</strong><span>COMMANDEMENT SUPRÊME</span><small>Chaque personnage incarné portera le nom de son joueur lorsque l’attribution serveur sera intégrée.</small></div>
         <div class="igr-regime-org-nodes" role="list" aria-label="Membres du pouvoir">
           <article role="listitem"><strong>MINISTRE DE LA DÉFENSE</strong><small>COUSIN</small><span>Ministre de la Défense</span></article>
