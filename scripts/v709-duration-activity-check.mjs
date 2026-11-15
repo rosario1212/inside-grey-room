@@ -25,7 +25,7 @@ assert.equal(c.IGR_DURATION_MODES_V35.estimate('long'),'≈ 72–107 min');
 STATE.sync.players=roster(['enqueteur','analyste','procureur','maitre','suspect','suspect','suspect']);
 assert.equal(c.IGR_DURATION_MODES_V35.estimate('short'),'≈ 40–55 min');
 assert.equal(c.IGR_DURATION_MODES_V35.estimate('long'),'≈ 70–90 min');
-for(const s of ['COURTROOM_ACTIVITY','activityRating(r,global)','stars(activityRating(r,global))','procureur:4','juge:4','maitre:4','analyste:4','expert:3','temoin:3']){
+for(const s of ['COURTROOM_ACTIVITY','activityRating(r,global)','stars(activityRating(r,global))','procureur:4','juge:4','maitre:4','analyste:3','expert:2','temoin:2','inspecteur:3','journaliste:3']){
  assert.ok(guide.includes(s),'Missing contextual activity: '+s);
 }
 assert.ok(!source.includes('judicialAudienceCount'),'Timed judge hearing estimate must be gone');
