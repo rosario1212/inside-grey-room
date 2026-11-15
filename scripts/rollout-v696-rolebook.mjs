@@ -10,6 +10,11 @@ for(const page of ['index.html','en.html']){
  content=content.replace(/self-guided-rules-v51\.js\?v=[A-Za-z0-9._-]+/g,'self-guided-rules-v51.js?v='+version);
  if(!content.includes('self-guided-rules-v51.js?v='+version))throw new Error('Missing rolebook entry in '+page);
  await writeFile(file,content,'utf8');
+ // Keep Cloudflare Worker shell aliases byte-identical to the published homepage.
+ for(const alias of [page.replace('.html','-latest-release.txt'),page.replace('.html','-terror-live-v694-20261115.txt')]){
+  const dest=path.join(target,alias);
+  if(await exists(dest))await writeFile(dest,content,'utf8');
+ }
 }
 const swFile=path.join(target,'service-worker.js');
 if(await exists(swFile)){
