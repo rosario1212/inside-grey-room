@@ -39,7 +39,7 @@
       {title:'LA DERNIÈRE LIAISON',text:'L’état-major ne peut transmettre qu’une confirmation limitée. Le centre doit choisir ce qui mérite une dernière vérification et garder les dossiers à l’abri de la panique.'}
     ]
   };
-  const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v688_military_order','terror_v682_at_gates','terror_v682_final_status','terror_v688_captivity']);
+  const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v688_military_order','terror_v694_military_result','terror_v682_at_gates','terror_v682_final_status','terror_v688_captivity']);
   function frontBoard(){
     if(!inDlc()||STATE?.view!=='game')return;
     const d=STATE?.sync,board=document.getElementById('terrorV681Board');
@@ -72,7 +72,7 @@
        '<p><strong>Aujourd’hui.</strong> Les autres grandes villes sont tombées. Les forces armées d’Almizia résistent dans leur capitale, appuyées par des unités isolées et des réserves hors de la ville. Une synthèse judiciaire vérifiée peut leur permettre de sécuriser puis reprendre un secteur, sans victoire miraculeuse.</p></details>'+
        '<div class="terror-v682-liaison"><small>DERNIÈRE CAPITALE LIBRE · '+city+' · FORCES ARMÉES D’ALMIZIA</small>'+
        '<strong>'+e(liaisonStatus==='lost'?'DERNIÈRE LIAISON ROMPUE':nationalCounterpush>0?'CONTRE-OFFENSIVE EN COURS':'RECOUPEMENT DES INFORMATIONS')+'</strong>'+
-       '<p>Vos décisions comptent pour la dernière capitale libre. À chaque cycle, des analyses recoupées donnent aux forces nationales une information à vérifier puis à exploiter ; des conclusions insuffisantes freinent leur réponse, et des erreurs majeures accélèrent le FDR. Chaque perte ou reconquête est rendue publique.</p></div>';
+       '<p>L Officier confirme trois décisions militaires par cycle. Leurs conséquences sont immédiatement publiées et modifient les secteurs, la pression ennemie ou la protection civile. Les réponses de l enquête influencent la qualité des renseignements au cycle suivant. Chaque perte ou reconquête est visible de tous.</p></div>';
     board.insertAdjacentElement('beforebegin',div);
     const cycleNumber=Math.max(1,Math.min(3,Number(d.room.cycle)||1));
     const beat=publicBeats[scen()]?.[cycleNumber-1];
