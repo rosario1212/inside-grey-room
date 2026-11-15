@@ -166,16 +166,22 @@ begin
   end if;
   if p_action='start' then
     if status<>'waiting' then raise exception 'already started'; end if;
-    update public.igr_v4_rooms set phase_started_at=now(),phase_ends_at=now()+make_interval(secs=>coalesce((item->>'seconds')::int,120)),state=jsonb_set(state,'{v52_status}',to_jsonb('active'::text),true),updated_at=now() where code=r.code;
+    update public.igr_v4_rooms set phase_started_at=now(),phase_ends_at=now()+make_interval(secs=>coalesce((item->>'seconds')::int,120)),state=jsonb_set(jsonb_set(state,'{v52_status}',to_jsonb('active'::text),true),'{v705_defense_done}','false'::jsonb,true),updated_at=now() where code=r.code;
   elsif p_action='skip' then
     if status<>'waiting' then raise exception 'already started'; end if;
     if stage='defenses' and public.igr_v44_judge_present(r.code) then raise exception 'the court must hear the suspect; silence is allowed';end if;
     skip_type:=case when stage='audience' then 'v52_audience_skip' else 'v52_defense_skip' end;
     insert into public.igr_v4_actions(room_code,player_id,cycle,action_type,payload) values(r.code,me.id,r.cycle,skip_type,jsonb_build_object('role',me.public_role));
     perform public.igr_v52_advance(r.code,'skip');
+  elsif p_action='defense_done' then
+    if stage<>'defenses' or not public.igr_v44_judge_present(r.code) or status<>'active' or me.public_role<>'suspect' or item->>'player_id'<>me.id::text then raise exception 'defense signal forbidden';end if;
+    update public.igr_v4_rooms set state=jsonb_set(state,'{v705_defense_done}','true'::jsonb,true),updated_at=now() where code=r.code;
   elsif p_action='end' then
     if status<>'active' then raise exception 'not active'; end if;
-    if stage='defenses' and public.igr_v44_judge_present(r.code) and me.public_role<>'juge' then raise exception 'only the judge can close this appearance';end if;
+    if stage='defenses' and public.igr_v44_judge_present(r.code) then
+      if me.public_role<>'juge' then raise exception 'only the judge can close this appearance';end if;
+      if not coalesce((r.state->>'v705_defense_done')::boolean,false) and now()<r.phase_started_at+interval '2 minutes' then raise exception 'suspect has the right to two minutes of defense unless they waive it';end if;
+    end if;
     perform public.igr_v52_advance(r.code,'manual');
   else raise exception 'invalid action'; end if;
   return jsonb_build_object('ok',true);
