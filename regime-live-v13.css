@@ -64,3 +64,9 @@
 .igr-rg13-scene h4{font-size:19px;font-weight:700;line-height:1.2;letter-spacing:-.01em;margin:0;color:#f0e6dc}
 .igr-rg13-scene p{font-size:14px;line-height:1.65;color:#dbd0c5;margin:0;max-width:68ch}
 .igr-rg13-scene span{color:#9e9188;font-size:10px;font-style:italic}
+
+/* v16: optional civic roles sit alongside the judge and defendants. */
+.igr-rg13-civic-attendees{padding:12px 15px;border-top:1px solid #524c44;background:#161615;color:#e1d7c3}
+.igr-rg13-civic-attendees>b{font-size:12px;letter-spacing:.1em}
+.igr-rg13-civic-attendees p{font-size:13px;margin:5px 0}
+.igr-rg13-section select,.igr-rg13-section textarea{max-width:100%;box-sizing:border-box}

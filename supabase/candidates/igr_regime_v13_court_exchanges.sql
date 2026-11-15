@@ -2,11 +2,12 @@
 -- Trusted server controls 5-min confrontation stage, avoids unbounded chat
 -- and does not let a procedural ruling change historical truths.
 
-CREATE OR REPLACE FUNCTION public.igr_regime_v13_court_exchange(
- p_code text,p_player_token uuid,p_request_id text,
- p_kind text,p_message text,p_reply_to text DEFAULT NULL)
-RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
-AS $$
+CREATE OR REPLACE FUNCTION public.igr_regime_v13_court_exchange(p_code text, p_player_token uuid, p_request_id text, p_kind text, p_message text, p_reply_to text DEFAULT NULL::text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
 DECLARE
  r public.igr_v4_rooms%rowtype;
  p public.igr_v4_players%rowtype;
@@ -40,7 +41,7 @@ BEGIN
    (m.play_state->'court'->>'duration_minutes')::int=14 THEN 720 ELSE 360 END;
  IF elapsed<confront_start OR elapsed>=confront_end THEN
    RAISE EXCEPTION 'confrontation window is not active';END IF;
- IF p_kind NOT IN ('question','objection','reply','ruling') THEN
+ IF p_kind NOT IN ('question','objection','reply','ruling','testimony','press_question') THEN
    RAISE EXCEPTION 'unsupported court intervention';END IF;
  actor:=CASE WHEN p.public_role='suspect'
  THEN m.private_pack->'private_cards'->(p.internal_slot-1)->>'actor_id'
@@ -57,6 +58,10 @@ BEGIN
    THEN RAISE EXCEPTION 'question reserved for accusation';END IF;
  ELSIF p_kind='reply' THEN
   IF p.public_role<>'suspect' THEN RAISE EXCEPTION 'reply reserved for suspects';END IF;
+ ELSIF p_kind='testimony' THEN
+  IF p.public_role<>'temoin' THEN RAISE EXCEPTION 'testimony reserved for witness';END IF;
+ ELSIF p_kind='press_question' THEN
+  IF p.public_role<>'journaliste' THEN RAISE EXCEPTION 'press reserved for journalist';END IF;
  ELSE
   IF p.public_role NOT IN ('enqueteur','analyste','procureur','suspect')
    THEN RAISE EXCEPTION 'objection unavailable';END IF;
@@ -66,7 +71,8 @@ BEGIN
  exchanges:=coalesce(m.play_state->'court'->'exchanges','[]'::jsonb);
  SELECT count(*) INTO n FROM jsonb_array_elements(exchanges) e
  WHERE e->>'player_id'=p.id::text AND e->>'kind'<>'ruling';
- IF n>=5 AND p_kind<>'ruling' THEN RAISE EXCEPTION 'confrontation intervention quota exhausted';END IF;
+ IF n >= (CASE WHEN p.public_role IN ('temoin','journaliste') THEN 2 ELSE 5 END)
+   AND p_kind<>'ruling' THEN RAISE EXCEPTION 'confrontation intervention quota exhausted';END IF;
  IF p_kind='ruling' THEN
   SELECT value INTO referred FROM jsonb_array_elements(exchanges) value
   WHERE value->>'id'=p_reply_to AND value->>'kind'='objection';
@@ -91,7 +97,8 @@ BEGIN
  (room_code,request_id,actor_player,action_kind,cycle,response)
  VALUES(m.room_code,p_request_id,p.id,'court_exchange',r.cycle,response);
  RETURN response;
-END $$;
+END $function$
+
 REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_court_exchange(
  text,uuid,text,text,text,text) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_regime_v13_court_exchange(
