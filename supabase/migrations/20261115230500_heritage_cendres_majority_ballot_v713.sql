@@ -72,7 +72,7 @@ begin
   select count(*) into v_cast from public.igr_heritage_online_cendres_votes
   where room_code=p_code;
 
-  if coalesce(v_votes,0)>=v_majority then
+  if v_cast=v_total and coalesce(v_votes,0)>=v_majority then
     update public.igr_heritage_online_rooms
       set decision_id=v_winning_option,stage='reveal',updated_at=now()
     where code=p_code;
