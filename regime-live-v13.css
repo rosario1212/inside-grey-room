@@ -48,3 +48,12 @@
 .igr-rg13-act h5{font-size:13px;color:#e7dac3;margin:0}
 .igr-rg13-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 @media(max-width:680px){.igr-rg13-banner{padding:15px}.igr-rg13-court{padding:10px}.igr-rg13-court header strong{font-size:29px}.igr-rg13-judge{min-width:85%}.igr-rg13-form,.igr-rg13-grid{grid-template-columns:1fr}.igr-rg13-choices{grid-template-columns:1fr}.igr-rg13-sides{gap:6px}.igr-rg13-sides>div{padding:9px}.igr-rg13-root button{min-height:44px}}
+
+.igr-rg13-stage{font:650 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#d1c0a2;margin-top:8px}
+.igr-rg13-exchanges{display:grid;gap:7px;max-height:300px;overflow-y:auto;padding:5px}
+.igr-rg13-exchanges article{display:grid;gap:4px;padding:10px 12px;background:#171614;border-left:2px solid rgba(190,172,139,.65);border-radius:6px}
+.igr-rg13-exchanges article small{color:#bca985;font:600 10px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em}
+.igr-rg13-exchanges article p{margin:0;line-height:1.5;color:#e3ddd2}
+.igr-rg13-ruling{background:#1b1915;padding:10px;border:1px solid var(--rg13-line);border-radius:8px}
+.igr-rg13-ruling button+button{margin-left:8px}
+.igr-rg13-court .igr-rg13-section{background:#101111}
