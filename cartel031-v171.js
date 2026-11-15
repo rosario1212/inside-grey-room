@@ -20,7 +20,10 @@ function currentCache(){
  return cache;
 }
 async function refresh(){
- currentCache();const key=cacheKey;if(!key||loadingKey===key)return;
+ currentCache();
+  // A suspended or disconnected client must not poll a private scenario endpoint.
+  if(document.visibilityState==='hidden'||(typeof navigator!=='undefined'&&navigator.onLine===false))return;
+  const key=cacheKey;if(!key||loadingKey===key)return;
  loadingKey=key;const request=++requestSerial;
  try{const next=await window.rpc('igr_v171_031_state',{p_code:S().room,p_player_token:S().token});
   if(request!==requestSerial||key!==sessionIdentity()){currentCache();return;}
