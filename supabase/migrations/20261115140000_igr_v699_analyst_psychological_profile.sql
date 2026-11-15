@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.igr_v699_analyst_profile_state(
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
 AS $body$
 DECLARE who public.igr_v4_players%rowtype; r public.igr_v4_rooms%rowtype;
- roster jsonb; history_ jsonb; submitted_ boolean;
+ roster jsonb; history_ jsonb; submitted_ boolean; match_ integer;
  allowed_ boolean;
 BEGIN
  SELECT * INTO who FROM public.igr_v4_players
@@ -17,6 +17,7 @@ BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'analyst or investigator role required'; END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=who.room_code;
  IF NOT FOUND THEN RAISE EXCEPTION 'room not found'; END IF;
+ match_:=greatest(1,coalesce((r.state->>'match_no')::integer,1));
 
  SELECT coalesce(jsonb_agg(jsonb_build_object('id',id,'pseudo',pseudo)
      ORDER BY seat_index),'[]'::jsonb)
@@ -33,11 +34,13 @@ BEGIN
  FROM public.igr_v4_actions a
  JOIN public.igr_v4_players author ON author.id=a.player_id AND author.room_code=a.room_code
  WHERE a.room_code=r.code AND a.action_type='igr_v699_analyst_profile'
- AND author.public_role='analyste';
+ AND author.public_role='analyste'
+ AND coalesce((a.payload->>'match_no')::integer,1)=match_;
 
  SELECT EXISTS(SELECT 1 FROM public.igr_v4_actions a
  WHERE a.room_code=r.code AND a.player_id=who.id
- AND a.cycle=r.cycle AND a.action_type='igr_v699_analyst_profile')
+ AND a.cycle=r.cycle AND a.action_type='igr_v699_analyst_profile'
+ AND coalesce((a.payload->>'match_no')::integer,1)=match_)
  INTO submitted_;
 
  allowed_:=who.public_role='analyste' AND r.status='playing'
@@ -50,7 +53,7 @@ BEGIN
   AND jsonb_array_length(roster)>0 AND NOT submitted_;
 
  RETURN jsonb_build_object('enabled',true,'role',who.public_role,
-  'cycle',r.cycle,'phase',r.phase,'can_submit',coalesce(allowed_,false),
+  'cycle',r.cycle,'match_no',match_,'phase',r.phase,'can_submit',coalesce(allowed_,false),
   'submitted_this_cycle',submitted_,'suspects',roster,'history',history_,
   'readers','analyste,enqueteur','canonical_evidence',false);
 END;
@@ -63,7 +66,7 @@ CREATE OR REPLACE FUNCTION public.igr_v699_analyst_profile_submit(
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
 AS $body$
 DECLARE who public.igr_v4_players%rowtype;r public.igr_v4_rooms%rowtype;
- levels_ jsonb;note_ text;focus_ text;
+ levels_ jsonb;note_ text;focus_ text;match_ integer;
 BEGIN
  PERFORM igr_private.rate_limit('analyst_profile_v699',
    coalesce(p_player_token::text,''),6,60);
@@ -79,9 +82,11 @@ BEGIN
    'final_suspect_defenses','judge_speech','judge_integrity_vote',
    'locking','reveal','closed')
  THEN RAISE EXCEPTION 'assessment phase closed'; END IF;
+ match_:=greatest(1,coalesce((r.state->>'match_no')::integer,1));
  IF EXISTS(SELECT 1 FROM public.igr_v4_actions a WHERE a.room_code=r.code
   AND a.player_id=who.id AND a.cycle=r.cycle
-  AND a.action_type='igr_v699_analyst_profile')
+  AND a.action_type='igr_v699_analyst_profile'
+  AND coalesce((a.payload->>'match_no')::integer,1)=match_)
  THEN RAISE EXCEPTION 'assessment already submitted this cycle'; END IF;
  IF NOT EXISTS(SELECT 1 FROM public.igr_v4_players
   WHERE room_code=r.code AND public_role='suspect')
@@ -100,13 +105,13 @@ BEGIN
 
  INSERT INTO public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
  VALUES(r.code,who.id,r.cycle,'igr_v699_analyst_profile',
-   jsonb_build_object('levels',levels_,'focus',focus_,
+   jsonb_build_object('match_no',match_,'levels',levels_,'focus',focus_,
     'note',note_,'confidence',p_confidence,'verified',false,
     'canonical_evidence',false));
  -- No broadcast: only the Analyst and Investigator may read this hypothesis
  -- through igr_v699_analyst_profile_state; all other public roles are denied.
  RETURN jsonb_build_object('ok',true,'cycle',r.cycle,
-  'notice','Avis analytique transmis à l Enquêteur. Hypothèse non vérifiée.');
+  'match_no',match_,'notice','Avis analytique transmis à l Enquêteur. Hypothèse non vérifiée.');
 END;
 $body$;
 REVOKE ALL ON FUNCTION public.igr_v699_analyst_profile_submit(text,uuid,jsonb,text,text,integer)
