@@ -257,6 +257,10 @@ BEGIN
    RAISE EXCEPTION 'the defense statement window is not active';
  END IF;
  slot_no:=(elapsed_seconds-60)/count_seconds;
+ IF p_actor_id IS DISTINCT FROM
+   (m.private_pack->'private_cards'->slot_no->>'actor_id') THEN
+   RAISE EXCEPTION 'judge cannot replace the accused assigned to this time slot';
+ END IF;
  last_called_slot:=coalesce((m.play_state->'court'->>'last_called_slot')::integer,-1);
  IF last_called_slot=slot_no THEN
    RAISE EXCEPTION 'only one speaker may be called per defense slot';
