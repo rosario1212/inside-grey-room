@@ -105,3 +105,21 @@ test('Regime court verdict is based on collective responsibility levels, never o
  assert.match(finalSql,/collective_accurate/);
  assert.doesNotMatch(finalSql,/SELECT coalesce\(\(m\.play_state->'reconstructions'->enq\.id::text->>'accurate'/);
 });
+
+test('enquiry roles can recover an unanswered Judge mandate after 90 seconds',()=>{
+ assert.ok(ui.includes('function mandateRecovery(){'));
+ assert.ok(ui.includes('data-regime-recover-at'));
+ assert.ok(ui.includes('el.disabled=left>0'));
+ assert.ok(ui.includes("action==='judge-fallback'"));
+ assert.ok(judicialSql.includes("now()>=start_at+interval '90 seconds'"));
+ assert.ok(ui.includes('refuge?.label'));
+ assert.ok(!ui.includes("x.track_choice==='together'"));
+});
+test('published private manuscripts remain in the nine-variant QA matrix',async()=>{
+ const qa=await read('supabase/tests/igr_regime_v14_nine_variant_server_qa.sql');
+ assert.ok(qa.includes("status' IN ('draft','ready')"));
+});
+test('the shared trial keeps each suspect personal file available',()=>{
+ assert.ok(ui.includes("phase==='regime_court'?myCard()+court()"));
+ assert.ok(ui.includes('judge()+mandateRecovery()'));
+});

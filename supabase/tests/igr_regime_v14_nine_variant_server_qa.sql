@@ -12,7 +12,7 @@ BEGIN
   SELECT scenario_id sid,variant_id variant,manuscript->'regime_vnext' d
   FROM igr_private.igr_v99_variant_manuscripts
   WHERE scenario_id IN ('032','033','034') AND
-        manuscript->'regime_vnext'->>'status'='draft'
+        manuscript->'regime_vnext'->>'status' IN ('draft','ready')
   ORDER BY scenario_id,variant_id
  LOOP
    d:=src.d;room_id:='QA14'||src.sid||src.variant;

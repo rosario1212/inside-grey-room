@@ -1,7 +1,7 @@
 const CACHE='igr-santoro-display-audit-20261108';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v14-main-sync-20261115',
-  '/regime-live-v13.js?v=regime-v14-main-sync-20261115',
+  '/regime-live-v13.js?v=regime-v15-audit-20261115',
   '/analyst-profiling-v700.css?v=v701-progressive-psychology',
   '/analyst-profiling-v700.js?v=v701-progressive-psychology',
   '/terror-crisis-v696.css?v=terror-carbon-v697-20261115',
