@@ -6,6 +6,7 @@ on:
       - 'heritage-play-v13-7.js'
       - 'play-modes-v13-8.js'
       - 'scripts/v713-cendres-*.mjs'
+      - 'scripts/v714-cendres-*.mjs'
       - 'supabase/migrations/*heritage_cendres_majority_ballot_v713.sql'
       - 'supabase/tests/igr_v713_cendres_ballot_*.sql'
       - '.github/workflows/heritage-cendres-v713-qa.yml'
@@ -15,6 +16,7 @@ on:
       - 'heritage-play-v13-7.js'
       - 'play-modes-v13-8.js'
       - 'scripts/v713-cendres-*.mjs'
+      - 'scripts/v714-cendres-*.mjs'
       - 'supabase/migrations/*heritage_cendres_majority_ballot_v713.sql'
       - 'supabase/tests/igr_v713_cendres_ballot_*.sql'
   workflow_dispatch:
@@ -36,6 +38,7 @@ jobs:
           node --check play-modes-v13-8.js
           node scripts/v713-cendres-playtest-check.mjs
           node scripts/v713-cendres-online-check.mjs
+          node scripts/v714-cendres-final-hardening-check.mjs
   postgres:
     name: CENDRES isolated majority database
     runs-on: ubuntu-latest
