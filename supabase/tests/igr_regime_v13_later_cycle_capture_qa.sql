@@ -18,7 +18,7 @@ BEGIN
    WHERE e->>'id'='032A-H13') THEN
     RAISE EXCEPTION 'C2 director capture evidence not published'; END IF;
  res:=public.igr_regime_v13_warrant('QA13SAFE',enq,
-   'qa-later-warrant-2','vahran_director','apart',
+   'qa-later-warrant-2','vahran_director','032A-vahran',
    '["032A-H11","032A-H13"]'::jsonb);
  res:=public.igr_regime_v13_judge_review('QA13SAFE',judge,
    'qa-later-review-2','qa-later-warrant-2','allow');
@@ -33,7 +33,7 @@ BEGIN
    WHERE e->>'id'='032A-H24') THEN
     RAISE EXCEPTION 'C3 minister capture evidence not published'; END IF;
  res:=public.igr_regime_v13_warrant('QA13SAFE',enq,
-   'qa-later-warrant-3','interior_minister','apart',
+   'qa-later-warrant-3','interior_minister','032A-interior',
    '["032A-H21","032A-H24"]'::jsonb);
  res:=public.igr_regime_v13_judge_review('QA13SAFE',judge,
    'qa-later-review-3','qa-later-warrant-3','allow');
