@@ -3,9 +3,9 @@
 'use strict';
 const ROLE_TIPS={
  analyste:[
-  'Cycle 1 : relève deux incohérences datées et distingue constat et interprétation. Propose une première priorité à l’Enquêteur.',
-  'Cycle 2 : tente de réfuter votre hypothèse principale par une source indépendante. Demande un recoupement concret.',
-  'Cycle 3 : explique ce qui reste incertain et propose des niveaux de responsabilité justifiés.'
+  'Cycle 1 : note les incohérences et remplis les deux questions psychologiques par suspect (10 mots minimum chacune).',
+  'Cycle 2 : révise tes hypothèses avec les questions adaptées aux déclarations et interrogatoires visibles.',
+  'Cycle 3 : compose un portrait psychologique final par suspect, révélé après la partie sans incidence sur le verdict.'
  ],
  expert:[
   'Cycle 1 : choisis ton analyse technique sur une question précise. Explique les limites du résultat.',
@@ -61,9 +61,9 @@ const ROLE_TIPS={
 
 const ROLE_TIPS_EN={
  analyste:[
-  'Cycle 1: identify two dated contradictions and separate observations from interpretations.',
-  'Cycle 2: challenge your leading hypothesis using a second independent source.',
-  'Cycle 3: state what remains uncertain before recommending responsibility levels.'
+  'Cycle 1: note inconsistencies and answer two psychological questions per suspect (at least 10 words each).',
+  'Cycle 2: revise each portrait through questions reflecting visible statements and interrogations.',
+  'Cycle 3: complete each final psychological portrait; all are revealed afterward without affecting the verdict.'
  ],
  expert:[
   'Cycle 1: choose a technical question and explain what your analysis can establish.',
