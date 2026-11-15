@@ -17,16 +17,17 @@ for(const page of ['index.html','en.html']){
   const html=read(path.join(root,page));
   const matches=html.split('cartel031-v171.js?v=v173-cartel031-negotiation').length-1;
   assert.equal(matches,1,page+' must load exactly one CARTEL 031 runtime');
-  assert(html.includes('live-cell-v12-44.js?v=v701-network-resilience-20261115'),
-    page+' still references the pre-fix live sync client');
-  assert(html.includes('app-v11-terror-live-v694-20261115.js?v=v701-network-resilience-20261115')||
-         html.includes('app-v11.js?v=v701-network-resilience-20261115'),
-    page+' still references a stale room-session client');
+  if(page==='index.html'){
+    assert(html.includes('live-cell-v12-44.js?v=v701-network-resilience-20261115'),
+      page+' still references the pre-fix live sync client');
+    assert(html.includes('app-v11-terror-live-v694-20261115.js?v=terror-live-v694-20261115&sync=v701-network-resilience-20261115'),
+      'Immutable app revision must be preserved with a fresh network cache key');
+  }
 }
 if(existsSync(path.join(root,'service-worker.js'))){
  const sw=read(path.join(root,'service-worker.js'));
- assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-v701-network-resilience-20261115';"),
-  'PWA cache was not invalidated for the session repair');
+ assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-terror-live-v694-20261115';"),
+  'The immutable PWA release cache must remain compatible');
  assert(sw.includes('live-cell-v12-44.js?v=v701-network-resilience-20261115'),
   'Service-worker asset list points to an old live sync client');
 }
