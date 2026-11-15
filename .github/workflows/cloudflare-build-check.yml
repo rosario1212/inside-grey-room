@@ -91,7 +91,11 @@ jobs:
           node --check role-tree-polish-v12-29.js
           node --check omerta-v12-30.js
           node --check live-cell-v12-44.js
+          node --check app-v11.js
+          node --check runtime-optimization-v12.js
+          node --check service-worker.js
           node scripts/ui-regression-check.mjs
+          node scripts/multiplayer-sync-check.mjs
       - name: Build canonical web bundle
         run: npm run build
       - name: Validate full production release preflight
