@@ -22,6 +22,7 @@
 
   const roomScenario = () => String(STATE?.sync?.room?.scenario_id || STATE?.scenarioId || STATE?.selectedScenario || '');
   const inRoom = () => !!(STATE?.room && STATE?.token);
+  const roomScreenActive = () => ['lobby','briefing','role','game'].includes(STATE?.view);
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
   const isOnline = () => navigator.onLine !== false;
   const isTerminalSessionError = error => /unauthorized|room not found|cellule introuvable|invalid player|player not found/i.test(String(error?.message || error || ''));
@@ -690,7 +691,7 @@
 
   // Connectivity is device-neutral: do not trust cached client phases.
   window.addEventListener('online',()=>{
-    if(!inRoom())return;
+    if(!inRoom()||!roomScreenActive())return;
     connectRealtime(true);
     if(document.visibilityState!=='hidden')syncSoon(0,true);
     schedulePoll(document.visibilityState==='hidden'?pollDelay():500);
@@ -710,7 +711,7 @@
   // to execute. The next resume must fetch the current authoritative state.
   let lastForegroundRepair=0;
   function foregroundRepair(){
-    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    if(!inRoom()||!roomScreenActive()||document.visibilityState==='hidden'||!isOnline())return;
     if(Date.now()-lastForegroundRepair<750)return;
     lastForegroundRepair=Date.now();
     const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>20000;
@@ -732,7 +733,7 @@
   // Device-neutral rescue watchdog: if a foreground snapshot failed to render,
   // retry without a manual reload, independently of socket state.
   setInterval(()=>{
-    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    if(!inRoom()||!roomScreenActive()||document.visibilityState==='hidden'||!isOnline())return;
     const since=Date.now()-Number(STATE.lastSuccessfulSyncAt||0);
     if(since>10000){
       if(!RT.ready||Date.now()-RT.lastMessageAt>35000)connectRealtime(true);
