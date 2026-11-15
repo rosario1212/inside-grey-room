@@ -14,6 +14,9 @@ const index=read('index.html');
 const builder=read('scripts/build-web.mjs');
 const mobile=read('scripts/build-mobile.mjs');
 const pub=read('scripts/publish-006-adaptive-shell.mjs');
+const command694=read('terror-command-v694.js');
+const sql694=read('supabase/migrations/20261115020000_igr_v694_terror_officer_rapid_command.sql');
+execFileSync(process.execPath,['--check','terror-command-v694.js'],{stdio:'pipe'});
 for(const path of ['app-v11.js','terror-front-v682.js','terror-command-v688.js','terror-live-v681.js'])
   execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
 assert(front.includes('ALMIZIA')&&front.includes('Ferra'),'Approved Almizia and Ferra lore missing');
@@ -40,7 +43,7 @@ assert(command.includes('function')&&command.includes('renderReveal=function'),'
 assert(css.includes('.terror-v688-command')&&css.includes('.terror-v688-capture'),'Military and defeat UI must be styled');
 assert(index.includes('terror-command-v688.js')&&index.includes('terror-command-v688.css'),'Military UI missing in canonical HTML');
 for(const bundle of [builder,mobile])assert(bundle.includes("'terror-command-v688.js'")&&bundle.includes("'terror-command-v688.css'"),'Military UI missing from a release bundle');
-assert(pub.includes('terror-command-auditions-v693-20261115')&&pub.includes('terror-command-v688.js?v=terror-officer-v693-20261115'),'Cache version and new assets missing');
+assert(pub.includes('terror-live-v694-20261115')&&pub.includes('terror-command-v688.js?v=terror-officer-v693-20261115'),'Cache version and new assets missing');
 const fatal=read('supabase/migrations/20261115011300_igr_v690_terror_executions_and_evidence_guard.sql');
 const civilian=read('supabase/migrations/20261115011500_igr_v691_terror_civilian_protection_and_officer.sql');
 assert(fatal.includes('exécutés sommairement')&&fatal.includes('executed_summarily'),'All defeated captives must be executed in every scenario');
@@ -62,4 +65,6 @@ assert(command.includes("terrorV693Join")&&command.includes("terrorV693Visit"),'
 assert(app.includes("session_epoch_ms")&&command.includes("session_epoch_ms"),'Cross-platform video grant must be session-scoped');
 assert(front.includes("Severin Voss")&&front.includes("Marek Soren"),'FDR leadership missing in public lore');
 assert(!front.includes("président Voss"),'FDR leader may not be confused with president of Almizia');
+assert(command694.includes('igr_v694_terror_orders')&&command694.includes('igr_v694_officer_confront'),'v694 realtime commands not wired');
+assert(sql694.includes('igr_v694_terror_confirm')&&sql694.includes('igr_v694_finish_cycle'),'v694 server command quota missing');
 console.log('PASS Terror v688: Almizia/Ferra, essential military commander, constrained operations, public military impact and three differentiated captivity endings.');
