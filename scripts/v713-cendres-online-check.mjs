@@ -15,9 +15,9 @@ for(const phrase of [
   "ballot?.votes_cast",
   "ballot?.my_vote",
 ])assert.ok(src.includes(phrase),'Online runtime contract missing '+phrase);
-assert.ok(play.includes('finishOnlineConfirmed:()=>'),'Post-confirmation persistence absent');
+assert.ok(play.includes('finishOnlineConfirmed:(serverRoom=null,serverPractice=false)=>'),'Post-confirmation persistence absent');
 assert.ok(src.includes('hFinishPending'),'Online finish must guard in-flight watcher race');
-assert.ok(src.includes("if(hSession()?.hostToken)window.IGR_HERITAGE_PLAY?.finishOnlineConfirmed?.()"),'Host result must persist after confirmed room-finished sync');
+assert.ok(src.includes("finishOnlineConfirmed?.(d.room,!!s.practice)"),'Host result must persist after confirmed room-finished sync');
 assert.ok(sql.includes("if v_room.campaign_id='cendres' then raise exception 'collective ballot required'"),'Legacy host bypass not blocked');
 assert.ok(sql.includes("if v_total not between 5 and 7"),'Invalid roster not blocked');
 assert.ok(sql.includes('v_majority := (v_total/2)+1'),'Absolute majority not implemented');
