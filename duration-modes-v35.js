@@ -32,7 +32,8 @@ function estimate(m){const roster=state()?.sync?.players||[];if(!roster.length)r
  // v706: a Judge makes all players eligible for the preparatory hearing,
  // followed by a real courtroom; without a Judge the legacy estimate is untouched.
  const hasJudge=roster.some(p=>(p.public_role==='en_attente'?p.preferred_role:p.public_role)==='juge');
- if(hasJudge){const newFinal=roster.length*(m==='short'?1:1.5)+suspects*(m==='short'?3:4);
+ if(hasJudge){const judicialAudienceCount=roster.filter(p=>['enqueteur','analyste','inspecteur','expert','procureur','juge'].includes(p.public_role==='en_attente'?p.preferred_role:p.public_role)).length;
+  const newFinal=judicialAudienceCount*(m==='short'?1:1.5)+suspects*(m==='short'?3:4);
   const oldFinal=audiences*speech+suspects*defense+lawyers*speech;
   delta+=Math.ceil(newFinal-oldFinal);
  }
