@@ -70,6 +70,20 @@ checkpoints AS (
  UNION ALL SELECT v,'judicial court has 14-minute long hearing',
        d->'courtroom'->>'long_if_second_capture_c3_minutes'='14'
        AND d->'courtroom'->>'long_confrontation_minutes'='5' FROM m
+ UNION ALL SELECT v,'C1 risky statements explicitly unlock corroboration',
+       (SELECT count(*) FROM jsonb_array_elements(d->'capture_evidence') e
+         WHERE e->>'cycle'='1'
+           AND e->>'trigger_action_id' IS NOT NULL
+           AND e->>'alternative_investigation_id' IS NOT NULL
+           AND e->>'revealed_at'='fugitive_risky_action_or_confirmed_investigation')=2 FROM m
+ UNION ALL SELECT v,'both C1 fugitives retain a lower-exposure strategic choice',
+       (SELECT count(*) FROM jsonb_array_elements(d->'fugitive_actions') a
+         WHERE a->>'cycle'='1' AND a->'cost'->>'kind'='lose_protection'
+           AND a->'reveals_capture_evidence_id' IS NULL)=2 FROM m
+ UNION ALL SELECT v,'two capture histories can never share a single C1 source',
+       (SELECT count(DISTINCT e->>'origin')
+        FROM jsonb_array_elements(d->'capture_evidence') e
+        WHERE e->>'cycle'='1')>=2 FROM m
  UNION ALL SELECT v,'unverified C3 proof does not claim human approval',
        (SELECT count(*) FROM jsonb_array_elements(d->'revelations') a
         WHERE a->>'kind'='guaranteed' AND a->>'min_cycle'='3'
