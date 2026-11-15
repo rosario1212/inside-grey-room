@@ -5,6 +5,10 @@ DECLARE d record; pack_ jsonb;code_ text;enq_id uuid;enq_token uuid;
  needs text; actual text; expected text; k int;
 BEGIN
  IF NOT igr_private.igr_v695_release_eligible() THEN RAISE EXCEPTION 'draft release audit failed';END IF;
+ IF has_function_privilege('anon','public.igr_v694_officer_state(text,uuid)','EXECUTE') OR
+    has_function_privilege('anon','public.igr_v694_officer_decide(text,uuid,text)','EXECUTE') OR
+    has_function_privilege('anon','public.igr_v688_terror_choose_operation(text,uuid,text)','EXECUTE')
+ THEN RAISE EXCEPTION 'legacy officer endpoints still exposed';END IF;
  FOR d IN SELECT scenario_id,variant_id,proposed_manuscript AS m
    FROM igr_private.igr_v680_terror_editorial_drafts
    WHERE scenario_id IN ('026','027','028') ORDER BY 1,2 LOOP
