@@ -10,15 +10,15 @@
   const scen=()=>String(STATE?.sync?.room?.scenario_id||'');
   const episodeCopy={
     '026':{
-      title:'LE FDR PREND LA VILLE',
+      title:'LA VILLE TOMBE',
       detail:'L’enquête révèle comment le FDR a capturé les institutions. Les pièces authentifiées peuvent aider à restaurer des services civils.',
       risk:'Les anciens membres du Front n’obtiendront aucune protection automatique si ses forces prennent le bâtiment.'},
     '027':{
-      title:'LE FDR RESSERRE L’ÉTAU',
+      title:'LA ZONE ROUGE',
       detail:'Les factions du FDR manipulent le renseignement. Les enquêteurs doivent séparer faits, omissions et informations périmées pour protéger les civils.',
       risk:'Les détenus disposent de renseignements dont l’actualité est incertaine; un mauvais choix peut aggraver leur situation.'},
     '028':{
-      title:'LE FDR AUX ABORDS DU CENTRE',
+      title:'DERNIER PÉRIMÈTRE',
       detail:'Le FDR est presque aux portes. Les enquêteurs doivent confirmer ou réfuter une présence intérieure sans céder à une fausse alerte.',
       risk:'La fidélité au Front ne dit pas qui contrôlera la porte ni si l’un des captifs sera épargné.'}
   };
