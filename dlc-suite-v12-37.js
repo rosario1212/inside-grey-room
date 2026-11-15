@@ -151,12 +151,33 @@
     return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span>${typeof scenarioDifficultyTag==='function'?scenarioDifficultyTag(sc):''}</div></div></article>`;
   }
   function accessRow(collection){return `<div class="dlc-access-row dlc-access-row--top">${accessBadge(collection)}</div>`}
+  // Public-only preview. Never include hidden loyalties or inferred influence in this tree.
+  function regimeGovernmentPreview(){
+    return `<details class="igr-regime-org-preview">
+      <summary><span>ORGANIGRAMME DU RÉGIME</span><small>Clan présidentiel et appareil d’État</small></summary>
+      <div class="igr-regime-org-content">
+        <p class="igr-regime-org-lead">République de Karsane · 15 millions d’habitants avant la guerre · gouvernement masculin sous la dictature.</p>
+        <div class="igr-regime-org-head"><strong>HARB KASSAR</strong><span>PRÉSIDENT · COMMANDEMENT SUPRÊME</span><small>Nom de référence : le président portera le nom du joueur dans les dossiers personnalisés, après intégration serveur.</small></div>
+        <div class="igr-regime-org-nodes" role="list" aria-label="Membres du pouvoir">
+          <article role="listitem"><strong>Fouad Kassar</strong><small>FRÈRE</small><span>Ministre de la Défense</span></article>
+          <article role="listitem"><strong>Mourad Kassar</strong><small>COUSIN</small><span>Ministre de l’Intérieur</span></article>
+          <article role="listitem"><strong>Darian Kassar</strong><small>FILS · HÉRITIER PRÉSUMÉ</small><span>Ministre de l’Information</span></article>
+          <article role="listitem"><strong>Ilyas Sayegh</strong><small>GENDRE</small><span>Chef de la sécurité présidentielle</span></article>
+          <article role="listitem"><strong>Hamza Daher</strong><small>CONFIDENT · SANS PARENTÉ</small><span>Secrétaire général du palais</span></article>
+          <article role="listitem"><strong>Youssef Baran</strong><small>FIDÈLE · SANS PARENTÉ</small><span>Directeur de la prison de Vahran · sous l’Intérieur</span></article>
+        </div>
+        <p class="igr-regime-org-note">Liens familiaux et fonctions officielles sont connus. Le pouvoir réel reste à prouver dans chaque enquête : aucun lien secret n’est dévoilé ici.</p>
+      </div>
+    </details>`;
+  }
+
   function appendCollection(root,{collection,title,eyebrow,copy,ids,label,tag}){
     root.querySelector(`.${collection}-dlc-section`)?.remove();
     for(const id of ids)document.getElementById(`scenario-${id}`)?.remove();
     const section=document.createElement('section');section.className=`panel ${collection}-dlc-section`;section.dataset.collection=collection;
     const scenarios=[...ids].map(id=>scenario(id));
     section.innerHTML=`<div class="dlc-suite-head"><div><span class="dlc-suite-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${copy}</p></div></div>${accessRow(collection)}${hasAccess(collection)?`<div class="scenario-list scenario-list-v10-13 ${collection}-list">${scenarios.map(sc=>card(sc,collection,label,tag)).join('')}</div>`:lockedBlock(collection)}`;
+    if(collection==='regime')section.querySelector('.dlc-suite-head')?.insertAdjacentHTML('afterend',regimeGovernmentPreview());
     root.appendChild(section);
   }
 
