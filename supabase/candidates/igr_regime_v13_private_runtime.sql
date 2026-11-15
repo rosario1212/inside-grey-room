@@ -93,7 +93,7 @@ DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
-  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean; scene jsonb; defense_objective jsonb; defense_used boolean;
+  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean; court_view jsonb; court_elapsed integer; stage_end integer; current_stage text; long_court boolean; scene jsonb; defense_objective jsonb; defense_used boolean; trace_id text; trace_label text; public_trace_ready boolean;
   public_clues jsonb='[]'::jsonb; clue jsonb; saved jsonb;
   a jsonb='[]'::jsonb; item jsonb; chosen text;
 BEGIN
@@ -120,16 +120,45 @@ BEGIN
     THEN public_clues:=public_clues||jsonb_build_array(
       clue - 'trigger_action' - 'editorial_provenance'); END IF;
   END LOOP;
-  FOR clue IN SELECT value FROM jsonb_array_elements(m.private_pack->'capture_evidence') LOOP
-    IF (clue->>'revealed_at'='cycle_start' AND (clue->>'cycle')::int<=r.cycle)
+  public_trace_ready:=NOT (
+    r.phase='role_reading' AND r.cycle=1 AND
+    (NOT (m.play_state->'alliance' ?
+      (m.private_pack->'private_cards'->0->>'actor_id'))
+     OR NOT (m.play_state->'alliance' ?
+      (m.private_pack->'private_cards'->1->>'actor_id'))));
+  FOR clue IN SELECT value FROM jsonb_array_elements(
+      m.private_pack->'capture_evidence') LOOP
+    IF public_trace_ready AND
+      ((clue->>'revealed_at'='cycle_start' AND (clue->>'cycle')::int<=r.cycle)
       OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? (clue->>'id'))
       OR EXISTS(SELECT 1 FROM jsonb_array_elements(
         coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
-        WHERE sd->>'id'=clue->>'id' AND (sd->>'cycle')::integer<=r.cycle)
-    THEN public_clues:=public_clues||jsonb_build_array(
-      jsonb_build_object('id',clue->>'id','kind','capture','title','PISTE DE TRAQUE',
-        'text',clue->>'description','cycle',clue->>'cycle',
-        'source',clue->>'origin','target_id',clue->>'targetId')); END IF;
+        WHERE sd->>'id'=clue->>'id' AND (sd->>'cycle')::integer<=r.cycle))
+    THEN
+      trace_id:=coalesce(m.play_state->'capture_clue_tracks'->>(clue->>'id'),
+        (SELECT sd->>'track_id' FROM jsonb_array_elements(
+          coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
+          WHERE sd->>'id'=clue->>'id' LIMIT 1),
+        CASE WHEN (clue->>'cycle')::integer=1
+          THEN igr_private.igr_regime_v14_base_track(m.room_code,clue->>'targetId')
+          ELSE igr_private.igr_regime_v14_active_track(m.room_code,clue->>'targetId')
+        END);
+      SELECT net->>'label' INTO trace_label FROM jsonb_array_elements(
+        m.private_pack->'first_cycle'->'public_networks') net
+        WHERE net->>'id'=trace_id LIMIT 1;
+      public_clues:=public_clues||jsonb_build_array(
+       jsonb_build_object('id',clue->>'id','kind','capture',
+         'title','PISTE DE TRAQUE','text',clue->>'description',
+         'cycle',clue->>'cycle','source',clue->>'origin',
+         'target_id',clue->>'targetId','network_id',trace_id,
+         'network_label',trace_label));
+    END IF;
+  END LOOP;
+  FOR clue IN SELECT value FROM jsonb_array_elements(
+      coalesce(m.play_state->'extra_capture_leads','[]'::jsonb)) LOOP
+    IF (clue->>'cycle')::integer<=r.cycle THEN
+      public_clues:=public_clues||jsonb_build_array(clue);
+    END IF;
   END LOOP;
   IF p.public_role IN ('enqueteur','analyste') AND r.cycle BETWEEN 1 AND 3 THEN
     offered:=m.private_pack->'investigation_choices'->(r.cycle-1)->'choices';
@@ -195,6 +224,7 @@ BEGIN
       'investigation_used_this_cycle',used_cycle,'my_fugitive_decision_used',used_move,
       'third_submitted',coalesce((m.play_state->'third'->>'submitted')::boolean,false),
       'cast',cast_list,'court_acts',court_acts,
+      'public_networks',m.private_pack->'first_cycle'->'public_networks',
       'pending_mandates',CASE WHEN p.public_role IN ('juge','enqueteur','analyste')
          THEN (SELECT coalesce(jsonb_agg(x),'[]'::jsonb)
              FROM jsonb_array_elements(coalesce(m.play_state->'mandates','[]'::jsonb)) x
@@ -227,6 +257,7 @@ DECLARE
   old jsonb; old_actor uuid; old_kind text; result jsonb;
   actor text; option_row jsonb; choice text; piece jsonb; future_lead jsonb; next_lead_cycle integer;
   claim text; statement_text text; captured_exhibit_id text;
+  active_refuge text;fallback_refuge text;refuge_label text;clue_to_publish jsonb;
   new_state jsonb; disclosed jsonb;
 BEGIN
   SELECT * INTO p FROM public.igr_v4_players
