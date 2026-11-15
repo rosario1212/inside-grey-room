@@ -72,16 +72,18 @@ const courtDefendants=()=>players().filter(p=>p.public_role==='suspect');
 const courtRoster=roles=>players().filter(p=>roles.includes(p.public_role)).map(p=>esc(labelRole(p.public_role))+' · '+esc(p.pseudo)).join('<br>')||copy('Aucun rôle présent','No assigned role');
 function courtroomSeating(){
  const prosecution=['procureur','enqueteur','analyste','inspecteur','expert'],defence=['maitre','suspect'],other=['temoin','journaliste'];
- return `<details class="igr708-seating" ${courtStep()==='seating'?'open':''}>
- <summary>${copy('PLAN DE SALLE CONSEILLÉ · FACULTATIF','SUGGESTED SEATING · OPTIONAL')}</summary>
- <p>${copy('Placez-vous librement : le tribunal fonctionne même autour d’une table, sans déplacement imposé.','Sit wherever convenient: the courtroom works around a table, without required movements.')}</p>
- <div class="igr708-bench"><b>⚖ ${copy('JUGE','JUDGE')}</b><small>${courtRoster(['juge'])}</small></div>
+ const members=roles=>players().filter(p=>roles.includes(p.public_role));
+ const seats=roles=>members(roles).map(p=>`<span class="igr712-seat-person"><b>${esc(p.pseudo)}</b><small>${esc(labelRole(p.public_role))}</small></span>`).join('')||`<span class="igr712-seat-empty">${copy('Aucun joueur','No player')}</span>`;
+ return `<details class="igr708-seating igr712-block" ${courtStep()==='seating'?'open':''}>
+ <summary><span class="igr712-summary-icon" aria-hidden="true">⌖</span><span><strong>${copy('Disposition de la salle','Courtroom seating')}</strong><small>${copy('Plan indicatif · places libres','Suggested layout · free seating')}</small></span><span class="igr712-chevron" aria-hidden="true">⌄</span></summary>
+ <div class="igr712-seating-inner">
+ <div class="igr712-seating-top"><span class="igr712-rail-label">${copy('PRÉSIDENCE','BENCH')}</span><div class="igr708-bench"><span aria-hidden="true">⚖</span><div><strong>${copy('Juge','Judge')}</strong><small>${seats(['juge'])}</small></div></div></div>
  <div class="igr708-sides">
- <div><strong>${copy('ACCUSATION','PROSECUTION')}</strong><p>${courtRoster(prosecution)}</p></div>
- <div><strong>${copy('DÉFENSE','DEFENCE')}</strong><p>${courtRoster(defence)}</p></div></div>
- ${players().some(p=>other.includes(p.public_role))?`<div class="igr708-side"><b>${copy('TÉMOINS / JOURNALISTE (si présents)','WITNESSES / JOURNALIST (if present)')}</b><p>${courtRoster(other)}</p></div>`:''}
- <small>${copy('Cette proposition ne détermine ni les alliances, ni la culpabilité, ni les droits de parole.','This layout does not determine alliances, guilt or speaking rights.')}</small>
- </details>`;
+ <section class="igr712-seat-side"><span class="igr712-rail-label">${copy('ACCUSATION','PROSECUTION')}</span><div class="igr712-seat-people">${seats(prosecution)}</div></section>
+ <section class="igr712-seat-side"><span class="igr712-rail-label">${copy('DÉFENSE','DEFENCE')}</span><div class="igr712-seat-people">${seats(defence)}</div></section></div>
+ ${members(other).length?`<div class="igr712-seating-gallery"><span class="igr712-rail-label">${copy('TÉMOINS ET OBSERVATEURS','WITNESSES AND OBSERVERS')}</span><div class="igr712-seat-people">${seats(other)}</div></div>`:''}
+ <p class="igr712-seat-disclaimer">${copy('Ce schéma aide à se placer. Il n’impose aucun déplacement et ne révèle aucune alliance.','This layout is only a guide. It requires no movement and reveals no alliances.')}</p>
+ </div></details>`;
 }
 function courtroomRoleCue(){
  const who=role(),prosecutor=players().some(p=>p.public_role==='procureur'),witness=specialCartel029();
@@ -96,7 +98,7 @@ function courtroomRoleCue(){
  suspect:[witness?copy('Réponds comme témoin selon ce que tu sais, ou garde le silence. Tu confirmeras avoir été entendu et avoir eu ton dernier mot.','Answer as a witness about what you know, or remain silent. Confirm your testimony opportunity and final statement.'):copy('Défends ta version, questionne les accusations et choisis ce que tu souhaites révéler. Tu peux aussi garder le silence.','Defend your account and challenge accusations. Choose what to disclose, or remain silent.')],
  journaliste:[copy('Tu peux évoquer tes publications si le Juge t’accorde la parole. Une publication ne vaut pas preuve.','You may discuss your publications if the Judge recognizes you. A report is not automatically evidence.')],
  temoin:[copy('Réponds uniquement sur les faits que tu connais et les déclarations que tu as réellement faites.','Speak only about facts you know and statements you actually made.')]}
- return `<article class="igr52-card"><small>${copy('TON RÔLE AU TRIBUNAL','YOUR COURTROOM ROLE')}</small><p>${(cues[who]||[copy('Interviens si le Juge te donne la parole.','Speak when recognized by the Judge.')]).join(' ')}</p></article>`;
+ return `<article class="igr52-card igr712-role"><div class="igr712-role-mark" aria-hidden="true">§</div><div><small>${copy('TON RÔLE AU TRIBUNAL','YOUR COURTROOM ROLE')}</small><h3>${esc(labelRole(who))}</h3><p>${(cues[who]||[copy('Interviens si le Juge te donne la parole.','Speak when recognized by the Judge.')]).join(' ')}</p></div></article>`;
 }
 const courtTopics=[
  ['charges',copy('Accusations : qui est soupçonné, de quoi ?','Charges: who is accused, of what?')],
@@ -109,18 +111,21 @@ const courtTopics=[
 function courtroomAgenda(){
  if(role()!=='juge')return '';
  const checked=courtArray('v708_checks');
- return `<article class="igr708-agenda"><h3>${copy('FIL CONDUCTEUR DU JUGE','JUDGE’S CHECKLIST')}</h3>
- <p>${copy('Coche les sujets abordés si c’est utile. Rien n’est divulgué ou débloqué par ces coches ; elles ne remplacent pas la confirmation des suspects.','Mark topics as useful. These checkmarks neither reveal information nor override defendants’ confirmations.')}</p>
- ${courtTopics.map(([id,label])=>`<button class="igr708-topic" onclick="igr708Court('toggle_point','${id}')"><span>${checked.includes(id)?'☑':'□'}</span>${esc(label)}</button>`).join('')}
- </article>`;
+ return `<section class="igr708-agenda igr712-block" aria-label="${copy('Guide facultatif du Juge','Optional Judge guide')}">
+ <header class="igr712-block-head"><div><small>${copy('AIDE-MÉMOIRE · FACULTATIF','OPTIONAL REFERENCE')}</small><h3>${copy('Fil conducteur du juge','Judge’s guide')}</h3></div><span class="igr712-counter">${checked.length} / ${courtTopics.length}</span></header>
+ <p class="igr712-guide-note">${copy('Repères à aborder librement. Ces coches ne forcent aucun échange ni aucune révélation.','Suggested discussion topics. Checkmarks never force a speech or reveal information.')}</p>
+ <div class="igr712-topic-grid">${courtTopics.map(([id,label],i)=>{const index=label.indexOf(':');const heading=index>=0?label.slice(0,index):label;const detail=index>=0?label.slice(index+1).trim():'';const done=checked.includes(id);
+  return `<button type="button" class="igr708-topic ${done?'is-complete':''}" aria-pressed="${done}" onclick="igr708Court('toggle_point','${id}')"><span class="igr712-topic-index">${String(i+1).padStart(2,'0')}</span><span class="igr712-topic-content"><b>${esc(heading)}</b><small>${esc(detail)}</small></span><span class="igr712-topic-check" aria-hidden="true">${done?'✓':'○'}</span></button>`;}).join('')}</div>
+ </section>`;
 }
 function courtroomDefendantProgress(){
  const defendants=courtDefendants(),heard=courtArray('v708_heard'),last=courtArray('v708_last_word'),absent=courtArray('v59_absent');
- return `<article class="igr52-card"><small>${copy('GARANTIES DE PAROLE','SPEAKING RIGHTS')}</small>
- <div class="igr708-progress-head"><span>${copy('Suspect / témoin','Defendant / witness')}</span><span>${copy('Défense','Defence')}</span><span>${copy('Dernier mot','Final word')}</span></div>
- ${defendants.map(p=>{const id=String(p.id),a=absent.includes(id);
- return `<div class="igr708-progress-row"><span>${esc(p.pseudo)}${a?' · '+copy('absent','absent'):''}</span><span>${a?'—':heard.includes(id)?'✓':'○'}</span><span>${a?'—':last.includes(id)?'✓':'○'}</span></div>`}).join('')}
- <small>${copy('✓ confirmé volontairement · ○ encore à proposer · — absence déclarée par l’hôte','✓ confirmed voluntarily · ○ pending · — host-confirmed absence')}</small></article>`;
+ const present=defendants.filter(p=>!absent.includes(String(p.id))),countHeard=present.filter(p=>heard.includes(String(p.id))).length,countLast=present.filter(p=>last.includes(String(p.id))).length;
+ return `<section class="igr52-card igr712-defendants" aria-label="${copy('Suivi des interventions','Speaking rights status')}">
+ <div class="igr712-block-head"><div><small>${copy('DROITS DE LA DÉFENSE','DEFENCE RIGHTS')}</small><h3>${copy('Paroles garanties','Speaking opportunities')}</h3></div><span class="igr712-counter">${countHeard}/${present.length}</span></div>
+ <div class="igr712-metrics"><div><b>${countHeard}<span> / ${present.length}</span></b><small>${copy('Défenses proposées','Defence offered')}</small></div><div><b>${countLast}<span> / ${present.length}</span></b><small>${copy('Derniers mots','Final statements')}</small></div></div>
+ <div class="igr712-defendant-grid">${defendants.map(p=>{const id=String(p.id),a=absent.includes(id);return `<div class="igr712-defendant ${a?'is-absent':''}"><strong>${esc(p.pseudo)}</strong><div class="igr712-defendant-flags"><span class="${!a&&heard.includes(id)?'done':''}">${a?'—':heard.includes(id)?'✓':'○'} ${copy('Défense','Defence')}</span><span class="${!a&&last.includes(id)?'done':''}">${a?'—':last.includes(id)?'✓':'○'} ${copy('Dernier mot','Final word')}</span></div>${a?`<small>${copy('Absence confirmée par l’hôte','Host-confirmed absence')}</small>`:''}</div>`;}).join('')}</div>
+ <p class="igr712-footnote">${copy('Chaque suspect confirme personnellement qu’il a eu la possibilité de parler ou de garder le silence.','Each defendant personally confirms having had a chance to speak or remain silent.')}</p></section>`;
 }
 function courtroomV708(){
  const step=courtStep(),judge=role()==='juge',defendant=role()==='suspect',heard=courtArray('v708_heard'),last=courtArray('v708_last_word'),absent=courtArray('v59_absent');
