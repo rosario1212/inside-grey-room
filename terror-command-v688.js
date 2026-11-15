@@ -88,7 +88,7 @@ function report(){
        '<div class="terror-v688-confirm">INTERVENTION UTILISÉE'+(sessionCurrent?' · TU PARTICIPES À CETTE SÉANCE':'')+'</div>'+
        (sessionCurrent?'<p class="terror-v693-question">'+esc(visit.question||'')+'</p>':'')+
        (sessionCurrent&&phase==='interrogation'&&typeof canVideo==='function'&&canVideo('officier_liaison')?
-         '<button type="button" class="terror-v693-button" onclick="setTab(\\'video\\')">Accéder au flux direct de cette audition</button>':''):
+         '<button type="button" class="terror-v693-button" onclick="setTab(\'video\')">Accéder au flux direct de cette audition</button>':''):
       liveHearing?
        '<label for="terrorV693Focus">Angle de ta question</label>'+
        '<select id="terrorV693Focus">'+focusOptions.map(o=>'<option value="'+o.id+'"'+(o.id===defaultFocus?' selected':'')+'>'+esc(o.label)+'</option>').join('')+'</select>'+
