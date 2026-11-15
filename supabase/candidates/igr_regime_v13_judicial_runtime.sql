@@ -271,7 +271,9 @@ BEGIN
  END LOOP;
  declared:=jsonb_build_object('accurate',accurate,'passed',accurate>=3,'submitted_at',now());
  UPDATE igr_private.igr_regime_v13_rooms SET
- play_state=jsonb_set(m.play_state,ARRAY['reconstructions',p.id::text],declared,true)
+ play_state=jsonb_set(m.play_state,'{reconstructions}',
+ coalesce(m.play_state->'reconstructions','{}'::jsonb)||
+ jsonb_build_object(p.id::text,declared),true)
  WHERE room_code=m.room_code;
  res:=jsonb_build_object('ok',true,'received',true,'final_score_sealed',true);
  INSERT INTO igr_private.igr_regime_v13_ledger
