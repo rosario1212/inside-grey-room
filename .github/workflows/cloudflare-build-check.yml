@@ -97,6 +97,8 @@ jobs:
           node scripts/ui-regression-check.mjs
           node scripts/multiplayer-sync-check.mjs
           node scripts/v697-lobby-sync-check.mjs
+      - name: Simulate CENDRES Heritage campaigns (5 and 7 players)
+        run: node scripts/v713-cendres-playtest-check.mjs
       - name: Build canonical web bundle
         run: npm run build
       - name: Validate full production release preflight
