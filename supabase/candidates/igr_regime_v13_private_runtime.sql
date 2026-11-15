@@ -255,7 +255,7 @@ BEGIN
         m.play_state->'third' ? 'final_declaration',false),
       'events',coalesce(m.play_state->'events','[]'::jsonb),
       'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb))));
-END $;
+END $$;
 REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) TO anon,authenticated;
 
