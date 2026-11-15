@@ -35,5 +35,5 @@ SELECT sid scenario_id,v variant,
  count(*) FILTER (WHERE supported_acts>=3)::int source_paths_for_three,
  count(*) FILTER (WHERE supported_acts=4)::int source_paths_for_four,
  count(*) FILTER (WHERE supported_acts<3)::int source_paths_insufficient,
- count(*)=64 AND min(supported_acts)<3 AND max(supported_acts)=4 AS varied
+ count(*)=64 AND min(supported_acts)>=3 AND max(supported_acts)=4 AS fair_access
 FROM score GROUP BY sid,v ORDER BY sid,v;
