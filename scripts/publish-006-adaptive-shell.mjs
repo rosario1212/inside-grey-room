@@ -105,7 +105,7 @@ for(const asset of ['/terror-command-v694.js?v=terror-live-v694-20261115','/terr
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
  }
 }
-sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+"'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+"'"),'PWA cache version did not advance');
+sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+"-mobile-net-v1'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+"-mobile-net-v1'"),'PWA cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
