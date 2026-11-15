@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import path from 'node:path';
 import vm from 'node:vm';
+import {createHash} from 'node:crypto';
 
 const target=path.resolve(process.argv[2]||'dist');
 const VERSION='v87-canonical-narrative';
@@ -84,7 +85,12 @@ try{
     await stat(path.join(target,chapter.poster.split('?')[0].slice(1)));
     assert(shell.includes(chapter.poster),'Every restored MAÎTRE poster must be precached');
   }
-  assert.equal(scope.cache,'igr-'+VERSION,'PWA cache must use the new lobby release');
+  const uiFingerprint=createHash('sha256')
+   .update(await read('dlc-suite-v12-37.js'))
+   .update(await read('mobile-ui-v28.css'))
+   .digest('hex').slice(0,12);
+  assert.equal(scope.cache,'igr-'+VERSION+'-'+uiFingerprint,
+   'PWA cache must be content-addressed to the published Regime mobile rules');
   assert(app.includes('/service-worker.js?v='+VERSION),'App must register the same service worker version');
 }catch(error){if(error.code!=='ENOENT')throw error}
 for(const page of ['index.html','en.html']){
