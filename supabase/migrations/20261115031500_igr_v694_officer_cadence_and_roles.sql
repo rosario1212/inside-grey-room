@@ -233,3 +233,53 @@ BEGIN
   EXECUTE fn;
  END IF;
 END;$patch$;
+
+
+-- A voluntary, accountable action for two previously over-dependent public roles.
+-- A statement is explicitly not a canonical clue or a judicial ruling.
+CREATE OR REPLACE FUNCTION public.igr_v694_role_initiative(
+ p_code text,p_player_token uuid,p_action text,p_note text DEFAULT '')
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $body$
+DECLARE p public.igr_v4_players%rowtype;r public.igr_v4_rooms%rowtype;
+action_ text;note_ text;heading text;intro text;
+BEGIN
+ PERFORM igr_private.rate_limit('role_v694_initiative',coalesce(p_player_token::text,''),5,60);
+ SELECT * INTO p FROM public.igr_v4_players WHERE room_code=upper(trim(p_code))
+   AND player_token=p_player_token;
+ IF NOT FOUND OR p.public_role NOT IN ('analyste','temoin')
+ THEN RAISE EXCEPTION 'role not eligible';END IF;
+ SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
+ IF NOT FOUND OR r.status<>'playing' OR r.cycle NOT BETWEEN 1 AND 3
+   OR r.phase IN ('briefing','role_reading','cycle_debrief','locking','reveal')
+ THEN RAISE EXCEPTION 'initiative phase closed';END IF;
+ action_:=lower(trim(coalesce(p_action,'')));
+ note_:=left(regexp_replace(trim(coalesce(p_note,'')),'[<>&]','','g'),220);
+ IF p.public_role='analyste' AND action_='recoupement' THEN
+  IF char_length(note_)<20 THEN RAISE EXCEPTION 'a verifiable question of at least 20 characters is required';END IF;
+  heading:='L ANALYSTE SIGNALE UNE CONTRADICTION À TESTER';
+  intro:='Note méthodologique, non vérifiée : ';
+ ELSIF p.public_role='temoin' AND action_ IN ('demande_audition','declaration') THEN
+  IF action_='declaration' AND char_length(note_)<20
+  THEN RAISE EXCEPTION 'the public statement needs at least 20 characters';END IF;
+  heading:=CASE action_ WHEN 'demande_audition' THEN 'LE TÉMOIN DEMANDE À ÊTRE ENTENDU'
+   ELSE 'DÉCLARATION VOLONTAIRE DU TÉMOIN' END;
+  intro:=CASE action_ WHEN 'demande_audition' THEN
+   'Le témoin sollicite un échange. La convocation reste du ressort de l Enquêteur. '
+   ELSE 'Propos personnels du témoin, non corroborés par le système : ' END;
+ ELSE RAISE EXCEPTION 'invalid role initiative';END IF;
+ IF EXISTS(SELECT 1 FROM public.igr_v4_actions a WHERE a.room_code=r.code
+  AND a.player_id=p.id AND a.cycle=r.cycle AND a.action_type='igr_v694_role_initiative')
+ THEN RAISE EXCEPTION 'role initiative already submitted this cycle';END IF;
+ INSERT INTO public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
+ VALUES(r.code,p.id,r.cycle,'igr_v694_role_initiative',
+   jsonb_build_object('action',action_,'note',note_,'verified',false));
+ INSERT INTO public.igr_v4_events(room_code,event_type,visibility,cycle,payload)
+ VALUES(r.code,'igr_v694_role_initiative','public',r.cycle,
+  jsonb_build_object('title',heading,'text',intro||note_,'author_id',p.id::text,
+   'author_role',p.public_role,'verified',false,'canonical_evidence',false));
+ RETURN jsonb_build_object('ok',true,'action',action_,'notice',heading);
+END;
+$body$;
+REVOKE ALL ON FUNCTION public.igr_v694_role_initiative(text,uuid,text,text) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.igr_v694_role_initiative(text,uuid,text,text) TO anon,authenticated;
