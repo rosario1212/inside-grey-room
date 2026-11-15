@@ -176,3 +176,84 @@ begin
   else perform public.igr_v52_advance(r.code,'host_confirmed_absence');st:='{}'::jsonb;end if;
  return jsonb_build_object('ok',true)||st;
 end$function$;
+
+
+CREATE OR REPLACE FUNCTION public.igr_v708_court_action(
+ p_code text,p_player_token uuid,p_action text,p_item text DEFAULT NULL)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $function$
+declare
+ r public.igr_v4_rooms%rowtype;
+ me public.igr_v4_players%rowtype;
+ step text;
+ checks jsonb;
+ heard jsonb;
+ lastwords jsonb;
+ absent jsonb;
+ pending_count integer;
+ next_step text;
+begin
+ perform igr_private.rate_limit('v708_court_action',p_player_token::text,30,60);
+ select * into me from public.igr_v4_players where room_code=upper(trim(p_code)) and player_token=p_player_token;
+ if not found then raise exception 'unauthorized';end if;
+ select * into r from public.igr_v4_rooms where code=me.room_code for update;
+ if not found or r.status<>'playing' or r.phase<>'final_suspect_defenses'
+    or r.state->>'v52_stage'<>'courtroom'
+    or not public.igr_v44_judge_present(r.code) then raise exception 'not in courtroom';end if;
+ step:=coalesce(r.state->>'v708_court_step','seating');
+ checks:=coalesce(r.state->'v708_checks','[]'::jsonb);
+ heard:=coalesce(r.state->'v708_heard','[]'::jsonb);
+ lastwords:=coalesce(r.state->'v708_last_word','[]'::jsonb);
+ absent:=coalesce(r.state->'v59_absent','[]'::jsonb);
+
+ if p_action in ('open','next','back','toggle_point','close') and me.public_role<>'juge'
+   then raise exception 'judge only';end if;
+ if p_action='open' then
+   if step<>'seating' then raise exception 'already opened';end if;
+   next_step:='opening';
+ elsif p_action='next' then
+   if step='opening' then next_step:='debate';
+   elsif step='debate' then next_step:='conclusions';
+   else raise exception 'cannot advance';end if;
+ elsif p_action='back' then
+   if step='conclusions' then next_step:='debate';
+   else raise exception 'cannot go back';end if;
+ elsif p_action='toggle_point' then
+   if p_item is null or p_item not in ('charges','evidence','contradictions','defences','submissions','last_words')
+     then raise exception 'unknown guide point';end if;
+   if checks ? p_item then
+      select coalesce(jsonb_agg(x.value),'[]'::jsonb) into checks from jsonb_array_elements(checks) x where x.value<>to_jsonb(p_item);
+   else checks:=checks||to_jsonb(p_item);end if;
+   update public.igr_v4_rooms set state=jsonb_set(state,'{v708_checks}',checks,true),updated_at=now() where code=r.code;
+   return jsonb_build_object('ok',true,'checks',checks);
+ elsif p_action in ('defense_done','last_word_done') then
+   if me.public_role<>'suspect' then raise exception 'only the defendant';end if;
+   if p_action='defense_done' then
+     if step not in ('debate','conclusions') then raise exception 'defense not available yet';end if;
+     if not (heard ? me.id::text) then heard:=heard||to_jsonb(me.id::text);end if;
+     update public.igr_v4_rooms set state=jsonb_set(state,'{v708_heard}',heard,true),updated_at=now() where code=r.code;
+   else
+     if step<>'conclusions' then raise exception 'last word not available';end if;
+     if not (heard ? me.id::text) then raise exception 'confirm defence first';end if;
+     if not (lastwords ? me.id::text) then lastwords:=lastwords||to_jsonb(me.id::text);end if;
+     update public.igr_v4_rooms set state=jsonb_set(state,'{v708_last_word}',lastwords,true),updated_at=now() where code=r.code;
+   end if;
+   return jsonb_build_object('ok',true);
+ elsif p_action='close' then
+   if step<>'conclusions' then raise exception 'conclusions must be reached';end if;
+   select count(*) into pending_count from public.igr_v4_players p where p.room_code=r.code and p.public_role='suspect'
+      and not ((heard ? p.id::text) or (absent ? p.id::text));
+   if pending_count>0 then raise exception 'defendants still need to confirm defence';end if;
+   select count(*) into pending_count from public.igr_v4_players p where p.room_code=r.code and p.public_role='suspect'
+      and not ((lastwords ? p.id::text) or (absent ? p.id::text));
+   if pending_count>0 then raise exception 'defendants still need last word opportunity';end if;
+   perform public.igr_v52_begin_stage(r.code,'locking');
+   return jsonb_build_object('ok',true,'phase','locking');
+ else raise exception 'invalid courtroom action';end if;
+
+ update public.igr_v4_rooms set state=jsonb_set(state,'{v708_court_step}',to_jsonb(next_step),true),updated_at=now() where code=r.code;
+ insert into public.igr_v4_events(room_code,event_type,visibility,payload) values
+   (r.code,'courtroom','public',jsonb_build_object('title',case next_step when 'opening' then 'TRIBUNAL · OUVERTURE' when 'debate' then 'TRIBUNAL · DÉBATS' else 'TRIBUNAL · CONCLUSIONS' end,
+    'text',case next_step when 'opening' then 'Le Juge ouvre la séance et invite le Procureur, sinon l’Enquêteur, à présenter les accusations.' when 'debate' then 'Le Juge organise librement les questions et confrontations. Aucun chronomètre.' else 'Réquisitions, défense et dernier mot des suspects avant le vote secret.' end));
+ return jsonb_build_object('ok',true,'step',next_step);
+end$function$;
