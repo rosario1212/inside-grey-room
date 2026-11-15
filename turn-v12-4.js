@@ -2,7 +2,7 @@
    Long-lived Cloudflare TURN secrets stay server-side. Clients receive only
    short-lived ICE credentials from /api/turn. */
 (() => {
-  const REV = 'v12.18-managed-turn-20260929-1';
+  const REV = 'v701-authorized-managed-turn-20261115';
   const PROD_ORIGIN = 'https://inside-grey-room-last.alial-khafaji2002.workers.dev';
   const PUBLIC_FALLBACK = {
     urls: [
@@ -18,6 +18,9 @@
   let managedIceServers = [];
   let refreshPromise = null;
   let refreshAfter = 0;
+  let authorizedIdentity = '';
+  let backoffUntil = 0;
+  const identity = () => STATE?.room && STATE?.token ? String(STATE.room)+':'+String(STATE.token) : '';
 
   const endpoint = () => {
     const native = typeof NATIVE_SHELL !== 'undefined' && NATIVE_SHELL;
@@ -27,27 +30,50 @@
   const hasTurn = servers => (servers || []).some(s => urlsOf(s).some(u => /^turns?:/i.test(String(u))));
 
   async function refreshManagedTurn(force = false) {
+    const session = identity();
+    // Never reuse a TURN credential after changing rooms or player identities.
+    if (session !== authorizedIdentity) {
+      authorizedIdentity = session;
+      managedIceServers = [];
+      refreshAfter = 0;
+      backoffUntil = 0;
+      refreshPromise = null;
+    }
+    if (!session) return [];
     if (!force && managedIceServers.length && Date.now() < refreshAfter) return managedIceServers;
+    if (!force && Date.now() < backoffUntil) return [];
     if (refreshPromise) return refreshPromise;
-    refreshPromise = (async () => {
+    const room = String(STATE.room), token = String(STATE.token);
+    const operation = (async () => {
       const ctl = new AbortController();
       const timer = setTimeout(() => ctl.abort(), 3500);
       try {
-        const res = await fetch(endpoint(), { cache: 'no-store', credentials: 'omit', signal: ctl.signal });
+        const res = await fetch(endpoint(), {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', apikey: SUPABASE_KEY},
+          body: JSON.stringify({p_code:room,p_player_token:token}),
+          cache: 'no-store', credentials: 'omit', signal: ctl.signal
+        });
         if (!res.ok) throw new Error(`TURN endpoint ${res.status}`);
         const data = await res.json();
         const servers = Array.isArray(data?.iceServers) ? data.iceServers.filter(Boolean) : [];
         if (!hasTurn(servers)) throw new Error('Managed TURN response has no relay');
+        if (identity() !== session) return [];
         managedIceServers = servers;
+        backoffUntil = 0;
         const ttl = Math.max(900, Math.min(Number(data?.ttl) || 3600, 10800));
         refreshAfter = Date.now() + Math.max(10 * 60 * 1000, (ttl - 600) * 1000);
         return managedIceServers;
+      } catch (error) {
+        if (identity() === session) backoffUntil = Date.now() + 25000;
+        throw error;
       } finally {
         clearTimeout(timer);
-        refreshPromise = null;
       }
     })();
-    return refreshPromise;
+    refreshPromise = operation;
+    try { return await operation; }
+    finally { if (refreshPromise === operation) refreshPromise = null; }
   }
 
   async function waitForTurn(maxMs = 2800) {
@@ -96,6 +122,17 @@
     }
     return pc;
   };
+
+  // The canonical investigator entrypoint is activateVideo(), not startVideo().
+  // The old lazy TURN patch omitted this hook, leaving iPhones using only the
+  // public fallback during their first live broadcast.
+  if (typeof activateVideo === 'function') {
+    const baseActivateVideo = activateVideo;
+    activateVideo = async function(...args) {
+      await waitForTurn();
+      return baseActivateVideo.apply(this,args);
+    };
+  }
 
   if (typeof startVideo === 'function') {
     const baseStartVideo = startVideo;
