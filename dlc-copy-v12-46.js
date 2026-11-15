@@ -18,7 +18,7 @@
     },
     regime: {
       eyebrow: 'DLC APRÈS LA CHUTE',
-      text: 'Dix-neuf ans de dictature, une guerre d’agression et des milliers de prisonniers. Chaque dossier oppose deux dirigeants joués en fuite aux enquêteurs : les deux captures donnent la victoire, chaque capture condamne le fugitif à un destin fatal.'
+      text: 'Dix-neuf ans de dictature, une guerre d’agression et des milliers de prisonniers. Chaque dossier oppose deux dirigeants en fuite aux enquêteurs. Ils choisissent leur alliance ; les capturer ne suffit pas : il faut établir qui a ordonné les crimes. Un fugitif capturé perd sa survie et connaît un destin fatal à l’épilogue.'
     }
   });
 
