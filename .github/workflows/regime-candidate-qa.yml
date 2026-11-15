@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/regime-rules-v10.mjs'
       - 'scripts/regime-rules-v10.test.mjs'
+      - 'scripts/regime-v14-client-integrity.test.mjs'
       - 'supabase/tests/igr_regime_release_readiness_v9.sql'
       - 'supabase/tests/igr_regime_*_qa.sql'
       - 'supabase/tests/igr_regime_nine_playability_matrix_v12.sql'
@@ -37,10 +38,11 @@ jobs:
         run: |
           node --check scripts/regime-rules-v10.mjs
           node --check scripts/regime-rules-v10.test.mjs
+          node --check scripts/regime-v14-client-integrity.test.mjs
           node --check regime-live-v13.js
           node --check scripts/build-web.mjs
       - name: Exercise synthetic deterministic rules
-        run: node --test scripts/regime-rules-v10.test.mjs
+        run: node --test scripts/regime-rules-v10.test.mjs scripts/regime-v14-client-integrity.test.mjs
       - name: Verify guarded presentation and shared courtroom source
         run: |
           grep -q 'regime_v13_active' regime-live-v13.js
@@ -61,6 +63,8 @@ jobs:
           test -s supabase/tests/igr_regime_v14_captured_defense_qa.sql
           test -s supabase/tests/igr_regime_v14_speech_rights_qa.sql
           test -s supabase/tests/igr_regime_v14_reconnect_replay_qa.sql
+          test -s supabase/tests/igr_regime_v14_private_aliases_qa.sql
+          test -s supabase/tests/igr_regime_v14_all_rosters_matrix_qa.sql
       - name: Verify that secret manuscripts are not bundled
         run: |
           if grep -En 'canonical_truth|private_cards|variant_secret' scripts/regime-rules-v10.mjs; then
