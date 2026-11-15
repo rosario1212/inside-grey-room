@@ -251,9 +251,14 @@ BEGIN
      FOR eid IN SELECT jsonb_array_elements_text(ans->'evidenceIds') LOOP
        SELECT value INTO piece FROM jsonb_array_elements(m.private_pack->'revelations') value
        WHERE value->>'id'=eid AND value->'act_ids' ? (act->>'id') LIMIT 1;
-       IF FOUND AND
+       IF NOT FOUND THEN
+         piece:=m.private_pack->'third_suspect_mission'->'public_on_submission';
+         IF NOT (piece->>'id'=eid AND piece->'act_ids' ? (act->>'id'))
+           THEN piece:=NULL;END IF;
+       END IF;
+       IF piece IS NOT NULL AND
          ((piece->>'kind'='guaranteed' AND (piece->>'min_cycle')::int<=r.cycle)
-           OR (m.play_state->'disclosed' ? eid))
+           OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? eid))
        THEN sources:=array_append(sources,piece->>'origin');END IF;
      END LOOP;
    END IF;
