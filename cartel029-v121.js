@@ -211,7 +211,7 @@ wrap('renderGameTab',(orig)=>{
 });
 wrap('phaseLabel',(orig,phase)=>{
  if(!active())return orig(phase);
- if(phase==='final_suspect_defenses')return 'PAROLE FINALE DES TÉMOINS';
+ if(phase==='final_suspect_defenses')return (d()?.players||[]).some(p=>p.public_role==='juge')?'TRIBUNAL · TÉMOINS':'PAROLE FINALE DES TÉMOINS';
  if(phase==='locking')return 'CONCLUSIONS DU DOSSIER 029';
  if(phase==='final_audience')return 'AUDIENCE DU DOSSIER';
  return orig(phase);
