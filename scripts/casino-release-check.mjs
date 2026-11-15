@@ -25,10 +25,25 @@ for(const dir of process.argv.slice(2).length?process.argv.slice(2):['dist']){
   const syntax=spawnSync(process.execPath,['--check',join(dir,client)],{encoding:'utf8'});
   assert.equal(syntax.status,0,'Invalid Casino runtime '+client+': '+syntax.stderr);
  }
+ // The optimized release may fold each public Casino asset into an exact,
+ // hash-addressed bundle. v702-runtime-check proves byte-for-byte inclusion.
+ let optimization=null;
+ try{optimization=JSON.parse(await readFile(join(dir,'igr-v702-optimization-report.json'),'utf8'))}catch{}
+ const mainHtml=await readFile(join(dir,'index.html'),'utf8');
  for(const page of ['index.html','en.html']){
-  const html=await readFile(join(dir,page),'utf8');
-  assert.equal((html.match(/src="casino-client-v105.js\?v=105.5"/g)||[]).length,1);
-  assert.equal((html.match(/href="casino-client-v105.css\?v=105.5"/g)||[]).length,1);
+  const pageHtml=await readFile(join(dir,page),'utf8');
+  const redirect=page==='en.html'&&/location\.replace\(['"]\.\/['"]\)/.test(pageHtml);
+  if(redirect)assert.match(pageHtml,/localStorage\.setItem\(['"]igr_locale['"],['"]en['"]\)/,
+   'The English redirect must preserve its locale before loading the main page');
+  const html=redirect?mainHtml:pageHtml;
+  for(const [kind,url] of [['js','casino-client-v105.js?v=105.5'],['css','casino-client-v105.css?v=105.5']]){
+   const direct=kind==='js'
+     ?html.includes('src="'+url+'"'):html.includes('href="'+url+'"');
+   const packed=(optimization?.bundles||[]).filter(item=>item.kind===kind&&
+     item.sourceUrls.includes(url)&&html.includes((kind==='js'?'src="':'href="')+item.file+'"'));
+   assert.equal(Number(direct)+packed.length,1,
+    'Public Casino '+kind+' must be loaded exactly once by '+page+' or its redirect destination');
+  }
  }
 }
 console.log('Casino release: server modules excluded, privileged keys absent, RPCs service-only, existing narrative permissions preserved.');
