@@ -48,6 +48,38 @@ BEGIN
   SELECT * INTO rec FROM public.igr_v4_rooms WHERE code=code_name;
   IF rec.phase<>'locking' OR rec.phase_ends_at IS NOT NULL THEN RAISE EXCEPTION 'Court did not lead to secret vote';END IF;
  END LOOP;
+ -- Host can declare a genuinely absent defendant without forging their speech or vote.
+ INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES('C708A','014');
+ INSERT INTO public.igr_v4_players(room_code,pseudo,seat_index,public_role,internal_slot)
+  VALUES('C708A','Enqueteur',0,'enqueteur',null),('C708A','Juge',1,'juge',null),
+         ('C708A','Suspect actif',2,'suspect',1),('C708A','Suspect absent',3,'suspect',2);
+ UPDATE public.igr_v4_rooms SET status='playing',cycle=3 WHERE code='C708A';
+ PERFORM public.igr_v52_begin_stage('C708A','courtroom');
+ UPDATE public.igr_v4_rooms SET phase_started_at=now()-interval '90 seconds' WHERE code='C708A';
+ DECLARE
+  hostkey uuid;
+  missing_id uuid;
+  active_token uuid;
+ BEGIN
+  SELECT host_token INTO hostkey FROM public.igr_v4_rooms WHERE code='C708A';
+  SELECT id INTO missing_id FROM public.igr_v4_players WHERE room_code='C708A' AND pseudo='Suspect absent';
+  SELECT player_token INTO active_token FROM public.igr_v4_players WHERE room_code='C708A' AND pseudo='Suspect actif';
+  SELECT player_token INTO judge_token FROM public.igr_v4_players WHERE room_code='C708A' AND public_role='juge';
+  PERFORM public.igr_v59_host_recover('C708A',hostkey,missing_id,'Déconnexion confirmée du joueur');
+  SELECT * INTO rec FROM public.igr_v4_rooms WHERE code='C708A';
+  IF NOT (rec.state->'v59_absent' ? missing_id::text) OR rec.phase<>'final_suspect_defenses'
+     THEN RAISE EXCEPTION 'Host recovery failed';END IF;
+  IF rec.state->'v708_heard' ? missing_id::text OR rec.state->'v708_last_word' ? missing_id::text
+     THEN RAISE EXCEPTION 'Host recovery forged a statement';END IF;
+  PERFORM public.igr_v708_court_action('C708A',judge_token,'open',null);
+  PERFORM public.igr_v708_court_action('C708A',judge_token,'next',null);
+  PERFORM public.igr_v708_court_action('C708A',active_token,'defense_done',null);
+  PERFORM public.igr_v708_court_action('C708A',judge_token,'next',null);
+  PERFORM public.igr_v708_court_action('C708A',active_token,'last_word_done',null);
+  PERFORM public.igr_v708_court_action('C708A',judge_token,'close',null);
+  SELECT * INTO rec FROM public.igr_v4_rooms WHERE code='C708A';
+  IF rec.phase<>'locking' THEN RAISE EXCEPTION 'Absent defendant blocks courtroom closure';END IF;
+ END;
  -- No-Judge cases must still enter timed audience after cycle 3.
  INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES('C708N','014');
  INSERT INTO public.igr_v4_players(room_code,pseudo,seat_index,public_role,internal_slot)
