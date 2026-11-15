@@ -7,9 +7,9 @@ import {readFileSync} from 'node:fs';
 const sw=readFileSync('service-worker.js','utf8');
 const turn=readFileSync('turn-v12-4.js','utf8');
 const html=readFileSync('index.html','utf8');
-assert(html.includes('turn-v12-4.js?v=security-v698-lazy-turn-20261115'),
+assert(html.includes('turn-v12-4.js?v=security-v701-room-authorized-20261115'),
  'Updated video privacy code must be cache-busted in the published entrypoint');
-assert(sw.includes('/turn-v12-4.js?v=security-v698-lazy-turn-20261115'),
+assert(sw.includes('/turn-v12-4.js?v=security-v701-room-authorized-20261115'),
  'Service-worker manifest must match the lazily provisioned video script');
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 
@@ -90,30 +90,44 @@ assert.equal((await art.response).status,200);
 await Promise.all(art.waits);
 assert(await current.match(origin+'/assets/cover-new.webp?v=1'),'Static illustration must remain cacheable');
 
-let turnRequests=0,videoStarts=0,videoJoins=0,lastConfig=null;
+let turnRequests=0,videoStarts=0,videoJoins=0,lastConfig=null,cameraCalls=0;
+const order=[];
 const fakePlayer={
   getConfiguration:()=>({iceServers:[]}),
   setConfiguration(cfg){lastConfig=cfg}
 };
 const context={
   console,Promise,Date,AbortController,setTimeout,clearTimeout,URL,
-  window:{},STATE:{room:null,token:null,sync:null},
+  window:{},SUPABASE_KEY:'sb_publishable_qa_test_only',
+  STATE:{room:'QA701',token:'00000000-0000-4000-8000-000000000701',sync:null},
   newPeer:()=>fakePlayer,
+  ensureLocalVideo:async()=>{cameraCalls++;order.push('camera');return {};},
   startVideo:async()=>{videoStarts++},
+  activateVideo:async()=>{videoStarts++},
   joinVideoAsViewer:async()=>{videoJoins++},
-  fetch:async()=>{turnRequests++;return {
-    ok:true,async json(){return {iceServers:[{urls:'turn:managed.example',username:'temp',credential:'temporary'}],ttl:3600}}
-  }}
+  fetch:async(_url,opts)=>{
+    turnRequests++;order.push('turn');
+    assert.equal(opts.method,'POST','TURN must use authenticated POST');
+    assert.equal(opts.headers.apikey,context.SUPABASE_KEY);
+    assert.equal(JSON.parse(opts.body).p_code,context.STATE.room);
+    assert.equal(JSON.parse(opts.body).p_player_token,context.STATE.token);
+    return {ok:true,async json(){return {iceServers:[{urls:'turn:managed.example',username:'temp',credential:'temporary'}],ttl:3600}}};
+  }
 };
 vm.runInNewContext(turn,context);
 assert.equal(turnRequests,0,'TURN credentials fetched before entering video');
-await context.startVideo();
+await context.activateVideo();
 assert.equal(videoStarts,1);
-assert.equal(turnRequests,1,'First video call must request managed TURN exactly once');
+assert.equal(cameraCalls,1,'iOS camera capture must be requested from the initial tap');
+assert.deepEqual(order.slice(0,2),['camera','turn'],'Camera permission must precede any relay network await');
+assert.equal(turnRequests,1,'Investigator camera must preauthorize TURN');
 context.newPeer('viewer',true);
-assert(lastConfig?.iceServers?.some(x=>String(x.urls)==='turn:managed.example'),'Managed relay not configured for peer');
+assert(lastConfig?.iceServers?.some(x=>String(x.urls)==='turn:managed.example'),'Managed relay not configured for investigator');
 await context.joinVideoAsViewer();
 assert.equal(videoJoins,1);
-assert.equal(turnRequests,1,'Second participant action must reuse nonexpired TURN credentials');
+assert.equal(turnRequests,1,'Viewer must reuse unexpired TURN credentials');
+context.STATE.room='QA702';
+await context.joinVideoAsViewer();
+assert.equal(turnRequests,2,'Switching rooms must obtain new authorized credentials');
 
 console.log('PASS v698: no offline API/token cache, purge old TURN credentials, assets still cached, lazy managed video TURN.');

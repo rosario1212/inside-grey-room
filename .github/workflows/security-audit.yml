@@ -45,3 +45,5 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
       - name: Verify API credentials cannot persist offline
         run: node scripts/v698-api-cache-and-turn-check.mjs
+      - name: Check TURN room authorization and rate-limit boundary
+        run: node scripts/v701-turn-relay-security-check.mjs
