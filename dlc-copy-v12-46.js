@@ -46,48 +46,10 @@
     if(String(room?.scenario_id||'')!=='027'||window.STATE?.view!=='game')return;
     const panel=document.getElementById('terrorRuntimeV33');
     if(!panel)return;
-    const runtime=room?.state?.terror_runtime||{};
-    const role=String(window.STATE?.sync?.player?.public_role||window.STATE?.role||'');
-    const assessments=runtime.assessments||{};
-    const phase=String(room?.phase||'');
-
-    panel.querySelectorAll('.terror-v33-assessment').forEach(card=>{
-      const actions=card.querySelector('.terror-v33-actions');
-      if(!actions)return;
-      actions.hidden=phase!=='locking';
-      const note=card.querySelector('[data-v33-assessment-note]');
-      if(phase!=='locking'&&!note){
-        const hint=document.createElement('div');
-        hint.className='terror-v33-muted';
-        hint.dataset.v33AssessmentNote='1';
-        hint.textContent='Évaluation finale disponible au verrouillage.';
-        card.appendChild(hint);
-      }else if(phase==='locking'&&note){note.remove()}
-    });
-
-    if(runtime.decision)return;
-    const ready=!!assessments.credibility&&!!assessments.sincerity&&phase==='locking';
-    panel.querySelectorAll('.terror-v33-decision:not(.locked):not([data-v33-liaison-decision])').forEach(el=>el.remove());
-    const oldNote=panel.querySelector('[data-v33-liaison-note]');
-
-    if(role==='inspecteur'){
-      if(oldNote)oldNote.remove();
-      if(ready&&!panel.querySelector('[data-v33-liaison-decision]')){
-        const grid=panel.querySelector('.terror-v33-grid');
-        const block=document.createElement('div');
-        block.className='terror-v33-decision';
-        block.dataset.v33LiaisonDecision='1';
-        block.innerHTML='<small>OFFICIER DE LIAISON · RECOMMANDATION IRRÉVERSIBLE</small><p>Les évaluations sont verrouillées. Après consultation du groupe, transmets la recommandation extérieure. Elle reste institutionnelle et abstraite.</p><div class="terror-v33-actions"><button class="btn ghost small" type="button" onclick="terrorV33Decision(\'intervenir\')">Intervenir</button><button class="btn primary small" type="button" onclick="terrorV33Decision(\'retarder\')">Retarder</button><button class="btn ghost small" type="button" onclick="terrorV33Decision(\'annuler\')">Annuler</button></div>';
-        (grid||panel).insertAdjacentElement('afterend',block);
-      }else if(!ready&&!oldNote){
-        const note=document.createElement('div');note.className='terror-v33-muted';note.dataset.v33LiaisonNote='1';note.textContent='La recommandation extérieure attend les évaluations indépendantes de l’Enquêteur et de l’Analyste.';panel.appendChild(note);
-      }
-      return;
-    }
-
-    panel.querySelector('[data-v33-liaison-decision]')?.remove();
-    if(ready&&!oldNote){
-      const note=document.createElement('div');note.className='terror-v33-muted';note.dataset.v33LiaisonNote='1';note.textContent='Les évaluations sont verrouillées. L’Officier de liaison doit maintenant transmettre la recommandation extérieure.';panel.appendChild(note);
+    // Historical Inspector-as-liaison UI must never compete with live Officer orders.
+    for(const item of panel.querySelectorAll(
+       '[data-v33-liaison-decision],[data-v33-liaison-note],.terror-v33-decision:not(.locked)')){
+      item.remove();
     }
   }
 
