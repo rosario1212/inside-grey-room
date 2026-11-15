@@ -135,42 +135,95 @@ function third(){
 function court(){
  if(cache?.phase!=='regime_court')return '';
  const c=cache?.court||{},long=Number(c.duration_minutes)===14;
- const calls=c.called||[];
+ const calls=c.called||[],stage=c.stage_actual||'opening';
  const arrested=cache?.arrests||{};
- const witnesses=cast().filter((s,i)=>i===2||Object.hasOwn(arrested,s.actor_id));
- const absent=cast().filter((s,i)=>i<2&&!Object.hasOwn(arrested,s.actor_id));
- const active=c.current?.actor_id,stage=c.stage||'opening';
- const judgeUI=isRole('juge')?'<div class="igr-rg13-call"><b>APPEL À LA BARRE</b>'+
- witnesses.filter(s=>!calls.includes(s.actor_id)).map(s=>
- button('APPELER '+s.pseudo,'court-call','data-actor-id="'+esc(s.actor_id)+'"')).join('')+'</div>':'';
+ const present=cast().filter((person,i)=>i===2||Object.hasOwn(arrested,person.actor_id));
+ const absent=cast().filter((person,i)=>i<2&&!Object.hasOwn(arrested,person.actor_id));
+ const current=c.current?.actor_id,exchanges=Array.isArray(c.exchanges)?c.exchanges:[];
+ const stageLabels={opening:'OUVERTURE DU PROCÈS',defenses:'DÉCLARATIONS DES ACCUSÉS',
+ confrontation:'CONFRONTATION · QUESTIONS ET OBJECTIONS',closing:'CLÔTURE DU JUGE',
+ vote:'DÉLIBÉRATION · VOTE FINAL'};
+ const judgeUI=isRole('juge')&&stage==='defenses'?
+  '<div class="igr-rg13-call"><b>APPEL À LA BARRE · UNE PERSONNE PAR CRÉNEAU</b>'+
+   present.filter(x=>!calls.includes(x.actor_id)).map(x=>
+    button('APPELER '+x.pseudo,'court-call','data-actor-id="'+esc(x.actor_id)+'"')).join('')+
+   '</div>':'';
+ const courtroomRoles=new Set(['enqueteur','analyste','procureur']);
+ const myPresent=cache?.role==='suspect'&&present.some(x=>x.actor_id===thisActor());
+ const myAccusation=courtroomRoles.has(cache?.role);
+ const ruled=new Set(exchanges.filter(x=>x.kind==='ruling').map(x=>x.reply_to));
+ const discussion=stage==='confrontation'?
+  section('CONTRE-INTERROGATOIRE',
+   '<p>Le Juge dirige les échanges. Questions, réponses et objections sont visibles par tous; aucune intervention ne modifie les preuves scellées.</p>'+
+   '<div class="igr-rg13-exchanges">'+(exchanges.length?
+     exchanges.slice(-18).map(x=>'<article><small>'+esc(x.pseudo)+' · '+esc(
+      {question:'QUESTION',reply:'RÉPONSE',objection:'OBJECTION',ruling:'DÉCISION DU JUGE'}[x.kind]||x.kind)+
+      '</small><p>'+esc(x.text)+'</p></article>').join(''):
+     '<p>Aucune intervention consignée dans cette confrontation.</p>')+'</div>'+
+   ((myAccusation||myPresent)?
+     '<label>Intervention<textarea rows="2" maxlength="280" id="igrRgExchangeText" placeholder="Cite un fait précis et pose une question courte"></textarea></label>'+
+     (myAccusation?button('POSER UNE QUESTION','court-question'):'')+
+     (myPresent?button('RÉPONDRE','court-reply'):'')+
+     button('SOULEVER UNE OBJECTION','court-objection'):'')+
+   (isRole('juge')?
+     exchanges.filter(x=>x.kind==='objection'&&!ruled.has(x.id)).map(x=>
+      '<article class="igr-rg13-ruling"><strong>Objection de '+esc(x.pseudo)+'</strong>'+
+      '<p>'+esc(x.text)+'</p>'+
+      button('ACCUEILLIR','court-sustain','data-reply-to="'+esc(x.id)+'"')+
+      button('REJETER','court-overrule','data-reply-to="'+esc(x.id)+'"')+'</article>').join(''):'')
+   ):'';
  const docs=Array.isArray(cache?.public_evidence)?cache.public_evidence:[];
  const acts=Array.isArray(cache?.court_acts)?cache.court_acts:[];
- const options='<option value="unknown">NON ÉTABLI</option>'+cast().map(s=>
- '<option value="'+esc(s.actor_id)+'">'+esc(s.pseudo)+'</option>').join('');
+ const options='<option value="unknown">NON ÉTABLI</option>'+cast().map(x=>
+  '<option value="'+esc(x.actor_id)+'">'+esc(x.pseudo)+'</option>').join('');
  const select=(id,name)=>'<select data-court-act="'+esc(id)+'" data-court-field="'+name+'">'+options+'</select>';
  const proofOptions='<option value="">— Choisir une pièce —</option>'+
- docs.filter(x=>x.kind!=='capture').map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title||x.id)+'</option>').join('');
+  docs.filter(x=>x.kind!=='capture').map(x=>
+   '<option value="'+esc(x.id)+'">'+esc(x.title||x.id)+'</option>').join('');
  const reconstruction=['enqueteur','analyste'].includes(cache.role)?
  section('RECONSTITUTION DES QUATRE ACTES',
- '<p>La responsabilité doit être fondée sur deux sources indépendantes par acte. Le vote 0–2 habituel aura lieu après ce tribunal.</p>'+
- acts.map(x=>'<article class="igr-rg13-act"><h5>'+esc(x.title)+'</h5>'+
- '<div class="igr-rg13-grid"><label>Ordonne'+select(x.id,'orderedBy')+'</label>'+
- '<label>Transmet'+select(x.id,'transmittedBy')+'</label>'+
- '<label>Exécute'+select(x.id,'executedBy')+'</label>'+
- '<label>Sait et contrôle'+select(x.id,'knewAndControlledBy')+'</label>'+
- '<label>Source 1<select data-court-act="'+esc(x.id)+'" data-court-field="evidence1">'+proofOptions+'</select></label>'+
- '<label>Source 2<select data-court-act="'+esc(x.id)+'" data-court-field="evidence2">'+proofOptions+'</select></label></div></article>').join('')+
- button('DÉPOSER LA RECONSTITUTION','reconstruct')):'';
+  cache.my_reconstruction_submitted?
+   '<p>Ta reconstitution a été déposée. Le serveur garde le résultat scellé jusqu’à la révélation.</p>':
+  '<p>Prépare les quatre attributions pendant les débats. Deux sources indépendantes par acte sont nécessaires. Le vote 0–2 habituel suivra ce procès.</p>'+
+  acts.map(x=>'<article class="igr-rg13-act"><h5>'+esc(x.title)+'</h5>'+
+    '<div class="igr-rg13-grid"><label>Ordonne'+select(x.id,'orderedBy')+'</label>'+
+    '<label>Transmet'+select(x.id,'transmittedBy')+'</label>'+
+    '<label>Exécute'+select(x.id,'executedBy')+'</label>'+
+    '<label>Sait et contrôle'+select(x.id,'knewAndControlledBy')+'</label>'+
+    '<label>Source 1<select data-court-act="'+esc(x.id)+'" data-court-field="evidence1">'+proofOptions+'</select></label>'+
+    '<label>Source 2<select data-court-act="'+esc(x.id)+'" data-court-field="evidence2">'+proofOptions+'</select></label></div></article>').join('')+
+    button('DÉPOSER LA RECONSTITUTION','reconstruct')):'';
+ const thirdMission=cache?.my_mission;
+ const thirdFinal=cache.role==='suspect'&&thirdMission?.assigned_path==='cooperate'?
+ section('DÉCLARATION PERSONNELLE DU TROISIÈME SUSPECT',
+  cache.my_third_final_submitted?
+   '<p>Ta déclaration finale est enregistrée.</p>':
+  '<p>Identifie le donneur d’ordre et reconnais ton implication. Tu peux gagner même si l’enquête se trompe.</p>'+
+  '<label>Qui a réellement donné l’ordre ?<select id="igrRgThirdOrdered">'+options+'</select></label>'+
+  '<label>Quelle a été ton implication ?<select id="igrRgThirdPart">'+
+  '<option value="order">Donner l’ordre</option>'+
+  '<option value="transmission">Transmettre</option>'+
+  '<option value="execution">Exécuter</option>'+
+  '<option value="knowledge">Savoir et pouvoir agir</option>'+
+  '<option value="none">Aucune participation établie</option></select></label>'+
+  button('VALIDER MA DÉCLARATION','third-final')):'';
+ const count=Math.max(0,Number(c.stage_seconds_remaining)||0);
  return '<section class="igr-rg13-court"><header><small>TRIBUNAL SPÉCIAL · KARSANE</small>'+
- '<h2>LES ACCUSÉS À LA BARRE</h2><p>'+esc(long?'PROCÈS LONG · 14 MINUTES · 5 MINUTES DE CONFRONTATION':'PROCÈS COURT · 8 MINUTES')+'</p>'+
- '<strong id="igrRgCourtClock">—</strong></header>'+
- '<div class="igr-rg13-bench"><div class="igr-rg13-judge">⚖ JUGE<br><small>'+esc((me()?.public_role==='juge'?me()?.pseudo:'Présidence de séance')||'Tribunal')+'</small></div>'+
- '<div class="igr-rg13-sides"><div><b>ACCUSATION</b><p>Enquêteur · Analyste · Procureur si présent</p></div>'+
- '<div><b>MIS EN CAUSE</b>'+witnesses.map(x=>'<p>'+esc(x.pseudo)+(active===x.actor_id?' · À LA BARRE':'')+'</p>').join('')+
- absent.map(x=>'<p class="igr-rg13-absent">'+esc(x.pseudo)+' · EN FUITE (siège vide)</p>').join('')+'</div></div>'+
- '<div class="igr-rg13-bar">BARRE · '+esc(active?person(active):'En attente de l’appel')+
- '<span id="igrRgBarClock"></span></div></div>'+
- judgeUI+reconstruction+'</section>';
+  '<h2>LES ACCUSÉS À LA BARRE</h2><p>'+esc(long?
+   'PROCÈS LONG · 14 MINUTES · 5 MINUTES DE CONFRONTATION':
+   'PROCÈS COURT · 8 MINUTES')+'</p>'+
+  '<strong id="igrRgCourtClock">—</strong><div class="igr-rg13-stage">'+esc(stageLabels[stage]||stage)+
+  ' · '+Math.floor(count/60)+':'+String(count%60).padStart(2,'0')+'</div></header>'+
+  '<div class="igr-rg13-bench"><div class="igr-rg13-judge">⚖ JUGE'+
+  '<br><small>Présidence de séance</small></div>'+
+  '<div class="igr-rg13-sides"><div><b>ACCUSATION</b>'+
+  '<p>Enquêteur · Analyste · Procureur facultatif</p></div>'+
+  '<div><b>MIS EN CAUSE</b>'+present.map(x=>
+   '<p>'+esc(x.pseudo)+(current===x.actor_id?' · À LA BARRE':'')+'</p>').join('')+
+   absent.map(x=>'<p class="igr-rg13-absent">'+esc(x.pseudo)+' · EN FUITE (siège vide)</p>').join('')+
+  '</div></div><div class="igr-rg13-bar">BARRE · '+esc(current?person(current):'En attente de l’appel')+
+  '<span id="igrRgBarClock"></span></div></div>'+
+  judgeUI+discussion+thirdFinal+reconstruction+'</section>';
 }
 function events(){
  const rows=cache?.events||[];if(!rows.length)return '';
@@ -185,7 +238,16 @@ function render(){
  if(k===lastRender){tick();return}lastRender=k;
  const after=document.querySelector('.phase-strip')||document.querySelector('#game');
  if(!after)return;
- document.getElementById('igr-regime-v13')?.remove();
+ const previous=document.getElementById('igr-regime-v13');
+ const preserved=new Map();
+ if(previous){
+  previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense').forEach(el=>{
+   const k=el.hasAttribute('data-court-act')?
+     el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
+   preserved.set(k,el.value);
+  });
+ }
+ previous?.remove();
  const root=document.createElement('div');
  root.id='igr-regime-v13';
  root.className='igr-rg13-root';
@@ -196,6 +258,11 @@ function render(){
  (phase==='regime_court'?court():myCard()+alliance()+actions()+investigations()+third()+warrants()+judge())+
  evidence()+events();
  after.insertAdjacentElement('afterend',root);
+ root.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense').forEach(el=>{
+  const k=el.hasAttribute('data-court-act')?
+   el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
+  if(preserved.has(k))el.value=preserved.get(k);
+ });
  tick();
 }
 function tick(){
@@ -233,6 +300,16 @@ document.addEventListener('click',async(ev)=>{
     p_decision:action==='judge-allow'?'allow':'contest'});
   }else if(action==='court-call'){
    await call('igr_regime_v13_court_call',{...args,p_actor_id:el.dataset.actorId});
+  }else if(action==='third-final'){
+   await call('igr_regime_v13_third_final',{...args,p_ordered_by:control('igrRgThirdOrdered'),
+      p_own_participation:control('igrRgThirdPart')});
+  }else if(['court-question','court-reply','court-objection','court-sustain','court-overrule'].includes(action)){
+   const kinds={ 'court-question':'question','court-reply':'reply',
+    'court-objection':'objection','court-sustain':'ruling','court-overrule':'ruling'};
+   const msg=action==='court-sustain'?'sustained':
+      action==='court-overrule'?'overruled':control('igrRgExchangeText');
+   await call('igr_regime_v13_court_exchange',{...args,p_kind:kinds[action],
+       p_message:msg,p_reply_to:el.dataset.replyTo||null});
   }else if(action==='reconstruct'){
    const answers=(cache?.court_acts||[]).map(a=>{
     const row={actId:a.id};
