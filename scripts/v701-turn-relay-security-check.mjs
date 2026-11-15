@@ -1,6 +1,6 @@
 /* v701: No anonymous TURN credentials. Run entirely offline with mocked Worker upstream. */
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 import {default as worker} from '../cloudflare-worker.mjs';
 
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
@@ -89,4 +89,14 @@ const migration=readFileSync('supabase/migrations/20261115144500_igr_v701_turn_v
 assert(migration.includes('terror_v693_officer_join'),'Officer video visit must be checked server-side');
 assert(migration.includes("room_.phase <> 'interrogation'"),'Private TURN authorization must be phase bound');
 assert(migration.includes("rate_limit('turn_authorize_global'"),'Private TURN auth must have global rate limits');
+if(process.argv[2]){
+ const dir=process.argv[2];
+ const builtHtml=readFileSync(dir+'/index.html','utf8');
+ const builtSw=readFileSync(dir+'/service-worker.js','utf8');
+ const marker='turn-v12-4.js?v=security-v701-room-authorized-20261115';
+ assert(builtHtml.includes(marker),'Published Web document did not version the secure client');
+ assert(builtSw.includes('/'+marker),'Published PWA manifest still points at older TURN script');
+ if(existsSync(dir+'/index-latest-release.txt'))
+   assert(readFileSync(dir+'/index-latest-release.txt','utf8').includes(marker),'Worker root entrypoint lost secure TURN version');
+}
 console.log('PASS v701: authenticated TURN, role and session checks, origin isolation, no provider leak, iOS/Android native preflight.');
