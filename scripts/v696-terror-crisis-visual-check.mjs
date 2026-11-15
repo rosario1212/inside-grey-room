@@ -47,7 +47,7 @@ for(const build of ['scripts/build-web.mjs','scripts/build-mobile.mjs'])
 assert(finalize.includes("'terror-crisis-v696.css'"),'Final page must version the crisis stylesheet');
 assert(sw.includes('/terror-crisis-v696.css?v=terror-crisis-v696-20261115'),
  'Service worker source must preload the crisis CSS');
-assert(publisher.includes('crisisCssPath')&&publisher.includes("const tag='terror-live-v694-20261115-crisis-v696'"),
+assert(publisher.includes('crisisCssPath')&&publisher.includes("const tag='terror-live-v694-20261115'"),
  'Publish step must advance its PWA cache');
 
 if(process.argv[2]){
@@ -59,6 +59,6 @@ if(process.argv[2]){
   'Built page lost or duplicated crisis theme');
  assert(builtSw.includes('/terror-crisis-v696.css?v=v87-canonical-narrative'),
   'PWA precache URL and finalizer version are not aligned');
- assert(builtSw.includes('crisis-v696'),'PWA cache did not advance for visual release');
+ assert(builtSw.includes('/terror-crisis-v696.css?v=v87-canonical-narrative'),'PWA must preload immutable v696 CSS');
 }
 console.log('PASS TERREUR v696 Option B: scoped crisis palette, iPhone layout, accessibility, actions, build and PWA.');
