@@ -295,8 +295,8 @@ function patchHBridge(d,stage){
     if(options){
       options.before(info);
       if(ballot){
-        $('button',options).forEach(b=>{b.disabled=!!ballot.my_vote;b.classList.toggle('is-voted',!!ballot.my_vote&&b.dataset.hpOption===ballot.my_vote)});
-      }else if(!host)$('button',options).forEach(b=>b.disabled=true);
+        $$('button',options).forEach(b=>{b.disabled=!!ballot.my_vote;b.classList.toggle('is-voted',!!ballot.my_vote&&b.dataset.hpOption===ballot.my_vote)});
+      }else if(!host)$$('button',options).forEach(b=>b.disabled=true);
     }
     const mode=$('.hplay-mode');
     if(mode)mode.textContent='EN LIGNE · DÉCISION';
