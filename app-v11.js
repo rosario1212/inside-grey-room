@@ -62,6 +62,22 @@ const SCENARIO_ROLES = {
 function playerCountLabel(sc){
  return sc.min===sc.max ? `${sc.min} joueur${sc.min>1?'s':''}` : `${sc.min}–${sc.max} joueurs`;
 }
+// Single teaser contract for classic scenarios and every DLC catalogue.
+ // Keep dossier facts in the detail page; the compact preview is deliberately short.
+function scenarioCardTeaser(raw){
+ const clean=String(raw??'').replace(/\s+/g,' ').trim().replace(/[\s.!?…]+$/g,'');
+ if(!clean)return '';
+ const width=typeof window!=='undefined'&&Number.isFinite(window.innerWidth)?window.innerWidth:400;
+ const limit=width<=390?62:width<=560?77:width<=900?105:125;
+ let clipped=clean;
+ if(clean.length>limit){
+  clipped=clean.slice(0,limit);
+  const space=clipped.lastIndexOf(' ');
+  if(space>limit-22)clipped=clipped.slice(0,space);
+ }
+ return clipped.replace(/[\s,;:.!?…]+$/g,'')+'…';
+}
+
 const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
 function scenarioDifficultyTag(sc){const id=String(sc?.id||sc||'');return ADVANCED_SCENARIO_IDS.has(id)?`<span class="tag advanced-tag">${window.IGR_LOCALE==='en'?'ADVANCED':'AVANCÉ'}</span>`:''}
 
@@ -586,7 +602,7 @@ async function refresh007PublishState(force=false){
 }
 function renderCreateList(){
  const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
- byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(scenarioCardTeaser(sc.short))}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
  if(typeof refresh007PublishState==='function')void refresh007PublishState();
 }
 function selectScenario(id){
