@@ -25,7 +25,7 @@ BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'officer role required';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  IF NOT FOUND OR r.scenario_id NOT IN ('026','027','028') OR r.status<>'playing'
-  OR r.cycle NOT BETWEEN 1 AND 3 OR r.phase IN ('cycle_debrief','trame','locking','reveal')
+  OR r.cycle NOT BETWEEN 1 AND 3 OR r.phase IN ('investigation_assembly','cycle_debrief','trame','locking','reveal')
  THEN RETURN jsonb_build_object('enabled',false);END IF;
  s:=coalesce(r.state->'terror_v694','{}'::jsonb);
  IF coalesce((s->>'cycle')::integer,0)<>r.cycle THEN
@@ -116,7 +116,7 @@ BEGIN
  IF coalesce((s->>'cycle')::integer,0)<>r.cycle
   OR coalesce((s->>'step')::integer,0)<>step_
   OR at_<(s->>'available_at')::timestamptz OR at_>=(s->>'deadline')::timestamptz
-  OR r.status<>'playing' OR r.phase IN ('cycle_debrief','trame','locking','reveal')
+  OR r.status<>'playing' OR r.phase IN ('investigation_assembly','cycle_debrief','trame','locking','reveal')
  THEN RAISE EXCEPTION 'stale order';END IF;
  IF EXISTS(SELECT 1 FROM public.igr_v4_actions a WHERE a.room_code=r.code
   AND a.player_id=p.id AND a.cycle=r.cycle AND a.action_type='terror_v694_decision'
@@ -251,7 +251,7 @@ BEGIN
  THEN RAISE EXCEPTION 'role not eligible';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  IF NOT FOUND OR r.status<>'playing' OR r.cycle NOT BETWEEN 1 AND 3
-   OR r.phase IN ('briefing','role_reading','cycle_debrief','locking','reveal')
+   OR r.phase IN ('briefing','role_reading','investigation_assembly','cycle_debrief','locking','reveal')
  THEN RAISE EXCEPTION 'initiative phase closed';END IF;
  action_:=lower(trim(coalesce(p_action,'')));
  note_:=left(regexp_replace(trim(coalesce(p_note,'')),'[<>&]','','g'),220);
