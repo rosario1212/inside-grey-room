@@ -32,8 +32,8 @@ begin
       and action_type in ('final_lock','judge_integrity_vote','v52_audience_initial','v52_audience_spoken','v52_audience_skip','v52_defense_spoken','v52_defense_skip','v52_lawyer_spoken','v52_lawyer_skip');
     for p in
       select * from public.igr_v4_players
-      where room_code=p_room and (public.igr_v44_judge_present(p_room) or public_role in ('enqueteur','analyste','inspecteur','expert','procureur','juge','journaliste'))
-      order by case public_role when 'enqueteur' then 1 when 'analyste' then 2 when 'inspecteur' then 3 when 'expert' then 4 when 'procureur' then 5 when 'journaliste' then 6 when 'suspect' then 7 when 'maitre' then 8 when 'juge' then 9 else 99 end,seat_index
+      where room_code=p_room and (case when public.igr_v44_judge_present(p_room) then public.igr_v52_investigation_role(public_role) else public_role in ('enqueteur','analyste','inspecteur','expert','procureur','juge','journaliste') end)
+      order by case public_role when 'enqueteur' then 1 when 'analyste' then 2 when 'inspecteur' then 3 when 'expert' then 4 when 'procureur' then 5 when 'juge' then 6 when 'journaliste' then 7 else 99 end,seat_index
     loop
       q:=q||jsonb_build_array(jsonb_build_object('player_id',p.id::text,'pseudo',p.pseudo,'role',p.public_role,'seconds',speech_seconds,'required',false));
     end loop;
@@ -90,7 +90,7 @@ begin
   insert into public.igr_v4_events(room_code,event_type,visibility,payload)
   values(p_room,'phase','public',
     case p_stage
-      when 'audience' then case when public.igr_v44_judge_present(p_room) then jsonb_build_object('title','AUDIENCE PRÉPARATOIRE','text','Tous les joueurs : COURT 01:00 / LONG 01:30 chacun, ou Passer. Exprimez vos soupçons, pas de verdict. Le tribunal suit.') else case when r.scenario_id in ('026','027','028') then jsonb_build_object('title','AUDIENCE FINALE · TERREUR','text','L’Enquêteur puis l’Analyste présentent leur lecture des faits (COURT 01:00 / LONG 02:00 chacun). Ils peuvent passer. Les trois suspects se défendent ensuite, avant les deux conclusions individuelles.') else jsonb_build_object('title','AUDIENCE FINALE','text','Enquêteur → Analyste → Inspecteur → Expert → Procureur → Juge → Journaliste. COURT 01:00 / LONG 02:00 max. Tous peuvent passer sauf le Juge.') end end
+      when 'audience' then case when public.igr_v44_judge_present(p_room) then jsonb_build_object('title','AUDIENCE PRÉPARATOIRE','text','Audience réservée au camp Enquête : Enquêteur, Analyste, Inspecteur, Expert, Procureur, Juge si présents. COURT 01:00 / LONG 01:30 chacun, ou Passer. Suspects et Avocat interviennent ensuite au tribunal. Aucun verdict à l’audience.') else case when r.scenario_id in ('026','027','028') then jsonb_build_object('title','AUDIENCE FINALE · TERREUR','text','L’Enquêteur puis l’Analyste présentent leur lecture des faits (COURT 01:00 / LONG 02:00 chacun). Ils peuvent passer. Les trois suspects se défendent ensuite, avant les deux conclusions individuelles.') else jsonb_build_object('title','AUDIENCE FINALE','text','Enquêteur → Analyste → Inspecteur → Expert → Procureur → Juge → Journaliste. COURT 01:00 / LONG 02:00 max. Tous peuvent passer sauf le Juge.') end end
       else case when r.scenario_id='029' then
         jsonb_build_object('title',case when public.igr_v44_judge_present(p_room) then 'TRIBUNAL · TÉMOINS' else 'PAROLE FINALE DES TÉMOINS' end,
           'text',case when public.igr_v44_judge_present(p_room) then 'Le Juge conduit les comparutions : COURT 03:00 / LONG 04:00. Le rapport final spécifique au dossier 029 reste inchangé.' else 'Chaque témoin peut préciser ce qu’il sait, se taire ou demander des éclaircissements. COURT 02:00 / LONG 03:00.' end)
