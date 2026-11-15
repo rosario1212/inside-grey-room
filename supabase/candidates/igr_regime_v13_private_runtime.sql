@@ -1,6 +1,6 @@
 -- INSIDE GREY ROOM — LE RÉGIME v13
 -- Candidate only. Additive, isolated tables and RPCs. The actual release
--- flag defaults FALSE. The existing 032–034 game flow is NOT replaced.
+-- flag defaults FALSE. Explicit owner release authorization is an alternative to human_review_approved; never claim a human playtest occurred. The existing 032–034 game flow is NOT replaced.
 -- Do not deploy until final audience and transitions are integrated.
 
 CREATE TABLE IF NOT EXISTS igr_private.igr_regime_v13_release (
@@ -50,7 +50,7 @@ AS $$
     WHERE editorial_status='ready'
       AND approved_by IS NOT NULL AND approved_at IS NOT NULL
       AND manuscript->'regime_vnext'->>'status'='ready'
-      AND manuscript->'regime_vnext'->>'human_review_approved'='true')=9
+      AND (manuscript->'regime_vnext'->>'human_review_approved'='true' OR manuscript->'regime_vnext'->>'author_release_authorized'='true'))=9
       FROM igr_private.igr_v99_variant_manuscripts
       WHERE scenario_id IN ('032','033','034'))
 $$;
@@ -71,7 +71,7 @@ BEGIN
     WHERE scenario_id=r.scenario_id AND variant_id IN ('A','B','C')
       AND editorial_status='ready'
       AND manuscript->'regime_vnext'->>'status'='ready'
-      AND manuscript->'regime_vnext'->>'human_review_approved'='true'
+      AND (manuscript->'regime_vnext'->>'human_review_approved'='true' OR manuscript->'regime_vnext'->>'author_release_authorized'='true')
     ORDER BY gen_random_uuid() LIMIT 1;
   IF NOT FOUND THEN RETURN false; END IF;
   INSERT INTO igr_private.igr_regime_v13_rooms(room_code,scenario_id,variant_id,private_pack,play_state)
