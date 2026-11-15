@@ -23,7 +23,7 @@ has(ui,"TRIBUNAL · AUDITION LIBRE");
 has(ui,"CLÔTURER CETTE COMPARUTION");
 has(ui,"'defense_done'");
 has(rules,"tribunal sans aucun chronomètre");
-has(manual,"AUCUN CHRONOMÈTRE");
+has(manual,"aucun chronomètre");
 assert.ok(!ui.includes("function courtroomUnclocked(item,status,mine,myLawyer,witness029){const"),'Courtroom function must remain separate from legacy');
 assert.ok(ui.includes("const mine=String(item.player_id)===myId()"),'No-Judge defendant paths preserved');
 console.log('v707 courtroom invariants: PASSED (no courtroom timer, hearing unchanged, judge closure requires defence consent).');
