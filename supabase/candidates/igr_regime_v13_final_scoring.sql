@@ -83,10 +83,8 @@ BEGIN
  IF r.phase NOT IN ('locking','reveal') THEN
     RAISE EXCEPTION 'regime results requested before final locking';END IF;
  SELECT * INTO enq FROM public.igr_v4_players WHERE room_code=r.code AND public_role='enqueteur' LIMIT 1;
- SELECT payload->'levels' INTO levels_vote FROM public.igr_v4_actions
-  WHERE room_code=r.code AND player_id=enq.id AND action_type='final_lock'
-  ORDER BY id DESC LIMIT 1;
- levels_vote:=coalesce(levels_vote,'{}'::jsonb);
+ -- A Regime result uses the same strict majority by suspect as v711.
+ levels_vote:=coalesce(igr_private.igr_v711_majority_levels(r.code),'{}'::jsonb);
  SELECT * INTO third FROM public.igr_v4_players
    WHERE room_code=r.code AND public_role='suspect' AND internal_slot=3 LIMIT 1;
  mission:=m.private_pack->'third_suspect_mission';
@@ -99,7 +97,7 @@ BEGIN
     guess_level:=coalesce((levels_vote->>player_row.id::text)::int,-1);
     responsibilities:=responsibilities||jsonb_build_array(jsonb_build_object(
       'player_id',player_row.id,'pseudo',player_row.pseudo,
-      'truth_level',true_level,'enqueteur_level',guess_level));
+      'truth_level',true_level,'enqueteur_level',guess_level,'collective_level',guess_level));
     total:=total+1;
     IF true_level=guess_level THEN exact:=exact+1;END IF;
  END LOOP;
@@ -108,9 +106,18 @@ BEGIN
    CASE WHEN m.play_state->'arrests' ?
    (m.private_pack->'private_cards'->1->>'actor_id') THEN 1 ELSE 0 END;
  tactical:=captured=2;
- SELECT coalesce((m.play_state->'reconstructions'->enq.id::text->>'accurate')::int,0)
-   INTO accurate;
- judicial:=accurate>=3;
+ -- Both investigators may document four acts independently; no solo veto.
+ -- An act is established when either Enquêteur or Analyste supplied
+ -- an independently source-supported accurate attribution.
+ SELECT count(*)::int INTO accurate
+ FROM jsonb_array_elements(m.private_pack->'acts') truth_act
+ WHERE EXISTS (
+  SELECT 1 FROM jsonb_each(coalesce(m.play_state->'reconstructions','{}'::jsonb)) rec
+  JOIN public.igr_v4_players voter ON voter.id::text=rec.key
+    AND voter.room_code=r.code AND voter.public_role IN ('enqueteur','analyste')
+  WHERE coalesce((rec.value->'act_orders'->(truth_act.value->>'id')->>'act_correct')::boolean,false)
+ );
+ judicial:=accurate>=3 AND exact>=2;
  whole:=tactical AND judicial;
  IF third_path='cooperate' THEN
    SELECT x.value INTO act FROM jsonb_array_elements(m.private_pack->'acts') x
@@ -148,10 +155,13 @@ BEGIN
              x->>'act_id'=defense_obj->>'act_id' AND
              x->>'claimed_orderer'=defense_obj->>'expected_ordered_by'
              AND (x->>'cycle')::integer BETWEEN 1 AND 3)
-        AND coalesce((m.play_state->'reconstructions'->enq.id::text->
-           'act_orders'->(defense_obj->>'act_id')->>'order_correct')::boolean,false)
-        AND coalesce((m.play_state->'reconstructions'->enq.id::text->
-           'act_orders'->(defense_obj->>'act_id')->>'supported')::boolean,false);
+        AND EXISTS (
+          SELECT 1 FROM jsonb_each(coalesce(m.play_state->'reconstructions','{}'::jsonb)) rec
+          JOIN public.igr_v4_players voter ON voter.id::text=rec.key
+            AND voter.room_code=r.code AND voter.public_role IN ('enqueteur','analyste')
+          WHERE coalesce((rec.value->'act_orders'->(defense_obj->>'act_id')->>'order_correct')::boolean,false)
+            AND coalesce((rec.value->'act_orders'->(defense_obj->>'act_id')->>'supported')::boolean,false)
+        );
      END IF;
      role_success:=NOT (m.play_state->'arrests' ? own_actor) OR captured_partial;
      text_out:=CASE
@@ -169,8 +179,8 @@ BEGIN
    ELSIF player_row.public_role IN ('enqueteur','analyste','procureur') THEN
      role_success:=whole;
      text_out:=CASE WHEN whole THEN
-       'Les deux dirigeants sont capturés et au moins trois des quatre actes sont reconstitués correctement.'
-       ELSE 'La victoire totale exige deux captures et au moins trois des quatre actes correctement reconstitués.' END;
+       'Deux captures, trois actes sur quatre établis et verdict majoritaire exact sur au moins deux suspects : victoire collective.'
+       ELSE 'Il faut deux captures, trois actes étayés sur quatre et au moins deux niveaux de responsabilité exacts selon la majorité du camp.' END;
    ELSIF player_row.public_role='juge' THEN
      SELECT count(*) INTO judge_actions FROM igr_private.igr_regime_v13_ledger ledger
        WHERE ledger.room_code=r.code AND ledger.actor_player=player_row.id
@@ -203,7 +213,8 @@ BEGIN
   'regime_verdict',jsonb_build_object(
     'captures',captured,'tactical',tactical,
     'judicial',judicial,'accurate_acts',accurate,
-    'total_victory',whole,'third_suspect_win',third_success,
+    'collective_accurate',exact,'collective_required',2,
+    'acts_required',3,'total_victory',whole,'third_suspect_win',third_success,
     'epilogue',CASE WHEN whole THEN
        m.private_pack->'canonical_truth'->'epilogue'->>'victory'
        ELSE m.private_pack->'canonical_truth'->'epilogue'->>'failure' END,
