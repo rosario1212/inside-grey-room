@@ -64,6 +64,65 @@ try{
   await runAuditGameplayChecks({page,read,check});
   await runNotificationChecks({page,read,check,css});
   await runDesktopChecks({page,css,app,read,check,report});
+
+  await check('regime-v162-phone-cards-and-roles',async()=>{
+    const cards=[
+      {id:'032',name:'LES ARCHIVES DU PALAIS',
+       description:'Deux dirigeants en fuite : le directeur de la prison de Vahran et le ministre de l Intérieur. Les enquêteurs relient les archives, les arrestations et la chaîne de commandement.',
+       players:'6–8 JOUEURS'},
+      {id:'034',name:'LES NOMS QU ILS PORTAIENT',
+       description:'Le président déchu et son gendre, chef de la sécurité, sont recherchés. Le président peut être lié à des identités multiples, des ordres et des responsabilités distinctes.',
+       players:'6–9 JOUEURS'}
+    ];
+    const markup=cards.map(sc=>'<article class="scenario scenario--art scenario--compact regime-scenario" data-igr-scenario-id="'+sc.id+'">'+
+      '<div class="scenario-thumb compact"><img alt="" src=""></div>'+
+      '<div class="scenario-body compact"><div class="scenario-id">LE RÉGIME · DOSSIER '+sc.id+'</div>'+
+      '<h3>'+sc.name+'</h3><p>'+sc.description+'</p>'+
+      '<div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></div></article>').join('');
+    for(const width of [320,375,390,430,768,1280]){
+      await page.setViewportSize({width,height:900});
+      await page.setContent('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+
+        '</style></head><body class="igr-theme-regime"><div id="app"><main class="page page-create-v10-13">'+
+        '<section class="panel regime-dlc-section"><div class="scenario-list scenario-list-v10-13 regime-list">'+markup+
+        '</div></section></main></div></body></html>');
+      const measures=await page.locator('.regime-scenario').evaluateAll(els=>els.map(el=>{
+        const body=el.querySelector('.scenario-body'),p=body.querySelector('p'),t=body.querySelector('.tag-row'),
+          box=el.getBoundingClientRect(),textBox=p.getBoundingClientRect(),tagBox=t.getBoundingClientRect();
+        return {cardHeight:box.height,textBottom:textBox.bottom,tagTop:tagBox.top,tagBottom:tagBox.bottom,
+          cardBottom:box.bottom,bodyOverflow:body.scrollWidth>body.clientWidth+1,
+          heightRule:getComputedStyle(el).maxHeight,clamp:getComputedStyle(p).webkitLineClamp};
+      }));
+      for(const [i,m] of measures.entries()){
+        assert(m.cardHeight>=190,width+'px dossier '+cards[i].id+': card height too small');
+        assert(m.heightRule==='none',width+'px dossier '+cards[i].id+': fixed max-height is still active');
+        assert(m.clamp==='3',width+'px dossier '+cards[i].id+': four-line clamp still overrides');
+        assert(m.textBottom+2<=m.tagTop,width+'px dossier '+cards[i].id+': text overlaps badges: '+JSON.stringify(m));
+        assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card');
+        assert(!m.bodyOverflow,width+'px dossier '+cards[i].id+': text wider than card');
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'regime-v162-iphone-cards.png'),fullPage:true});
+    }
+    await page.setViewportSize({width:375,height:780});
+    await page.setContent('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+
+      '</style></head><body class="igr-theme-regime"><div id="app"><main class="page page-confirm-v10-13">'+
+      '<section class="panel confirm-panel-v10-13"><div class="confirm">'+
+      '<div class="roles-availability"><div class="roles-row"><span>OBLIGATOIRES</span>'+
+      '<p>Enquêteur · Analyste · Juge · 3 suspects</p></div>'+
+      '<div class="roles-row optional"><span>FACULTATIFS</span>'+
+      '<p>Procureur · Témoin · Journaliste</p></div></div></div></section></main></div></body></html>');
+    const rows=await page.locator('.roles-availability .roles-row').evaluateAll(els=>els.map(el=>{
+      const title=el.querySelector('span').getBoundingClientRect(),p=el.querySelector('p').getBoundingClientRect(),
+        box=el.getBoundingClientRect();
+      return {start:box.top,end:box.bottom,titleEnd:title.bottom,textTop:p.top,
+        overflow:el.scrollWidth>el.clientWidth+1,pOverflow:el.querySelector('p').scrollWidth>el.querySelector('p').clientWidth+1};
+    }));
+    assert(rows[0].titleEnd<rows[0].textTop&&rows[1].titleEnd<rows[1].textTop,
+      'Regime role category must be visually above its role names');
+    assert(rows[0].end+5<=rows[1].start,'Regime mandatory and optional roles are too compressed');
+    assert(rows.every(row=>!row.overflow&&!row.pOverflow),'Role names must wrap inside the roster panel');
+    await page.screenshot({path:path.join(report,'regime-v162-iphone-roles.png'),fullPage:true});
+  });
+
   await check('desktop-standard-multiplayer-button-launch',async()=>{
     await page.setViewportSize({width:1366,height:768});
     await page.setContent('<!doctype html><html><head><style>'+css+'</style></head><body><div id="app"><main class="page page-confirm-v10-13"><section class="panel confirm-panel-v10-13"><div class="confirm"><label>Ton pseudo<input id="createPseudo" value="Test Desktop"></label><button class="btn primary block" type="button">Ouvrir la cellule</button></div></section></main></div></body></html>');

@@ -175,3 +175,33 @@ test('Regime phone cards clamp copy and keep badges beneath the text',async()=>{
  assert.ok(index.includes('regime-v16-1-mobile-cards-20261115'));
  assert.ok(sw.includes('regime-v16-1-mobile-cards-20261115'));
 });
+
+test('last loaded mobile CSS overrides the offending fixed 190px regime cards',async()=>{
+ const mobile=await read('mobile-ui-v28.css');
+ const old=mobile.indexOf('height:190px!important;');
+ const fixed=mobile.lastIndexOf('v16.2 Regime mobile:');
+ assert.ok(old>=0&&fixed>old,'Regime exception must follow fixed-height rules');
+ const rules=mobile.slice(fixed);
+ assert.ok(rules.includes('.scenario--compact.regime-scenario'));
+ assert.ok(rules.includes('height:auto!important;'));
+ assert.ok(rules.includes('max-height:none!important;'));
+ assert.ok(rules.includes('-webkit-line-clamp:3!important;'));
+ assert.ok(rules.includes('margin-top:auto!important;'));
+ assert.ok(rules.includes('body.igr-theme-regime #app .page-confirm-v10-13'));
+});
+test('the final role renderer and lobby normalize legacy numbered suffixes',async()=>{
+ const app=await read('app-v11.js');
+ assert.ok(app.includes("const clean=String(x||'').replace("));
+ assert.ok(app.includes("const x=String(label||'').trim().replace("));
+ const catalogue=await read('dlc-suite-v12-37.js');
+ for(const old of ['Procureur (7e)','Témoin (8e)','Journaliste (9e)'])
+  assert.ok(!catalogue.includes(old),'numbered Regime label still present: '+old);
+});
+test('installed PWA cache fingerprints the actual mobile layout',async()=>{
+ const finalizer=await read('scripts/apply-lobby-display-v72.mjs');
+ const check=await read('scripts/lobby-display-check.mjs');
+ assert.ok(finalizer.includes("createHash('sha256')"));
+ assert.ok(finalizer.includes('igr-${VERSION}-${regimeUiFingerprint}'));
+ assert.ok(check.includes('uiFingerprint'));
+ assert.ok(check.includes('PWA cache must be content-addressed'));
+});

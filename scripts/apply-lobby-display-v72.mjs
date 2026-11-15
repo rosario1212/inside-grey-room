@@ -1,4 +1,5 @@
 import {readFile,writeFile,stat,copyFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import path from 'node:path';
 
 const target=path.resolve(process.argv[2]||'dist');
@@ -18,6 +19,12 @@ assets.push('live-cell-v12-44.js','gameplay-clean-v12.js','runtime-optimization-
 await copyFile(path.resolve(polish),path.join(target,polish));
 await copyFile(path.resolve(narrativeRuntime),path.join(target,narrativeRuntime));
 for(const asset of assets)await stat(path.join(target,asset));
+// The final client uses stable v87 URLs; fingerprint real mobile source bytes
+// to force installed PWAs to replace their service worker/cache on a UI fix.
+const regimeUiFingerprint=createHash('sha256')
+ .update(await readFile(path.join(target,'dlc-suite-v12-37.js')))
+ .update(await readFile(path.join(target,'mobile-ui-v28.css')))
+ .digest('hex').slice(0,12);
 for(const url of posterUrls)await stat(path.join(target,url.split('?')[0].slice(1)));
 for(const page of ['index.html','en.html']){
   const file=path.join(target,page);
@@ -46,7 +53,7 @@ await writeFile(appFile,app.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'
 const swFile=path.join(target,'service-worker.js');
 try{
   let sw=await readFile(swFile,'utf8');
-  sw=sw.replace(/const CACHE='[^']+';/,`const CACHE='igr-${VERSION}';`);
+  sw=sw.replace(/const CACHE='[^']+';/,`const CACHE='igr-${VERSION}-${regimeUiFingerprint}';`);
   for(const asset of assets){
     sw=sw.replace(new RegExp('/'+escapeRe(asset)+'\\?v=[^"\']+','g'),'/'+asset+'?v='+VERSION);
     if(!sw.includes('/'+asset+'?v='+VERSION))sw=sw.replace('const SHELL=[',`const SHELL=[\n  '/${asset}?v=${VERSION}',`);

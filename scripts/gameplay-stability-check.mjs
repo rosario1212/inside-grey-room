@@ -118,7 +118,7 @@ try{
   const distIndex=await read('dist/index.html');
   const distSw=await read('dist/service-worker.js');
   const presentationVersion=files.lobbyDisplayApply.match(/const VERSION='([^']+)'/)?.[1];
-  const presentationFinalized=presentationVersion&&distSw.includes(`const CACHE='igr-${presentationVersion}';`);
+  const presentationFinalized=presentationVersion&&(distSw.includes(`const CACHE='igr-${presentationVersion}';`)||distSw.includes(`const CACHE='igr-${presentationVersion}-`));
   const navigationThemeUrl='navigation-theme-v18.js?v='+(presentationFinalized?presentationVersion:'v27-role-choice-nav');
   ok(distIndex.includes(navigationThemeUrl),'dist/index.html has stale navigation-theme asset');
   ok(distIndex.includes('navigation-heritage-v19.js?v=v27-role-choice-nav'),'dist/index.html has stale navigation behavior');
@@ -135,7 +135,7 @@ try{
   const heritageCache=heritageCacheName?`const CACHE='${heritageCacheName}';`:'';
   const lobbyVersion=files.lobbyDisplayApply.match(/const VERSION='([^']+)'/)?.[1];
   const lobbyCache=lobbyVersion?`const CACHE='igr-${lobbyVersion}';`:'';
-  const finalLobbyCache=!!lobbyCache&&distSw.includes(lobbyCache)&&distIndex.includes('lobby-ui-fix-v13.css?v='+lobbyVersion)&&distSw.includes('/lobby-ui-fix-v13.css?v='+lobbyVersion);
+  const finalLobbyCache=!!lobbyCache&&(distSw.includes(lobbyCache)||distSw.includes(`const CACHE='igr-${lobbyVersion}-`))&&distIndex.includes('lobby-ui-fix-v13.css?v='+lobbyVersion)&&distSw.includes('/lobby-ui-fix-v13.css?v='+lobbyVersion);
   ok(finalLobbyCache||(heritageCache&&distSw.includes(heritageCache))||(rcCache&&distSw.includes(rcCache))||distSw.includes("const CACHE='igr-v36-1-parasite-fix';")||distSw.includes("const CACHE='igr-v38-gameplay-ui-state';")||distSw.includes("const CACHE='igr-v39-authoritative-ui';")||distSw.includes("const CACHE='igr-v41-authoritative-ui';")||distSw.includes("const CACHE='igr-v42-investigation-ui';")||distSw.includes("const CACHE='igr-v42-3-mobile-chrome';")||distSw.includes("const CACHE='igr-v43-1-lawyer-reading';")||distSw.includes("const CACHE='igr-v53-gameplay-polish';")||distSw.includes("const CACHE='igr-v55-heritage-audit';")||distSw.includes("const CACHE='igr-v56-objective-dedupe';")||distSw.includes("const CACHE='igr-v57-heritage-audit';")||distSw.includes("const CACHE='igr-v59-role-finale-integrity';")||distSw.includes("const CACHE='igr-v60-mobile-beta';")||distSw.includes("const CACHE='igr-v64-silver-entrance';"),'dist/service-worker.js has stale cache version');
   if(distSw.includes("const CACHE='igr-v59-role-finale-integrity';"))for(const asset of ['final-audience-v52.js','self-guided-rules-v51.js','judicial-runtime-v44.js','duration-modes-v35.js','duration-modes-v35.css','natural-role-gameplay-v50.js']){
     ok(distIndex.includes(asset+'?v=v59-role-finale-integrity'),'dist/index.html: stale finale asset '+asset);
