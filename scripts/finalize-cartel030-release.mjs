@@ -17,7 +17,14 @@ for(const name of ['index.html','en.html',...(!nativeBundle?['service-worker.js'
   text=text.replace(/dlc-suite-v12-37\.js\?v=[A-Za-z0-9._-]+/g,`dlc-suite-v12-37.js?v=${version}`);
   text=text.replace(/(cartel029-v(?:107|121)\.js)\?v=[A-Za-z0-9._-]+/g,`$1?v=${version}`);
   text=text.replace(/(lawyer-runtime-v43\.js|lawyer-dismissal-v45\.js|natural-role-gameplay-v50\.js|play-modes-v13-8\.js|prosecutor-runtime-v47\.js)\?v=[A-Za-z0-9._-]+/g,`$1?v=${version}`);
-  if(name==='index.html'||name==='en.html')text=text.replace('</body>',`  <script src="cartel031-v171.js?v=${version}"></script>\n</body>`);
+  if(name==='index.html'||name==='en.html'){
+    // The release finalizer is the only owner of the 031 script tag.
+    // Re-running it must update the version, not install a second live poller.
+    const tag='<script src="cartel031-v171.js?v='+version+'"></script>';
+    const loaded=[...text.matchAll(/<script\b[^>]*\bsrc=["']cartel031-v171\.js(?:\?v=[^"']*)?["'][^>]*><\/script>/gi)];
+    if(loaded.length>1)throw new Error(name+': CARTEL 031 script loaded multiple times');
+    text=loaded.length ? text.replace(loaded[0][0],tag) : text.replace('</body>', '  '+tag+'\n</body>');
+  }
   if(name==='service-worker.js'){
     if(!text.includes('/cartel031-v171.js?v='+version))text=text.replace('const SHELL=[',`const SHELL=[\n  '/cartel031-v171.js?v=${version}',`);
     text=text.replace(/const CACHE='[^']+';/,`const CACHE='igr-${clientVersion}';`);
