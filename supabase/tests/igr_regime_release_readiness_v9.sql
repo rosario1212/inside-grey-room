@@ -2,7 +2,7 @@
 WITH cases(sid) AS (VALUES ('032'),('033'),('034')),
 v(variant_id) AS (VALUES ('A'),('B'),('C')),
 draft AS (
-SELECT cases.sid, v.variant_id, m.editorial_status,
+SELECT cases.sid, v.variant_id, m.editorial_status, m.approved_at,
  coalesce((m.manuscript->>'human_review_approved')::boolean,false) human_ok,
  m.manuscript
 FROM cases CROSS JOIN v
