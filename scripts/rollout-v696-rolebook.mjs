@@ -14,7 +14,6 @@ for(const page of ['index.html','en.html']){
 const swFile=path.join(target,'service-worker.js');
 if(await exists(swFile)){
  let s=await readFile(swFile,'utf8');
- s=s.replace(/const CACHE='[^']+';/,"const CACHE='igr-v696-rolebook';");
  s=s.replace(/\/self-guided-rules-v51\.js\?v=[A-Za-z0-9._-]+/g,'/self-guided-rules-v51.js?v='+version);
  await writeFile(swFile,s,'utf8');
 }
