@@ -121,9 +121,9 @@ begin
     camp_axis:=target_truth>=0 and target_auth>=0 and target_auth<target_truth;
     select exists(select 1 from public.igr_v47_prosecutor_cooperations c join public.igr_v4_players a on a.id=c.against_player_id where c.room_code=p_room and c.prosecutor_id=proc.id and c.status='accepted' and c.against_player_id<>proc_rt.protected_target_id and coalesce((authority_levels->>a.id::text)::int,-1)>coalesce((truth_levels->>(a.internal_slot-1))::int,0)) into secondary_success;
     score:=(case when camp_axis then 1 else 0 end)+(case when main_axis then 1 else 0 end)+(case when secondary_success then 1 else 0 end); score:=case score when 3 then 100 when 2 then 67 when 1 then 33 else 0 end;
-    it:=jsonb_set(it,'{success}',to_jsonb(main_axis),true);
+    it:=jsonb_set(it,'{success}',to_jsonb(main_axis and camp_axis),true);
     it:=jsonb_set(it,'{text}',to_jsonb('Procureur corrompu · cible : '||coalesce(target_name,'inconnue')||' · ta version personnelle '||case when main_axis then 'réduit bien son exposition' else 'ne la protège pas assez' end||' · la version d’autorité '||case when camp_axis then 'la protège' else 'ne la protège pas' end||'.'),true);
-    it:=jsonb_set(it,'{victories}',jsonb_build_object('camp',camp_axis,'main',main_axis,'secondary',secondary_success,'camp_label','Intérêts corrompus'),true);
+    it:=jsonb_set(it,'{victories}',jsonb_build_object('camp',camp_axis,'main',main_axis and camp_axis,'secondary',secondary_success,'camp_label','Intérêts corrompus'),true);
    else
     main_axis:=proc_exact=total and total>0; camp_axis:=camp_exact=total and total>0;
     select exists(select 1 from public.igr_v47_prosecutor_cooperations c join public.igr_v4_players a on a.id=c.against_player_id where c.room_code=p_room and c.prosecutor_id=proc.id and c.status='accepted' and coalesce((truth_levels->>(a.internal_slot-1))::int,0)>0) into secondary_success;
@@ -286,6 +286,10 @@ begin
         personal_ok:=truth>0
           and guess>=0
           and guess<truth
+          and exists(select 1 from jsonb_array_elements(coalesce(base->'responsibilities','[]'::jsonb)) b(value)
+                     where b.value->>'player_id'=t.id::text
+                       and coalesce((b.value->>'authority_level')::int,-1)>=0
+                       and (b.value->>'authority_level')::int<truth)
           and not accused
           and protections_used<3;
 
