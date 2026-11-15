@@ -77,6 +77,16 @@ Les cartes A et B sont un outil de **lecture** : elles ne doivent pas déjà ré
 
 **Disponibilité :** optionnel au-dessus de l'effectif minimal du dossier ; ne pas modifier les effectifs requis tant que les packs et la validation serveur n'ont pas été remaniés. Le rôle peut remplacer une place optionnelle inutilisée, jamais supprimer une fonction requise.
 
+## Rôle majeur dans 034 : PRÉSIDENT DÉCHU (suspect, non un joueur supplémentaire)
+
+Le président n'est pas une figure décorative, ni un superadministrateur. Il est incarné par l'un des trois suspects déjà requis dans 034. Son pseudo de joueur est l'identité du personnage pour la session.
+
+- **Cycle 1 — DÉCRET CONTESTÉ :** le président choisit de reconnaître, contester ou limiter la portée d'un acte historique déjà présent dans sa variante. Il verrouille une position officielle. Les autres personnages voient immédiatement cette position et peuvent l'opposer à ses actes.
+- **Cycle 2 — CONFRONTATION DU SOMMET :** il peut demander une confrontation avec un ancien ministre, sous réserve des quotas et décisions de procédure du jeu. La demande ne crée pas un événement supplémentaire gratuit ; refus motivé ou convocation effective sont visibles immédiatement.
+- **Cycle 3 — DERNIÈRE DÉCLARATION :** il choisit de témoigner contre un ancien fidèle, de défendre sa chaîne d'ordres ou de garder le silence. Les formulations sont compatibles avec les faits de sa variante. Le choix influe sur les alliances et les objectifs privés mais jamais sur l'identité réelle des auteurs ni le barème juridique.
+
+**Garde-fou :** l'ancien président ne commande plus d'armée et ne peut pas ordonner une purge, détruire des pièces ou nommer des magistrats pendant la partie. Ses armes sont la mémoire, les archives, ses relations et la parole. Sa position ne lui donne aucun droit de blocage sur l'enquête.
+
 ## Personnalisation sûre du président : contrat technique
 
 1. Ne pas utiliser les chaînes de caractères pour identifier le président dans l'organigramme ou les vérités. Utiliser un `character_key='president'` stable côté serveur.
