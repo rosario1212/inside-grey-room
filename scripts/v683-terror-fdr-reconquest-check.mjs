@@ -40,7 +40,7 @@ assert(command.includes('function')&&command.includes('renderReveal=function'),'
 assert(css.includes('.terror-v688-command')&&css.includes('.terror-v688-capture'),'Military and defeat UI must be styled');
 assert(index.includes('terror-command-v688.js')&&index.includes('terror-command-v688.css'),'Military UI missing in canonical HTML');
 for(const bundle of [builder,mobile])assert(bundle.includes("'terror-command-v688.js'")&&bundle.includes("'terror-command-v688.css'"),'Military UI missing from a release bundle');
-assert(pub.includes('terror-story-finales-v691-20261115')&&pub.includes('terror-command-v688.js?v=terror-capital-v691-20261115'),'Cache version and new assets missing');
+assert(pub.includes('terror-terminal-consistency-v692-20261115')&&pub.includes('terror-command-v688.js?v=terror-capital-v691-20261115'),'Cache version and new assets missing');
 const fatal=read('supabase/migrations/20261115011300_igr_v690_terror_executions_and_evidence_guard.sql');
 const civilian=read('supabase/migrations/20261115011500_igr_v691_terror_civilian_protection_and_officer.sql');
 assert(fatal.includes('exécutés sommairement')&&fatal.includes('executed_summarily'),'All defeated captives must be executed in every scenario');
@@ -50,4 +50,8 @@ assert(front.includes('publicBeats')&&front.includes('LA DERNIÈRE COPIE')&&fron
 assert(live.includes('SERVICES CIVILS SOUTENUS')&&live.includes('military_operation'),'Public outcome must show military and humanitarian choices');
 assert(command.includes('EXÉCUTIONS SOMMAIRES')&&command.includes('exécutés sommairement'),'Client endings contradict server endings');
 assert(!command.includes('AUCUNE SURVIE GARANTIE'),'Ending may not imply possible survival');
+const finalNotice=read('supabase/migrations/20261115012200_igr_v692_terror_final_bulletin_consistency.sql');
+assert(finalNotice.includes('exécutés sommairement')&&!finalNotice.includes('incomplete_the_fdr'),'Terminal public bulletin must be explicit');
+assert(front.includes('LE FDR A PRIS LA GREY ROOM')&&front.includes('EXÉCUTIONS SOMMAIRES · AUCUN SURVIVANT'),'Client gate cannot contradict final verdict');
+assert(!front.includes('LE SORT DES PRÉSENTS RESTE INCERTAIN'),'Old uncertain ending is forbidden');
 console.log('PASS Terror v688: Almizia/Ferra, essential military commander, constrained operations, public military impact and three differentiated captivity endings.');
