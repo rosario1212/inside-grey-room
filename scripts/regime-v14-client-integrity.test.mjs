@@ -71,7 +71,7 @@ test('the six-player base and optional prosecutor do not force passive extras',(
  assert.match(lifecycleSql,/igr_v4_min_players/);
  assert.match(lifecycleSql,/igr_v4_max_players/);
  assert.match(lifecycleSql,/THEN 7/);
- assert.match(lifecycleSql,/THEN 6/);
+ assert.match(lifecycleSql,/then 6/i);
  assert.match(lifecycleSql,/procureur/);
 });
 test('production assets bundle gated client and CSS for desktop and mobile',()=>{
