@@ -161,11 +161,11 @@ BEGIN
        now()-(court_view->>'started_at')::timestamptz))::integer);
     long_court:=coalesce((court_view->>'duration_minutes')::int,8)=14;
     IF court_elapsed<60 THEN current_stage:='opening';stage_end:=60;
-    ELSIF court_elapsed<CASE WHEN long_court THEN 420 ELSE 240 END
+    ELSIF court_elapsed<(CASE WHEN long_court THEN 420 ELSE 240 END)
       THEN current_stage:='defenses';stage_end:=CASE WHEN long_court THEN 420 ELSE 240 END;
-    ELSIF court_elapsed<CASE WHEN long_court THEN 720 ELSE 360 END
+    ELSIF court_elapsed<(CASE WHEN long_court THEN 720 ELSE 360 END)
       THEN current_stage:='confrontation';stage_end:=CASE WHEN long_court THEN 720 ELSE 360 END;
-    ELSIF court_elapsed<CASE WHEN long_court THEN 780 ELSE 420 END
+    ELSIF court_elapsed<(CASE WHEN long_court THEN 780 ELSE 420 END)
       THEN current_stage:='closing';stage_end:=CASE WHEN long_court THEN 780 ELSE 420 END;
     ELSE current_stage:='vote';stage_end:=CASE WHEN long_court THEN 840 ELSE 480 END;
     END IF;
