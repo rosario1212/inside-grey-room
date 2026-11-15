@@ -547,12 +547,54 @@ function cendresFinalConsequence(live,opt){
   if(opt.id==='airbase'&&crisis>=3)return 'La recherche est engagée sur une base sans réception authentifiée. Dans une crise déjà dégradée, cette erreur prive la cellule d’une localisation exploitable à temps.';
   return opt.consequence;
 }
-function renderDecision(live){const pc=PACKS[live.campaignId].chapters[live.chapter];shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
-  <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">DÉCISION</div></header>
-  <section class="hplay-decision-head"><span class="hplay-eyebrow">CHOIX IRRÉVERSIBLE</span><h1>${esc(pc.question)}</h1><p>Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.</p></section>
-  <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>VERROUILLER →</i></button>`).join('')}</section>
-</main>`)}
-function chooseOption(id){const l=readLive();if(!l)return;const pc=PACKS[l.campaignId].chapters[l.chapter],opt=pc.options.find(o=>o.id===id);if(!opt)return;l.decision=id;l.result={grade:opt.grade,title:opt.title,consequence:opt.consequence};l.stage='result';saveLive(l);renderResult(l)}
+function ensureCendresBallot(live){
+  if(!live.ballot||!Array.isArray(live.ballot.votes)||!Number.isInteger(live.ballot.index)){
+    live.ballot={round:1,index:0,votes:[],show:false};
+    saveLive(live);
+  }
+  return live.ballot;
+}
+function renderDecision(live){
+  const pc=PACKS[live.campaignId].chapters[live.chapter];
+  if(live.campaignId==='cendres'&&!live.online){
+    const b=ensureCendresBallot(live),p=live.players[b.index];
+    if(!p)return;
+    shellPut(`<main class="page hplay hplay-decision hplay-theme-cendres">
+      <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">VOTE ${b.index+1}/${live.players.length} · TOUR ${b.round}</div></header>
+      <section class="hplay-decision-head"><span class="hplay-eyebrow">MAJORITÉ COLLECTIVE · VOTE PRIVÉ</span><h1>${b.show?esc(pc.question):`Passez le téléphone à ${esc(p.name)}`}</h1>
+        <p>${b.show?'Choisissez votre propre hypothèse. Votre vote sera masqué au joueur suivant.':'Tous les membres de la cellule doivent voter. La décision ne sera révélée qu’après le dernier vote.'}</p>
+      </section>
+      ${b.show?`<section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>VOTER →</i></button>`).join('')}</section>`:
+      `<section class="hplay-panel"><p>Tour ${b.round} · ${b.votes.length}/${live.players.length} votes reçus.</p><button class="btn primary" data-hp-action="ballot-reveal">JE SUIS PRÊT À VOTER</button></section>`}
+    </main>`);
+    return;
+  }
+  shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
+    <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">DÉCISION</div></header>
+    <section class="hplay-decision-head"><span class="hplay-eyebrow">CHOIX IRRÉVERSIBLE</span><h1>${esc(pc.question)}</h1><p>Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.</p></section>
+    <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>VERROUILLER →</i></button>`).join('')}</section>
+  </main>`);
+}
+function chooseOption(id){
+  const l=readLive();if(!l)return;
+  const pc=PACKS[l.campaignId].chapters[l.chapter],opt=pc.options.find(o=>o.id===id);
+  if(!opt)return;
+  if(l.campaignId==='cendres'&&!l.online){
+    const b=ensureCendresBallot(l);
+    if(!b.show||b.index>=l.players.length)return;
+    b.votes.push(id);b.index++;b.show=false;
+    if(b.votes.length<l.players.length){saveLive(l);renderDecision(l);return}
+    const counts={};for(const v of b.votes)counts[v]=(counts[v]||0)+1;
+    const winner=Object.keys(counts).find(k=>counts[k]>Math.floor(l.players.length/2));
+    if(!winner){
+      b.round++;b.index=0;b.votes=[];
+      saveLive(l);renderDecision(l);toastSafe('Aucune majorité absolue : nouveau tour de vote.');return;
+    }
+    id=winner;opt=pc.options.find(o=>o.id===id);
+  }
+  l.decision=id;l.result={grade:opt.grade,title:opt.title,consequence:opt.consequence};
+  l.stage='result';saveLive(l);renderResult(l);
+}
 function renderResult(live){const pc=PACKS[live.campaignId].chapters[live.chapter],opt=pc.options.find(o=>o.id===live.decision),label=opt.qualitative?'Choix d’héritage':opt.grade===2?'Recoupement réussi':opt.grade===1?'Vérité partielle':'Erreur de lecture';shellPut(`<main class="page hplay hplay-result hplay-theme-${live.campaignId}">
   <header class="hplay-top"><div class="hplay-mode">RÉVÉLATION</div></header>
   <section class="hplay-result-card"><span class="hplay-eyebrow">${label.toUpperCase()}</span><h1>${esc(opt.title)}</h1><p class="hplay-result-truth">${esc(pc.reveal)}</p><div class="hplay-result-consequence"><span>CONSÉQUENCE</span><b>${esc(cendresFinalConsequence(live,opt))}</b></div>${live.practice?'<div class="hplay-practice">REJOUÉ — la sauvegarde principale ne sera pas modifiée.</div>':''}<button class="btn primary" data-hp-action="finish">${live.practice?'TERMINER LE REPLAY':'INSCRIRE DANS L’HÉRITAGE'}</button></section>
@@ -641,6 +683,7 @@ function handleClick(e){
     if(a==='phase-next'){const l=readLive();if(l){l.phaseIndex=Math.min(PACKS[l.campaignId].chapters[l.chapter].phases.length-1,(l.phaseIndex||0)+1);saveLive(l);renderPlay(l)}return}
     if(a==='phase-prev'){const l=readLive();if(l){l.phaseIndex=Math.max(0,(l.phaseIndex||0)-1);saveLive(l);renderPlay(l)}return}
     if(a==='decision'){const l=readLive();if(l){l.stage='decision';saveLive(l);renderDecision(l)}return}
+    if(a==='ballot-reveal'){const l=readLive();if(l?.campaignId==='cendres'&&!l.online&&l.stage==='decision'){ensureCendresBallot(l).show=true;saveLive(l);renderDecision(l)}return}
     if(a==='play'){const l=readLive();if(l){l.stage='play';saveLive(l);renderPlay(l)}return}
     if(a==='finish'){const l=readLive();if(l)applyResult(l);return}
     if(a==='session-menu')return sessionMenu();
