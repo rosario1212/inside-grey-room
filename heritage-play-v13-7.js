@@ -479,12 +479,12 @@ function advanceReveal(){const l=readLive();if(!l)return;const idx=l.revealIndex
 
 function renderPlay(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter],idx=Math.max(0,Math.min(pc.phases.length-1,live.phaseIndex||0)),phase=pc.phases[idx];
-  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live,idx,s):'';
+  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live,idx,s):'',late=cendresLateEvidence(live,idx,s);
   shellPut(`<main class="page hplay hplay-session hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="session-menu">••• <span>Session</span></button><div class="hplay-mode">PHASE ${idx+1}/${pc.phases.length}</div></header>
     <section class="hplay-session-head"><span class="hplay-eyebrow">${esc(PACKS[live.campaignId].title)} · DOSSIER 0${live.chapter}</span><h1>${esc(phase[0])}</h1><p>${esc(phase[1])}</p></section>
     <section class="hplay-session-grid">
-      <div class="hplay-panel hplay-table-card"><span>AU CENTRE DE LA TABLE</span><h2>${idx===0?'Briefing commun':idx===pc.phases.length-1?'Décision à verrouiller':'Recoupement en cours'}</h2><p>${idx===0?esc(pc.briefing):idx===pc.phases.length-1?esc(pc.question):'Posez les informations à voix haute. Une information privée peut être racontée, jamais montrée directement.'}</p>${conditional?`<div class="hplay-conditional"><b>HÉRITAGE ACTIF</b><span>${esc(conditional)}</span></div>`:''}${annex?`<div class="hplay-conditional hplay-annex"><b>ANNEXE DE CELLULE</b><span>${esc(annex)}</span></div>`:''}</div>
+      <div class="hplay-panel hplay-table-card"><span>AU CENTRE DE LA TABLE</span><h2>${idx===0?'Briefing commun':idx===pc.phases.length-1?'Décision à verrouiller':'Recoupement en cours'}</h2><p>${idx===0?esc(pc.briefing):idx===pc.phases.length-1?esc(pc.question):'Posez les informations à voix haute. Une information privée peut être racontée, jamais montrée directement.'}</p>${conditional?`<div class="hplay-conditional"><b>HÉRITAGE ACTIF</b><span>${esc(conditional)}</span></div>`:''}${late?`<div class="hplay-conditional hplay-audit"><b>RECOUPEMENT TARDIF</b><span>${esc(late)}</span></div>`:''}${annex?`<div class="hplay-conditional hplay-annex"><b>ANNEXE DE CELLULE</b><span>${esc(annex)}</span></div>`:''}</div>
       <aside class="hplay-panel hplay-roster"><span>RÔLES À TABLE</span>${live.players.map(p=>`<div><b>${esc(p.name)}</b><small>${esc(roleFor(live.campaignId,p.roleId)?.name||'')}</small></div>`).join('')}</aside>
     </section>
     <nav class="hplay-session-nav"><button class="btn ghost" data-hp-action="phase-prev" ${idx===0?'disabled':''}>← PRÉCÉDENT</button>${idx<pc.phases.length-1?`<button class="btn primary" data-hp-action="phase-next">PHASE SUIVANTE →</button>`:`<button class="btn primary" data-hp-action="decision">VERROUILLER LA DÉCISION →</button>`}</nav>
@@ -516,6 +516,37 @@ function conditionalIntel(id,n,s){
   return n===5?`Le Conseil arrive avec ${s.kuroi?.debts?.length||0} dette(s) enregistrée(s) et ${s.kuroi?.chronicle?.length||0} fait(s) dans la Chronique. Ces traces doivent être prises en compte dans le choix final.`:`${choices} décision(s) antérieure(s) influencent désormais la confiance entre la Police et les clans.`;
 }
 
+// A late dossier exhibit is shared with the whole cell. It does not overwrite private role cards.
+// Its precision varies with the campaign already played (including online host carry).
+function cendresLateEvidence(live,phaseIndex,carry){
+  if(live.campaignId!=='cendres'||phaseIndex<2)return '';
+  const f=carry?.cendres?.flags||{},crisis=Math.max(0,Math.min(4,Number(carry?.cendres?.crisis?.level||0)));
+  if(live.chapter===3)return 'Une vérification de conservation révèle un écart entre une version papier et une exportation numérique. L’audition brute et les droits de modification doivent être comparés avant de rejeter toute la source.';
+  if(live.chapter===4){
+    if(crisis>=3)return 'Le journal d’administration a été récupéré partiellement. Il confirme une écriture technique lors de plusieurs opérations, mais le rattachement nominal reste à recouper avec les niveaux de droit.';
+    const solid=['s1_correct','s2_correct','s3_correct'].filter(k=>f[k]).length;
+    return solid>=2?'L’audit différé distingue demande politique et écriture effective : l’autorisation de modification appartient à un compte de service lié aux habilitations; le cabinet ne disposait sur ces pièces que d’un accès de consultation.':'Une délégation technique commune relie les opérations. Le relevé nominatif manque : départagez les droits de lecture, d’ordre et d’écriture à partir des cartes privées.';
+  }
+  if(live.chapter===5){
+    if(crisis>=3)return 'Le dernier contrôle de transit est incomplet. Il situe le convoi sur une route de vallée, mais aucune réception authentifiée n’a pu être obtenue. Le groupe doit s’appuyer sur ses recoupements antérieurs.';
+    if(f.s4_correct)return 'Le compte du relais neutralisé renvoie à une livraison hors inventaire sur un accès civil souterrain; ni la base ni le dépôt ne possèdent de reçu signé après le passage du convoi en vallée.';
+    return 'Une trace d’accès civil a été retrouvée sur la route du convoi, mais le dernier accusé de réception est manquant. Comparez-la avec les témoignages et les droits d’accès.';
+  }
+  return '';
+}
+
+function cendresFinalConsequence(live,opt){
+  if(!opt||live.campaignId!=='cendres'||Number(live.chapter)!==5)return opt?.consequence||'';
+  const carry=live.online?live.campaignCarry:state('cendres');
+  const crisis=Math.max(0,Math.min(4,Number(carry?.cendres?.crisis?.level||0)));
+  if(opt.id==='nadir'){
+    if(crisis>=3)return 'L’ogive est récupérée. Mais les vérifications retardées et les dossiers contaminés laissent une compromission institutionnelle majeure à traiter : la victoire opérationnelle n’efface pas les erreurs héritées.';
+    if(crisis>=1)return 'L’ogive est récupérée. Plusieurs pistes ont toutefois été traitées trop tard et la cellule laisse une crise résiduelle dans la chaîne de renseignement.';
+    return 'L’ogive est récupérée et les principales pièces ont été préservées. La cellule transmet une chaîne de preuves cohérente et limite les dégâts institutionnels.';
+  }
+  if(opt.id==='airbase'&&crisis>=3)return 'La recherche est engagée sur une base sans réception authentifiée. Dans une crise déjà dégradée, cette erreur prive la cellule d’une localisation exploitable à temps.';
+  return opt.consequence;
+}
 function renderDecision(live){const pc=PACKS[live.campaignId].chapters[live.chapter];shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
   <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">DÉCISION</div></header>
   <section class="hplay-decision-head"><span class="hplay-eyebrow">CHOIX IRRÉVERSIBLE</span><h1>${esc(pc.question)}</h1><p>Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.</p></section>
@@ -524,12 +555,13 @@ function renderDecision(live){const pc=PACKS[live.campaignId].chapters[live.chap
 function chooseOption(id){const l=readLive();if(!l)return;const pc=PACKS[l.campaignId].chapters[l.chapter],opt=pc.options.find(o=>o.id===id);if(!opt)return;l.decision=id;l.result={grade:opt.grade,title:opt.title,consequence:opt.consequence};l.stage='result';saveLive(l);renderResult(l)}
 function renderResult(live){const pc=PACKS[live.campaignId].chapters[live.chapter],opt=pc.options.find(o=>o.id===live.decision),label=opt.qualitative?'Choix d’héritage':opt.grade===2?'Recoupement réussi':opt.grade===1?'Vérité partielle':'Erreur de lecture';shellPut(`<main class="page hplay hplay-result hplay-theme-${live.campaignId}">
   <header class="hplay-top"><div class="hplay-mode">RÉVÉLATION</div></header>
-  <section class="hplay-result-card"><span class="hplay-eyebrow">${label.toUpperCase()}</span><h1>${esc(opt.title)}</h1><p class="hplay-result-truth">${esc(pc.reveal)}</p><div class="hplay-result-consequence"><span>CONSÉQUENCE</span><b>${esc(opt.consequence)}</b></div>${live.practice?'<div class="hplay-practice">REJOUÉ — la sauvegarde principale ne sera pas modifiée.</div>':''}<button class="btn primary" data-hp-action="finish">${live.practice?'TERMINER LE REPLAY':'INSCRIRE DANS L’HÉRITAGE'}</button></section>
+  <section class="hplay-result-card"><span class="hplay-eyebrow">${label.toUpperCase()}</span><h1>${esc(opt.title)}</h1><p class="hplay-result-truth">${esc(pc.reveal)}</p><div class="hplay-result-consequence"><span>CONSÉQUENCE</span><b>${esc(cendresFinalConsequence(live,opt))}</b></div>${live.practice?'<div class="hplay-practice">REJOUÉ — la sauvegarde principale ne sera pas modifiée.</div>':''}<button class="btn primary" data-hp-action="finish">${live.practice?'TERMINER LE REPLAY':'INSCRIRE DANS L’HÉRITAGE'}</button></section>
 </main>`)}
 
 function applyResult(live){
   if(!live||live.finished)return;
   const pc=PACKS[live.campaignId].chapters[live.chapter],out=pc.apply?.[live.decision]||{};
+  if(live.result&&live.campaignId==='cendres'&&Number(live.chapter)===5)live.result.consequence=cendresFinalConsequence(live,pc.options.find(o=>o.id===live.decision));
   if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
       const flag=out.flag;if(flag){const payload={flags:{[flag]:true},crisisDelta:Number(out.crisis||0)};api().completeChapter('cendres',live.chapter,payload)}else api().completeChapter('cendres',live.chapter,{crisisDelta:Number(out.crisis||0)});
