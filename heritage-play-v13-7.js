@@ -712,13 +712,14 @@ function boot(){
     // A finished room is the authority on the verdict. Recover even if the last
     // local result screen was lost during a refresh or a reconnect.
     const room=serverRoom&&typeof serverRoom==='object'?serverRoom:null;
+    if(!room||room.stage!=='finished')return false;
     const saved=readLive();
     const campaign=room?.campaign_id||saved?.campaignId;
     const chapter=Number(room?.chapter||saved?.chapter);
     const decision=room?.decision_id||saved?.decision;
     const ch=PACKS[campaign]?.chapters?.[chapter];
     const opt=ch?.options?.find(o=>o.id===decision);
-    if(!opt||room&&room.stage!=='finished')return false;
+    if(!opt)return false;
     if(!serverPractice&&!completed(campaign,chapter)&&current(campaign)!==chapter)return false;
     const same=saved?.online&&saved.campaignId===campaign&&Number(saved.chapter)===chapter;
     const live=same?{...saved}:{
@@ -728,7 +729,7 @@ function boot(){
     };
     live.decision=decision;
     live.stage='result';live.finished=false;
-    live.practice=!!(room?serverPractice:live.practice);
+    live.practice=!!serverPractice;
     if(room)live.campaignCarry=room.campaign_carry||live.campaignCarry||null;
     live.result={grade:opt.grade,title:opt.title,consequence:opt.consequence};
     try{
