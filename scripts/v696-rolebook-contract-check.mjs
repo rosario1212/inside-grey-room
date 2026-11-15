@@ -55,6 +55,7 @@ if(dest){
  const enHtml=read(dest+'/en.html');
  assert(html.includes('self-guided-rules-v51.js?v=v696-rolebook')&&enHtml.includes('self-guided-rules-v51.js?v=v696-rolebook'),
   'PWA/native build not using v696 rulebook revision');
+ if(existsSync(dest+'/index-latest-release.txt'))assert.equal(read(dest+'/index-latest-release.txt'),html,'Cloudflare shell alias differs from rolebook homepage');
  const built=read(dest+'/self-guided-rules-v51.js');
  assert(built.includes('roleAgencyHtml')&&built.includes('terrorRulesHtml'),'built rulebook stale');
  if(existsSync(dest+'/service-worker.js')){
