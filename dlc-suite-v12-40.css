@@ -381,3 +381,193 @@ body.igr-theme-cartel #app .briefing-page .briefing-eyebrow{
 .regime-dlc-section .igr-regime-org-nodes span{color:#bdc6cb;font-size:.76rem;line-height:1.35}
 @media(max-width:620px){.regime-dlc-section .igr-regime-org-content{padding:12px}.regime-dlc-section .igr-regime-org-nodes{grid-template-columns:repeat(2,minmax(0,1fr))}.regime-dlc-section .igr-regime-org-preview>summary{padding:14px 12px}}
 @media(max-width:350px){.regime-dlc-section .igr-regime-org-nodes{grid-template-columns:1fr}}
+
+
+/* v16.1 — Le Régime: iPhone catalog cards. Content determines card height;
+   posters fill the row without imposing a 3:4 row height. No text/tag overlap. */
+.page-create-v10-13 .regime-dlc-section .regime-list{
+  display:grid;
+  gap:12px;
+  min-width:0;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario{
+  display:grid!important;
+  grid-template-columns:clamp(104px,28vw,132px) minmax(0,1fr)!important;
+  gap:0!important;
+  align-items:stretch!important;
+  min-height:180px!important;
+  height:auto!important;
+  overflow:hidden!important;
+  isolation:isolate;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-thumb{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:180px!important;
+  aspect-ratio:auto!important;
+  align-self:stretch!important;
+  border:0!important;
+  border-right:1px solid rgba(151,159,164,.24)!important;
+  border-radius:17px 0 0 17px!important;
+  overflow:hidden!important;
+  box-shadow:none!important;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-thumb img{
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-body.compact{
+  display:flex!important;
+  flex-direction:column!important;
+  align-self:stretch!important;
+  justify-content:flex-start!important;
+  gap:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  padding:13px 13px 14px!important;
+  overflow:hidden!important;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-id{
+  font-size:.66rem!important;
+  line-height:1.4!important;
+  overflow-wrap:anywhere;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-body h3{
+  margin:5px 0 9px!important;
+  font-size:clamp(1.03rem,3.8vw,1.2rem)!important;
+  line-height:1.16!important;
+  letter-spacing:-.01em!important;
+  overflow-wrap:break-word;
+  text-wrap:pretty;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-body>p{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:3!important;
+  line-clamp:3;
+  flex:0 0 auto!important;
+  max-height:4.3em!important;
+  min-height:0!important;
+  margin:0 0 12px!important;
+  overflow:hidden!important;
+  color:#b5bdc5!important;
+  font-size:.84rem!important;
+  line-height:1.42!important;
+  overflow-wrap:break-word;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .tag-row{
+  position:static!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-start!important;
+  gap:6px!important;
+  min-width:0!important;
+  margin-top:auto!important;
+  padding-top:7px!important;
+}
+.page-create-v10-13 .regime-dlc-section .regime-scenario .tag-row .tag{
+  position:static!important;
+  flex:0 1 auto!important;
+  max-width:100%!important;
+  min-height:0!important;
+  padding:6px 8px!important;
+  font-size:.59rem!important;
+  line-height:1.25!important;
+  letter-spacing:.055em!important;
+  white-space:normal!important;
+  overflow-wrap:break-word;
+  text-align:center;
+}
+/* Detail view: optional labels wrap naturally and every category has its own
+   padded surface, rather than an almost-black strip behind the role text. */
+body.igr-theme-regime .page-confirm-v10-13 .confirm{
+  min-width:0!important;
+}
+body.igr-theme-regime .page-confirm-v10-13 .confirm .roles-availability{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:2px 0 4px!important;
+  padding:12px!important;
+  background:rgba(13,17,21,.82)!important;
+  border:1px solid rgba(164,176,184,.24)!important;
+  border-radius:17px!important;
+}
+body.igr-theme-regime .page-confirm-v10-13 .confirm .roles-availability .roles-row{
+  display:block!important;
+  min-width:0!important;
+  padding:11px 12px!important;
+  border:1px solid rgba(151,165,174,.15)!important;
+  border-radius:11px!important;
+  background:linear-gradient(145deg,#171d21,#11161a)!important;
+  box-shadow:none!important;
+}
+body.igr-theme-regime .page-confirm-v10-13 .confirm .roles-availability .roles-row>span{
+  display:block!important;
+  margin:0 0 7px!important;
+  color:#93a3af!important;
+  font-size:.68rem!important;
+  line-height:1.25!important;
+  letter-spacing:.12em!important;
+}
+body.igr-theme-regime .page-confirm-v10-13 .confirm .roles-availability .roles-row p{
+  display:block!important;
+  margin:0!important;
+  color:#e0e4e7!important;
+  font-size:.88rem!important;
+  line-height:1.55!important;
+  font-weight:450!important;
+  white-space:normal!important;
+  overflow-wrap:break-word;
+}
+body.igr-theme-regime .page-confirm-v10-13 .confirm .roles-availability .roles-row.optional p{
+  color:#c5cdd2!important;
+}
+body.igr-theme-regime .page-confirm-v10-13 .confirm .tag-row{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  min-width:0!important;
+}
+body.igr-theme-regime .page-confirm-v10-13 .confirm .tag-row .tag{
+  max-width:100%!important;
+  white-space:normal!important;
+  overflow-wrap:break-word;
+  line-height:1.4!important;
+}
+@media(max-width:430px){
+  .page-create-v10-13 .regime-dlc-section .regime-scenario{
+    grid-template-columns:112px minmax(0,1fr)!important;
+    min-height:186px!important;
+  }
+  .page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-body.compact{
+    padding:11px 10px 12px!important;
+  }
+  .page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-body h3{
+    font-size:1.03rem!important;
+  }
+  .page-create-v10-13 .regime-dlc-section .regime-scenario .scenario-body>p{
+    font-size:.79rem!important;
+  }
+}
+@media(max-width:340px){
+  .page-create-v10-13 .regime-dlc-section .regime-scenario{
+    grid-template-columns:96px minmax(0,1fr)!important;
+  }
+  .page-create-v10-13 .regime-dlc-section .regime-scenario .tag-row .tag{
+    font-size:.55rem!important;
+    padding:5px 6px!important;
+  }
+}

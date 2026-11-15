@@ -147,3 +147,28 @@ test('Regime expanded server capacity, tribunal and majority remain consistent',
  assert.match(lifecycleSql,/\'temoin\',\'journaliste\'/);
  assert.match(judicialSql,/count\(\*\) FROM public\.igr_v4_players WHERE room_code=r\.code\)>=8/);
 });
+
+test('Regime UI roles are plain names that map correctly to lobby capacities',async()=>{
+ const catalog=await read('dlc-suite-v12-37.js');
+ for(const id of ['032','033','034']){
+  const line=catalog.split('\n').find(s=>s.includes("'"+id+"':{required:"));
+  assert.ok(line,'missing role entry '+id);
+  assert.ok(line.includes("optional:['Procureur','Témoin'"),'unexpected roles in '+id);
+  assert.doesNotMatch(line,/\\(7e\\)|\\(8e\\)|\\(9e\\)/);
+ }
+ assert.match(catalog,/'034':\\{required:\\['Enquêteur','Analyste','Juge','3 suspects'\\],optional:\\['Procureur','Témoin','Journaliste'\\]/);
+ assert.match(catalog,/min:6,max:9,sound:/);
+});
+test('Regime mobile cards and detail roster prevent description and badge overlap',async()=>{
+ const css=await read('dlc-suite-v12-40.css');
+ assert.match(css,/regime-scenario \\.scenario-body>p/);
+ assert.match(css,/-webkit-line-clamp:3!important/);
+ assert.match(css,/regime-scenario \\.tag-row/);
+ assert.match(css,/margin-top:auto!important/);
+ assert.match(css,/regime-scenario \\.scenario-thumb img/);
+ assert.match(css,/position:absolute!important/);
+ assert.match(css,/roles-availability \\.roles-row/);
+ assert.match(css,/white-space:normal!important/);
+ assert.match(index,/regime-v16-1-mobile-cards-20261115/);
+ assert.match(sw,/regime-v16-1-mobile-cards-20261115/);
+});
