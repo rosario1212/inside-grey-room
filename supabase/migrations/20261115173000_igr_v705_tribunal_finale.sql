@@ -99,7 +99,7 @@ begin
       end
     end
   );
-end$function$
+end$function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v52_advance(p_room text, p_reason text DEFAULT 'manual'::text)
@@ -139,7 +139,7 @@ begin
       state=jsonb_set(jsonb_set(jsonb_set(jsonb_set(state,'{v52_index}',to_jsonb(nxt),true),'{v52_status}',to_jsonb('waiting'::text),true),'{v52_current_id}',to_jsonb(item->>'player_id'),true),'{v52_current_role}',to_jsonb(item->>'role'),true),
       updated_at=now()
   where code=r.code;
-end$function$
+end$function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v52_stage_action(p_code text, p_player_token uuid, p_action text, p_levels jsonb DEFAULT NULL::jsonb)
@@ -176,7 +176,7 @@ begin
     perform public.igr_v52_advance(r.code,'manual');
   else raise exception 'invalid action'; end if;
   return jsonb_build_object('ok',true);
-end$function$
+end$function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_v4_tick(p_room text)
@@ -205,4 +205,4 @@ begin
  select * into r from public.igr_v4_rooms where code=p_room for update;
  if r.phase='cycle_debrief' then perform public.igr_v4_emit_trame(r.code);update public.igr_v4_rooms set phase='trame',phase_started_at=now(),phase_ends_at=now()+interval '22 seconds',updated_at=now() where code=r.code;
  elsif r.phase='final_debrief' then perform public.igr_v52_begin_stage(r.code,'locking');end if;
-end$function$
+end$function$;
