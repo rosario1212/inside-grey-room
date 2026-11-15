@@ -32,18 +32,18 @@ Tous les joueurs doivent voir **la même personne à la barre, la même pièce c
 
 ## 4. Durées dynamiques, en respectant les décisions précédentes
 
-### Deuxième capture enregistrée en C3 → PROCÈS LONG (12 min cible)
+### Deuxième capture enregistrée en C3 → PROCÈS LONG (14 min cible)
 
 | Temps | Scène |
 | --- | --- |
 | 1 min | Juge ouvre la séance, accuse les réceptionnés, présente les quatre actes en litige |
 | 6 min | **2 min garanties par chacun des trois suspects**, appelés à la barre successivement, avec droit de réponse intégré |
-| 3 min | Contre-interrogatoire contradictoire : accusation, Analyste, confrontations entre accusés, objections éventuelles |
+| 5 min | Contre-interrogatoire contradictoire : accusation, Analyste, confrontations entre accusés, objections éventuelles |
 | 1 min | Réquisitoire final, synthèse des quatre actes et clôture orale par le Juge |
 | 1 min | Vote final du camp enquête (0/1/2) et verrouillage des attributions documentées avant révélation |
-| **12 min** | **Total cible** |
+| **14 min** | **Total cible** |
 
-Les quatre actes et éléments de preuve doivent avoir été saisis **pendant les cycles**, pas entièrement reconstruits dans la dernière minute. Si le vote v52 requiert plus de 1 min dans les tests, prévoir un temps réaliste et ajuster la cible de 12 min.
+Les quatre actes et éléments de preuve doivent avoir été saisis **pendant les cycles**, pas entièrement reconstruits dans la dernière minute. Si le vote v52 requiert plus de 1 min dans les tests, prévoir un temps réaliste et ajuster la cible de 14 min.
 
 ### Deuxième capture enregistrée en C1 ou C2 → PROCÈS COURT EN SALLE COMMUNE
 
