@@ -9,6 +9,6 @@ assert(!app.includes("valueBlock('CE QUE TU IGNORES'"),'The player must never se
 assert(app.includes("valueBlock('CE QUE TU SAIS',ps.anchors)"),'Knowledge section must remain');
 assert(standard.includes('Ignorances réservées à l\'édition'),'Internal-only unknowns policy must be documented');
 assert(html.includes('app-v11.js?v='+version),'Client cache version mismatch');
-assert(/const CACHE='igr-[^']+'/.test(sw),'PWA cache version must be present and versioned');
+assert(sw.includes("const CACHE='igr-"+version+"'"),'PWA cache version mismatch');
 assert(sw.includes('/app-v11.js?v='+version),'PWA precache version mismatch');
 console.log('Hidden unknowns: visible cards, standard and cache OK');
