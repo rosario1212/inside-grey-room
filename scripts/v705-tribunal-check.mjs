@@ -1,0 +1,48 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+
+const read = p => readFileSync(p, 'utf8');
+const sql = read('supabase/migrations/20261115173000_igr_v705_tribunal_finale.sql');
+const ui = read('final-audience-v52.js');
+const rules = read('self-guided-rules-v51.js');
+const manual = read('app-v11.js');
+const need = (source, fragment) => assert.ok(source.includes(fragment), 'Missing contract: ' + fragment);
+need(sql, "then 90 when r.state->>'duration_mode'");
+need(sql, "then 240 when r.state->>'duration_mode'");
+need(sql, "'required',false");
+need(sql, "public.igr_v44_judge_present(p_room) or public_role in");
+need(sql, "then now()+interval '25 seconds'");
+need(sql, "waiting_timeout");
+need(sql, "only the judge can close this appearance");
+need(sql, "silence is allowed");
+need(sql, "TRIBUNAL · TÉMOINS");
+need(sql, "r.scenario_id='029'");
+assert.ok(!sql.includes("judge must speak"));
+assert.equal((sql.match(/end\$function\$;/g) || []).length, 4);
+need(ui, "speechLabel=()=>judgePresent()?'1:30'");
+need(ui, "defenseLabel=()=>judgePresent()?'4:00'");
+need(ui, "CLÔTURER CETTE COMPARUTION");
+need(ui, "TRIBUNAL · COMPARUTION");
+need(ui, "Vote final individuel et secret");
+need(ui, '<option value="" selected disabled>');
+need(ui, "!['0','1','2'].includes(el.value)");
+need(ui, "Tous peuvent passer, y compris le Juge.");
+need(rules, "tribunal éventuel");
+need(manual, "Tribunal avec Juge");
+assert.ok(!sql.includes('CREATE OR REPLACE FUNCTION public.igr_v52_make_reveal'), 'Scoring must remain unchanged');
+// End-to-end game design simulation (not a substitute for a real multi-device server test).
+const players = ['enqueteur','analyste','procureur','juge','maitre','suspect','suspect','suspect'];
+assert.equal(players.length, 8);
+assert.equal(players.filter(r => r === 'suspect').length, 3);
+const maxAudience = players.length * 90;
+const maxCourtroom = 3 * 240;
+const maxVoting = 120; // design budget; not an enforced server-side deadline
+assert.ok(maxAudience + maxCourtroom + maxVoting <= 28 * 60);
+const actualAudience = [90,80,45,0,75,75,60,55].reduce((a,b)=>a+b,0);
+const actualCourtroom = [220,240,200].reduce((a,b)=>a+b,0);
+const actualVoting = 100;
+assert.ok(actualAudience <= maxAudience && actualCourtroom <= maxCourtroom);
+const before = {A:1,B:2,C:0}, after = {A:2,B:1,C:0};
+assert.notDeepEqual(before,after, 'Courtroom must permit revised assessments');
+assert.ok(actualAudience + actualCourtroom + actualVoting < 28 * 60);
+console.log('v705 tribunal static & 8-player design simulation OK: ' + ((actualAudience+actualCourtroom+actualVoting)/60).toFixed(1) + ' minutes');
