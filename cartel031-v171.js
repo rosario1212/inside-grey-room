@@ -13,12 +13,12 @@ const card=(title,body)=>'<article class="igr031-card"><h3>'+esc(title)+'</h3>'+
 const button=(action,payload,text)=>'<button type="button" class="btn ghost block" data-c031-action="'+action+'" data-c031-payload="'+esc(JSON.stringify(payload))+'">'+esc(text)+'</button>';
 // Keep the saved local-game schema stable while asset releases change.
 let cache=null,busy=false,loadingKey='',requestSerial=0,cacheKey='',drafts={},signature='',localContext=null,localActor=null,localPending=null;
-let nextRetryAt=0,failedRequests=0,lastErrorNoticeAt=0,lastPassivePollAt=0;
+let nextRetryAt=0,failedRequests=0,lastErrorNoticeAt=0,lastPassivePollAt=0,forceQueued=false;
 const privateTab=()=>S()?.tab==='cartel031'||(S()?.tab==='prosecutor'&&me()?.public_role==='procureur');
 const sessionIdentity=()=>active()&&S()?.token?JSON.stringify([S().room,S().token,me()?.id,me()?.public_role,room()?.state?.match_no||1,room()?.status]):'';
 function currentCache(){
  const key=sessionIdentity();
- if(key!==cacheKey){cacheKey=key;cache=null;signature='';drafts={};loadingKey='';nextRetryAt=0;failedRequests=0;lastPassivePollAt=0;requestSerial++;document.getElementById('igr031PrivateProof')?.remove();}
+ if(key!==cacheKey){cacheKey=key;cache=null;signature='';drafts={};loadingKey='';nextRetryAt=0;failedRequests=0;lastPassivePollAt=0;forceQueued=false;requestSerial++;document.getElementById('igr031PrivateProof')?.remove();}
  return cache;
 }
 async function refresh(force=false){
@@ -26,7 +26,9 @@ async function refresh(force=false){
  // Never fetch private case state while the device is asleep or disconnected.
  if(document.visibilityState==='hidden'||(typeof navigator!=='undefined'&&navigator.onLine===false))return;
  const key=cacheKey,now=Date.now();
- if(!key||loadingKey===key||(!force&&now<nextRetryAt))return;
+ if(!key)return;
+ if(loadingKey===key){if(force)forceQueued=true;return;}
+ if(!force&&now<nextRetryAt)return;
  loadingKey=key;const request=++requestSerial;
  try{
   const next=await window.rpc('igr_v171_031_state',{p_code:S().room,p_player_token:S().token});
@@ -45,7 +47,16 @@ async function refresh(force=false){
     window.toast?.(copy('Connexion instable. Reprise automatique…','Unstable connection. Reconnecting automatically…'));
    }
   }
- }finally{if(request===requestSerial)loadingKey='';}
+ }finally{
+  if(request===requestSerial){
+   loadingKey='';
+   // A mutation acknowledged during an older fetch requires a new snapshot.
+   if(forceQueued&&key===sessionIdentity()){
+    forceQueued=false;
+    void refresh(true);
+   }
+  }
+ }
 }
 function showPrivateProof(d){
  if(!d?.proof||!document.body||room()?.status!=='playing')return;
