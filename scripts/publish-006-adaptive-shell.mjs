@@ -5,9 +5,8 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='terror-live-v694-20261115';
+const tag='terror-live-v694-20261115-crisis-v696';
 const crisisCssPath='/terror-crisis-v696.css?v=v87-canonical-narrative';
-const crisisCacheTag='-crisis-v696';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -114,7 +113,7 @@ for(const asset of ['/terror-command-v694.js?v=terror-live-v694-20261115','/terr
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
  }
 }
-sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+crisisCacheTag+"'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+crisisCacheTag+"'"),'PWA crisis cache version did not advance');
+sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+"'");
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+"'"),'PWA crisis cache version did not advance');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
