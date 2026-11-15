@@ -1029,6 +1029,7 @@ async function performSync(force=false){
   }else d=await rpc('igr_v4_sync',params);
   if(STATE.room!==room||STATE.token!==token)return null;
   STATE.syncFailures=0;
+  STATE.lastSyncFailure=null;
   connectionStatus(false);
   const sig=syncSignature(d);
   // An authoritative snapshot and a successfully rendered screen are different
@@ -1077,7 +1078,7 @@ async function performSync(force=false){
    if(changed&&STATE.room===room&&STATE.token===token&&STATE.sync===d){const draft=captureDrafts();routeFromServer();restoreDrafts(draft)}
   }).catch(e=>console.warn('avatars',e));
   return rendered?d:null;
- }catch(e){if(STATE.room===room&&STATE.token===token){STATE.syncFailures=(STATE.syncFailures||0)+1;connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
+ }catch(e){if(STATE.room===room&&STATE.token===token){STATE.syncFailures=(STATE.syncFailures||0)+1;STATE.lastSyncFailure={room,token,error:e};connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
 }
 function routeFromServer(){
  const d=STATE.sync;if(!d)return;

@@ -13,22 +13,50 @@ const card=(title,body)=>'<article class="igr031-card"><h3>'+esc(title)+'</h3>'+
 const button=(action,payload,text)=>'<button type="button" class="btn ghost block" data-c031-action="'+action+'" data-c031-payload="'+esc(JSON.stringify(payload))+'">'+esc(text)+'</button>';
 // Keep the saved local-game schema stable while asset releases change.
 let cache=null,busy=false,loadingKey='',requestSerial=0,cacheKey='',drafts={},signature='',localContext=null,localActor=null,localPending=null;
+let nextRetryAt=0,failedRequests=0,lastErrorNoticeAt=0,lastPassivePollAt=0,forceQueued=false;
+const privateTab=()=>S()?.tab==='cartel031'||(S()?.tab==='prosecutor'&&me()?.public_role==='procureur');
 const sessionIdentity=()=>active()&&S()?.token?JSON.stringify([S().room,S().token,me()?.id,me()?.public_role,room()?.state?.match_no||1,room()?.status]):'';
 function currentCache(){
  const key=sessionIdentity();
- if(key!==cacheKey){cacheKey=key;cache=null;signature='';drafts={};loadingKey='';requestSerial++;document.getElementById('igr031PrivateProof')?.remove();}
+ if(key!==cacheKey){cacheKey=key;cache=null;signature='';drafts={};loadingKey='';nextRetryAt=0;failedRequests=0;lastPassivePollAt=0;forceQueued=false;requestSerial++;document.getElementById('igr031PrivateProof')?.remove();}
  return cache;
 }
-async function refresh(){
- currentCache();const key=cacheKey;if(!key||loadingKey===key)return;
+async function refresh(force=false){
+ currentCache();
+ // Never fetch private case state while the device is asleep or disconnected.
+ if(document.visibilityState==='hidden'||(typeof navigator!=='undefined'&&navigator.onLine===false))return;
+ const key=cacheKey,now=Date.now();
+ if(!key)return;
+ if(loadingKey===key){if(force)forceQueued=true;return;}
+ if(!force&&now<nextRetryAt)return;
  loadingKey=key;const request=++requestSerial;
- try{const next=await window.rpc('igr_v171_031_state',{p_code:S().room,p_player_token:S().token});
+ try{
+  const next=await window.rpc('igr_v171_031_state',{p_code:S().room,p_player_token:S().token});
   if(request!==requestSerial||key!==sessionIdentity()){currentCache();return;}
+  failedRequests=0;nextRetryAt=0;
   const sig=JSON.stringify(next),changed=sig!==signature;cache=next;signature=sig;
-  if(changed&&S()?.tab==='cartel031')window.renderGame?.();
+  // The prosecutor uses the same protected desk inside the prosecutor tab.
+  if(changed&&privateTab())window.renderGame?.();
   showPrivateProof(next);
- }catch(e){if(request===requestSerial&&key===sessionIdentity()&&S()?.tab==='cartel031')window.toast?.(e.message)}
- finally{if(request===requestSerial)loadingKey='';}
+ }catch(e){
+  if(request===requestSerial&&key===sessionIdentity()){
+   failedRequests=Math.min(6,failedRequests+1);
+   nextRetryAt=Date.now()+Math.min(15000,1200*Math.pow(2,failedRequests-1));
+   if(privateTab()&&Date.now()-lastErrorNoticeAt>12000){
+    lastErrorNoticeAt=Date.now();
+    window.toast?.(copy('Connexion instable. Reprise automatique…','Unstable connection. Reconnecting automatically…'));
+   }
+  }
+ }finally{
+  if(request===requestSerial){
+   loadingKey='';
+   // A mutation acknowledged during an older fetch requires a new snapshot.
+   if(forceQueued&&key===sessionIdentity()){
+    forceQueued=false;
+    void refresh(true);
+   }
+  }
+ }
 }
 function showPrivateProof(d){
  if(!d?.proof||!document.body||room()?.status!=='playing')return;
@@ -122,7 +150,7 @@ async function act(action,payload={}){
   if(key!==sessionIdentity()){currentCache();return;}
   const ids=action==='vote'?['c031Vote']:action==='plan'?['c031Mode','c031Location','c031Approach','c031Assault']:action==='offer'?['c031Terms-'+prepared.suspect_id]:[];
   for(const id of ids)if(drafts[id]===submittedDraft[id])delete drafts[id];
-  await window.syncNow?.(true);await refresh();window.renderGame?.();
+  await window.syncNow?.(true);await refresh(true);window.renderGame?.();
  }catch(e){window.toast?.(e.message)}
  finally{busy=false}
 }
@@ -134,9 +162,23 @@ if(baseTabs){const f=function(){const tabs=baseTabs.apply(this,arguments)||[];if
 const baseTab=typeof window.renderGameTab==='function'?window.renderGameTab:null;
 if(baseTab){const f=function(){const d=currentCache();if(active()&&(S()?.tab==='cartel031'||S()?.tab==='prosecutor'&&me()?.public_role==='procureur')){localContext=null;localActor=null;return renderBoard(d,me(),drafts,true);}return baseTab.apply(this,arguments)};try{renderGameTab=f}catch{}window.renderGameTab=f;}
 const baseLeave=window.leaveRoom;if(typeof baseLeave==='function')window.leaveRoom=function(){try{return baseLeave.apply(this,arguments)}finally{currentCache();}};
-setInterval(refresh,2200);window.addEventListener('focus',refresh);setTimeout(refresh,400);
+// Active decision desks refresh promptly; passive tabs use a lighter safety poll.
+setInterval(()=>{
+ if(!active())return;
+ const now=Date.now();
+ if(privateTab()||now-lastPassivePollAt>=10000){
+  lastPassivePollAt=now;
+  void refresh();
+ }
+},2200);
+window.addEventListener('focus',()=>{void refresh(true)});
+window.addEventListener('online',()=>{void refresh(true)});
+document.addEventListener('visibilitychange',()=>{
+ if(document.visibilityState==='visible')void refresh(true);
+});
+setTimeout(refresh,400);
 const style=document.createElement('style');style.textContent='.igr031-proof{position:fixed;inset:0;z-index:1100;background:#030608f5;display:grid;align-items:center;padding:20px;overflow:auto}.igr031-proof>.igr031-card{max-width:650px;margin:auto}.igr031-page{display:grid;gap:14px}.igr031-card{padding:16px;border:1px solid #ffffff26;border-radius:16px;background:#ffffff06}.igr031-card p,.igr031-card blockquote{line-height:1.5;white-space:pre-line}.igr031-card label{display:grid;gap:6px;margin:12px 0}.igr031-card select{width:100%;min-height:44px;background:#14191f;color:#f2f4f6;border:1px solid #ffffff40;border-radius:8px;padding:8px}.igr031-card .btn{margin-top:10px;white-space:normal}.igr031-private{color:#dcb177;font-size:12px;font-weight:800}.igr031-agreement{padding:12px 0;border-top:1px solid #ffffff20}';document.head.appendChild(style);
-window.igr031Open=()=>{if(S()){S().tab='cartel031';window.renderGame?.();refresh()}};
+window.igr031Open=()=>{if(S()){S().tab='cartel031';window.renderGame?.();void refresh(true)}};
 window.IGR_CARTEL031={version,refresh,renderBoard,act,prepareAction,
  initLocal,renderLocal,localState,applyLocal,localOutcome};
 

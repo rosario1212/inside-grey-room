@@ -6,12 +6,12 @@ import vm from 'node:vm';
 const target=path.resolve(process.argv[2]||'dist');
 const source=await readFile(path.join(target,'cartel031-v171.js'),'utf8');
 function harness(){
- const handlers={},nodes=new Map(),elements={};
- const document={addEventListener:(event,handler)=>(handlers[event]??=[]).push(handler),getElementById:id=>elements[id]||nodes.get(id)||null,
+ const handlers={},windowHandlers={},nodes=new Map(),elements={},intervals=new Map();let renders=0;
+ const document={visibilityState:'visible',addEventListener:(event,handler)=>(handlers[event]??=[]).push(handler),getElementById:id=>elements[id]||nodes.get(id)||null,
   head:{appendChild(){}},body:{appendChild(node){nodes.set(node.id,node)}},
   createElement:()=>({setAttribute(){},querySelector:()=>({addEventListener(){}}),remove(){nodes.delete(this.id)}})};
- const context=vm.createContext({document,setTimeout:()=>0,setInterval:()=>0,console,STATE:{}});
- Object.assign(context,{window:context,addEventListener(){},confirm:()=>true,renderGame(){},gameTabs:()=>[],renderGameTab:()=>'<p>OTHER TAB</p>',
+ const context=vm.createContext({document,navigator:{onLine:true},setTimeout:()=>0,setInterval:(fn,ms)=>{intervals.set(ms,fn);return intervals.size},console,STATE:{}});
+ Object.assign(context,{window:context,addEventListener:(event,handler)=>(windowHandlers[event]??=[]).push(handler),confirm:()=>true,renderGame(){renders++},gameTabs:()=>[],renderGameTab:()=>'<p>OTHER TAB</p>',
   leaveRoom(){context.STATE={}},sessionStorage:{getItem:()=>null}});
  vm.runInContext(source,context);
  const set=(room='ROOM1',id='e',role='enqueteur',match=1)=>{context.STATE={room,token:'token-'+id,tab:'cartel031',sync:{room:{scenario_id:'031',status:'playing',state:{cartel031_ready:true,match_no:match}},player:{id,public_role:role}}}};
@@ -19,7 +19,7 @@ function harness(){
   locations:[{id:'x',label:'X'},{id:'y',label:'Y'}],approaches:[{id:'direct',label:'DIRECT'},{id:'isolate',label:'ISOLATE'}],assault_options:[{id:'outside',label:'OUTSIDE'},{id:'chief',label:'CHIEF'}],suspects:[{id:'s1',pseudo:'S1'}]});
  const change=(id,value)=>{elements[id]={value};for(const handler of handlers.change||[])handler({target:{id,value}})};
  const toggleProof=open=>{const node={id:'c031ProofReview',open};elements[node.id]=node;for(const handler of handlers.toggle||[])handler({target:node})};
- set();return {context,api:context.IGR_CARTEL031,set,state,change,toggleProof,nodes};
+ set();return {context,api:context.IGR_CARTEL031,set,state,change,toggleProof,nodes,intervals,renders:()=>renders,emitDoc:event=>(handlers[event]||[]).forEach(fn=>fn()),emitWindow:event=>(windowHandlers[event]||[]).forEach(fn=>fn())};
 }
 // Switching roles or players never renders an already fetched private dossier.
 {
@@ -78,5 +78,62 @@ function harness(){
  assert(!/<details id="c031ProofReview"[^>]* open/.test(h.context.renderGameTab()));
  h.toggleProof(true);await h.api.refresh();assert.match(h.context.renderGameTab(),/<details id="c031ProofReview"[^>]* open/);
  h.toggleProof(false);assert(!/<details id="c031ProofReview"[^>]* open/.test(h.context.renderGameTab()));
+}
+// Private RPCs should never run in the background, yet recover on a mobile wake.
+{
+ const h=harness();let calls=0;
+ h.context.rpc=async()=>{calls++;return h.state()};
+ h.context.document.visibilityState='hidden';
+ await h.api.refresh();assert.equal(calls,0);
+ h.context.document.visibilityState='visible';h.emitDoc('visibilitychange');
+ await Promise.resolve();await Promise.resolve();
+ assert.equal(calls,1,'Mobile foreground must retry the protected 031 state');
+ h.context.navigator.onLine=false;await h.api.refresh();assert.equal(calls,1);
+ h.context.navigator.onLine=true;h.emitWindow('online');
+ await Promise.resolve();await Promise.resolve();assert.equal(calls,2,'Network recovery must reload the protected state');
+}
+// Background tabs get fewer RPCs, but the active 031 decision desk remains responsive.
+{
+ const h=harness();let calls=0;
+ h.context.rpc=async()=>{calls++;return h.state()};
+ h.context.STATE.tab='investigation';
+ await h.api.refresh();assert.equal(calls,1);
+ const tick=h.intervals.get(2200);assert(tick,'Missing adaptive 031 polling watchdog');
+ tick();await Promise.resolve();await Promise.resolve();assert.equal(calls,2);
+ tick();await Promise.resolve();await Promise.resolve();assert.equal(calls,2,'Passive tab triggered redundant private RPC');
+ h.context.STATE.tab='cartel031';
+ tick();await Promise.resolve();await Promise.resolve();assert.equal(calls,3,'Active desk stopped refreshing');
+}
+// The prosecutor board is backed by the same private data and must repaint.
+{
+ const h=harness();let sequence=0;
+ h.set('ROOM1','p','procureur');h.context.STATE.tab='prosecutor';
+ h.context.rpc=async()=>({...h.state(),role:'procureur',votes_received:++sequence});
+ await h.api.refresh();const before=h.renders();
+ assert(before>0,'Prosecutor protected desk did not paint on the first snapshot');
+ await h.api.refresh();
+ assert.equal(h.renders(),before+1,'Updated prosecutor private data did not repaint');
+}
+// A forced refresh requested during an older HTTP fetch must fetch again once it settles.
+{
+ const h=harness(),requests=[];
+ h.context.rpc=()=>new Promise(resolve=>requests.push(resolve));
+ const first=h.api.refresh();
+ await h.api.refresh(true);
+ assert.equal(requests.length,1,'Concurrent private refreshes should share the first fetch');
+ requests[0](h.state('PRIVATE OLD'));
+ await first;await Promise.resolve();await Promise.resolve();
+ assert.equal(requests.length,2,'Forced invalidation during a pending fetch was lost');
+ requests[1](h.state('PRIVATE NEW'));
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
+ assert(h.context.renderGameTab().includes('PRIVATE NEW'),'New private information was not applied after the forced refresh');
+}
+// Failed private snapshots are backed off; a player action can still force recovery.
+{
+ const h=harness();let failures=0;
+ h.context.rpc=async()=>{failures++;throw Error('temporary outage')};
+ await h.api.refresh();await h.api.refresh();
+ assert.equal(failures,1,'Repeated failures must not generate an HTTP storm');
+ await h.api.refresh(true);assert.equal(failures,2,'A confirmed action must bypass passive retry backoff');
 }
 console.log('CARTEL 031 session PASS: player changes, late responses, rematches, immediate exit privacy, draft preservation and submission acknowledgement.');

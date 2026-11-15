@@ -16,10 +16,10 @@ const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve
 const flush=async()=>{for(let i=0;i<30;i++)await Promise.resolve()};
 const data=(phase='investigation')=>({room:{code:'CHECK',scenario_id:'001',status:'playing',phase,cycle:1,state:{}},player:{id:'one',pseudo:'QA',public_role:'suspect'},players:[],events:[]});
 function client(){
-  const requests=[],renders=[],timers=new Map(),listeners={};let timerId=0;
+  const requests=[],renders=[],timers=new Map(),intervals=new Map(),listeners={};let timerId=0;
   const document={visibilityState:'visible',hidden:false,documentElement:{dataset:{}},getElementById:()=>null,querySelector:()=>null,addEventListener(name,fn){(listeners[name]??=[]).push(fn)}};
   const scope={STATE:{room:'CHECK',token:'token',sync:data(),syncSig:'',syncBusy:false,syncPromise:null,serverOffset:0},document,navigator:{onLine:true},URL,performance:{now:()=>0},console:{warn(){},error(){}},
-    setTimeout(fn,delay){const id=++timerId;timers.set(id,{fn,delay});return id},clearTimeout:id=>timers.delete(id),setInterval(){return++timerId},clearInterval(){},
+    setTimeout(fn,delay){const id=++timerId;timers.set(id,{fn,delay});return id},clearTimeout:id=>timers.delete(id),setInterval(fn,ms){const id=++timerId;intervals.set(id,{fn,ms});return id},clearInterval:id=>intervals.delete(id),
     rpc(name){if(name==='igr_v4_realtime_token')return Promise.resolve('signal');const request=deferred();requests.push(request);return request.promise},
     syncSignature:d=>JSON.stringify(d),captureDrafts:()=>({}),restoreDrafts(){},connectionStatus(){},saveSession(){},refreshAvatars:async()=>{},markGameStarted(){},markGameCompleted(){},manageVideoState(){},maybeShowRoleNotice(){},routeFromServer(){renders.push(scope.STATE.sync.room.phase)},
     stopRoomWatcher(){},startRoomWatcher(){},leaveRoom(){scope.STATE.room=null;scope.STATE.token=null},chooseLobbyRole(){},startGame(){},toast(){},clearSession(){},SUPABASE_URL:'https://example.supabase.co',SUPABASE_KEY:'test',
@@ -39,7 +39,7 @@ function client(){
   scope.WebSocket=Socket;vm.createContext(scope);
   vm.runInContext(extract(app,'async function syncNow(','function routeFromServer('),scope);
   const runTimer=async(max=20,min=0)=>{for(const [id,t] of timers){if(t.delay>=min&&t.delay<=max){timers.delete(id);t.fn();await flush();return true}}return false};
-  return{scope,requests,renders,timers,listeners,Socket,runTimer,loadLive:()=>{vm.runInContext(optimization,scope);vm.runInContext(live,scope)}};
+  return{scope,requests,renders,timers,intervals,listeners,Socket,runTimer,runInterval:async(ms)=>{for(const t of intervals.values())if(t.ms===ms){t.fn();await flush();return true}return false},loadLive:()=>{vm.runInContext(optimization,scope);vm.runInContext(live,scope)}};
 }
 
 const checks=[];
@@ -87,6 +87,24 @@ await check('failed RPC does not acknowledge a revision and is retried',async()=
   const retry=[...c.timers.values()].find(t=>t.delay>=500&&t.delay<=1000);assert(retry,'Failed snapshot must schedule a retry');
   await c.runTimer(1000,500);c.requests[2].resolve(data('recovered'));await flush();
   assert.equal(c.scope.__IGR_REALTIME__.snapshot().syncedRevision,4);
+});
+await check('expired player tokens release a stale room instead of retrying forever',async()=>{
+  const c=client();c.loadLive();await flush();c.Socket.sockets[0].open();await c.runTimer();
+  assert.equal(c.requests.length,1);
+  c.requests[0].reject(new Error('unauthorized'));await flush();
+  assert.equal(c.scope.STATE.room,null,'The stale room should be cleared after a terminal sync error');
+  assert.equal(c.scope.STATE.token,null,'An expired player token must not keep polling');
+});
+await check('stalled-screen rescue watchdog preserves exponential sync retry delay',async()=>{
+  const c=client();c.loadLive();await flush();c.Socket.sockets[0].open();await c.runTimer();
+  assert.equal(c.requests.length,1);
+  c.requests[0].reject(new Error('temporary network failure'));await flush();
+  const oldTimers=[...c.timers.entries()].map(([id,t])=>[id,t.delay]);
+  assert(oldTimers.some(([,delay])=>delay>=500&&delay<=1500),'The first failure must schedule a delayed retry');
+  assert(await c.runInterval(7000),'Stalled-screen recovery watchdog not installed');
+  const newTimers=[...c.timers.entries()].map(([id,t])=>[id,t.delay]);
+  assert.deepEqual(newTimers,oldTimers,'Watchdog must not restart fallback polling every 900ms during outages');
+  assert.equal(c.requests.length,1,'Watchdog started duplicate HTTP snapshots while retry was pending');
 });
 await check('messages from a superseded socket are ignored',async()=>{
   const c=client();c.loadLive();await flush();const old=c.Socket.sockets[0].open();await c.runTimer();c.requests[0].resolve(data());await flush();

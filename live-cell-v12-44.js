@@ -26,6 +26,13 @@
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
   const isOnline = () => navigator.onLine !== false;
   const isTerminalSessionError = error => /unauthorized|room not found|cellule introuvable|invalid player|player not found/i.test(String(error?.message || error || ''));
+  const terminalSnapshotError = () => {
+    // Core sync deliberately returns null on HTTP errors. Recover only if the
+    // error belongs to the current authenticated room, not an older session.
+    const failure=STATE?.lastSyncFailure;
+    if(!failure||failure.room!==STATE.room||failure.token!==STATE.token)return null;
+    return isTerminalSessionError(failure.error)?failure.error:null;
+  };
   const wsEndpoint = () => {
     try {
       const u = new URL(SUPABASE_URL);
@@ -136,7 +143,7 @@
         if(!current()) return;
         // performSync returns null on network errors. Never acknowledge a
         // revision until its authoritative snapshot was actually fetched.
-        if(!data?.room || !data?.player) throw new Error('sync_unavailable');
+        if(!data?.room || !data?.player) throw terminalSnapshotError() || new Error('sync_unavailable');
         RT.failures=0;
         recordServerClock(data);
         if(targetRevision) RT.syncedRevision = Math.max(RT.syncedRevision,targetRevision);
@@ -411,6 +418,10 @@
     const healthy = RT.ready && RT.ws?.readyState===WebSocket.OPEN;
     if(!healthy) return hidden ? 15000 : Math.min(15000,Math.round(1200*Math.pow(1.7,RT.failures)));
     if(hidden) return 30000;
+    // A healthy socket is not proof that the HTTP snapshot endpoint works.
+    // Back off failed polls to avoid a room-wide request storm during an outage;
+    // incoming Realtime revisions still schedule an immediate reconciliation.
+    if(RT.failures>0) return Math.min(10000,Math.round(1200*Math.pow(1.7,Math.min(8,RT.failures))));
 
     const room = STATE?.sync?.room;
     // All foreground clients use the same authoritative server snapshot, including
@@ -441,7 +452,13 @@
         const data=await syncNow(false,true);
         if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
         if(data?.room && data?.player){RT.failures=0;recordServerClock(data)}
-        else RT.failures=Math.min(8,RT.failures+1);
+        else {
+          RT.failures=Math.min(8,RT.failures+1);
+          if(terminalSnapshotError()){
+            recoverStaleSession('Cette cellule n’est plus disponible. Rejoins-la avec un code valide.');
+            return;
+          }
+        }
       }catch(error){
         if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
         RT.failures=Math.min(8,RT.failures+1);
@@ -736,7 +753,16 @@
     if(!inRoom()||!roomScreenActive()||document.visibilityState==='hidden'||!isOnline())return;
     const since=Date.now()-Number(STATE.lastSuccessfulSyncAt||0);
     if(since>10000){
-      if(!RT.ready||Date.now()-RT.lastMessageAt>35000)connectRealtime(true);
+      // A failed snapshot must not trigger a second fast retry loop via the
+      // rescue watchdog. Keep the existing scheduled backoff intact.
+      if((!RT.ready||Date.now()-RT.lastMessageAt>35000)&&!RT.joining&&!RT.reconnect)
+        connectRealtime(true);
+      if(RT.failures>0){
+        if(!RT.syncRunning&&!RT.syncTimer)
+          syncSoon(Math.min(16000,Math.round(800*Math.pow(1.8,Math.max(0,RT.failures-1)))),true);
+        if(!RT.pollTimer)schedulePoll(pollDelay());
+        return;
+      }
       syncSoon(0,true);
       schedulePoll(900);
     }
