@@ -1,7 +1,7 @@
 -- Run inside BEGIN; ... ROLLBACK; after v704. The three 6-player
 -- simulations validate sealed starts, actual order choices and cycle reports.
 DO $qa$
-DECLARE sid text; room_ text; host_ uuid; token_ uuid; response_ jsonb;state_ jsonb;
+DECLARE sid text; room_ text; host_ uuid; token_ uuid; response_ jsonb;state_ jsonb;i integer;
 BEGIN
  FOREACH sid IN ARRAY ARRAY['026','027','028'] LOOP
   room_:='T4P'||sid;
