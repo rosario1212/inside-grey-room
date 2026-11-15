@@ -35,6 +35,18 @@ Périmètre : dossiers 035–039, jeu local à 5 et 7 joueurs, affichage des ind
 - Essais sur navigateur mobile réel : lisibilité des nouvelles pièces, navigation entre phases, crash/résumé.
 - Partie multijoueur réelle à 5 et 7 téléphones : création, connexion, attribution privée, synchronisation du carry, déconnexion/reconnexion et confirmation serveur de fin.
 - Playtest humain en aveugle : vérifier la difficulté réelle et le temps d'activité de chaque rôle. Les tests automatisés ne mesurent pas le suspense.
-- Revoir le système de verrouillage du choix final en ligne : l'hôte possède encore le pouvoir technique de décision; le présent patch **ne** met pas en place un vote collectif authentifié.
+- Vote collectif **ajouté** côté serveur et client : une voix par jeton personnel, tous les joueurs votent, majorité absolue de 3/5 ou 4/7, nouveau tour si nécessaire, aucun contournement par l'hôte. Un vote séquentiel privé existe aussi en mode local à téléphone partagé.
 
 Ces corrections sont confinées à CENDRES. Aucune réécriture de KUROI, MAÎTRE, CASINO ni des DLC 001–034.
+
+## Ajout technique : vote collectif et persistance
+- Nouvelle migration proposée : `supabase/migrations/20261115230500_heritage_cendres_majority_ballot_v713.sql`.
+- Les bulletins ne sont pas accessibles directement aux joueurs : SQL avec RLS, droits révoqués et deux RPC authentifiées par jeton individuel.
+- Le verdict ne se déclenche **qu'après le vote de tous les joueurs inscrits** ; il faut une majorité absolue, sans quoi les bulletins sont réinitialisés pour un second tour.
+- Le serveur refuse l'ancien chemin permettant à l'hôte de verrouiller seul la décision dans CENDRES ; KUROI et MAÎTRE conservent leurs règles.
+- Les déconnexions en cours de partie conservent les places et les jetons pour permettre une reconnexion sans réduire artificiellement le quorum.
+- La progression locale n'est maintenant inscrite qu'après la confirmation serveur de la clôture multijoueur.
+- Essai transactionnel de la migration réalisé contre le schéma réel Supabase : **tests 5/7 joueurs réussis ; transaction annulée sans changement persistant**.
+- Reproduction CI PostgreSQL isolée : `supabase/tests/igr_v713_cendres_ballot_harness.sql` et `supabase/tests/igr_v713_cendres_ballot_integration.sql` ; exécution via `.github/workflows/heritage-cendres-v713-qa.yml`.
+- La validation de 5–7 téléphones réels et le déploiement couplé du client et de la migration restent à réaliser avant de rendre la PR publiable.
+- Alerte Cloudflare séparée : le Worker de production déclaré dans `wrangler.jsonc` est `inside-grey-room-last` et sa CI GitHub réussit ; un contrôle Cloudflare externe est attaché à `inside-grey-room`. Les journaux du service externe sont privés, donc sa cause précise ne peut pas être établie à partir du seul statut GitHub.
