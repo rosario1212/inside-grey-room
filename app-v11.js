@@ -947,7 +947,11 @@ async function joinRoom(){
   if(fresh?.room?.status==='lobby')renderLobby(fresh);
   void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
   void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
- }catch(e){console.error(e);toast('Cellule introuvable, pleine ou déjà lancée.');}
+ }catch(e){
+  console.error(e);
+  const unavailable=e?.name==='AbortError'||[429,500,502,503,504].includes(Number(e?.status))||/fetch|network|connexion|connection|timeout|load failed|timed out/i.test(String(e?.message||''));
+  toast(unavailable?'Connexion au serveur impossible pour le moment. Réessaie sans changer de code.':'Cellule introuvable, pleine ou déjà lancée.');
+ }
 }
 function syncSignature(d){
  if(!d)return'';
@@ -973,7 +977,7 @@ function connectionStatus(failed){
  let el=byId('connectionStatus');
  if(!failed){el?.remove();return}
  if(!el){el=document.createElement('div');el.id='connectionStatus';el.className='connection-status';el.setAttribute('role','status');document.body.appendChild(el)}
- el.textContent='Connexion interrompue · reconnexion automatique…';
+ el.textContent=navigator.onLine===false ? 'Hors ligne · reprise automatique au retour du réseau…' : Number(STATE.syncFailures||0)>1 ? 'Serveur temporairement indisponible · nouvelle tentative…' : 'Connexion instable · nouvelle tentative…';
 }
 async function syncNow(force=false,fresh=false){
  if(!STATE.room||!STATE.token)return null;
@@ -988,6 +992,9 @@ async function syncNow(force=false,fresh=false){
   do{
    STATE.syncQueued=false;STATE.syncForce=false;STATE.syncRoom=STATE.room;STATE.syncToken=STATE.token;
    result=await performSync(render);
+   // A failing RPC must release the coalesced sync promise; the scheduler
+   // retries later rather than looping indefinitely while offline.
+   if(!result)break;
    render=STATE.syncForce;
   }while(STATE.syncQueued&&STATE.room&&STATE.token);
   return result;
@@ -1014,6 +1021,7 @@ async function performSync(force=false){
    }
   }else d=await rpc('igr_v4_sync',params);
   if(STATE.room!==room||STATE.token!==token)return null;
+  STATE.syncFailures=0;
   connectionStatus(false);
   const sig=syncSignature(d);
   // An authoritative snapshot and a successfully rendered screen are different
@@ -1062,7 +1070,7 @@ async function performSync(force=false){
    if(changed&&STATE.room===room&&STATE.token===token&&STATE.sync===d){const draft=captureDrafts();routeFromServer();restoreDrafts(draft)}
   }).catch(e=>console.warn('avatars',e));
   return rendered?d:null;
- }catch(e){if(STATE.room===room&&STATE.token===token){connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
+ }catch(e){if(STATE.room===room&&STATE.token===token){STATE.syncFailures=(STATE.syncFailures||0)+1;connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
 }
 function routeFromServer(){
  const d=STATE.sync;if(!d)return;
