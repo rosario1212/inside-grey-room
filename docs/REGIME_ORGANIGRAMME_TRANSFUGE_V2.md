@@ -17,8 +17,8 @@ L'interface comprend deux vues publiques permanentes et une troisième vue proba
 ### Vue A : LE CLAN
 Liens de sang et d'alliance vérifiés au briefing :
 - Harb Kassar, Président (remplacé en session à l'affichage par le pseudo du joueur) ;
-- Fouad Kassar, frère ;
-- Mourad Kassar, cousin ;
+- Fouad Kassar, cousin ;
+- Mourad Kassar, frère ;
 - Darian Kassar, fils, héritier présumé ;
 - Ilyas Sayegh, gendre par mariage avec une fille **sans fonction gouvernementale** ;
 - Hamza Daher, confident, **non apparenté** ;
@@ -100,7 +100,7 @@ Les cartes A et B sont un outil de **lecture** : elles ne doivent pas déjà ré
 
 ## Rôle majeur dans 034 : PRÉSIDENT DÉCHU (suspect, non un joueur supplémentaire)
 
-Le président n'est pas une figure décorative, ni un superadministrateur. Il est incarné par l'un des trois suspects déjà requis dans 034. Son pseudo de joueur est l'identité du personnage pour la session.
+Ce paragraphe sur le président constitue une piste de conception historique : le modèle v2 de traques doubles est défini dans `docs/REGIME_DOUBLE_TRAQUE_032_034_V2.md`. Le président n'est pas une figure décorative, ni un superadministrateur. Il est incarné par l'un des trois suspects déjà requis dans 034. Son pseudo de joueur est l'identité du personnage pour la session.
 
 - **Cycle 1 — DÉCRET CONTESTÉ :** le président choisit de reconnaître, contester ou limiter la portée d'un acte historique déjà présent dans sa variante. Il verrouille une position officielle. Les autres personnages voient immédiatement cette position et peuvent l'opposer à ses actes.
 - **Cycle 2 — CONFRONTATION DU SOMMET :** il peut demander une confrontation avec un ancien ministre, sous réserve des quotas et décisions de procédure du jeu. La demande ne crée pas un événement supplémentaire gratuit ; refus motivé ou convocation effective sont visibles immédiatement.
