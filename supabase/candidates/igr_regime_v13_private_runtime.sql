@@ -93,7 +93,7 @@ DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
-  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast jsonb; used_cycle boolean;used_move boolean;
+  actor text; card jsonb; own_mission jsonb; offered jsonb; court_acts jsonb;cast_list jsonb; used_cycle boolean;used_move boolean;
   public_clues jsonb='[]'::jsonb; clue jsonb; saved jsonb;
   a jsonb='[]'::jsonb; item jsonb; chosen text;
 BEGIN
@@ -140,7 +140,7 @@ BEGIN
   SELECT coalesce(jsonb_agg(jsonb_build_object('actor_id',
     m.private_pack->'private_cards'->(pl.internal_slot-1)->>'actor_id',
     'pseudo',pl.pseudo,'player_id',pl.id::text) ORDER BY pl.internal_slot),'[]'::jsonb)
-  INTO cast FROM public.igr_v4_players pl WHERE pl.room_code=r.code
+  INTO cast_list FROM public.igr_v4_players pl WHERE pl.room_code=r.code
     AND pl.public_role='suspect' AND pl.internal_slot BETWEEN 1 AND 3;
   SELECT coalesce(jsonb_agg(jsonb_build_object('id',a.value->>'id',
     'title',a.value->>'title') ORDER BY a.ordinality),'[]'::jsonb)
@@ -159,7 +159,7 @@ BEGIN
       'my_alliance_choice',chosen,'offered_investigations',offered,
       'investigation_used_this_cycle',used_cycle,'my_fugitive_decision_used',used_move,
       'third_submitted',coalesce((m.play_state->'third'->>'submitted')::boolean,false),
-      'cast',cast,'court_acts',court_acts,
+      'cast',cast_list,'court_acts',court_acts,
       'pending_mandates',CASE WHEN p.public_role IN ('juge','enqueteur','analyste')
          THEN (SELECT coalesce(jsonb_agg(x),'[]'::jsonb)
              FROM jsonb_array_elements(coalesce(m.play_state->'mandates','[]'::jsonb)) x
