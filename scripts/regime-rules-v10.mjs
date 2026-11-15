@@ -46,7 +46,8 @@ export function resolveMandate(input) {
   if(!evidences[0].origin||evidences[0].origin===evidences[1].origin)return privateError('not_independent');
   if(!['allow','reject','pending'].includes(judgeResponse))return privateError('invalid_judge_action');
   // A procedural refusal of facially sufficient evidence is reviewable, not a veto.
-  if(judgeResponse==='reject')return {status:'judge_disagreement',code:'objective_review_required',consumed:false};
+  if(judgeResponse==='reject'&&!judgeTimedOut)return {status:'judge_disagreement',code:'objective_review_required',consumed:false};
+  // After a documented deadline, a neutral procedural fallback can resolve the objection.
   if(judgeResponse==='pending'&&!judgeTimedOut)return {status:'awaiting_judge',consumed:false};
   const sealed=canonicalTracks?.[targetId];
   if(!sealed || typeof sealed.activeTrackId!=='string')return privateError('sealed_data_missing');
@@ -98,15 +99,15 @@ export function evaluateReconstruction({sealedActs,answers,publicEvidence,minimu
   return {accurate,total:4,passed:accurate>=minimum,verdicts};
 }
 
-export function courtroomSchedule({scenarioId,captureCycles={},suspectCount=3}={}) {
+export function courtroomSchedule({scenarioId,captureCycles={}}={}) {
   if(!REGIME_SCENARIOS[scenarioId])throw Error('not a Regime scenario');
   const values=REGIME_SCENARIOS[scenarioId].fugitives.map(id=>captureCycles[id]);
   if(values.some(v=>v!=null&&!validCycle(v)))throw Error('invalid capture cycle');
   const doubleCaptured=values.every(validCycle);
   const last=doubleCaptured?Math.max(...values):null;
-  if(!doubleCaptured)return {kind:'reconstruction',totalMinutes:8,suspectsPresent:1};
-  if(last===3)return {kind:'long',totalMinutes:14,opening:1,defenses:6,confrontation:5,closing:1,vote:1};
-  return {kind:'short',totalMinutes:8,opening:1,defenses:3,confrontation:2,closing:1,vote:1};
+  if(!doubleCaptured)return {kind:'reconstruction',totalMinutes:8,suspectsPresent:values.filter(validCycle).length+1};
+  if(last===3)return {kind:'long',totalMinutes:14,suspectsPresent:3,opening:1,defenses:6,confrontation:5,closing:1,vote:1};
+  return {kind:'short',totalMinutes:8,suspectsPresent:3,opening:1,defenses:3,confrontation:2,closing:1,vote:1};
 }
 
 export function classifyVictory({scenarioId,captureCycles={},reconstruction}={}) {
