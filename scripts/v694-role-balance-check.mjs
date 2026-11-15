@@ -24,6 +24,7 @@ for(const builder of ['scripts/build-web.mjs','scripts/build-mobile.mjs']){
 }
 const sw=read('service-worker.js');
 assert(sw.includes('role-cadence-v694.js')&&sw.includes('role-cadence-v694.css'),'PWA preload absent');
+assert(read(dist+'/index.html').includes('role-cadence-v694.js'),'built entrypoint lost the role runtime');
 for(const file of ['index.html','role-cadence-v694.js','role-cadence-v694.css']){
  assert(existsSync(dist+'/'+file),'bundle missing '+file+' in '+dist);
 }
