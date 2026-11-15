@@ -337,9 +337,14 @@ BEGIN
       OR NOT (m.play_state->'arrests' ? actor) THEN
       RAISE EXCEPTION 'only captured fugitive may present this defense';
     END IF;
-    IF r.phase='regime_court' AND
-      coalesce(m.play_state->'court'->>'stage_actual','') IN ('closing','vote')
-    THEN RAISE EXCEPTION 'defense window closed';END IF;
+    IF r.phase='regime_court' THEN
+      IF m.play_state->'court'->>'started_at' IS NULL OR
+       now()>=(m.play_state->'court'->>'started_at')::timestamptz+
+        make_interval(secs=>CASE
+          WHEN (m.play_state->'court'->>'duration_minutes')::integer=14 THEN 720
+          ELSE 360 END)
+      THEN RAISE EXCEPTION 'court defendant defense window closed';END IF;
+    END IF;
     IF EXISTS(SELECT 1 FROM jsonb_array_elements(
          coalesce(new_state->'captured_responses','[]'::jsonb)) x
       WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle)
