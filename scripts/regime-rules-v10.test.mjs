@@ -93,3 +93,22 @@ test('news only after confirmed public president capture, only once',()=>{
  assert.equal(generatePublicNews({scenarioId:'034',event:ev,publishedIds:['capture:r1']}),null);
  assert.equal(generatePublicNews({scenarioId:'034',event:{...ev,type:'warrant_requested'}}),null);
 });
+
+test('a contested lawful warrant is released to neutral review after timeout',()=>{
+ const r=resolveMandate({...cfg,judgeResponse:'reject',judgeTimedOut:true,requestId:'req-neutral-fallback'});
+ assert.equal(r.status,'captured');assert.equal(r.consumed,true);
+});
+test('a fugitive not captured never appears as accused in the courtroom',()=>{
+ const none=courtroomSchedule({scenarioId:'034',captureCycles:{}});
+ const one=courtroomSchedule({scenarioId:'034',captureCycles:{fallen_president:1}});
+ assert.equal(none.suspectsPresent,1);assert.equal(one.suspectsPresent,2);
+});
+test('every Regime scenario supports C1 capture with two scenario-specific pieces',()=>{
+ for(const [scenarioId,targetId] of [
+  ['032','vahran_director'],['033','presidential_heir'],['034','fallen_president']]){
+   const r=resolveMandate({...cfg,scenarioId,targetId,requestId:'req-'+scenarioId,
+    publicEvidence:sources(targetId,'track_alpha'),
+    canonicalTracks:{[targetId]:{activeTrackId:'track_alpha'}}});
+   assert.equal(r.status,'captured');
+ }
+});
