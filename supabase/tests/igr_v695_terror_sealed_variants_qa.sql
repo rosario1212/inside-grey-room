@@ -74,5 +74,18 @@ BEGIN
         d.scenario_id,d.variant_id,slot_,actual,expected;
     END IF;
   END LOOP;
+  -- v52's authoritative result is built through v50, not only the v4 reveal.
+  results_:=public.igr_v50_reveal_legacy(code_);
+  FOR slot_ IN 1..3 LOOP
+    SELECT x->>'truth_level' INTO actual FROM
+      jsonb_array_elements(results_->'responsibilities') x
+    JOIN public.igr_v4_players pp ON pp.id=(x->>'player_id')::uuid
+    WHERE pp.room_code=code_ AND pp.internal_slot=slot_;
+    expected:=(d.m->'v680_verdict'->'levels'->>slot_::text);
+    IF actual IS DISTINCT FROM expected THEN
+      RAISE EXCEPTION 'authoritative v50 verdict mismatch %/%/% actual % expected %',
+       d.scenario_id,d.variant_id,slot_,actual,expected;
+    END IF;
+  END LOOP;
  END LOOP;
 END $test$;
