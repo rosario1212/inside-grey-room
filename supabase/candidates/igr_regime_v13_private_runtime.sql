@@ -122,7 +122,10 @@ BEGIN
   END LOOP;
   FOR clue IN SELECT value FROM jsonb_array_elements(m.private_pack->'capture_evidence') LOOP
     IF (clue->>'revealed_at'='cycle_start' AND (clue->>'cycle')::int<=r.cycle)
-      OR (m.play_state->'disclosed' ? (clue->>'id'))
+      OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? (clue->>'id'))
+      OR EXISTS(SELECT 1 FROM jsonb_array_elements(
+        coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
+        WHERE sd->>'id'=clue->>'id' AND (sd->>'cycle')::integer<=r.cycle)
     THEN public_clues:=public_clues||jsonb_build_array(
       jsonb_build_object('id',clue->>'id','kind','capture','title','PISTE DE TRAQUE',
         'text',clue->>'description','cycle',clue->>'cycle',
@@ -209,7 +212,7 @@ DECLARE
   r public.igr_v4_rooms%rowtype;
   m igr_private.igr_regime_v13_rooms%rowtype;
   old jsonb; old_actor uuid; old_kind text; result jsonb;
-  actor text; option_row jsonb; choice text; piece jsonb;
+  actor text; option_row jsonb; choice text; piece jsonb; future_lead jsonb; next_lead_cycle integer;
   new_state jsonb; disclosed jsonb;
 BEGIN
   SELECT * INTO p FROM public.igr_v4_players
@@ -261,6 +264,27 @@ BEGIN
       disclosed:=coalesce(new_state->'disclosed','[]'::jsonb)||
           jsonb_build_array(option_row->>'reveals_capture_evidence_id');
       new_state:=jsonb_set(new_state,'{disclosed}',disclosed,true);
+    END IF;
+    -- Protecting a contact now reduces immediate exposure, but costs a
+    -- verified later lead. On C3, the cost is immediate (no imaginary C4).
+    IF option_row->'cost'->>'kind'='lose_protection' THEN
+      next_lead_cycle:=least(3,r.cycle+1);
+      SELECT e.value INTO future_lead
+      FROM jsonb_array_elements(m.private_pack->'capture_evidence') e
+      WHERE e.value->>'targetId'=actor
+        AND (e.value->>'cycle')::integer=next_lead_cycle LIMIT 1;
+      IF FOUND THEN
+        IF next_lead_cycle=r.cycle THEN
+          new_state:=jsonb_set(new_state,'{disclosed}',
+            coalesce(new_state->'disclosed','[]'::jsonb)||
+            jsonb_build_array(future_lead->>'id'),true);
+        ELSE
+          new_state:=jsonb_set(new_state,'{scheduled_disclosures}',
+            coalesce(new_state->'scheduled_disclosures','[]'::jsonb)||
+            jsonb_build_array(jsonb_build_object(
+            'id',future_lead->>'id','cycle',next_lead_cycle)),true);
+        END IF;
+      END IF;
     END IF;
     new_state:=jsonb_set(new_state,'{events}',
       coalesce(new_state->'events','[]'::jsonb)||
