@@ -54,3 +54,18 @@ Le test de lecture seule reproductible est dans `supabase/tests/igr_regime_relea
 **Étape E — Publication** : CI du commit candidate, preuves serveur, relecture humaine des neuf histoires, validation des tests, puis et seulement puis approbation des manuscrits, fusion revue sur `main`, confirmation du déploiement Cloudflare sur le même SHA et smoke-test contrôlé.
 
 **Conclusion :** la structure éditoriale du Régime est assez aboutie pour guider une implémentation cohérente. Ce rapport ne certifie pas la jouabilité ni la possibilité d'une publication immédiate. Aucun changement destructif ou activation n'a été réalisé en base.
+
+
+## Jalon 032 — amélioration privée v11 (même journée)
+
+**Écriture réellement effectuée dans la base privée** : les trois manuscrits 032 A/B/C comportent désormais une section `regime_vnext` autonome. **Les champs canoniques actifs historiques ne sont pas remplacés ; leurs statuts restent `review` et aucun manuscrit n'est marqué approuvé.** Les variantes 033–034 ne sont pas encore converties.
+
+- 3 variantes distinctes, 3 fiches par variante, 4 actes par variante, 3 preuves garanties, 12 enquêtes facultatives, 8 indices de traque, 12 contre-décisions avec avantage/coût et 1 mission du troisième suspect.
+- **63/63 assertions SQL réussies** dans `supabase/tests/igr_regime_032_candidate_drafts_qa.sql`.
+- **192/192 combinaisons d'enquête énumérées** (64 par variante) : 56/64 offrent au moins trois actes corroborables, 18/64 les quatre actes, 8/64 deux actes. Ce sont des **potentiels documentaires**, sans supposer que les joueurs attribueront les responsables correctement.
+- **15/15 simulations de raccordement** (trois variantes, deux fugitifs, deux types d'alliance, et mission personnelle) : choix imprudent avec deux preuves indépendantes = capture C1 possible ; choix moins exposant = seconde preuve non automatiquement publiée ; mission coopération/protection calculable. Ces simulations ont été effectuées avec le noyau de règles générique, **hors session réelle**.
+- **25/25 tests unitaires synthétiques** du noyau de règles réussis au dernier contrôle.
+- **Test de publication actualisé (66 assertions) : 25 OK / 41 bloquantes**. Il suit à présent le vrai critère du mécanisme v99 (`editorial_status='ready'` + approbation), distingue les variantes privées staged des variantes réellement promues et souligne les écarts 033/034.
+- **Contrôle de publication existant** : `igr_private.igr_v100_preflight('032')`, `('033')` et `('034')` renvoient toujours `release_eligible=false` (`approved=0`). Cela préserve la production.
+
+**Défaut non résolu :** aucune fonction serveur Supabase de traque, de mandat, de choix d'alliance ou de tribunal collectif n'est connectée à `regime_vnext`. Les personnages anciens sont encore dans les champs canoniques historiques. Les mêmes étapes de sécurité/QA et de validation humaine restent obligatoires avant toute sortie.
