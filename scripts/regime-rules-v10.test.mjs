@@ -158,3 +158,18 @@ test('third suspect cannot submit the fugitive strategy',()=>{
   requestId:'req-not-fugitive',actionId:'x',options:[]});
  assert.equal(r.code,'not_a_fugitive');
 });
+
+test('two independent documents can corroborate several acts without changing truth',()=>{
+ const d={orderedBy:'A',transmittedBy:'B',executedBy:'C',knewAndControlledBy:'A'};
+ const acts=[1,2,3,4].map(n=>({id:'m'+n,...d}));
+ const e=[
+  {id:'g1',act_ids:['m1','m2'],origin:'palace',revealed:true},
+  {id:'g2',act_ids:['m2','m3'],origin:'audit',revealed:true},
+  {id:'g3',act_ids:['m3','m4'],origin:'prison',revealed:true},
+  {id:'o1',act_ids:['m1'],origin:'witness',revealed:true}
+ ];
+ const answers=acts.map(a=>({actId:a.id,...d,
+  evidenceIds:a.id==='m1'?['g1','o1']:a.id==='m2'?['g1','g2']:a.id==='m3'?['g2','g3']:['g3']}));
+ const z=evaluateReconstruction({sealedActs:acts,answers,publicEvidence:e});
+ assert.equal(z.accurate,3);assert.equal(z.passed,true);
+});
