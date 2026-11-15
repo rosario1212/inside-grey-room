@@ -237,7 +237,7 @@ function court(){
  section('RECONSTITUTION DES QUATRE ACTES',
   cache.my_reconstruction_submitted?
    '<p>Ta reconstitution a été déposée. Le serveur garde le résultat scellé jusqu’à la révélation.</p>':
-  '<p>Prépare les quatre attributions pendant les débats. Deux sources indépendantes par acte sont nécessaires. Le vote 0–2 habituel suivra ce procès.</p>'+
+  '<p>Prépare les quatre attributions pendant les débats. Deux sources indépendantes par acte sont nécessaires. Le vote 0–2 suivra ce procès : la majorité du camp Enquête doit identifier justement au moins deux des trois responsabilités. Trois des quatre actes doivent aussi être étayés.</p>'+
   acts.map(x=>'<article class="igr-rg13-act"><h5>'+esc(x.title)+'</h5>'+
     '<div class="igr-rg13-grid"><label>Ordonne'+select(x.id,'orderedBy')+'</label>'+
     '<label>Transmet'+select(x.id,'transmittedBy')+'</label>'+

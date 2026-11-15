@@ -97,3 +97,11 @@ test('safe forward-port keeps recent security, mobile and DLC layers',async()=>{
  assert.match(sw,/function isSensitiveServicePath/);
  assert.match(sw,/igr-v702/);
 });
+
+test('Regime court verdict is based on collective responsibility levels, never one investigator alone',()=>{
+ assert.match(finalSql,/igr_v711_majority_levels\(r\.code\)/);
+ assert.match(finalSql,/judicial:=accurate>=3 AND exact>=2/);
+ assert.match(finalSql,/voter\.public_role IN \('enqueteur','analyste'\)/);
+ assert.match(finalSql,/collective_accurate/);
+ assert.doesNotMatch(finalSql,/SELECT coalesce\(\(m\.play_state->'reconstructions'->enq\.id::text->>'accurate'/);
+});
