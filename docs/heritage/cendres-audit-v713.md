@@ -50,3 +50,11 @@ Ces corrections sont confinées à CENDRES. Aucune réécriture de KUROI, MAÎTR
 - Reproduction CI PostgreSQL isolée : `supabase/tests/igr_v713_cendres_ballot_harness.sql` et `supabase/tests/igr_v713_cendres_ballot_integration.sql` ; exécution via `.github/workflows/heritage-cendres-v713-qa.yml`.
 - La validation de 5–7 téléphones réels et le déploiement couplé du client et de la migration restent à réaliser avant de rendre la PR publiable.
 - Alerte Cloudflare séparée : le Worker de production déclaré dans `wrangler.jsonc` est `inside-grey-room-last` et sa CI GitHub réussit ; un contrôle Cloudflare externe est attaché à `inside-grey-room`. Les journaux du service externe sont privés, donc sa cause précise ne peut pas être établie à partir du seul statut GitHub.
+
+## Révision éditoriale ciblée (sans refaire l'intrigue)
+- Dossier 035 : les agents assassinés devaient remettre des relevés dont une copie a disparu. Leurs derniers journaux d'accès ouvrent une piste au-delà de V-17.
+- Dossier 036 : la logistique sort de la simple diversion ; le convoi est maquillé en mouvement d'inventaire, tandis que le faux drapeau détourne l'attention vers la frontière.
+- Dossier 037 : le témoignage recoupé révèle une référence d'inventaire sans identifier encore le chargement.
+- Dossier 038 : l'audit des accès rattache le relais à la liste des agents assassinés et aux falsifications documentaires. Les tueurs ne sont pas identifiés arbitrairement.
+- Dossier 039 : le convoi est daté par une caméra routière 32 minutes après l'explosion, distincte des huit minutes nécessaires pour quitter le centre. Le mobile final est la pression stratégique exercée grâce à l'arme soustraite au démantèlement.
+- Solutions, objectifs, cinq phases de campagne, compositions de rôles, variantes et progression inchangés.
