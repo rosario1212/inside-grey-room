@@ -6,7 +6,8 @@ import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
 const tag='terror-live-v694-20261115';
-const crisisCssPath='/terror-crisis-v696.css?v=v87-canonical-narrative';
+const crisisCssPath='/terror-crisis-v696.css?v=terror-carbon-v697-20261115';
+const crisisHtmlStyle=/terror-crisis-v696\.css\?v=[^"'<>\s]+/g;
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -34,7 +35,10 @@ const terrorV694=await readFile(path.join(dest,'terror-command-v694.js'),'utf8')
 assert(terrorV694.includes('igr_v694_terror_confirm')&&terrorV694.includes('terrorV694Join'),'v694 gameplay UI missing');
 const crisisCss=await readFile(path.join(dest,'terror-crisis-v696.css'),'utf8');
 assert(crisisCss.includes('data-igr-lobby-theme="terror"') && crisisCss.includes('terror-v681-city-lobby') && crisisCss.includes('igr-duration-tab-v35'), 'TERREUR premium crisis UI missing');
-const terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
+let terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
+assert(terrorHtml.includes('terror-crisis-v696.css?v=v87-canonical-narrative'), 'Expect finalized premium CSS before carbon cache-bust');
+terrorHtml=terrorHtml.replace(crisisHtmlStyle,'terror-crisis-v696.css?v=terror-carbon-v697-20261115');
+await writeFile(path.join(dest,'index.html'),terrorHtml,'utf8');
 assert(terrorHtml.includes('terror-crisis-v696.css'), 'TERREUR crisis CSS missing from public entrypoint');
 assert(terrorHtml.includes('terror-live-v681.js') && terrorHtml.includes('terror-live-v681.css'), 'terror shared city widget not included in published entrypoint');
 assert(terrorHtml.includes('terror-front-v682.js') && terrorHtml.includes('terror-front-v682.css'),'FDR public story and siege assets missing');
@@ -73,6 +77,7 @@ for(const page of ['index.html','en.html']){
 }
 const swFile=path.join(dest,'service-worker.js');
 let sw=await readFile(swFile,'utf8');
+sw=sw.replace(/\/terror-crisis-v696\.css\?v=[^"'\s,]+/g,crisisCssPath);
 const newCachePath='/'+appName+'?v='+tag;
 if(!sw.includes(crisisCssPath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing for TERREUR visuals');
@@ -114,6 +119,6 @@ for(const asset of ['/terror-command-v694.js?v=terror-live-v694-20261115','/terr
  }
 }
 sw=sw.replace(/const CACHE='[^']+'/,"const CACHE='igr-santoro-display-audit-20261108-"+tag+"'");
-assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+"'"),'PWA crisis cache version did not advance');
+assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+tag+"'"),'PWA must preserve immutable app release cache while versioning the CSS URL');
 await writeFile(swFile,sw,'utf8');
 console.log('Scenario 006 immutable app and homepage published:',tag);
