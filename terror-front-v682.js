@@ -72,7 +72,7 @@
        '<p><strong>Aujourd’hui.</strong> Les autres grandes villes sont tombées. Les forces armées d’Almizia résistent dans leur capitale, appuyées par des unités isolées et des réserves hors de la ville. Une synthèse judiciaire vérifiée peut leur permettre de sécuriser puis reprendre un secteur, sans victoire miraculeuse.</p></details>'+
        '<div class="terror-v682-liaison"><small>DERNIÈRE CAPITALE LIBRE · '+city+' · FORCES ARMÉES D’ALMIZIA</small>'+
        '<strong>'+e(liaisonStatus==='lost'?'DERNIÈRE LIAISON ROMPUE':nationalCounterpush>0?'CONTRE-OFFENSIVE EN COURS':'RECOUPEMENT DES INFORMATIONS')+'</strong>'+
-       '<p>L Officier confirme trois décisions militaires par cycle. Leurs conséquences sont immédiatement publiées et modifient les secteurs, la pression ennemie ou la protection civile. Les réponses de l enquête influencent la qualité des renseignements au cycle suivant. Chaque perte ou reconquête est visible de tous.</p></div>';
+       '<p>L’Officier confirme trois décisions militaires par cycle. Leurs conséquences sont immédiatement publiées et modifient les secteurs, la pression ennemie ou la protection civile. Les réponses de l’enquête influencent la qualité des renseignements au cycle suivant. Chaque perte ou reconquête est visible de tous.</p></div>';
     board.insertAdjacentElement('beforebegin',div);
     const cycleNumber=Math.max(1,Math.min(3,Number(d.room.cycle)||1));
     const beat=publicBeats[scen()]?.[cycleNumber-1];

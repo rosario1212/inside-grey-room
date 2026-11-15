@@ -4,7 +4,7 @@
   const IDS=new Set(['026','027','028']);
   const isTerror=(d=STATE?.sync)=>IDS.has(String(d?.room?.scenario_id||STATE?.scenarioId||STATE?.selectedScenario||''));
   const esc=v=>typeof h==='function'?h(String(v??'')):String(v??'').replace(/[&<>"']/g,'');
-  const qCache=new Map();
+  const qCache=new Map(),quizDraft=new Map();
   const safeNum=(x,min,max)=>Math.min(max,Math.max(min,Number(x)||0));
   let previousCityKey='';
   let previousControlled=null;
@@ -12,6 +12,7 @@
   const live=()=>STATE?.sync?.room?.state?.terror_v681||{};
   const phaseName=()=>String(STATE?.sync?.room?.phase||'');
   const role=()=>String(STATE?.sync?.player?.public_role||'');
+  const quizKey=()=>[STATE.room,STATE.token,STATE?.sync?.room?.cycle].join(':');
   function cityName(){return live().city||''}
 
   function citySetup(){
@@ -72,14 +73,14 @@
     const history=Array.isArray(w.history)?w.history:[];
     const last=history.length?history[history.length-1]:null;
     const civilian=Math.max(0,Math.min(6,Number(w.civilian_services||0)));
-    const operationLabel=last?.military_operation==='proteger'?'PROTECTION DES CIVILS':last?.military_operation==='reconquerir'?'RECONQUÊTE LIMITÉE':'TENIR LES POSITIONS';
-    const outcomeText=last?.decision_effect==='national_reconquest'?
+    const operationLabel=last?.military_order_label?String(last.military_order_label).toUpperCase():last?.military_operation==='proteger'?'PROTECTION DES CIVILS':last?.military_operation==='reconquerir'?'RECONQUÊTE LIMITÉE':'TENIR LES POSITIONS';
+    const outcomeText=last?.military_order_text|| (last?.decision_effect==='national_reconquest'?
       'L’officier a ordonné une reconquête sur la base de renseignements vérifiés. Les forces nationales ont rétabli leur contrôle dans des secteurs disputés.':
       last?.decision_effect==='civilian_protection'?
       'L’officier a privilégié les habitants, les services et les preuves. Leur protection progresse, même si la défense a dû céder du terrain.':
       last?.decision_effect==='fdr_breakthrough'?
       'Des informations insuffisamment confirmées et la pression militaire ont permis au FDR de progresser plus rapidement.':
-      'Les défenseurs tiennent plusieurs positions. L’état-major ne dispose pas encore des preuves permettant de reprendre un secteur.';
+      'Les défenseurs tiennent plusieurs positions. L’état-major ne dispose pas encore des preuves permettant de reprendre un secteur.');
     const consequence=last?.correct_answers!==undefined?
       '<div class="terror-v681-consequence"><small>VOTRE IMPACT · CYCLE '+Number(last.cycle)+' · RAPPORT PUBLIC DE L’ÉTAT-MAJOR</small>'+
       '<strong>'+Number(last.correct_answers)+'/6 RÉPONSES EXACTES · '+esc(operationLabel)+'</strong>'+
@@ -111,7 +112,8 @@
     const d=STATE?.sync;if(!d||!isTerror(d)||d.room.status!=='playing'||phaseName()!=='cycle_debrief'
       ||!['enqueteur','analyste'].includes(role()))return null;
     const key=[STATE.room,STATE.token,d.room.cycle].join(':');
-    if(!qCache.has(key)){
+    const prior=qCache.get(key);
+    if(!prior||(prior.error&&Date.now()-Number(prior.failedAt||0)>=7000)){
       qCache.set(key,{pending:true});
       rpc('igr_v681_terror_get_questions',{p_code:STATE.room,p_player_token:STATE.token})
         .then(data=>{
@@ -119,32 +121,50 @@
           if(STATE.room&&STATE.view==='game'&&phaseName()==='cycle_debrief'&&
             [STATE.room,STATE.token,STATE.sync?.room?.cycle].join(':')===key)renderCurrent();
         })
-        .catch(e=>{console.warn('terror quiz unavailable',e);qCache.set(key,{enabled:false,error:true});if(STATE.view==='game')renderCurrent();});
+        .catch(e=>{console.warn('terror quiz unavailable',e);qCache.set(key,{enabled:false,error:true,failedAt:Date.now()});if(STATE.view==='game')renderCurrent();});
     }
     return qCache.get(key);
   }
+  window.terrorV681SaveDraft=()=>{
+    if(!isTerror()||phaseName()!=='cycle_debrief'||!['enqueteur','analyste'].includes(role()))return;
+    const k=quizKey(),draft={...(quizDraft.get(k)||{})};
+    for(const id of ['terrorV681Q1','terrorV681Q2','terrorV681Q3','qConvergence','qConfusion','qAxis']){
+      const field=document.getElementById(id);
+      if(field)draft[id]=field.value;
+    }
+    quizDraft.set(k,draft);
+  };
+  window.terrorV681RetryQuiz=()=>{
+    if(!isTerror()||phaseName()!=='cycle_debrief'||!['enqueteur','analyste'].includes(role()))return;
+    qCache.delete(quizKey());
+    promptForQuiz();
+    if(typeof renderCurrent==='function')renderCurrent();
+  };
   function quizForm(){
-    if(myAction('terror_v681_quiz')||myAction('debrief'))return '<div class="locked-state">Tes réponses sont scellées. La situation de la ville évoluera quand le cycle sera clôturé.</div>';
+    if(myAction('terror_v681_quiz')||myAction('debrief')){quizDraft.delete(quizKey());return '<div class="locked-state">Tes réponses sont scellées. La situation de la ville évoluera quand le cycle sera clôturé.</div>';}
     const set=promptForQuiz();
     if(!set||set.pending)return '<div class="locked-state">Réception des trois questions factuelles du dossier…</div>';
     if(!set.enabled||!Array.isArray(set.questions)||set.questions.length!==3)
-      return '<div class="locked-state">Questionnaire indisponible. Le MJ n’affichera aucun score avant la clôture du cycle.</div>';
+      return '<div class="locked-state">Le questionnaire n’a pas pu être chargé. Vérifie la connexion, puis réessaie. <button type="button" class="btn" onclick="terrorV681RetryQuiz()">Réessayer</button></div>';
+    const draft=quizDraft.get(quizKey())||{};
+    const selected=(id,value)=>String(draft[id]??'')===String(value)?' selected':'';
     const questions=set.questions.map((q,i)=>{
       const opts=Array.isArray(q.options)?q.options:[];
       return '<div class="field"><label for="terrorV681Q'+(i+1)+'">'+(i+1)+' · '+esc(q.title)+'</label>'+
-      '<select id="terrorV681Q'+(i+1)+'"><option value="">Choisir une réponse…</option>'+
-      opts.map((o,j)=>'<option value="'+['a','b','c'][j]+'">'+esc(o)+'</option>').join('')+
-      '<option value="u">Je ne sais pas</option></select></div>';
+      '<select id="terrorV681Q'+(i+1)+'" onchange="terrorV681SaveDraft()"><option value="">Choisir une réponse…</option>'+
+      opts.map((o,j)=>'<option value="'+['a','b','c'][j]+'"'+selected('terrorV681Q'+(i+1),['a','b','c'][j])+'>'+esc(o)+'</option>').join('')+
+      '<option value="u"'+selected('terrorV681Q'+(i+1),'u')+'>Je ne sais pas</option></select></div>';
     }).join('');
     return '<div class="qcm-v11 terror-v681-quiz"><h3>QUESTIONS DE CRISE · '+esc(cityName().toUpperCase())+'</h3>'+
       '<p class="choice-helper">Réponds individuellement. Trois questions fondées sur les faits examinés : les réponses ne sont corrigées qu’au niveau du rythme collectif, jamais pendant le questionnaire.</p>'+
       questions+
-      '<div class="field"><label for="qConvergence">Le groupe est-il proche de la reconstruction ?</label><select id="qConvergence"><option value="0">Pas encore</option><option value="1">Partiellement</option><option value="2">Oui, largement</option></select></div>'+
-      '<div class="field"><label for="qConfusion">Difficulté ressentie</label><select id="qConfusion"><option value="0">Faible</option><option value="1">Modérée</option><option value="2">Importante</option></select></div>'+
-      '<div class="field"><label for="qAxis">Axe à approfondir</label><select id="qAxis"><option value="chronologie">Chronologie</option><option value="acces">Accès / déplacements</option><option value="mobile">Motivations</option><option value="materiel">Preuves matérielles</option><option value="responsabilite">Responsabilités</option></select></div>'+
+      '<div class="field"><label for="qConvergence">Le groupe est-il proche de la reconstruction ?</label><select id="qConvergence" onchange="terrorV681SaveDraft()"><option value="0"'+selected('qConvergence',0)+'>Pas encore</option><option value="1"'+selected('qConvergence',1)+'>Partiellement</option><option value="2"'+selected('qConvergence',2)+'>Oui, largement</option></select></div>'+
+      '<div class="field"><label for="qConfusion">Difficulté ressentie</label><select id="qConfusion" onchange="terrorV681SaveDraft()"><option value="0"'+selected('qConfusion',0)+'>Faible</option><option value="1"'+selected('qConfusion',1)+'>Modérée</option><option value="2"'+selected('qConfusion',2)+'>Importante</option></select></div>'+
+      '<div class="field"><label for="qAxis">Axe à approfondir</label><select id="qAxis" onchange="terrorV681SaveDraft()"><option value="chronologie"'+selected('qAxis','chronologie')+'>Chronologie</option><option value="acces"'+selected('qAxis','acces')+'>Accès / déplacements</option><option value="mobile"'+selected('qAxis','mobile')+'>Motivations</option><option value="materiel"'+selected('qAxis','materiel')+'>Preuves matérielles</option><option value="responsabilite"'+selected('qAxis','responsabilite')+'>Responsabilités</option></select></div>'+
       '<button type="button" class="btn primary block" onclick="terrorV681SubmitQuiz()">Sceller mes réponses · la ville attend</button></div>';
   }
   window.terrorV681SubmitQuiz=async()=>{
+    window.terrorV681SaveDraft();
     const answers={};
     for(let i=1;i<=3;i++){
       const val=document.getElementById('terrorV681Q'+i)?.value;
@@ -158,6 +178,7 @@
         p_confusion:Number(document.getElementById('qConfusion')?.value||1),
         p_axis:document.getElementById('qAxis')?.value||'chronologie'
       });
+      quizDraft.delete(quizKey());
       await syncNow(true);
       toast('Réponses scellées. Le prochain bulletin de situation sera public.');
     }catch(e){console.error('terror quiz',e);toast('Débrief déjà envoyé ou phase terminée.');}
