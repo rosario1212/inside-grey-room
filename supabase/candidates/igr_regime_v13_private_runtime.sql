@@ -180,7 +180,7 @@ BEGIN
     WHERE (x.value->>'cycle')::integer=r.cycle LIMIT 1;
   IF p.public_role='suspect' AND p.internal_slot IN (1,2) AND
     m.play_state->'arrests' ? actor THEN
-    defense_objective:=m.private_pack->'captured_defense_objectives'->actor
+    defense_objective:=(m.private_pack->'captured_defense_objectives'->actor)
        - 'expected_ordered_by';
   END IF;
   defense_used:=EXISTS(SELECT 1 FROM jsonb_array_elements(
