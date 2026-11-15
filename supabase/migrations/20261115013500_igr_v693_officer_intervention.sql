@@ -57,7 +57,7 @@ BEGIN
   ELSE 'Cette autorisation ou ce contact est-il encore valable, et comment vérifier sa date ?' END;
  visit:=jsonb_build_object(
   'cycle',r.cycle,'visitor_id',p.id::text,'session_type',session_type,
-  'session_started_at',r.phase_started_at::text,'focus',focus_,
+  'session_started_at',r.phase_started_at::text,'session_epoch_ms',floor(extract(epoch from r.phase_started_at)*1000)::bigint,'focus',focus_,
   'question',question_text,'targets',session_targets);
  INSERT INTO public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
  VALUES(r.code,p.id,r.cycle,'terror_v693_officer_join',visit);
