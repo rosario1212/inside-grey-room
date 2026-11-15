@@ -79,6 +79,7 @@ BEGIN
   IF coalesce((item->>'core')::boolean,false) THEN CONTINUE;END IF;
   clean_text:=split_part(item->>'result',' — Ce que cela peut changer face au FDR : ',1);
   kind_:=CASE item->>'difficulty'
+    WHEN 'mixed' THEN 'clarity' WHEN 'challenge' THEN 'ambiguity'
     WHEN 'clarity' THEN 'clarity' WHEN 'ambiguity' THEN 'ambiguity'
     ELSE 'balanced' END;
   trames:=trames||jsonb_build_array(jsonb_build_object(
@@ -222,12 +223,24 @@ BEGIN
  -- All new evidence is read from the room snapshot, never from a global A-only pack.
  sig:='public.igr_v4_emit_trame(text)';
  SELECT pg_get_functiondef(sig::regprocedure) INTO fn;
- IF strpos(fn,'v_used := coalesce(')=0 THEN RAISE EXCEPTION 'trame source anchor missing';END IF;
+ IF strpos(fn,'v_used := coalesce(')=0 OR strpos(fn,'with raw as (')=0
+  OR strpos(fn,'v_prior_conf numeric := null;')=0
+ THEN RAISE EXCEPTION 'trame source anchor missing';END IF;
+ fn:=replace(fn,'v_prior_conf numeric := null;',
+    'v_prior_conf numeric := null; v_prior_accuracy integer := null;');
  fn:=replace(fn,'v_used := coalesce(',
    'if v_room.scenario_id in (''026'',''027'',''028'') then '||
    'v_pack:=coalesce(igr_private.igr_v695_pinned_pack(v_room.code),v_pack);'||
    'perform igr_private.igr_v695_emit_guaranteed(v_room.code,v_room.cycle);end if;'||
    E'\n  v_used := coalesce(');
+ fn:=replace(fn,'with raw as (',
+   'if v_room.scenario_id in (''026'',''027'',''028'') and v_room.cycle>=2 then '||
+   'select (h->>''correct_answers'')::int into v_prior_accuracy '||
+   'from jsonb_array_elements(coalesce(v_room.state#>''{terror_v681,history}'',''[]''::jsonb)) h '||
+   'where (h->>''cycle'')::int=v_room.cycle-1 limit 1;'||
+   'v_wanted:=CASE WHEN v_prior_accuracy<=2 THEN ''clarity'' '||
+   'WHEN v_prior_accuracy>=5 THEN ''ambiguity'' ELSE ''balanced'' END;end if;'||
+   E'\n  with raw as (');
  EXECUTE fn;
 
  sig:='public.igr_v4_make_reveal(text)';
