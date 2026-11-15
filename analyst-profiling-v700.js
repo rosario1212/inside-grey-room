@@ -154,10 +154,12 @@ function tabHtml(){
   const sid=String(s.id),old=record(sid,cycle),pair=questionsFor(s,cycle),draft=drafts.get(draftKey(sid))||{one:'',two:''};
   const history=records(sid).filter(x=>Number(x.cycle)<cycle).map(x=>
    '<details class="igr700-old"><summary>'+tr('Relire le cycle ','Review cycle ')+safe(x.cycle)+'</summary>'+
-    '<p><b>1.</b> '+safe(x.answer_one)+'</p><p><b>2.</b> '+safe(x.answer_two)+'</p></details>').join('');
+    '<p><b>'+safe(questionText(x.question_one_code)||Q1())+'</b> '+safe(x.answer_one)+'</p>'+ 
+    '<p><b>'+safe(questionText(x.question_two_code)||Q2())+'</b> '+safe(x.answer_two)+'</p></details>').join('');
   return '<article class="igr700-person"><div class="igr700-person-head"><h3>'+safe(s.pseudo)+'</h3><span>'+
    (old?tr('ENREGISTRÉ','SAVED'):tr('À REMPLIR','PENDING'))+'</span></div>'+
-   (old?'<div class="igr700-saved"><p><b>1.</b> '+safe(old.answer_one)+'</p><p><b>2.</b> '+safe(old.answer_two)+'</p></div>':
+   (old?'<div class="igr700-saved"><p><b>'+safe(pair.one.text)+'</b> '+safe(old.answer_one)+'</p>'+ 
+     '<p><b>'+safe(pair.two.text)+'</b> '+safe(old.answer_two)+'</p></div>':
     available?'<div class="igr700-fields"><label>'+safe(pair.one.text)+
      '<textarea id="igr700-one-'+safe(sid)+'" rows="2" maxlength="180" data-igr700-suspect="'+safe(sid)+'" data-igr700-field="one" placeholder="'+tr('Au moins 10 mots…','At least 10 words…')+'">'+safe(draft.one)+'</textarea><small class="igr701-counter">'+wordCount(draft.one)+' / 10 '+tr('mots minimum','words minimum')+'</small></label>'+
      '<label>'+safe(pair.two.text)+
