@@ -7,10 +7,10 @@ const js=read('analyst-profiling-v700.js');
 const rules=read('self-guided-rules-v51.js');
 const sql=read('supabase/migrations/20261115143000_igr_v700_analyst_two_question_profiles.sql');
 for(const f of ['analyst-profiling-v700.js','self-guided-rules-v51.js'])execFileSync(process.execPath,['--check',f]);
-for(const marker of ['igr_v700_psych_profiles','igr_v700_submit_psych_profile','r.status=\\'finished\\'',
- 'a.action_type=\\'igr_v700_psych_profile\\'','p.public_role=\\'analyste\\'',
- 'coalesce((a.payload->>\\'match_no\\')::integer,1)=match_','canonical_evidence', 'two question']){
- if(marker==='two question')continue;
+for(const marker of ["igr_v700_psych_profiles","igr_v700_submit_psych_profile",
+ "r.status='finished'","a.action_type='igr_v700_psych_profile'",
+ "p.public_role='analyste'","coalesce((a.payload->>'match_no')::integer,1)=match_",
+ "canonical_evidence"]){
  assert(sql.includes(marker),'Missing server guard '+marker);
 }
 assert(!sql.includes("INSERT INTO public.igr_v4_events"),'no public broadcast during play');
