@@ -7,7 +7,7 @@ BEGIN
  IF EXISTS (SELECT 1 FROM public.igr_v4_rooms WHERE code IN ('C711J','C711N')) THEN
   RAISE EXCEPTION 'QA room already exists';
  END IF;
- INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES ('C711J','014'),('C711N','014');
+ INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES ('C711J','001'),('C711N','001');
  INSERT INTO public.igr_v4_players(room_code,pseudo,seat_index,public_role,internal_slot)
  VALUES ('C711J','Enqueteur',0,'enqueteur',null),
  ('C711J','Analyste',1,'analyste',null),('C711J','Procureur',2,'procureur',null),
