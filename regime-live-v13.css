@@ -57,3 +57,10 @@
 .igr-rg13-ruling{background:#1b1915;padding:10px;border:1px solid var(--rg13-line);border-radius:8px}
 .igr-rg13-ruling button+button{margin-left:8px}
 .igr-rg13-court .igr-rg13-section{background:#101111}
+
+/* Régime v14 — restrained horror photography treatment, without decorative gore. */
+.igr-rg13-scene{display:grid;gap:8px;padding:22px 19px;border-radius:13px;border:1px solid rgba(163,130,116,.32);background:radial-gradient(ellipse at 15% 0%,#33201c 0%,#171413 44%,#090a0b 100%);box-shadow:inset 0 0 38px rgba(0,0,0,.28)}
+.igr-rg13-scene small{color:#c69b86;font:700 10px/1.5 'IBM Plex Mono',monospace;letter-spacing:.13em}
+.igr-rg13-scene h4{font-size:19px;font-weight:700;line-height:1.2;letter-spacing:-.01em;margin:0;color:#f0e6dc}
+.igr-rg13-scene p{font-size:14px;line-height:1.65;color:#dbd0c5;margin:0;max-width:68ch}
+.igr-rg13-scene span{color:#9e9188;font-size:10px;font-style:italic}
