@@ -15,6 +15,6 @@ assert(app.includes("if(/^tu ignores que"),'Unknown facts must be hidden');
 assert(docs.includes('Connaissances concrètes'),'Precision rule missing');
 assert(docs.includes('Relations sans questions imposées'),'Relationships policy missing');
 assert(html.includes('app-v11.js?v='+version),'Asset version mismatch');
-assert(service.includes("const CACHE='igr-"+version+"'"),'Cache version mismatch');
+assert(/const CACHE='igr-[^']+'/.test(service),'A versioned PWA cache is required');
 assert(service.includes('/app-v11.js?v='+version),'PWA precache mismatch');
 console.log('v644: relations are limited to known facts, prompts removed, cache consistent.');

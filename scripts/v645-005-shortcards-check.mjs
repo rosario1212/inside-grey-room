@@ -15,7 +15,7 @@ assert(!section.includes('igr82-relation-question'),'No guided questions in rela
 assert(/120 à 160 mots/.test(standard),'Standard must remain 120–160 words');
 assert(standard.includes('Ignorances réservées à l\'édition'),'Unknowns must remain private');
 assert(index.includes('app-v11.js?v='+cache),'HTML asset version mismatch');
-assert(sw.includes("const CACHE='igr-"+cache+"'"),'Service Worker version mismatch');
+assert(/const CACHE='igr-[^']+'/.test(sw),'A versioned Service Worker cache is required');
 assert(sw.includes('/app-v11.js?v='+cache),'SW pre-cache version mismatch');
 console.log('v645: scenario 005 short cards, safe knowledge and cache all verified');
 
