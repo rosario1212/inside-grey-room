@@ -142,3 +142,38 @@ export function generatePublicNews({scenarioId,event,publishedIds=[]}={}) {
     title:'UN HAUT RESPONSABLE DU RÉGIME CAPTURÉ',
     text:'Les autorités de transition confirment une arrestation. Les investigations sur les décisions criminelles se poursuivent.'};
 }
+
+/**
+ * Validate one fugitive strategic choice against a server-loaded private
+ * variant catalogue. Effects are returned as declarative commands; a trusted
+ * transactional server adapter must apply them and save the immutable record.
+ */
+export function resolveFugitiveTurn({scenarioId,actorId,cycle,requestId,actionId,
+  options,history=[],capturedAt=null}={}) {
+  const sc=REGIME_SCENARIOS[scenarioId];
+  if(!sc)return privateError('not_regime');
+  if(!sc.fugitives.includes(actorId))return privateError('not_a_fugitive');
+  if(!validCycle(cycle))return privateError('invalid_cycle');
+  if(capturedAt!==null)return privateError('already_captured');
+  if(typeof requestId!=='string'||requestId.trim().length<5)return privateError('invalid_request');
+  if(!Array.isArray(history))return privateError('bad_action_history');
+  const old=history.find(x=>x.requestId===requestId);
+  if(old)return old.actorId===actorId&&old.cycle===cycle?
+    {status:'replay',consumed:false}:privateError('request_conflict');
+  if(history.some(x=>x.actorId===actorId&&x.cycle===cycle))
+    return privateError('one_strategy_per_cycle');
+  // options must come from the trusted sealed pack, not from the player payload.
+  const option=Array.isArray(options)?options.find(x=>x.id===actionId&&
+    x.actorId===actorId&&(!x.availableCycles||x.availableCycles.includes(cycle))):null;
+  if(!option)return privateError('option_not_available');
+  const allowedEffects=new Set(['delay_lead','shift_network','shield_contact','publish_declaration']);
+  const allowedCosts=new Set(['expose_trace','lose_protection','create_contradiction']);
+  if(!allowedEffects.has(option.effect?.kind)||!allowedCosts.has(option.cost?.kind)||
+    typeof option.effect?.ref!=='string'||typeof option.cost?.ref!=='string')
+    return privateError('unbalanced_option');
+  // Historical criminal acts are immutable: no mutation of 'truth', 'acts', or proof authenticity.
+  return {status:'accepted',consumed:true,
+    record:{requestId,scenarioId,actorId,cycle,actionId},
+    commands:[{kind:option.effect.kind,ref:option.effect.ref},
+      {kind:option.cost.kind,ref:option.cost.ref}]};
+}
