@@ -90,8 +90,10 @@ BEGIN
     OR char_length(a2) NOT BETWEEN 12 AND 180
     OR a1 ~ '[<>]' OR a2 ~ '[<>]'
  THEN RAISE EXCEPTION 'each answer must contain 12 to 180 plain text characters';END IF;
- IF a1 ~ '[[:cntrl:]]' OR a2 ~ '[[:cntrl:]]'
- THEN RAISE EXCEPTION 'single paragraph answers required';END IF;
+ IF a1 ~ '[\r\t]' OR a2 ~ '[\r\t]'
+   OR char_length(a1)-char_length(replace(a1,E'\n',''))>1
+   OR char_length(a2)-char_length(replace(a2,E'\n',''))>1
+ THEN RAISE EXCEPTION 'each answer has a maximum of two explicit lines';END IF;
  INSERT INTO public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
  VALUES(r.code,p.id,r.cycle,'igr_v700_psych_profile',
   jsonb_build_object('match_no',match_,'suspect_id',p_suspect_id::text,
