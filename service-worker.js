@@ -1,6 +1,7 @@
-const CACHE='igr-regime-journal-draft-v6';
+const CACHE='igr-regime-private-candidate-v13';
 const SHELL=[
   '/', '/index.html', '/en.html',
+  '/regime-live-v13.css?v=regime-candidate-v13-20261115','/regime-live-v13.js?v=regime-candidate-v13-20261115',
   '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=role-balance-v694-20261115',
   '/styles-v11.css?v=v12.22-mobile-ui','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
   '/gameplay-flow-v13.css?v=v13.2-final','/dlc-experience-v13.css?v=v13.2-final','/lobby-ui-fix-v13.css?v=v13.2-lobby-fix',
