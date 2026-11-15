@@ -324,6 +324,10 @@ END $patch$;
 REVOKE ALL ON FUNCTION public.igr_v33_terror_decide_027(text,uuid,text) FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON FUNCTION public.igr_terror_military_decision(text,uuid,text) FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON FUNCTION public.igr_v688_terror_choose_operation(text,uuid,text) FROM PUBLIC,anon,authenticated;
+-- A concurrent legacy v694 cadence module was retained for role tips/initiatives,
+-- but its officer endpoints must not modify the same military state.
+REVOKE ALL ON FUNCTION public.igr_v694_officer_state(text,uuid) FROM PUBLIC,anon,authenticated;
+REVOKE ALL ON FUNCTION public.igr_v694_officer_decide(text,uuid,text) FROM PUBLIC,anon,authenticated;
 
 -- The release indicator is server-side, never accessible to clients.
 DO $audit$
