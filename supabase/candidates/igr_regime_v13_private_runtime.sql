@@ -77,7 +77,7 @@ BEGIN
   VALUES(r.code,r.scenario_id,m.variant_id,m.manuscript->'regime_vnext',
     jsonb_build_object('alliance','{}'::jsonb,'decisions','[]'::jsonb,
       'investigations','[]'::jsonb,'disclosed','[]'::jsonb,
-      'arrests','{}'::jsonb,'mandates','[]'::jsonb,'third','{}'::jsonb,
+      'arrests','{}'::jsonb,'mandates','[]'::jsonb,'reconstructions','{}'::jsonb,'third','{}'::jsonb,
       'court','{}'::jsonb));
   RETURN true;
 END $$;
