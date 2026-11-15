@@ -1,6 +1,6 @@
 # LE RÉGIME — organigramme d'État et rôle exclusif v2
 
-**État : l'organigramme public reste une proposition active ; le rôle de Transfuge est désormais une piste NON RETENUE pour la composition cible, conservée uniquement comme historique de design. Voir `docs/REGIME_JUGE_ET_TRAQUE_V1.md`. La personnalisation du président n'est pas intégrée au runtime serveur.**
+**État : l'organigramme public reste une proposition active ; le rôle de Transfuge est désormais une piste NON RETENUE pour la composition cible, conservée uniquement comme historique de design. Voir `docs/REGIME_ALLIANCE_MANDATS_VERDICT_V5.md`. La personnalisation du président n'est pas intégrée au runtime serveur.**
 
 ## Décisions approuvées
 
