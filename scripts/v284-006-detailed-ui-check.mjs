@@ -18,7 +18,7 @@ assert.match(js,/enqueteur','analyste/,'Only investigator and analyst can submit
 assert.match(js,/unsure/,'Uncertainty must be a neutral answer');
 assert.doesNotMatch(js,/v284_006_prior_alignment|canonical_truth|true_variant|score *=/i,'Client cannot contain scoring logic or truth');
 assert.match(sw,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'PWA must precache questionnaire');
-assert.ok(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+release+"'"),'PWA cache must refresh');
+assert.ok(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"+release+"-carbon-v697'"),'PWA cache must carry the immutable app release and charcoal CSS revision');
 assert.ok(worker.includes('index-latest-release.txt'),'Worker must serve the active immutable page');
 assert.equal(readFileSync(path.join(dist,'index-latest-release.txt'),'utf8'),html,'Worker shell alias must equal the finished homepage');
 console.log('Scenario 006 v284 detailed questionnaire and immutable release: PASS');
