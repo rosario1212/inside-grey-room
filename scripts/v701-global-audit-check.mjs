@@ -15,6 +15,14 @@ assert.deepEqual(metadata.evidence_per_cycle,[4,5,4]);
 assert(existsSync(path.join(root,script)),'CARTEL 031 client absent from web build');
 for(const page of ['index.html','en.html']){
   const html=read(path.join(root,page));
+  if(page==='en.html' && /location\.replace\(['"]\.\/['"]\)/.test(html)&&!/<script\s+src=/.test(html)){
+    // English intentionally redirects into the published main client. The
+    // bilingual page must not download every gameplay module before leaving.
+    assert.match(html,/localStorage\.setItem\(['"]igr_locale['"],['"]en['"]\)/,
+      'English redirect must persist the requested locale');
+    assert(!/<script\s+src=/.test(html),'English redirect must not download an extra runtime');
+    continue;
+  }
   const matches=html.split('cartel031-v171.js?v=v173-cartel031-negotiation').length-1;
   assert.equal(matches,1,page+' must load exactly one CARTEL 031 runtime');
   if(page==='index.html'){
