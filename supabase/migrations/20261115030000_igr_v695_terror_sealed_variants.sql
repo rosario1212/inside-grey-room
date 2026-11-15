@@ -38,6 +38,32 @@ BEGIN
 END $body$;
 REVOKE ALL ON FUNCTION igr_private.igr_v695_release_eligible() FROM PUBLIC,anon,authenticated;
 
+-- The same user-approved dossier descriptions serve both the lobby and
+-- the authenticated public briefing. No per-variant secret is included.
+UPDATE public.igr_v4_scenario_packs SET pack=jsonb_set(pack,'{context}',
+ to_jsonb($text026$À Ferra, l’armée s’est effondrée. Le FDR a saisi ses armes, fait tomber les villes puis installé son pouvoir par les rafles, les exécutions sommaires et les disparitions. Des registres ont été falsifiés ou détruits ; pour certaines familles, il ne reste plus de trace officielle.
+
+Dans la capitale encore défendue, la Grey Room détient trois personnes liées au FDR. Chacune connaît une partie des ordres, des abus ou des dissimulations.
+
+Les combats approchent. Il faut établir les responsabilités avant que les preuves ne disparaissent.$text026$::text),true),updated_at=now()
+WHERE scenario_id='026';
+
+UPDATE public.igr_v4_scenario_packs SET pack=jsonb_set(pack,'{context}',
+ to_jsonb($text027$Après les massacres et les déplacements forcés, le FDR contrôle une partie de la capitale. Il affirme que la zone rouge est vide. Pourtant, des familles cherchent encore leurs proches et le sort des otages reste incertain.
+
+Trois captifs livrent des informations parfois authentiques, parfois périmées, parfois choisies pour désigner leurs rivaux. L’Enquêteur doit attribuer les crimes commis.
+
+L’Officier doit défendre les positions et protéger les habitants à partir de renseignements incomplets. Une décision peut préserver un secteur ou mettre en danger ceux qui y sont restés.$text027$::text),true),updated_at=now()
+WHERE scenario_id='027';
+
+UPDATE public.igr_v4_scenario_packs SET pack=jsonb_set(pack,'{context}',
+ to_jsonb($text028$Les unités gouvernementales reculent et les communications tombent par intermittence. Dans les territoires conquis, le FDR impose des arrestations et des représailles ; la Grey Room conserve encore les dossiers de ses victimes.
+
+Le FDR annonce qu’un complice se trouve déjà dans le périmètre protégé. Des autorisations anciennes et des messages reçus tardivement semblent appuyer cette menace sans prouver une présence actuelle.
+
+Deux détenus cherchent à coopérer ; le troisième entretient le doute. L’enquête doit établir les crimes passés et vérifier l’alerte présente sans condamner quelqu’un sur une rumeur.$text028$::text),true),updated_at=now()
+WHERE scenario_id='028';
+
 -- Validated private editor draft -> one immutable, room-scoped scenario pack.
 CREATE OR REPLACE FUNCTION igr_private.igr_v695_build_pack(p_sid text,p_v jsonb)
 RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path TO ''
