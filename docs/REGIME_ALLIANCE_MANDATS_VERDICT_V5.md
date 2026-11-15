@@ -34,8 +34,8 @@ Chaque fugitif choisit simultanément et sans voir l'autre décision :
 - **SE SÉPARER** : recourir à son propre réseau et limiter les liens.
 
 Règle simple et déterministe :
-- **Deux consentements SE REGROUPER → ENSEMBLE**, partage de contacts et d'avantages mais risque d'exposition mutuelle. Les deux restent des cibles différentes ; une seule source n'autorise pas deux arrestations.
-- **Au moins un SE SÉPARER → SÉPARÉS**, réseaux distincts, autonomie accrue mais moins de capacité à se couvrir.
+- **Deux consentements SE REGROUPER → ENSEMBLE**, partage de contacts et d'avantages mais risque d'exposition mutuelle. Les enquêteurs ne voient PAS directement cette décision ; ils ne peuvent déduire le regroupement qu'à partir de preuves révélées par leurs actions. Les deux restent des cibles différentes ; une seule source n'autorise pas deux arrestations.
+- **Au moins un SE SÉPARER → SÉPARÉS**, réseaux distincts, autonomie accrue mais moins de capacité à se couvrir. Les enquêtes sur l'autre fugitif ne révèlent pas automatiquement ce refus.
 - **Silence/timeout → SE SÉPARER par défaut annoncé** avant confirmation ; pour qu'une déconnexion ne prive pas un autre joueur d'un choix, faire une reprise de session ou un choix serveur neutre explicite.
 
 **Chaque variante garantit que ces deux états restent matériellement jouables** : il existe des pistes et pièces pour les deux structures. La récompense et la faiblesse de chaque état varient par variante sans cacher une option « perdante à 100 % ». Dans certaines variantes, des alliances peuvent être rompues ultérieurement par des décisions C1/C2 ; aucun changement de réseau par hasard.
