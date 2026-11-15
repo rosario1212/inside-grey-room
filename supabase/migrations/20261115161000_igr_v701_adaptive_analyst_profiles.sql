@@ -46,7 +46,88 @@ BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'analyst role required';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=who.room_code FOR UPDATE;
  IF NOT FOUND THEN RAISE EXCEPTION 'unknown room';END IF;
- IF p_question_one_code !~ '^c[123]_(base|statement|interview|confrontation|evidence)_1$'
+ IF p_question_one_code IS NULL OR p_question_two_code IS NULL OR
+    p_question_one_code !~ '^c[123]_(base|statement|interview|confrontation|evidence)_1
+ THEN RAISE EXCEPTION 'invalid first psychological question';END IF;
+ k:=substring(p_question_one_code FROM '^c[123]_(base|statement|interview|confrontation|evidence)_1
+ expected_:='c'||r.cycle||'_'||k||'_1';
+ IF p_question_one_code IS DISTINCT FROM expected_
+ OR p_question_two_code IS DISTINCT FROM ('c'||r.cycle||'_'||k||'_2')
+ THEN RAISE EXCEPTION 'questions must match the current cycle and context';END IF;
+ current_match:=greatest(1,coalesce((r.state->>'match_no')::integer,1));
+ response_:=public.igr_v700_submit_psych_profile(p_code,p_player_token,
+  p_suspect_id,p_answer_one,p_answer_two);
+ UPDATE public.igr_v4_actions a
+ SET payload=payload||jsonb_build_object(
+  'question_one_code',p_question_one_code,
+  'question_two_code',p_question_two_code)
+ WHERE a.room_code=r.code AND a.player_id=who.id
+  AND a.cycle=r.cycle AND a.action_type='igr_v700_psych_profile'
+  AND a.payload->>'suspect_id'=p_suspect_id::text
+  AND coalesce((a.payload->>'match_no')::integer,1)=current_match;
+ GET DIAGNOSTICS updated_count=ROW_COUNT;
+ IF updated_count<>1 THEN RAISE EXCEPTION 'profile question binding failed';END IF;
+ RETURN response_||jsonb_build_object('question_one_code',p_question_one_code,
+   'question_two_code',p_question_two_code);
+END;
+$body$;
+REVOKE ALL ON FUNCTION public.igr_v701_submit_psych_profile(text,uuid,uuid,text,text,text,text)
+ FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.igr_v701_submit_psych_profile(text,uuid,uuid,text,text,text,text)
+ TO anon,authenticated;
+ THEN RAISE EXCEPTION 'invalid first psychological question';END IF;
+ k:=substring(p_question_one_code FROM '^c[123]_(base|statement|interview|confrontation|evidence)_1$');
+ expected_:='c'||r.cycle||'_'||k||'_1';
+ IF p_question_one_code IS DISTINCT FROM expected_
+ OR p_question_two_code IS DISTINCT FROM ('c'||r.cycle||'_'||k||'_2')
+ THEN RAISE EXCEPTION 'questions must match the current cycle and context';END IF;
+ current_match:=greatest(1,coalesce((r.state->>'match_no')::integer,1));
+ response_:=public.igr_v700_submit_psych_profile(p_code,p_player_token,
+  p_suspect_id,p_answer_one,p_answer_two);
+ UPDATE public.igr_v4_actions a
+ SET payload=payload||jsonb_build_object(
+  'question_one_code',p_question_one_code,
+  'question_two_code',p_question_two_code)
+ WHERE a.room_code=r.code AND a.player_id=who.id
+  AND a.cycle=r.cycle AND a.action_type='igr_v700_psych_profile'
+  AND a.payload->>'suspect_id'=p_suspect_id::text
+  AND coalesce((a.payload->>'match_no')::integer,1)=current_match;
+ GET DIAGNOSTICS updated_count=ROW_COUNT;
+ IF updated_count<>1 THEN RAISE EXCEPTION 'profile question binding failed';END IF;
+ RETURN response_||jsonb_build_object('question_one_code',p_question_one_code,
+   'question_two_code',p_question_two_code);
+END;
+$body$;
+REVOKE ALL ON FUNCTION public.igr_v701_submit_psych_profile(text,uuid,uuid,text,text,text,text)
+ FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.igr_v701_submit_psych_profile(text,uuid,uuid,text,text,text,text)
+ TO anon,authenticated;);
+ IF k IS NULL THEN RAISE EXCEPTION 'invalid context';END IF;
+ expected_:='c'||r.cycle||'_'||k||'_1';
+ IF p_question_one_code IS DISTINCT FROM expected_
+ OR p_question_two_code IS DISTINCT FROM ('c'||r.cycle||'_'||k||'_2')
+ THEN RAISE EXCEPTION 'questions must match the current cycle and context';END IF;
+ current_match:=greatest(1,coalesce((r.state->>'match_no')::integer,1));
+ response_:=public.igr_v700_submit_psych_profile(p_code,p_player_token,
+  p_suspect_id,p_answer_one,p_answer_two);
+ UPDATE public.igr_v4_actions a
+ SET payload=payload||jsonb_build_object(
+  'question_one_code',p_question_one_code,
+  'question_two_code',p_question_two_code)
+ WHERE a.room_code=r.code AND a.player_id=who.id
+  AND a.cycle=r.cycle AND a.action_type='igr_v700_psych_profile'
+  AND a.payload->>'suspect_id'=p_suspect_id::text
+  AND coalesce((a.payload->>'match_no')::integer,1)=current_match;
+ GET DIAGNOSTICS updated_count=ROW_COUNT;
+ IF updated_count<>1 THEN RAISE EXCEPTION 'profile question binding failed';END IF;
+ RETURN response_||jsonb_build_object('question_one_code',p_question_one_code,
+   'question_two_code',p_question_two_code);
+END;
+$body$;
+REVOKE ALL ON FUNCTION public.igr_v701_submit_psych_profile(text,uuid,uuid,text,text,text,text)
+ FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.igr_v701_submit_psych_profile(text,uuid,uuid,text,text,text,text)
+ TO anon,authenticated;
  THEN RAISE EXCEPTION 'invalid first psychological question';END IF;
  k:=substring(p_question_one_code FROM '^c[123]_(base|statement|interview|confrontation|evidence)_1$');
  expected_:='c'||r.cycle||'_'||k||'_1';
