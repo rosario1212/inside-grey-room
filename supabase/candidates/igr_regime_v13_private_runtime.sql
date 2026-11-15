@@ -253,7 +253,16 @@ BEGIN
         m.play_state->'reconstructions' ? p.id::text,false),
       'my_third_final_submitted',coalesce(
         m.play_state->'third' ? 'final_declaration',false),
-      'events',coalesce(m.play_state->'events','[]'::jsonb),
+      'events',coalesce(
+        (SELECT jsonb_agg(jsonb_build_object(
+           'type','public_news','id','journal-c'||j.ord,
+           'title','JOURNAL DE KARSANE','text',j.news,
+           'cycle',j.ord) ORDER BY j.ord)
+         FROM jsonb_array_elements_text(coalesce(
+           m.private_pack->'journal'->'events','[]'::jsonb))
+           WITH ORDINALITY j(news,ord)
+         WHERE j.ord<=least(3,greatest(0,r.cycle))),'[]'::jsonb)||
+         coalesce(m.play_state->'events','[]'::jsonb),
       'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb))));
 END $$;
 REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) FROM PUBLIC,anon,authenticated;
