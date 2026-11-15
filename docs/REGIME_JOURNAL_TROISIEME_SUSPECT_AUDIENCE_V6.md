@@ -100,3 +100,18 @@ La victoire tactique est 2/2 captures ; le résultat judiciaire indépendant se 
 5. Ajouter la règle de temps d'audience exclusivement conditionnée à la **deuxième capture en C3**, calculée serveur, puis test du rythme avec six à neuf joueurs.
 6. Tester au minimum 0/2, 1/2, 2/2 en C1/C2/C3 ; président capturé mais gendre libre ; dirigeants séparés/ensemble ; objectifs du troisième suspect satisfaits/ratés ; exactitude 0–4 actes et toutes les variantes.
 7. Aucun rendu « EN DIRECT » ne doit porter à confusion avec une information provenant d'une agence de presse réelle. Pas de publication avant tests end-to-end.
+
+
+## 7. Ajustement simplifié — audience et troisième suspect
+
+**Règle UX : le tribunal est une simulation simple, pas un nouveau jeu procédural.**
+
+- **Audience longue uniquement lorsque la deuxième capture intervient au C3** (durée totale cible 10–12 min à tester) : ouverture et charges très courtes par Enquêteur/Procureur, **2 minutes garanties à chacun des 3 suspects** pour présenter sa version et sa défense, conclusion du Juge, puis **vote final du camp d'enquête** sur le degré de responsabilité de chacun, selon la grammaire d'audience déjà présente dans v52 (échelle 0/1/2). Le Juge anime et arbitre selon les règles existantes ; aucune voix supplémentaire ou pouvoir arbitraire ne doit être inventé pour lui.
+- **Audience normale lorsque les deux captures sont obtenues en C1 ou C2** : les confrontations des cycles suivants remplacent l'essentiel des longues défenses finales ; garder clôture et vote de responsabilité du moteur existant. Ne pas imposer artificiellement trois fois deux minutes si les interrogatoires ont déjà eu lieu.
+- **Fiche des quatre actes charnières du Régime** : l'équipe peut rattacher des actes à des responsables avec preuves ; cela **complète** le vote v52 par degrés de responsabilité au lieu de créer un tribunal indépendant incompréhensible. Séparer le score de reconstitution des quatre actes et l'échelle v52 appliquée aux suspects. Les règles exactes du vote et les droits du Juge doivent être audités sur le runtime v52 avant modification.
+- **Troisième suspect : deux voies uniquement et conditions vérifiables** :
+  - **COOPÉRATION** : avant fin C2, remettre la pièce authentique spécifique de la carte privée **ET**, dans sa déclaration finale, désigner correctement le donneur d'ordre et reconnaître correctement sa propre implication. Score serveur indépendant des erreurs de vote du camp d'enquête.
+  - **PROTECTION** : avant fin C2, déposer sa version défensive sur un acte précis désigné dans sa carte **ET** faire en sorte que le vote final du camp d'enquête **n'identifie pas correctement son degré de responsabilité concernant cet acte**. Les preuves restent accessibles et le juge ne décide pas arbitrairement de sa réussite.
+- La voie est fixée par la variante avant C1, révélée au seul troisième suspect. S'il n'agit pas, il perd. Les deux voies peuvent être gagnées même si les deux fugitifs sont capturés tôt, par dialogue, confrontation et vote final.
+
+**Statut : objectif de conception ; rien de ceci n'est fonctionnel dans le serveur à la seule lecture de ce document.**
