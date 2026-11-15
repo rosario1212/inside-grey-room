@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='terror-live-v694-20261115-crisis-v696';
+const tag='terror-live-v694-20261115';
 const crisisCssPath='/terror-crisis-v696.css?v=v87-canonical-narrative';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
