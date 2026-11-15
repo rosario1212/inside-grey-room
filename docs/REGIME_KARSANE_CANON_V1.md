@@ -2,7 +2,7 @@
 
 **Statut : refonte narrative proposée, non intégrée aux packs privés et non déployée.**
 
-**Présidence personnalisée en partie :** « Harb Kassar » est l'identité de référence hors session. Quand un joueur reçoit le rôle de président, son nom de joueur (pseudonyme choisi) devient le nom du président **dans cette partie** ; aucun surnom ou prénom « Harb » ne lui est imposé à l'écran. Le serveur doit figer cet alias à l'ouverture de la partie, remplacer de façon structurée toutes les mentions du président dans les cartes, convocations, documents, entretiens et révélation de cette partie, et relier les noeuds de l'organigramme à un identifiant de personnage stable (jamais au texte du nom). Aucun document ne peut mélanger les deux noms. La personnalisation n'est pas encore implémentée.
+**Noms des joueurs dans la partie :** TOUS les personnages joués — président, ministres, héritier, chefs de services, troisième suspect, Enquêteur, Analyste, Juge et optionnels — sont désignés par le pseudonyme de leur joueur. Harb Kassar et les autres noms servent de références canoniques hors session, jamais d'identités imposées dans les cartes. Le serveur doit figer l'alias de chaque personnage au lancement et rendre les noms par identifiants stables dans toutes les preuves, relations et résultats, y compris après reconnexion. La personnalisation généralisée n'est pas encore implémentée ; voir `docs/REGIME_TRAQUES_IDENTITES_VICTOIRES_RESPONSABILITES_V3.md`.
 
 Ce fichier définit uniquement des invariants publics et des objectifs d'écriture. Il ne livre aucune combinaison de responsables par variante ni aucune preuve décisive.
 
@@ -42,7 +42,7 @@ Surnoms attribués par des survivants ou utilisés dans les papiers clandestins 
 
 ## Contrat de traques doubles (v2)
 
-Les dossiers 032, 033 et 034 comportent chacun **deux dirigeants recherchés**, incarnés dès le premier cycle par deux des trois suspects-joueurs. Le troisième suspect reste interrogeable dès C1. La réussite de l'enquête repose sur les deux captures, jamais sur une capture prédéterminée. Les deux cibles ont des choix réels d'obstruction ou de coopération avant leur arrestation, puis des actions de défense après. Le Juge est requis dans chaque dossier et le Procureur facultatif. La bible de mécanique de référence est `docs/REGIME_DOUBLE_TRAQUE_032_034_V2.md`.
+Les dossiers 032, 033 et 034 comportent chacun **deux dirigeants recherchés**, incarnés dès le premier cycle par deux des trois suspects-joueurs. Le troisième suspect reste interrogeable dès C1. La réussite collective de l'enquête repose sur deux captures, sans capture prédéterminée. Les fugitifs peuvent commencer **ensemble, séparés, ou ensemble avec rupture possible selon la variante A/B/C**. Chaque capture signifie **défaite personnelle immédiate**, avec issue fatale décrite à l'épilogue ; le joueur continue à intervenir à l'audience. Une arrestation n'établit pas la culpabilité. Le Juge est requis dans chaque dossier et le Procureur facultatif. Les formes de responsabilité remplacent la grille 0/1/2 exclusivement pour ce DLC. La référence de conception est `docs/REGIME_TRAQUES_IDENTITES_VICTOIRES_RESPONSABILITES_V3.md`.
 
 ## Trois dossiers, trois portes sur le même système
 
