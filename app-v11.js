@@ -550,11 +550,17 @@ function renderHome(){
   </div>`,true);
  if(SOUND.enabled)ensureAmbient('menu');
 }
-function goHome(){STATE.view='home';if(STATE.room)saveSession();renderHome()}
-function goCreate(){STATE.view='create-list';saveSession();renderCreateList()}
-function goJoin(){STATE.view='join';saveSession();renderJoin()}
-function goRules(){STATE.view='rules';saveSession();renderRules()}
-function goProfile(){STATE.view='profile';saveSession();renderProfile()}
+function pauseRoomSyncForNavigation(){
+ // Keep the resume credential, but stop the live game watcher while browsing.
+ // Otherwise a stale cell can repaint the catalog or show a false outage.
+ try{if(STATE.room&&STATE.token)stopRoomWatcher()}catch{}
+ connectionStatus(false);
+}
+function goHome(){pauseRoomSyncForNavigation();STATE.view='home';if(STATE.room)saveSession();renderHome()}
+function goCreate(){pauseRoomSyncForNavigation();STATE.view='create-list';saveSession();renderCreateList()}
+function goJoin(){pauseRoomSyncForNavigation();STATE.view='join';saveSession();renderJoin()}
+function goRules(){pauseRoomSyncForNavigation();STATE.view='rules';saveSession();renderRules()}
+function goProfile(){pauseRoomSyncForNavigation();STATE.view='profile';saveSession();renderProfile()}
 
 // DOSSIER 007 NON PUBLIÉ: le client ne l'ouvre que si le serveur l'autorise.
 // La création/le lancement refont une vérification fraîche; le serveur reste l'autorité. Ne pas supprimer ces gardes isolément.
@@ -975,7 +981,8 @@ function restoreDrafts(draft){
 }
 function connectionStatus(failed){
  let el=byId('connectionStatus');
- if(!failed){el?.remove();return}
+ const active=['lobby','briefing','role','game'].includes(STATE?.view);
+ if(!failed||!active){el?.remove();return}
  if(!el){el=document.createElement('div');el.id='connectionStatus';el.className='connection-status';el.setAttribute('role','status');document.body.appendChild(el)}
  el.textContent=navigator.onLine===false ? 'Hors ligne · reprise automatique au retour du réseau…' : Number(STATE.syncFailures||0)>1 ? 'Serveur temporairement indisponible · nouvelle tentative…' : 'Connexion instable · nouvelle tentative…';
 }
@@ -2881,10 +2888,10 @@ document.addEventListener('keydown',e=>{
  }else if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role="button"][tabindex]')){e.preventDefault();e.target.click()}
 });
 async function resumeSession(){const ok=await restore();if(ok){hideIntroImmediately();routeFromServer()}else toast('Reconnexion impossible pour le moment. Réessaie après avoir vérifié la connexion.')}
-window.addEventListener('online',()=>{if(STATE.room)syncNow(true)});
-window.addEventListener('offline',()=>{if(STATE.room)connectionStatus(true)});
+window.addEventListener('online',()=>{if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))syncNow(true)});
+window.addEventListener('offline',()=>{if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))connectionStatus(true)});
 window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))syncNow(true)});
 
 
 /* v11-30-scenario-text-rewrite — PWA cache bootstrap */
