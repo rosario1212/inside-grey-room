@@ -177,13 +177,13 @@ BEGIN
  fn:=replace(fn,'AND cmd.action_type=''terror_v694_military'';','AND cmd.action_type=''terror_v694_military'' AND coalesce((cmd.payload->>''auto'')::boolean,false)=false;');
  fn:=replace(fn,
   'success:=exact>=threshold' || E'\n        AND coalesce((r.state#>>''{terror_v681,controlled}'')::int,0)>0' || E'\n        AND action_count>=1;',
-  'success:=coalesce((r.state#>>''{terror_v681,controlled}'')::int,0)>0 AND action_count>=9;');
+  'success:=coalesce((r.state#>>''{terror_v681,controlled}'')::int,0)>0 AND action_count>=7;');
  fn:=replace(fn,'Tes ordres ont contribué à préserver les défenses de la capitale d Almizia, appuyés par un dossier suffisamment exact. La Grey Room tient encore.',
-  'Tu as confirmé les neuf décisions et contribué à la défense de la capitale. Le résultat judiciaire est évalué indépendamment.');
+  'Tu as personnellement confirmé la majorité des ordres décisifs et préservé la capitale. Le verdict judiciaire est évalué indépendamment.');
  fn:=replace(fn,'Tu n as transmis aucun ordre militaire avant l issue de la crise. Le FDR prend la capitale ou les preuves ne permettent pas de conclure.',
-  'Tu n as pas confirmé les neuf décisions requises. Ta mission de commandement est incomplète.');
+  'Tu n as confirmé aucun ordre. Les procédures de sécurité ont limité les dégâts, sans remplacer ton commandement.');
  fn:=replace(fn,'Malgré tes décisions, les informations disponibles et le dernier verdict ne permettent pas d empêcher le FDR de prendre la Grey Room.',
-  'Ta mission militaire échoue : le périmètre est perdu ou les neuf décisions ne sont pas confirmées.');
+  'Ta mission militaire échoue : le périmètre est perdu ou moins de sept décisions ont été confirmées personnellement.');
  EXECUTE fn;
 END $patch$;
 
