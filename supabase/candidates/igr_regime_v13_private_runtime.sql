@@ -92,9 +92,12 @@ REVOKE EXECUTE ON FUNCTION igr_private.igr_regime_v13_pin(text) FROM PUBLIC,anon
 -- Read only the player's private card and public facts that have actually been
 -- released. The caller NEVER receives the candidate private_pack, canonical_truth,
 -- non-public action outcomes, variant ID or other player's private choice.
-CREATE OR REPLACE FUNCTION public.igr_regime_v13_state(p_code text,p_player_token uuid)
-RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
-AS $$
+CREATE OR REPLACE FUNCTION public.igr_regime_v13_state(p_code text, p_player_token uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
 DECLARE
   p public.igr_v4_players%rowtype;
   r public.igr_v4_rooms%rowtype;
@@ -118,6 +121,8 @@ BEGIN
   IF p.public_role='suspect' THEN
     card:=m.private_pack->'private_cards'->(p.internal_slot-1);
     IF p.internal_slot=3 THEN own_mission:=m.private_pack->'third_suspect_mission'; END IF;
+  ELSIF p.public_role IN ('temoin','journaliste') THEN
+    card:=igr_private.igr_regime_v16_civic_card(r.scenario_id,p.public_role);
   END IF;
   -- Only already released pieces + always-public exhibits of previous cycles.
   FOR clue IN SELECT value FROM jsonb_array_elements(m.private_pack->'revelations') LOOP
@@ -235,6 +240,14 @@ BEGIN
    jsonb_build_object('enabled',true,
       'scenario_id',m.scenario_id,'cycle',r.cycle,'phase',r.phase,
       'role',p.public_role,'actor_id',actor,'my_card',card,'my_mission',own_mission,
+      'civic_attendees',(
+       SELECT coalesce(jsonb_agg(jsonb_build_object('role',q.public_role,'pseudo',q.pseudo)
+          ORDER BY q.seat_index),'[]'::jsonb)
+       FROM public.igr_v4_players q WHERE q.room_code=r.code
+         AND q.public_role IN ('temoin','journaliste')),
+      'my_civic_used_this_cycle',EXISTS(
+       SELECT 1 FROM jsonb_array_elements(coalesce(m.play_state->'civic_statements','[]'::jsonb)) x
+       WHERE x->>'player_id'=p.id::text AND (x->>'cycle')::int=r.cycle),
       'scene',scene,'my_captured_objective',defense_objective,
       'my_captured_response_used',defense_used,
       'my_alliance_choice',chosen,'offered_investigations',offered,
@@ -264,7 +277,8 @@ BEGIN
          WHERE j.ord<=least(3,greatest(0,r.cycle))),'[]'::jsonb)||
          coalesce(m.play_state->'events','[]'::jsonb),
       'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb))));
-END $$;
+END $function$
+
 REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) TO anon,authenticated;
 
