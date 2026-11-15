@@ -10,7 +10,7 @@ const SHELL=[
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
   '/omerta-v12-40.css?v=v12.41-uniform-dlc','/omerta-money-intel-v1.css?v=om021-1','/omerta-santoro-verdict-v28.css?v=santoro-verdict-v28','/omerta-023-spy-v1.css?v=omerta-023-spy-v1','/terror-v12-40.css?v=v12.41-uniform-dlc','/dlc-suite-v12-40.css?v=v20261018-cartel-cell-gold-v7','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
   '/app-v11.js?v=santoro-display-audit-20261108','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
-  '/turn-v12-4.js?v=v12.22-mobile-ui','/profile-dossier-v12.js?v=v12.22-mobile-ui','/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
+  '/turn-v12-4.js?v=security-v698-lazy-turn-20261115','/profile-dossier-v12.js?v=v12.22-mobile-ui','/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
   '/notifications-v12.js?v=v12.22-mobile-ui','/native-lifecycle-v12.js?v=v12.22-mobile-ui','/runtime-optimization-v12.js?v=v12.22-mobile-ui','/gameplay-simple-v12.js?v=v12.22-mobile-ui',
   '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v12.22-mobile-ui',
   '/scenario-flow-v13.js?v=v13.2-final','/gameplay-flow-v13.js?v=v13.2-final','/dlc-experience-v13.js?v=v13.2-final','/scenario-replay-contracts-v13.json?v=v13.2-final','/lobby-ui-fix-v13.js?v=v13.2-lobby-fix',
@@ -30,6 +30,13 @@ const SHELL=[
   '/assets/cartel-029-poster-v2.svg?v=v20261018-cartel-clean-scene-v6','/assets/cartel-030-poster-v2.svg?v=v20261018-cartel-clean-scene-v6','/assets/cartel-031-poster-v2.svg?v=v20261018-cartel-clean-scene-v6',
   '/assets/regime-032-les-archives-du-palais.webp?v=12.37-final','/assets/regime-033-la-dynastie.webp?v=12.37-final','/assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
 ];
+
+function isSensitiveServicePath(pathname){
+  // API and identity endpoints may return short-lived TURN credentials,
+  // capabilities or player data. The Cache API ignores Cache-Control:no-store
+  // on cache.put(), so these requests must never reach a caching branch.
+  return /^\/(?:api|rest|auth|functions|storage)(?:\/|$)/.test(pathname);
+}
 
 async function precacheShell(){
   const cache=await caches.open(CACHE);
@@ -60,6 +67,13 @@ self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
     await Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)));
+    // Upgrade from earlier releases: wipe any API credentials accidentally
+    // stored in the retained cache, without discarding offline shell assets.
+    const activeCache=await caches.open(CACHE);
+    const cachedRequests=await activeCache.keys();
+    await Promise.all(cachedRequests.filter(request=>{
+      try{return isSensitiveServicePath(new URL(request.url).pathname)}catch{return false}
+    }).map(request=>activeCache.delete(request)));
     await self.clients.claim();
   })());
 });
@@ -69,6 +83,9 @@ self.addEventListener('fetch',event=>{
   if(req.method!=='GET')return;
   const url=new URL(req.url);
   if(url.origin!==self.location.origin)return;
+  // Prevent identity, WebRTC and future service endpoints from being cached,
+  // served stale offline or exposed to Cache Storage scripts on this origin.
+  if(isSensitiveServicePath(url.pathname))return;
 
   // Reuse immutable, versioned illustrations without hitting the network
   // each time a player revisits a scenario. Scripts stay network-first.

@@ -6,11 +6,21 @@ on:
     paths:
       - 'package.json'
       - 'package-lock.json'
+      - 'cloudflare-worker.mjs'
+      - 'service-worker.js'
+      - 'turn-v12-4.js'
+      - 'supabase/migrations/**'
+      - 'scripts/v698-api-cache-and-turn-check.mjs'
       - '.github/workflows/security-audit.yml'
   pull_request:
     paths:
       - 'package.json'
       - 'package-lock.json'
+      - 'cloudflare-worker.mjs'
+      - 'service-worker.js'
+      - 'turn-v12-4.js'
+      - 'supabase/migrations/**'
+      - 'scripts/v698-api-cache-and-turn-check.mjs'
       - '.github/workflows/security-audit.yml'
   schedule:
     - cron: '30 5 * * 1'
@@ -33,3 +43,5 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Fail on high or critical production vulnerabilities
         run: npm audit --omit=dev --audit-level=high
+      - name: Verify API credentials cannot persist offline
+        run: node scripts/v698-api-cache-and-turn-check.mjs
