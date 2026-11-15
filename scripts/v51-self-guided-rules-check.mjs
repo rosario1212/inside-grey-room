@@ -19,7 +19,7 @@ for(const marker of [
   'Hors Grey Room',
   'Client officiel',
   'QUE FAIRE MAINTENANT ?',
-  'consommer au maximum 3 protections',
+  '3 points de protection',
   "ph==='event_saisine'",
   "ph.startsWith('annex_')",
   'Comment jouer chaque rôle',
