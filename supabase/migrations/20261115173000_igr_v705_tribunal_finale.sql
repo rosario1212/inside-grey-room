@@ -23,8 +23,8 @@ declare
 begin
   select * into r from public.igr_v4_rooms where code=p_room for update;
   if not found then return; end if;
-  speech_seconds:=case when public.igr_v44_judge_present(p_room) then 90 when r.state->>'duration_mode'='short' then 60 else 120 end;
-  defense_seconds:=case when public.igr_v44_judge_present(p_room) then 240 when r.state->>'duration_mode'='short' then 120 else 180 end;
+  speech_seconds:=case when public.igr_v44_judge_present(p_room) and r.state->>'duration_mode'='short' then 60 when public.igr_v44_judge_present(p_room) then 90 when r.state->>'duration_mode'='short' then 60 else 120 end;
+  defense_seconds:=case when public.igr_v44_judge_present(p_room) and r.state->>'duration_mode'='short' then 180 when public.igr_v44_judge_present(p_room) then 240 when r.state->>'duration_mode'='short' then 120 else 180 end;
 
   if p_stage='audience' then
     delete from public.igr_v4_actions
@@ -90,12 +90,12 @@ begin
   insert into public.igr_v4_events(room_code,event_type,visibility,payload)
   values(p_room,'phase','public',
     case p_stage
-      when 'audience' then case when public.igr_v44_judge_present(p_room) then jsonb_build_object('title','AUDIENCE PRÉPARATOIRE','text','Tous les joueurs : 01:30 chacun au maximum, ou Passer. Exprimez vos soupçons, pas de verdict. Le tribunal suit.') else jsonb_build_object('title','AUDIENCE FINALE','text','Enquêteur → Analyste → Inspecteur → Expert → Procureur → Juge → Journaliste. COURT 01:00 / LONG 02:00 max.') end
+      when 'audience' then case when public.igr_v44_judge_present(p_room) then jsonb_build_object('title','AUDIENCE PRÉPARATOIRE','text','Tous les joueurs : COURT 01:00 / LONG 01:30 chacun, ou Passer. Exprimez vos soupçons, pas de verdict. Le tribunal suit.') else jsonb_build_object('title','AUDIENCE FINALE','text','Enquêteur → Analyste → Inspecteur → Expert → Procureur → Juge → Journaliste. COURT 01:00 / LONG 02:00 max.') end
       else case when r.scenario_id='029' then
         jsonb_build_object('title',case when public.igr_v44_judge_present(p_room) then 'TRIBUNAL · TÉMOINS' else 'PAROLE FINALE DES TÉMOINS' end,
-          'text',case when public.igr_v44_judge_present(p_room) then 'Le juge conduit les comparutions de 04:00. Le rapport final spécifique du dossier 029 reste inchangé.' else 'Chaque témoin peut préciser ce qu’il sait, se taire ou demander des éclaircissements. COURT 02:00 / LONG 03:00.' end)
+          'text',case when public.igr_v44_judge_present(p_room) then 'Le Juge conduit les comparutions : COURT 03:00 / LONG 04:00. Le rapport final spécifique au dossier 029 reste inchangé.' else 'Chaque témoin peut préciser ce qu’il sait, se taire ou demander des éclaircissements. COURT 02:00 / LONG 03:00.' end)
       else jsonb_build_object('title',case when public.igr_v44_judge_present(p_room) then 'TRIBUNAL' else 'DÉFENSES FINALES' end,
-          'text',case when public.igr_v44_judge_present(p_room) then 'Par suspect : 02:00 défense et avocat, 01:00 questions, 01:00 réponse. Le juge préside ; chacun peut se taire. Puis vote individuel secret.' else 'Chaque suspect peut parler COURT 02:00 / LONG 03:00 ou passer. Son Avocat officiel partage ce temps ; il n’existe pas de second plaidoyer séparé.' end)
+          'text',case when public.igr_v44_judge_present(p_room) then 'Par suspect : COURT 03:00 (01:30 défense, 00:45 questions, 00:45 réponse) ; LONG 04:00 (02:00, 01:00, 01:00). Le Juge préside, puis vote privé.' else 'Chaque suspect peut parler COURT 02:00 / LONG 03:00 ou passer. Son Avocat officiel partage ce temps ; il n’existe pas de second plaidoyer séparé.' end)
       end
     end
   );
@@ -119,7 +119,7 @@ begin
     values(p_room,(item->>'player_id')::uuid,r.cycle,spoken_type,jsonb_build_object('reason',p_reason,'role',item->>'role'));
   end if;
 
-  if status='waiting' and p_reason='waiting_timeout' and item is not null then
+  if status='waiting' and p_reason='waiting_timeout' and stage='audience' and item is not null then
     insert into public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
     values(p_room,(item->>'player_id')::uuid,r.cycle,case when stage='audience' then 'v52_audience_skip' else 'v52_defense_skip' end,jsonb_build_object('role',item->>'role','reason','waiting_timeout'));
   end if;
@@ -160,12 +160,13 @@ begin
   if item is null then raise exception 'no current speaker';end if;
   if item->>'player_id'<>me.id::text and not(stage='defenses' and me.public_role='juge' and public.igr_v44_judge_present(r.code)) then raise exception 'not your turn';end if;
 
-  if status='waiting' and public.igr_v44_judge_present(r.code) and r.phase_ends_at is not null and now()>=r.phase_ends_at then
+  if status='waiting' and stage='audience' and public.igr_v44_judge_present(r.code) and r.phase_ends_at is not null and now()>=r.phase_ends_at then
     perform public.igr_v52_advance(r.code,'waiting_timeout');
     return jsonb_build_object('ok',false,'expired',true);
   end if;
   if p_action='start' then
     if status<>'waiting' then raise exception 'already started'; end if;
+    if stage='defenses' and public.igr_v44_judge_present(r.code) and me.public_role<>'juge' then raise exception 'only judge can open courtroom';end if;
     update public.igr_v4_rooms set phase_started_at=now(),phase_ends_at=now()+make_interval(secs=>coalesce((item->>'seconds')::int,120)),state=jsonb_set(jsonb_set(state,'{v52_status}',to_jsonb('active'::text),true),'{v705_defense_done}','false'::jsonb,true),updated_at=now() where code=r.code;
   elsif p_action='skip' then
     if status<>'waiting' then raise exception 'already started'; end if;
@@ -180,7 +181,7 @@ begin
     if status<>'active' then raise exception 'not active'; end if;
     if stage='defenses' and public.igr_v44_judge_present(r.code) then
       if me.public_role<>'juge' then raise exception 'only the judge can close this appearance';end if;
-      if not coalesce((r.state->>'v705_defense_done')::boolean,false) and now()<r.phase_started_at+interval '2 minutes' then raise exception 'suspect has the right to two minutes of defense unless they waive it';end if;
+      if not coalesce((r.state->>'v705_defense_done')::boolean,false) and now()<r.phase_started_at+case when r.state->>'duration_mode'='short' then interval '90 seconds' else interval '2 minutes' end then raise exception 'suspect defense time protected unless explicitly waived';end if;
     end if;
     perform public.igr_v52_advance(r.code,'manual');
   else raise exception 'invalid action'; end if;
@@ -208,7 +209,10 @@ begin
    insert into public.igr_v4_events(room_code,event_type,visibility,payload) values(r.code,'free_investigation','public',jsonb_build_object('title','ENQUÊTE OUVERTE','text','Les interactions redeviennent libres. Seules les convocations officielles de la Grey Room sont prioritaires.','cycle',r.cycle));return;
  end if;
  if r.phase='closed' then if r.phase_ends_at is not null and now()>=r.phase_ends_at then perform public.igr_v52_begin_stage(r.code,'audience');end if;return;end if;
- if r.phase in ('final_audience','final_suspect_defenses','final_lawyer_opinions') then status:=coalesce(r.state->>'v52_status','waiting');if r.phase_ends_at is not null and now()>=r.phase_ends_at then if status='active' then perform public.igr_v52_advance(r.code,'timeout'); elsif status='waiting' and public.igr_v44_judge_present(r.code) then perform public.igr_v52_advance(r.code,'waiting_timeout');end if;end if;return;end if;
+ if r.phase in ('final_audience','final_suspect_defenses','final_lawyer_opinions') then status:=coalesce(r.state->>'v52_status','waiting');if r.phase_ends_at is not null and now()>=r.phase_ends_at then if status='active' then perform public.igr_v52_advance(r.code,'timeout'); elsif status='waiting' and public.igr_v44_judge_present(r.code) then
+     if r.phase='final_audience' then perform public.igr_v52_advance(r.code,'waiting_timeout');
+     else update public.igr_v4_rooms set phase_started_at=now(),phase_ends_at=now()+make_interval(secs=>coalesce((r.state->'v52_queue'->coalesce((r.state->>'v52_index')::int,0)->>'seconds')::int,180)),state=jsonb_set(jsonb_set(r.state,'{v52_status}',to_jsonb('active'::text),true),'{v705_defense_done}','false'::jsonb,true),updated_at=now() where code=r.code;
+     end if;end if;end if;return;end if;
  if r.phase='locking' and coalesce((r.state->>'v52_final_reassessment')::boolean,false) then return;end if;
  perform public.igr_v50_tick_legacy(p_room);
  select * into r from public.igr_v4_rooms where code=p_room for update;
