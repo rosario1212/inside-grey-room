@@ -40,7 +40,8 @@ BEGIN
  WHERE room_code=upper(trim(p_code));
  IF NOT FOUND OR p_input IS NULL OR p_real_id IS NULL THEN RETURN false;END IF;
  IF coalesce((m.play_state->>'strict_alias_only')::boolean,false) THEN
-   RETURN p_input=igr_private.igr_regime_v14_public_id(p_code,p_real_id);
+   RETURN p_input=igr_private.igr_regime_v14_public_id(p_code,p_real_id)
+     OR (p_real_id !~ '(^|_)0[0-9]{2}[ABC]([-_]|$)' AND p_input=p_real_id);
  END IF;
  RETURN p_input=p_real_id OR
    p_input=igr_private.igr_regime_v14_public_id(p_code,p_real_id);
