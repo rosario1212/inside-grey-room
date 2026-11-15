@@ -28,7 +28,8 @@ BEGIN
   AND d.proposed_manuscript->'canonical_truth'->'responsibility_by_slot'
       =d.proposed_manuscript->'v680_verdict'->'levels'
   AND coalesce(length(d.proposed_manuscript->'canonical_truth'->>'summary'),0)>120
-  AND coalesce((d.proposed_manuscript->>'invariants_respected')::boolean,true);
+  AND jsonb_typeof(d.proposed_manuscript->'invariants_respected')='array'
+  AND jsonb_array_length(d.proposed_manuscript->'invariants_respected')>=3;
  RETURN valid_count=9 AND distinct_patterns=9
    AND (SELECT count(DISTINCT d.scenario_id||d.variant_id)
         FROM igr_private.igr_v680_terror_editorial_drafts d
