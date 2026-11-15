@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='terror-command-auditions-v693-20261115';
+const tag='terror-live-v694-20261115';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -29,10 +29,13 @@ assert(terrorFront.includes("RÉPUBLIQUE D’ALMIZIA") && terrorFront.includes('
 const terrorCommand=await readFile(path.join(dest,'terror-command-v688.js'),'utf8');
 assert(terrorCommand.includes('terrorV693Join') && terrorCommand.includes('terrorV693Visit'),'Terror officer hearing participation must be bundled');
 assert(terrorCommand.includes('igr_v688_terror_choose_operation') && terrorCommand.includes('terror-v688-capture'), 'Terror commander and captivity presentation missing');
+const terrorV694=await readFile(path.join(dest,'terror-command-v694.js'),'utf8');
+assert(terrorV694.includes('igr_v694_terror_confirm')&&terrorV694.includes('terrorV694Join'),'v694 gameplay UI missing');
 const terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
 assert(terrorHtml.includes('terror-live-v681.js') && terrorHtml.includes('terror-live-v681.css'), 'terror shared city widget not included in published entrypoint');
 assert(terrorHtml.includes('terror-front-v682.js') && terrorHtml.includes('terror-front-v682.css'),'FDR public story and siege assets missing');
 assert(terrorHtml.includes('terror-command-v688.js') && terrorHtml.includes('terror-command-v688.css'),'Terror military choice assets missing in production entrypoint');
+assert(terrorHtml.includes('terror-command-v694.js')&&terrorHtml.includes('terror-command-v694.css'),'v694 immediate command UI missing from release');
 const questionnaire=await readFile(path.join(dest,'investigation-accuracy-v284.js'),'utf8');
 const detailedFive=await readFile(path.join(dest,'investigation-deep-v286.js'),'utf8');
 const detailedSeven=await readFile(path.join(dest,'investigation-007-v289.js'),'utf8');
@@ -96,7 +99,7 @@ if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-for(const asset of ['/terror-live-v681.js?v=terror-capital-v691-20261115','/terror-live-v681.css?v=terror-city-v681-20261114','/terror-front-v682.js?v=terror-officer-v693-20261115','/terror-front-v682.css?v=terror-capital-v691-20261115','/terror-command-v688.js?v=terror-officer-v693-20261115','/terror-command-v688.css?v=terror-officer-v693-20261115']){
+for(const asset of ['/terror-command-v694.js?v=terror-live-v694-20261115','/terror-command-v694.css?v=terror-live-v694-20261115','/terror-live-v681.js?v=terror-capital-v691-20261115','/terror-live-v681.css?v=terror-city-v681-20261114','/terror-front-v682.js?v=terror-officer-v693-20261115','/terror-front-v682.css?v=terror-capital-v691-20261115','/terror-command-v688.js?v=terror-officer-v693-20261115','/terror-command-v688.css?v=terror-officer-v693-20261115']){
  if(!sw.includes(asset)){
   assert(sw.includes('const SHELL=['),'PWA shell missing');
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
