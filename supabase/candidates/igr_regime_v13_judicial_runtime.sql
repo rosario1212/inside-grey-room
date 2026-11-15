@@ -190,6 +190,7 @@ DECLARE
  p public.igr_v4_players%rowtype;r public.igr_v4_rooms%rowtype;
  m igr_private.igr_regime_v13_rooms%rowtype;
  called jsonb;count_seconds integer;st jsonb;res jsonb;allowed boolean;
+ prev igr_private.igr_regime_v13_ledger%rowtype;
  elapsed_seconds integer;slot_no integer;last_called_slot integer;
 BEGIN
  SELECT * INTO p FROM public.igr_v4_players WHERE room_code=upper(trim(p_code)) AND player_token=p_player_token;
@@ -203,6 +204,13 @@ BEGIN
  called:=coalesce(m.play_state->'court'->'called','[]'::jsonb);
  IF called ? p_actor_id THEN RAISE EXCEPTION 'already called to the bar'; END IF;
  IF length(coalesce(p_request_id,''))<8 THEN RAISE EXCEPTION 'invalid request';END IF;
+ SELECT * INTO prev FROM igr_private.igr_regime_v13_ledger
+ WHERE room_code=p.room_code AND request_id=p_request_id;
+ IF FOUND THEN
+  IF prev.actor_player<>p.id OR prev.action_kind<>'court_call'
+    THEN RAISE EXCEPTION 'court request conflict';END IF;
+  RETURN prev.response;
+ END IF;
  count_seconds:=CASE WHEN (m.play_state->'court'->>'duration_minutes')::int=14 THEN 120 ELSE 60 END;
  elapsed_seconds:=floor(extract(epoch from (
    now()-(m.play_state->'court'->>'started_at')::timestamptz)))::integer;
@@ -226,7 +234,7 @@ BEGIN
  INSERT INTO igr_private.igr_regime_v13_ledger
  (room_code,request_id,actor_player,action_kind,cycle,response)
  VALUES(m.room_code,p_request_id,p.id,'court_call',r.cycle,res)
- ON CONFLICT(room_code,request_id) DO NOTHING;
+ ;
  RETURN res;
 END $$;
 REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_court_call(text,uuid,text,text)
