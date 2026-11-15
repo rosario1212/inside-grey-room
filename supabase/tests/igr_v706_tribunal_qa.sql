@@ -16,6 +16,7 @@ BEGIN
       (room_,'Analyste',1,'analyste',null),
       (room_,'Avocat',2,'maitre',null),
       (room_,'Juge',3,'juge',null),
+      (room_,'Journaliste',7,'journaliste',null),
       (room_,'Suspect A',4,'suspect',1),
       (room_,'Suspect B',5,'suspect',2),
       (room_,'Suspect C',6,'suspect',3);
