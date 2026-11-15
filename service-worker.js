@@ -31,6 +31,13 @@ const SHELL=[
   '/assets/regime-032-les-archives-du-palais.webp?v=12.37-final','/assets/regime-033-la-dynastie.webp?v=12.37-final','/assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
 ];
 
+function isSensitiveServicePath(pathname){
+  // API and identity endpoints may return short-lived TURN credentials,
+  // capabilities or player data. The Cache API ignores Cache-Control:no-store
+  // on cache.put(), so these requests must never reach a caching branch.
+  return /^\/(?:api|rest|auth|functions|storage)(?:\/|$)/.test(pathname);
+}
+
 async function precacheShell(){
   const cache=await caches.open(CACHE);
   const failed=[];
@@ -60,6 +67,13 @@ self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
     await Promise.all(keys.filter(k=>k.startsWith('igr-')&&k!==CACHE).map(k=>caches.delete(k)));
+    // Upgrade from earlier releases: wipe any API credentials accidentally
+    // stored in the retained cache, without discarding offline shell assets.
+    const activeCache=await caches.open(CACHE);
+    const cachedRequests=await activeCache.keys();
+    await Promise.all(cachedRequests.filter(request=>{
+      try{return isSensitiveServicePath(new URL(request.url).pathname)}catch{return false}
+    }).map(request=>activeCache.delete(request)));
     await self.clients.claim();
   })());
 });
@@ -69,6 +83,9 @@ self.addEventListener('fetch',event=>{
   if(req.method!=='GET')return;
   const url=new URL(req.url);
   if(url.origin!==self.location.origin)return;
+  // Prevent identity, WebRTC and future service endpoints from being cached,
+  // served stale offline or exposed to Cache Storage scripts on this origin.
+  if(isSensitiveServicePath(url.pathname))return;
 
   // Reuse immutable, versioned illustrations without hitting the network
   // each time a player revisits a scenario. Scripts stay network-first.
