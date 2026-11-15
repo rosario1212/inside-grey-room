@@ -1,0 +1,418 @@
+/* Inside Grey Room / TERREUR — Crisis B visual system v696
+   Noir minéral • gris ardoise • rouge brique profond
+   Aesthetic only: never modifies timers, input semantics or the evidence model. */
+
+/* A theme scope tied to the live scenario, not a stale body theme from a previous room. */
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]){
+  --terror-b-bg:#080b10;
+  --terror-b-surface:#10161e;
+  --terror-b-surface-hi:#161e28;
+  --terror-b-line:rgba(151,165,181,.18);
+  --terror-b-red:#9c3f4b;
+  --terror-b-red-strong:#b2515c;
+  --terror-b-red-soft:#df9a9e;
+  --terror-b-ink:#f0f2f4;
+  --terror-b-secondary:#b9c1cb;
+  color:var(--terror-b-ink);
+}
+body:has(#app .lobby-v11[data-igr-lobby-theme="terror"]){
+  background:
+    radial-gradient(ellipse 55% 30% at 82% 5%,rgba(121,37,51,.105),transparent 75%),
+    radial-gradient(ellipse 70% 46% at -10% 60%,rgba(37,61,78,.12),transparent 75%),
+    linear-gradient(180deg,#080b10 0%,#06080c 58%,#040608 100%)!important;
+}
+
+/* The case title feels editorial and institutional instead of a flat H1. */
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head{
+  position:relative;
+  padding-block:clamp(6px,2.5vw,18px) 0;
+  margin-bottom:clamp(15px,3vw,24px);
+  border:0;
+  isolation:isolate;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head::before{
+  content:"";
+  position:absolute;
+  inset:0 auto auto 0;
+  width:min(260px,66%);
+  height:1px;
+  background:linear-gradient(90deg,rgba(198,85,96,.9),rgba(172,79,91,.23),transparent);
+  pointer-events:none;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head .kicker{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:8px 0 13px;
+  color:#aab5c0!important;
+  font-size:11px;
+  font-weight:750;
+  letter-spacing:.19em;
+  text-transform:uppercase;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head .kicker::before{
+  content:"";
+  flex:none;
+  width:6px;height:6px;
+  border-radius:50%;
+  background:#b9505a;
+  box-shadow:0 0 0 4px rgba(178,72,84,.11);
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head h1{
+  margin:0 0 17px;
+  color:#f5f6f7!important;
+  font-size:clamp(33px,8.5vw,64px);
+  font-weight:840;
+  line-height:1.03;
+  letter-spacing:-.054em;
+  text-wrap:balance;
+  text-transform:uppercase;
+}
+
+/* Public preview: cut-paper edge, fine ruby rule and controlled depth. */
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-case-preview{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  padding:clamp(19px,4vw,27px)!important;
+  margin:12px 0 0;
+  border:1px solid rgba(142,160,177,.22)!important;
+  border-radius:20px!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(116,48,63,.13),transparent 53%),
+    linear-gradient(135deg,rgba(22,31,42,.91),rgba(9,13,19,.96) 76%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 14px 34px rgba(0,0,0,.24)!important;
+  max-width:none;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-case-preview::before{
+  content:"";
+  position:absolute;
+  left:0;top:23px;
+  width:3px;height:39px;
+  background:linear-gradient(#d7797d,#843341);
+  border-radius:0 2px 2px 0;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-case-preview>span{
+  display:block;
+  margin-bottom:12px;
+  color:#d79da1!important;
+  font:750 10px/1.5 'IBM Plex Mono',ui-monospace,monospace;
+  letter-spacing:.175em;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-case-preview .lobby-scenario-summary{
+  max-width:65ch;
+  margin:0;
+  color:#d8dfe6!important;
+  font-size:clamp(13px,1.75vw,15px);
+  font-weight:420;
+  line-height:1.69;
+  letter-spacing:-.007em;
+  overflow-wrap:anywhere;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-case-preview .terror-v682-lobby-label{
+  margin:17px 0 0;
+  padding:15px 0 0;
+  border-top:1px solid rgba(185,106,117,.23);
+  font-size:12px;
+  font-weight:650;
+  letter-spacing:.005em;
+  line-height:1.65;
+  color:#bdc7d2!important;
+}
+
+/* Distinct controls — calm slate secondary actions, no opaque white bricks. */
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head .igr-v13-lobby-actions{
+  gap:9px;
+  margin-top:2px;
+  flex-wrap:wrap;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head .igr-v13-lobby-actions .btn{
+  min-height:46px;
+  padding:10px 15px!important;
+  background:linear-gradient(160deg,#182029,#0e131a)!important;
+  color:#e1e6eb!important;
+  border:1px solid rgba(150,163,180,.27)!important;
+  border-radius:13px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
+  font-weight:680;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head .igr-v13-lobby-actions .btn:hover{
+  border-color:rgba(197,122,133,.53)!important;
+  background:#1c242d!important;
+}
+
+/* Capital selection: red is the authority / danger accent, not a muddy fill. */
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"])>.terror-v681-city-lobby{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  margin:17px 0 19px!important;
+  padding:clamp(18px,4.1vw,28px)!important;
+  border:1px solid rgba(168,79,91,.46)!important;
+  border-radius:21px!important;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(145,46,65,.16),transparent 49%),
+    linear-gradient(145deg,rgba(21,29,38,.985),rgba(10,13,19,.995) 79%)!important;
+  box-shadow:inset 0 1px 0 rgba(243,200,202,.055),0 18px 42px rgba(0,0,0,.29),0 0 0 1px rgba(55,25,31,.12)!important;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"])>.terror-v681-city-lobby::before{
+  content:"";
+  position:absolute;
+  top:0;left:clamp(18px,4.1vw,28px);right:clamp(18px,4.1vw,28px);height:2px;
+  border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,#bf5c66,rgba(170,74,85,.42) 36%,transparent 75%);
+  pointer-events:none;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-city-head{
+  gap:9px;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-city-head span{
+  color:#d0a4a7!important;
+  font:750 10px/1.55 'IBM Plex Mono',ui-monospace,monospace;
+  letter-spacing:.16em;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-city-head b{
+  color:#f0f2f4;
+  font-size:clamp(19px,3.4vw,26px);
+  font-weight:760;
+  letter-spacing:-.024em;
+  line-height:1.24;
+  text-wrap:pretty;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"])>.terror-v681-city-lobby>p{
+  margin:13px 0 16px;
+  max-width:70ch;
+  color:#b8c1cb!important;
+  font-size:clamp(13px,1.6vw,14px);
+  line-height:1.67;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-warning{
+  padding:11px 13px 11px 15px;
+  border:1px solid rgba(180,78,94,.35);
+  border-left:3px solid #a64c59;
+  border-radius:11px;
+  background:linear-gradient(90deg,rgba(126,46,62,.2),rgba(36,22,31,.12));
+  color:#e8b8ba;
+  font-size:13px;
+  line-height:1.5;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-current-city{
+  border-left-color:#c46873;
+  border-radius:0 11px 11px 0;
+  background:linear-gradient(90deg,rgba(144,51,66,.2),rgba(12,18,24,.18));
+  color:#e9bfc2;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-current-city strong{
+  color:#f4f6f7;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-city-entry{
+  margin-top:17px;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-city-entry label{
+  margin-bottom:9px;
+  color:#c8d0d9!important;
+  font-size:12px;
+  font-weight:650;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1.65fr) minmax(132px,.9fr);
+  align-items:stretch;
+  gap:9px;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row input{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:52px;
+  padding:0 14px;
+  background:rgba(6,10,15,.79)!important;
+  color:#f1f2f4!important;
+  border:1px solid rgba(158,174,190,.33)!important;
+  border-radius:12px!important;
+  font-size:16px;
+  font-weight:520;
+  outline:0;
+  box-shadow:inset 0 1px 0 rgba(0,0,0,.26);
+  transition:border-color .16s ease,box-shadow .16s ease;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row input::placeholder{
+  color:#8f9aa8;
+  opacity:1;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row input:focus{
+  border-color:#d17a84!important;
+  box-shadow:0 0 0 3px rgba(166,76,89,.18),inset 0 1px 0 rgba(0,0,0,.2);
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row .btn.primary{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:52px;
+  padding:11px 12px!important;
+  border:1px solid #b65b66!important;
+  border-radius:12px!important;
+  background:linear-gradient(145deg,#a74753,#7d2e3b)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 7px 20px rgba(78,17,27,.22)!important;
+  color:#fff4f5!important;
+  font-size:13px;
+  font-weight:780;
+  letter-spacing:-.01em;
+  text-wrap:balance;
+  line-height:1.3;
+  text-shadow:none!important;
+  white-space:normal;
+  cursor:pointer;
+  transition:filter .16s ease,transform .16s ease;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row .btn.primary:active{
+  transform:translateY(1px);
+  filter:brightness(1.05);
+}
+
+/* Duration selection has a clear chosen state without a neon glow. */
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"])>.lobby-v11{
+  border:1px solid rgba(140,153,170,.21)!important;
+  border-radius:22px!important;
+  background:linear-gradient(165deg,rgba(15,21,29,.94),rgba(6,9,14,.985))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 20px 48px rgba(0,0,0,.22)!important;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-lobby-v35{
+  width:100%;
+  max-width:560px;
+  gap:9px;
+  margin-bottom:15px;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-tab-v35{
+  min-height:65px;
+  border:1px solid rgba(144,160,176,.24)!important;
+  border-radius:13px!important;
+  background:linear-gradient(165deg,rgba(23,31,40,.86),rgba(11,16,23,.98))!important;
+  color:#b4bdc8!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-tab-v35.is-active{
+  border-color:rgba(191,94,106,.82)!important;
+  background:linear-gradient(165deg,rgba(105,41,55,.48),rgba(28,26,36,.96))!important;
+  color:#f6e7e9!important;
+  box-shadow:inset 0 2px 0 rgba(201,107,118,.85),0 0 0 1px rgba(116,48,60,.1);
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-tab-v35 span{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-tab-v35 small{
+  margin-top:6px;
+  font-size:11px;
+  font-weight:550;
+  letter-spacing:0;
+  opacity:.85;
+}
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-note{
+  margin-top:5px;
+  color:#a8b3c0!important;
+  font-size:12px;
+  line-height:1.48;
+}
+
+/* Follow-through inside the room, so the palette doesn't disappear after setup. */
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-code strong{
+  color:#ecf0f3;
+  letter-spacing:.075em;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-status strong,
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-zone .section-title h2{
+  color:#f0f2f4;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-zone{
+  border-color:rgba(150,93,106,.25)!important;
+  background:linear-gradient(160deg,rgba(21,29,37,.9),rgba(9,14,20,.96))!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-card,
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-random-role-cta{
+  border-color:rgba(143,159,175,.23)!important;
+  background:linear-gradient(160deg,#19212a,#10161e)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03)!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-card.selected{
+  border-color:rgba(196,93,106,.72)!important;
+  background:linear-gradient(150deg,rgba(92,37,50,.63),rgba(18,21,30,.95))!important;
+  box-shadow:inset 3px 0 0 #b25260,inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-choice-status{
+  border-color:rgba(171,88,101,.33)!important;
+  background:linear-gradient(160deg,rgba(69,37,48,.63),rgba(14,19,26,.96))!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"]>.btn.primary{
+  border-color:#bd606b!important;
+  background:linear-gradient(135deg,#a84955,#722b39)!important;
+  color:#fff!important;
+  border-radius:13px!important;
+  min-height:52px;
+}
+
+/* Selection catalogue and live board share the same restrained atmosphere. */
+#app .terror-scenario{
+  border-color:rgba(158,85,99,.34)!important;
+  background:linear-gradient(145deg,#151b24,#080c12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.2)!important;
+}
+#app .terror-scenario:focus-visible{
+  outline:2px solid #ce7781;
+  outline-offset:3px;
+}
+.terror-v681-live,.terror-v682-front,.terror-v694-command{
+  border-color:rgba(156,80,92,.42)!important;
+  background:radial-gradient(circle at 100% 0%,rgba(125,41,60,.12),transparent 43%),linear-gradient(160deg,#18212b,#0b1017)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 13px 30px rgba(0,0,0,.24);
+}
+.terror-v681-live .terror-v681-head h2,.terror-v694-command header strong{color:#f0eef0}
+.terror-v681-city-head span,.terror-v681-head small,.terror-v694-command header small{color:#dcabae}
+.terror-v694-alert{
+  border-color:rgba(193,95,105,.61)!important;
+  background:linear-gradient(145deg,rgba(97,38,53,.5),rgba(25,23,32,.85))!important;
+}
+.terror-v694-timer{color:#ffe2e4}
+
+/* Accessibility and narrow-screen ergonomics. */
+#app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) :is(
+ .igr-v13-lobby-actions .btn,.terror-v681-input-row input,
+ .terror-v681-input-row .btn.primary,.igr-duration-tab-v35,
+ .role-choice-card,.igr-random-role-cta
+):focus-visible{
+  outline:2px solid #e2a5a9!important;
+  outline-offset:3px!important;
+}
+@media(max-width:430px){
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-head h1{
+    font-size:clamp(32px,9vw,43px);
+    letter-spacing:-.055em;
+  }
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .lobby-case-preview{
+    padding:19px!important;
+  }
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row{
+    grid-template-columns:minmax(0,1.4fr) minmax(125px,.9fr);
+    gap:8px;
+  }
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row .btn.primary{
+    font-size:12px;
+  }
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .igr-duration-tab-v35{
+    min-height:57px;
+  }
+}
+@media(max-width:360px){
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row{
+    grid-template-columns:minmax(0,1fr);
+  }
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) .terror-v681-input-row .btn.primary{
+    min-height:48px;font-size:13px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #app .page:has(> .lobby-v11[data-igr-lobby-theme="terror"]) :is(
+    .terror-v681-input-row input,.terror-v681-input-row button,.igr-duration-tab-v35
+  ){transition:none!important}
+}
