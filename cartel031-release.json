@@ -1,0 +1,10 @@
+{
+  "version": "v173-cartel031-negotiation",
+  "scenario_id": "031",
+  "client_script": "cartel031-v171.js",
+  "evidence_per_cycle": [
+    4,
+    5,
+    4
+  ]
+}
