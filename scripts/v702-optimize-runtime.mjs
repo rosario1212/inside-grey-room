@@ -46,7 +46,11 @@ async function optimize(html,kind){
    const file='igr-v702-'+kind+'-'+hash(payload)+'.'+kind;
    if(kind==='js')new Script(payload,{filename:file});
    await writeFile(path.join(out,file),payload,'utf8');
-   const tag=kind==='js'?'<script src="'+file+'"></script>':'<link rel="stylesheet" href="'+file+'">';
+   // Legacy scenario QA inspects asset version markers in the HTML. Preserve
+   // a non-loading provenance comment; v702-runtime-check verifies every
+   // listed file is actually concatenated byte-for-byte into this chunk.
+   const provenance='<!-- IGR v702 packaged: '+group.map(item=>item.url).join(' ')+' -->\n';
+   const tag=provenance+(kind==='js'?'<script src="'+file+'"></script>':'<link rel="stylesheet" href="'+file+'">');
    changes.push({start:group[0].start,end:group.at(-1).end,tag});
    bundles.set(file,{file,kind,sourceUrls:group.map(item=>item.url),originalBytes:group.reduce((n,x)=>n+Buffer.byteLength(x.content),0),
     bundledBytes:Buffer.byteLength(payload),brotliOriginalBytes:group.reduce((n,x)=>n+brotli(x.content),0),
