@@ -9,8 +9,8 @@ const readActivity=s=>{const m=s.match(/const ACTIVITY=(\{[^;\n]+\});/);assert(m
 assert.deepEqual(readActivity(natural),expected,'lobby activity ratings do not match v697');
 assert.deepEqual(readActivity(rules),expected,'rulebook activity ratings must match lobby');
 assert(natural.includes("ACTIVITÉ','ACTIVITY")&&natural.includes('stars(ACTIVITY[r])'),'lobby stars not wired');
-assert(rules.includes('ESTIMATED ACTIVITY')&&rules.includes('stars(ACTIVITY[r]||2)'),'rulebook stars absent');
-assert(rules.includes('Stars measure likely activity, not difficulty or importance'),'rating meaning missing');
+assert(rules.includes('ESTIMATED ACTIVITY')&&rules.includes('stars(activityRating(r,global))')&&rules.includes('COURTROOM_ACTIVITY'),'rulebook stars absent');
+assert(rules.includes('Stars estimate likely activity, not difficulty or importance'),'rating meaning missing');
 for(const file of ['natural-role-gameplay-v50.js','self-guided-rules-v51.js'])execFileSync(process.execPath,['--check',file]);
 for(const lang of ['fr','en']){
  const window={IGR_LOCALE:lang,STATE:{sync:{room:{scenario_id:'026',cycle:2,status:'playing',state:{}},player:{public_role:'officier_liaison'},players:[]}},renderGameTab(){return''},renderRules(){return''},IGR_RUNTIME_COORDINATOR:{every(){}}};
