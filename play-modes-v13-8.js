@@ -251,7 +251,7 @@ async function syncHeritageOnline(force=false){
     const sig=JSON.stringify([d.room?.status,d.room?.stage,d.room?.phase_index,d.room?.decision_id,
       ballot?.vote_round,ballot?.votes_cast,ballot?.my_vote,(d.players||[]).map(p=>[p.id,p.ready,p.role_id])]);
     if(!force&&sig===hLastSig)return;
-    hLastSig=sig;routeHOnline(d);
+    routeHOnline(d);hLastSig=sig;
   }catch(e){
     console.warn('heritage online sync',e.message);
     if(/expired|unauthorized/i.test(e.message||'')){clearHSession();toastX('La cellule HÉRITAGE a expiré.')}
