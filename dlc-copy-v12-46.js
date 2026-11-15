@@ -18,7 +18,7 @@
     },
     regime: {
       eyebrow: 'DLC APRÈS LA CHUTE',
-      text: 'Dix-neuf ans de dictature. Une guerre d’agression, des villages rasés, des milliers de détenus et un président capturé. La justice remonte la chaîne des ordres jusqu’au sommet.'
+      text: 'Dix-neuf ans de dictature, une guerre d’agression et des milliers de détenus. Le pouvoir s’est effondré : six hauts responsables sont traqués dans trois enquêtes distinctes.'
     }
   });
 
