@@ -15,6 +15,9 @@
 - Témoin : **une seule initiative par cycle** : demande d'audition **ou** déclaration personnelle (20–220 caractères), non corroborée ; la demande ne force pas une convocation.
 - Espion : statut caché superposé à un rôle public, objectifs spécifiques à la variante et aux DLC ; non divulgué dans les règles publiques.
 
+## Terreur 026–028 : six joueurs, six rôles
+Les trois dossiers sont désormais réservés à **6 joueurs exactement** : Enquêteur, Analyste, Officier et trois Suspects. Aucun Inspecteur, Expert ou Procureur jouable n'y est attribué. Les résultats de terrain et renseignements prévus dans les variantes restent des éléments d'enquête; en l'absence de Procureur et de Juge, la conclusion de l'Enquêteur fait autorité.
+
 ## Terreur 026–028 : Officier (nom affiché)
 Le rôle public technique reste \`officier_liaison\` ; dans l'interface, son titre est **Officier**, et non Inspecteur ni Officier de liaison.
 - **3 décisions militaires par cycle, 9 maximum** sur la partie, en trois séquences : institutions/archives/évacuations ; réserves/secteur/secours ; tenir/protéger/reconquérir.
