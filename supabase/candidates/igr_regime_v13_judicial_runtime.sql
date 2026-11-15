@@ -257,7 +257,7 @@ DECLARE
  m igr_private.igr_regime_v13_rooms%rowtype;
  act jsonb;ans jsonb;eid text;piece jsonb;
  sources text[];i integer;accurate integer:=0;
- correct boolean;declared jsonb;res jsonb;
+ correct boolean;declared jsonb;res jsonb; source_supported boolean;act_scores jsonb:='{}'::jsonb;
 BEGIN
  SELECT * INTO p FROM public.igr_v4_players
  WHERE room_code=upper(trim(p_code)) AND player_token=p_player_token;
@@ -287,14 +287,19 @@ BEGIN
        THEN sources:=array_append(sources,piece->>'origin');END IF;
      END LOOP;
    END IF;
-   SELECT count(distinct t) >= 2 INTO correct FROM unnest(sources) t;
-   correct:=correct AND ans->>'orderedBy'=act->>'orderedBy'
+   SELECT count(distinct t) >= 2 INTO source_supported FROM unnest(sources) t;
+   correct:=source_supported AND ans->>'orderedBy'=act->>'orderedBy'
      AND ans->>'transmittedBy'=act->>'transmittedBy'
      AND ans->>'executedBy'=act->>'executedBy'
      AND ans->>'knewAndControlledBy'=act->>'knewAndControlledBy';
+   act_scores:=act_scores||jsonb_build_object(act->>'id',jsonb_build_object(
+      'order_correct',coalesce(source_supported AND
+        ans->>'orderedBy'=act->>'orderedBy',false),
+      'supported',coalesce(source_supported,false),
+      'act_correct',coalesce(correct,false)));
    IF correct THEN accurate:=accurate+1;END IF;
  END LOOP;
- declared:=jsonb_build_object('accurate',accurate,'passed',accurate>=3,'submitted_at',now());
+ declared:=jsonb_build_object('accurate',accurate,'passed',accurate>=3,'act_orders',act_scores,'submitted_at',now());
  UPDATE igr_private.igr_regime_v13_rooms SET
  play_state=jsonb_set(m.play_state,'{reconstructions}',
  coalesce(m.play_state->'reconstructions','{}'::jsonb)||
