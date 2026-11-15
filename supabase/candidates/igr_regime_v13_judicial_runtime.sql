@@ -37,7 +37,7 @@ BEGIN
  IF m.play_state->'arrests' ? p_target_id THEN RAISE EXCEPTION 'fugitive already captured';END IF;
  IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(
    m.private_pack->'first_cycle'->'public_networks') loc
-   WHERE loc->>'id'=p_track_choice)
+   WHERE igr_private.igr_regime_v14_matches_input(m.room_code,p_track_choice,loc->>'id'))
    THEN RAISE EXCEPTION 'unknown proposed refuge';END IF;
  IF r.cycle=1 AND r.phase='role_reading' AND
     (NOT (m.play_state->'alliance' ? target1) OR
@@ -55,13 +55,13 @@ BEGIN
    from_extra:=false;
    SELECT value INTO e FROM jsonb_array_elements(
      m.private_pack->'capture_evidence') value
-     WHERE value->>'id'=eid AND value->>'targetId'=p_target_id
+     WHERE igr_private.igr_regime_v14_matches_input(m.room_code,eid,value->>'id') AND value->>'targetId'=p_target_id
        AND (value->>'cycle')::integer<=r.cycle LIMIT 1;
    IF e IS NULL THEN
      from_extra:=true;
      SELECT value INTO e FROM jsonb_array_elements(
        coalesce(m.play_state->'extra_capture_leads','[]'::jsonb)) value
-       WHERE value->>'id'=eid AND value->>'target_id'=p_target_id
+       WHERE igr_private.igr_regime_v14_matches_input(m.room_code,eid,value->>'id') AND value->>'target_id'=p_target_id
          AND (value->>'cycle')::integer<=r.cycle LIMIT 1;
    END IF;
    IF e IS NULL THEN RAISE EXCEPTION 'unpublished or unrelated trace';END IF;
@@ -72,22 +72,22 @@ BEGIN
      published:=
        ((e->>'revealed_at'='cycle_start'
          AND (e->>'cycle')::integer<=r.cycle)
-        OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? eid)
+        OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? (e->>'id'))
         OR EXISTS(SELECT 1 FROM jsonb_array_elements(
          coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
-         WHERE sd->>'id'=eid AND (sd->>'cycle')::integer<=r.cycle));
+         WHERE sd->>'id'=e->>'id' AND (sd->>'cycle')::integer<=r.cycle));
      IF NOT published THEN RAISE EXCEPTION 'private trace not revealed';END IF;
      origin_name:=e->>'origin';
      trace_id:=coalesce(
-       m.play_state->'capture_clue_tracks'->>eid,
+       m.play_state->'capture_clue_tracks'->>(e->>'id'),
        (SELECT sd->>'track_id' FROM jsonb_array_elements(
          coalesce(m.play_state->'scheduled_disclosures','[]'::jsonb)) sd
-         WHERE sd->>'id'=eid LIMIT 1),
+         WHERE sd->>'id'=e->>'id' LIMIT 1),
        CASE WHEN (e->>'cycle')::integer=1
          THEN igr_private.igr_regime_v14_base_track(m.room_code,p_target_id)
          ELSE igr_private.igr_regime_v14_active_track(m.room_code,p_target_id) END);
    END IF;
-   IF trace_id IS DISTINCT FROM p_track_choice THEN
+   IF NOT igr_private.igr_regime_v14_matches_input(m.room_code,p_track_choice,trace_id) THEN
       RAISE EXCEPTION 'the two documents must point to the chosen refuge';END IF;
    origins:=origins||ARRAY[origin_name];
  END LOOP;
@@ -157,7 +157,7 @@ BEGIN
  ELSE RAISE EXCEPTION 'judge review not permitted or too early'; END IF;
  target:=w->>'target_id';
  actual:=igr_private.igr_regime_v14_active_track(m.room_code,target);
- outcome:=CASE WHEN w->>'track_choice'=actual THEN 'captured' ELSE 'not_found' END;
+ outcome:=CASE WHEN igr_private.igr_regime_v14_matches_input(m.room_code,w->>'track_choice',actual) THEN 'captured' ELSE 'not_found' END;
  IF m.play_state->'arrests' ? target THEN outcome:='already_captured';END IF;
  w:=jsonb_set(w,'{status}',to_jsonb(outcome),true);
  w:=jsonb_set(w,'{judge_review}',to_jsonb(reviewed),true);
@@ -322,21 +322,21 @@ BEGIN
    RAISE EXCEPTION 'four judicial attributions required';END IF;
  IF m.play_state->'reconstructions' ? (p.id::text) THEN RAISE EXCEPTION 'already submitted';END IF;
  FOR act IN SELECT value FROM jsonb_array_elements(m.private_pack->'acts') LOOP
-   SELECT value INTO ans FROM jsonb_array_elements(p_answers) value WHERE value->>'actId'=act->>'id';
+   SELECT value INTO ans FROM jsonb_array_elements(p_answers) value WHERE igr_private.igr_regime_v14_matches_input(m.room_code,value->>'actId',act->>'id');
    IF NOT FOUND THEN RAISE EXCEPTION 'missing judicial act';END IF;
    sources:=ARRAY[]::text[];
    IF jsonb_typeof(ans->'evidenceIds')='array' THEN
      FOR eid IN SELECT jsonb_array_elements_text(ans->'evidenceIds') LOOP
        SELECT value INTO piece FROM jsonb_array_elements(m.private_pack->'revelations') value
-       WHERE value->>'id'=eid AND value->'act_ids' ? (act->>'id') LIMIT 1;
+       WHERE igr_private.igr_regime_v14_matches_input(m.room_code,eid,value->>'id') AND value->'act_ids' ? (act->>'id') LIMIT 1;
        IF NOT FOUND THEN
          piece:=m.private_pack->'third_suspect_mission'->'public_on_submission';
-         IF NOT (piece->>'id'=eid AND piece->'act_ids' ? (act->>'id'))
+         IF NOT (igr_private.igr_regime_v14_matches_input(m.room_code,eid,piece->>'id') AND piece->'act_ids' ? (act->>'id'))
            THEN piece:=NULL;END IF;
        END IF;
        IF piece IS NOT NULL AND
          ((piece->>'kind'='guaranteed' AND (piece->>'min_cycle')::int<=r.cycle)
-           OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? eid))
+           OR (coalesce(m.play_state->'disclosed','[]'::jsonb) ? (piece->>'id')))
        THEN sources:=array_append(sources,piece->>'origin');END IF;
      END LOOP;
    END IF;
