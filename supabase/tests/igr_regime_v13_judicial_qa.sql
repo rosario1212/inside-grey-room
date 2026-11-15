@@ -34,6 +34,10 @@ BEGIN
  SELECT play_state,private_pack INTO state,draft
  FROM igr_private.igr_regime_v13_rooms WHERE room_code='QA13SAFE';
  IF state->'court'->>'duration_minutes'<>'14' THEN RAISE EXCEPTION 'long hearing must be 14 min';END IF;
+ UPDATE igr_private.igr_regime_v13_rooms
+ SET play_state=jsonb_set(play_state,ARRAY['court','started_at'],
+    to_jsonb((now()-interval '61 seconds')::text),true)
+ WHERE room_code='QA13SAFE';
  result:=public.igr_regime_v13_court_call('QA13SAFE',judge,'qa-court-call-0001','palace_secretary');
  IF result->>'seconds'<>'120' THEN RAISE EXCEPTION '2-minute speaking right missing';END IF;
  -- Reveal all optional evidence for a deterministic reconstitution; the server
