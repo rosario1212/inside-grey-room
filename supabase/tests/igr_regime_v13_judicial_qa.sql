@@ -38,7 +38,7 @@ BEGIN
  SET play_state=jsonb_set(play_state,ARRAY['court','started_at'],
     to_jsonb((now()-interval '61 seconds')::text),true)
  WHERE room_code='QA13SAFE';
- result:=public.igr_regime_v13_court_call('QA13SAFE',judge,'qa-court-call-0001','palace_secretary');
+ result:=public.igr_regime_v13_court_call('QA13SAFE',judge,'qa-court-call-0001','vahran_director');
  IF result->>'seconds'<>'120' THEN RAISE EXCEPTION '2-minute speaking right missing';END IF;
  -- Reveal all optional evidence for a deterministic reconstitution; the server
  -- must still evaluate the four accurate attributions using independent documents.
