@@ -1,28 +1,32 @@
 # LE RÉGIME — Bible publique de l'univers de Karsane (proposition v1)
 
 **Statut : refonte narrative proposée, non intégrée aux packs privés et non déployée.**
+
+**Présidence personnalisée en partie :** « Harb Kassar » est l'identité de référence hors session. Quand un joueur reçoit le rôle de président, son nom de joueur (pseudonyme choisi) devient le nom du président **dans cette partie** ; aucun surnom ou prénom « Harb » ne lui est imposé à l'écran. Le serveur doit figer cet alias à l'ouverture de la partie, remplacer de façon structurée toutes les mentions du président dans les cartes, convocations, documents, entretiens et révélation de cette partie, et relier les noeuds de l'organigramme à un identifiant de personnage stable (jamais au texte du nom). Aucun document ne peut mélanger les deux noms. La personnalisation n'est pas encore implémentée.
+
 Ce fichier définit uniquement des invariants publics et des objectifs d'écriture. Il ne livre aucune combinaison de responsables par variante ni aucune preuve décisive.
 
 ## L'État et sa chute
 
-- **État fictif :** République de Karsane ; capitale : Darsen.
-- **Ancien chef d'État :** président Nadim Kassar, au pouvoir durant dix-neuf ans. Le surnom de « Boucher de Darsen » lui est attribué par des survivants et par la presse : c'est un qualificatif historique, pas une décision judiciaire sur tous les actes en cause.
+- **État fictif :** République de Karsane ; capitale : Darsen ; **population de référence avant la guerre : 15 000 000 d'habitants**. Ce chiffre est fixé pour les trois dossiers. Les pertes humaines ne doivent pas être déduites automatiquement des autres nombres de l'univers.
+- **Ancien chef d'État :** président Harb Kassar, au pouvoir durant dix-neuf ans. Le surnom de « Boucher de Darsen » lui est attribué par des survivants et par la presse : c'est un qualificatif historique, pas une décision judiciaire sur tous les actes en cause.
 - **État voisin fictif :** République de Belvane. L'armée de Karsane a déclenché une guerre d'agression contre Belvane. La nature illégale de cette guerre est un fait fixe de l'univers ; les responsabilités individuelles doivent être établies.
 - **Victimes de la politique d'extermination :** les Veyrins, population minoritaire fictive de la région de Veyra. L'intention de destruction d'une partie du groupe constitue un fait historique dans cet univers. Le tribunal doit encore établir, pour chaque accusé, l'intention, la connaissance, la participation, le contrôle et l'éventuel défaut de prévention ou de répression.
 - **61 villages détruits** au cours de la campagne ; chiffre de référence fictionnel et établi par les archives, à ne pas changer au hasard entre les trois dossiers.
 - **Prison de Vahran :** 14 600 personnes enregistrées sur l'ensemble de son fonctionnement répressif. Une part des registres de sortie est manquante ; les morts, tortures et disparitions sont des faits historiques, mais le bilan total doit rester méthodiquement distingué des chiffres documentés.
 - **Chute :** l'appareil central se désintègre en année 19 du régime ; l'ancien président fuit 53 jours, puis est arrêté vivant.
+- **Composition du pouvoir :** seuls des hommes occupaient les postes exécutifs, militaires et ministériels sous cette dictature fictive. Cette exclusion institutionnelle fait partie de la violence politique du régime, elle n'est pas une règle sur le genre des joueurs.
 - **Procédure :** Tribunal spécial de Karsane, juridiction internationale fictive mise en place après la transition ; auditions avec procureur, défense, juge et audience motivée. Il ne s'agit pas d'un prétendu « procès à l'ONU ».
 
 ## Le clan présidentiel
 
 | Personnage canonique | Position sous le régime | Rapport à la présidence | Prétexte de défense plausible |
 | --- | --- | --- | --- |
-| Nadim Kassar | Président et commandant suprême officiel | Chef du clan | Nie une partie des instructions personnelles et renvoie aux services |
+| Harb Kassar | Président et commandant suprême officiel | Chef du clan | Nie une partie des instructions personnelles et renvoie aux services |
 | Fouad Kassar | Ministre de la Défense | Frère du président | Sépare ordres stratégiques, opérations sur le terrain et savoir réel |
 | Mourad Kassar | Ministre de l'Intérieur | Cousin du président | Présente les arrestations comme des mesures de sécurité |
-| Ilyas Sayegh | Chef de la sécurité présidentielle et coordinateur des renseignements | Gendre du président | Se déclare simple intermédiaire et conteste son pouvoir effectif |
-| Samira Kassar | Ministre de l'Information et organisatrice du culte présidentiel | Fille du président | Distingue propagande, connaissance des crimes et autorité sur les unités |
+| Ilyas Sayegh | Chef de la sécurité présidentielle et coordinateur des renseignements | Gendre du président (époux d’une fille sans charge gouvernementale) | Se déclare simple intermédiaire et conteste son pouvoir effectif |
+| Darian Kassar | Ministre de l'Information et organisatrice du culte présidentiel | Fils du président | Distingue propagande, connaissance des crimes et autorité sur les unités |
 | Youssef Baran | Directeur du complexe pénitentiaire de Vahran | Fidèle sans lien familial | Affirme avoir exécuté une administration sans pouvoir sur les ordres |
 | Hamza Daher | Secrétaire général du cabinet présidentiel | Proche historique, sans parenté | Affirme que des notes ou visas n'étaient pas des instructions |
  
@@ -74,6 +78,12 @@ Surnoms attribués par des survivants ou utilisés dans les papiers clandestins 
 ## Prudence de publication
 
 Il s'agit d'une **bible narrative à valider**, pas d'une migration des fiches ou du serveur. Avant de faire entrer ces noms et chiffres dans les scénarios privés, auditer les autres packs et toutes les règles actuelles. Ne pas publier un scénario partiellement réécrit.
+
+## Règle de gouvernement et filiation
+
+**Grand Conseil de l'État : 100 % masculin dans la fiction.** Tous les titulaires de la présidence, de la défense, de l'intérieur, de l'information, du cabinet et de la sécurité présidentielle sont des hommes. La fille non nommée du président n'a jamais exercé de fonction : son mariage avec Ilyas Sayegh explique le lien « gendre » sans contradiction. Le fils Darian est héritier présumé, non successeur automatique ; les ambitions entre branches du clan constituent des conflits à prouver dans chaque variante.
+
+Arbre officiel : Présidence (Harb Kassar, alias de joueur en session) > ministres Défense (Fouad), Intérieur (Mourad), Information (Darian), sécurité présidentielle (Ilyas), cabinet (Hamza). Le directeur pénitentiaire Baran relève de l'Intérieur. Les liens **familiaux** sont distincts des liens de **commandement formels** et des liens de **pouvoir réel**, qui ne peuvent être révélés que par des pièces canoniques de la variante jouée.
 
 ## La pièce transversale : CIRCULAIRE 17
 
