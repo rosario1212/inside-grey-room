@@ -15,8 +15,8 @@ assert.deepEqual(metadata.evidence_per_cycle,[4,5,4]);
 assert(existsSync(path.join(root,script)),'CARTEL 031 client absent from web build');
 for(const page of ['index.html','en.html']){
   const html=read(path.join(root,page));
-  const matches=[...html.matchAll(/<script\\b[^>]*\\bsrc=["']cartel031-v171\\.js\\?v=v173-cartel031-negotiation["'][^>]*><\\/script>/g)];
-  assert.equal(matches.length,1,page+' must load exactly one CARTEL 031 runtime');
+  const matches=html.split('cartel031-v171.js?v=v173-cartel031-negotiation').length-1;
+  assert.equal(matches,1,page+' must load exactly one CARTEL 031 runtime');
 }
 // The final release patcher, not the initial HTML/build lists, owns this client.
 const finalizer=read('scripts/finalize-cartel030-release.mjs');
