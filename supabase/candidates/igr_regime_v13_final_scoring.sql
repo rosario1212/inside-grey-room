@@ -71,6 +71,7 @@ DECLARE
  captured integer:=0;accurate integer:=0;max_accurate integer:=0;
  truthful integer:=0;exact integer:=0; total integer:=0;true_level integer;guess_level integer;
  role_success boolean;third_success boolean:=false;is_accurate boolean;
+ defense_obj jsonb;captured_partial boolean;judge_actions integer;
  tactical boolean;judicial boolean;whole boolean;
  text_out text; third_path text; own_actor text; response jsonb;
 BEGIN
@@ -137,10 +138,28 @@ BEGIN
    text_out:='Ta contribution à la reconstruction est évaluée sur les pièces.';
    IF player_row.public_role='suspect' AND player_row.internal_slot IN (1,2) THEN
      own_actor:=m.private_pack->'private_cards'->(player_row.internal_slot-1)->>'actor_id';
-     role_success:=NOT (m.play_state->'arrests' ? own_actor);
-     text_out:=CASE WHEN role_success THEN
-       'Tu as échappé aux autorités de transition. Ta responsabilité judiciaire reste distincte de ta fuite.'
-       ELSE 'Tu as été capturé. Ta mission personnelle de fuite échoue; le tribunal examine les preuves indépendamment.' END;
+     defense_obj:=m.private_pack->'captured_defense_objectives'->own_actor;
+     captured_partial:=false;
+     IF m.play_state->'arrests' ? own_actor AND defense_obj IS NOT NULL THEN
+       captured_partial:=EXISTS(SELECT 1 FROM
+           jsonb_array_elements(coalesce(m.play_state->'captured_responses','[]'::jsonb)) x
+           WHERE x->>'actor_id'=own_actor AND
+             x->>'act_id'=defense_obj->>'act_id' AND
+             x->>'claimed_orderer'=defense_obj->>'expected_ordered_by'
+             AND (x->>'cycle')::integer BETWEEN 1 AND 3)
+        AND coalesce((m.play_state->'reconstructions'->enq.id::text->
+           'act_orders'->(defense_obj->>'act_id')->>'order_correct')::boolean,false)
+        AND coalesce((m.play_state->'reconstructions'->enq.id::text->
+           'act_orders'->(defense_obj->>'act_id')->>'supported')::boolean,false);
+     END IF;
+     role_success:=NOT (m.play_state->'arrests' ? own_actor) OR captured_partial;
+     text_out:=CASE
+       WHEN NOT (m.play_state->'arrests' ? own_actor) THEN
+         'Tu as échappé à l arrestation. Cette réussite ne prouve pas ton innocence.'
+       WHEN captured_partial THEN
+         'Tu es capturé, mais le tribunal distingue correctement l auteur d un ordre précis que tu n as pas donné. C est une victoire personnelle limitée, pas un acquittement général.'
+       ELSE
+         'Tu es capturé et ta défense n a pas établi la non-attribution de l ordre visé. Tes autres responsabilités demeurent à examiner.' END;
    ELSIF player_row.public_role='suspect' AND player_row.internal_slot=3 THEN
      role_success:=third_success;
      text_out:=CASE WHEN role_success THEN
@@ -152,7 +171,11 @@ BEGIN
        'Les deux dirigeants sont capturés et au moins trois des quatre actes sont reconstitués correctement.'
        ELSE 'La victoire totale exige deux captures et au moins trois des quatre actes correctement reconstitués.' END;
    ELSIF player_row.public_role='juge' THEN
+     SELECT count(*) INTO judge_actions FROM igr_private.igr_regime_v13_ledger ledger
+       WHERE ledger.room_code=r.code AND ledger.actor_player=player_row.id
+         AND ledger.action_kind IN ('judge_review','court_call','court_exchange');
      role_success:=coalesce((m.play_state->'court'->>'started')::boolean,false)
+       AND judge_actions>0
        AND (SELECT count(*) FROM jsonb_array_elements(coalesce(m.play_state->'mandates','[]'::jsonb)) w
          WHERE w->>'status'='awaiting_judge')=0;
      text_out:=CASE WHEN role_success THEN
@@ -180,6 +203,9 @@ BEGIN
     'captures',captured,'tactical',tactical,
     'judicial',judicial,'accurate_acts',accurate,
     'total_victory',whole,'third_suspect_win',third_success,
+    'epilogue',CASE WHEN whole THEN
+       m.private_pack->'canonical_truth'->'epilogue'->>'victory'
+       ELSE m.private_pack->'canonical_truth'->'epilogue'->>'failure' END,
     'four_acts',m.private_pack->'acts')
  );
  RETURN response;
