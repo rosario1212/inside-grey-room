@@ -34,7 +34,8 @@ need(ui, "Vote final individuel et secret");
 need(ui, '<option value="" selected disabled>');
 need(ui, "!['0','1','2'].includes(el.value)");
 need(ui, "Tous peuvent passer, y compris le Juge.");
-need(rules, "tribunal éventuel");
+need(rules, "function tribunalGuideHtml()");
+need(rules, "igr712-majority-strip");
 need(manual, "Tribunal avec Juge");
 assert.ok(!sql.includes('CREATE OR REPLACE FUNCTION public.igr_v52_make_reveal'), 'Scoring must remain unchanged');
 // End-to-end game design simulation (not a substitute for a real multi-device server test).
