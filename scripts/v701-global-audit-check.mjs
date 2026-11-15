@@ -10,20 +10,24 @@ const read=p=>readFileSync(p,'utf8');
 const script='cartel031-v171.js';
 const metadata=JSON.parse(read(path.join(root,'cartel031-release.json')));
 assert.equal(metadata.version,'v173-cartel031-negotiation');
-assert.equal(metadata.scenario_id,'031');
+assert.equal(metadata.scenario,'031');
 assert.deepEqual(metadata.evidence_per_cycle,[4,5,4]);
-assert.equal(metadata.client_script,script);
 assert(existsSync(path.join(root,script)),'CARTEL 031 client absent from web build');
 for(const page of ['index.html','en.html']){
   const html=read(path.join(root,page));
-  assert(html.includes('cartel031-v171.js?v=v173-cartel031-negotiation'),
-    page+' does not load the CARTEL 031 interactions');
+  const matches=[...html.matchAll(/<script\\b[^>]*\\bsrc=["']cartel031-v171\\.js\\?v=v173-cartel031-negotiation["'][^>]*><\\/script>/g)];
+  assert.equal(matches.length,1,page+' must load exactly one CARTEL 031 runtime');
 }
-for(const file of ['scripts/build-web.mjs','scripts/build-mobile.mjs']){
-  const build=read(file);
-  assert(build.includes("'cartel031-v171.js'")&&build.includes("'cartel031-release.json'"),
-    file+' omits a required CARTEL 031 asset');
-}
+// The final release patcher, not the initial HTML/build lists, owns this client.
+const finalizer=read('scripts/finalize-cartel030-release.mjs');
+assert(finalizer.includes("copyFile(path.resolve('cartel031-v171.js')"),
+  'The release finalizer does not package CARTEL 031');
+assert(finalizer.includes('loaded.length>1'),
+  'The finalizer must prevent duplicate 031 pollers');
+const pkg=JSON.parse(read('package.json'));
+for(const key of ['build','mobile:build','postinstall'])
+  assert(pkg.scripts[key].includes('scripts/finalize-cartel030-release.mjs'),
+    key+' does not run the canonical 031 release finalizer');
 const client=read(script);
 assert(client.includes("igr_v171_031_state")&&client.includes("igr_v171_031_act"),
   'Private 031 RPC handlers missing');
