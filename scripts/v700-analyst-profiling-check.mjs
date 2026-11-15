@@ -46,7 +46,7 @@ assert(sandbox.gameTabs().some(x=>x.id==='profiling'),'Analyst profiling tab abs
 assert(sandbox.renderGameTab().includes('Chargement'),'safe loading placeholder absent');
 await sandbox.window.IGR_ANALYST_PROFILING_V700.refresh(true);
 let out=sandbox.renderGameTab();
-assert.equal((out.match(/<textarea rows="2"/g)||[]).length,4,'two questions for each of two suspects');
+assert.equal((out.match(/<textarea id="igr700-(?:one|two)-[^\"]+" rows="2"/g)||[]).length,4,'two questions for each of two suspects');
 assert(out.includes('Suspect A')&&out.includes('Suspect B'),'suspect panels not independent');
 assert(out.includes('Quels propos ou faits connus'),'second grounded question missing');
 assert(!out.includes('Profils psychologiques de l’Analyste'),'profiles prematurely published');
