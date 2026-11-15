@@ -32,7 +32,7 @@ need(ui,"Aucun chronomètre");
 need(ui,"CLÔTURER ET OUVRIR LE VOTE SECRET");
 need(ui,"room()?.state?.v52_stage==='courtroom'?courtroomV708()");
 need(ui,"if(judgePresent())return");
-need(rules,"tribunal sans aucun chronomètre");
+need(rules,"Avec Juge : tribunal libre, sans audience séparée ni chronomètre.");
 need(manual,"aucune audience séparée");
 new Function(ui);
 new Function(rules);
