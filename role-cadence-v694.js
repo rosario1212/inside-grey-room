@@ -84,8 +84,13 @@ function showMilitary(){
  const old=document.getElementById('terrorV688Military'),existing=document.getElementById('igr694Military');
  existing?.remove();
  const s=cache.value;
- if(!old||!s?.enabled||cache.error)return; // Legacy panel remains until v694 is available.
+ if(!old||!s||cache.error)return; // Legacy panel remains only when server v694 is unavailable.
  old.style.display='none';
+ if(!s.enabled){
+  const note=document.createElement('section');note.id='igr694Military';note.className='igr694-command';
+  note.innerHTML='<small>ÉTAT-MAJOR D’ALMIZIA</small><p>Les ordres s’ouvrent après l’Assemblée d’enquête. Aucun chrono ne court pendant cette phase de préparation ou de clôture.</p>';
+  old.insertAdjacentElement('afterend',note);return;
+ }
  const el=document.createElement('section');el.id='igr694Military';el.className='igr694-command';
  const stage=Number(s.step)||1,opts=Array.isArray(s.choices)?s.choices:[];
  const current=stage<=3?opts.map(o=>'<button class="igr694-choice" type="button" '+(!s.ready?'disabled':'')+
