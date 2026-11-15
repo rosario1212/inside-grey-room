@@ -27,3 +27,14 @@
 Le dernier audit des **neuf variantes privées** reste valable : toutes les fiches A/B/C sont en révision et utilisent des personnages antérieurs à la nouvelle refonte. Les choix conditionnels n'ont pas de connexions RPC, le Juge n'est pas obligatoire dans le 032, le 034 demande encore 7 joueurs, et le vrai tribunal synchronisé n'a pas été développé. Aucun des **24 tests synthétiques** ne remplace la rédaction des 9 manuscrits ou un playtest humain.
 
 **Prochaine implémentation mesurable** : 032 A/B/C privés à jour + un salon à 6 joueurs dont les deux fugitifs choisissent l'alliance, un mandat C1 autorisé/refusé, une capture enregistrée, le troisième suspect actif et le tribunal court/long sans rejouer l'audience. Puis étendre à 033/034 et réexécuter tous les contrôles avant fusion.
+
+
+## Jalon privé du 032 (v11)
+
+Un nouveau candidat par variante existe dans le champ `manuscript.regime_vnext` de la table protégée `igr_private.igr_v99_variant_manuscripts` ; **ce champ n'est pas lu par le runtime actuel**. Les contrôles publics, qui ne contiennent aucune vérité privée, figurent dans :
+
+- `supabase/tests/igr_regime_032_candidate_drafts_qa.sql` (63/63 PASS) ;
+- `supabase/tests/igr_regime_032_playability_matrix.sql` (64 choix × 3 variantes, atteignabilité variable des preuves) ;
+- `docs/REGIME_032_PRIVATE_CANDIDATES_QA_V11.md` (rapport sans révélations des vérités A/B/C).
+
+Une simulation externe à la partie a confirmé le lien entre risque C1 et indice indépendant pour les 2 fugitifs de chaque variante, dans les deux états d'alliance (12 captures positives, 12 non-captures sans seconde preuve), ainsi que les 3 missions du troisième suspect. **Aucun de ces éléments ne représente une mise en production.**
