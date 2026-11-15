@@ -118,7 +118,7 @@
   function runQueuedSync(){
     RT.syncTimer = null;
     RT.syncDue = 0;
-    if(!inRoom() || RT.syncRunning || !RT.syncDirty) return;
+    if(!inRoom() || !isOnline() || RT.syncRunning || !RT.syncDirty) return;
 
     const force = RT.syncForce;
     const targetRevision = RT.revision;
@@ -155,7 +155,7 @@
       .finally(() => {
         if(!current()) return;
         RT.syncRunning = false;
-        if(!inRoom()) return;
+        if(!inRoom() || !isOnline()) return;
         if(RT.syncDirty || RT.revision > RT.syncedRevision){
           const backoff=failed ? Math.min(16000,Math.round(800*Math.pow(1.8,Math.max(0,RT.failures-1)))) : 0;
           syncSoon(backoff,RT.syncForce,RT.revision);
@@ -164,7 +164,7 @@
   }
 
   function syncSoon(delay=0, force=false, revision=0){
-    if(!inRoom()) return;
+    if(!inRoom() || !isOnline()) return;
     const rev = Number(revision || 0);
     if(Number.isFinite(rev) && rev > RT.revision) RT.revision = rev;
     if(rev && rev <= RT.syncedRevision && !force) return;
@@ -430,7 +430,7 @@
 
   function schedulePoll(delay=pollDelay()){
     clearAdaptivePoll();
-    if(!inRoom()) return;
+    if(!inRoom() || !isOnline()) return;
     const room=STATE.room,token=STATE.token,generation=RT.pollGeneration;
     RT.pollTimer=setTimeout(async () => {
       RT.pollTimer=null;
