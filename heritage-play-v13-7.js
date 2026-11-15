@@ -606,10 +606,11 @@ function applyResult(live){
   if(live.result&&live.campaignId==='cendres'&&Number(live.chapter)===5)live.result.consequence=cendresFinalConsequence(live,pc.options.find(o=>o.id===live.decision));
   if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
-      const flag=out.flag;if(flag){const payload={flags:{[flag]:true},crisisDelta:Number(out.crisis||0)};api().completeChapter('cendres',live.chapter,payload)}else api().completeChapter('cendres',live.chapter,{crisisDelta:Number(out.crisis||0)});
-      const grade=live.result?.grade||0,labels=['PISTE COMPROMISE','PISTE PARTIELLE','PISTE VALIDÉE'];
-      api().cendres.upsertNode({id:`cendres-${live.chapter}-${live.decision}`,label:`D0${live.chapter} · ${labels[grade]}`,kind:'dossier',status:grade===2?'cleared':grade===1?'watch':'unknown',chapter:live.chapter,note:live.result?.consequence});
-      if(live.chapter>1)api().cendres.link(`cendres-${live.chapter-1}-${findPreviousDecision('cendres',live.chapter-1)}`,`cendres-${live.chapter}-${live.decision}`,'héritage de campagne');
+      const commit=api()?.cendres?.commitDecision?.({
+        chapter:live.chapter,decision:live.decision,grade:live.result?.grade||0,
+        consequence:live.result?.consequence||'',crisisDelta:Number(out.crisis||0),flag:out.flag||''
+      });
+      if(!commit?.ok){toastSafe('Sauvegarde impossible : le dossier reste ouvert. Réessayez.');return}
     }else{
       if(out.flag)api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}});else api().completeChapter('kuroi',live.chapter,{});
       if(live.chapter===1){
