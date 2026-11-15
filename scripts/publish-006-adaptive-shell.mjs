@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='terror-story-finales-v691-20261115';
+const tag='terror-terminal-consistency-v692-20261115';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -95,7 +95,7 @@ if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-for(const asset of ['/terror-live-v681.js?v=terror-capital-v691-20261115','/terror-live-v681.css?v=terror-city-v681-20261114','/terror-front-v682.js?v=terror-capital-v691-20261115','/terror-front-v682.css?v=terror-capital-v691-20261115','/terror-command-v688.js?v=terror-capital-v691-20261115','/terror-command-v688.css?v=terror-ops-v688-20261115']){
+for(const asset of ['/terror-live-v681.js?v=terror-capital-v691-20261115','/terror-live-v681.css?v=terror-city-v681-20261114','/terror-front-v682.js?v=terror-finale-v692-20261115','/terror-front-v682.css?v=terror-capital-v691-20261115','/terror-command-v688.js?v=terror-capital-v691-20261115','/terror-command-v688.css?v=terror-ops-v688-20261115']){
  if(!sw.includes(asset)){
   assert(sw.includes('const SHELL=['),'PWA shell missing');
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
