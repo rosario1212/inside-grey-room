@@ -24,6 +24,7 @@ const failTexts={
 function report(){
  const d=context();if(!d||!isTerror()||STATE.view!=='game'||!officer()||d.room.status!=='playing'||Number(d.room.cycle)<1)return;
  document.getElementById('terrorV688Military')?.remove();
+ document.getElementById('terrorV693Visit')?.remove();
  const parent=document.getElementById('terrorV681Board')||document.querySelector('.phase-strip');
  if(!parent)return;
  const k=key();let info=cache.get(k);
@@ -60,8 +61,67 @@ function report(){
     !canChoose()?'<div class="terror-v688-intel">Fenêtre de décision close pour ce cycle.</div>':
     '<div class="terror-v688-choice-grid">'+cards+'</div>')+
    '<small class="terror-v688-note">L’ordre est public. Le résultat dépend aussi des réponses de l’Enquêteur et de l’Analyste, que vous ne pouvez pas modifier.</small>';
+
  parent.insertAdjacentElement('afterend',el);
+ // A second, independently limited power: join one currently active hearing
+ // or confrontation at cycles 2 and 3, with no access to secret truth.
+ if(Number(d.room.cycle)>=2){
+   const phase=String(d.room.phase||'');
+   const liveHearing=phase==='interrogation'||phase==='event_confrontation';
+   const visit=d.room.state?.terror_v693_officer_visit;
+   const oldAction=Array.isArray(d.my_actions)&&d.my_actions.some(a=>a.action_type==='terror_v693_officer_join'&&Number(a.cycle)===Number(d.room.cycle));
+   const used=oldAction||(Number(visit?.cycle)===Number(d.room.cycle)&&visit?.visitor_id===d.player.id);
+   const sessionCurrent=used&&visit?.visitor_id===d.player.id&&
+       Number(visit.session_epoch_ms)===Date.parse(d.room.phase_started_at);
+   const hearingName=phase==='event_confrontation'?'confrontation':'interrogatoire';
+   const defaultFocus=d.room.scenario_id==='026'?'source':d.room.scenario_id==='027'?'civils':'acces';
+   const focusOptions=[
+     {id:'source',label:'Contrôler la source et sa date'},
+     {id:'civils',label:'Préciser les risques pour les civils'},
+     {id:'acces',label:'Vérifier un accès ou une liaison'}
+   ];
+   const visitPanel=document.createElement('section');
+   visitPanel.id='terrorV693Visit';visitPanel.className='terror-v693-visit';
+   visitPanel.innerHTML='<div class="terror-v693-visit-head"><small>INTERVENTION MILITAIRE · CYCLE '+Number(d.room.cycle)+'/3</small><strong>UNE AUDITION OU CONFRONTATION PAR CYCLE</strong></div>'+
+    '<p>Tu peux entrer une seule fois dans une séance déjà ouverte, demander un fait vérifiable et en tenir compte avant de donner ton ordre. Cela ne crée pas une preuve et ne transfère pas l’interrogatoire à l’état-major.</p>'+
+    (used?
+       '<div class="terror-v688-confirm">INTERVENTION UTILISÉE'+(sessionCurrent?' · TU PARTICIPES À CETTE SÉANCE':'')+'</div>'+
+       (sessionCurrent?'<p class="terror-v693-question">'+esc(visit.question||'')+'</p>':'')+
+       (sessionCurrent&&phase==='interrogation'&&typeof canVideo==='function'&&canVideo('officier_liaison')?
+         '<button type="button" class="terror-v693-button" onclick="setTab(\'video\')">Accéder au flux direct de cette audition</button>':''):
+      liveHearing?
+       '<label for="terrorV693Focus">Angle de ta question</label>'+
+       '<select id="terrorV693Focus">'+focusOptions.map(o=>'<option value="'+o.id+'"'+(o.id===defaultFocus?' selected':'')+'>'+esc(o.label)+'</option>').join('')+'</select>'+
+       '<button type="button" class="terror-v693-button" onclick="terrorV693Join()">Rejoindre cet '+esc(hearingName)+'</button>':
+       '<div class="terror-v688-intel">Aucune séance ouverte pour le moment. Tu peux réserver ton intervention pour un interrogatoire ou une confrontation ultérieur(e) de ce cycle.</div>')+
+     '<small>Cette intervention ne consomme pas ton ordre militaire. La retransmission vidéo n’est disponible que lors d’un interrogatoire actif et autorisé.</small>';
+   el.insertAdjacentElement('afterend',visitPanel);
+ }
 }
+
+window.terrorV693Join=async()=>{
+ const d=context(),phase=d?.room?.phase;
+ if(!officer()||Number(d?.room?.cycle)<2||!['interrogation','event_confrontation'].includes(phase))return;
+ const focus=document.getElementById('terrorV693Focus')?.value||'source';
+ const button=document.querySelector('#terrorV693Visit .terror-v693-button');
+ if(button)button.disabled=true;
+ try{
+   const reply=await rpc('igr_v693_terror_officer_join',{
+     p_code:STATE.room,p_player_token:STATE.token,
+     p_focus:focus,p_phase_started_at:d.room.phase_started_at
+   });
+   await syncNow(true);
+   if(phase==='interrogation'&&typeof canVideo==='function'&&canVideo('officier_liaison')){
+     STATE.tab='video';
+     renderCurrent();
+   }
+   toast('Intervention officielle enregistrée : une question ciblée, une seule séance pour ce cycle.');
+ }catch(err){
+   console.warn('officer hearing access denied',err);
+   toast('Intervention indisponible : séance terminée, rôle non autorisé ou quota déjà utilisé.');
+   if(button)button.disabled=false;
+ }
+};
 window.terrorV688Choose=async choice=>{
  if(!officer()||!['tenir','proteger','reconquerir'].includes(choice))return;
  try{

@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const dest=path.resolve(process.argv[2]||'dist');
-const tag='terror-terminal-consistency-v692-20261115';
+const tag='terror-command-auditions-v693-20261115';
 const appName='app-v11-'+tag+'.js';
 const appSource=await readFile(path.join(dest,'app-v11.js'),'utf8');
 assert(appSource.includes('investigation_006_adaptive'),'Scenario 006 adaptive UI missing');
@@ -27,6 +27,7 @@ assert(terrorCity.includes('igr_v681_terror_set_city') && terrorCity.includes('i
 const terrorFront=await readFile(path.join(dest,'terror-front-v682.js'),'utf8');
 assert(terrorFront.includes("RÉPUBLIQUE D’ALMIZIA") && terrorFront.includes('terror_v683_sector_recovered') && terrorFront.includes('base militaire de Ferra'), 'FDR country/base/reconquest UI missing');
 const terrorCommand=await readFile(path.join(dest,'terror-command-v688.js'),'utf8');
+assert(terrorCommand.includes('terrorV693Join') && terrorCommand.includes('terrorV693Visit'),'Terror officer hearing participation must be bundled');
 assert(terrorCommand.includes('igr_v688_terror_choose_operation') && terrorCommand.includes('terror-v688-capture'), 'Terror commander and captivity presentation missing');
 const terrorHtml=await readFile(path.join(dest,'index.html'),'utf8');
 assert(terrorHtml.includes('terror-live-v681.js') && terrorHtml.includes('terror-live-v681.css'), 'terror shared city widget not included in published entrypoint');
@@ -95,7 +96,7 @@ if(!sw.includes(fiveCachePath)){
  assert(sw.includes('const SHELL=['),'PWA manifest missing');
  sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${fiveCachePath}',`);
 }
-for(const asset of ['/terror-live-v681.js?v=terror-capital-v691-20261115','/terror-live-v681.css?v=terror-city-v681-20261114','/terror-front-v682.js?v=terror-finale-v692-20261115','/terror-front-v682.css?v=terror-capital-v691-20261115','/terror-command-v688.js?v=terror-capital-v691-20261115','/terror-command-v688.css?v=terror-ops-v688-20261115']){
+for(const asset of ['/terror-live-v681.js?v=terror-capital-v691-20261115','/terror-live-v681.css?v=terror-city-v681-20261114','/terror-front-v682.js?v=terror-officer-v693-20261115','/terror-front-v682.css?v=terror-capital-v691-20261115','/terror-command-v688.js?v=terror-officer-v693-20261115','/terror-command-v688.css?v=terror-officer-v693-20261115']){
  if(!sw.includes(asset)){
   assert(sw.includes('const SHELL=['),'PWA shell missing');
   sw=sw.replace('const SHELL=[',`const SHELL=[\n  '${asset}',`);
