@@ -12,7 +12,7 @@
     ref:0, joinRef:null, heartbeatRef:null,
     heartbeat:null, joinWatchdog:null, reconnect:null, reconnectAttempt:0,
     pollTimer:null, pollGeneration:0, syncTimer:null, syncDue:0, syncRunning:false, syncDirty:false,
-    syncForce:false, syncRunId:0, revision:0, syncedRevision:0,
+    syncForce:false, syncRunId:0, revision:0, syncedRevision:0, failures:0,
     lastMessageAt:0, serverEpoch:0, clientEpoch:0,
     closedByUs:false, generation:0
   };
@@ -22,6 +22,7 @@
 
   const roomScenario = () => String(STATE?.sync?.room?.scenario_id || STATE?.scenarioId || STATE?.selectedScenario || '');
   const inRoom = () => !!(STATE?.room && STATE?.token);
+  const roomScreenActive = () => !STATE?.view || ['lobby','briefing','role','game'].includes(STATE.view);
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
   const isOnline = () => navigator.onLine !== false;
   const isTerminalSessionError = error => /unauthorized|room not found|cellule introuvable|invalid player|player not found/i.test(String(error?.message || error || ''));
@@ -98,6 +99,7 @@
     RT.heartbeatRef = null;
     RT.revision = 0;
     RT.syncedRevision = 0;
+    RT.failures = 0;
     if(ws){ try{ws.close(1000,String(reason).slice(0,120))}catch{} }
     setRealtimeState(inRoom() && !isOnline() ? 'offline' : 'off');
   }
@@ -117,7 +119,7 @@
   function runQueuedSync(){
     RT.syncTimer = null;
     RT.syncDue = 0;
-    if(!inRoom() || RT.syncRunning || !RT.syncDirty) return;
+    if(!inRoom() || !isOnline() || RT.syncRunning || !RT.syncDirty) return;
 
     const force = RT.syncForce;
     const targetRevision = RT.revision;
@@ -135,6 +137,7 @@
         // performSync returns null on network errors. Never acknowledge a
         // revision until its authoritative snapshot was actually fetched.
         if(!data?.room || !data?.player) throw new Error('sync_unavailable');
+        RT.failures=0;
         recordServerClock(data);
         if(targetRevision) RT.syncedRevision = Math.max(RT.syncedRevision,targetRevision);
         schedulePoll();
@@ -142,6 +145,7 @@
       .catch(error => {
         if(!current()) return;
         failed = true;
+        RT.failures=Math.min(8,RT.failures+1);
         if(isTerminalSessionError(error)){
           recoverStaleSession('Cette cellule n’est plus disponible.');
           return;
@@ -152,15 +156,16 @@
       .finally(() => {
         if(!current()) return;
         RT.syncRunning = false;
-        if(!inRoom()) return;
+        if(!inRoom() || !isOnline()) return;
         if(RT.syncDirty || RT.revision > RT.syncedRevision){
-          syncSoon(failed ? 650 : 0,RT.syncForce,RT.revision);
+          const backoff=failed ? Math.min(16000,Math.round(800*Math.pow(1.8,Math.max(0,RT.failures-1)))) : 0;
+          syncSoon(backoff,RT.syncForce,RT.revision);
         }
       });
   }
 
   function syncSoon(delay=0, force=false, revision=0){
-    if(!inRoom()) return;
+    if(!inRoom() || !isOnline()) return;
     const rev = Number(revision || 0);
     if(Number.isFinite(rev) && rev > RT.revision) RT.revision = rev;
     if(rev && rev <= RT.syncedRevision && !force) return;
@@ -211,7 +216,8 @@
   function scheduleReconnect(){
     if(!inRoom() || RT.closedByUs || !isOnline()) return;
     clearTimer('reconnect');
-    const delays = [250,500,900,1600,2800,4500,6500];
+    // Degraded Realtime servers must not be hammered by reconnect storms.
+    const delays = [250,850,1800,3500,7000,14000,22000];
     const base = delays[Math.min(RT.reconnectAttempt++,delays.length-1)];
     const delay = Math.round(base*(0.85+Math.random()*0.30));
     RT.reconnect = setTimeout(() => connectRealtime(true),delay);
@@ -403,7 +409,7 @@
   function pollDelay(){
     const hidden = document.visibilityState==='hidden';
     const healthy = RT.ready && RT.ws?.readyState===WebSocket.OPEN;
-    if(!healthy) return hidden ? 3000 : 900;
+    if(!healthy) return hidden ? 15000 : Math.min(15000,Math.round(1200*Math.pow(1.7,RT.failures)));
     if(hidden) return 30000;
 
     const room = STATE?.sync?.room;
@@ -425,7 +431,7 @@
 
   function schedulePoll(delay=pollDelay()){
     clearAdaptivePoll();
-    if(!inRoom()) return;
+    if(!inRoom() || !isOnline()) return;
     const room=STATE.room,token=STATE.token,generation=RT.pollGeneration;
     RT.pollTimer=setTimeout(async () => {
       RT.pollTimer=null;
@@ -434,9 +440,11 @@
       try{
         const data=await syncNow(false,true);
         if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
-        recordServerClock(data);
+        if(data?.room && data?.player){RT.failures=0;recordServerClock(data)}
+        else RT.failures=Math.min(8,RT.failures+1);
       }catch(error){
         if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
+        RT.failures=Math.min(8,RT.failures+1);
         if(isTerminalSessionError(error)){
           recoverStaleSession('Cette cellule n’est plus disponible.');
           return;
@@ -683,7 +691,7 @@
 
   // Connectivity is device-neutral: do not trust cached client phases.
   window.addEventListener('online',()=>{
-    if(!inRoom())return;
+    if(!inRoom()||!roomScreenActive())return;
     connectRealtime(true);
     if(document.visibilityState!=='hidden')syncSoon(0,true);
     schedulePoll(document.visibilityState==='hidden'?pollDelay():500);
@@ -703,7 +711,7 @@
   // to execute. The next resume must fetch the current authoritative state.
   let lastForegroundRepair=0;
   function foregroundRepair(){
-    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    if(!inRoom()||!roomScreenActive()||document.visibilityState==='hidden'||!isOnline())return;
     if(Date.now()-lastForegroundRepair<750)return;
     lastForegroundRepair=Date.now();
     const stale=!RT.ready||!RT.ws||RT.ws.readyState!==WebSocket.OPEN||Date.now()-RT.lastMessageAt>20000;
@@ -725,7 +733,7 @@
   // Device-neutral rescue watchdog: if a foreground snapshot failed to render,
   // retry without a manual reload, independently of socket state.
   setInterval(()=>{
-    if(!inRoom()||document.visibilityState==='hidden'||!isOnline())return;
+    if(!inRoom()||!roomScreenActive()||document.visibilityState==='hidden'||!isOnline())return;
     const since=Date.now()-Number(STATE.lastSuccessfulSyncAt||0);
     if(since>10000){
       if(!RT.ready||Date.now()-RT.lastMessageAt>35000)connectRealtime(true);

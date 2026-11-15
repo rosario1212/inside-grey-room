@@ -550,11 +550,17 @@ function renderHome(){
   </div>`,true);
  if(SOUND.enabled)ensureAmbient('menu');
 }
-function goHome(){STATE.view='home';if(STATE.room)saveSession();renderHome()}
-function goCreate(){STATE.view='create-list';saveSession();renderCreateList()}
-function goJoin(){STATE.view='join';saveSession();renderJoin()}
-function goRules(){STATE.view='rules';saveSession();renderRules()}
-function goProfile(){STATE.view='profile';saveSession();renderProfile()}
+function pauseRoomSyncForNavigation(){
+ // Keep the resume credential, but stop the live game watcher while browsing.
+ // Otherwise a stale cell can repaint the catalog or show a false outage.
+ try{if(STATE.room&&STATE.token)stopRoomWatcher()}catch{}
+ connectionStatus(false);
+}
+function goHome(){pauseRoomSyncForNavigation();STATE.view='home';if(STATE.room)saveSession();renderHome()}
+function goCreate(){pauseRoomSyncForNavigation();STATE.view='create-list';saveSession();renderCreateList()}
+function goJoin(){pauseRoomSyncForNavigation();STATE.view='join';saveSession();renderJoin()}
+function goRules(){pauseRoomSyncForNavigation();STATE.view='rules';saveSession();renderRules()}
+function goProfile(){pauseRoomSyncForNavigation();STATE.view='profile';saveSession();renderProfile()}
 
 // DOSSIER 007 NON PUBLIÉ: le client ne l'ouvre que si le serveur l'autorise.
 // La création/le lancement refont une vérification fraîche; le serveur reste l'autorité. Ne pas supprimer ces gardes isolément.
@@ -947,7 +953,11 @@ async function joinRoom(){
   if(fresh?.room?.status==='lobby')renderLobby(fresh);
   void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
   void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
- }catch(e){console.error(e);toast('Cellule introuvable, pleine ou déjà lancée.');}
+ }catch(e){
+  console.error(e);
+  const unavailable=e?.name==='AbortError'||[429,500,502,503,504].includes(Number(e?.status))||/fetch|network|connexion|connection|timeout|load failed|timed out/i.test(String(e?.message||''));
+  toast(unavailable?'Connexion au serveur impossible pour le moment. Réessaie sans changer de code.':'Cellule introuvable, pleine ou déjà lancée.');
+ }
 }
 function syncSignature(d){
  if(!d)return'';
@@ -971,9 +981,10 @@ function restoreDrafts(draft){
 }
 function connectionStatus(failed){
  let el=byId('connectionStatus');
- if(!failed){el?.remove();return}
+ const active=['lobby','briefing','role','game'].includes(STATE?.view);
+ if(!failed||!active){el?.remove();return}
  if(!el){el=document.createElement('div');el.id='connectionStatus';el.className='connection-status';el.setAttribute('role','status');document.body.appendChild(el)}
- el.textContent='Connexion interrompue · reconnexion automatique…';
+ el.textContent=navigator.onLine===false ? 'Hors ligne · reprise automatique au retour du réseau…' : Number(STATE.syncFailures||0)>1 ? 'Serveur temporairement indisponible · nouvelle tentative…' : 'Connexion instable · nouvelle tentative…';
 }
 async function syncNow(force=false,fresh=false){
  if(!STATE.room||!STATE.token)return null;
@@ -988,6 +999,9 @@ async function syncNow(force=false,fresh=false){
   do{
    STATE.syncQueued=false;STATE.syncForce=false;STATE.syncRoom=STATE.room;STATE.syncToken=STATE.token;
    result=await performSync(render);
+   // A failed RPC for the same session must release the promise, while
+   // a pending request from an old room must not block the new room snapshot.
+   if(!result && STATE.syncRoom===STATE.room && STATE.syncToken===STATE.token)break;
    render=STATE.syncForce;
   }while(STATE.syncQueued&&STATE.room&&STATE.token);
   return result;
@@ -1014,6 +1028,7 @@ async function performSync(force=false){
    }
   }else d=await rpc('igr_v4_sync',params);
   if(STATE.room!==room||STATE.token!==token)return null;
+  STATE.syncFailures=0;
   connectionStatus(false);
   const sig=syncSignature(d);
   // An authoritative snapshot and a successfully rendered screen are different
@@ -1062,7 +1077,7 @@ async function performSync(force=false){
    if(changed&&STATE.room===room&&STATE.token===token&&STATE.sync===d){const draft=captureDrafts();routeFromServer();restoreDrafts(draft)}
   }).catch(e=>console.warn('avatars',e));
   return rendered?d:null;
- }catch(e){if(STATE.room===room&&STATE.token===token){connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
+ }catch(e){if(STATE.room===room&&STATE.token===token){STATE.syncFailures=(STATE.syncFailures||0)+1;connectionStatus(true);console.warn('sync',e.message)}return null}finally{STATE.syncBusy=false}
 }
 function routeFromServer(){
  const d=STATE.sync;if(!d)return;
@@ -2873,15 +2888,15 @@ document.addEventListener('keydown',e=>{
  }else if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role="button"][tabindex]')){e.preventDefault();e.target.click()}
 });
 async function resumeSession(){const ok=await restore();if(ok){hideIntroImmediately();routeFromServer()}else toast('Reconnexion impossible pour le moment. Réessaie après avoir vérifié la connexion.')}
-window.addEventListener('online',()=>{if(STATE.room)syncNow(true)});
-window.addEventListener('offline',()=>{if(STATE.room)connectionStatus(true)});
+window.addEventListener('online',()=>{if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))syncNow(true)});
+window.addEventListener('offline',()=>{if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))connectionStatus(true)});
 window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room)syncNow(true)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))syncNow(true)});
 
 
 /* v11-30-scenario-text-rewrite — PWA cache bootstrap */
 if (!NATIVE_SHELL && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js?v=v12-store-candidate').catch(() => {});
+    navigator.serviceWorker.register('/service-worker.js?v=v12-mobile-net-v1').catch(() => {});
   }, {once:true});
 }
