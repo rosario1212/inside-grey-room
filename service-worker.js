@@ -1,4 +1,4 @@
-const CACHE='igr-full-public-intros-20261116';
+const CACHE='igr-santoro-display-audit-20261108';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
   '/catalog-descriptions-v1.css?v=complete-public-intros-20261116',
