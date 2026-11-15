@@ -1,6 +1,6 @@
 # LE RÉGIME — décision de design : jugement permanent et traque du président v1
 
-**Statut : proposition de refonte enregistrée, NON activée dans le runtime.** Prévaut sur l'idée d'un rôle exclusif de Transfuge et sur les anciens assemblages publics de rôles 032–034. Ne pas fusionner avant tests de compatibilité serveur.
+**Statut : ARCHIVE DE CONCEPTION (supplantée par `docs/REGIME_DOUBLE_TRAQUE_032_034_V2.md`). Ce document contient des règles désormais rejetées, notamment la capture garantie du président. Il ne doit pas être implémenté comme référence active.** Prévaut sur l'idée d'un rôle exclusif de Transfuge et sur les anciens assemblages publics de rôles 032–034. Ne pas fusionner avant tests de compatibilité serveur.
 
 ## 1. Ne pas forcer un nouveau rôle
 
