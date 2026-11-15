@@ -359,3 +359,26 @@ body.igr-theme-cartel #app .briefing-page .briefing-eyebrow{
     -webkit-text-fill-color:CanvasText!important;
   }
 }
+
+
+/* LE RÉGIME — public government/family preview, no private variant information. */
+.regime-dlc-section .igr-regime-org-preview{margin:16px 0 20px;border:1px solid rgba(144,157,163,.25);border-radius:14px;background:linear-gradient(180deg,rgba(10,12,14,.98),rgba(23,25,28,.98));color:#e7e9e9;overflow:hidden}
+.regime-dlc-section .igr-regime-org-preview>summary{list-style:none;cursor:pointer;min-height:56px;padding:13px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;letter-spacing:.09em;font-size:.83rem;font-weight:750}
+.regime-dlc-section .igr-regime-org-preview>summary::-webkit-details-marker{display:none}
+.regime-dlc-section .igr-regime-org-preview>summary small{letter-spacing:.01em;color:#b8c0c5;font-size:.76rem;font-weight:500}
+.regime-dlc-section .igr-regime-org-preview>summary:focus-visible{outline:2px solid #bbc7cd;outline-offset:-4px}
+.regime-dlc-section .igr-regime-org-content{border-top:1px solid rgba(144,157,163,.24);padding:16px}
+.regime-dlc-section .igr-regime-org-lead,.regime-dlc-section .igr-regime-org-note{margin:0 0 14px;font-size:.78rem;line-height:1.5;color:#bdc5c8}
+.regime-dlc-section .igr-regime-org-note{margin:16px 0 0}
+.regime-dlc-section .igr-regime-org-head{margin:0 auto 18px;max-width:440px;text-align:center;background:#17191c;padding:15px 12px;border:1px solid rgba(180,190,195,.34);border-radius:8px;display:grid;gap:5px;position:relative}
+.regime-dlc-section .igr-regime-org-head::after{content:"";position:absolute;left:50%;top:100%;height:18px;border-left:1px solid rgba(180,190,195,.42)}
+.regime-dlc-section .igr-regime-org-head strong{font-family:Georgia,serif;font-size:1.1rem;letter-spacing:.08em}
+.regime-dlc-section .igr-regime-org-head span{font-size:.67rem;color:#cdd3d6;letter-spacing:.05em}
+.regime-dlc-section .igr-regime-org-head small{font-size:.7rem;color:#a6b0b4;letter-spacing:0;line-height:1.4}
+.regime-dlc-section .igr-regime-org-nodes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-top:2px}
+.regime-dlc-section .igr-regime-org-nodes article{display:flex;flex-direction:column;gap:6px;min-width:0;border:1px solid rgba(145,158,167,.25);background:rgba(36,40,44,.86);padding:12px;border-radius:8px}
+.regime-dlc-section .igr-regime-org-nodes strong{font-family:Georgia,serif;font-size:.96rem;font-weight:700}
+.regime-dlc-section .igr-regime-org-nodes small{color:#d1d7db;font-weight:700;font-size:.63rem;letter-spacing:.07em}
+.regime-dlc-section .igr-regime-org-nodes span{color:#bdc6cb;font-size:.76rem;line-height:1.35}
+@media(max-width:620px){.regime-dlc-section .igr-regime-org-content{padding:12px}.regime-dlc-section .igr-regime-org-nodes{grid-template-columns:repeat(2,minmax(0,1fr))}.regime-dlc-section .igr-regime-org-preview>summary{padding:14px 12px}}
+@media(max-width:350px){.regime-dlc-section .igr-regime-org-nodes{grid-template-columns:1fr}}
