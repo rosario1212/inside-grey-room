@@ -11,7 +11,13 @@ LEFT JOIN igr_private.igr_v99_variant_manuscripts m
 ), ch AS (
 SELECT sid, variant_id, 'manuscript present' gate, (manuscript is not null) ok FROM draft
 UNION ALL SELECT sid,variant_id,'editorial approval',
- coalesce(editorial_status='approved' AND human_ok,false) FROM draft
+ coalesce(editorial_status='ready' AND human_ok AND manuscript->>'status'='ready',false) FROM draft
+UNION ALL SELECT sid,variant_id,'new Regime candidate staged privately',
+       coalesce(manuscript->'regime_vnext'->>'status'='draft',false) FROM draft
+UNION ALL SELECT sid,variant_id,'candidate promoted and editorially approved',
+       coalesce(editorial_status='ready' AND approved_at IS NOT NULL
+         AND manuscript->>'human_review_approved'='true'
+         AND manuscript->>'status'='ready',false) FROM draft
 UNION ALL SELECT sid,variant_id,'Fugitive role identities use new canon',
 CASE sid
 WHEN '032' THEN lower(coalesce(manuscript->'private_cards'->0->>'identity','')) LIKE '%directeur%'
