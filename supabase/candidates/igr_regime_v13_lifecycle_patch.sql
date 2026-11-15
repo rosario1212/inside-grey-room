@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION public.igr_v4_max_players(p_scenario text)
  SET search_path TO 'public'
 AS $function$
  select case
- when p_scenario IN ('032','033','034') AND igr_private.igr_regime_v13_release_eligible() THEN 7
+ when p_scenario IN ('032','033','034') AND igr_private.igr_regime_v13_release_eligible() THEN (CASE WHEN p_scenario='034' THEN 9 ELSE 8 END)
  when p_scenario='029' and igr_private.igr_v108_029_is_enabled() then 11
  when p_scenario between '035' and '039' then 7
  when p_scenario between '040' and '044' then 7
@@ -50,7 +50,7 @@ AS $function$
  when p_scenario in ('013','014') then 6 when p_scenario='015' then 7 when p_scenario='016' then 9
  when p_scenario='017' then 10 when p_scenario='018' then 9 when p_scenario='019' then 9 when p_scenario='020' then 16 else 5 end
 $function$
-;
+
 
 -- PATCH igr_v4_role_for_seat
 CREATE OR REPLACE FUNCTION public.igr_v4_role_for_seat(p_scenario text, p_seat integer, p_count integer)
@@ -63,9 +63,9 @@ begin
  if p_scenario in ('032','033','034') AND igr_private.igr_regime_v13_release_eligible() then
    if p_count<6 OR p_count>public.igr_v4_max_players(p_scenario)
      OR p_seat<0 OR p_seat>=p_count THEN
-       raise exception 'Regime requires six players, or seven with prosecutor';
+       raise exception 'Regime requires 6 to 8 players (032/033), or 6 to 9 (034)';
    end if;
-   return (array['enqueteur','analyste','juge','suspect','suspect','suspect','procureur']::text[])[p_seat+1];
+   return (array['enqueteur','analyste','juge','suspect','suspect','suspect','procureur','temoin','journaliste']::text[])[p_seat+1];
  end if;
  if p_scenario='029' and igr_private.igr_v108_029_is_enabled() then
    if p_count not between 6 and 11 then raise exception 'four witness roster requires 6 to 11 participants'; end if;
@@ -122,7 +122,7 @@ elsif p_scenario in ('007','010','012') then return (array['enqueteur','analyste
  return 'suspect';
 end
 $function$
-;
+
 
 -- PATCH igr_v4_start_game
 CREATE OR REPLACE FUNCTION public.igr_v4_start_game(p_code text, p_host_token uuid)

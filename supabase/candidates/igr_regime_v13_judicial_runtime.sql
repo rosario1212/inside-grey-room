@@ -187,8 +187,11 @@ GRANT EXECUTE ON FUNCTION public.igr_regime_v13_judge_review(text,uuid,text,text
  TO anon,authenticated;
 
 CREATE OR REPLACE FUNCTION igr_private.igr_regime_v13_begin_court(p_code text)
-RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
-AS $$
+ RETURNS boolean
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
 DECLARE
  r public.igr_v4_rooms%rowtype;m igr_private.igr_regime_v13_rooms%rowtype;
  t1 text;t2 text;c1 integer;c2 integer;minutes integer;
@@ -202,7 +205,7 @@ BEGIN
  t2:=m.private_pack->'private_cards'->1->>'actor_id';
  c1:=(m.play_state->'arrests'->t1->>'cycle')::int;
  c2:=(m.play_state->'arrests'->t2->>'cycle')::int;
- minutes:=CASE WHEN c1 IS NOT NULL AND c2 IS NOT NULL AND greatest(c1,c2)=3 THEN 14 ELSE 8 END;
+ minutes:=CASE WHEN (SELECT count(*) FROM public.igr_v4_players WHERE room_code=r.code)>=8 OR (c1 IS NOT NULL AND c2 IS NOT NULL AND greatest(c1,c2)=3) THEN 14 ELSE 8 END;
  st:=jsonb_set(m.play_state,'{court}',jsonb_build_object(
     'started',true,'started_at',now(),'duration_minutes',minutes,
     'stage','opening','called','[]'::jsonb,'current',NULL,'phase','tribunal'),true);
@@ -215,7 +218,8 @@ BEGIN
    'text','Tous les joueurs rejoignent la salle commune. Le Juge appelle les personnes présentes à la barre. L audience finale ne sera pas rejouée.',
    'duration_minutes',minutes));
  RETURN true;
-END $$;
+END $function$
+
 REVOKE EXECUTE ON FUNCTION igr_private.igr_regime_v13_begin_court(text)
  FROM PUBLIC,anon,authenticated;
 
