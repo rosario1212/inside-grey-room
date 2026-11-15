@@ -66,6 +66,11 @@ export function evaluateThirdSuspect({path,actionCycle,actionType,actId,finalSta
   if(!['cooperate','protect'].includes(path))return {won:false,reason:'unknown_path'};
   if(!validCycle(actionCycle)||actionCycle>2)return {won:false,reason:'missed_deadline'};
   if(!privateTruth || !actId || actId!==privateTruth.actId)return {won:false,reason:'wrong_act'};
+  if(path==='cooperate' && (![privateTruth.orderedBy,privateTruth.ownParticipation]
+    .every(v=>typeof v==='string'&&v.trim().length>0)))return {won:false,reason:'unsealed_truth'};
+  if(path==='protect' && (typeof privateTruth.thirdPlayerId!=='string'||
+    !Number.isInteger(privateTruth.trueLevel)||privateTruth.trueLevel<0||privateTruth.trueLevel>2))
+    return {won:false,reason:'unsealed_truth'};
   if(path==='cooperate'){
     if(actionType!=='submit_authentic_document'||!privateTruth.documentAuthenticated)
       return {won:false,reason:'authentic_document_missing'};
@@ -81,6 +86,9 @@ export function evaluateThirdSuspect({path,actionCycle,actionType,actId,finalSta
 export function evaluateReconstruction({sealedActs,answers,publicEvidence,minimum=3}={}) {
   if(!Array.isArray(sealedActs)||sealedActs.length!==4)throw Error('four sealed acts required');
   if(!Array.isArray(answers)||answers.length!==4)throw Error('four reconstructions required');
+  if(new Set(sealedActs.map(x=>x.id)).size!==4 || sealedActs.some(x=>typeof x.id!=='string'))
+    throw Error('four unique sealed acts required');
+  if(new Set(answers.map(x=>x.actId)).size!==4)throw Error('one answer per act required');
   if(!Array.isArray(publicEvidence))throw Error('public evidence required');
   if(!Number.isInteger(minimum)||minimum<1||minimum>4)throw Error('invalid threshold');
   const fields=['orderedBy','transmittedBy','executedBy','knewAndControlledBy'];
@@ -92,7 +100,7 @@ export function evaluateReconstruction({sealedActs,answers,publicEvidence,minimu
       .filter(e=>e&&e.revealed===true&&e.actId===act.id);
     const origins=new Set(independent.map(e=>e.origin).filter(Boolean));
     const supported=origins.size>=2;
-    const matching=fields.every(k=>response[k]===act[k]);
+    const matching=fields.every(k=>Object.hasOwn(response,k)&&Object.hasOwn(act,k)&&response[k]===act[k]);
     return {actId:act.id,correct:supported&&matching,reason:!supported?'insufficient_sources':matching?'correct':'incorrect_attribution'};
   });
   const accurate=verdicts.filter(x=>x.correct).length;
