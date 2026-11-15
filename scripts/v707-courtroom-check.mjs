@@ -22,7 +22,7 @@ has(ui,"J’AI TERMINÉ MA DÉFENSE / JE GARDE LE SILENCE");
 has(ui,"TRIBUNAL · AUDITION LIBRE");
 has(ui,"CLÔTURER CETTE COMPARUTION");
 has(ui,"'defense_done'");
-has(rules,"tribunal sans aucun chronomètre");
+has(rules,"Avec Juge : tribunal libre, sans audience séparée ni chronomètre.");
 has(manual,"aucun chronomètre");
 assert.ok(!ui.includes("function courtroomUnclocked(item,status,mine,myLawyer,witness029){const"),'Courtroom function must remain separate from legacy');
 assert.ok(ui.includes("const mine=String(item.player_id)===myId()"),'No-Judge defendant paths preserved');
