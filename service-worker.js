@@ -33,16 +33,18 @@ const SHELL=[
 async function precacheShell(){
   const cache=await caches.open(CACHE);
   const failed=[];
-  await Promise.all(SHELL.map(async url=>{
+  // Precache only the PWA entrypoints. Loading every poster and script in
+  // parallel during install can starve mobile room RPCs and stall the UI.
+  // Other resources are cached when the player actually opens them.
+  const critical=['/index.html','/en.html','/manifest.webmanifest'];
+  for(const url of critical){
     try{
       const request=new Request(url,{cache:'reload'});
       const response=await fetch(request);
       if(!response.ok)throw new Error(`HTTP ${response.status}`);
       await cache.put(request,response);
-    }catch(error){
-      failed.push(`${url} (${String(error?.message||error)})`);
-    }
-  }));
+    }catch(error){failed.push(`${url} (${String(error?.message||error)})`)}
+  }
   if(failed.length)console.warn('[IGR SW] precache partial failure',failed);
 }
 
@@ -66,6 +68,16 @@ self.addEventListener('fetch',event=>{
   if(req.method!=='GET')return;
   const url=new URL(req.url);
   if(url.origin!==self.location.origin)return;
+
+  // Reuse immutable, versioned illustrations without hitting the network
+  // each time a player revisits a scenario. Scripts stay network-first.
+  if(url.pathname.startsWith('/assets/') && url.searchParams.has('v')){
+    event.respondWith(caches.match(req).then(cached=>cached||fetch(req).then(response=>{
+      if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{}))}
+      return response;
+    })));
+    return;
+  }
 
   const runtimeFile=req.mode==='navigate'||/\.(?:js|css|html)$/.test(url.pathname);
   const navigationKey=url.pathname==='/en.html'?'/en.html':'/index.html';
