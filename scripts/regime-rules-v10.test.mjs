@@ -1,0 +1,95 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {chooseFugitiveAlliance,resolveMandate,evaluateThirdSuspect,
+ evaluateReconstruction,courtroomSchedule,classifyVictory,generatePublicNews}
+ from './regime-rules-v10.mjs';
+
+const sources=(target,track)=>[
+{id:'e1',origin:'palace',targetId:target,trackId:track,cycle:1,revealed:true,corrobates:true},
+{id:'e2',origin:'witness',targetId:target,trackId:track,cycle:1,revealed:true,corrobates:true}
+];
+const cfg={scenarioId:'034',actorRole:'enqueteur',cycle:1,targetId:'fallen_president',
+ trackId:'track_alpha',evidenceIds:['e1','e2'],publicEvidence:sources('fallen_president','track_alpha'),
+ canonicalTracks:{fallen_president:{activeTrackId:'track_alpha'}},
+ requestId:'req-test-one',judgeResponse:'allow',attempts:[]};
+test('alliance requires mutual consent',()=>{
+ assert.equal(chooseFugitiveAlliance('together','together'),'together');
+ assert.equal(chooseFugitiveAlliance('together','apart'),'apart');
+ assert.equal(chooseFugitiveAlliance('together',null),'apart');
+});
+test('correct evidence allows president capture already in C1',()=>{
+ const r=resolveMandate(cfg);
+ assert.equal(r.status,'captured');assert.equal(r.publicEvent.targetId,'fallen_president');
+});
+test('a different fugitive needs own corroboration',()=>{
+ assert.equal(resolveMandate({...cfg,targetId:'presidential_security',requestId:'req-second'}).status,'rejected');
+});
+test('old or undisclosed evidence cannot be used',()=>{
+ const bad=cfg.publicEvidence.map((x,i)=>i===0?{...x,revealed:false}:x);
+ assert.equal(resolveMandate({...cfg,publicEvidence:bad}).code,'evidence_not_public_or_not_related');
+});
+test('two copies from a single source do not form corroboration',()=>{
+ const x=cfg.publicEvidence.map(e=>({...e,origin:'palace'}));
+ assert.equal(resolveMandate({...cfg,publicEvidence:x}).code,'not_independent');
+});
+test('wrong lead fails and consumes attempt, no secret leak',()=>{
+ const r=resolveMandate({...cfg,trackId:'track_wrong',requestId:'req-wrong'});
+ assert.equal(r.status,'not_found');assert.equal(r.consumed,true);assert.equal(r.publicEvent,null);
+ assert.ok(!('canonicalTracks' in r));
+});
+test('quota and replay guard',()=>{
+ const result=resolveMandate(cfg);
+ const old=[result.record];
+ assert.equal(resolveMandate({...cfg,attempts:old}).status,'replay');
+ assert.equal(resolveMandate({...cfg,attempts:old,requestId:'req-other'}).code,'quota_exhausted');
+});
+test('an arbitrary judge refusal does not create a capture or consume attempt',()=>{
+ const r=resolveMandate({...cfg,judgeResponse:'reject'});
+ assert.equal(r.status,'judge_disagreement');assert.equal(r.consumed,false);
+});
+test('another role cannot file a warrant',()=>{
+ assert.equal(resolveMandate({...cfg,actorRole:'suspect'}).code,'not_authorized');
+});
+test('third suspect cooperation independent of investigator vote',()=>{
+ const truth={actId:'act-1',orderedBy:'leader',ownParticipation:'transmitter',documentAuthenticated:true};
+ const r=evaluateThirdSuspect({path:'cooperate',actionCycle:2,actionType:'submit_authentic_document',
+  actId:'act-1',finalStatement:{orderedBy:'leader',ownParticipation:'transmitter'},privateTruth:truth,
+  investigatorLevels:{somebody:0}});
+ assert.equal(r.won,true);
+});
+test('third suspect protection needs defense and an inaccurate verdict',()=>{
+ const truth={actId:'act-2',thirdPlayerId:'third',trueLevel:2};
+ const base={path:'protect',actionCycle:1,actionType:'file_defense',actId:'act-2',
+  privateTruth:truth,defenseSubmitted:true};
+ assert.equal(evaluateThirdSuspect({...base,investigatorLevels:{third:1}}).won,true);
+ assert.equal(evaluateThirdSuspect({...base,investigatorLevels:{third:2}}).won,false);
+ assert.equal(evaluateThirdSuspect({...base,defenseSubmitted:false,investigatorLevels:{third:1}}).won,false);
+});
+test('courtroom 14 minutes only if second capture in C3',()=>{
+ assert.equal(courtroomSchedule({scenarioId:'034',captureCycles:{fallen_president:1,presidential_security:3}}).totalMinutes,14);
+ assert.equal(courtroomSchedule({scenarioId:'034',captureCycles:{fallen_president:1,presidential_security:2}}).totalMinutes,8);
+ assert.equal(courtroomSchedule({scenarioId:'034',captureCycles:{fallen_president:1}}).kind,'reconstruction');
+});
+test('reconstruction requires 4 correctly sourced acts',()=>{
+ const fields={orderedBy:'A',transmittedBy:'B',executedBy:'C',knewAndControlledBy:'A'};
+ const sealedActs=[1,2,3,4].map(id=>({id:'a'+id,...fields}));
+ const answers=sealedActs.map(a=>({actId:a.id,...fields,evidenceIds:['p'+a.id,'w'+a.id]}));
+ const evidence=sealedActs.flatMap(a=>[
+  {id:'p'+a.id,actId:a.id,origin:'palace',revealed:true},
+  {id:'w'+a.id,actId:a.id,origin:'witness',revealed:true}]);
+ const r=evaluateReconstruction({sealedActs,answers,publicEvidence:evidence});
+ assert.equal(r.accurate,4);
+ assert.equal(evaluateReconstruction({sealedActs,answers,publicEvidence:evidence.slice(2)}).passed,true);
+ assert.equal(evaluateReconstruction({sealedActs,answers,publicEvidence:evidence.slice(4)}).passed,false);
+});
+test('capture alone is not total victory',()=>{
+ const x=classifyVictory({scenarioId:'034',captureCycles:{fallen_president:1,presidential_security:3},
+  reconstruction:{passed:false}});
+ assert.equal(x.tactical,true);assert.equal(x.totalInvestigationWin,false);assert.equal(x.mixed,true);
+});
+test('news only after confirmed public president capture, only once',()=>{
+ const ev={type:'capture_confirmed',eventId:'capture:r1',targetId:'fallen_president'};
+ assert.equal(generatePublicNews({scenarioId:'034',event:ev}).code,'president_captured');
+ assert.equal(generatePublicNews({scenarioId:'034',event:ev,publishedIds:['capture:r1']}),null);
+ assert.equal(generatePublicNews({scenarioId:'034',event:{...ev,type:'warrant_requested'}}),null);
+});
