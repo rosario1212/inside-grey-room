@@ -22,7 +22,7 @@
     const section=document.createElement('section');
     section.className='terror-v681-city-lobby';section.id='terrorV681CityLobby';
     section.innerHTML='<div class="terror-v681-city-head"><span>TERREUR · LOCALISATION DU DOSSIER</span><b>Quel nom portera la dernière capitale libre ?</b></div>'+
-      '<p>Le nom choisi désigne la capitale de la République fictive de Almizia. Le FDR a déjà pris les autres grandes villes. Cette dernière capitale résiste avec douze secteurs de jeu. Aucune géolocalisation.</p>'+
+      '<p>Le nom choisi désigne la capitale de la République fictive d’Almizia. Le FDR a déjà pris les autres grandes villes. Cette dernière capitale résiste avec douze secteurs de jeu. Aucune géolocalisation.</p>'+
       (city?'<div class="terror-v681-current-city">CAPITALE D’ALMIZIA · <strong>'+esc(city)+'</strong></div>':
        '<div class="terror-v681-warning">Nomme la capitale avant de lancer cette partie.</div>')+
       (canSet?'<div class="terror-v681-city-entry"><label for="terrorV681CityName">Nom de la ville (2 à 36 caractères)</label>'+
