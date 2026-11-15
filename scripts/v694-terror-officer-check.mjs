@@ -31,7 +31,7 @@ const terrorCopy=read('terror-v12-37.js');
 const collectionCopy=read('dlc-copy-v12-46.js');
 for(const s of ['rafles, les exécutions sommaires','sort des otages reste incertain','sans prouver une présence actuelle'])
  assert(terrorCopy.includes(s),'Terror dossier realism copy missing: '+s);
-assert(collectionCopy.includes('dernière capitale résiste'),'Terror DLC must not falsely state the capital has already fallen');
+assert(collectionCopy.includes('la capitale résiste'),'Terror DLC must not falsely state the capital has already fallen');
 assert(!collectionCopy.includes('s’empare de la ville'),'Old sensationalist DLC intro still present');
 assert(!terrorCopy.includes('l’Officier de liaison'),'Legacy officer label remains in scenario descriptions');
 assert(css.includes('.terror-v694-timer'),'Countdown CSS missing');
