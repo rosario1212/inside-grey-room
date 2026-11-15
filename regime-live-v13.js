@@ -27,10 +27,29 @@ const rpcSafe=async(name,args)=>{
  return window.rpc(name,{p_code:session().room,p_player_token:session().token,...args});
 };
 function toast(s){window.toast?.(s)}
+const pendingMutations=new Map();
+function stableRequestId(name,args){
+ const payload={...args};delete payload.p_request_id;
+ const scope=[session()?.room,session()?.playerId,name,JSON.stringify(payload)].join('|');
+ let sum=2166136261;
+ for(let i=0;i<scope.length;i++){sum^=scope.charCodeAt(i);sum=Math.imul(sum,16777619)}
+ const key='igr-regime-req-'+(sum>>>0).toString(16)+'-'+scope.length;
+ let id=pendingMutations.get(key);
+ if(!id){try{id=window.sessionStorage.getItem(key)}catch(_){}}
+ if(!id){id=args.p_request_id||req();try{window.sessionStorage.setItem(key,id)}catch(_){}}
+ pendingMutations.set(key,id);
+ return {key,id};
+}
 async function call(name,args){
- try{const result=await rpcSafe(name,args);toast('Action enregistrée.');cache=null;lastRender='';
- await window.syncNow?.(true);await poll(true);return result}
- catch(e){toast(e?.message||'Action refusée par le serveur');return null}
+ const request=stableRequestId(name,args);
+ let result;
+ try{result=await rpcSafe(name,{...args,p_request_id:request.id})}
+ catch(e){toast(e?.message||'Connexion interrompue : réessaie, ta demande conserve le même identifiant.');return null}
+ pendingMutations.delete(request.key);
+ try{window.sessionStorage.removeItem(request.key)}catch(_){}
+ toast('Action enregistrée.');cache=null;lastRender='';
+ try{await window.syncNow?.(true);await poll(true)}catch(_){/* Accepted action is not undone if refresh fails. */}
+ return result;
 }
 async function poll(force=false){
  if(!can()){cache=null;document.getElementById('igr-regime-v13')?.remove();return}
@@ -247,7 +266,7 @@ function court(){
    'PROCÈS LONG · 14 MINUTES · 5 MINUTES DE CONFRONTATION':
    'PROCÈS COURT · 8 MINUTES')+'</p>'+
   '<strong id="igrRgCourtClock">—</strong><div class="igr-rg13-stage">'+esc(stageLabels[stage]||stage)+
-  ' · '+Math.floor(count/60)+':'+String(count%60).padStart(2,'0')+'</div></header>'+
+  ' · <span id="igrRgStageClock">'+Math.floor(count/60)+':'+String(count%60).padStart(2,'0')+'</span></div></header>'+
   '<div class="igr-rg13-bench"><div class="igr-rg13-judge">⚖ JUGE'+
   '<br><small>Présidence de séance</small></div>'+
   '<div class="igr-rg13-sides"><div><b>ACCUSATION</b>'+
@@ -270,12 +289,19 @@ function events(){
 }
 function render(){
  if(!can()||!cache?.enabled){document.getElementById('igr-regime-v13')?.remove();return}
- const k=key()+'|'+JSON.stringify(cache);
+ const stable={...cache,court:cache?.court?{...cache.court}:null};
+ if(stable.court)delete stable.court.stage_seconds_remaining;
+ const k=key()+'|'+JSON.stringify(stable);
  if(k===lastRender){tick();return}lastRender=k;
  const after=document.querySelector('.phase-strip')||document.querySelector('#game');
  if(!after)return;
  const previous=document.getElementById('igr-regime-v13');
  const preserved=new Map();
+ const active=previous?.contains(document.activeElement)?document.activeElement:null;
+ const activeKey=active?(active.hasAttribute('data-court-act')?
+   active.getAttribute('data-court-act')+'|'+active.getAttribute('data-court-field'):active.id):null;
+ const selection=active&&typeof active.selectionStart==='number'?
+   [active.selectionStart,active.selectionEnd]:null;
  if(previous){
   previous.querySelectorAll('[data-court-act],#igrRgExchangeText,#igrRgThirdOrdered,#igrRgThirdPart,#igrRgDefense,#igrRgCapturedOrderer,#igrRgCapturedStatement,#igrRgTarget,#igrRgTrack,#igrRgE1,#igrRgE2').forEach(el=>{
    const k=el.hasAttribute('data-court-act')?
@@ -298,10 +324,22 @@ function render(){
   const k=el.hasAttribute('data-court-act')?
    el.getAttribute('data-court-act')+'|'+el.getAttribute('data-court-field'):el.id;
   if(preserved.has(k))el.value=preserved.get(k);
+  if(k===activeKey){
+    el.focus({preventScroll:true});
+    if(selection&&typeof el.setSelectionRange==='function')try{el.setSelectionRange(...selection)}catch(_){}
+  }
  });
  tick();
 }
 function tick(){
+ const stageClock=document.getElementById('igrRgStageClock'),court=cache?.court;
+ if(stageClock&&court?.started_at){
+  const passed=Math.max(0,Math.floor((Date.now()-Date.parse(court.started_at))/1000));
+  const bounds=Number(court.duration_minutes)===14?[60,420,720,780,840]:[60,240,360,420,480];
+  const remaining=Math.max(0,(bounds.find(end=>end>passed)||bounds[bounds.length-1])-passed);
+  stageClock.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+
+    String(remaining%60).padStart(2,'0');
+ }
  const clock=document.getElementById('igrRgCourtClock');
  if(clock&&room()?.phase_ends_at){
  const ms=Math.max(0,Date.parse(room().phase_ends_at)-Date.now());
