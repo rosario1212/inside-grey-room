@@ -12,7 +12,7 @@
     ref:0, joinRef:null, heartbeatRef:null,
     heartbeat:null, joinWatchdog:null, reconnect:null, reconnectAttempt:0,
     pollTimer:null, pollGeneration:0, syncTimer:null, syncDue:0, syncRunning:false, syncDirty:false,
-    syncForce:false, syncRunId:0, revision:0, syncedRevision:0,
+    syncForce:false, syncRunId:0, revision:0, syncedRevision:0, failures:0,
     lastMessageAt:0, serverEpoch:0, clientEpoch:0,
     closedByUs:false, generation:0
   };
@@ -98,6 +98,7 @@
     RT.heartbeatRef = null;
     RT.revision = 0;
     RT.syncedRevision = 0;
+    RT.failures = 0;
     if(ws){ try{ws.close(1000,String(reason).slice(0,120))}catch{} }
     setRealtimeState(inRoom() && !isOnline() ? 'offline' : 'off');
   }
@@ -135,6 +136,7 @@
         // performSync returns null on network errors. Never acknowledge a
         // revision until its authoritative snapshot was actually fetched.
         if(!data?.room || !data?.player) throw new Error('sync_unavailable');
+        RT.failures=0;
         recordServerClock(data);
         if(targetRevision) RT.syncedRevision = Math.max(RT.syncedRevision,targetRevision);
         schedulePoll();
@@ -142,6 +144,7 @@
       .catch(error => {
         if(!current()) return;
         failed = true;
+        RT.failures=Math.min(8,RT.failures+1);
         if(isTerminalSessionError(error)){
           recoverStaleSession('Cette cellule n’est plus disponible.');
           return;
@@ -154,7 +157,8 @@
         RT.syncRunning = false;
         if(!inRoom()) return;
         if(RT.syncDirty || RT.revision > RT.syncedRevision){
-          syncSoon(failed ? 650 : 0,RT.syncForce,RT.revision);
+          const backoff=failed ? Math.min(16000,Math.round(800*Math.pow(1.8,Math.max(0,RT.failures-1)))) : 0;
+          syncSoon(backoff,RT.syncForce,RT.revision);
         }
       });
   }
@@ -211,7 +215,8 @@
   function scheduleReconnect(){
     if(!inRoom() || RT.closedByUs || !isOnline()) return;
     clearTimer('reconnect');
-    const delays = [250,500,900,1600,2800,4500,6500];
+    // Degraded Realtime servers must not be hammered by reconnect storms.
+    const delays = [250,850,1800,3500,7000,14000,22000];
     const base = delays[Math.min(RT.reconnectAttempt++,delays.length-1)];
     const delay = Math.round(base*(0.85+Math.random()*0.30));
     RT.reconnect = setTimeout(() => connectRealtime(true),delay);
@@ -403,7 +408,7 @@
   function pollDelay(){
     const hidden = document.visibilityState==='hidden';
     const healthy = RT.ready && RT.ws?.readyState===WebSocket.OPEN;
-    if(!healthy) return hidden ? 3000 : 900;
+    if(!healthy) return hidden ? 15000 : Math.min(15000,Math.round(1200*Math.pow(1.7,RT.failures)));
     if(hidden) return 30000;
 
     const room = STATE?.sync?.room;
@@ -434,9 +439,11 @@
       try{
         const data=await syncNow(false,true);
         if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
-        recordServerClock(data);
+        if(data?.room && data?.player){RT.failures=0;recordServerClock(data)}
+        else RT.failures=Math.min(8,RT.failures+1);
       }catch(error){
         if(generation!==RT.pollGeneration || STATE.room!==room || STATE.token!==token) return;
+        RT.failures=Math.min(8,RT.failures+1);
         if(isTerminalSessionError(error)){
           recoverStaleSession('Cette cellule n’est plus disponible.');
           return;
