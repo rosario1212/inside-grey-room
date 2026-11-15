@@ -14,6 +14,9 @@ Statut : contrat des rôles, amendé après fusion avec les mécaniques TERREUR 
 - **Enquêteur / Suspect** : pouvoirs inchangés; guides de cycle non contraignants pour prévenir monopole et passivité.
 - **Espion** : rôle secret indépendant conservé, aucun changement aux routes ni aux conditions de victoire.
 
+## Actualisation v703 — distribution TERREUR
+À partir de v703, **les trois dossiers TERREUR se jouent exclusivement à six** : Enquêteur, Analyste, Officier, trois Suspects. L'Inspecteur, l'Expert et le Procureur ne sont plus distribués dans ces dossiers. Les descriptions historiques ci-dessous décrivent les évolutions antérieures; les règles v703 prévalent pour le choix des places. Les autres DLC conservent leurs rôles.
+
 ## DLC TERREUR 026–028 — version canonique v695
 
 **Officier** : le commandement de l'armée nationale appartient à un joueur distinct de l'Enquêteur et de l'Inspecteur. L'ancien prototype « Officier de liaison » et ses commandes sont désactivés dans TERREUR v695.
