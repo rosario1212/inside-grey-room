@@ -45,7 +45,7 @@ BEGIN
 
  -- Judge alone cannot change other players' votes, nor can Prosecutor alone.
  UPDATE public.igr_v4_actions a SET payload=jsonb_set(payload,'{levels}',jsonb_build_object(s1::text,2,s2::text,2,s3::text,2),true)
-   FROM public.igr_v4_players p WHERE a.room_code='C711J' AND a.player_id=p.id AND p.public_role='procureur' AND a.action_type='final_lock';
+   FROM public.igr_v4_players pp WHERE a.room_code='C711J' AND a.player_id=pp.id AND pp.public_role='procureur' AND a.action_type='final_lock';
  SELECT igr_private.igr_v711_majority_levels('C711J') INTO auth;
  IF (auth->>s1::text)::int<>2 THEN RAISE EXCEPTION 'Majority 3 vs 1 ignored';END IF;
  SELECT id INTO s1 FROM public.igr_v4_players WHERE room_code='C711N' AND internal_slot=1;
