@@ -94,7 +94,7 @@ BEGIN
  SET play_state=jsonb_set(play_state,ARRAY['court','started_at'],
     to_jsonb((now()-interval '61 seconds')::text),true)
  WHERE room_code='QA13LIFE';
- result:=public.igr_regime_v13_court_call('QA13LIFE',judge,'qa-life-call-0001','transmission_officer');
+ result:=public.igr_regime_v13_court_call('QA13LIFE',judge,'qa-life-call-0001','fallen_president');
  IF result->>'seconds'<>'120' THEN RAISE EXCEPTION 'court witness time wrong';END IF;
  mission:=pack->'third_suspect_mission';
  SELECT e.value INTO act FROM jsonb_array_elements(pack->'acts') e
