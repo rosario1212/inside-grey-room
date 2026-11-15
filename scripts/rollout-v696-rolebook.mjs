@@ -11,7 +11,7 @@ for(const page of ['index.html','en.html']){
  content=content.replace(/self-guided-rules-v51\.js\?v=[A-Za-z0-9._-]+/g,'self-guided-rules-v51.js?v='+version);
  // Deliver the fixed runtime to installed PWAs instead of reusing old asset URLs.
  content=content.replace(/live-cell-v12-44\.js\?v=[A-Za-z0-9._-]+/g,'live-cell-v12-44.js?v='+networkVersion);
- content=content.replace(/(app-v11(?:-terror-live-v694-20261115)?\.js)\?v=[A-Za-z0-9._-]+/g,(_,file)=>file+'?v='+networkVersion);
+ content=content.replace(/(app-v11(?:-terror-live-v694-20261115)?\.js\?v=[A-Za-z0-9._-]+)(?:&sync=[A-Za-z0-9._-]+)?/g,(_,url)=>url+'&sync='+networkVersion);
  if(!content.includes('self-guided-rules-v51.js?v='+version))throw new Error('Missing rolebook entry in '+page);
  await writeFile(file,content,'utf8');
  // Keep Cloudflare Worker shell aliases byte-identical to the published homepage.
@@ -25,15 +25,14 @@ if(await exists(swFile)){
  let s=await readFile(swFile,'utf8');
  s=s.replace(/\/self-guided-rules-v51\.js\?v=[A-Za-z0-9._-]+/g,'/self-guided-rules-v51.js?v='+version);
  s=s.replace(/\/live-cell-v12-44\.js\?v=[A-Za-z0-9._-]+/g,'/live-cell-v12-44.js?v='+networkVersion);
- s=s.replace(/(\/app-v11(?:-terror-live-v694-20261115)?\.js)\?v=[A-Za-z0-9._-]+/g,(_,file)=>file+'?v='+networkVersion);
- s=s.replace(/const CACHE='[^']+';/,"const CACHE='igr-santoro-display-audit-20261108-"+networkVersion+"';");
+
+
  await writeFile(swFile,s,'utf8');
 }
-for(const name of ['app-v11.js','app-v11-terror-live-v694-20261115.js']){
- const appFile=path.join(target,name);
- if(!await exists(appFile))continue;
+const appFile=path.join(target,'app-v11.js');
+if(await exists(appFile)){
  let a=await readFile(appFile,'utf8');
- a=a.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'/service-worker.js?v='+networkVersion);
+ a=a.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'/service-worker.js?v='+version);
  await writeFile(appFile,a,'utf8');
 }
 console.log('Rulebook v696 cache and entrypoints updated in '+target);
