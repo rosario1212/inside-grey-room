@@ -77,6 +77,11 @@ begin
     for i in 1..(n/2+1) loop
       out:=public.igr_heritage_online_vote_cendres(room,tokens[i],'b');
     end loop;
+    if coalesce((out->>'decided')::boolean,false) then
+      raise exception 'Decision released before all players voted: %',n; end if;
+    for i in (n/2+2)..n loop
+      out:=public.igr_heritage_online_vote_cendres(room,tokens[i],'audio');
+    end loop;
     if coalesce((out->>'decided')::boolean,false)=false
       then raise exception 'Majority not reached: %',n; end if;
     select r.stage,r.decision_id into stage,chosen
