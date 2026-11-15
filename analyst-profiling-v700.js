@@ -87,7 +87,7 @@ function updatePanels(){
  const reveal=document.querySelector('.reveal-v11');
  if(reveal&&R()?.status==='finished'){
   let el=reveal.querySelector('#igr700-final-public');
-  if(!el){el=document.createElement('div');el.id='igr700-final-public';reveal.appendChild(el)}
+  if(!el){el=document.createElement('div');el.id='igr700-final-public';const exit=reveal.querySelector('button[onclick^="leaveRoom"]');if(exit)reveal.insertBefore(el,exit);else reveal.appendChild(el)}
   el.innerHTML=data?.published?report():'<div class="igr700-report igr700-muted">'+
     tr('Chargement des profils psychologiques…','Loading psychological profiles…')+'</div>';
  }
