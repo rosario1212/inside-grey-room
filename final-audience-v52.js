@@ -190,7 +190,7 @@ function reassessment(){const st=room()?.state||{},special029=judgePresent()&&sp
  const registered=Math.max(0,Number(st.v52_locks_received)||0),required=Math.max(0,Number(st.v52_locks_required)||0);
  const pct=required?Math.min(100,Math.round(registered*100/required)):0;
  const title=special029?copy('Conclusions du rapport — dossier 029','Report conclusions — case 029'):judgePresent()?copy('Vote final individuel et secret','Individual secret final vote'):copy('Réévaluation finale','Final reassessment');
- const subtitle=special029?copy('Les témoins ne sont pas notés sur une échelle de culpabilité ; le rapport propre au dossier détermine la conclusion.','Witnesses are not given guilt scores; this case follows its own report.'):copy('Chaque membre habilité choisit sa lecture. La majorité absolue par suspect fait la décision collective.','Each eligible player makes one choice. A strict majority per suspect decides the team verdict.');
+ const subtitle=special029?copy('Les témoins ne sont pas notés sur une échelle de culpabilité ; le rapport propre au dossier détermine la conclusion.','Witnesses are not given guilt scores; this case follows its own report.'):copy('Chaque membre habilité choisit sa lecture. La majorité absolue par suspect détermine le verdict collectif.','Each eligible player makes one choice. A strict majority per suspect decides the team verdict.');
  const choices=special029?'':`<div class="igr712-ballot-scale">
  <div><b>0</b><span>${copy('Aucune','None')}</span></div>
  <div><b>1</b><span>${copy('Secondaire','Secondary')}</span></div>
@@ -324,6 +324,27 @@ const v708style=document.createElement('style');v708style.dataset.igrCourtroom='
  .igr712-role-mark{width:40px;height:40px;font-size:24px}
 }
 @media(prefers-reduced-motion:reduce){.igr708-topic,.igr712-chevron{transition:none}}
+
+/* Final secret ballot: large, readable choices and meaningful completion progress. */
+.igr52-page .igr712-ballot-hero{padding:clamp(20px,4vw,29px);display:grid;gap:14px;background:linear-gradient(160deg,#1b1e1e,#111414);border-color:#484036}
+.igr52-page .igr712-ballot-hero h3{font-size:clamp(21px,4vw,27px);line-height:1.2;letter-spacing:-.02em;color:#f4efe7}
+.igr52-page .igr712-ballot-hero>p{font-size:13px;line-height:1.65;color:#c5cccc;max-width:660px;margin:0}
+.igr712-ballot-scale{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.igr712-ballot-scale>div{border:1px solid #373d3d;background:#222727;border-radius:12px;padding:15px;display:grid;justify-items:center;gap:7px}
+.igr712-ballot-scale b{font:600 24px 'IBM Plex Mono',monospace;color:#e5cba4}
+.igr712-ballot-scale span{font-size:12px;line-height:1.4;color:#c4cbca;text-align:center}
+.igr52-page .igr712-ballot-majority{padding:12px 14px;border-left:3px solid #b79e78;border-radius:0 9px 9px 0;background:#28251f;font-size:12px;line-height:1.6;color:#ded2bd}
+.igr712-ballot-status{display:grid;gap:9px}
+.igr712-ballot-status>div:first-child{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.igr712-ballot-status>div:first-child span{font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#aeb7b4}
+.igr712-ballot-status>div:first-child b{font:700 13px 'IBM Plex Mono',monospace;color:#e2c89e}
+.igr712-ballot-bar{height:7px;background:#343a3a;border-radius:30px;overflow:hidden}
+.igr712-ballot-bar>span{height:100%;display:block;background:#bda47f;border-radius:inherit;transition:width .2s ease}
+.igr52-page:has(.igr712-ballot-hero) .igr52-map{padding:22px 24px;background:#151919;border-color:#343b3b;border-radius:18px;display:grid;gap:16px}
+.igr52-page:has(.igr712-ballot-hero) .igr52-map h3{font-size:18px}
+.igr52-page:has(.igr712-ballot-hero) .igr52-map textarea{min-height:76px}
+@media(max-width:430px){.igr52-page .igr712-ballot-scale>div{padding:12px 7px}.igr52-page:has(.igr712-ballot-hero) .igr52-map{padding:17px}}
+@media(prefers-reduced-motion:reduce){.igr712-ballot-bar>span{transition:none}}
 `;document.head.appendChild(v708style);
 const style=document.createElement('style');style.textContent=`.igr52-page{display:grid;gap:14px}.igr52-page>header,.igr52-card,.igr52-live,.igr52-map,.igr52-rules{padding:15px;border:1px solid rgba(255,255,255,.11);border-radius:16px;background:#0a0f14}.igr52-page header small,.igr52-card small,.igr52-live small,.igr52-map small,.igr52-rules small,.igr52-now small{font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.13em;color:#8f99a2}.igr52-page h2,.igr52-page h3,.igr52-rules h2{margin:0}.igr52-page p,.igr52-rules p{color:#aeb7bf;line-height:1.48}.igr52-flow{display:flex;gap:6px;overflow:auto}.igr52-flow span{white-space:nowrap;padding:7px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.09);font-size:11px;color:#78828b}.igr52-flow .on{color:#fff;border-color:rgba(255,255,255,.28);background:#151c22}.igr52-actions{display:flex;gap:8px;flex-wrap:wrap}.igr52-actions>*{flex:1;min-width:135px}.igr52-level{display:grid;grid-template-columns:1fr minmax(150px,220px);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}.igr52-level select,.igr52-map textarea{width:100%}.igr52-map{display:grid;gap:8px}.igr52-timer{font:700 38px 'IBM Plex Mono',monospace;letter-spacing:.03em}.igr52-lawyer-note,.igr52-progress{padding:9px 11px;border:1px solid rgba(255,255,255,.08);border-radius:11px;color:#c7cdd2}.igr52-now{margin:10px 0 12px;padding:11px 13px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:#0d1318}.igr52-now p{margin:4px 0 0;color:#c2c9cf}.igr52-rules{margin-top:16px}.igr52-rules ol{padding-left:20px;color:#c8ced3;display:grid;gap:8px}@media(max-width:680px){.igr52-level{grid-template-columns:1fr}.igr52-actions>*{min-width:100%}}`;document.head.appendChild(style);
 const basePhaseLabel=typeof window.phaseLabel==='function'?window.phaseLabel:(typeof phaseLabel==='function'?phaseLabel:null);if(basePhaseLabel){const f=function(ph){const labels={final_audience:copy('AUDIENCE FINALE','FINAL HEARING'),final_suspect_defenses:judgePresent()?copy('TRIBUNAL','COURTROOM'):copy('DÉFENSES FINALES','FINAL DEFENCES')};return labels[ph]||basePhaseLabel.apply(this,arguments)};try{phaseLabel=f}catch(_){}window.phaseLabel=f}
