@@ -1,6 +1,6 @@
 # LE RÉGIME — Traque à deux fugitifs : identité, variantes, mort et responsabilité (v3)
 
-**Statut : contrat de conception uniquement ; gameplay NON implémenté au serveur, non fusionné et non publié.** Ce texte supplante `docs/REGIME_DOUBLE_TRAQUE_032_034_V2.md` sur tous les points qu'il précise. Les règles actuelles 0/1/2 d'autres scénarios ne sont pas modifiées.
+**Statut : contrat de conception uniquement ; gameplay NON implémenté au serveur, non fusionné et non publié.** Le déroulement d'une partie, les menus d'enquête, les contre-choix des fugitifs et la simulation 034 sont détaillés dans `docs/REGIME_PARTIE_TYPE_OPTIONS_TRAQUE_V4.md`. Ce texte supplante `docs/REGIME_DOUBLE_TRAQUE_032_034_V2.md` sur tous les points qu'il précise. Les règles actuelles 0/1/2 d'autres scénarios ne sont pas modifiées.
 
 ## 1. Règle absolue : chaque personnage incarné porte le nom du joueur
 
