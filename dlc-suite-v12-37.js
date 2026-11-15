@@ -20,9 +20,9 @@
     {id:'031',title:'LA DETTE',short:'Six agents tués, trois chefs arrêtés. Ce que le commando voulait faire disparaître menace de retourner l’enquête contre la Grey Room.',context:'Au Mexique, dans le Sonora, après le massacre du gouverneur, six agents américains sont abattus près de la frontière. Trois chefs du commando sont arrêtés. La Grey Room doit reconstituer l’embuscade et découvrir ce que les tueurs voulaient empêcher de remonter. L’enquête se joue en trois cycles ; ses conséquences dépasseront la salle d’interrogatoire.',mood:'Frontière · dette · peur intime.',min:6,max:8,sound:'debt',mechanics:['Trois chefs du commando','Pression privée','Décisions collectives']}
   ];
   const REGIME=[
-    {id:'032',title:'LES ARCHIVES DU PALAIS',short:'Un régime est tombé. Les archives restent. Chacun affirme n’avoir été qu’un rouage.',context:'Les archives dévoilent arrestations arbitraires, disparitions et chaînes de signatures. Les suspects peuvent se renvoyer la faute, mais les documents forcent à reconstruire la responsabilité réelle.',mood:'Archives · chute du pouvoir · responsabilité.',min:6,max:8,sound:'archives',mechanics:['Chaîne d’ordre','Documents','Déni hiérarchique']},
-    {id:'033',title:'LA DYNASTIE',short:'Le gouvernement a disparu. La famille qui l’entourait prétend que personne ne décidait vraiment.',context:'Une famille oligarchique a gardé le pouvoir derrière les titres. L’enquête doit séparer lien de sang, influence et décision réelle.',mood:'Famille d’État · pouvoir réel · succession.',min:6,max:8,sound:'estate',mechanics:['Arbre de pouvoir','Oligarchie','Responsabilités distinctes']},
-    {id:'034',title:'LES NOMS QU’ILS PORTAIENT',short:'Dans les dossiers, ils avaient des fonctions. Dans les couloirs, ils avaient des surnoms. Les deux cartes ne coïncident pas.',context:'Les derniers dossiers du régime révèlent des surnoms rares utilisés pour désigner des acteurs dont l’influence variait selon les opérations. Les joueurs doivent reconstruire la place réelle de chacun.',mood:'Surnoms · guerre · hiérarchie opaque.',min:7,max:9,sound:'war',mechanics:['Identités de pouvoir','Délation','Reconstruction de chaîne']}
+    {id:'032',title:'LES ARCHIVES DU PALAIS',short:'Deux dirigeants en fuite : le directeur de la prison de Vahran et le ministre de l’Intérieur. Leur traque passe par les registres et les transferts.',context:'Deux joueurs incarnent les responsables recherchés et choisissent secrètement au départ s’ils fuient ensemble ou séparés ; leurs décisions peuvent les exposer dès C1. Un troisième suspect est interrogeable. L’Enquêteur remonte la chaîne carcérale et le Juge supervise les mandats. Capture : défaite personnelle et exécution dans l’épilogue.',mood:'Prison · transferts · traque pénitentiaire.',min:6,max:8,sound:'archives',mechanics:['Deux dirigeants à capturer','Variantes de fuite','Responsabilités par actes']},
+    {id:'033',title:'LA DYNASTIE',short:'Le fils du président et son cousin, ministre de la Défense, tentent d’échapper aux poursuites après la guerre et les massacres.',context:'Deux joueurs jouent les fugitifs : le fils héritier et le cousin ministre de la Défense. Les deux fugitifs choisissent de se regrouper ou non ; les variantes modifient leurs ressources, leurs rivalités et leurs secrets. Ils agissent chaque cycle pour préserver leurs fidèles ; le camp d’enquête recoupe les loyautés et les ordres de guerre. Deux captures et la reconstitution des responsabilités criminelles donnent la victoire complète à l’enquête.',mood:'Guerre · héritage · trahisons.',min:6,max:8,sound:'estate',mechanics:['Deux dirigeants à capturer','Rupture du clan','Responsabilités de guerre']},
+    {id:'034',title:'LES NOMS QU’ILS PORTAIENT',short:'Le président déchu et son gendre, chef de la sécurité, sont recherchés. Le président peut être capturé dès le premier cycle.',context:'Deux joueurs incarnent le président et son gendre. Ils choisissent de fuir ensemble ou séparément, de protéger un réseau ou de se désavouer. La Tête, le Sceau et la Tour sont des codes utilisés à différentes périodes. Les enquêteurs recoupent identités, contacts et refuges ; une capture est possible dès C1. Le joueur capturé perd son objectif de fuite, mais reste actif pour se défendre. La capture du président déclenche une édition spéciale du journal fictif du pays, sans prouver sa culpabilité.',mood:'Traque présidentielle · réseau de fidèles · procès.',min:7,max:9,sound:'war',mechanics:['Capture possible dès C1','Pistes de refuge','Procédure judiciaire']}
   ];
 
   const ART=Object.freeze({
@@ -151,12 +151,33 @@
     return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p>${h(sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span>${typeof scenarioDifficultyTag==='function'?scenarioDifficultyTag(sc):''}</div></div></article>`;
   }
   function accessRow(collection){return `<div class="dlc-access-row dlc-access-row--top">${accessBadge(collection)}</div>`}
+  // Public-only preview. Never include hidden loyalties or inferred influence in this tree.
+  function regimeGovernmentPreview(){
+    return `<details class="igr-regime-org-preview">
+      <summary><span>ORGANIGRAMME DU RÉGIME</span><small>Clan présidentiel et appareil d’État</small></summary>
+      <div class="igr-regime-org-content">
+        <p class="igr-regime-org-lead">République de Karsane · 15 millions d’habitants avant la guerre · gouvernement masculin sous la dictature. <strong>Deux joueurs incarnent les fugitifs dès C1</strong> ; le troisième suspect peut être interrogé. L’Enquêteur dirige les recherches, l’Analyste recoupe les pistes, le Juge contrôle les ordonnances et le Procureur est facultatif. Les personnages incarnés utilisent les noms de leurs joueurs en partie.</p>
+        <div class="igr-regime-org-head"><strong>PRÉSIDENT DÉCHU</strong><span>COMMANDEMENT SUPRÊME</span><small>Les personnages incarnés utilisent les pseudonymes des joueurs une fois leurs rôles attribués.</small></div>
+        <div class="igr-regime-org-nodes" role="list" aria-label="Membres du pouvoir">
+          <article role="listitem"><strong>MINISTRE DE LA DÉFENSE</strong><small>COUSIN</small><span>Ministre de la Défense</span></article>
+          <article role="listitem"><strong>MINISTRE DE L’INTÉRIEUR</strong><small>FRÈRE</small><span>Ministre de l’Intérieur</span></article>
+          <article role="listitem"><strong>FILS DU PRÉSIDENT</strong><small>HÉRITIER PRÉSUMÉ</small><span>Ministre de l’Information</span></article>
+          <article role="listitem"><strong>CHEF DE LA SÉCURITÉ</strong><small>GENDRE</small><span>Chef de la sécurité présidentielle</span></article>
+          <article role="listitem"><strong>SECRÉTAIRE DU PALAIS</strong><small>CONFIDENT · SANS PARENTÉ</small><span>Secrétaire général du palais</span></article>
+          <article role="listitem"><strong>DIRECTEUR DE VAHRAN</strong><small>FIDÈLE · SANS PARENTÉ</small><span>Directeur de la prison de Vahran · sous l’Intérieur</span></article>
+        </div>
+        <p class="igr-regime-org-note">Liens familiaux et fonctions officielles sont connus. Le pouvoir réel reste à prouver dans chaque enquête : aucun lien secret n’est dévoilé ici.</p>
+      </div>
+    </details>`;
+  }
+
   function appendCollection(root,{collection,title,eyebrow,copy,ids,label,tag}){
     root.querySelector(`.${collection}-dlc-section`)?.remove();
     for(const id of ids)document.getElementById(`scenario-${id}`)?.remove();
     const section=document.createElement('section');section.className=`panel ${collection}-dlc-section`;section.dataset.collection=collection;
     const scenarios=[...ids].map(id=>scenario(id));
     section.innerHTML=`<div class="dlc-suite-head"><div><span class="dlc-suite-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${copy}</p></div></div>${accessRow(collection)}${hasAccess(collection)?`<div class="scenario-list scenario-list-v10-13 ${collection}-list">${scenarios.map(sc=>card(sc,collection,label,tag)).join('')}</div>`:lockedBlock(collection)}`;
+    if(collection==='regime')section.querySelector('.dlc-suite-head')?.insertAdjacentHTML('afterend',regimeGovernmentPreview());
     root.appendChild(section);
   }
 
@@ -237,7 +258,7 @@
   function decorateCreateList(){
     const root=document.querySelector('.page-create-v10-13');if(!root)return;
     appendCollection(root,{collection:'cartel',title:'CARTEL',eyebrow:'DLC · PRESSION',copy:window.IGR_LOCALE==='en'?'Mexico · Puerto Ceniza, Sinaloa. Three linked cases against Los Salcedo: surveillance of the cell, pressure on justice and threats to loved ones.':'Mexique · Puerto Ceniza, Sinaloa. Trois dossiers liés face à Los Salcedo : surveillance de la cellule, justice sous pression, menace contre les proches.',ids:CARTEL_IDS,label:'CARTEL',tag:'PRESSION'});
-    appendCollection(root,{collection:'regime',title:'LE RÉGIME',eyebrow:'DLC · APRÈS LA CHUTE',copy:'3 dossiers sur crimes d’État, délation intéressée, oligarchie familiale et reconstruction du pouvoir réel.',ids:REGIME_IDS,label:'LE RÉGIME',tag:'ARCHIVES'});
+    appendCollection(root,{collection:'regime',title:'LE RÉGIME',eyebrow:'DLC · APRÈS LA CHUTE',copy:'Deux dirigeants joués en cavale par scénario. Ils choisissent leur alliance ; la presse fictive suit la chute du régime. Capturer les deux est la première épreuve, identifier les donneurs d’ordre la seconde.',ids:REGIME_IDS,label:'LE RÉGIME',tag:'ARCHIVES'});
     renderTerrorAccess(root);
     markExistingCards(root);ensureFilters(root);applyFilters(root);
   }
