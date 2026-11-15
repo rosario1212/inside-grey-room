@@ -20,9 +20,7 @@ BEGIN
  IF NOT FOUND OR p.public_role<>'enqueteur' THEN RAISE EXCEPTION 'not authorized to request warrants';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
- IF NOT FOUND OR r.status<>'playing' OR r.cycle NOT BETWEEN 1 AND 3 OR
- r.phase IN ('closed','final_audience','final_suspect_defenses','locking','regime_court')
- THEN RAISE EXCEPTION 'warrants unavailable';END IF;
+ IF NOT FOUND THEN RAISE EXCEPTION 'warrants unavailable';END IF;
  IF length(coalesce(p_request_id,''))<8 OR length(p_request_id)>128 THEN RAISE EXCEPTION 'invalid request';END IF;
  SELECT * INTO old FROM igr_private.igr_regime_v13_ledger
  WHERE room_code=p.room_code AND request_id=p_request_id;
@@ -30,6 +28,9 @@ BEGIN
    IF old.actor_player<>p.id OR old.action_kind<>'mandate' THEN RAISE EXCEPTION 'request conflict';END IF;
    RETURN old.response;
  END IF;
+ IF r.status<>'playing' OR r.cycle NOT BETWEEN 1 AND 3 OR
+ r.phase IN ('closed','final_audience','final_suspect_defenses','locking','regime_court')
+ THEN RAISE EXCEPTION 'warrants unavailable';END IF;
  target1:=m.private_pack->'private_cards'->0->>'actor_id';
  target2:=m.private_pack->'private_cards'->1->>'actor_id';
  IF p_target_id NOT IN (target1,target2) THEN RAISE EXCEPTION 'unknown fugitive';END IF;
@@ -133,7 +134,7 @@ BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'unauthorized';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
- IF NOT FOUND OR r.status<>'playing' THEN RAISE EXCEPTION 'regime feature unavailable'; END IF;
+ IF NOT FOUND THEN RAISE EXCEPTION 'regime feature unavailable'; END IF;
  IF length(coalesce(p_request_id,''))<8 OR length(p_request_id)>128 THEN RAISE EXCEPTION 'invalid request';END IF;
  SELECT * INTO old FROM igr_private.igr_regime_v13_ledger
  WHERE room_code=p.room_code AND request_id=p_request_id;
@@ -141,6 +142,7 @@ BEGIN
    IF old.actor_player<>p.id OR old.action_kind<>'judge_review' THEN RAISE EXCEPTION 'request conflict';END IF;
    RETURN old.response;
  END IF;
+ IF r.status<>'playing' THEN RAISE EXCEPTION 'game has finished';END IF;
  warrants:=coalesce(m.play_state->'mandates','[]'::jsonb);
  FOR i IN 0..jsonb_array_length(warrants)-1 LOOP
   IF warrants->i->>'id'=p_mandate_id THEN w:=warrants->i;idx:=i;EXIT;END IF;
@@ -298,13 +300,24 @@ DECLARE
  act jsonb;ans jsonb;eid text;piece jsonb;
  sources text[];i integer;accurate integer:=0;
  correct boolean;declared jsonb;res jsonb; source_supported boolean;act_scores jsonb:='{}'::jsonb;
+ prior igr_private.igr_regime_v13_ledger%rowtype;
 BEGIN
  SELECT * INTO p FROM public.igr_v4_players
  WHERE room_code=upper(trim(p_code)) AND player_token=p_player_token;
  IF NOT FOUND OR p.public_role NOT IN ('enqueteur','analyste') THEN RAISE EXCEPTION 'investigation only';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
- IF NOT FOUND OR r.phase<>'regime_court' THEN RAISE EXCEPTION 'not a courtroom phase';END IF;
+ IF NOT FOUND THEN RAISE EXCEPTION 'private courtroom snapshot unavailable';END IF;
+ IF length(coalesce(p_request_id,'')) NOT BETWEEN 8 AND 128 THEN
+   RAISE EXCEPTION 'invalid request';END IF;
+ SELECT * INTO prior FROM igr_private.igr_regime_v13_ledger
+ WHERE room_code=p.room_code AND request_id=p_request_id;
+ IF FOUND THEN
+  IF prior.actor_player<>p.id OR prior.action_kind<>'judicial_reconstruction'
+    THEN RAISE EXCEPTION 'request conflict';END IF;
+  RETURN prior.response;
+ END IF;
+ IF r.phase<>'regime_court' THEN RAISE EXCEPTION 'not a courtroom phase';END IF;
  IF jsonb_typeof(p_answers)<>'array' OR jsonb_array_length(p_answers)<>4 THEN
    RAISE EXCEPTION 'four judicial attributions required';END IF;
  IF m.play_state->'reconstructions' ? (p.id::text) THEN RAISE EXCEPTION 'already submitted';END IF;
