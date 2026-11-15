@@ -129,6 +129,8 @@ export default {
   const headers=new Headers(asset.headers);
   if(shellPath)headers.set('Content-Type','text/html; charset=utf-8');
   if(shellPath)headers.set('Cache-Control','no-store, max-age=0');
+  else if(/^\/igr-v702-(?:js|css)-[a-f0-9]{16}\.(?:js|css)$/.test(url.pathname))
+    headers.set('Cache-Control','public, max-age=31536000, immutable');
   else if(/\.(?:js|css|html|json)$/.test(url.pathname)||url.pathname==='/')headers.set('Cache-Control','no-cache');
   // Opaque release marker; narrative and variant IDs remain server-side.
   headers.set('X-IGR-Release','igr-003-008-009-011-secure-20261025');
