@@ -86,3 +86,13 @@ test('regime release stays opt-in and cannot be published by the QA workflow',()
  assert.match(privateSql,/igr_regime_v13_release_eligible/);
  assert.match(lifecycleSql,/igr_regime_v13_release_eligible/);
 });
+
+test('safe forward-port keeps recent security, mobile and DLC layers',async()=>{
+ const mobile=await read('scripts/build-mobile.mjs');
+ assert.match(mobile,/'regime-live-v13\\.js'/);
+ assert.match(mobile,/'regime-live-v13\\.css'/);
+ assert.match(index,/terror-crisis-v696\\.css/);
+ assert.match(index,/analyst-profiling-v700\\.js/);
+ assert.match(sw,/function isSensitiveServicePath/);
+ assert.match(sw,/igr-v702/);
+});
