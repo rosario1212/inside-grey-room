@@ -127,8 +127,8 @@ test('the shared trial keeps each suspect personal file available',()=>{
 test('Regime 8th witness and 034-only 9th journalist are selectable and active',async()=>{
  const catalog=await read('dlc-suite-v12-37.js');
  assert.match(catalog,/min:6,max:9,sound:/);
- assert.match(catalog,/Témoin \(8e\)/);
- assert.match(catalog,/Journaliste \(9e\)/);
+ assert.match(catalog,/optional:\['Procureur','Témoin'\]/);
+ assert.match(catalog,/'Journaliste'\]\}/);
  assert.match(ui,/function civicRole\(\)/);
  assert.match(ui,/igr_regime_v16_civic_statement/);
  assert.match(ui,/court-testimony/);
@@ -137,7 +137,7 @@ test('Regime 8th witness and 034-only 9th journalist are selectable and active',
  assert.match(courtSql,/testimony/);
  assert.match(privateSql,/igr_regime_v16_civic_card/);
  assert.match(lifecycleSql,/igr_regime_v16_civic_card/);
- assert.match(index,/regime-v16-rosters-20261115/);
+ assert.match(index,/regime-v16-1-mobile-cards-20261115/);
 });
 test('Regime expanded server capacity, tribunal and majority remain consistent',async()=>{
  const rosterMigration=await read('supabase/migrations/20261115230900_igr_regime_v16_optional_roster_limits.sql');
