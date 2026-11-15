@@ -6,6 +6,11 @@ import {readFileSync} from 'node:fs';
 
 const sw=readFileSync('service-worker.js','utf8');
 const turn=readFileSync('turn-v12-4.js','utf8');
+const html=readFileSync('index.html','utf8');
+assert(html.includes('turn-v12-4.js?v=security-v698-lazy-turn-20261115'),
+ 'Updated video privacy code must be cache-busted in the published entrypoint');
+assert(sw.includes('/turn-v12-4.js?v=security-v698-lazy-turn-20261115'),
+ 'Service-worker manifest must match the lazily provisioned video script');
 const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 
 assert(sw.includes('isSensitiveServicePath(url.pathname)'),
