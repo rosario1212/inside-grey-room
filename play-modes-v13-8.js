@@ -208,10 +208,10 @@ function handleLocalSubmit(e){if(e.target.id!=='localVerdictForm')return;e.preve
 /* ------------------------------------------------------------------
    HÉRITAGE · LOCAL + ONLINE
 ------------------------------------------------------------------ */
-let hWatcher=null,hLastSig='';
+let hWatcher=null,hLastSig='',hLastStage='',hVotePending=false;
 function hSession(){return readJSON(HNET_KEY)}
 function saveHSession(v){writeJSON(HNET_KEY,v)}
-function clearHSession(){del(HNET_KEY);hLastSig='';if(hWatcher){clearInterval(hWatcher);hWatcher=null}}
+function clearHSession(){del(HNET_KEY);hLastSig='';hLastStage='';if(hWatcher){clearInterval(hWatcher);hWatcher=null}}
 function heritageMeta(campaign){return window.IGR_HERITAGE?.campaigns?.[campaign]}
 function heritageCarry(campaign){
   try{const s=window.IGR_HERITAGE?.get?.(campaign);if(!s)return[];if(campaign==='cendres'){return [`Crise : ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}`,`${s.cendres?.network?.nodes?.length||0} identités`,`${s.cendres?.network?.links?.length||0} connexions`]}return [`${(s.kuroi?.debts||[]).filter(d=>d.status==='due').length} dettes ouvertes`,`${s.kuroi?.chronicle?.length||0} faits dans la Chronique`]}catch{return[]}
@@ -236,7 +236,27 @@ function renderHeritageOnlineCreate(campaign,chapter,practice=false){if(campaign
 async function createHeritageOnline(campaign,chapter,practice){if(campaign==='maitre')return openMaitreOnline(chapter);const pseudo=$('#hnetPseudo')?.value.trim();if(!pseudo)return toastX('Entre ton pseudo.');const ident=profileIdentity();if(!ident?.id||!ident?.token)return toastX('Ton profil est requis pour ouvrir HÉRITAGE.');let out=null,code=null;for(let i=0;i<5;i++){code=newHCode();try{out=await rpc('igr_heritage_online_create',{p_code:code,p_campaign_id:campaign,p_chapter:chapter,p_pseudo:pseudo,p_profile_id:ident.id,p_profile_token:ident.token});break}catch(e){if(i===4||!/duplicate|23505/i.test(`${e.code||''} ${e.message||''}`)){console.error(e);return toastX(/access/i.test(e.message||'')?'Accès HÉRITAGE requis.':'Création impossible.')}}}storage().setItem('igr_v9_last_pseudo',pseudo);saveHSession({code:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,campaign,chapter,practice:!!practice});await window.IGR_HERITAGE_CONTEXT_V71?.publish?.();startHWatcher(true)}
 async function dualJoinRoom(){const pseudo=($('#joinPseudo')?.value||'').trim(),code=($('#joinCode')?.value||'').trim().toUpperCase();if(!pseudo||code.length!==5)return toastX('Pseudo et code requis.');if(code.startsWith('H')){try{const out=await rpc('igr_heritage_online_join',{p_code:code,p_pseudo:pseudo});storage().setItem('igr_v9_last_pseudo',pseudo);saveHSession({code:out.room_code||code,token:out.player_token,hostToken:null,playerId:out.player_id,campaign:out.campaign_id,chapter:out.chapter,practice:false});startHWatcher(true);return}catch(e){if(!/heritage[_ ]room[_ ]not[_ ]found/i.test(e.message||'')){console.error(e);return toastX(/full/i.test(e.message||'')?'Cellule HÉRITAGE complète.':/started/i.test(e.message||'')?'Cette campagne a déjà commencé.':'Impossible de rejoindre cette cellule HÉRITAGE.')}}}return baseJoinRoom?.()}
 function startHWatcher(immediate=false){if(hSession()?.campaign==='maitre'){window.IGR_HERITAGE_MAITRE_ONLINE?.resume?.();return}if(hWatcher)clearInterval(hWatcher);hWatcher=setInterval(()=>syncHeritageOnline(false),850);if(immediate)syncHeritageOnline(true)}
-async function syncHeritageOnline(force=false){const s=hSession();if(!s||s.campaign==='maitre')return;if(document.hidden&&!force)return;try{const d=await rpc('igr_heritage_online_sync',{p_code:s.code,p_player_token:s.token});document.dispatchEvent(new CustomEvent('igr-heritage-sync',{detail:d}));const sig=JSON.stringify([d.room?.status,d.room?.stage,d.room?.phase_index,d.room?.decision_id,(d.players||[]).map(p=>[p.id,p.ready,p.role_id])]);if(!force&&sig===hLastSig)return;hLastSig=sig;routeHOnline(d)}catch(e){console.warn('heritage online sync',e.message);if(/expired|unauthorized/i.test(e.message||'')){clearHSession();toastX('La cellule HÉRITAGE a expiré.')}}}
+async function syncHeritageOnline(force=false){
+  const s=hSession();if(!s||s.campaign==='maitre')return;
+  if(document.hidden&&!force)return;
+  try{
+    const d=await rpc('igr_heritage_online_sync',{p_code:s.code,p_player_token:s.token});
+    hLastStage=d.room?.stage||'';
+    if(d.room?.campaign_id==='cendres'&&d.room?.stage==='decision'){
+      // The server never exposes individual players' votes to other clients.
+      d.room.ballot_status=await rpc('igr_heritage_online_cendres_ballot_status',{p_code:s.code,p_player_token:s.token});
+    }
+    document.dispatchEvent(new CustomEvent('igr-heritage-sync',{detail:d}));
+    const ballot=d.room?.ballot_status;
+    const sig=JSON.stringify([d.room?.status,d.room?.stage,d.room?.phase_index,d.room?.decision_id,
+      ballot?.vote_round,ballot?.votes_cast,ballot?.my_vote,(d.players||[]).map(p=>[p.id,p.ready,p.role_id])]);
+    if(!force&&sig===hLastSig)return;
+    hLastSig=sig;routeHOnline(d);
+  }catch(e){
+    console.warn('heritage online sync',e.message);
+    if(/expired|unauthorized/i.test(e.message||'')){clearHSession();toastX('La cellule HÉRITAGE a expiré.')}
+  }
+}
 function routeHOnline(d){const stage=d.room?.stage;if(stage==='lobby')return renderHLobby(d);if(stage==='role_reading')return renderHRole(d);if(stage==='play')return bridgeHPlay(d,'play');if(stage==='decision')return bridgeHPlay(d,'decision');if(stage==='reveal')return bridgeHPlay(d,'result');if(stage==='finished')return renderHFinished(d)}
 function renderHLobby(d){const s=hSession(),host=!!s?.hostToken,count=d.players?.length||0;const m=heritageMeta(d.room.campaign_id),ch=m?.chapters?.[d.room.chapter-1];shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><header class="hnet-head"><button class="btn ghost small" data-hnet="leave">← Quitter</button><span>${esc(m?.title||'HÉRITAGE')} · DOSSIER 0${d.room.chapter}</span></header><section class="hnet-lobby"><div class="hnet-code"><span>CODE DE CELLULE</span><strong>${esc(d.room.code)}</strong><small>Les autres joueurs : Rejoindre une partie → ${esc(d.room.code)}</small></div><div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(ch?.title||'')}</h1><p>${count}/7 joueurs · minimum 5</p></div><div class="hnet-players">${(d.players||[]).map((p,i)=>`<div><span>${i+1}</span><b>${esc(p.pseudo)}</b><small>${p.is_host?'HÔTE':'CONNECTÉ'}</small></div>`).join('')}</div>${host?`<button class="btn primary block" data-hnet="start" ${count<5?'disabled':''}>${count<5?`ENCORE ${5-count} JOUEUR${5-count>1?'S':''}`:'LANCER LE DOSSIER'}</button>`:`<div class="hnet-wait">En attente de l’hôte…</div>`}</section></main>`)}
 async function startHeritageOnline(){const s=hSession();if(!s?.hostToken)return;try{await rpc('igr_heritage_online_start',{p_code:s.code,p_host_token:s.hostToken});await syncHeritageOnline(true)}catch(e){console.error(e);toastX('Il faut 5 à 7 joueurs pour lancer.') }}
@@ -267,9 +287,17 @@ function patchHBridge(d,stage){
   if(stage==='decision'){
     const info=document.createElement('div');
     info.className='hnet-decision-note';
-    info.textContent=host?'Vous êtes l’hôte : verrouillez le choix du groupe.':'Discutez ensemble. Seul l’hôte peut verrouiller la décision.';
+    const ballot=d.room.campaign_id==='cendres'?d.room.ballot_status:null;
+    info.textContent=ballot
+      ?`VOTE COLLECTIF · TOUR ${ballot.vote_round} · ${ballot.votes_cast}/${ballot.players} votes · majorité requise : ${ballot.majority}. ${ballot.my_vote?'Votre voix est enregistrée.':'Chaque joueur vote sur son téléphone.'} ${ballot.vote_round>1?'Le tour précédent n’a dégagé aucune majorité.':''}`
+      :host?'Vous êtes l’hôte : verrouillez le choix du groupe.':'Discutez ensemble. Seul l’hôte peut verrouiller la décision.';
     const options=$('.hplay-options');
-    if(options){options.before(info);if(!host)$$('button',options).forEach(b=>b.disabled=true)}
+    if(options){
+      options.before(info);
+      if(ballot){
+        $('button',options).forEach(b=>{b.disabled=!!ballot.my_vote;b.classList.toggle('is-voted',!!ballot.my_vote&&b.dataset.hpOption===ballot.my_vote)});
+      }else if(!host)$('button',options).forEach(b=>b.disabled=true);
+    }
     const mode=$('.hplay-mode');
     if(mode)mode.textContent='EN LIGNE · DÉCISION';
   }
@@ -281,8 +309,45 @@ function patchHBridge(d,stage){
   }
 }
 async function advanceHeritageOnline(){const s=hSession();if(!s?.hostToken)return toastX('Seul l’hôte contrôle les phases.');try{await rpc('igr_heritage_online_advance',{p_code:s.code,p_host_token:s.hostToken});await syncHeritageOnline(true)}catch(e){console.error(e);toastX('Impossible de changer de phase.')}}
-async function decideHeritageOnline(decision){const s=hSession();if(!s?.hostToken)return toastX('Seul l’hôte verrouille la décision.');try{await rpc('igr_heritage_online_decide',{p_code:s.code,p_host_token:s.hostToken,p_option_id:decision});await syncHeritageOnline(true)}catch(e){console.error(e);toastX('Décision non confirmée.')}}
-async function leaveHeritageOnline(){const s=hSession();if(!s)return;try{await rpc('igr_heritage_online_leave',{p_code:s.code,p_player_token:s.token})}catch{}clearHSession();del(HERITAGE_LIVE_KEY);try{renderHome()}catch{location.reload()}}
+async function decideHeritageOnline(decision){
+  const s=hSession();if(!s||hVotePending)return;
+  if(s.campaign!=='cendres'&&!s.hostToken)return toastX('Seul l’hôte verrouille la décision.');
+  hVotePending=true;
+  try{
+    if(s.campaign==='cendres'){
+      // All five to seven player tokens have one equal vote. Host token is deliberately unused.
+      const result=await rpc('igr_heritage_online_vote_cendres',{p_code:s.code,p_player_token:s.token,p_option_id:decision});
+      if(result?.new_round)toastX('Aucune majorité : un nouveau vote commence.');
+    }else{
+      await rpc('igr_heritage_online_decide',{p_code:s.code,p_host_token:s.hostToken,p_option_id:decision});
+    }
+    await syncHeritageOnline(true);
+  }catch(e){
+    console.error(e);
+    toastX(s.campaign==='cendres'?'Vote non enregistré. Réessaie.':'Décision non confirmée.');
+  }finally{hVotePending=false}
+}
+async function leaveHeritageOnline(){
+  const s=hSession();if(!s)return;
+  if(s.campaign==='cendres'&&hLastStage&&hLastStage!=='lobby'&&hLastStage!=='finished'){
+    // Preserve the seat and player token: disconnecting must not shrink the majority.
+    if(hWatcher){clearInterval(hWatcher);hWatcher=null}
+    hLastSig='';del(HERITAGE_LIVE_KEY);
+    try{renderHome()}catch{location.reload()}
+    toastX('Votre place est conservée. Reprenez la cellule pour voter.');
+    return;
+  }
+  try{
+    const out=await rpc('igr_heritage_online_leave',{p_code:s.code,p_player_token:s.token});
+    if(out?.resume_required){
+      if(hWatcher){clearInterval(hWatcher);hWatcher=null}
+      hLastSig='';del(HERITAGE_LIVE_KEY);renderHome();
+      toastX('Votre place est conservée. Reprenez la cellule pour voter.');return;
+    }
+  }catch(e){console.warn('heritage leave',e)}
+  clearHSession();del(HERITAGE_LIVE_KEY);
+  try{renderHome()}catch{location.reload()}
+}
 async function finishHeritageOnlineHost(){const s=hSession();if(!s?.hostToken)return;try{await rpc('igr_heritage_online_finish',{p_code:s.code,p_host_token:s.hostToken})}catch(e){console.warn(e)}clearHSession()}
 function renderHFinished(d){clearHSession();del(HERITAGE_LIVE_KEY);shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>PARTIE TERMINÉE</span><h1>Le dossier est clos.</h1><p>L’hôte a inscrit la conséquence dans sa campagne HÉRITAGE.</p><button class="btn primary" id="hnetHome">RETOUR À L’ACCUEIL</button></section></main>`);$('#hnetHome')?.addEventListener('click',()=>renderHome())}
 function resumeHeritageOnline(){if(!hSession())return toastX('Aucune cellule HÉRITAGE à reprendre.');startHWatcher(true)}
