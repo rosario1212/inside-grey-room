@@ -708,7 +708,34 @@ function boot(){
   patchHomeCard();
   setTimeout(maybeUpgradeOldHeritage,0);
   window.addEventListener('pageshow',()=>setTimeout(patchHomeCard,0),{passive:true});
-  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,finishOnlineConfirmed:()=>{const live=readLive();if(!live?.online||live.stage!=='result'||!live.decision)return false;applyResult(live);return true},roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
+  window.IGR_HERITAGE_PLAY=Object.freeze({version:VERSION,open:renderHub,openCampaign:renderCampaign,openChapter:renderChapter,resume:resumeLive,finishOnlineConfirmed:(serverRoom=null,serverPractice=false)=>{
+    // A finished room is the authority on the verdict. Recover even if the last
+    // local result screen was lost during a refresh or a reconnect.
+    const room=serverRoom&&typeof serverRoom==='object'?serverRoom:null;
+    const saved=readLive();
+    const campaign=room?.campaign_id||saved?.campaignId;
+    const chapter=Number(room?.chapter||saved?.chapter);
+    const decision=room?.decision_id||saved?.decision;
+    const ch=PACKS[campaign]?.chapters?.[chapter];
+    const opt=ch?.options?.find(o=>o.id===decision);
+    if(!opt||room&&room.stage!=='finished')return false;
+    if(!serverPractice&&!completed(campaign,chapter)&&current(campaign)!==chapter)return false;
+    const same=saved?.online&&saved.campaignId===campaign&&Number(saved.chapter)===chapter;
+    const live=same?{...saved}:{
+      version:2,online:true,campaignId:campaign,chapter,players:[],
+      decision,practice:!!serverPractice,campaignCarry:room?.campaign_carry||null,
+      result:null,stage:'result',finished:false
+    };
+    live.decision=decision;
+    live.stage='result';live.finished=false;
+    live.practice=!!(room?serverPractice:live.practice);
+    if(room)live.campaignCarry=room.campaign_carry||live.campaignCarry||null;
+    live.result={grade:opt.grade,title:opt.title,consequence:opt.consequence};
+    try{
+      applyResult(live);
+      return live.practice||!!api()?.get?.(campaign)?.completed?.includes(chapter);
+    }catch(error){console.warn('[Heritage] failed to persist confirmed result',error);return false}
+  },roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
