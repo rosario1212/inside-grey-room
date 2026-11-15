@@ -133,8 +133,9 @@ BEGIN
  votes:=votes||jsonb_build_object(p.id::text,pack->'canonical_truth'->
  'responsibility_by_slot'->(p.internal_slot::text));
  END LOOP;
- INSERT INTO public.igr_v4_actions(room_code,player_id,cycle,action_type,payload)
- VALUES('QA13LIFE',enq_id,3,'final_lock',jsonb_build_object('levels',votes));
+ result:=public.igr_v4_lock_final('QA13LIFE',investigator,
+   jsonb_build_object('levels',votes,'note','Procès de Karsane · conclusion judiciaire'));
+ IF result->>'ok'<>'true' THEN RAISE EXCEPTION 'v52 final vote not accepted';END IF;
  reveal:=public.igr_v4_make_reveal('QA13LIFE');
  IF coalesce((reveal->'regime_verdict'->>'total_victory')::boolean,false)<>true THEN
  RAISE EXCEPTION 'new Regime finale mis-scored victory';END IF;
