@@ -88,6 +88,13 @@ await check('failed RPC does not acknowledge a revision and is retried',async()=
   await c.runTimer(1000,500);c.requests[2].resolve(data('recovered'));await flush();
   assert.equal(c.scope.__IGR_REALTIME__.snapshot().syncedRevision,4);
 });
+await check('expired player tokens release a stale room instead of retrying forever',async()=>{
+  const c=client();c.loadLive();await flush();c.Socket.sockets[0].open();await c.runTimer();
+  assert.equal(c.requests.length,1);
+  c.requests[0].reject(new Error('unauthorized'));await flush();
+  assert.equal(c.scope.STATE.room,null,'The stale room should be cleared after a terminal sync error');
+  assert.equal(c.scope.STATE.token,null,'An expired player token must not keep polling');
+});
 await check('messages from a superseded socket are ignored',async()=>{
   const c=client();c.loadLive();await flush();const old=c.Socket.sockets[0].open();await c.runTimer();c.requests[0].resolve(data());await flush();
   c.listeners.online.at(-1)();await flush();old.update(999);
