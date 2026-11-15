@@ -59,7 +59,7 @@ if(dest){
  assert(built.includes('roleAgencyHtml')&&built.includes('terrorRulesHtml'),'built rulebook stale');
  if(existsSync(dest+'/service-worker.js')){
   const sw=read(dest+'/service-worker.js');
-  assert(sw.includes("const CACHE='igr-v696-rolebook'"),'PWA cache version not rotated');
+  assert(sw.includes("const CACHE='igr-santoro-display-audit-20261108-"),'Published PWA cache namespace changed unexpectedly');
   assert(sw.includes('/self-guided-rules-v51.js?v=v696-rolebook'),'rulebook not in new precache');
  }
 }
