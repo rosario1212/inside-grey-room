@@ -231,7 +231,8 @@ BEGIN
   defense_used:=EXISTS(SELECT 1 FROM jsonb_array_elements(
     coalesce(m.play_state->'captured_responses','[]'::jsonb)) x
     WHERE x->>'actor_id'=actor AND (x->>'cycle')::integer=r.cycle);
-  RETURN jsonb_build_object('enabled',true,
+  RETURN igr_private.igr_regime_v14_sanitize_json(p.room_code,
+   jsonb_build_object('enabled',true,
       'scenario_id',m.scenario_id,'cycle',r.cycle,'phase',r.phase,
       'role',p.public_role,'actor_id',actor,'my_card',card,'my_mission',own_mission,
       'scene',scene,'my_captured_objective',defense_objective,
@@ -253,8 +254,8 @@ BEGIN
       'my_third_final_submitted',coalesce(
         m.play_state->'third' ? 'final_declaration',false),
       'events',coalesce(m.play_state->'events','[]'::jsonb),
-      'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb)));
-END $$;
+      'investigations_count',jsonb_array_length(coalesce(m.play_state->'investigations','[]'::jsonb))));
+END $;
 REVOKE EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.igr_regime_v13_state(text,uuid) TO anon,authenticated;
 
