@@ -7,7 +7,7 @@ const sql=read(root),app=read('role-cadence-v694.js'),index=read('index.html');
 const dist=process.argv[2]||'dist';
 execFileSync(process.execPath,['--check','role-cadence-v694.js'],{stdio:'pipe'});
 assert(sql.includes('igr_v694_officer_state')&&sql.includes('igr_v694_officer_decide'),'server-authoritative officer status/choice missing');
-assert(sql.includes("r.phase IN ('investigation_assembly','cycle_debrief'") ,'officer timers must not begin during the Enquête assembly');
+assert(sql.includes("r.phase IN ('briefing','role_reading','pre_investigation','investigation_assembly'") ,'officer timers must not begin during the Enquête assembly');
 assert(sql.includes('igr_v694_window')&&sql.includes('60+floor(random()*61)'),'1–2 minute random windows missing');
 assert(sql.includes('v694 cumulative command impact')&&sql.includes('correct_count>=5'),'all three officer decisions must affect measured consequences');
 assert(sql.includes('v694 deadline guard')&&sql.includes('military order time expired'),'legacy officer endpoint must not bypass timed decisions');
