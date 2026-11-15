@@ -60,6 +60,14 @@ WITH ids(sid,variant_id) AS (
  AND e->>'trigger_action_id' IS NOT NULL AND e->>'alternative_investigation_id' IS NOT NULL)=2
  AND (SELECT count(distinct e->>'origin') FROM jsonb_array_elements(d->'capture_evidence') e
  WHERE e->>'cycle'='1')>=2 FROM drafts
+ UNION ALL SELECT sid,variant_id,'four later-cycle capture leads linked to actual investigations',
+ (SELECT count(*) FROM jsonb_array_elements(d->'capture_evidence') e
+    WHERE (e->>'cycle')::integer IN (2,3)
+      AND e->>'alternative_investigation_id' IN (
+       SELECT c.value->>'id' FROM jsonb_array_elements(d->'investigation_choices') group_item,
+          LATERAL jsonb_array_elements(group_item->'choices') c
+       WHERE (group_item->>'cycle')::integer=(e->>'cycle')::integer
+      ))=4 FROM drafts
  UNION ALL SELECT sid,variant_id,'alliance both possibilities, no auto C1 capture',
  d->'first_cycle'->'available_tracks_by_alliance' ?& ARRAY['together','apart']
  AND d->'first_cycle'->>'capture_possible_on_cycle_one'='true'
