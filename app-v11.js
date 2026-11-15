@@ -65,17 +65,9 @@ function playerCountLabel(sc){
 // Single teaser contract for classic scenarios and every DLC catalogue.
  // Keep dossier facts in the detail page; the compact preview is deliberately short.
 function scenarioCardTeaser(raw){
- const clean=String(raw??'').replace(/\s+/g,' ').trim().replace(/[\s.!?…]+$/g,'');
- if(!clean)return '';
- const width=typeof window!=='undefined'&&Number.isFinite(window.innerWidth)?window.innerWidth:400;
- const limit=width<=390?62:width<=560?77:width<=900?105:125;
- let clipped=clean;
- if(clean.length>limit){
-  clipped=clean.slice(0,limit);
-  const space=clipped.lastIndexOf(' ');
-  if(space>limit-22)clipped=clipped.slice(0,space);
- }
- return clipped.replace(/[\s,;:.!?…]+$/g,'')+'…';
+ // Public catalogue text is already editorially spoiler-safe. Never cut mid-sentence.
+ return String(raw??'').replace(/\s+/g,' ').trim();
+
 }
 
 const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
