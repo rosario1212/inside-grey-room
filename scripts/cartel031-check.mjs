@@ -6,7 +6,17 @@ const target=path.resolve(process.argv[2]||'dist');
 const source=await readFile(path.join(target,'cartel031-v171.js'),'utf8');
 const meta=JSON.parse(await readFile(path.join(target,'cartel031-release.json'),'utf8'));
 assert.equal(meta.version,'v173-cartel031-negotiation');assert.deepEqual(meta.evidence_per_cycle,[4,5,4]);
-for(const name of ['index.html','en.html'])assert((await readFile(path.join(target,name),'utf8')).includes('cartel031-v171.js?v='+meta.version));
+for(const name of ['index.html','en.html']){
+ const html=await readFile(path.join(target,name),'utf8');
+ if(name==='en.html'&&/location\.replace\(['"]\.\/['"]\)/.test(html)){
+  assert.match(html,/localStorage\.setItem\(['"]igr_locale['"],['"]en['"]\)/,
+   'English redirect must preserve the requested language');
+  assert(!/<script\s+src=/.test(html),'English redirect must not load redundant gameplay scripts');
+  continue;
+ }
+ assert(html.includes('cartel031-v171.js?v='+meta.version),
+  name+' must publish the protected Cartel 031 client exactly once');
+}
 assert(!source.includes('"canonical_truth":{'));assert(!source.includes('family_proofs:{'));
 const baseCanon={
  canonical_truth:{levels:[2,2,2],hostage_location:'site-a',safe_approach:'isolate',assault_author:'order-a'},
