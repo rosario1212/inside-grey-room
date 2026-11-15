@@ -15,7 +15,7 @@ const builder=read('scripts/build-web.mjs');
 const mobile=read('scripts/build-mobile.mjs');
 const pub=read('scripts/publish-006-adaptive-shell.mjs');
 const command694=read('terror-command-v694.js');
-const sql694=read('supabase/migrations/20261115020000_igr_v694_terror_officer_rapid_command.sql');
+const sql694=read('supabase/migrations/20261115033000_igr_v694_terror_officer_rapid_command.sql');
 execFileSync(process.execPath,['--check','terror-command-v694.js'],{stdio:'pipe'});
 for(const path of ['app-v11.js','terror-front-v682.js','terror-command-v688.js','terror-live-v681.js'])
   execFileSync(process.execPath,['--check',path],{stdio:'pipe'});

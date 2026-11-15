@@ -5,7 +5,7 @@ const read=p=>readFileSync(p,'utf8');
 const root='.';
 const runtime=read('terror-command-v694.js');
 const css=read('terror-command-v694.css');
-const migration=read('supabase/migrations/20261115020000_igr_v694_terror_officer_rapid_command.sql');
+const migration=read('supabase/migrations/20261115033000_igr_v694_terror_officer_rapid_command.sql');
 const qa=read('supabase/tests/igr_v694_officer_rapid_command_qa.sql');
 const entry=read('index.html'),web=read('scripts/build-web.mjs'),mobile=read('scripts/build-mobile.mjs');
 const pub=read('scripts/publish-006-adaptive-shell.mjs');

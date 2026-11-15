@@ -39,7 +39,7 @@
       {title:'LA DERNIÈRE LIAISON',text:'L’état-major ne peut transmettre qu’une confirmation limitée. Le centre doit choisir ce qui mérite une dernière vérification et garder les dossiers à l’abri de la panique.'}
     ]
   };
-  const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v688_military_order','terror_v694_military_result','terror_v682_at_gates','terror_v682_final_status','terror_v688_captivity']);
+  const fallEvents=new Set(['terror_v682_front_briefing','terror_v681_city_fall','terror_v682_sector_lost','terror_v683_sector_recovered','terror_v688_military_order','terror_v694_military_result','terror_v694_order','terror_v694_order_missed','terror_v682_at_gates','terror_v682_final_status','terror_v688_captivity']);
   function frontBoard(){
     if(!inDlc()||STATE?.view!=='game')return;
     const d=STATE?.sync,board=document.getElementById('terrorV681Board');

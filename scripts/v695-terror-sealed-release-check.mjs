@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 const read=x=>readFileSync(x,'utf8');
-const migration=read('supabase/migrations/20261115030000_igr_v695_terror_sealed_variants.sql');
+const migration=read('supabase/migrations/20261115034000_igr_v695_terror_sealed_variants.sql');
 const sqlQA=read('supabase/tests/igr_v695_terror_sealed_variants_qa.sql');
-const officer=read('supabase/migrations/20261115020000_igr_v694_terror_officer_rapid_command.sql');
+const officer=read('supabase/migrations/20261115033000_igr_v694_terror_officer_rapid_command.sql');
 const ui=read('dlc-copy-v12-46.js'),intro=read('terror-v12-37.js');
 for(const token of ['igr_v695_release_eligible','igr_v695_build_pack','igr_v695_pin_room',
  'igr_v695_pinned_pack','igr_v695_emit_guaranteed','igr_v695_terror_room_packs',
