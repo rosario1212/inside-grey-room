@@ -96,8 +96,8 @@ function roleAgencyHtml(global=false){
    copy('Le Juge dispose de <b>trois points</b> de protection, certaines pièces coûtant deux points. L’Avocat représente <b>un seul client officiel</b> et les échanges libres n’ajoutent aucun droit de représentation. Les coopérations du Procureur peuvent orienter les témoignages, mais ne lient jamais le Juge.',
    'The Judge has <b>three protection points</b>; some items cost two. The Lawyer represents <b>one official client</b>; informal conversations grant no additional rights. Prosecutor cooperation can shape testimony but never binds the Judge.'),'PROCÉDURE'),
   ruleCard(copy('Majorité collective','Collective majority'),
-   copy('Chaque membre habilité du <b>camp Enquête</b> vote individuellement : <b>0 aucune, 1 secondaire, 2 principale</b>. La <b>majorité absolue (plus de 50 %)</b> détermine le verdict collectif sans veto du Juge ni du Procureur. Sans majorité, le verdict du suspect est indéterminé et ne compte pas comme exact. Les objectifs individuels restent distincts.',
-   'Each eligible <b>Investigation-side</b> member votes individually: <b>0 none, 1 secondary, 2 primary</b>. A <b>strict majority (over 50%)</b> determines the team verdict, without a Judge or Prosecutor veto. Without a majority, the suspect’s verdict is unresolved and cannot count as correct. Individual objectives remain distinct.'),'VERDICT')
+   copy('Chaque membre habilité du <b>camp Enquête</b> vote individuellement : <b>0 : aucune, 1 : secondaire, 2 : principale</b>. La <b>majorité absolue (plus de 50 %)</b> détermine le verdict collectif sans veto du Juge ni du Procureur. Sans majorité, le verdict du suspect est indéterminé et ne compte pas comme exact. Les objectifs individuels restent distincts.',
+   'Each eligible <b>Investigation-side</b> member votes individually: <b>0: none, 1: secondary, 2: primary</b>. A <b>strict majority (over 50%)</b> determines the team verdict, without a Judge or Prosecutor veto. Without a majority, the suspect’s verdict is unresolved and cannot count as correct. Individual objectives remain distinct.'),'VERDICT')
  ];
  if(!global&&['026','027','028'].includes(String(room()?.scenario_id||''))){
    cards.splice(2,4,
@@ -105,8 +105,8 @@ function roleAgencyHtml(global=false){
        copy('Une partie TERREUR réunit <b>un Enquêteur, un Analyste, un Officier et trois suspects</b>. L’Inspecteur, l’Expert et le Procureur ne sont pas attribués. Les découvertes de terrain et les renseignements scénarisés restent accessibles dans l’enquête.',
             'A TERROR game has <b>one Investigator, one Analyst, one Officer and three suspects</b>. The Inspector, Expert and Prosecutor are not assigned. Scripted field findings and intelligence remain available through the investigation.'),'TERREUR'),
      ruleCard(copy('Verdict du camp Enquête','Investigation verdict'),
-       copy('Dans TERREUR, <b>l’Enquêteur et l’Analyste votent chacun</b> sur les responsabilités. Leur accord fait la majorité ; un désaccord laisse le verdict du suspect indéterminé. L’Officier garde ses décisions militaires sans voter sur les responsabilités. Niveaux : <b>0 aucune, 1 secondaire, 2 principale</b>.',
-            'In TERROR, <b>the Investigator and Analyst both vote</b> on responsibility. Their agreement forms a majority; disagreement leaves that suspect’s verdict unresolved. The Officer controls military orders but does not vote on responsibilities. Levels: <b>0 none, 1 secondary, 2 primary</b>.'),'VERDICT'));
+       copy('Dans TERREUR, <b>l’Enquêteur et l’Analyste votent chacun</b> sur les responsabilités. Leur accord fait la majorité ; un désaccord laisse le verdict du suspect indéterminé. L’Officier garde ses décisions militaires sans voter sur les responsabilités. Niveaux : <b>0 : aucune, 1 : secondaire, 2 : principale</b>.',
+            'In TERROR, <b>the Investigator and Analyst both vote</b> on responsibility. Their agreement forms a majority; disagreement leaves that suspect’s verdict unresolved. The Officer controls military orders but does not vote on responsibilities. Levels: <b>0: none, 1: secondary, 2: primary</b>.'),'VERDICT'));
  }
  return '<section class="igr51-section igr696-new-rules"><div class="igr51-section-head"><span>05</span><div><small>'+
   copy('POUVOIRS ACTUALISÉS','UPDATED POWERS')+'</small><h2>'+
