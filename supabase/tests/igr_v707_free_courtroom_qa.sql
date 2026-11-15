@@ -4,7 +4,7 @@ DO $qa$
 DECLARE m text; rc text; rr public.igr_v4_rooms%rowtype; jp uuid; sp uuid; q jsonb; failed boolean; i int;
 BEGIN
  FOREACH m IN ARRAY ARRAY['short','long'] LOOP
-  rc:='C707'||left(m,1);
+  rc:='C707'||upper(left(m,1));
   IF EXISTS(SELECT 1 FROM public.igr_v4_rooms WHERE code=rc) THEN RAISE EXCEPTION 'QA code already exists';END IF;
   INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES(rc,'014');
   INSERT INTO public.igr_v4_players(room_code,pseudo,seat_index,public_role,internal_slot)
