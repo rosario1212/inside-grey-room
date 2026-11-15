@@ -143,6 +143,33 @@ function applyPayload(c,payload){
     if(payload.flags&&typeof payload.flags==='object')Object.assign(c.cendres.flags,payload.flags);
   }else if(payload.flags&&typeof payload.flags==='object')Object.assign(c.kuroi.flags,payload.flags);
 }
+// Save a CENDRES verdict and its network consequences in one durable write.
+function commitCendresDecision(input={}){
+  const chapter=Number(input.chapter),decision=text(input.decision,40);
+  if(!Number.isInteger(chapter)||chapter<1||chapter>5||!/^[a-z_]+$/.test(decision))return {ok:false,reason:'invalid-decision'};
+  const grade=clampInt(input.grade,0,2),delta=Number(input.crisisDelta??0);
+  if(!Number.isFinite(delta)||Math.abs(delta)>2)return {ok:false,reason:'invalid-crisis'};
+  const flag=text(input.flag,40);
+  if(flag&&!new RegExp('^s'+chapter+'_[a-z0-9_]+$').test(flag))return {ok:false,reason:'invalid-flag'};
+  const c=getCampaign('cendres',true);
+  if(c.completed.includes(chapter))return {ok:true,already:true,campaign:c};
+  if(chapter!==c.currentChapter)return {ok:false,reason:'locked',campaign:c};
+  const network=c.cendres.network,labels=['PISTE COMPROMISE','PISTE PARTIELLE','PISTE VALIDÉE'];
+  const id='cendres-'+chapter+'-'+decision,prev=chapter>1?network.nodes.find(n=>n.chapter===chapter-1&&n.kind==='dossier'):null;
+  network.nodes.push({id,label:'D0'+chapter+' · '+labels[grade],kind:'dossier',status:grade===2?'cleared':grade===1?'watch':'unknown',chapter,note:text(input.consequence,240)});
+  if(prev&&prev.id!==id){
+    const key=[prev.id,id].sort().join('::');
+    network.links.push({key,from:prev.id,to:id,label:'héritage de campagne',chapter});
+  }
+  c.cendres.crisis.level=clampInt(c.cendres.crisis.level+delta,0,4);
+  c.cendres.crisis.label=crisisLabel(c.cendres.crisis.level);
+  if(flag)c.cendres.flags[flag]=true;
+  c.completed.push(chapter);c.completed.sort((a,b)=>a-b);
+  if(chapter===5){c.status='completed';c.currentChapter=5}else c.currentChapter=chapter+1;
+  log(c,'chapter-completed',{chapter,decision,payload:{crisisDelta:delta,flags:flag?{[flag]:true}:{}}});
+  if(!saveCampaign(c))return {ok:false,reason:'storage-failed'};
+  renderIfOpen('cendres');return {ok:true,campaign:c};
+}
 function upsertCendresNode(input){
   const c=getCampaign('cendres',true),d=c.cendres.network;
   const id=text(input?.id,80)||uid();
@@ -303,7 +330,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 window.IGR_HERITAGE=Object.freeze({
   version:VERSION,campaigns:CAMPAIGNS,open:renderHub,home,openCampaign:renderCampaign,openChapter:renderChapter,begin,keyOpen,
   get:id=>clone(getCampaign(id,false)),completeChapter,reset,backup,exportCampaign,importCampaign,
-  cendres:Object.freeze({upsertNode:upsertCendresNode,link:linkCendres,addCrisisEvent,setCountdown}),
+  cendres:Object.freeze({upsertNode:upsertCendresNode,link:linkCendres,addCrisisEvent,setCountdown,commitDecision:commitCendresDecision}),
   kuroi:Object.freeze({upsertClanMember,addDebt,updateDebt,addChronicle})
 });
 })();
