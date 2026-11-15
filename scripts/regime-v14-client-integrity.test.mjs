@@ -202,5 +202,6 @@ test('installed PWA cache fingerprints the actual mobile layout',async()=>{
  const check=await read('scripts/lobby-display-check.mjs');
  assert.ok(finalizer.includes("createHash('sha256')"));
  assert.ok(finalizer.includes('igr-${VERSION}-${regimeUiFingerprint}'));
- assert.ok(check.includes('igr-'+VERSION)===false || check.includes('uiFingerprint'));
+ assert.ok(check.includes('uiFingerprint'));
+ assert.ok(check.includes('PWA cache must be content-addressed'));
 });
