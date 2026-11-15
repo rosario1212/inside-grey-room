@@ -33,16 +33,10 @@ BEGIN
  IF EXISTS(SELECT 1 FROM jsonb_array_elements(public_state->'my_fugitive_options') act
    WHERE act->>'id' NOT LIKE 'ref-%') THEN
    RAISE EXCEPTION 'fugitive option ID not opaque';END IF;
+ UPDATE public.igr_v4_rooms SET cycle=2,phase='role_reading' WHERE code='QA13SAFE';
+ public_state:=public.igr_regime_v13_state('QA13SAFE',director);
  SELECT opt->>'id' INTO option_ref FROM jsonb_array_elements(
-   public_state->'my_fugitive_options') opt
-   WHERE opt->>'cycle'='1' LIMIT 1;
- IF option_ref IS NULL THEN
-   -- Synthetic QA has already used director's C1 move. Test C2 instead.
-   UPDATE public.igr_v4_rooms SET cycle=2,phase='role_reading' WHERE code='QA13SAFE';
-   public_state:=public.igr_regime_v13_state('QA13SAFE',director);
-   SELECT opt->>'id' INTO option_ref FROM jsonb_array_elements(
-     public_state->'my_fugitive_options') opt LIMIT 1;
- END IF;
+   public_state->'my_fugitive_options') opt LIMIT 1;
  IF option_ref IS NULL THEN RAISE EXCEPTION 'no private aliased move';END IF;
  accepted:=public.igr_regime_v13_action('QA13SAFE',director,'fugitive_choice',
    'qa-opaque-move-0001',jsonb_build_object('option_id',option_ref));
