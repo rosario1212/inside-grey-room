@@ -312,7 +312,7 @@ BEGIN
  exchanges:=coalesce(m.play_state->'court'->'exchanges','[]'::jsonb);
  SELECT count(*) INTO n FROM jsonb_array_elements(exchanges) e
  WHERE e->>'player_id'=p.id::text AND e->>'kind'<>'ruling';
- IF n>=CASE WHEN p.public_role IN ('temoin','journaliste') THEN 2 ELSE 5 END
+ IF n >= (CASE WHEN p.public_role IN ('temoin','journaliste') THEN 2 ELSE 5 END)
    AND p_kind<>'ruling' THEN RAISE EXCEPTION 'confrontation intervention quota exhausted';END IF;
  IF p_kind='ruling' THEN
   SELECT value INTO referred FROM jsonb_array_elements(exchanges) value
