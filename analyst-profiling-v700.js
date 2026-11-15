@@ -147,8 +147,8 @@ function tabHtml(){
  return '<section class="igr700-panel"><header class="igr700-head"><small>'+
   tr('OUTIL DE L’ANALYSTE · CYCLE ','ANALYST DESK · CYCLE ')+cycle+'/3</small>'+
   '<h2>'+tr('Profilage psychologique','Psychological profiling')+'</h2>'+
-  '<p>'+tr('Obligatoire : deux réponses de 10 mots minimum par suspect, à chaque cycle. Questions courtes adaptées aux faits visibles. Aucun diagnostic, aucune détection du mensonge.',
-  'Required: two answers of at least 10 words per suspect, each cycle. Short questions adapted to visible events. No diagnosis or lie detection.')+'</p>'+
+  '<p>'+tr('Obligatoire : deux réponses de 10 mots minimum par suspect, à chaque cycle. Questions adaptées aux faits visibles. Aucun diagnostic. Aucune incidence sur la victoire, le score ou le verdict.',
+  'Required: two answers of at least 10 words per suspect, each cycle. Questions adapt to visible events. No diagnosis. No impact on victory, score or verdict.')+'</p>'+
   '<div class="igr700-progress">'+done+' / '+suspects.length+' '+tr('profils obligatoires enregistrés','required profiles saved')+'</div></header>'+
  suspects.map(s=>{
   const sid=String(s.id),old=record(sid,cycle),pair=questionsFor(s,cycle),draft=drafts.get(draftKey(sid))||{one:'',two:''};
@@ -169,8 +169,8 @@ function tabHtml(){
     '<p class="igr700-muted">'+tr('Les réponses ne sont plus modifiables pendant cette phase.','Answers cannot be edited during this phase.')+'</p>')+
     history+'</article>';
  }).join('')+
- '<p class="igr700-footer">'+tr('Les réponses restent privées pendant la partie. Tous les joueurs pourront les consulter après la révélation finale. Aucun score ni verdict n’est modifié.',
- 'Answers remain private during play. All players can read them after the final reveal. Scores and verdicts are not changed.')+'</p></section>';
+ '<p class="igr700-footer">'+tr('Les réponses restent privées pendant la partie. Tous les joueurs pourront les consulter après la révélation finale. Les profils n’ont aucune incidence sur la victoire, le score ou le verdict.',
+ 'Answers remain private during play. All players can read them after the final reveal. Profiles do not affect victory, score or verdict.')+'</p></section>';
 }
 function updatePanels(){
  if(S()?.view!=='game')return;
