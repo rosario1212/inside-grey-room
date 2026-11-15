@@ -13,6 +13,8 @@ on:
       - 'index.html'
       - 'terror-live-v681.*'
       - 'terror-front-v682.*'
+      - 'terror-command-v694.*'
+      - 'scripts/v694-terror-officer-check.mjs'
       - 'en.html'
       - 'service-worker.js'
       - 'manifest.webmanifest'
