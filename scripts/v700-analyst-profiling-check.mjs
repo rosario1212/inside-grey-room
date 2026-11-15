@@ -14,6 +14,10 @@ for(const marker of ['igr_v700_psych_profiles','igr_v700_submit_psych_profile','
  assert(sql.includes(marker),'Missing server guard '+marker);
 }
 assert(!sql.includes("INSERT INTO public.igr_v4_events"),'no public broadcast during play');
+assert(read('app-v11.js').includes("'rules','profiling'].includes(STATE.tab)"),
+ 'profiling tab must persist across server reconciliation');
+assert(read('app-v11.js').includes("if(STATE.tab!=='profiling')STATE.tab='investigation'"),
+ 'final reveal must retain the profiling tab when chosen');
 assert(rules.includes('Profilage psychologique de l’Analyste')&&rules.includes('Analyst psychological profiling'),
  'Rolebook missing FR/EN profiling rules');
 const listeners={};
