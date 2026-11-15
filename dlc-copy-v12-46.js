@@ -18,7 +18,7 @@
     },
     regime: {
       eyebrow: 'DLC APRÈS LA CHUTE',
-      text: 'Le régime est tombé. Des opposants ont été arrêtés ou ont disparu. Les anciens responsables se renvoient les ordres; les archives doivent établir qui décidait, qui exécutait et qui couvrait.'
+      text: 'Dix-neuf ans de dictature. Une guerre d’agression, des villages rasés, des milliers de détenus et un président capturé. La justice remonte la chaîne des ordres jusqu’au sommet.'
     }
   });
 
