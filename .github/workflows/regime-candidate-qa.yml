@@ -7,6 +7,14 @@ on:
       - 'scripts/regime-rules-v10.mjs'
       - 'scripts/regime-rules-v10.test.mjs'
       - 'supabase/tests/igr_regime_release_readiness_v9.sql'
+      - 'supabase/tests/igr_regime_*_qa.sql'
+      - 'supabase/tests/igr_regime_nine_playability_matrix_v12.sql'
+      - 'supabase/candidates/igr_regime_v13_*.sql'
+      - 'regime-live-v13.js'
+      - 'regime-live-v13.css'
+      - 'index.html'
+      - 'service-worker.js'
+      - 'scripts/build-web.mjs'
       - '.github/workflows/regime-candidate-qa.yml'
   workflow_dispatch:
 
@@ -27,8 +35,24 @@ jobs:
         run: |
           node --check scripts/regime-rules-v10.mjs
           node --check scripts/regime-rules-v10.test.mjs
+          node --check regime-live-v13.js
+          node --check scripts/build-web.mjs
       - name: Exercise synthetic deterministic rules
         run: node --test scripts/regime-rules-v10.test.mjs
+      - name: Verify guarded presentation and shared courtroom source
+        run: |
+          grep -q 'regime_v13_active' regime-live-v13.js
+          grep -q 'igr_regime_v13_court_exchange' regime-live-v13.js
+          grep -q 'igr_regime_v13_third_final' regime-live-v13.js
+          grep -q 'regime-live-v13.js' index.html
+          grep -q 'regime-live-v13.css' scripts/build-web.mjs
+          test -s regime-live-v13.css
+      - name: Validate candidate-only SQL safety
+        run: |
+          grep -q 'enabled boolean NOT NULL DEFAULT false' supabase/candidates/igr_regime_v13_private_runtime.sql
+          grep -q 'REVOKE ALL ON igr_private.igr_regime_v13_rooms' supabase/candidates/igr_regime_v13_private_runtime.sql
+          test -s supabase/tests/igr_regime_v13_release_lifecycle_qa.sql
+          test -s supabase/tests/igr_regime_v13_court_exchanges_qa.sql
       - name: Verify that secret manuscripts are not bundled
         run: |
           if grep -En 'canonical_truth|private_cards|variant_secret' scripts/regime-rules-v10.mjs; then
