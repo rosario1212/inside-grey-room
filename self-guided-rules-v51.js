@@ -201,6 +201,61 @@ function rewriteInterrogationBanner(){document.querySelectorAll('.igr44-live').f
 
 const style=document.createElement('style');style.dataset.igrV51=VERSION;style.textContent=`
 .igr51-rulebook{display:grid;gap:18px;max-width:980px;margin:0 auto}.igr51-hero{padding:22px;border:1px solid rgba(255,255,255,.14);border-radius:20px;background:linear-gradient(180deg,#11171d,#090d11);display:grid;gap:9px}.igr51-hero small,.igr51-section-head small,.igr51-card small,.igr51-now small,.igr51-free-sheet small{font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#8f99a2}.igr51-hero h1,.igr51-section h2,.igr51-card h3,.igr51-now h3,.igr51-free-sheet h2{margin:0}.igr51-hero p,.igr51-card p,.igr51-now p,.igr51-tabs-guide p,.igr51-role p,.igr51-free-sheet p{margin:0;color:#aeb7bf;line-height:1.52}.igr51-quick{display:flex;gap:8px;flex-wrap:wrap}.igr51-quick span{padding:7px 9px;border:1px solid rgba(255,255,255,.1);border-radius:999px;font-size:11px;color:#d6dce1}.igr51-section{display:grid;gap:12px}.igr51-section-head{display:flex;gap:12px;align-items:center}.igr51-section-head>span{width:34px;height:34px;border:1px solid rgba(255,255,255,.15);border-radius:50%;display:grid;place-items:center;font:700 11px 'IBM Plex Mono',monospace}.igr51-steps{display:grid;gap:7px}.igr51-steps article{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:#0b1015}.igr51-steps article>b{width:28px;height:28px;border-radius:50%;background:#171e25;display:grid;place-items:center}.igr51-steps h3{margin:0 0 3px;font-size:14px}.igr51-steps p{margin:0;color:#9da7af;line-height:1.45}.igr51-lawyer-grid,.igr51-common{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.igr51-card{padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:15px;background:#0b1015;display:grid;gap:6px}.igr51-tabs-guide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.igr51-tabs-guide article{padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:#0a0e12}.igr51-tabs-guide b{display:block;margin-bottom:4px}.igr51-activity-explain{margin:0;color:#a6afb7;font-size:12px;line-height:1.45}.igr51-role-list{display:grid;gap:7px}.igr51-role{border:1px solid rgba(255,255,255,.09);border-radius:14px;background:#0a0e12;overflow:hidden}.igr51-role.mine{border-color:rgba(255,255,255,.26)}.igr51-role summary{list-style:none;cursor:pointer;padding:13px;display:flex;justify-content:space-between;align-items:center}.igr51-role summary::-webkit-details-marker{display:none}.igr51-role summary span{display:grid;gap:2px}.igr51-role summary small{color:#858f98}.igr51-role[open] summary i{transform:rotate(45deg)}.igr51-role>div{padding:0 13px 13px}.igr51-role ul{margin:8px 0;padding-left:18px;color:#c6cdd3;display:grid;gap:5px}.igr51-avoid{padding-top:8px;border-top:1px solid rgba(255,255,255,.07)}.igr51-now{margin:10px 0 12px;padding:12px 14px;border:1px solid rgba(255,255,255,.14);border-radius:15px;background:#0d1318;display:grid;grid-template-columns:minmax(150px,.45fr) 1fr;gap:14px;align-items:center}.igr51-free-overlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.74);display:grid;place-items:center;padding:18px}.igr51-free-sheet{width:min(500px,100%);padding:20px;border:1px solid rgba(255,255,255,.16);border-radius:19px;background:#0a0f14;display:grid;gap:11px}.igr51-free-sheet button{margin-top:5px}@media(max-width:720px){.igr51-lawyer-grid,.igr51-common,.igr51-tabs-guide{grid-template-columns:1fr}.igr51-now{grid-template-columns:1fr}.igr51-hero{padding:17px}}
+
+/* v712: readable manual with a graphic courtroom flow and genuine 5-star hierarchy. */
+.igr51-rulebook{gap:28px;max-width:1020px}
+.igr51-hero{padding:clamp(22px,5vw,34px);gap:14px;background:radial-gradient(circle at 95% 0,rgba(186,159,111,.12),transparent 41%),linear-gradient(160deg,#171a1b,#090b0c);border-color:#44413b}
+.igr51-hero h1{font-size:clamp(25px,5vw,35px);line-height:1.2;letter-spacing:-.025em;color:#f3eee6}
+.igr51-hero p{font-size:14px;max-width:690px;line-height:1.7;color:#c4cacc}
+.igr51-quick{gap:9px}
+.igr51-quick span{padding:9px 13px;border-radius:10px;background:#1c2122;border-color:#353a3b;font-size:12px;color:#d5dadb}
+.igr51-section{gap:16px}
+.igr51-section-head{align-items:flex-start;gap:14px}
+.igr51-section-head>span{width:43px;height:43px;min-width:43px;border-radius:12px;font-size:13px;color:#dfc5a1;background:#25231f;border-color:#534a3d}
+.igr51-section-head h2{font-size:clamp(20px,4vw,26px);line-height:1.3;letter-spacing:-.015em;color:#f2f0eb}
+.igr51-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.igr51-steps article{grid-template-columns:40px minmax(0,1fr);gap:13px;min-height:96px;padding:17px 18px;border-color:#303638;border-radius:16px;background:#121617}
+.igr51-steps article>b{width:38px;height:38px;border:1px solid #524737;background:#28241e;color:#d9c19c;font-size:13px;border-radius:10px}
+.igr51-steps h3{font-size:14px;margin:0 0 7px}
+.igr51-steps p{line-height:1.65;font-size:12px;color:#b4bfc0}
+.igr51-lawyer-grid,.igr51-common{gap:14px}
+.igr51-card{padding:20px 21px;gap:10px;background:#141819;border-color:#303638;border-radius:16px}
+.igr51-card h3{font-size:17px;letter-spacing:-.01em}
+.igr51-card p{font-size:13px;line-height:1.72}
+.igr51-tabs-guide{gap:12px}
+.igr51-tabs-guide article{padding:17px;border-color:#303638;background:#141819}
+.igr51-activity-explain{font-size:12px;line-height:1.65;color:#afb8b8;max-width:720px}
+.igr51-role-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.igr51-role{background:#141819;border-color:#303638;border-radius:16px}
+.igr51-role.mine{border-color:#8b7757;background:#1d1c19}
+.igr51-role summary{padding:19px;gap:14px;min-height:75px}
+.igr51-role summary span{gap:6px}
+.igr51-role summary b{font-size:16px;color:#f3f0e9}
+.igr51-role summary small{font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#d8bb8f}
+.igr51-role>div{padding:0 19px 19px}
+.igr51-role>div>p,.igr51-role li{font-size:13px;line-height:1.7}
+.igr51-role ul{gap:9px;padding-left:20px}
+.igr51-role summary:focus-visible{outline:2px solid #dbc19a;outline-offset:2px}
+.igr712-rules-court{gap:17px}
+.igr712-rule-lanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.igr712-rule-lane{border:1px solid #343939;border-radius:18px;background:linear-gradient(160deg,#191d1e,#101314);padding:22px;display:grid;grid-template-rows:auto 1fr auto;gap:18px;min-width:0}
+.igr712-rule-lane.is-relevant{border-color:#746148}
+.igr712-rule-lane-head{display:flex;gap:14px;align-items:center}
+.igr712-rule-icon{flex:none;width:50px;height:50px;border-radius:13px;border:1px solid #50483a;background:#26231e;color:#d5b98c;font-size:24px;display:grid;place-items:center}
+.igr712-rule-lane-head small,.igr712-majority-strip small{display:block;font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#d3b68b}
+.igr712-rule-lane h3,.igr712-majority-strip h3{margin:5px 0 0;font-size:20px;color:#f1eee8}
+.igr712-rule-flow{list-style:none;counter-reset:court;display:grid;gap:11px;margin:0;padding:0}
+.igr712-rule-flow li{counter-increment:court;display:grid;grid-template-columns:25px minmax(0,1fr);gap:11px;align-items:center;font-size:13px;line-height:1.6;color:#c5ccca}
+.igr712-rule-flow li:before{content:counter(court);width:25px;height:25px;display:grid;place-items:center;border-radius:8px;border:1px solid #4c4a42;color:#d8c29f;font:700 11px 'IBM Plex Mono',monospace}
+.igr712-rule-lane-foot{padding-top:13px;border-top:1px solid #343b3c;color:#bbbcb7;font-size:12px;line-height:1.65}
+.igr712-majority-strip{display:grid;grid-template-columns:100px minmax(0,1fr);gap:21px;align-items:center;border:1px solid #514838;background:linear-gradient(115deg,#25221c,#161a1a);padding:23px;border-radius:17px}
+.igr712-majority-mark{font:600 35px 'IBM Plex Mono',monospace;color:#e0c69c;letter-spacing:-.07em;text-align:center}
+.igr712-majority-mark span{font-size:17px;letter-spacing:-.05em}
+.igr712-majority-strip h3{font-size:18px}
+.igr712-majority-strip p{color:#c1c9c8;font-size:13px;line-height:1.7;margin:9px 0 0;max-width:690px}
+.igr712-rules-exception{color:#aeb7b6;font-size:12px;line-height:1.6;margin:0}
+@media(max-width:750px){.igr51-steps,.igr51-role-list,.igr712-rule-lanes{grid-template-columns:1fr}.igr51-lawyer-grid,.igr51-common,.igr51-tabs-guide{grid-template-columns:1fr}.igr51-hero{padding:22px}.igr51-role summary{min-height:67px}.igr712-rule-lane{padding:19px}}
+@media(max-width:490px){.igr712-majority-strip{grid-template-columns:1fr;gap:10px}.igr712-majority-mark{text-align:left;font-size:31px}.igr51-quick span{font-size:11px}.igr51-steps article{padding:15px}}
 `;document.head.appendChild(style);
 
 const baseTab=typeof window.renderGameTab==='function'?window.renderGameTab:(typeof renderGameTab==='function'?renderGameTab:null);if(baseTab){const f=function(){if(S()?.tab==='rules')return rulebookHtml(false);return baseTab.apply(this,arguments)};try{renderGameTab=f}catch(_){}window.renderGameTab=f}
