@@ -354,15 +354,32 @@ async function finishHeritageOnlineHost(){
   try{
     const out=await rpc('igr_heritage_online_finish',{p_code:s.code,p_host_token:s.hostToken});
     if(out?.ok===false)throw new Error('server finish refused');
-    const stored=window.IGR_HERITAGE_PLAY?.finishOnlineConfirmed?.();
-    if(!stored)throw new Error('the local Heritage result was not ready');
+    const verified=await rpc('igr_heritage_online_sync',{p_code:s.code,p_player_token:s.token});
+    if(verified?.room?.stage!=='finished')throw new Error('server finish not confirmed');
+    const stored=window.IGR_HERITAGE_PLAY?.finishOnlineConfirmed?.(verified.room,!!s.practice);
+    if(!stored)throw new Error('the confirmed Heritage result could not be persisted');
     clearHSession();del(HERITAGE_LIVE_KEY);
   }catch(e){
     console.warn('heritage online finish',e);
     toastX('Clôture non synchronisée. Réessayez depuis ce dossier.');
   }finally{hFinishPending=false}
 }
-function renderHFinished(d){if(hSession()?.hostToken)window.IGR_HERITAGE_PLAY?.finishOnlineConfirmed?.();clearHSession();del(HERITAGE_LIVE_KEY);shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>PARTIE TERMINÉE</span><h1>Le dossier est clos.</h1><p>L’hôte a inscrit la conséquence dans sa campagne HÉRITAGE.</p><button class="btn primary" id="hnetHome">RETOUR À L’ACCUEIL</button></section></main>`);$('#hnetHome')?.addEventListener('click',()=>renderHome())}
+function renderHFinished(d){
+  const s=hSession(),host=!!s?.hostToken;
+  if(host){
+    const stored=window.IGR_HERITAGE_PLAY?.finishOnlineConfirmed?.(d.room,!!s.practice);
+    if(!stored){
+      shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>SAUVEGARDE À TERMINER</span><h1>Le serveur a clos ce dossier.</h1><p>La conséquence n’a pas encore été inscrite dans votre campagne. Votre accès est conservé pour réessayer.</p><button class="btn primary" id="hnetRecover">RÉESSAYER LA SYNCHRONISATION</button></section></main>`);
+      $('#hnetRecover')?.addEventListener('click',()=>syncHeritageOnline(true));
+      return;
+    }
+    clearHSession();del(HERITAGE_LIVE_KEY);
+    return;
+  }
+  clearHSession();del(HERITAGE_LIVE_KEY);
+  shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>PARTIE TERMINÉE</span><h1>Le dossier est clos.</h1><p>Le résultat collectif a été confirmé par le serveur.</p><button class="btn primary" id="hnetHome">RETOUR À L’ACCUEIL</button></section></main>`);
+  $('#hnetHome')?.addEventListener('click',()=>renderHome());
+}
 function resumeHeritageOnline(){if(!hSession())return toastX('Aucune cellule HÉRITAGE à reprendre.');startHWatcher(true)}
 
 function interceptHeritageOnline(e){const s=hSession();if(!s)return;const hp=e.target.closest?.('[data-hp-action],[data-hp-option]');if(!hp)return;const a=hp.dataset.hpAction;if(a==='hide-next'){e.preventDefault();e.stopImmediatePropagation();readyHeritageOnline();return}if(a==='phase-next'||a==='decision'){e.preventDefault();e.stopImmediatePropagation();advanceHeritageOnline();return}if(a==='phase-prev'){e.preventDefault();e.stopImmediatePropagation();return}if(hp.dataset.hpOption){e.preventDefault();e.stopImmediatePropagation();decideHeritageOnline(hp.dataset.hpOption);return}if(a==='abort'||a==='session-menu'){e.preventDefault();e.stopImmediatePropagation();leaveHeritageOnline();return}if(a==='finish'){e.preventDefault();e.stopImmediatePropagation();if(!s.hostToken){clearHSession();del(HERITAGE_LIVE_KEY);renderHome();return}void finishHeritageOnlineHost();return}}
