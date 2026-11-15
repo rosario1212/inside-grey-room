@@ -18,7 +18,7 @@
     },
     regime: {
       eyebrow: 'DLC APRÈS LA CHUTE',
-      text: 'Le régime est tombé. Les archives restent. Identifiez ceux qui ont ordonné, couvert et profité.'
+      text: 'Le régime est tombé. Des opposants ont été arrêtés ou ont disparu. Les anciens responsables se renvoient les ordres; les archives doivent établir qui décidait, qui exécutait et qui couvrait.'
     }
   });
 
