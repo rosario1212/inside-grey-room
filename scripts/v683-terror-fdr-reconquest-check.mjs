@@ -34,9 +34,9 @@ assert(military.includes('counterpush:=least(2,counterpush+1)'),'Reconquest must
 assert(military.includes("'correct_answers',correct_count")&&military.includes("'military_operation',military_choice"),'Cause and effect must appear in public debrief');
 assert(military.includes('terror_v688_captivity')&&military.includes("WHEN '026'")&&military.includes("WHEN '027'"),'Each scenario needs distinct FDR capture stakes');
 assert(military.includes("'front_at_gates'")&&military.includes("'evidence_preserved'"),'Both war outcomes must remain achievable');
-for(const sid of ['026','027','028'])assert(app.includes("'"+sid+"':{required:")&&app.includes('Officier des opérations'),'Three role rosters missing');
-assert(app.includes("'Officier des opérations':'officier_liaison'"),'Role selection must map the officer to server role');
-for(const sid of ['026','027','028'])assert(legacyTerror.includes("'"+sid+"':{required:")&&legacyTerror.includes('Officier des opérations'),'Legacy Terror overlay must preserve the new commander roster');
+for(const sid of ['026','027','028'])assert(app.includes("'"+sid+"':{required:")&&app.includes('Officier'),'Three role rosters missing');
+assert(app.includes("'Officier':'officier_liaison'"),'Role selection must map the officer to server role');
+for(const sid of ['026','027','028'])assert(legacyTerror.includes("'"+sid+"':{required:")&&legacyTerror.includes('Officier'),'Legacy Terror overlay must preserve the new commander roster');
 assert(!legacyTerror.includes("label:'Officier de liaison'"),'Inspector cannot masquerade as the military commander');
 assert(command.includes('terrorV688Choose')&&command.includes('igr_v688_terror_operations'),'Commander choices must be usable in the game');
 assert(command.includes('function')&&command.includes('renderReveal=function'),'Distinct defeat finales must appear in reveal');
