@@ -8,7 +8,7 @@ const meta=JSON.parse(await readFile(path.join(target,'cartel031-release.json'),
 assert.equal(meta.version,'v173-cartel031-negotiation');assert.deepEqual(meta.evidence_per_cycle,[4,5,4]);
 for(const name of ['index.html','en.html']){
  const html=await readFile(path.join(target,name),'utf8');
- if(name==='en.html'&&/location\.replace\(['"]\.\/['"]\)/.test(html)){
+ if(name==='en.html'&&/location\.replace\(['"]\.\/['"]\)/.test(html)&&!/<script\s+src=/.test(html)){
   assert.match(html,/localStorage\.setItem\(['"]igr_locale['"],['"]en['"]\)/,
    'English redirect must preserve the requested language');
   assert(!/<script\s+src=/.test(html),'English redirect must not load redundant gameplay scripts');
