@@ -187,7 +187,7 @@ BEGIN
     IF m.play_state->'alliance' ? actor THEN RAISE EXCEPTION 'alliance choice already locked'; END IF;
     choice:=p_payload->>'choice';
     IF choice NOT IN ('together','apart') THEN RAISE EXCEPTION 'invalid alliance'; END IF;
-    new_state:=jsonb_set(new_state,'{alliance,'||actor||'}',to_jsonb(choice),true);
+    new_state:=jsonb_set(new_state,ARRAY['alliance',actor],to_jsonb(choice),true);
     result:=jsonb_build_object('ok',true,'kind',p_kind,'locked',true);
   ELSIF p_kind='fugitive_choice' THEN
     IF p.public_role<>'suspect' OR p.internal_slot NOT IN (1,2)
