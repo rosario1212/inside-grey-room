@@ -111,7 +111,7 @@ function roleChoiceSummary(sc,count,players){
 }
 
 const ROLE_INFO = {
-officier_liaison:{label:'Officier des opérations',win:'Décide des opérations nationales avec les moyens rendus disponibles par les renseignements authentifiés.',body:'À chaque cycle, choisis une opération militaire parmi les options autorisées : défendre, protéger les civils ou reprendre un secteur si les données le permettent. Tu ne disposes ni du corrigé ni du verdict judiciaire.'},
+officier_liaison:{label:'Officier des opérations',win:'Préserve la dernière capitale libre grâce aux renseignements vérifiés et à tes décisions militaires.',body:'Un ordre militaire décisif par cycle. Dès le deuxième, tu peux rejoindre une seule séance d’interrogatoire ou confrontation pour vérifier une source, le sort des civils ou un accès. Tu ne décides jamais du verdict judiciaire.'},
 enqueteur:{label:'Enquêteur',win:'Reconstruis correctement les faits, les responsabilités et le degré réel d’implication.',body:'Tu diriges les interrogatoires, choisis certaines décisions d’enquête et portes la reconstruction factuelle finale.'},
 analyste:{label:'Analyste',win:'Produis la reconstruction psychologique la plus juste.',body:'Tu observes les interrogatoires, utilises le Canal Enquête et participes aux entretiens annexes avec l’Enquêteur.'},
 suspect:{label:'Suspect',win:'Fais respecter la frontière réelle de ta responsabilité.',body:'Tu peux mentir, manipuler, accuser, minimiser ou admettre partiellement. Être compromis ne signifie pas automatiquement perdre.'},
@@ -1485,7 +1485,17 @@ async function confirmLeaveGame(ev){
  if(ok)leaveRoom();
 }
 function canInvestigationChannel(role){return['enqueteur','analyste','procureur','juge','inspecteur','expert'].includes(role)}
-function canVideo(role){return['enqueteur','analyste','procureur','juge','inspecteur'].includes(role)}
+function canVideo(role){
+ if(role==='officier_liaison'){
+   const d=STATE.sync,r=d?.room,v=r?.state?.terror_v693_officer_visit;
+   return !!(d&&r&&['026','027','028'].includes(r.scenario_id)
+     &&r.status==='playing'&&r.phase==='interrogation'&&Number(r.cycle)>=2
+     &&v?.visitor_id===d.player?.id&&Number(v.cycle)===Number(r.cycle)
+     &&v.session_type==='interrogation'
+     &&Date.parse(v.session_started_at)===Date.parse(r.phase_started_at));
+ }
+ return ['enqueteur','analyste','procureur','juge','inspecteur'].includes(role);
+}
 function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;return [{id:'card',label:'Ma carte'},{id:'investigation',label:'Enquête'},...(canInvestigationChannel(role)||role==='journaliste'||role==='enqueteur'||role==='suspect'||role==='temoin'||role==='maitre'?[{id:'channel',label:role==='journaliste'?'Messages':'Canal'}]:[]),...(canVideo(role)?[{id:'video',label:'Flux'}]:[]),{id:'timeline',label:'Fil'},{id:'rules',label:'Règles'}]}
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
