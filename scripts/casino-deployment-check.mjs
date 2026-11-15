@@ -71,11 +71,20 @@ if(!omertaScriptTag){
   const local=await readFile('dist/'+chunk.file,'utf8');
   const source=await readFile('dist/omerta-v12-omerta-editorial-20261109.js','utf8');
   assert(local.includes(source.trim()),'The packaged Omertà script differs from its immutable source');
-  const remoteResponse=await get('/'+chunk.file+'?production_verify='+encodeURIComponent(process.env.IGR_EXPECTED_COMMIT||''));
-  assert.equal(remoteResponse.status,200,'The published Omertà chunk is inaccessible');
-  const remote=await remoteResponse.text();
   const digest=text=>createHash('sha256').update(text).digest('hex');
-  assert.equal(digest(remote),digest(local),'The live Omertà chunk does not match the built release');
+  const desiredDigest=digest(local);
+  let remote='',remoteStatus=0;
+  const attempts=process.env.IGR_EXPECTED_COMMIT?15:1;
+  for(let attempt=0;attempt<attempts;attempt++){
+    const response=await get('/'+chunk.file+'?production_verify='+
+      encodeURIComponent(process.env.IGR_EXPECTED_COMMIT||'')+'&probe='+attempt);
+    remoteStatus=response.status;
+    remote=response.status===200?await response.text():'';
+    if(remoteStatus===200&&digest(remote)===desiredDigest)break;
+    if(attempt+1<attempts)await new Promise(resolve=>setTimeout(resolve,2200));
+  }
+  assert.equal(remoteStatus,200,'The published Omertà chunk is inaccessible');
+  assert.equal(digest(remote),desiredDigest,'The live Omertà chunk does not match the built release');
   assert(remote.includes('Chaque vendredi, des commerçants du quartier remettent leur contribution'),
     'Certified Omertà 021 introduction missing from deployed chunk');
   assert(remote.includes('Vittorio Santoro dirige une famille dont l’autorité repose sur des règles'),
