@@ -27,6 +27,6 @@ Le rôle public technique reste \`officier_liaison\` ; dans l'interface, son tit
 Aucun joueur ne peut attribuer à l'application des preuves, déclarations ou pouvoirs inexistants. Les initiatives publiques sont toujours étiquetées non vérifiées. La nouvelle v696 interdit aussi le démarrage des alertes pendant le briefing, la lecture des cartes et l'Assemblée, et interdit les initiatives une fois les phases finales ouvertes.
 
 ## Publication
-Le règlement est affiché en **français et anglais**, y compris les descriptions des rôles, les onglets et les nouveaux panneaux d'initiatives. Le build Web/PWA et la version mobile vérifient le rendu dans les deux langues. La distribution PWA emploie une nouvelle URL d'asset et un cache v696 pour éviter de servir l'ancien règlement.
+Le règlement est affiché en **français et anglais**, y compris les descriptions des rôles, les onglets et les nouveaux panneaux d'initiatives. Le build Web/PWA et la version mobile vérifient le rendu dans les deux langues. La distribution PWA emploie une nouvelle URL versionnée v696, en conservant le cache de publication certifié, afin d'éviter de servir l'ancien règlement.
 
 **Validation :** vérifications statiques et tests de transactions; un playtest humain multijoueur reste nécessaire pour certifier l'équilibrage et la lisibilité sous stress.
