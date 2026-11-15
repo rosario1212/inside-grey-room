@@ -3,7 +3,7 @@ BEGIN;
 -- v694 military decision, not the retired v688 one-order system.
 -- No changes to score, verdicts, private variants or military effects.
 DO $patch$
-DECLARE fn text;
+DECLARE fn text; at_start integer; at_end integer; legacy_band text;
 BEGIN
  SELECT pg_get_functiondef('igr_private.igr_v681_terror_dynamic_room()'::regprocedure) INTO fn;
  IF position('v704_terror_debrief_canonical_last_order' IN fn)>0 THEN RETURN;END IF;
@@ -28,26 +28,21 @@ BEGIN
   military_choice:=coalesce(v704_order->>'choice','tenir');
  END IF;
  $patchline$);
- fn:=replace(fn,
- $from$band:=CASE
-     WHEN military_choice='reconquerir' AND correct_count>=5 THEN 'RECONQUÊTE NATIONALE'
-     WHEN military_choice='reconquerir' AND correct_count<3 THEN 'OFFENSIVE ÉCHOUÉE · LE FDR ACCÉLÈRE'
-     WHEN military_choice='proteger' THEN 'PROTECTION DES CIVILS'
-     WHEN military_choice='tenir' AND correct_count>=5 THEN 'DÉFENSE TENUE · DOSSIER VÉRIFIÉ'
-     WHEN correct_count>=3 THEN 'PRESSION CONTENUE' ELSE 'AVANCÉE DU FDR' END;$from$,
- $to$band:=CASE WHEN v704_order IS NOT NULL THEN
-   CASE military_choice
-     WHEN 'reconquerir' THEN CASE
-       WHEN coalesce((v704_order->>'delta')::int,0)<0 THEN 'RECONQUÊTE TENTÉE · PRESSION RÉDUITE'
-       ELSE 'RECONQUÊTE TENTÉE · PRESSION ACCRUE' END
-     WHEN 'proteger' THEN 'PROTECTION DES CIVILS'
-     ELSE 'DÉFENSE DES POSITIONS' END
-   ELSE CASE
-     WHEN military_choice='reconquerir' AND correct_count>=5 THEN 'RECONQUÊTE NATIONALE'
-     WHEN military_choice='reconquerir' AND correct_count<3 THEN 'OFFENSIVE ÉCHOUÉE · LE FDR ACCÉLÈRE'
-     WHEN military_choice='proteger' THEN 'PROTECTION DES CIVILS'
-     WHEN military_choice='tenir' AND correct_count>=5 THEN 'DÉFENSE TENUE · DOSSIER VÉRIFIÉ'
-     WHEN correct_count>=3 THEN 'PRESSION CONTENUE' ELSE 'AVANCÉE DU FDR' END END;$to$);
+ -- Keep the old one-order report branch verbatim for legacy rooms.
+ at_start:=strpos(fn,'band:=CASE');
+ at_end:=strpos(fn,'civilian_services:=greatest(0,least(6,civilian_services+CASE');
+ IF at_start=0 OR at_end<=at_start THEN RAISE EXCEPTION 'v704 military band anchor missing';END IF;
+ legacy_band:=substring(fn from at_start+length('band:=') for at_end-at_start-length('band:='));
+ legacy_band:=regexp_replace(legacy_band,';[[:space:]]*$','');
+ fn:=left(fn,at_start-1) ||
+ $band$band:=CASE WHEN v704_order IS NOT NULL THEN CASE military_choice
+   WHEN 'reconquerir' THEN CASE
+     WHEN coalesce((v704_order->>'delta')::int,0)<0 THEN 'RECONQUÊTE TENTÉE · PRESSION RÉDUITE'
+     ELSE 'RECONQUÊTE TENTÉE · PRESSION ACCRUE' END
+   WHEN 'proteger' THEN 'PROTECTION DES CIVILS'
+   ELSE 'DÉFENSE DES POSITIONS' END ELSE $band$||
+ legacy_band||E' END;\n   '||substring(fn from at_end);
+
  fn:=replace(fn,'''military_operation'',military_choice,',
   '''military_operation'',military_choice,'||
   E'\n       ''military_order_label'',v704_order->>''label'','||
@@ -71,7 +66,8 @@ BEGIN
            WHEN correct_count>=3 THEN 'defensive_hold'
            ELSE 'fdr_breakthrough' END END$to$);
  IF position('v704_terror_debrief_canonical_last_order' IN fn)=0 OR
-    position('''military_order_label'',v704_order->>''label''' IN fn)=0 THEN
+    position('''military_order_label'',v704_order->>''label''' IN fn)=0 OR
+    position('RECONQUÊTE TENTÉE · PRESSION ACCRUE' IN fn)=0 THEN
     RAISE EXCEPTION 'v704 debrief rewrite incomplete';END IF;
  EXECUTE fn;
 END $patch$;
