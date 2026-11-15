@@ -10,7 +10,7 @@
     },
     terror: {
       eyebrow: 'DLC DE CRISE',
-      text: 'Bloqués dans la Grey Room. Un groupe terroriste s’empare de la ville. Le périmètre se referme.'
+      text: 'Le FDR a renversé les autorités dans presque tout le pays. Exécutions, enlèvements, prisons clandestines, familles déplacées : la dernière capitale résiste, et la Grey Room cherche qui a ordonné, exécuté ou couvert ces crimes.'
     },
     cartel: {
       eyebrow: 'DLC SOUS PRESSION',
