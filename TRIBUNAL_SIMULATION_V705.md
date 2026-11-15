@@ -4,18 +4,18 @@
 Conserver l’Audience finale pour présenter les soupçons, faire du Tribunal une confrontation collective centrée sur les Suspects, puis laisser chaque rôle habilité reconsidérer seul sa décision. Aucun vote ni verdict définitif à l’Audience.
 
 ## Règles (seulement si un Juge joue)
-1. **Audience préparatoire** : tous les joueurs, y compris Suspects, Avocat et Juge, reçoivent jusqu’à **1 min (COURT) ou 1 min 30 (LONG)** chacun ; chacun peut parler moins longtemps ou passer. Aucun verdict rendu et aucun niveau 0–2 verrouillé.
+1. **Audience préparatoire** : seuls les membres du camp Enquête (Enquêteur, Analyste, Inspecteur, Expert, Procureur, Juge selon présence) reçoivent jusqu’à **1 min (COURT) ou 1 min 30 (LONG)** chacun, en commençant par l’Enquêteur. Chacun peut parler moins longtemps ou passer ; Suspects, Avocat et Journaliste ne participent pas à cette audience avec Juge. Aucun verdict rendu et aucun niveau 0–2 verrouillé.
 2. **Tribunal** : tous physiquement réunis. Le Juge dirige la comparution de chaque Suspect, **3 min maximum en COURT** (1:30 défense avec Avocat, 0:45 questions, 0:45 réponse) ou **4 min maximum en LONG** (2 min défense, 1 min questions, 1 min réponse). Ce sont des repères, pas trois chronomètres serveur distincts ; le tour total de 4 min est garanti par le serveur. Le Suspect peut se taire et signaler **« J’ai terminé ma défense »** pour renoncer au temps restant, mais **ne peut pas interrompre les questions** en clôturant lui-même la comparution. Sans ce signal, le serveur protège les **1 min 30 en COURT / 2 min en LONG** de défense avant toute clôture anticipée par le Juge ; le timeout serveur termine au plus tard à 4 min.
 3. **Vote individuel et secret** : l’Enquêteur et tous les rôles déjà habilités par les règles existantes verrouillent 0/1/2 séparément sur leur propre appareil, sans concertation. Aucun choix présélectionné. Hiérarchie du verdict et vote d’intégrité du Juge inchangés. Révélation seulement après tous les verrouillages exigés et conditions particulières.
 4. **Anti-blocage** : si un tour n’est pas ouvert dans les 25 s, l’application passe automatiquement la parole à l’Audience. Au tribunal, elle ouvre automatiquement la comparution pour protéger le droit de défense. Les tours démarrés disposent de leur chronomètre réel.
 5. **Compatibilité** : sans Juge, la finale antérieure reste en place. Le dossier 029 garde son rapport et ses règles de résultat propres, et traite ses comparutions comme celles de témoins.
 
-## Simulation de 8 joueurs
+## Simulation de 8 joueurs (4 Enquête, 1 Avocat, 3 Suspects)
 Enquêteur, Analyste, Procureur, Juge, Avocat, trois Suspects.
-- Audience : 90 + 80 + 45 + 0 (Juge passe) + 75 + 75 + 60 + 55 = **480 s, soit 8 min**. Des soupçons sont formulés, pas de verdict.
+- Audience : Enquêteur 90 s + Analyste 80 s + Procureur 45 s + Juge 0 s (passe) = **215 s, soit 3 min 35**. Des soupçons sont formulés, pas de verdict.
 - Tribunal : les trois comparutions durent **220, 240 et 200 s**, soit **11 min**. Le Juge laisse le temps à la défense, interroge et peut raccourcir une comparution si les échanges sont clos.
 - Vote privé : **100 s**, soit **1 min 40** dans cette simulation.
-- Total des phases : **20 min 40**, hors petites transitions. Maximum prévu : 12 min d’Audience + 12 min de comparutions + 2 min de vote indicatif = **26 min**, plus transitions.
+- Total des phases : **16 min 15**, hors petites transitions. Pour cet exemple de 4 rôles Enquête et 3 Suspects en LONG, maximum théorique : 6 min d’Audience + 12 min de comparutions + 2 min de vote indicatif = **20 min**, plus transitions.
 
 ### Test de réévaluation
 Hypothèse fictive : après l’Audience, la lecture de l’Enquêteur est A=1, B=2, C=0 ; après le Tribunal, la lecture définitive devient A=2, B=1, C=0. La possibilité de changer d’avis est essentielle. Le score réel reste déterminé par la vérité canonique et le verrouillage côté serveur.
