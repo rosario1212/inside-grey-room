@@ -21,8 +21,7 @@ BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'unauthorized';END IF;
  SELECT * INTO r FROM public.igr_v4_rooms WHERE code=p.room_code FOR UPDATE;
  SELECT * INTO m FROM igr_private.igr_regime_v13_rooms WHERE room_code=p.room_code FOR UPDATE;
- IF NOT FOUND OR r.status<>'playing' OR r.phase<>'regime_court'
- THEN RAISE EXCEPTION 'courtroom unavailable';END IF;
+ IF NOT FOUND THEN RAISE EXCEPTION 'courtroom unavailable';END IF;
  IF length(coalesce(p_request_id,'')) NOT BETWEEN 8 AND 128 THEN
  RAISE EXCEPTION 'invalid request id';END IF;
  SELECT * INTO prior FROM igr_private.igr_regime_v13_ledger
@@ -32,6 +31,7 @@ BEGIN
    THEN RAISE EXCEPTION 'request collision';END IF;
   RETURN prior.response;
  END IF;
+ IF r.status<>'playing' OR r.phase<>'regime_court' THEN RAISE EXCEPTION 'courtroom closed';END IF;
  elapsed:=floor(extract(epoch FROM
    now()-(m.play_state->'court'->>'started_at')::timestamptz))::integer;
  confront_start:=CASE WHEN
