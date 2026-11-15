@@ -3,7 +3,7 @@ import {readFile,writeFile,stat} from 'node:fs/promises';
 import path from 'node:path';
 const target=path.resolve(process.argv[2]||'dist');
 const exists=async x=>{try{await stat(x);return true}catch{return false}};
-const version='v696-rolebook';
+const version='v701-rolebook';
 const networkVersion='v701-network-resilience-20261115';
 for(const page of ['index.html','en.html']){
  const file=path.join(target,page);if(!await exists(file))continue;
