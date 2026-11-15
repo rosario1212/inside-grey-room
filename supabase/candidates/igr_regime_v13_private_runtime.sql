@@ -309,7 +309,7 @@ BEGIN
     active_refuge:=igr_private.igr_regime_v14_active_track(m.room_code,actor);
     fallback_refuge:=NULL;
     IF option_row->'effect'->>'kind'='shift_network' THEN
-      fallback_refuge:=m.private_pack->'first_cycle'->'fallback_tracks'->
+      fallback_refuge:=m.private_pack->'first_cycle'->'fallback_tracks'->>
         (CASE WHEN p.internal_slot=1 THEN 'first' ELSE 'second' END);
       SELECT net->>'label' INTO refuge_label FROM jsonb_array_elements(
          m.private_pack->'first_cycle'->'public_networks') net
