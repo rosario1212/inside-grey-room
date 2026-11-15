@@ -70,7 +70,7 @@ test('captured defendants and the third suspect retain meaningful objectives',()
 test('the six-player base and optional prosecutor do not force passive extras',()=>{
  assert.match(lifecycleSql,/igr_v4_min_players/);
  assert.match(lifecycleSql,/igr_v4_max_players/);
- assert.match(lifecycleSql,/THEN 7/);
+ assert.match(lifecycleSql,/p_scenario='034' THEN 9 ELSE 8 END/);
  assert.match(lifecycleSql,/then 6/i);
  assert.match(lifecycleSql,/procureur/);
 });
@@ -139,10 +139,11 @@ test('Regime 8th witness and 034-only 9th journalist are selectable and active',
  assert.match(lifecycleSql,/igr_regime_v16_civic_card/);
  assert.match(index,/regime-v16-rosters-20261115/);
 });
-test('Regime expanded server capacity, tribunal and majority remain consistent',()=>{
+test('Regime expanded server capacity, tribunal and majority remain consistent',async()=>{
+ const rosterMigration=await read('supabase/migrations/20261115230900_igr_regime_v16_optional_roster_limits.sql');
  assert.match(lifecycleSql,/p_scenario='034' THEN 9 ELSE 8 END/);
- assert.match(lifecycleSql,/when 'temoin' then return case when p_count>=8/);
- assert.match(lifecycleSql,/when 'journaliste' then return case when p_scenario='034' and p_count>=9/);
+ assert.match(rosterMigration,/when 'temoin' then return case when p_count>=8/);
+ assert.match(rosterMigration,/when 'journaliste' then return case when p_scenario='034' and p_count>=9/);
  assert.match(lifecycleSql,/\'temoin\',\'journaliste\'/);
  assert.match(judicialSql,/count\(\*\) FROM public\.igr_v4_players WHERE room_code=r\.code\)>=8/);
 });
