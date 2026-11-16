@@ -921,3 +921,17 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   flex-wrap:wrap!important;
   overflow:visible!important;
 }
+
+/* v752 — short DLC catalogue copy must stay complete, not line-clamped. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
+  > .scenario-body.compact > p.igr-card-excerpt{
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
+  -webkit-box-orient:initial!important;
+  text-overflow:clip!important;
+  overflow:visible!important;
+  flex:0 1 auto!important;
+}
+
