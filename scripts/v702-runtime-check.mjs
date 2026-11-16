@@ -62,6 +62,14 @@ const brAfter=report.bundles.reduce((a,b)=>a+b.brotliBundleBytes,0);
 const app=await read('app-v11.js');
 const dlc=await read('dlc-suite-v12-37.js');
 const premium=await read('premium-access-sync-v17.js');
+const cartelRuntime=await read('dlc-suite-v12-37.js');
+const cartelServiceWorker=await read('service-worker.js');
+for(const asset of ['cartel-029-le-cycle-mort.webp','cartel-030-la-cour-achetee.webp','cartel-031-la-dette.webp']){
+  assert(cartelRuntime.includes('assets/'+asset),'Cartel runtime points to a missing/obsolete poster: '+asset);
+  assert(cartelServiceWorker.includes('/assets/'+asset),'PWA offline cache omits an existing Cartel poster: '+asset);
+}
+assert(!/cartel-0(?:29|30|31)-poster-v2\.svg/.test(cartelRuntime+cartelServiceWorker),
+  'Missing Cartel SVG references must not survive release.');
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
 assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing shared bounded scenario teaser function');
