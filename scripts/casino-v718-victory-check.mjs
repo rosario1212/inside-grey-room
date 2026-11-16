@@ -61,8 +61,8 @@ for(let count=4;count<=7;count++)for(const optional of [[],['judge'],['prosecuto
 }
 {
  const s=scored(fixture(4,[],['p3']));
- const fin=casinoVictory(s);
- s.finale={...s.finale,victory:fin,successor:'p0',political:'recognised_claim'};
+ s.finale={...s.finale,successor:'p0',political:'recognised_claim'};
+ const fin=casinoVictory(s);s.finale.victory=fin;
  assert.equal(casinoPersonalVictory(s,'p0',fin).outcome,'victory','Recognized successor receives win');
  s.support.p1='p0';
  s.agreements.pact={id:'pact',participants:['p0','p1'],kind:'alliance',status:'signed',breachedBy:[]};
