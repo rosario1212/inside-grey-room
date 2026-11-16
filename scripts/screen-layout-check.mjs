@@ -442,13 +442,11 @@ try{
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
-          if(/^(00[1-8]|0(?:09|1[0-9]|20))/.test(name)){
-            assert(Math.abs(m.displayAspect-.75)<=.025,width+'px '+name+': every Base poster must use a 3:4 display frame '+JSON.stringify(m));
-          }
-          if(/^(029|030|031)/.test(name)){
-            assert(Math.abs(m.displayAspect-724/960)<=.015,
-              width+'px '+name+': Cartel display frame ratio is incorrect '+JSON.stringify(m));
-          }
+          const reference=metrics[0];
+          assert(Math.abs(m.displayAspect-reference.displayAspect)<=.025,
+            width+'px '+name+': every poster must use the same Omerta-proportioned display frame '+JSON.stringify(m));
+          // object-fit:cover preserves the actual image ratio while eliminating
+          // letterbox bands, independently of portrait/landscape source art.
         }
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-native34-and-dlc.png'),fullPage:true});
