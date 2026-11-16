@@ -790,6 +790,15 @@ function boot(){
       applyResult(live);
       return live.practice||!!api()?.get?.(campaign)?.completed?.includes(chapter);
     }catch(error){console.warn('[Heritage] failed to persist confirmed result',error);return false}
+  },publicRoles:(campaign,count=5)=>{
+    const n=Math.max(5,Math.min(7,Number(count)||5));
+    const ids=campaign==='cendres'
+      ?['chef','sigint','terrain','source','liaison',...(n>=6?['legal']:[]),...(n>=7?['archive']:[])]
+      :campaign==='kuroi'
+        ?['waka_k','kobun_k','waka_a',...(n>=7?['kobun_a']:[]),'commissaire','inspecteur',...(n>=6?['bengoshi']:[])]
+        :[];
+    return ids.map(id=>ROLES[campaign]?.find(r=>r.id===id))
+      .filter(Boolean).map(r=>Object.freeze({id:r.id,name:r.name,short:r.short,activity:r.activity,public:r.public}));
   },roleCard:(campaign,chapter,roleId)=>{const r=roleFor(campaign,roleId),sec=PACKS[campaign]?.chapters?.[Number(chapter)]?.secrets?.[roleId]||['',''];return r?Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''}):null}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
