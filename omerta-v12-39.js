@@ -383,12 +383,16 @@
     refreshQueued = true;
     requestAnimationFrame(() => {refreshQueued = false;refreshOmertaUi()});
   }
+  // Do not rescan the page after styling classes/badges change. Actual
+  // element mounts and image-source replacements still refresh artwork.
   const observer = new MutationObserver(mutations => {
-    if(mutations.some(m => m.addedNodes?.length || m.removedNodes?.length || m.type === 'attributes')) queueRefreshOmertaUi();
+    if(mutations.some(m => m.type==='attributes'
+      ? m.attributeName==='src'&&m.target?.tagName==='IMG'
+      : [...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1)
+    )) queueRefreshOmertaUi();
   });
-  observer.observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['class','src']});
+  observer.observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['src']});
   document.addEventListener('DOMContentLoaded', refreshOmertaUi, {once:true});
   window.addEventListener('pageshow', refreshOmertaUi, {passive:true});
   setTimeout(refreshOmertaUi, 0);
-  setTimeout(refreshOmertaUi, 220);
 })();
