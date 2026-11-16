@@ -227,3 +227,25 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   object-fit:contain!important;
   object-position:50% 0%!important;
 }
+
+/* v716 visual regression: RÉGIME cards must grow with untruncated copy.
+   Keep the original typography and portrait mount; only restore intrinsic
+   height by making the copy block participate in the grid's row sizing. */
+#app .page-create-v10-13 .scenario-list-v10-13 > article.regime-scenario.scenario--compact.scenario--art{
+  grid-template-rows:auto!important;
+  height:auto!important;
+  min-height:max-content!important;
+  max-height:none!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.regime-scenario.scenario--compact.scenario--art .scenario-body.compact{
+  display:block!important;
+  height:auto!important;
+  min-height:max-content!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.regime-scenario.scenario--compact.scenario--art .scenario-body.compact .tag-row{
+  position:static!important;
+  margin:12px 0 0!important;
+  padding-top:4px!important;
+}
