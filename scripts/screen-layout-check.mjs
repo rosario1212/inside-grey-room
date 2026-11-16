@@ -239,14 +239,14 @@ try{
   await check('catalog-v7-real-full-posters-001-032',async()=>{
     const assets=[
       {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
-      {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-le-cycle-mort.webp'},
-      {klass:'cartel-scenario',name:'030 — LA COUR ACHETÉE',full:'cartel-030-la-cour-achetee.webp'},
-      {klass:'cartel-scenario',name:'031 — LA DETTE',full:'cartel-031-la-dette.webp'},
+      {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-poster-v2.svg'},
+      {klass:'cartel-scenario',name:'030 — LA COUR ACHETÉE',full:'cartel-030-poster-v2.svg'},
+      {klass:'cartel-scenario',name:'031 — LA DETTE',full:'cartel-031-poster-v2.svg'},
       {klass:'regime-scenario',name:'032 — LES ARCHIVES DU PALAIS',full:'regime-032-les-archives-du-palais.webp'}
     ];
     const toData=async file=>{
       const bytes=await readFile(path.join(target,'assets',file));
-      return 'data:image/webp;base64,'+bytes.toString('base64');
+      return 'data:'+(file.endsWith('.svg')?'image/svg+xml':'image/webp')+';base64,'+bytes.toString('base64');
     };
     const markup=[];
     for(const item of assets){
