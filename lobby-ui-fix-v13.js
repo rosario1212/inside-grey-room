@@ -202,8 +202,11 @@
     }
   }catch(err){console.warn('lobby back/settings hook',err)}
 
+  // Only new/removed lobby mounts need another enhancement pass; not every badge.
   const observer=new MutationObserver(mutations=>{
-    if(mutations.some(m=>m.addedNodes?.length || m.removedNodes?.length))queueEnhanceLobby();
+    if(mutations.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>
+      n.nodeType===1&&(n.matches?.('.page,.lobby-v11,.role-choice-zone')||n.querySelector?.('.role-choice-zone'))
+    )))queueEnhanceLobby();
   });
   const app=document.getElementById('app');
   if(app)observer.observe(app,{childList:true,subtree:true});

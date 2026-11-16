@@ -13,9 +13,9 @@ const fr=()=>window.IGR_LOCALE!=='en', copy=(a,b)=>fr()?a:b;
 const esc=v=>typeof window.h==='function'?window.h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const INVESTIGATION=new Set(['enqueteur','analyste','procureur','juge','inspecteur','expert']);
 const REPORTERS=new Set(['suspect','enqueteur','analyste','procureur','juge','inspecteur','expert']);
-const ACTIVITY={enqueteur:5,suspect:4,procureur:3,juge:4,maitre:3,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
-const COURTROOM_ACTIVITY={enqueteur:5,suspect:4,procureur:4,juge:5,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
-const activityRating=r=>players().some(p=>(p.public_role==='en_attente'?p.preferred_role:p.public_role)==='juge')?(COURTROOM_ACTIVITY[r]||ACTIVITY[r]||2):(ACTIVITY[r]||2);
+const ACTIVITY={enqueteur:5,suspect:4,procureur:4,juge:5,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
+const COURTROOM_ACTIVITY=ACTIVITY;
+const activityRating=r=>ACTIVITY[r]||2;
 const ROLE_COPY={
  enq:null,
  enqueteur:copy('Tu diriges la Grey Room, choisis les convocations officielles et portes la reconstruction finale. Hors Grey Room, les échanges sont libres.','You direct the Grey Room, choose official summons and carry the final reconstruction. Outside the Grey Room, interactions are free.'),
@@ -49,7 +49,25 @@ const toast=(e,f)=>window.toast?.(e?.message||f);
 const stars=n=>`${'★'.repeat(Math.max(0,Math.min(5,+n||0)))}${'☆'.repeat(Math.max(0,5-(+n||0)))}`;
 const roleLabel=r=>r==='officier_liaison'?copy('Officier','Officer'):(r==='maitre'&&window.cartelLawyerLabel?.())||({enqueteur:'Enquêteur',analyste:'Analyste',suspect:'Suspect',maitre:'Avocat',procureur:'Procureur',juge:'Juge',journaliste:'Journaliste',inspecteur:'Inspecteur',expert:'Expert',temoin:'Témoin'})[r]||r;
 function parseRoleFromCard(btn){const s=btn?.getAttribute?.('onclick')||'';return s.match(/(?:chooseLobbyRole|claimNextRole)\(['"]([^'"]+)/)?.[1]||btn?.dataset?.role||''}
-function decorateRoleCards(){document.querySelectorAll('.role-choice-card').forEach(btn=>{if(btn.classList.contains('random-role-card'))return;const r=parseRoleFromCard(btn);if(!r||!(r in ACTIVITY))return;let tag=btn.querySelector('.igr50-activity');if(!tag){tag=document.createElement('span');tag.className='igr50-activity';tag.title=copy('Fréquence moyenne des interventions et décisions pendant la partie.','Average frequency of interventions and decisions during the game.');const holder=btn.querySelector('span')||btn;holder.appendChild(tag)}tag.textContent=`${copy('ACTIVITÉ','ACTIVITY')} · ${stars(activityRating(r))}`;const sm=btn.querySelector('small');if(sm&&ROLE_COPY[r])sm.textContent=ROLE_COPY[r]})}
+function decorateRoleCards(){
+ document.querySelectorAll('.role-choice-card').forEach(btn=>{
+  if(btn.classList.contains('random-role-card'))return;
+  const r=parseRoleFromCard(btn);if(!r||!(r in ACTIVITY))return;
+  let tag=btn.querySelector('.igr50-activity');
+  if(!tag){
+   tag=document.createElement('span');tag.className='igr50-activity';
+   tag.title=copy('Fréquence estimée des interactions et décisions. Note stable, indépendante des autres sélections.','Estimated activity. Stable rating independent of other selections.');
+   (btn.querySelector('span')||btn).appendChild(tag);
+  }
+  const rating=`${copy('ACTIVITÉ','ACTIVITY')} · ${stars(activityRating(r))}`;
+  if(tag.textContent!==rating)tag.textContent=rating;
+  const fullText=ROLE_COPY[r];
+  const sm=btn.querySelector('small');
+  if(sm&&fullText&&sm.textContent!==fullText)sm.textContent=fullText;
+  const info=btn.closest('.igr-role-option')?.querySelector('.igr-role-more p');
+  if(info&&fullText&&info.textContent!==fullText)info.textContent=fullText;
+ });
+}
 function currentAssembly(){return room()?.phase==='investigation_assembly'}
 function assemblyNo(){return Math.max(1,Math.min(3,+room()?.cycle||1))}
 function assemblyGuide(){if(!currentAssembly())return'';const mandatory=INVESTIGATION.has(role());return `<article class="igr50-status ${mandatory?'mandatory':'free'}"><small>${mandatory?copy('ASSEMBLÉE DU CAMP ENQUÊTE · OBLIGATOIRE','INVESTIGATION ASSEMBLY · MANDATORY'):copy('TEMPS LIBRE','FREE TIME')}</small><h3>${mandatory?`${copy('Assemblée','Assembly')} ${assemblyNo()} · ${room()?.state?.duration_mode==='short'?(assemblyNo()===1?'2:30':'2:00'):(assemblyNo()===1?'5:00':'4:00')}`:copy('Le camp Enquête est en assemblée','The Investigation side is in assembly')}</h3><p>${mandatory?copy(assemblyNo()===1?'Briefing commun : partagez les premières informations et fixez les priorités.':'Mettez en commun les découvertes du cycle précédent et fixez les priorités du nouveau cycle.',assemblyNo()===1?'Shared briefing: pool initial information and set priorities.':'Pool the previous cycle’s discoveries and set priorities for the new cycle.'):copy('Tu n’es pas convoqué. Tu peux te déplacer, préparer ta stratégie et parler librement aux autres joueurs disponibles.','You are not summoned. You may move, prepare your strategy and talk freely with other available players.')}</p></article>`}
