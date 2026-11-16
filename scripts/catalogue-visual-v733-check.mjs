@@ -104,9 +104,15 @@ try{
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
       const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(c.id);
-      assert.equal(c.imageFit,(['026','027','028'].includes(c.id)||preserve)?'contain':'cover',
-        `${width}px ${c.id}: ${preserve?'full title-safe poster':'approved Omerta cover'} must be used`);
-      if(preserve&&!['026','027','028'].includes(c.id))assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
+      const nativeRegime=['032','033','034'].includes(c.id);
+      assert.equal(c.imageFit,nativeRegime?'cover':preserve?'contain':'cover',
+        `${width}px ${c.id}: original artwork must fit its intended frame`);
+      if(nativeRegime){
+        assert(c.artUnderlay==='none',`${width}px ${c.id}: blurred vignette/duplicate behind silver cover`);
+        assert(Math.abs(c.thumb.width-c.thumb.height*16/25)<=2,`${width}px ${c.id}: silver cover must fit native 16:25`);
+      }else if(preserve&&!['026','027','028'].includes(c.id)){
+        assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
+      }
       assert(c.image.width>30&&c.image.height>30,`${width}px ${c.id}: poster collapsed`);
       assert(c.image.left>=c.thumb.left-2&&c.image.right<=c.thumb.right+2,`${width}px ${c.id}: poster outside column`);
       assert(c.image.top>=c.thumb.top-2&&c.image.bottom<=c.thumb.bottom+2,`${width}px ${c.id}: poster vertically clipped`);
@@ -211,9 +217,12 @@ try{
           }
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
           const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(item.id);
-          assert(item.imageFit===((['026','027','028'].includes(item.id)||preserve)?'contain':'cover'),
-            `v739 ${width}px ${item.id}: original artwork ${preserve?'must be fully framed':'retains approved cover'}`);
-          if(preserve&&!['026','027','028'].includes(item.id))assert(item.artUnderlay!=='none',
+          const nativeRegime=['032','033','034'].includes(item.id);
+          assert(item.imageFit===(nativeRegime?'cover':preserve?'contain':'cover'),
+            `v753 ${width}px ${item.id}: poster uses wrong object-fit`);
+          if(nativeRegime)assert(item.artUnderlay==='none',
+            `v753 ${width}px ${item.id}: blurred source-art layer remains`);
+          else if(preserve&&!['026','027','028'].includes(item.id))assert(item.artUnderlay!=='none',
             `v739 ${width}px ${item.id}: no ambient source-art backing to fill poster edge`);
           assert(Math.abs(item.posterRect.height-item.thumbRect.height)<2,
             `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
@@ -237,6 +246,9 @@ try{
         if(['026','027','028'].includes(item.id)){
           assert(Math.abs(item.thumbRect.width-item.height*(2/3))<=2,
             `v752 ${width}px ${item.id}: Terreur 2:3 poster proportion changed`);
+        }else if(['032','033','034'].includes(item.id)){
+          assert(Math.abs(item.thumbRect.width-item.height*(16/25))<=2,
+            `v753 ${width}px ${item.id}: Le Régime must show native 16:25 poster without vignette`);
         }else{
           assert(Math.abs(item.thumbRect.width-reference.thumbRect.width)<=1.1,
             `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
