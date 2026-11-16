@@ -75,7 +75,13 @@ for(const id of ['029','030','031']){
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
 assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing shared bounded scenario teaser function');
-assert(app.includes('scenarioCardTeaser(sc.short)'), 'Classic cards must use the shared 30-word preview');
+assert(app.includes('scenarioCardTeaser(sc.short,Number(sc.id)>=9?17:23)'),
+ 'Base 009–020 must use compact previews while preserving longer dossier details');
+for(const [name,source] of [['base',app],['Omertà',await read('omerta-v12.js')],
+  ['Terreur',await read('terror-v12-37.js')],['Cartel/Régime',dlc],['premium',premium]]){
+  assert(source.includes('</p></div><div class="tag-row" aria-label="Informations du dossier">'),
+    name+' catalogue must put badges in the full-width footer, not within the narrow text column');
+}
 for(const [label,source] of [['DLC',dlc],['premium catalogue',premium]]){
  assert(source.includes('class="igr-card-excerpt"'),label+' card must show a teaser');
  assert(source.includes('scenarioCardTeaser(sc.short,19)'),label+' card must use the shorter DLC-specific preview');
@@ -124,8 +130,12 @@ assert(fullCopyCss.includes('p.igr-card-excerpt')&&fullCopyCss.includes('-webkit
   'Final catalogue CSS must override the historical three-line truncation');
 assert(fullCopyCss.includes('max-height:none!important')&&fullCopyCss.includes('height:auto!important'),
   'Cards and summary paragraphs must grow with their public copy');
-assert(fullCopyCss.includes('FAMILY POSTER SYSTEM v11')&&fullCopyCss.includes('object-fit:contain!important'),
-  'Catalogue must use independently sized family poster templates without artwork distortion');
+assert(fullCopyCss.includes('FAMILY CATALOGUE v12')&&fullCopyCss.includes('object-fit:contain!important'),
+  'Catalogue must use independent poster templates with no artwork distortion');
+assert(fullCopyCss.includes('grid-template-areas:"poster content" "metadata metadata"'),
+  'Catalogue must reserve an independent full-width badge row');
+assert(fullCopyCss.includes('content-visibility:visible!important'),
+  'Do not reintroduce fake 240px content-height placeholders');
 for(const family of ['omerta','terror','cartel','regime']){
   assert(fullCopyCss.includes('article.scenario.scenario--art.scenario--compact.'+family+'-scenario'),
     'Dedicated poster template missing for '+family);
