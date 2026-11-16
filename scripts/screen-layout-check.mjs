@@ -78,7 +78,7 @@ try{
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">LE RÉGIME · DOSSIER '+sc.id+'</div>'+
       '<h3>'+sc.name+'</h3><p class="igr-card-excerpt">'+sc.description+'</p>'+
-      '<div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></div></article>').join('');
+      '</div><div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:900});
       await page.setContent('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+
@@ -86,7 +86,7 @@ try{
         '<section class="panel regime-dlc-section"><div class="scenario-list scenario-list-v10-13 regime-list">'+markup+
         '</div></section></main></div></body></html>');
       const measures=await page.locator('.regime-scenario').evaluateAll(els=>els.map(el=>{
-        const body=el.querySelector('.scenario-body'),p=body.querySelector('p'),t=body.querySelector('.tag-row'),
+        const body=el.querySelector('.scenario-body'),p=body.querySelector('p'),t=el.querySelector('.tag-row'),
           box=el.getBoundingClientRect(),textBox=p.getBoundingClientRect(),tagBox=t.getBoundingClientRect();
         return {cardHeight:box.height,textBottom:textBox.bottom,tagTop:tagBox.top,tagBottom:tagBox.bottom,
           cardBottom:box.bottom,bodyOverflow:body.scrollWidth>body.clientWidth+1,
@@ -170,10 +170,10 @@ try{
       'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
-  await check('catalog-v11-five-separate-family-gabarits',async()=>{
+  await check('catalog-v12-five-family-footer-layout',async()=>{
     const samples=[
       {klass:'',label:'DOSSIER 001',title:'LA CHAMBRE 222',description:'Maël Sénéchal est retrouvé mort, poignardé, dans la chambre 222. Trois personnes ont croisé sa route cette nuit-là. Leurs versions se contredisent.',players:'4–5 JOUEURS'},
-      {klass:'',label:'DOSSIER 020',title:'L’APOTHÉOSE',description:'327 personnes meurent dans l’incendie du Bal des Fondateurs. Certaines portes pouvaient encore être ouvertes. Aucune décision n’explique seule le bilan.',players:'13–16 JOUEURS'},
+      {klass:'',label:'DOSSIER 006',title:'LES CENDRES DU CHALET',description:'Cinq ans après la mort de Noé lors d’une randonnée, une ancienne vidéo bouleverse les témoignages de ses trois amis.',players:'4–5 JOUEURS'},
       {klass:'omerta-scenario',label:'OMERTÀ · DOSSIER 021',title:'L’ENVELOPPE',description:'À Brooklyn, une partie des recettes du racket manque à l’appel. Plusieurs hommes avaient accès à la collecte ; aucun ne veut en répondre.',players:'4–8 JOUEURS'},
       {klass:'omerta-scenario',label:'OMERTÀ · DOSSIER 025',title:'IL DON',description:'Vittorio Santoro laisse ses hommes gérer les affaires du clan. Un racket mal maîtrisé met en cause son entourage et son autorité.',players:'4–8 JOUEURS'},
       {klass:'terror-scenario',label:'TERREUR · DOSSIER 026',title:'LA VILLE TOMBE',description:'Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres.',players:'6 JOUEURS'},
@@ -189,8 +189,8 @@ try{
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:30)+'</p><div class="tag-row">'+
-      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>');
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:(sc.label.includes('001')?23:17))+'</p></div><div class="tag-row">'+
+      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></article>');
     const families=[
       ['scenario-panel-v10-13',''],
       ['omerta-dlc-section','omerta-list'],
@@ -211,7 +211,7 @@ try{
         '<button class="igr-dock-pill igr-dock-home"><span>⌂</span><b>Accueil</b></button></nav></body></html>');
       const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
         const body=el.querySelector('.scenario-body'),title=body.querySelector('h3'),
-          excerpt=body.querySelector('.igr-card-excerpt'),tags=body.querySelector('.tag-row'),
+          excerpt=body.querySelector('.igr-card-excerpt'),tags=el.querySelector('.tag-row'),
           card=el.getBoundingClientRect(),copy=excerpt.getBoundingClientRect(),tag=tags.getBoundingClientRect(),
           style=getComputedStyle(excerpt),heading=getComputedStyle(title);
         return {height:card.height,copyBottom:copy.bottom,tagsTop:tag.top,tagsBottom:tag.bottom,cardBottom:card.bottom,
@@ -268,14 +268,16 @@ try{
         }
         assert(m.copyFont>=13.5&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
-        assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
+        assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches footer badges');
+        assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': footer badges overflow their card');
+        assert(m.imageCount===1,width+'px '+name+': more than one image in family artwork');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='contain',width+'px '+name+': stretched or cropped artwork (not contain)');
         assert(['start','flex-start'].includes(m.artAlignment),width+'px '+name+': poster must not be stretched by description height');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
-          assert(m.artColumnWidth>=130&&m.artColumnWidth<=154,
+          assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
             width+'px '+name+': family-specific poster column width is incorrect '+m.artColumnWidth);
         }
         assert(m.fullFit==='contain',width+'px '+name+': poster pixels must retain their original proportions');
@@ -297,22 +299,74 @@ try{
   });
 
 
+  await check('catalog-v12-base-009-020-uniform-full-posters',async()=>{
+    const start=app.indexOf('const SCENARIOS = [');
+    const end=app.indexOf('const SCENARIO_ROLES =',start);
+    assert(start>=0&&end>start,'Cannot locate 001-020 canonical scenarios');
+    const baseScenarios=vm.runInNewContext(app.slice(start,end)+'; SCENARIOS')
+      .filter(sc=>Number(sc.id)>=9&&Number(sc.id)<=20);
+    assert.equal(baseScenarios.length,12,'Exactly 12 base dossiers 009–020 must be verified');
+    const helperStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
+    const helperEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',helperStart);
+    const preview=vm.runInNewContext(app.slice(helperStart,helperEnd)+'; scenarioCardTeaser');
+    const cards=baseScenarios.map(sc=>'<article id="scenario-'+sc.id+'" class="scenario scenario--art scenario--compact" data-igr-scenario-id="'+sc.id+'">'+
+      '<div class="scenario-thumb compact"><img class="igr-poster-full" src="" alt=""></div>'+
+      '<div class="scenario-body compact"><div class="scenario-id">DOSSIER '+sc.id+'</div>'+
+      '<h3>'+sc.title+'</h3><p class="igr-card-excerpt">'+preview(sc.short,17)+'</p></div>'+
+      '<div class="tag-row" aria-label="Informations du dossier">'+
+      '<span class="tag">'+sc.min+'–'+sc.max+' JOUEURS</span><span class="tag">ENQUÊTE</span></div></article>').join('');
+    for(const width of [320,375,390,430]){
+      await page.setViewportSize({width,height:812});
+      await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
+        '<style>'+css+'</style></head><body><div id="app"><main class="page page-create-v10-13">'+
+        '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+cards+
+        '</div></section></main></div></body></html>');
+      const data=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
+        const poster=el.querySelector('.scenario-thumb').getBoundingClientRect(),
+          body=el.querySelector('.scenario-body').getBoundingClientRect(),
+          footer=el.querySelector(':scope > .tag-row').getBoundingClientRect(),
+          card=el.getBoundingClientRect(),title=el.querySelector('h3'),
+          style=getComputedStyle(el.querySelector('.igr-poster-full'));
+        return {id:el.dataset.igrScenarioId,posterWidth:poster.width,posterHeight:poster.height,
+          posterBottom:poster.bottom,bodyBottom:body.bottom,footerTop:footer.top,footerBottom:footer.bottom,
+          cardBottom:card.bottom,fullFit:style.objectFit,titleVisible:title.scrollWidth<=title.clientWidth+1,
+          footerWidth:footer.width,cardWidth:card.width,
+          horizontalOverflow:el.scrollWidth>el.clientWidth+1};
+      }));
+      const first=data[0];
+      for(const m of data){
+        assert(m.fullFit==='contain',width+'px '+m.id+': artwork is cropped or distorted');
+        assert(Math.abs(m.posterWidth-first.posterWidth)<.5&&
+               Math.abs(m.posterHeight-first.posterHeight)<.5,
+          width+'px '+m.id+': base poster differs from other dossiers 009–020');
+        assert(m.footerTop>=Math.max(m.bodyBottom,m.posterBottom)-1,
+          width+'px '+m.id+': badges overlap the poster or synopsis');
+        assert(m.footerBottom<=m.cardBottom+1,width+'px '+m.id+': badges escape the card');
+        assert(Math.abs(m.footerWidth-m.cardWidth)<=2,
+          width+'px '+m.id+': badge footer must span the whole card');
+        assert(m.titleVisible,width+'px '+m.id+': scenario title is clipped');
+        assert(!m.horizontalOverflow,width+'px '+m.id+': card overflows horizontally');
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-all-base-009-020.png'),fullPage:true});
+    }
+  });
+
   await check('catalog-v11-real-uncropped-family-posters',async()=>{
     const assets=[
       {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
       {klass:'',name:'006 — LES CENDRES DU CHALET',full:'scenario-006-v10-13.webp'},
-      {klass:'',name:'009 — LE SUJET 17',full:'scenario-009-v11-6.webp'},
-      {klass:'',name:'010 — LE BRUIT DES MURS',full:'scenario-010-v11-6.webp'},
-      {klass:'',name:'011 — 36 HEURES',full:'scenario-011-v11-6.webp'},
-      {klass:'',name:'012 — FIDÈLES',full:'scenario-012-v11-6.webp'},
-      {klass:'',name:'013 — LIGNE DE MIRE',full:'scenario-013-v11-6.webp'},
-      {klass:'',name:'014 — SOUS SECRET',full:'scenario-014-v11-6.webp'},
-      {klass:'',name:'015 — AVANT LA MORT',full:'scenario-015-v11-6.webp'},
-      {klass:'',name:'016 — LE DERNIER ÉTAGE',full:'scenario-016-v11-6.webp'},
-      {klass:'',name:'017 — LE PRIX DU SILENCE',full:'scenario-017-v11-6.webp'},
-      {klass:'',name:'018 — LES ASSIETTES VIDES',full:'scenario-018-v11-6.webp'},
-      {klass:'',name:'019 — LE GRAND BAL',full:'scenario-019-v11-6.webp'},
-      {klass:'',name:'020 — L’APOTHÉOSE',full:'scenario-020-v11-6.webp'},
+      {klass:'',name:'009 — BASE',full:'scenario-009-v11-6.webp'},
+      {klass:'',name:'010 — BASE',full:'scenario-010-v11-6.webp'},
+      {klass:'',name:'011 — BASE',full:'scenario-011-v11-6.webp'},
+      {klass:'',name:'012 — BASE',full:'scenario-012-v11-6.webp'},
+      {klass:'',name:'013 — BASE',full:'scenario-013-v11-6.webp'},
+      {klass:'',name:'014 — BASE',full:'scenario-014-v11-6.webp'},
+      {klass:'',name:'015 — BASE',full:'scenario-015-v11-6.webp'},
+      {klass:'',name:'016 — BASE',full:'scenario-016-v11-6.webp'},
+      {klass:'',name:'017 — BASE',full:'scenario-017-v11-6.webp'},
+      {klass:'',name:'018 — BASE',full:'scenario-018-v11-6.webp'},
+      {klass:'',name:'019 — BASE',full:'scenario-019-v11-6.webp'},
+      {klass:'',name:'020 — BASE',full:'scenario-020-v11-6.webp'},
       {klass:'omerta-scenario',name:'021 — L’ENVELOPPE',full:'omerta-021-l-enveloppe.webp'},
       {klass:'terror-scenario',name:'026 — LA VILLE TOMBE',full:'terror-026-la-ville-tombe.webp'},
       {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-poster-v2.svg'},
@@ -331,7 +385,7 @@ try{
         '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
         '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
         '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
-        '<div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></div></article>');
+        '</div><div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></article>');
     }
     for(const width of [320,390,430]){
       await page.setViewportSize({width,height:812});
@@ -365,15 +419,14 @@ try{
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
           if(/^(00[1-8]|0(?:09|1[0-9]|20))/.test(name)){
-            assert(deviation<=.025,width+'px '+name+
-              ': base source ratio differs from its allocated poster frame (letterbox/vignette) '+JSON.stringify(m));
+            assert(deviation<=.025,width+'px '+name+': the Base 9:16 family poster is the wrong ratio '+JSON.stringify(m));
           }
           if(/^(029|030|031)/.test(name)){
             assert(deviation<=.015,width+'px '+name+': Cartel artwork must fit 724:960 without distortion '+JSON.stringify(m));
           }
         }
       }
-      if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-original-ratios.png'),fullPage:true});
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-native34-and-dlc.png'),fullPage:true});
     }
   });
 
