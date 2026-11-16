@@ -244,3 +244,43 @@
   .casino-live .casino-roster-disclosure>summary::before,
   .casino-live .casino-role-choice-card{transition:none}
 }
+
+
+/* v730 — Casino follows the same preparation rhythm without losing its burgundy identity. */
+.casino-live .casino-lobby-top{max-width:760px;margin:0 auto}
+.casino-live .casino-lobby-access{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
+  gap:10px 14px;padding:12px 15px;border:1px solid #5b4236;
+  border-radius:13px;background:linear-gradient(145deg,#1d1215,#0e0c0e)
+}
+.casino-live .casino-lobby-access>div{min-width:0}
+.casino-live .casino-lobby-access span{
+  display:block;color:#c3a689;font:800 10px/1.35 ui-monospace,monospace;
+  letter-spacing:.11em
+}
+.casino-live .casino-lobby-access h1{
+  margin:3px 0 0!important;color:#f2d9bc;
+  font:800 clamp(17px,4.7vw,25px)/1.18 ui-monospace,monospace;
+  letter-spacing:.07em;overflow-wrap:anywhere
+}
+.casino-live .casino-lobby-access .casino-action{
+  width:auto;min-width:95px;min-height:44px;margin:0;
+  padding:10px 13px;font-size:12px
+}
+.casino-live .casino-lobby-top>p{
+  margin:9px 0 0;color:#c5aea0;font-size:12px;line-height:1.5
+}
+.casino-live .casino-lobby-top>output:not(:empty){
+  margin:9px 0 0;padding:7px 10px;border-radius:8px;
+  background:#21171a;color:#ebcfa8
+}
+.casino-live .casino-role-choice-zone{margin-top:14px;margin-bottom:11px}
+.casino-live .casino-roster-disclosure{margin-top:0;margin-bottom:12px}
+.casino-live .casino-ready{margin-top:2px}
+@media(max-width:380px){
+  .casino-live .casino-lobby-access{padding:11px;gap:8px}
+  .casino-live .casino-lobby-access h1{font-size:16px;letter-spacing:.035em}
+  .casino-live .casino-lobby-access .casino-action{
+    min-width:80px;padding:10px 9px;font-size:11px
+  }
+}
