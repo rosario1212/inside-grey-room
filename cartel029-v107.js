@@ -15,23 +15,53 @@ const fields=[
  ['responsibilities','Qui dirige et qui est responsable ?','Who runs Los Salcedo and who is responsible?','Hiérarchie et faits étayés par des preuves.'],
  ['protection','Comment protéger les captifs ?','How can the captives be protected?','Trois rescapés, leurs proches et vingt captifs.']
 ];
-let record=null,seen='',loading=false,last=0,dirty=false,message='';
+let record=null,seen='',loading=false,last=0,dirty=false,message='',draft=null;
 const key=()=>[sync()?.room?.code,sync()?.player?.id,sync()?.room?.state?.match_no||1].join(':');
-function reset(){if(seen!==key()){record=null;seen=key();loading=false;last=0;dirty=false;message=''}}
+const draftKey=()=>['igr029-report-draft',...key().split(':')].join(':');
+const allowedFields=new Set(['santa_ceniza','activities','responsibilities','protection','responsibility_choice','witness4_assessment']);
+function restoreDraft(){
+ try{
+  const data=JSON.parse(window.sessionStorage?.getItem(draftKey())||'null');
+  if(!data||typeof data!=='object'||Array.isArray(data))return null;
+  const clean={};
+  for(const [name,value] of Object.entries(data))
+   if(allowedFields.has(name)&&typeof value==='string')clean[name]=value.slice(0,1200);
+  return Object.keys(clean).length?clean:null;
+ }catch{return null}
+}
+function keepDraft(values){
+ draft={...values};dirty=true;
+ try{window.sessionStorage?.setItem(draftKey(),JSON.stringify(draft))}catch{}
+}
+function clearDraft(){
+ draft=null;dirty=false;
+ try{window.sessionStorage?.removeItem(draftKey())}catch{}
+}
+function currentFields(){
+ const values={};
+ for(const el of document.querySelectorAll('[data-igr029-field]'))
+  if(allowedFields.has(el.dataset.igr029Field))values[el.dataset.igr029Field]=el.value;
+ return values;
+}
+function reset(){
+ if(seen===key())return;
+ record=null;seen=key();loading=false;last=0;dirty=false;message='';
+ draft=restoreDraft();dirty=!!draft;
+}
 function mission(){
  return '<section class="igr029-mission"><small>029 · LE CYCLE MORT</small><h3>'+esc(tr('Trois questions à résoudre','Three questions to resolve'))+'</h3><ol>'+
  fields.slice(0,3).map(f=>'<li>'+esc(tr(f[1],f[2]))+'</li>').join('')+'</ol><p>'+esc(tr('En parallèle : protéger les rescapés, leurs familles et les vingt captifs. Une menace ne prouve pas qu’elle a été exécutée.','Also: protect the survivors, their families and the twenty captives. A threat is not evidence that harm has occurred.'))+'</p></section>';
 }
 function finalChoice(key,label,options){
  const disabled=record?.status==='submitted';
- const previous=record?.fields?.[key]||'unknown';
+ const previous=draft?.[key]??record?.fields?.[key]??'unknown';
  return '<label class="igr029-field"><b>'+esc(label)+'</b><select data-igr029-field="'+key+'" '+(disabled?'disabled':'')+' onchange="igr029MarkDirty()">'+options.map(([v,t])=>'<option value="'+v+'" '+(v===previous?'selected':'')+'>'+esc(t)+'</option>').join('')+'</select></label>';
 }
 function reportBody(){
- if(!record)return '<p class="igr029-note">'+esc(message||tr('Chargement du rapport…','Loading report…'))+'</p>';
- const disabled=record.status==='submitted'||sync()?.room?.status==='finished';
+ if(!record&&!draft)return '<p class="igr029-note">'+esc(message||tr('Chargement du rapport…','Loading report…'))+'</p>';
+ const disabled=record?.status==='submitted'||sync()?.room?.status==='finished';
  return '<p class="igr029-note">'+esc(tr('Répondez simplement aux trois questions. Enregistrez à tout moment ; l’enquêteur et l’analyste partagent ce brouillon.','Answer the three questions. Save any time; the investigator and analyst share the draft.'))+'</p>'+
- fields.map((f,i)=>'<label class="igr029-field"><b>'+(i<3?i+1+'. ':'')+esc(tr(f[1],f[2]))+'</b><small>'+esc(f[3])+'</small><textarea data-igr029-field="'+f[0]+'" maxlength="1200" rows="3" '+(disabled?'readonly':'')+' oninput="igr029MarkDirty()">'+esc(record.fields?.[f[0]]||'')+'</textarea></label>').join('')+
+ fields.map((f,i)=>'<label class="igr029-field"><b>'+(i<3?i+1+'. ':'')+esc(tr(f[1],f[2]))+'</b><small>'+esc(f[3])+'</small><textarea data-igr029-field="'+f[0]+'" maxlength="1200" rows="3" '+(disabled?'readonly':'')+' oninput="igr029MarkDirty()">'+esc(draft?.[f[0]]??record?.fields?.[f[0]]??'')+'</textarea></label>').join('')+
  (Number(sync()?.room?.cycle)===3?'<div class="igr029-final-choices"><h4>'+esc(tr('Deux conclusions finales','Two final conclusions'))+'</h4>'+
  finalChoice('responsibility_choice',tr('Qui a décidé la représaille ?','Who ordered the reprisal?'),[
  ['unknown',tr('Preuves insuffisantes','Insufficient evidence')],['local',tr('Direction locale','Local leadership')],
@@ -53,7 +83,10 @@ async function load(force=false){
   const result=await rpc('igr_v107_029_report',{p_code:sync().room.code,p_player_token:state().token,p_patch:null,p_submit:false});
   if(k!==key())return;
   if(!result||!['draft','submitted'].includes(result.status))throw Error('Invalid report');
-  if(!dirty){record=result;message='';repaint()}
+  if(!dirty||result.status==='submitted'){
+    record=result;if(result.status==='submitted')clearDraft();
+    message='';repaint();
+   }else if(!record){record=result;repaint()}
  }catch(e){message=tr('Rapport momentanément indisponible.','Report unavailable.');repaint();console.warn('[029]',e?.message||e)}
  finally{loading=false}
 }
@@ -61,17 +94,28 @@ function controls(){return '<section class="igr029-report"><h3>'+esc(tr('Rapport
 async function save(submit){
  if(!active()||!member()||loading||!state()?.token||sync()?.room?.status!=='playing')return;
  if(submit&&(!lead()||Number(sync()?.room?.cycle)!==3))return;
- const patch={};for(const el of document.querySelectorAll('[data-igr029-field]'))patch[el.dataset.igr029Field]=el.value;
+ const patch=currentFields();
+ // A failed or lost network response must never destroy the investigator's answers.
+ keepDraft(patch);
+ if(submit&&(['santa_ceniza','activities','responsibilities'].some(k=>(patch[k]||'').trim().length<12)||
+   !['local','execution','finance','unknown'].includes(patch.responsibility_choice)||
+   !['innocent','coerced','voluntary','operative','unknown'].includes(patch.witness4_assessment))){
+  message=tr('Complète les trois conclusions et les deux choix finaux avant la remise.','Complete all three findings and both final choices before submitting.');
+  repaint();return;
+ }
  const k=key();loading=true;message=tr('Enregistrement…','Saving…');
  try{
   const value=await rpc('igr_v107_029_report',{p_code:sync().room.code,p_player_token:state().token,p_patch:patch,p_submit:!!submit});
   if(k!==key())return;
   if(!value||!['draft','submitted'].includes(value.status))throw Error('Invalid save');
-  record=value;dirty=false;message=submit?tr('Rapport remis.','Report submitted.'):tr('Rapport enregistré.','Report saved.');repaint();
- }catch(e){message=tr('Échec de l’enregistrement : vérifiez les réponses et la phase.','Save failed: check answers and phase.');repaint();console.warn('[029 save]',e?.message||e)}
+  record=value;clearDraft();message=submit?tr('Rapport remis.','Report submitted.'):tr('Rapport enregistré.','Report saved.');repaint();
+ }catch(e){
+  message=tr('Enregistrement non confirmé : tes réponses sont conservées dans cet onglet. Vérifie la connexion et réessaie.','Save not confirmed: your answers are preserved in this tab. Check your connection and retry.');
+  repaint();console.warn('[029 save]',e?.message||e)
+ }
  finally{loading=false}
 }
-window.igr029MarkDirty=()=>{dirty=true};window.igr029SaveReport=()=>save(false);window.igr029SubmitReport=()=>save(true);
+window.igr029MarkDirty=()=>{if(!record||record.status!=='submitted')keepDraft(currentFields())};window.igr029SaveReport=()=>save(false);window.igr029SubmitReport=()=>save(true);
 const original=typeof renderGameTab==='function'?renderGameTab:null;
 if(original){const wrapped=function(){
  const html=original.apply(this,arguments);
