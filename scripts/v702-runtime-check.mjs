@@ -98,8 +98,10 @@ assert(context.catalogueTeaser(longSynopsis).endsWith('…'),
   'Long catalogue previews must signal that more detail is available');
 assert.equal(context.catalogueTeaser(longSynopsis,19).split(/\s+/).length,19,
   'DLC previews must stay within 19 words');
-assert(context.catalogueTeaser('Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres. Trois captifs racontent la suite.',19).endsWith('.'),
-  'DLC catalogue summaries should end at a complete sentence where possible');
+assert(context.catalogueTeaser('Plusieurs responsables sont interrogés dans une ville coupée du monde. Les enquêteurs cherchent qui a donné les ordres. La suite reste confidentielle.',19).endsWith('.'),
+  'DLC catalogue previews should use a complete sentence whenever one fits the word budget');
+assert(context.catalogueTeaser('Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres. Trois captifs racontent la suite.',19).split(/\s+/).length<=19,
+  'When a longer sentence does not fit, the DLC teaser must still respect its word budget');
 assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
   'The selected dossier must retain the complete narrative context');
 const fullCopyCss=await read('catalog-descriptions-v1.css');
