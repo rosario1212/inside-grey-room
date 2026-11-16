@@ -140,6 +140,7 @@ const observer=new MutationObserver(records=>{
  )))scheduleRoleCardDecoration();
 });
 observer.observe(document.documentElement,{subtree:true,childList:true});
+scheduleRoleCardDecoration(); // Apply to a restored lobby already in the DOM.
 const every50=(key,ms,fn)=>window.IGR_RUNTIME_COORDINATOR?.every?window.IGR_RUNTIME_COORDINATOR.every(key,ms,fn):setInterval(fn,ms);
 every50('v50-role-state',2200,()=>refresh(false));
 setTimeout(()=>refresh(true),250);
