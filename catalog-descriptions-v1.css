@@ -305,3 +305,61 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   transform:none!important;
   filter:drop-shadow(0 2px 8px rgba(0,0,0,.45))!important;
 }
+
+/* Unified full-frame poster v7 — the whole artwork must always be visible.
+   Classic dossiers use the original full image rather than a cropped thumbnail.
+   The ambient layer fills the portrait column, preventing flat letterboxing
+   without sacrificing door numbers, embedded text or the poster's framing.
+   This is intentionally scoped to the scenario catalogue only. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background-color:#080a0d!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact > img.igr-poster-ambient{
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  padding:0!important;
+  aspect-ratio:auto!important;
+  z-index:0!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  filter:blur(8px) brightness(.60) saturate(.78)!important;
+  opacity:.97!important;
+  transform:scale(1.10)!important;
+  pointer-events:none!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact > img.igr-poster-full{
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  padding:1px!important;
+  box-sizing:border-box!important;
+  aspect-ratio:auto!important;
+  z-index:1!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  filter:drop-shadow(0 1px 6px rgba(0,0,0,.38))!important;
+  opacity:1!important;
+  transform:none!important;
+  pointer-events:none!important;
+}
+/* Lower-brightness treatment belongs to each DLC; keep their own palettes. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
+  .scenario-thumb.compact > img.igr-poster-ambient{
+  filter:blur(9px) brightness(.50) saturate(.72)!important;
+}
