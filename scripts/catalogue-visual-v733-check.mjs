@@ -208,8 +208,8 @@ try{
             `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
           assert(Math.abs(item.posterRect.width-item.thumbRect.width)<2,
             `v737 ${width}px ${item.id}: poster artwork frame not matched to Omerta`);
-          if(family==='base')assert(item.tagsTop-item.descriptionBottom<=27,
-            `v749 ${width}px ${item.id}: empty gap between synopsis and players is too large`);
+          assert(item.tagsTop-item.descriptionBottom<=27,
+            `v750 ${width}px ${item.id}: empty gap between synopsis and players is too large`);
           assert(item.tagsTop>=item.descriptionBottom-1,
             `v737 ${width}px ${item.id}: synopsis overlaps its player badges`);
           assert(item.badgesBottom<=item.cardBottom+1.5,`v737 ${width}px ${item.id}: player badge overflow`);
