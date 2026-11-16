@@ -71,4 +71,63 @@ assert(casino.includes("?.role!==selected"),'Re-selecting the same role must not
 assert(casinoCss.includes('casino-role-choice-grid--bureau')&&casinoCss.includes('casino-role-choice-footnote'),'Responsive grouped role UI must be styled');
 
 
+
+// v730 — all four online campaigns must present role selection before the roster.
+// Existing sealed-card authoring, role pools and multiplayer RPC permissions remain unchanged.
+const onlineLobbySource=js.slice(js.indexOf('function renderHLobby(d){'),js.indexOf('async function chooseHeritageRole(roleId){'));
+assert(onlineLobbySource.startsWith('function renderHLobby'),'Cendres/Kuroi lobby renderer missing');
+for(const campaign of ['cendres','kuroi']){
+ let rendered=null;
+ const render=runInNewContext(onlineLobbySource+';renderHLobby',{
+  hSession:()=>({hostToken:'host'}),
+  heritageMeta:()=>({title:campaign.toUpperCase(),chapters:[{title:'Dossier de test'}]}),
+  heritageRoleCards:()=>({markup:'<section class="hnet-role-zone">RÔLES</section>',invalid:0}),
+  window:{IGR_HERITAGE_PLAY:{publicRoles:()=>[{id:'chef',name:'Chef de cellule'}]}},
+  $:()=>null,esc:x=>String(x),shellPut:(html,preserve)=>{rendered={html,preserve}}
+ },{timeout:1000});
+ render({room:{campaign_id:campaign,chapter:1,code:'H1234'},players:[
+  {id:'p1',pseudo:'Ana',preferred_role:'chef',is_host:true},
+  {id:'p2',pseudo:'Bob',preferred_role:null,is_host:false}]});
+ assert(rendered?.preserve,'Heritage '+campaign+' lobby updates must preserve scrolling');
+ assert(rendered.html.indexOf('<section class="hnet-role-zone"')<rendered.html.indexOf('<details class="hnet-roster-disclosure"'),'Role choice must precede roster in '+campaign);
+ assert(rendered.html.includes('CODE D’INVITATION')&&rendered.html.includes('Participants à la table'),'Invitation and expandable roster missing in '+campaign);
+}
+const maitreLobbySource=maitre.slice(maitre.indexOf('function lobby(d){'),maitre.indexOf('function reveal(d){'));
+assert(maitreLobbySource.startsWith('function lobby'),'MAÎTRE online lobby renderer missing');
+let renderedMaitre=null;
+const renderMaitre=runInNewContext(maitreLobbySource+';lobby',{
+ sess:()=>({hostToken:'host'}),maitreRoleIds:()=>['avocat','client','enqueteur','procureur','juge'],
+ ROLES:[{id:'avocat',name:'Avocat'}],role:id=>({id,name:id.toUpperCase(),short:'Description.',activity:4}),
+ pc:()=>({title:'Dossier de test'}),$:()=>null,esc:x=>String(x),
+ put:(html,preserve)=>{renderedMaitre={html,preserve}}
+},{timeout:1000});
+renderMaitre({room:{chapter:1,code:'H4321'},player:{preferred_role:'avocat'},
+ players:['avocat','client','enqueteur','procureur','juge'].map((id,i)=>({id:'p'+i,pseudo:'J'+i,preferred_role:i?null:id,is_host:i===0}))});
+assert(renderedMaitre?.preserve,'MAÎTRE lobby must preserve scrolling');
+assert(renderedMaitre.html.indexOf('<section class="hnet-role-zone"')<renderedMaitre.html.indexOf('<details class="hnet-roster-disclosure"'),'MAÎTRE roles must precede roster');
+assert(renderedMaitre.html.includes('CODE D’INVITATION')&&renderedMaitre.html.includes('Participants à la table'),'MAÎTRE invitation or expandable roster missing');
+assert(casinoHTML.indexOf('<section class="casino-role-choice-zone"')<casinoHTML.indexOf('<details class="casino-roster-disclosure"'),'Casino roles must precede roster');
+assert(casinoHTML.includes('casino-lobby-access'),'Casino invite code should use compact shared hierarchy');
+
+assert(casinoHTML.includes('PRÉPARATION INCOMPLÈTE'),'Casino cannot launch with fewer than seven players or missing mandatory roles');
+const casinoReadyLobby=runInNewContext(casinoLobbySource+';lobby',{
+ state:{viewer:'me',inviteCode:'TESTCODE',isHost:true,members:[
+  {id:'me',name:'J1',role:'casino',ready:true},
+  {id:'p2',name:'J2',role:'casino',ready:true},
+  {id:'p3',name:'J3',role:'casino',ready:true},
+  {id:'p4',name:'J4',role:'casino',ready:true},
+  {id:'p5',name:'J5',role:'agent',ready:true},
+  {id:'p6',name:'J6',role:'investigator',ready:true},
+  {id:'p7',name:'J7',role:'analyst',ready:true}
+ ]},
+ roles:roleNames,roleShort:x=>'Brève du rôle '+x,roleStars:()=> '★★★★☆',esc:x=>String(x)
+},{timeout:1000});
+assert(casinoReadyLobby().includes('LANCER LE DOSSIER')&&!casinoReadyLobby().includes('PRÉPARATION INCOMPLÈTE'),'Casino valid configuration should enable host launch');
+
+assert(js.includes('savedScroll=preserveLobby')&&maitre.includes('savedScroll=preserveLobby'),'Live lobby updates must not jump to top');
+assert(js.includes("getAttribute('aria-pressed')!=='true'")&&maitre.includes("getAttribute('aria-pressed')==='true'"),'An already selected role must not trigger a redundant network request');
+for(const marker of ['hnet-activity-note','hnet-roster-disclosure','hnet-code strong','hnet-role-random'])assert(css.includes(marker),'Unifying Heritage CSS missing '+marker);
+for(const marker of ['casino-lobby-access','casino-roster-disclosure'])assert(casinoCss.includes(marker),'Casino CSS missing '+marker);
+console.log('PASS v730: four Heritage online lobbies align roles, invitation, roster and scroll position.');
+
 console.log('PASS v729: CENDRES/KUROI/MAÎTRE role reservations, Casino cards, 5-7 seats, private role boundaries, mobile UI and SQL contracts');
