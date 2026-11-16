@@ -360,7 +360,9 @@ try{
       }));
       const first=data[0];
       for(const m of data){
-        assert(m.fullFit==='cover',width+'px '+m.id+': artwork must fill the shared Omerta frame without distortion');
+        const expectedFit=m.id==='018'?'contain':'cover';
+        assert(m.fullFit===expectedFit,width+'px '+m.id+
+          ': artwork framing must respect the full 018 poster without altering other classic dossiers');
         assert(Math.abs(m.posterFrameWidth-first.posterFrameWidth)<.5&&
                Math.abs(m.posterFrameHeight-first.posterFrameHeight)<.5,
           width+'px '+m.id+': base poster differs from other dossiers 009–020');
