@@ -2,7 +2,7 @@
 .igr-scenario-filters{position:relative;z-index:10;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;max-width:100%;margin:0 0 16px;overflow:visible;padding:10px 12px;background:#090a0c;border:1px solid rgba(255,255,255,.10);border-radius:14px}
 .igr-catalog-label{font-size:.68rem;font-weight:800;letter-spacing:.12em;color:#9ea3ad;white-space:nowrap}
 .igr-catalog-select-wrap{position:relative;min-width:0}
-.igr-catalog-select{display:block;appearance:none;-webkit-appearance:none;box-sizing:border-box;width:100%;height:48px;min-width:0;padding:0 36px 0 14px;border-radius:11px;border:1px solid rgba(255,255,255,.18);background:#151619;color:#f0f1f4;font:650 .88rem/1.35 inherit;letter-spacing:0;outline:none;cursor:pointer;touch-action:manipulation}
+.igr-catalog-select{display:block;appearance:none;-webkit-appearance:none;box-sizing:border-box;width:100%;height:48px;min-width:0;padding:0 36px 0 14px;border-radius:11px;border:1px solid rgba(255,255,255,.18);background:#151619;color:#f0f1f4;font-family:inherit;font-size:.88rem;font-weight:650;line-height:1.35;letter-spacing:0;outline:none;cursor:pointer;touch-action:manipulation}
 .igr-catalog-select option{color:#f0f1f4;background:#151619}
 .igr-catalog-select:focus-visible{border-color:#c1c4ca;box-shadow:0 0 0 2px rgba(198,202,209,.16)}
 .igr-catalog-chevron{position:absolute;right:14px;top:50%;transform:translateY(-55%);color:#bcc0c6;font-size:1.3rem;line-height:1;pointer-events:none}
