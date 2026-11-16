@@ -236,11 +236,17 @@ try{
     await page.waitForFunction(()=>document.body.classList.contains('igr-catalogue-scrolled'),null,{timeout:1500});
     // Small only while scrolling; once motion stops, both labels return
     // even at dossier 020, as explicitly requested.
-    const compact=await page.locator('#igrDockFilters,#igrDockHome').evaluateAll(nodes=>nodes.map(n=>({
-      width:n.getBoundingClientRect().width,
-      labelDisplay:getComputedStyle(n.querySelector('b')).display,
-      clickArea:n.getBoundingClientRect().height
-    })));
+    const compact=await page.evaluate(()=>{
+      // Emulate the last active scroll tick and read the style synchronously.
+      // Avoid a test-runner scheduling gap longer than the 430ms idle timer.
+      window.dispatchEvent(new Event('scroll'));
+      return [...document.querySelectorAll('#igrDockFilters,#igrDockHome')].map(n=>({
+        width:n.getBoundingClientRect().width,
+        labelDisplay:getComputedStyle(n.querySelector('b')).display,
+        clickArea:n.getBoundingClientRect().height,
+        state:document.body.className
+      }));
+    });
     assert(compact.every(x=>x.width<=45&&x.width>=42&&x.clickArea>=42&&x.labelDisplay==='none'),
       'v738: Filtres and Accueil should be icon-only during active scroll: '+JSON.stringify(compact));
     await page.waitForFunction(()=>{
