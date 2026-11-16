@@ -270,7 +270,7 @@ try{
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
         assert(Math.abs(m.width-m.containerWidth)<=1&&Math.abs(m.height-m.containerHeight)<=1,
-          width+'px '+name+': artwork does not fully occupy its column');
+          width+'px '+name+': artwork does not fully occupy its column '+JSON.stringify(m));
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v7-actual-artwork-001-and-032.png'),fullPage:true});
     }
