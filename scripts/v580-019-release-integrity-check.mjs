@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {assertPwaRevision} from './pwa-release-consistency.mjs';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 const read=p=>readFileSync(p,'utf8');
@@ -12,8 +13,7 @@ const deploy=read('.github/workflows/cloudflare-production-deploy.yml');
 const v='santoro-display-audit-20261108';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+v),'HTML app revision mismatch');
-assert(sw.includes("const CACHE='igr-"+v+"'"),'Service worker cache mismatch');
-assert(sw.includes('/app-v11.js?v='+v),'Service worker shell mismatch');
+assertPwaRevision(html,sw);
 assert(app.includes("id:'019',title:'LE GRAND BAL'"),'019 catalog missing');
 assert(app.includes("'019':{required:['Enquêteur','Analyste','Procureur','Juge','Journaliste','Avocat','3 suspects'],optional:[]}"),'019 roles changed');
 assert(app.includes("Array.isArray(d.scenario?.investigation_019)"),'019 private investigation choices unavailable');
