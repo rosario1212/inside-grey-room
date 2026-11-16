@@ -17,7 +17,7 @@ const scenarios=['006','007','008'].map(id=>({id,title:id,short:id,min:5,max:5})
  const c=isolate('function renderCreateList(){',{
   IGR007_PUBLISH:flag,STATE:{view:'create-list'},
   byId:()=>target,shell:x=>x,SCENARIOS:scenarios,
-  scenarioThumbArt:id=>id,h:x=>x,playerCountLabel:()=> '5',
+  scenarioThumbArt:id=>id,scenarioArt:id=>id,h:x=>x,playerCountLabel:()=> '5',
   scenarioDifficultyTag:()=>'',refresh007PublishState:()=>{}
  });
  c.renderCreateList();

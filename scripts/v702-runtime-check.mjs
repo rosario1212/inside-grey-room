@@ -68,11 +68,14 @@ assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing sh
 assert(app.includes('scenarioCardTeaser(sc.short)'), 'Classic cards must use the shared 30-word preview');
 for(const [label,source] of [['DLC',dlc],['premium catalogue',premium]]){
  assert(source.includes('class="igr-card-excerpt"'),label+' card must show a teaser');
- assert(source.includes('scenarioCardTeaser(sc.short,21)'),label+' card must use the shorter DLC-specific preview');
+ assert(source.includes('scenarioCardTeaser(sc.short,19)'),label+' card must use the shorter DLC-specific preview');
  assert(source.includes('igr-poster-full')&&source.includes('igr-poster-ambient'),
    label+' must render the actual contained poster over its ambient background');
 }
-assert(!app.includes('class="igr-poster-ambient"'),'Landscape classic thumbnails must not be letterboxed');
+assert(app.includes('class="igr-poster-ambient"') && app.includes('class="igr-poster-full"'),
+ 'Classic 001-020 must use a complete foreground image and full-height ambient backdrop');
+assert(app.includes('src="${scenarioArt(sc.id)}"'),
+ 'Classic cards must load original uncropped artwork, not reuse cropped thumbnails as foreground');
 const start=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
 const end=app.indexOf('\nconst ADVANCED_SCENARIO_IDS=',start);
 assert(start>=0&&end>start,'Cannot locate pure card teaser implementation');
@@ -93,10 +96,12 @@ assert.equal(context.catalogueTeaser(longSynopsis).split(/\s+/).length,30,
   'Catalogue previews are capped at 30 words across all screen widths');
 assert(context.catalogueTeaser(longSynopsis).endsWith('…'),
   'Long catalogue previews must signal that more detail is available');
-assert.equal(context.catalogueTeaser(longSynopsis,21).split(/\s+/).length,21,
-  'DLC previews must stay within 21 words');
-assert(context.catalogueTeaser('Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres. Trois captifs racontent la suite.',21).endsWith('.'),
-  'DLC catalogue summaries should end at a complete sentence where possible');
+assert.equal(context.catalogueTeaser(longSynopsis,19).split(/\s+/).length,19,
+  'DLC previews must stay within 19 words');
+assert(context.catalogueTeaser('Plusieurs responsables sont interrogés dans une ville coupée du monde. Les enquêteurs cherchent qui a donné les ordres. La suite reste confidentielle.',19).endsWith('.'),
+  'DLC catalogue previews should use a complete sentence whenever one fits the word budget');
+assert(context.catalogueTeaser('Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres. Trois captifs racontent la suite.',19).split(/\s+/).length<=19,
+  'When a longer sentence does not fit, the DLC teaser must still respect its word budget');
 assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
   'The selected dossier must retain the complete narrative context');
 const fullCopyCss=await read('catalog-descriptions-v1.css');

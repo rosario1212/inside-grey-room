@@ -132,18 +132,21 @@ try{
     const longText=Array.from({length:47},(_,i)=>'mot'+i).join(' ');
     const compact=teaser(longText);
     assert.equal(compact.split(/\s+/).length,30,'Classic card descriptions must be capped at 30 words');
-    assert.equal(teaser(longText,21).split(/\s+/).length,21,'DLC descriptions must be capped at 21 words');
+    assert.equal(teaser(longText,19).split(/\s+/).length,19,'DLC descriptions must be capped at 19 words');
     assert(compact.endsWith('…'),'Long catalogue descriptions should signal continuation');
     assert.equal(teaser('Une description courte et complète.'),'Une description courte et complète.');
     assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
       'Opening a dossier must still display its complete context');
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
-      assert(source.includes('scenarioCardTeaser(sc.short,21)'),file+': public DLC cards must use 21 words');
+      assert(source.includes('scenarioCardTeaser(sc.short,19)'),file+': public DLC cards must use 19 words');
       assert(source.includes('igr-poster-full')&&source.includes('igr-poster-ambient'),
         file+': every DLC rendering pathway must keep full portrait posters');
     }
-    assert(!app.includes('class="igr-poster-ambient"'),'Classic cards should keep a single cover thumbnail');
+    assert(app.includes('class="igr-poster-ambient"')&&app.includes('class="igr-poster-full"'),
+      'Classic cards must also have full-image foreground + ambient fill');
+    assert(app.includes('src="${scenarioArt(sc.id)}"'),
+      'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
   await check('catalog-v5-five-universes-responsive-cards',async()=>{
@@ -158,9 +161,9 @@ try{
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
-      (sc.klass ? '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" style="object-fit:contain!important;aspect-ratio:auto!important" src=""></div>' : '<div class="scenario-thumb compact"><img alt="Photo du dossier" src=""></div>')+
+      '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?21:30)+'</p><div class="tag-row">'+
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:30)+'</p><div class="tag-row">'+
       '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:820});
@@ -218,17 +221,60 @@ try{
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='cover',width+'px '+name+': artwork background must cover its column');
-        if(samples[i].klass){
-          assert(m.imageCount===2,width+'px '+name+': portrait DLC must have ambient + full poster layers');
-          assert(m.fullFit==='contain',width+'px '+name+': DLC poster lettering must remain inside its frame');
-          assert(parseFloat(m.fullPadding)<=5,width+'px '+name+': poster inset too large');
-        } else {
-          assert(m.imageCount===1,width+'px '+name+': classic artwork must not have extra letterboxed image');
-          assert(m.fullFit===null,width+'px '+name+': classic landscape must not use portrait framing');
-        }
+        assert(m.imageCount===2,width+'px '+name+': every dossier must use two image layers');
+        assert(m.fullFit==='contain',width+'px '+name+': full image must not lose any part, including its title');
+        assert(parseFloat(m.fullPadding)<=2,width+'px '+name+': foreground has too much padding');
         assert(m.textVisible,width+'px '+name+': description hidden');
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v3-five-universes-iphone.png'),fullPage:true});
+    }
+  });
+
+
+  await check('catalog-v7-real-full-posters-001-032',async()=>{
+    const assets=[
+      {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp',ambient:'scenario-thumb-001.webp'},
+      {klass:'regime-scenario',name:'032 — LES ARCHIVES DU PALAIS',full:'regime-032-les-archives-du-palais.webp',ambient:'regime-032-les-archives-du-palais.webp'}
+    ];
+    const toData=async file=>{
+      const bytes=await readFile(path.join(target,'assets',file));
+      return 'data:image/webp;base64,'+bytes.toString('base64');
+    };
+    const markup=[];
+    for(const item of assets){
+      const [foreground,background]=await Promise.all([toData(item.full),toData(item.ambient)]);
+      markup.push('<article class="scenario scenario--art scenario--compact '+item.klass+'"><div class="scenario-thumb compact">'+
+        '<img class="igr-poster-ambient" alt="" aria-hidden="true" src="'+background+'">'+
+        '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
+        '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
+        '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
+        '<div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></div></article>');
+    }
+    for(const width of [320,390,430]){
+      await page.setViewportSize({width,height:812});
+      await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
+        '<style>'+css+'</style></head><body><div id="app"><main class="page page-create-v10-13">'+
+        '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+markup.join('')+
+        '</div></section></main></div></body></html>');
+      await page.waitForFunction(()=>[...document.querySelectorAll('.igr-poster-full')].every(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0));
+      const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
+        const img=el.querySelector('.igr-poster-full'),container=el.querySelector('.scenario-thumb').getBoundingClientRect(),
+          box=img.getBoundingClientRect(),fit=getComputedStyle(img).objectFit,
+          ambient=getComputedStyle(el.querySelector('.igr-poster-ambient')).objectFit;
+        const scale=Math.min(box.width/img.naturalWidth,box.height/img.naturalHeight);
+        return {fit,ambient,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,
+          boxWidth:box.width,boxHeight:box.height,renderedWidth:img.naturalWidth*scale,
+          renderedHeight:img.naturalHeight*scale,inside:box.left>=container.left-1&&box.right<=container.right+1&&box.top>=container.top-1&&box.bottom<=container.bottom+1};
+      }));
+      for(let i=0;i<metrics.length;i++){
+        const m=metrics[i],name=assets[i].name;
+        assert(m.fit==='contain',width+'px '+name+': image is cropped');
+        assert(m.ambient==='cover',width+'px '+name+': ambient background leaves hard bands');
+        assert(m.inside,width+'px '+name+': image overflows the artwork column');
+        assert(m.renderedWidth<=m.boxWidth+1&&m.renderedHeight<=m.boxHeight+1,
+          width+'px '+name+': original image cannot fit its frame');
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v7-actual-artwork-001-and-032.png'),fullPage:true});
     }
   });
 

@@ -20,7 +20,7 @@ export async function runDesktopChecks({page,css,app,read,check,report}){
     vm.runInNewContext(shell+source,scope);return output;
   }
   const create=staticPage(extract('function renderCreateList(){','function selectScenario(')+';renderCreateList();',{
-    SCENARIOS:scenarios,scenarioThumbArt:()=>'',playerCountLabel:()=> '7–10 joueurs',scenarioDifficultyTag:()=>''
+    SCENARIOS:scenarios,scenarioThumbArt:()=>'',scenarioArt:()=>'',playerCountLabel:()=> '7–10 joueurs',scenarioDifficultyTag:()=>''
   });
   const lobbySource=extract('function lobbyThemeForScenario(','async function chooseLobbyRole(');
   const choices=['Enquêteur','Analyste','Inspecteur','Expert','Journaliste','Procureur','Juge','Suspect'].map((label,i)=>({id:'role-'+i,cap:1,taken:0,info:{label,body:'Recoupe les déclarations et les faits. Tu disposes de tes propres informations et aides à reconstituer ce qui s’est passé.'}}));
