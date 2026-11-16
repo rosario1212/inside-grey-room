@@ -533,22 +533,21 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt {
-  display:-webkit-box!important;
-  -webkit-box-orient:vertical!important;
-  -webkit-line-clamp:3!important;
-  line-clamp:3!important;
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
   flex:0 1 auto!important;
   width:100%!important;
   min-width:0!important;
   min-height:0!important;
   height:auto!important;
-  max-height:4.26em!important;
+  max-height:none!important;
   margin:0!important;
   line-height:1.42!important;
   white-space:normal!important;
-  overflow:hidden!important;
+  overflow:visible!important;
   overflow-wrap:break-word!important;
-  text-overflow:ellipsis!important;
+  text-overflow:clip!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact > .tag-row {
@@ -601,18 +600,18 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
  }
  #app .page-create-v10-13 .scenario-list-v10-13
    > article.scenario.scenario--art.scenario--compact > .scenario-body.compact h3{
-   font-size:1.08rem!important;
+   font-size:1.21rem!important;
  }
  #app .page-create-v10-13 .scenario-list-v10-13
    > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt{
-   font-size:.80rem!important;
+   font-size:.91rem!important;
  }
 }
 @media(min-width:700px){
  #app .page-create-v10-13 .scenario-list-v10-13
    > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt{
-   -webkit-line-clamp:4!important;
-   line-clamp:4!important;
-   max-height:5.68em!important;
+   -webkit-line-clamp:unset!important;
+   line-clamp:unset!important;
+   max-height:none!important;
  }
 }
