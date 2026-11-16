@@ -32,7 +32,7 @@ const SHELL=[
   '/assets/heritage-maitre-01-le-client-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-02-le-deal-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-03-deux-choix-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-04-le-proces-final.webp?v=v34.9-maitre-theme-posters','/assets/heritage-maitre-05-l-honneur-final.webp?v=v34.9-maitre-theme-posters',
   '/assets/omerta-021-l-enveloppe.webp?v=12.37-final','/assets/omerta-022-omerta.webp?v=12.37-final','/assets/omerta-023-la-table.webp?v=12.37-final','/assets/omerta-024-il-pentito.webp?v=12.37-final','/assets/omerta-025-il-don.webp?v=12.37-final',
   '/assets/terror-026-la-ville-tombe.webp?v=12.37-final','/assets/terror-027-la-zone-rouge.webp?v=12.37-final','/assets/terror-028-dernier-perimetre.webp?v=12.37-final',
-  '/assets/cartel-029-le-cycle-mort.webp?v=cartel-original-webp-20261116','/assets/cartel-030-la-cour-achetee.webp?v=cartel-original-webp-20261116','/assets/cartel-031-la-dette.webp?v=cartel-original-webp-20261116',
+  '/assets/cartel-029-poster-v2.svg?v=v20261018-cartel-clean-scene-v6','/assets/cartel-030-poster-v2.svg?v=v20261018-cartel-clean-scene-v6','/assets/cartel-031-poster-v2.svg?v=v20261018-cartel-clean-scene-v6',
   '/assets/regime-032-les-archives-du-palais.webp?v=12.37-final','/assets/regime-033-la-dynastie.webp?v=12.37-final','/assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
 ];
 
