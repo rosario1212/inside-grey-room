@@ -25,6 +25,7 @@ assert.match(verdict,/votes_cast=electorate/);
 assert.match(verdict,/branch_votes\*2>electorate/);
 assert.match(verdict,/witness_votes\*2>electorate/);
 assert.match(verdict,/voter.public_role IN \('enqueteur','analyste','procureur','juge'\)/);
+assert.match(verdict,/majorités absolues/,'Public final phase must explain the collective verdict');
 assert.doesNotMatch(roles,/León Trejo dépasse|Rogelio.*approuve|Óscar Beltrán ordonne/);
 const storage=new Map();
 const sessionStorage={getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)};
