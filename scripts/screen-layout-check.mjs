@@ -97,7 +97,7 @@ try{
         assert(m.heightRule==='none',width+'px dossier '+cards[i].id+': fixed max-height is still active');
         assert(m.clamp==='none',width+'px dossier '+cards[i].id+': description is unexpectedly clamped');
         assert(m.textBottom+2<=m.tagTop,width+'px dossier '+cards[i].id+': text overlaps badges: '+JSON.stringify(m));
-        assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card');
+        assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card '+JSON.stringify(m));
         assert(!m.bodyOverflow,width+'px dossier '+cards[i].id+': text wider than card');
       }
       if(width===390)await page.screenshot({path:path.join(report,'regime-v162-iphone-cards.png'),fullPage:true});
