@@ -32,4 +32,5 @@ assert(omertaScript&&sw.includes('/'+omertaScript),'Omerta standalone script and
 assert(omertaScript.includes('santoro-display-audit-20261108'),'Omerta standalone must use a fresh versioned asset URL');
 assert(sw.includes("new Request(url,{cache:'reload'})"),'PWA installer must refresh all versioned assets even when reusing the cache key');
 assert(finalizer.includes("const clientVersion='"+cache+"'"),'production builder would reinstate stale 016 cache');
+assert(finalizer.includes('const sourceClientVersion='),'The build finalizer must keep the current catalogue app version');
 console.log('016 release gate: 5–9 roles, 3-axis final, private A/B/C pinned runtime, secured optional Expert, and PWA coherence PASS');
