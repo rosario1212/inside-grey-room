@@ -257,11 +257,11 @@ const PACKS={
           bengoshi:['Une clause du dossier de sortie de l’Oyabun ordonne de conserver toute preuve impliquant la police dans un dépôt tiers.','Préserver une copie indépendante, même si le groupe choisit de rendre l’original.']
         },
         options:[
-          {id:'copy',title:'COPIE TIERS · ORIGINAL NÉGOCIÉ',detail:'Une copie indépendante est préservée avant toute négociation.',grade:2,consequence:'La vérité survit sans exposer immédiatement tout le clan.'},
-          {id:'police',title:'RENDRE À LA POLICE',detail:'Le registre retourne entièrement sous contrôle institutionnel.',grade:0,consequence:'Des pages disparaissent et la police reprend l’initiative.'},
-          {id:'clan',title:'GARDER AU CLAN',detail:'Kurokawa conserve le registre et refuse toute remise.',grade:1,consequence:'La preuve survit, mais la coopération avec la police devient hostile.'}
+          {id:'copy',title:'COPIE TIERS · ORIGINAL NÉGOCIÉ',detail:'Une copie est confiée à un dépositaire indépendant. Ce recours protège la preuve, mais expose les témoins et les activités non liées au meurtre à une enquête ultérieure.',grade:2,consequence:'Une preuve indépendante subsiste, mais le clan ne peut plus contrôler ce qu’une enquête ultérieure découvrira.'},
+          {id:'police',title:'RENDRE À LA POLICE',detail:'Une remise officielle peut protéger les témoins à court terme, mais concentre les pièces chez des agents potentiellement compromis.',grade:0,consequence:'Des pages disparaissent et la police reprend l’initiative.'},
+          {id:'clan',title:'GARDER AU CLAN',detail:'Le clan garde les preuves et protège ses sources, au prix de leur faible force probante devant une autorité extérieure.',grade:1,consequence:'La preuve survit, mais la coopération avec la police devient hostile.'}
         ],
-        reveal:'La police voulait utiliser Kurokawa pour récupérer une preuve qu’elle ne pouvait saisir sans s’exposer. Le registre relie les opérations officieuses au meurtre de l’Oyabun.',
+        reveal:'La police voulait utiliser Kurokawa pour récupérer une preuve qu’elle ne pouvait saisir sans s’exposer. Le registre établit des liens entre opérations officieuses, accès à la résidence et membres de la police. L’auteur du commandement doit encore être distingué des exécutants.',
         apply:{copy:{flag:'k3_correct',chron:'Une copie indépendante du registre est mise à l’abri.'},police:{flag:'k3_wrong',chron:'Le registre revient sous contrôle policier et plusieurs pages disparaissent.'},clan:{flag:'k3_partial',chron:'Kurokawa conserve le registre et rompt une partie de la coopération.'}}
       },
       4:{
@@ -276,12 +276,12 @@ const PACKS={
         ],
         secrets:{
           waka_k:['L’Oyabun avait décidé de rompre avec la police et de publier le dossier de sortie sous 72 heures.','Établir le mobile institutionnel.'],
-          kobun_k:['Tu es Daichi Ren. Tu as tué l’Oyabun après que Mori a invoqué ta dette et transmis “la demande du Commissaire”.','Décider si tu avoues avant que les autres reconstruisent la chaîne.'],
+          kobun_k:['Tu es Daichi Ren. Tu as tué l’Oyabun après que Mori a invoqué ta dette et transmis « la demande du Commissaire ». Tu sais ce que tu as fait, mais tu n’as jamais vu l’ordre écrit d’Ishida.','Décider si tu avoues avant que les autres reconstruisent la chaîne.'],
           waka_a:['Arakida possède une photo de Ren entrant par l’accès de service, mais aucune preuve de l’ordre.','Éviter qu’une preuve de l’exécutant efface les commanditaires.'],
           kobun_a:['Tu as vu Mori détruire une copie du journal d’accès après le meurtre.','Nommer la couverture séparément de l’ordre.'],
           commissaire:['Tu as ordonné que “le problème Kurokawa soit réglé avant vendredi”, sachant que Mori avait un levier sur Ren.','Maintenir une défense fondée sur l’ambiguïté des mots, si tu le peux.'],
           inspecteur:['Tu as transmis l’ordre, ouvert l’accès et effacé le journal. Tu n’as pas porté le coup.','Faire reconnaître les différents niveaux de responsabilité.'],
-          bengoshi:['L’enveloppe de l’Oyabun contient une note : “Ishida ordonne. Mori fait faire. Ren paie sa dette.”','Ne produire la note qu’après avoir entendu les versions de chacun.']
+          bengoshi:['L’enveloppe contient trois mentions non signées, consignées séparément : une instruction venant du cabinet, un accès attribué à Mori et un rendez-vous de Ren. La note ne prouve pas à elle seule qui a ordonné de tuer.','Ne produire la note qu’après avoir entendu les versions de chacun.']
         },
         options:[
           {id:'chain',title:'ISHIDA → MORI → REN',detail:'Ordre du Commissaire, facilitation de l’Inspecteur, exécution du Kobun.',grade:2,consequence:'La chaîne complète entre au Registre et prépare le Conseil final.'},
@@ -293,7 +293,7 @@ const PACKS={
       },
       5:{
         title:'LE CONSEIL',
-        briefing:'La vérité est connue. Le Conseil réunit Kurokawa, Arakida, la police et le Bengoshi. Il ne s’agit plus seulement de savoir qui a tué : il faut décider ce que devient une vérité capable de détruire plusieurs institutions.',
+        briefing:'Le Conseil réunit Kurokawa, Arakida, des représentants de la police et le Bengoshi. La cellule dispose d’un récit du meurtre, mais sa solidité dépend des preuves préservées et des décisions antérieures. Il faut choisir ce qui sera révélé, à qui et avec quelles garanties.',
         question:'Que fait le Conseil de la vérité ?',
         phases:[
           ['MÉMOIRE','Relisez les dettes et la Chronique. Ce qui s’est passé dans les dossiers précédents limite les options crédibles.'],
@@ -312,10 +312,10 @@ const PACKS={
         },
         options:[
           {id:'public',title:'VÉRITÉ PUBLIQUE',qualitative:true,detail:'Transmettre le dossier complet à une autorité indépendante et assumer les conséquences des deux côtés.',grade:2,consequence:'Fin — LA LUMIÈRE FROIDE : les institutions paient, la Famille se fracture mais la dette cesse d’être secrète.'},
-          {id:'internal',title:'JUSTICE INTERNE',qualitative:true,detail:'Ishida tombe, Ren assume, mais le dossier complet ne devient pas public.',grade:1,consequence:'Fin — LE SILENCE NÉGOCIÉ : la paix tient, mais une partie du système survit.'},
-          {id:'scapegoat',title:'BOUC ÉMISSAIRE',qualitative:true,detail:'Accuser Arakida et refermer le dossier.',grade:0,consequence:'Fin — LA DETTE CONTINUE : la guerre évitée aujourd’hui devient la prochaine dette.'}
+          {id:'internal',title:'JUSTICE INTERNE',qualitative:true,detail:'Ishida tombe, Ren assume, mais le dossier intégral reste confidentiel au terme d’une procédure interne contestable.',grade:1,consequence:'Fin — LE SILENCE NÉGOCIÉ : la paix tient, mais une partie du système survit.'},
+          {id:'scapegoat',title:'BOUC ÉMISSAIRE',qualitative:true,detail:'Attribuer officiellement le meurtre au clan rival pour préserver les dirigeants, malgré une chaîne de preuves contradictoire.',grade:0,consequence:'Fin — LA DETTE CONTINUE : le mensonge peut retarder une crise, mais le risque de représailles et de nouvelles obligations demeure.'}
         ],
-        reveal:'Il n’existe pas de fin sans coût. KUROI mesure ce que le groupe accepte de rendre public, de sacrifier et de transmettre à ceux qui restent.',
+        reveal:'Aucune décision du Conseil ne répare le meurtre. La valeur de chaque issue dépend des preuves conservées, des responsabilités établies et des personnes exposées.',
         apply:{public:{flag:'k5_public',chron:'Le dossier Kuroi est transmis à une autorité indépendante.'},internal:{flag:'k5_internal',chron:'Le Conseil impose une justice interne et maintient une partie du secret.'},scapegoat:{flag:'k5_scapegoat',chron:'Arakida devient le bouc émissaire officiel du meurtre.'}}
       }
     }
@@ -479,7 +479,7 @@ function advanceReveal(){const l=readLive();if(!l)return;const idx=l.revealIndex
 
 function renderPlay(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter],idx=Math.max(0,Math.min(pc.phases.length-1,live.phaseIndex||0)),phase=pc.phases[idx];
-  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live,idx,s):'',late=cendresLateEvidence(live,idx,s);
+  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live,idx,s):'',late=cendresLateEvidence(live,idx,s)||kuroiLateEvidence(live,idx,s);
   shellPut(`<main class="page hplay hplay-session hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="session-menu">••• <span>Session</span></button><div class="hplay-mode">PHASE ${idx+1}/${pc.phases.length}</div></header>
     <section class="hplay-session-head"><span class="hplay-eyebrow">${esc(PACKS[live.campaignId].title)} · DOSSIER 0${live.chapter}</span><h1>${esc(phase[0])}</h1><p>${esc(phase[1])}</p></section>
@@ -487,7 +487,7 @@ function renderPlay(live){
       <div class="hplay-panel hplay-table-card"><span>AU CENTRE DE LA TABLE</span><h2>${idx===0?'Briefing commun':idx===pc.phases.length-1?'Décision à verrouiller':'Recoupement en cours'}</h2><p>${idx===0?esc(pc.briefing):idx===pc.phases.length-1?esc(pc.question):'Posez les informations à voix haute. Une information privée peut être racontée, jamais montrée directement.'}</p>${conditional?`<div class="hplay-conditional"><b>HÉRITAGE ACTIF</b><span>${esc(conditional)}</span></div>`:''}${late?`<div class="hplay-conditional hplay-audit"><b>RECOUPEMENT TARDIF</b><span>${esc(late)}</span></div>`:''}${annex?`<div class="hplay-conditional hplay-annex"><b>ANNEXE DE CELLULE</b><span>${esc(annex)}</span></div>`:''}</div>
       <aside class="hplay-panel hplay-roster"><span>RÔLES À TABLE</span>${live.players.map(p=>`<div><b>${esc(p.name)}</b><small>${esc(roleFor(live.campaignId,p.roleId)?.name||'')}</small></div>`).join('')}</aside>
     </section>
-    <nav class="hplay-session-nav"><button class="btn ghost" data-hp-action="phase-prev" ${idx===0?'disabled':''}>← PRÉCÉDENT</button>${idx<pc.phases.length-1?`<button class="btn primary" data-hp-action="phase-next">PHASE SUIVANTE →</button>`:`<button class="btn primary" data-hp-action="decision">VERROUILLER LA DÉCISION →</button>`}</nav>
+    <nav class="hplay-session-nav"><button class="btn ghost" data-hp-action="phase-prev" ${idx===0?'disabled':''}>← PRÉCÉDENT</button>${idx<pc.phases.length-1?`<button class="btn primary" data-hp-action="phase-next">PHASE SUIVANTE →</button>`:`<button class="btn primary" data-hp-action="decision">OUVRIR LE VOTE COLLECTIF →</button>`}</nav>
   </main>`);
 }
 
@@ -496,6 +496,13 @@ function missingRoleIntel(live,phaseIndex,carry){
   let omitted=ROLES[live.campaignId].filter(r=>!selected.has(r.id));
   if(!omitted.length)return '';
   const secrets=PACKS[live.campaignId].chapters[live.chapter].secrets;
+  if(live.campaignId==='kuroi'){
+    const neutral={
+      kobun_a:{1:'Un véhicule non marqué a été observé près de la résidence ; il reste à dater son trajet.',2:'Un échange de clé sans paiement a été constaté entre deux intermédiaires.',3:'L’entrepôt est surveillé ; aucune saisie officielle n’a encore été enregistrée.',4:'Une copie du journal d’accès a disparu après le meurtre.',5:'Des membres subalternes envisagent de quitter les clans si la crise s’étend.'},
+      bengoshi:{1:'Une enveloppe scellée existe, mais son contenu ne peut être présumé.',2:'Le registre consigne une ancienne faveur ; son sens et son effet doivent être établis.',3:'Une clause prévoit un dépôt indépendant des pièces mettant en cause la police.',4:'L’enveloppe rassemble trois traces à des dates distinctes, sans ordre criminel signé.',5:'Une transmission externe protégerait certaines preuves mais pourrait aussi exposer les témoins.'}
+    };
+    return omitted.map(r=>`${r.name} (rôle absent) : ${neutral[r.id]?.[live.chapter]||'La pièce attend un recoupement.'}`).join(' · ');
+  }
   if(live.campaignId==='cendres'){
     const crisis=Math.max(0,Number(carry?.cendres?.crisis?.level||0)),last=PACKS.cendres.chapters[live.chapter].phases.length-1;
     if(crisis>=3&&phaseIndex<last)return 'CRISE · Les annexes des rôles absents sont retenues en validation. Elles seront libérées avant la synthèse finale.';
@@ -512,8 +519,12 @@ function conditionalIntel(id,n,s){
     if(n===5){const good=['s1_correct','s2_correct','s3_correct','s4_correct'].filter(k=>f[k]).length;return good>=3?`La chaîne V-17 → 04:17 → accès internes est suffisamment stable pour éliminer un site par cohérence administrative.`:`La crise a absorbé une partie de vos certitudes. Vous devez privilégier contraintes physiques et habilitations plutôt que les synthèses précédentes.`}
     return `Le niveau de crise actuel est ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}.`;
   }
-  const f=s.kuroi?.flags||{};const choices=Object.keys(f).filter(k=>/^k\d_/.test(k)&&f[k]).length;
-  return n===5?`Le Conseil arrive avec ${s.kuroi?.debts?.length||0} dette(s) enregistrée(s) et ${s.kuroi?.chronicle?.length||0} fait(s) dans la Chronique. Ces traces doivent être prises en compte dans le choix final.`:`${choices} décision(s) antérieure(s) influencent désormais la confiance entre la Police et les clans.`;
+  const f=s.kuroi?.flags||{},debts=s.kuroi?.debts||[];
+  if(n===2)return f.k1_correct?'L’accès policier et la main interne sont deux constats distincts. Identifiez la dette qui les relie.':f.k1_wrong?'L’accusation d’Arakida a durci les échanges. Ne confondez pas intérêt du rival et preuve d’accès.':'Une piste interne domine, mais le commanditaire reste à identifier. Ne confondez pas succession et contrainte.';
+  if(n===3)return f.k2_correct?'La dette Mori–Ren est inscrite au registre. Un document confisqué pourrait établir sa transformation en obligation.':f.k2_wrong?'Une dette interclanique contestée ralentit l’accès au registre. Il faut sécuriser une preuve indépendante.':'Le sens de la dette police–Famille est encore discuté. Préserver l’original ne suffit pas à rendre son interprétation fiable.';
+  if(n===4)return f.k3_correct?'Une copie extérieure est préservée. La cellule peut comparer signatures et registres sans dépendre de la seule police.':f.k3_wrong?'Les pièces confiées à la police sont désormais incomplètes. Le groupe doit confronter les journaux, les témoignages et les traces antérieures.':'Le registre a été conservé par le clan, sans chaîne de conservation indépendante. Toute accusation devra être corroborée.';
+  if(n===5){const protectedCopy=!!f.k3_correct,chain=!!f.k4_correct;return `${protectedCopy?'Une copie indépendante du registre est conservée.':'La conservation indépendante des pièces n’a pas été garantie.'} ${chain?'La chaîne de responsabilité a été établie.':'La chaîne de commandement reste contestée.'} ${debts.filter(d=>d.status==='due').length} dette(s) ouverte(s) figurent au registre. Le Conseil doit tenir compte de ces limites.`}
+  return '';
 }
 
 // A late dossier exhibit is shared with the whole cell. It does not overwrite private role cards.
@@ -535,6 +546,37 @@ function cendresLateEvidence(live,phaseIndex,carry){
   return '';
 }
 
+// Shared exhibits stay neutral when no player holds a specialized KUROI role.
+function kuroiLateEvidence(live,phaseIndex,carry){
+  if(live.campaignId!=='kuroi'||phaseIndex<2)return '';
+  const f=carry?.kuroi?.flags||{};
+  if(live.chapter===1)return 'Les horodatages de la résidence et ceux d’un véhicule non marqué ne coïncident pas avec la chronologie officielle. Le badge prouve un accès, pas l’auteur de l’ordre.';
+  if(live.chapter===2)return 'Une mention ancienne du registre suit la faveur familiale, tandis qu’un relevé plus récent décrit un service demandé. Le passage de l’une à l’autre reste à établir.';
+  if(live.chapter===3)return 'Une inspection a été annoncée avant la demande de récupération du registre. La chaîne de garde actuelle ne permet pas de garantir que toutes les pages seront préservées.';
+  if(live.chapter===4){
+    if(f.k3_correct)return 'Le dépôt tiers confirme des anomalies entre la main qui a ouvert l’accès et la personne qui a transmis l’instruction. La pièce ne suffit pas à attribuer le commandement.';
+    if(f.k3_wrong)return 'La copie institutionnelle comporte des lacunes datées après sa remise. Des témoignages sur la dette et les accès doivent être confrontés sans présumer leur auteur.';
+    return 'La copie gardée par le clan montre plusieurs accès, mais son historique est incomplet. Une convergence de témoignages reste nécessaire pour départager les responsabilités.';
+  }
+  if(live.chapter===5){
+    if(f.k3_correct&&f.k4_correct)return 'Les pièces convergent, mais leur divulgation exposerait aussi des faits extérieurs au meurtre et des personnes encore vulnérables.';
+    if(f.k3_wrong)return 'Des pages n’ont pas été retrouvées après la remise à la police. Une transmission au dehors ferait apparaître les lacunes autant que les éléments conservés.';
+    return 'L’absence de chaîne de conservation indépendante rend plusieurs accusations plus difficiles à soutenir ; le Conseil devra nommer cette incertitude.';
+  }
+  return '';
+}
+function kuroiFinalConsequence(live,opt){
+  if(!opt||live.campaignId!=='kuroi'||Number(live.chapter)!==5)return opt?.consequence||'';
+  const carry=live.online?live.campaignCarry:state('kuroi'),flags=carry?.kuroi?.flags||{};
+  const copy=!!flags.k3_correct,chain=!!flags.k4_correct;
+  if(opt.id==='public'){
+    if(copy&&chain)return 'LA LUMIÈRE FROIDE — Une copie indépendante et une chaîne de responsabilité étayée sont remises à une autorité extérieure. Des enquêtes s’ouvrent contre les policiers et des activités du clan ; les témoins devront être protégés.';
+    if(!copy&&!chain)return 'LA LUMIÈRE FRAGILE — Le Conseil transmet les preuves disponibles, mais ni leur conservation ni toute la chaîne de commandement ne sont garanties. Une enquête indépendante pourra établir les lacunes, sans promettre de condamnations.';
+    return 'LA LUMIÈRE INCOMPLÈTE — Une enquête extérieure est saisie. Les pièces réunies permettent des vérifications, mais la conservation des documents ou l’attribution du commandement laisse subsister une difficulté majeure.';
+  }
+  if(opt.id==='internal')return chain?'LE SILENCE NÉGOCIÉ — La responsabilité de la chaîne est reconnue dans le Conseil, mais sans contrôle extérieur les sanctions et la paix entre clans restent précaires.':'LE SILENCE NÉGOCIÉ — Le Conseil propose des responsabilités internes alors que le commandement demeure contesté. La paix obtenue repose sur des concessions difficiles à vérifier.';
+  return 'LA DETTE CONTINUE — Le récit accusant Arakida protège momentanément certains acteurs, mais les preuves discordantes et les représailles possibles menacent la paix entre clans.';
+}
 function cendresFinalConsequence(live,opt){
   if(!opt||live.campaignId!=='cendres'||Number(live.chapter)!==5)return opt?.consequence||'';
   const carry=live.online?live.campaignCarry:state('cendres');
@@ -556,10 +598,10 @@ function ensureCendresBallot(live){
 }
 function renderDecision(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter];
-  if(live.campaignId==='cendres'&&!live.online){
+  if((live.campaignId==='cendres'||live.campaignId==='kuroi')&&!live.online){
     const b=ensureCendresBallot(live),p=live.players[b.index];
     if(!p)return;
-    shellPut(`<main class="page hplay hplay-decision hplay-theme-cendres">
+    shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
       <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">VOTE ${b.index+1}/${live.players.length} · TOUR ${b.round}</div></header>
       <section class="hplay-decision-head"><span class="hplay-eyebrow">MAJORITÉ COLLECTIVE · VOTE PRIVÉ</span><h1>${b.show?esc(pc.question):`Passez le téléphone à ${esc(p.name)}`}</h1>
         <p>${b.show?'Choisissez votre propre hypothèse. Votre vote sera masqué au joueur suivant.':'Tous les membres de la cellule doivent voter. La décision ne sera révélée qu’après le dernier vote.'}</p>
@@ -571,15 +613,15 @@ function renderDecision(live){
   }
   shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">DÉCISION</div></header>
-    <section class="hplay-decision-head"><span class="hplay-eyebrow">${live.campaignId==='cendres'?'VOTE COLLECTIF · UN BULLETIN PAR JOUEUR':'CHOIX IRRÉVERSIBLE'}</span><h1>${esc(pc.question)}</h1><p>${live.campaignId==='cendres'?'Votez sur votre propre téléphone. Le résultat n’est dévoilé qu’après le scrutin et une majorité absolue.':'Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.'}</p></section>
-    <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>${live.campaignId==='cendres'?'VOTER →':'VERROUILLER →'}</i></button>`).join('')}</section>
+    <section class="hplay-decision-head"><span class="hplay-eyebrow">${(live.campaignId==='cendres'||live.campaignId==='kuroi')?'VOTE COLLECTIF · UN BULLETIN PAR JOUEUR':'CHOIX IRRÉVERSIBLE'}</span><h1>${esc(pc.question)}</h1><p>${(live.campaignId==='cendres'||live.campaignId==='kuroi')?'Votez sur votre propre téléphone. Le résultat n’est dévoilé qu’après le scrutin et une majorité absolue.':'Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.'}</p></section>
+    <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>${(live.campaignId==='cendres'||live.campaignId==='kuroi')?'VOTER →':'VERROUILLER →'}</i></button>`).join('')}</section>
   </main>`);
 }
 function chooseOption(id){
   const l=readLive();if(!l)return;
   const pc=PACKS[l.campaignId].chapters[l.chapter];let opt=pc.options.find(o=>o.id===id);
   if(!opt)return;
-  if(l.campaignId==='cendres'&&!l.online){
+  if((l.campaignId==='cendres'||l.campaignId==='kuroi')&&!l.online){
     const b=ensureCendresBallot(l);
     if(!b.show||b.index>=l.players.length)return;
     b.votes.push(id);b.index++;b.show=false;
@@ -597,12 +639,13 @@ function chooseOption(id){
 }
 function renderResult(live){const pc=PACKS[live.campaignId].chapters[live.chapter],opt=pc.options.find(o=>o.id===live.decision),label=opt.qualitative?'Choix d’héritage':opt.grade===2?'Recoupement réussi':opt.grade===1?'Vérité partielle':'Erreur de lecture';shellPut(`<main class="page hplay hplay-result hplay-theme-${live.campaignId}">
   <header class="hplay-top"><div class="hplay-mode">RÉVÉLATION</div></header>
-  <section class="hplay-result-card"><span class="hplay-eyebrow">${label.toUpperCase()}</span><h1>${esc(opt.title)}</h1><p class="hplay-result-truth">${esc(pc.reveal)}</p><div class="hplay-result-consequence"><span>CONSÉQUENCE</span><b>${esc(cendresFinalConsequence(live,opt))}</b></div>${live.practice?'<div class="hplay-practice">REJOUÉ — la sauvegarde principale ne sera pas modifiée.</div>':''}<button class="btn primary" data-hp-action="finish">${live.practice?'TERMINER LE REPLAY':'INSCRIRE DANS L’HÉRITAGE'}</button></section>
+  <section class="hplay-result-card"><span class="hplay-eyebrow">${label.toUpperCase()}</span><h1>${esc(opt.title)}</h1><p class="hplay-result-truth">${esc(pc.reveal)}</p><div class="hplay-result-consequence"><span>CONSÉQUENCE</span><b>${esc(live.campaignId==='kuroi'?kuroiFinalConsequence(live,opt):cendresFinalConsequence(live,opt))}</b></div>${live.practice?'<div class="hplay-practice">REJOUÉ — la sauvegarde principale ne sera pas modifiée.</div>':''}<button class="btn primary" data-hp-action="finish">${live.practice?'TERMINER LE REPLAY':'INSCRIRE DANS L’HÉRITAGE'}</button></section>
 </main>`)}
 
 function applyResult(live){
   if(!live||live.finished)return;
   const pc=PACKS[live.campaignId].chapters[live.chapter],out=pc.apply?.[live.decision]||{};
+  if(live.result&&live.campaignId==='kuroi'&&Number(live.chapter)===5)live.result.consequence=kuroiFinalConsequence(live,pc.options.find(o=>o.id===live.decision));
   if(live.result&&live.campaignId==='cendres'&&Number(live.chapter)===5)live.result.consequence=cendresFinalConsequence(live,pc.options.find(o=>o.id===live.decision));
   if(!live.practice&&!completed(live.campaignId,live.chapter)){
     if(live.campaignId==='cendres'){
@@ -612,30 +655,12 @@ function applyResult(live){
       });
       if(!commit?.ok){toastSafe('Sauvegarde impossible : le dossier reste ouvert. Réessayez.');return}
     }else{
-      if(out.flag)api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}});else api().completeChapter('kuroi',live.chapter,{});
-      if(live.chapter===1){
-        api().kuroi.upsertClanMember('kurokawa',{id:'oyabun-kurokawa',name:'OYABUN KUROKAWA',role:'Chef du clan',status:'dead',chapter:1,note:'Assassiné avant l’ouverture de la campagne.'});
-        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun',status:'active',chapter:1,note:'Présent dans la chaîne d’accès au meurtre.'});
-        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur',status:'active',chapter:1,note:'Intermédiaire entre la police et Kurokawa.'});
-        api().kuroi.upsertClanMember('police',{id:'ishida',name:'ISHIDA',role:'Commissaire',status:'active',chapter:1,note:'Responsable institutionnel de l’enquête.'});
-      }
-      if(out.debt)api().kuroi.addDebt({id:`kuroi-debt-${live.chapter}-${live.decision}`,type:'giri',from:out.debt[0],to:out.debt[1],reason:out.debt[2],status:'due',chapter:live.chapter});
-      if(live.chapter===2&&live.decision==='mori_ren'){
-        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun · débiteur de Mori',status:'active',chapter:2,note:'Une ancienne faveur familiale est devenue GIRI.'});
-        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur · créancier',status:'active',chapter:2,note:'A transformé une faveur ancienne en obligation.'});
-      }
-      if(live.chapter===4&&live.decision==='chain'){
-        api().kuroi.updateDebt('kuroi-debt-2-mori_ren',{status:'paid',reason:'La dette Mori → Ren a été utilisée pour imposer le meurtre puis révélée.'});
-        api().kuroi.upsertClanMember('police',{id:'ishida',name:'ISHIDA',role:'Commissaire · donneur d’ordre',status:'detained',chapter:4,note:'La chaîne Ishida → Mori → Ren est établie.'});
-        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur · facilitateur',status:'detained',chapter:4,note:'A transmis l’ordre, ouvert l’accès et couvert les traces.'});
-        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun · exécutant',status:'detained',chapter:4,note:'A exécuté le meurtre sous le poids de sa dette.'});
-      }
-      if(live.chapter===5){
-        const status=live.decision==='public'?'broken':live.decision==='internal'?'paid':'due';
-        for(const id of ['kuroi-debt-2-mori_ren','kuroi-debt-4-chain'])api().kuroi.updateDebt(id,{status});
-      }
-      if(out.chron)api().kuroi.addChronicle(out.chron,'public');
-      api().kuroi.addChronicle(`Dossier 0${live.chapter} — ${live.result?.title}. ${live.result?.consequence}`,'public');
+      const commit=api()?.kuroi?.commitDecision?.({
+        chapter:live.chapter,decision:live.decision,flag:out.flag||'',
+        debt:out.debt||null,chron:out.chron||'',
+        title:live.result?.title||'',consequence:live.result?.consequence||''
+      });
+      if(!commit?.ok){toastSafe('Sauvegarde impossible : le dossier reste ouvert. Réessayez.');return}
     }
     rememberDecision(live.campaignId,live.chapter,live.decision);
   }
@@ -646,7 +671,7 @@ function decisionKey(id,n){return `igr_heritage_decision_${id}_${n}`}
 function rememberDecision(id,n,v){try{store().setItem(decisionKey(id,n),v)}catch{}}
 function findPreviousDecision(id,n){try{return store().getItem(decisionKey(id,n))||'archive'}catch{return 'archive'}}
 
-function resumeLive(){const l=readLive();if(!l)return renderHub();if(l.stage==='reveal')return renderReveal(l,false);if(l.stage==='play')return renderPlay(l);if(l.stage==='decision'){if(l.campaignId==='cendres'&&!l.online&&l.ballot?.show){l.ballot.show=false;saveLive(l)}return renderDecision(l)}if(l.stage==='result')return renderResult(l);renderChapter(l.campaignId,l.chapter)}
+function resumeLive(){const l=readLive();if(!l)return renderHub();if(l.stage==='reveal')return renderReveal(l,false);if(l.stage==='play')return renderPlay(l);if(l.stage==='decision'){if((l.campaignId==='cendres'||l.campaignId==='kuroi')&&!l.online&&l.ballot?.show){l.ballot.show=false;saveLive(l)}return renderDecision(l)}if(l.stage==='result')return renderResult(l);renderChapter(l.campaignId,l.chapter)}
 function sessionMenu(){const l=readLive();if(!l)return;const ok=confirm('Quitter cette partie ? La session restera enregistrée et pourra être reprise depuis le dossier.');if(ok)renderChapter(l.campaignId,l.chapter)}
 function abortSession(){if(!confirm('Abandonner cette partie Héritage ? La session en cours sera effacée.'))return;const l=readLive();clearLive();if(l)renderChapter(l.campaignId,l.chapter);else renderHub()}
 
@@ -684,8 +709,8 @@ function handleClick(e){
     if(a==='phase-next'){const l=readLive();if(l){l.phaseIndex=Math.min(PACKS[l.campaignId].chapters[l.chapter].phases.length-1,(l.phaseIndex||0)+1);saveLive(l);renderPlay(l)}return}
     if(a==='phase-prev'){const l=readLive();if(l){l.phaseIndex=Math.max(0,(l.phaseIndex||0)-1);saveLive(l);renderPlay(l)}return}
     if(a==='decision'){const l=readLive();if(l){l.stage='decision';saveLive(l);renderDecision(l)}return}
-    if(a==='ballot-reveal'){const l=readLive();if(l?.campaignId==='cendres'&&!l.online&&l.stage==='decision'){ensureCendresBallot(l).show=true;saveLive(l);renderDecision(l)}return}
-    if(a==='play'){const l=readLive();if(l){if(l.campaignId==='cendres'&&!l.online&&l.ballot)l.ballot.show=false;l.stage='play';saveLive(l);renderPlay(l)}return}
+    if(a==='ballot-reveal'){const l=readLive();if((l?.campaignId==='cendres'||l?.campaignId==='kuroi')&&!l.online&&l.stage==='decision'){ensureCendresBallot(l).show=true;saveLive(l);renderDecision(l)}return}
+    if(a==='play'){const l=readLive();if(l){if((l.campaignId==='cendres'||l.campaignId==='kuroi')&&!l.online&&l.ballot)l.ballot.show=false;l.stage='play';saveLive(l);renderPlay(l)}return}
     if(a==='finish'){const l=readLive();if(l)applyResult(l);return}
     if(a==='session-menu')return sessionMenu();
     if(a==='abort')return abortSession();

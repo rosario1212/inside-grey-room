@@ -242,9 +242,10 @@ async function syncHeritageOnline(force=false){
   try{
     const d=await rpc('igr_heritage_online_sync',{p_code:s.code,p_player_token:s.token});
     hLastStage=d.room?.stage||'';
-    if(d.room?.campaign_id==='cendres'&&d.room?.stage==='decision'){
-      // The server never exposes individual players' votes to other clients.
-      d.room.ballot_status=await rpc('igr_heritage_online_cendres_ballot_status',{p_code:s.code,p_player_token:s.token});
+    if(['cendres','kuroi'].includes(d.room?.campaign_id)&&d.room?.stage==='decision'){
+      // Both campaigns have private, player-token validated majority ballots.
+      const statusRpc=d.room.campaign_id==='cendres'?'igr_heritage_online_cendres_ballot_status':'igr_heritage_online_kuroi_ballot_status';
+      d.room.ballot_status=await rpc(statusRpc,{p_code:s.code,p_player_token:s.token});
     }
     document.dispatchEvent(new CustomEvent('igr-heritage-sync',{detail:d}));
     const ballot=d.room?.ballot_status;
@@ -278,7 +279,7 @@ function patchHBridge(d,stage){
         next.disabled=true;
         next.textContent='EN ATTENTE DE L’HÔTE…';
       }else if(next){
-        next.textContent=Number(d.room.phase_index)<3?'PHASE SUIVANTE →':'PASSER À LA DÉCISION →';
+        next.textContent=Number(d.room.phase_index)<3?'PHASE SUIVANTE →':(['cendres','kuroi'].includes(d.room.campaign_id)?'OUVRIR LE VOTE COLLECTIF →':'PASSER À LA DÉCISION →');
       }
     }
     const mode=$('.hplay-mode');
@@ -287,7 +288,7 @@ function patchHBridge(d,stage){
   if(stage==='decision'){
     const info=document.createElement('div');
     info.className='hnet-decision-note';
-    const ballot=d.room.campaign_id==='cendres'?d.room.ballot_status:null;
+    const ballot=['cendres','kuroi'].includes(d.room.campaign_id)?d.room.ballot_status:null;
     info.textContent=ballot
       ?`VOTE COLLECTIF · TOUR ${ballot.vote_round} · ${ballot.votes_cast}/${ballot.players} votes · majorité requise : ${ballot.majority}. ${ballot.my_vote?'Votre voix est enregistrée.':'Chaque joueur vote sur son téléphone.'} ${ballot.vote_round>1?'Le tour précédent n’a dégagé aucune majorité.':''}`
       :host?'Vous êtes l’hôte : verrouillez le choix du groupe.':'Discutez ensemble. Seul l’hôte peut verrouiller la décision.';
@@ -311,12 +312,13 @@ function patchHBridge(d,stage){
 async function advanceHeritageOnline(){const s=hSession();if(!s?.hostToken)return toastX('Seul l’hôte contrôle les phases.');try{await rpc('igr_heritage_online_advance',{p_code:s.code,p_host_token:s.hostToken});await syncHeritageOnline(true)}catch(e){console.error(e);toastX('Impossible de changer de phase.')}}
 async function decideHeritageOnline(decision){
   const s=hSession();if(!s||hVotePending)return;
-  if(s.campaign!=='cendres'&&!s.hostToken)return toastX('Seul l’hôte verrouille la décision.');
+  if(!['cendres','kuroi'].includes(s.campaign)&&!s.hostToken)return toastX('Seul l’hôte verrouille la décision.');
   hVotePending=true;
   try{
-    if(s.campaign==='cendres'){
-      // All five to seven player tokens have one equal vote. Host token is deliberately unused.
-      const result=await rpc('igr_heritage_online_vote_cendres',{p_code:s.code,p_player_token:s.token,p_option_id:decision});
+    if(['cendres','kuroi'].includes(s.campaign)){
+      // All 5–7 player tokens have one equal vote. Host token is deliberately unused.
+      const voteRpc=s.campaign==='cendres'?'igr_heritage_online_vote_cendres':'igr_heritage_online_vote_kuroi';
+      const result=await rpc(voteRpc,{p_code:s.code,p_player_token:s.token,p_option_id:decision});
       if(result?.new_round)toastX('Aucune majorité : un nouveau vote commence.');
     }else{
       await rpc('igr_heritage_online_decide',{p_code:s.code,p_host_token:s.hostToken,p_option_id:decision});
@@ -324,12 +326,12 @@ async function decideHeritageOnline(decision){
     await syncHeritageOnline(true);
   }catch(e){
     console.error(e);
-    toastX(s.campaign==='cendres'?'Vote non enregistré. Réessaie.':'Décision non confirmée.');
+    toastX(['cendres','kuroi'].includes(s.campaign)?'Vote non enregistré. Réessaie.':'Décision non confirmée.');
   }finally{hVotePending=false}
 }
 async function leaveHeritageOnline(){
   const s=hSession();if(!s)return;
-  if(s.campaign==='cendres'&&hLastStage&&hLastStage!=='lobby'&&hLastStage!=='finished'){
+  if(['cendres','kuroi'].includes(s.campaign)&&hLastStage&&hLastStage!=='lobby'&&hLastStage!=='finished'){
     // Preserve the seat and player token: disconnecting must not shrink the majority.
     if(hWatcher){clearInterval(hWatcher);hWatcher=null}
     hLastSig='';del(HERITAGE_LIVE_KEY);

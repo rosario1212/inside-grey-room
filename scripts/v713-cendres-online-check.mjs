@@ -40,26 +40,24 @@ async function verify(campaign,hostToken,expected){
   runInNewContext(match[0]+'\nthis.vote=decideHeritageOnline',context);
   await context.vote('b');
   assert.equal(calls[0]?.name,expected,'Wrong authority path '+campaign);
-  if(campaign==='cendres'){
+  if(campaign==='cendres'||campaign==='kuroi'){
     assert.equal(calls[0].args.p_player_token,'PRIVATE_PLAYER_TOKEN');
     assert.equal(calls[0].args.p_host_token,undefined);
-  }
-  if(campaign==='kuroi'){
-    assert.equal(calls[0].args.p_host_token,hostToken);
   }
   assert.equal(calls[1]?.name,'sync');
   assert.equal(notices.length,0);
 }
 await verify('cendres',null,'igr_heritage_online_vote_cendres');
 await verify('cendres','HOST_TOKEN','igr_heritage_online_vote_cendres');
-await verify('kuroi','HOST_TOKEN','igr_heritage_online_decide');
+await verify('kuroi','HOST_TOKEN','igr_heritage_online_vote_kuroi');
+await verify('kuroi',null,'igr_heritage_online_vote_kuroi');
 
-// A guest in KUROI remains unable to choose; no changed campaign authority.
+// KUROI guests vote; MAÎTRE guests cannot bypass the host-authorized choice.
 {
   const calls=[];
-  const c={hVotePending:false,hSession:()=>({campaign:'kuroi',code:'HK713',token:'GUEST',hostToken:null}),
+  const c={hVotePending:false,hSession:()=>({campaign:'maitre',code:'HM713',token:'GUEST',hostToken:null}),
     rpc:async(name)=>calls.push(name),syncHeritageOnline:async()=>{},toastX:()=>{},console:{error(){}}};
   runInNewContext(match[0]+'\nthis.vote=decideHeritageOnline',c);
   await c.vote('b');assert.deepEqual(calls,[]);
 }
-console.log('CENDRES v713 online controls: guest/host equal player-token vote, no host bypass, KUROI authority preserved, server-first finish and private ballot status.');
+console.log('HÉRITAGE online controls: CENDRES and KUROI guest/host private majority ballots, no host bypass, MAÎTRE authority preserved.');
