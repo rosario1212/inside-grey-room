@@ -1,0 +1,52 @@
+name: HÉRITAGE v733 — Test réel de lancement multijoueur
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'casino-client-v105.js'
+      - 'casino-client-v105.css'
+      - 'play-modes-v13-8.js'
+      - 'play-modes-v13-8.css'
+      - 'heritage-maitre-online-v34-4.js'
+      - 'scripts/casino-browser-check.mjs'
+      - 'scripts/v729-heritage-online-role-selection-check.mjs'
+      - '.github/workflows/heritage-v733-multiplayer-e2e.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'casino-client-v105.js'
+      - 'casino-client-v105.css'
+      - 'play-modes-v13-8.js'
+      - 'play-modes-v13-8.css'
+      - 'heritage-maitre-online-v34-4.js'
+      - '.github/workflows/heritage-v733-multiplayer-e2e.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  multiplayer:
+    name: 1 joueur bloqué, 7 joueurs lancés, campagne jouée
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Construire la vraie application web
+        run: npm ci --no-audit --no-fund
+      - name: Installer Chromium pour 7 sessions indépendantes
+        run: |
+          npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Vérifier les quatre commandes de lancement et les rôles
+        run: node scripts/v729-heritage-online-role-selection-check.mjs
+      - name: Jouer une partie Casino synthétique avec sept navigateurs
+        run: node scripts/casino-browser-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: heritage-v733-multiplayer-screens
+          path: casino-qa-results
+          if-no-files-found: ignore

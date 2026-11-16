@@ -59,7 +59,7 @@ const casinoCtx={
 };
 const casinoLobby=runInNewContext(casinoLobbySource+';lobby',casinoCtx,{timeout:1000});
 const casinoHTML=casinoLobby();
-assert(casinoHTML.includes('CHOISIS')||casinoHTML.includes('Choisis ton rôle'),'Casino role selection title missing');
+assert(casinoHTML.includes('Choisis où jouer'),'Casino role selection title missing');
 assert(casinoHTML.includes('data-role-id="agent"')&&casinoHTML.includes('COMPLET'),'Taken Bureau function must be disabled');
 assert(casinoHTML.includes('data-role-id="casino"')&&casinoHTML.includes('TON RÔLE'),'Own Casino role must be selected');
 
@@ -91,6 +91,8 @@ for(const campaign of ['cendres','kuroi']){
  assert(rendered?.preserve,'Heritage '+campaign+' lobby updates must preserve scrolling');
  assert(rendered.html.indexOf('<section class="hnet-role-zone"')<rendered.html.indexOf('<details class="hnet-roster-disclosure"'),'Role choice must precede roster in '+campaign);
  assert(rendered.html.includes('CODE D’INVITATION')&&rendered.html.includes('Participants à la table'),'Invitation and expandable roster missing in '+campaign);
+ assert(rendered.html.includes('data-hnet="copy-code"'),'Invitation code should be directly copyable in '+campaign);
+ assert(rendered.html.includes('ATTENTE · 3 À INVITER'),'A two-player room must show exactly three missing participants in '+campaign);
 }
 const maitreLobbySource=maitre.slice(maitre.indexOf('function lobby(d){'),maitre.indexOf('function reveal(d){'));
 assert(maitreLobbySource.startsWith('function lobby'),'MAÎTRE online lobby renderer missing');
@@ -106,10 +108,14 @@ renderMaitre({room:{chapter:1,code:'H4321'},player:{preferred_role:'avocat'},
 assert(renderedMaitre?.preserve,'MAÎTRE lobby must preserve scrolling');
 assert(renderedMaitre.html.indexOf('<section class="hnet-role-zone"')<renderedMaitre.html.indexOf('<details class="hnet-roster-disclosure"'),'MAÎTRE roles must precede roster');
 assert(renderedMaitre.html.includes('CODE D’INVITATION')&&renderedMaitre.html.includes('Participants à la table'),'MAÎTRE invitation or expandable roster missing');
+assert(renderedMaitre.html.includes('data-mnet="copy-code"'),'MAÎTRE invitation code should be directly copyable');
+assert(renderedMaitre.html.includes('COMMENCER LA PARTIE'),'MAÎTRE can launch at five participants');
 assert(casinoHTML.indexOf('<section class="casino-role-choice-zone"')<casinoHTML.indexOf('<details class="casino-roster-disclosure"'),'Casino roles must precede roster');
 assert(casinoHTML.includes('casino-lobby-access'),'Casino invite code should use compact shared hierarchy');
+assert(casinoHTML.includes('casino-launch-readiness')&&casinoHTML.includes('casino-selected-role'),'Casino must show all play requirements and own selected role');
+assert(casinoHTML.includes('casino-optional-roles'),'Optional prosecutor/judge should be discoverable without cluttering required functions');
 
-assert(casinoHTML.includes('PRÉPARATION INCOMPLÈTE'),'Casino cannot launch with fewer than seven players or missing mandatory roles');
+assert(casinoHTML.includes('EN ATTENTE · 5 À INVITER')&&casinoHTML.includes('disabled'),'Casino cannot launch with fewer than seven players');
 const casinoReadyLobby=runInNewContext(casinoLobbySource+';lobby',{
  state:{viewer:'me',inviteCode:'TESTCODE',isHost:true,members:[
   {id:'me',name:'J1',role:'casino',ready:true},
@@ -122,7 +128,7 @@ const casinoReadyLobby=runInNewContext(casinoLobbySource+';lobby',{
  ]},
  roles:roleNames,roleShort:x=>'Brève du rôle '+x,roleStars:()=> '★★★★☆',esc:x=>String(x)
 },{timeout:1000});
-assert(casinoReadyLobby().includes('LANCER LE DOSSIER')&&!casinoReadyLobby().includes('PRÉPARATION INCOMPLÈTE'),'Casino valid configuration should enable host launch');
+assert(casinoReadyLobby().includes('COMMENCER LA PARTIE')&&!casinoReadyLobby().includes('EN ATTENTE ·'),'Casino valid configuration should enable host launch');
 
 const casinoUnassignedLobby=runInNewContext(casinoLobbySource+';lobby',{
  state:{viewer:'p8',inviteCode:'TESTCODE',isHost:false,members:[
@@ -141,5 +147,44 @@ assert(js.includes("getAttribute('aria-pressed')!=='true'")&&maitre.includes("ge
 for(const marker of ['hnet-activity-note','hnet-roster-disclosure','hnet-code strong','hnet-role-random'])assert(css.includes(marker),'Unifying Heritage CSS missing '+marker);
 for(const marker of ['casino-lobby-access','casino-roster-disclosure'])assert(casinoCss.includes(marker),'Casino CSS missing '+marker);
 console.log('PASS v730: four Heritage online lobbies align roles, invitation, roster and scroll position.');
+
+
+
+// v733 — Simulate the actual host start command and the next synchronization.
+// This uses synthetic tokens; no user's session or production table is touched.
+const heritageStartSource=js.slice(js.indexOf('async function startHeritageOnline(){'),js.indexOf('function bridgeBase(d,stage){'));
+assert(heritageStartSource.startsWith('async function startHeritageOnline'),'Heritage host launch handler missing');
+for(const campaign of ['cendres','kuroi']){
+ const calls=[];let refreshes=0;const notices=[];
+ const start=runInNewContext(heritageStartSource+';startHeritageOnline',{
+  hSession:()=>({hostToken:'synthetic-host',code:'H1234',campaign}),
+  rpc:async(name,args)=>{calls.push({name,args});return {ok:true}},
+  syncHeritageOnline:async(force)=>{assert.equal(force,true);refreshes++},
+  toastX:m=>notices.push(m),console
+ },{timeout:1000});
+ await start();
+ assert.equal(calls.length,1,'One start request per campaign is required');
+ assert.equal(calls[0].name,'igr_heritage_online_start');
+ assert.equal(calls[0].args.p_code,'H1234');
+ assert.equal(calls[0].args.p_host_token,'synthetic-host');
+ assert.equal(refreshes,1,'Start must synchronize the new role-reading stage');
+ assert.equal(notices.length,0,'Valid start should not display a generic error');
+}
+const maitreClickSource=maitre.slice(maitre.indexOf('async function click(n){'),maitre.indexOf('function boot(){'));
+assert(maitreClickSource.startsWith('async function click'),'MAÎTRE click handler missing');
+const maitreCalls=[];let maitreRefreshes=0;
+const maitreClick=runInNewContext(maitreClickSource+';click',{
+ sess:()=>({hostToken:'synthetic-host',code:'H4321',chapter:1}),
+ rpcx:async(name,args)=>{maitreCalls.push({name,args});return {ok:true}},
+ sync:async(force)=>{assert.equal(force,true);maitreRefreshes++},
+ toastx:m=>{throw new Error('Unexpected MAÎTRE error: '+m)},
+ rolePending:false,console
+},{timeout:1000});
+await maitreClick({dataset:{mnet:'start',ch:'1'}});
+assert.equal(maitreCalls[0]?.name,'igr_heritage_online_start','MAÎTRE must call server-side start');
+assert.equal(maitreCalls[0]?.args.p_host_token,'synthetic-host');
+assert.equal(maitreRefreshes,1,'MAÎTRE start should refresh its role-reading stage');
+assert(css.includes('.hnet-selected-role')&&css.includes('.hnet-code-copy'),'Shared role preview and copy button must have styling');
+console.log('PASS v733: synthetic Cendres/Kuroi/Maître host launch and Casino preparation paths.');
 
 console.log('PASS v729: CENDRES/KUROI/MAÎTRE role reservations, Casino cards, 5-7 seats, private role boundaries, mobile UI and SQL contracts');

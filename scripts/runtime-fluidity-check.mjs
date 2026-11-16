@@ -53,8 +53,15 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
         await page.locator('.igr-utility-exit').click();
         assert.equal(await page.evaluate(()=>window.homeCalls),1,'The exit control must retain a single working action');
       }else if(mode==='create-list'){
-        await page.locator('#igrDockFilters').click();
-        assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('is-dock-open')),'Filters must remain usable');
+        // v731's direct DLC selector deliberately hides the old dock-filter button.
+        // Its own visual test verifies the new selector; never click a hidden control.
+        const legacyFilter=page.locator('#igrDockFilters');
+        if(await legacyFilter.isVisible()){
+          await legacyFilter.click();
+          assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('is-dock-open')),'Legacy filters must remain usable when visible');
+        }else{
+          assert.equal(await legacyFilter.count(),1,'Hidden legacy filter remains harmless during migration');
+        }
         await page.locator('#igrGlobalHome').click();
         assert.equal(await page.evaluate(()=>window.homeCalls),1,'Scenario navigation must remain usable');
       }else if(mode==='lobby'){

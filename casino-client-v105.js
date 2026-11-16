@@ -37,7 +37,7 @@ function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data
    timedControls.some(key=>Boolean(state[key])!==Boolean(data[key]));
  state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
-function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Synchronisé · état serveur '+state.revision:credentials?'Connexion…':''}
+function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Table à jour':credentials?'Connexion…':''}
 async function sync(){
  if(!credentials||!active||busy)return;if(polling)return polling;
  const epoch=generation;
@@ -80,9 +80,16 @@ function lobby(){
  const taken=new Map(members.filter(m=>m.role&&m.role!=='casino').map(m=>[m.role,m]));
  const casinoCount=members.filter(m=>m.role==='casino').length;
  const required=['agent','investigator','analyst'],missing=required.filter(id=>!taken.has(id));
- const allReady=members.every(m=>m.ready),unassigned=members.filter(m=>!Object.hasOwn(roles,m.role)).length;
+ const readyCount=members.filter(m=>m.ready).length,allReady=readyCount===members.length,unassigned=members.filter(m=>!Object.hasOwn(roles,m.role)).length;
  const canStart=members.length>=7&&members.length<=12&&casinoCount>=4&&casinoCount<=7&&!missing.length&&!unassigned&&allReady;
- const launchHint=casinoCount<4?`Encore ${4-casinoCount} joueur${4-casinoCount>1?'s':''} chez Yonghe.`:casinoCount>7?'Yonghe dépasse sept places. Certains joueurs doivent rejoindre le Bureau.':missing.length?`Fonctions indispensables à pourvoir : ${missing.map(id=>roles[id]).join(', ')}.`:unassigned?`${unassigned} joueur${unassigned>1?'s':''} sans fonction.`:!allReady?'Tous les joueurs doivent confirmer leur présence.':'La table est prête à jouer.';
+ const requirements=[
+  {ok:members.length>=7&&members.length<=12,text:`${members.length}/7 joueurs minimum (12 maximum)`},
+  {ok:casinoCount>=4&&casinoCount<=7,text:`Yonghe : ${casinoCount}/4 minimum (7 maximum)`},
+  {ok:!missing.length,text:missing.length?`Bureau : ${missing.map(id=>roles[id]).join(', ')} à pourvoir`:'Bureau : Agent, Enquêteur et Analyste présents'},
+  {ok:!unassigned,text:unassigned?`${unassigned} personne${unassigned>1?'s':''} sans rôle`:'Tous les rôles sont attribués'},
+  {ok:allReady,text:`${readyCount}/${members.length} confirmations`}
+ ];
+ const launchHint=canStart?'La table est prête. L’hôte peut lancer la partie.':members.length<7?`Encore ${7-members.length} participant${7-members.length>1?'s':''} à inviter pour démarrer.`:'Terminez les conditions ci-dessous pour démarrer.';
  const buttons=Object.entries(roles).map(([id,label])=>{
   const mine=own.role===id,locked=id==='casino'?casinoCount>=7&&!mine:!!taken.get(id)&&!mine;
   const availability=id==='casino'?casinoCount+'/7 PLACES':(taken.has(id)?'COMPLET':'LIBRE');
@@ -92,16 +99,18 @@ function lobby(){
   </button>`;
  });
  return `<section class="casino-lobby-top"><div class="casino-lobby-access"><div><span>CODE D’INVITATION</span><h1>${esc(state.inviteCode)}</h1></div><button type="button" class="casino-action" data-casino-action="invite">Copier le code</button></div><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
- <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div>
- <p>Choisis ton camp ou ta fonction. Chez Yonghe, ton personnage sera révélé au lancement.</p>
+ <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>ÉTAPE 1 · TON PERSONNAGE</span><h2>Choisis où jouer</h2></div>
+ <p>Appuie sur une fonction libre. Chez Yonghe, ton identité privée sera révélée au lancement.</p>
  <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
- <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1).join('')}</div></div>
- <p class="casino-role-choice-footnote">Procureur et juge facultatifs. ★ = activité estimée, pas importance.</p>
+ <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1,4).join('')}</div></div>
+ <details class="casino-optional-roles"><summary>Autres fonctions · facultatives</summary><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(4).join('')}</div></details>
+ <div class="casino-selected-role"><span>TON CHOIX</span><b>${esc(roles[own.role]||'Aucun rôle sélectionné')}</b>${roles[own.role]?`<em>ACTIVITÉ · ${roleStars(own.role)}</em>`:'<small>Choisis une fonction disponible.</small>'}</div>
  </section>
+ <section class="casino-launch-readiness" aria-label="Conditions de lancement"><div class="casino-launch-readiness-head"><span>ÉTAPE 2 · PRÉPARER LA TABLE</span><strong>${readyCount}/${members.length} prêts</strong></div><p>${esc(launchHint)}</p><ul>${canStart?'<li class="is-done"><span aria-hidden="true">✓</span> Conditions réunies · début possible</li>':requirements.filter(x=>!x.ok).map(x=>`<li><span aria-hidden="true">○</span>${esc(x.text)}</li>`).join('')}</ul></section>
  <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role]||'À CHOISIR')}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
- <button class="casino-action casino-ready" data-casino-action="ready" ${Object.hasOwn(roles,own.role)?'':'disabled'}>${!Object.hasOwn(roles,own.role)?'CHOISIS D’ABORD UN RÔLE':own.ready?'ANNULER MA CONFIRMATION':'JE SUIS PRÊT'}</button>
- ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${canStart?'LANCER LE DOSSIER':'PRÉPARATION INCOMPLÈTE'}</button>`:''}
- <p class="casino-lobby-note">${esc(launchHint)}</p>`;
+ <button class="casino-action casino-ready" data-casino-action="ready" ${Object.hasOwn(roles,own.role)?'':'disabled'}>${!Object.hasOwn(roles,own.role)?'CHOISIS D’ABORD UN RÔLE':own.ready?'✓ CONFIRMÉ · MODIFIER':'CONFIRMER MA PARTICIPATION'}</button>
+ ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${canStart?'COMMENCER LA PARTIE':members.length<7?`EN ATTENTE · ${7-members.length} À INVITER`:'EN ATTENTE DES JOUEURS'}</button>`:''}
+ <p class="casino-lobby-note">Une partie se joue avec 7 à 12 personnes, chacune sur son écran.</p>`;
 }
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
@@ -265,5 +274,5 @@ document.addEventListener('change',event=>{
  if(activity)activity.textContent='ACTIVITÉ · '+roleStars(select.value);
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.5',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.9',open,close,sync});
 })();
