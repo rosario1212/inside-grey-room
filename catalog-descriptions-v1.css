@@ -44,10 +44,10 @@
   min-height:0!important;
   max-height:none!important;
   aspect-ratio:auto!important;
-  object-fit:contain!important;
-  object-position:50% 0%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
 }
-/* Full poster in its own dark mount, never cropped at the dossier lettering. */
+/* Photo fills the complete card height: no letterbox / empty black column. */
 #app .page-create-v10-13 .omerta-scenario .scenario-thumb{background:linear-gradient(180deg,#1a0c0f,#080608)!important}
 #app .page-create-v10-13 .terror-scenario .scenario-thumb{background:linear-gradient(180deg,#101113,#030405)!important}
 #app .page-create-v10-13 .cartel-scenario .scenario-thumb{background:linear-gradient(180deg,#1a1208,#080704)!important}
@@ -208,8 +208,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   }
 }
 
-/* Final cascade guard: the legacy v28 stylesheet loads after this catalogue
-   layer. Keep images intact and the grid's row sized by the *full* copy. */
+/* The legacy v28 stylesheet loads later: retain the fluid card row and full-bleed image. */
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art{
   grid-template-rows:max-content!important;
   height:auto!important;
@@ -224,6 +223,6 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   overflow:visible!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact img{
-  object-fit:contain!important;
-  object-position:50% 0%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
 }
