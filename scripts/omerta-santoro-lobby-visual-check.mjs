@@ -42,8 +42,8 @@ for(const entry of synopses){
   'Legacy or vague copy must not return for '+sid);
  assert(/[.?]$/.test(entry.short),'Synopsis must end in natural punctuation for '+sid);
 }
-assert(html.includes('omerta-v12.js?v=consistent-card-excerpts-20261116-preview30-posterfull-20261116'));
-assert(sw.includes('/omerta-v12.js?v=consistent-card-excerpts-20261116-preview30-posterfull-20261116'));
+assert(html.includes('omerta-v12.js?v=v725-poster-native-fit-20261116'));
+assert(sw.includes('/omerta-v12.js?v=v725-poster-native-fit-20261116'));
 assert.match(canonical,/Domenico Falco ne se présente pas/);
 assert.doesNotMatch(polish,/Vittorio Verri|Adriano Verri|Famiglia Verri/);
 assert.doesNotMatch(polish,/Object\.assign\(sc,COPY\[id\]\)/);
@@ -125,7 +125,7 @@ assert.equal(posterId(heroImage),'025','Confirmation artwork must still be repai
 assert.match(art30,/img\.closest\?\.\('\.avatar,\.player-ident,\.lobby-player-live,\.game-player-ident'\)/);
 
 for(const asset of ['omerta-polish-v12.js','omerta-hotfix-v12.js','omerta-v12-30.js','omerta-v12-39.js','omerta-polish-v12.css']){
-  const version=asset+'?v=santoro-visual-fix-20261108';
+  const version=asset+'?v='+(asset==='omerta-v12-39.js'?'v725-poster-native-fit-20261116':'santoro-visual-fix-20261108');
   assert.ok(html.includes(version),'HTML does not refresh '+asset);
   assert.ok(sw.includes('/'+version),'PWA offline shell does not refresh '+asset);
 }

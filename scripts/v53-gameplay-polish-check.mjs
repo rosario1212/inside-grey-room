@@ -5,7 +5,9 @@ for(const x of ['igr53-analyst','Hypothèse actuelle','Contradiction majeure','i
 req(html,'runtime-coordinator-v53.js?v=v53-runtime-coordinator');req(html,'gameplay-polish-v53.js?v=v53-gameplay-polish');if(html.indexOf('runtime-coordinator-v53.js')>=html.indexOf('judicial-runtime-v44.js'))throw new Error('coordinator not before v44');if(html.lastIndexOf('final-audience-v52.js')>=html.lastIndexOf('gameplay-polish-v53.js'))throw new Error('v53 not after v52');
 for(const f of ['judicial-runtime-v44.js','prosecutor-runtime-v47.js','public-broadcasts-v49.js','natural-role-gameplay-v50.js','self-guided-rules-v51.js'])req(await readFile(path.join(target,f),'utf8'),'IGR_RUNTIME_COORDINATOR',f);
 req(rt,'v42-evidence-history','v53 evidence folding');const h=await readFile(path.join(root,'heritage-v13-5.js'),'utf8');for(let i=35;i<=44;i++){const id=String(i).padStart(3,'0');req(h,`scenarioId:'${id}'`)};const meta=JSON.parse(await readFile(path.join(root,'heritage-v13-7.meta.json'),'utf8'));if(meta.status!=='playable')throw new Error('Heritage meta not playable');
-req(await readFile(path.join(root,'omerta-v12-39.js'),'utf8'),'data:image/svg+xml','inline lightweight OMERTA thumbnail');
+const omertaPosterSource=await readFile(path.join(root,'omerta-v12-39.js'),'utf8');
+req(omertaPosterSource, "scenarioThumbArt = function(id){ return isOmerta(id) ? ART[String(id)] : previousThumb(id); }",'real OMERTA poster source');
+if(omertaPosterSource.includes('v53LightThumb'))throw new Error('OMERTA placeholder artwork must not return');
 for(const f of ['terror-v12-37.js','dlc-suite-v12-37.js']){
  const source=await readFile(path.join(root,f),'utf8');
  req(source,f==='terror-v12-37.js'?'isTerror(id) ? ART[String(id)] : oldThumb(id)':'if(!ART[key])return oldThumb(id);return ART[key]','original DLC poster thumbnail');

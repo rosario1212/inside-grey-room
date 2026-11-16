@@ -38,7 +38,7 @@
   function accessPill(entry){return `<span class="igr-premium-access-pill">${esc(label(entry))}</span>`}
   function playerLabel(sc){try{return typeof playerCountLabel==='function'?playerCountLabel(sc):`${sc?.min||'—'}–${sc?.max||'—'} joueurs`}catch{return `${sc?.min||'—'}–${sc?.max||'—'} joueurs`}}
   function scenarioById(id){try{return typeof scenario==='function'?scenario(id):SCENARIOS?.find?.(x=>String(x.id)===String(id))}catch{return null}}
-  function artFor(id){try{return typeof scenarioThumbArt==='function'?scenarioThumbArt(id):''}catch{return''}}
+  function artFor(id){try{return typeof scenarioArt==='function'?scenarioArt(id):''}catch{return''}}
 
   async function fetchStatus(force=false){
     const now=Date.now();
