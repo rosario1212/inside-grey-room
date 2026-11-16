@@ -125,7 +125,7 @@ try{
 
 
   await check('catalog-v5-30word-preview-preserves-full-details',async()=>{
-    const start=app.indexOf('const SCENARIO_PREVIEW_MAX_WORDS=30;');
+    const start=app.indexOf('function scenarioCardTeaser(raw)');
     const end=app.indexOf('const ADVANCED_SCENARIO_IDS=',start);
     assert(start>=0&&end>start,'Shared 30-word catalogue teaser helper is missing');
     const teaser=vm.runInNewContext(app.slice(start,end)+'; scenarioCardTeaser');
@@ -150,7 +150,7 @@ try{
       {klass:'cartel-scenario',label:'CARTEL · DOSSIER 030',title:'LA COUR ACHETÉE',description:'Le cartel a massacré un gouverneur et sa famille, puis détruit un registre compromettant. Trois assaillants ont été capturés. La Grey Room doit reconstituer les noms et les crimes que ce registre contenait.',players:'7–9 JOUEURS'},
       {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 034',title:'LES NOMS QU’ILS PORTAIENT',description:'Le président déchu et son gendre, chef de la sécurité, tentent d’échapper à la justice. Faux noms, refuges et derniers fidèles brouillent leur trace. Une arrestation peut intervenir très tôt, mais le verdict exige des preuves.',players:'6–9 JOUEURS'}
     ];
-    const codeStart=app.indexOf('const SCENARIO_PREVIEW_MAX_WORDS=30;');
+    const codeStart=app.indexOf('function scenarioCardTeaser(raw)');
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
