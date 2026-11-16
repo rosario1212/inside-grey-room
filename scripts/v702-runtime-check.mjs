@@ -74,7 +74,7 @@ for(const id of ['029','030','031']){
 }
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
-// v727 — strict family catalogue contract. Post-click narrative is unchanged.
+// v728 — approved mockup layout contract. Post-click narrative is unchanged.
 assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Shared 30-word teaser helper missing');
 assert(app.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,30)"),
   'Every Base dossier, including 001–008, must use the same 30-word cap');
@@ -107,26 +107,30 @@ assert.equal(cx.catalogueTeaser('Deux phrases simples.'),'Deux phrases simples.'
 assert(cx.catalogueTeaser(probe,30).endsWith('…'),'Long previews should signal more detail');
 assert(app.includes('class="confirm-copy"'),'Post-click dossier context must remain intact');
 const familyCss=await read('catalog-descriptions-v1.css');
-const finalCss=familyCss.slice(familyCss.indexOf('/* CATALOGUE STANDARD v727'));
-assert(finalCss.startsWith('/* CATALOGUE STANDARD v727'));
-assert(finalCss.includes('display:flow-root!important')&&finalCss.includes('float:left!important'),
-  'Text must wrap under original posters without a dead black gap');
-assert(finalCss.includes('object-fit:contain!important'),'Poster artwork must not be cropped or distorted');
-assert(finalCss.includes('--igr-poster-ratio:3/4'),'Base 001–020 must share one 3:4 display frame');
+const finalCss=familyCss.slice(familyCss.indexOf('/* INSIDE GREY ROOM — CATALOGUE v728'));
+assert(finalCss.startsWith('/* INSIDE GREY ROOM — CATALOGUE v728'));
+assert(finalCss.includes('display:grid!important')&&finalCss.includes('float:none!important'),
+ 'Posters and texts must occupy independent columns, never wrap below the artwork');
+assert(finalCss.includes('grid-template-columns:var(--igr-card-art-width) minmax(0,1fr)!important'),
+ 'Card geometry must use one fixed left media column');
+assert(finalCss.includes('object-fit:contain!important')&&finalCss.includes('aspect-ratio:var(--igr-card-art-ratio)!important'),
+ 'Full original poster must retain its source content in the family display frame');
+assert(finalCss.includes('--igr-card-art-ratio:3/4'),'Base 001–020 must share one 3:4 optical display frame');
 assert(!finalCss.includes('#scenario-009')&&!finalCss.includes('#scenario-020'),
-  'Base dossiers must not diverge into a separate 009–020 geometry');
+ 'No private 009–020 geometry must override the 001–020 standard');
 for(const [family,ratio] of [
-  ['omerta','3/4'],['terror','3/4'],['cartel','724/960'],['regime','3/4']
+ ['omerta','3/4'],['terror','3/4'],['cartel','724/960'],['regime','3/4']
 ]){
-  assert(finalCss.includes('article.scenario.scenario--art.scenario--compact.'+family+'-scenario'),
-    family+' must have its own template');
-  assert(finalCss.includes('--igr-poster-ratio:'+ratio),family+' ratio missing');
+ assert(finalCss.includes('article.scenario.scenario--art.scenario--compact.'+family+'-scenario'),
+  family+' must keep independent styling');
+ assert(finalCss.includes('--igr-card-art-ratio:'+ratio),family+' aspect ratio missing');
 }
-assert(!finalCss.includes('object-fit:fill!important'),'Distorted full-frame artwork forbidden');
+assert(finalCss.includes('var(--igr-cover-url'),'All families need a soft background when text makes a card taller');
+assert(!finalCss.includes('object-fit:fill!important'),'Distorted artwork forbidden');
 assert(html.includes('catalog-descriptions-v1.css')||report.bundles.some(b=>
   b.sourceUrls?.some(url=>url.startsWith('catalog-descriptions-v1.css'))),
   'The consolidated family stylesheet must reach the published bundle');
-console.log('PASS v727 — 001–020 common geometry, DLC independent, 30-word previews, no poster void');
+console.log('PASS v728 — live 2-column catalogue, uncropped posters, independent DLCs, 30-word previews');
 
 console.log('PASS v702 '+report.platform+' — CSS '+main.before.css+'→'+main.after.css+
  ' / JS '+main.before.js+'→'+main.after.js+
