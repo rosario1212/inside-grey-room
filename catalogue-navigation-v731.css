@@ -1,24 +1,34 @@
 /* IGR v731 — one calm illustrated catalogue, one direct collection navigation. */
-body:has(#app .page-create-v10-13){background:#030405!important}
+body:has(#app .page-create-v10-13){background:#030405!important;overflow-x:clip!important}
+html:has(#app .page-create-v10-13){overflow-x:clip!important}
 body:has(#app .page-create-v10-13) .bg-vignette{opacity:.44!important}
 body:has(#app .page-create-v10-13) #igrUniversalDock,
 body:has(#app .page-create-v10-13) #igrDockFilters,
 body:has(#app .page-create-v10-13) #igrDockHome{display:none!important}
 body:has(#app .page-create-v10-13) #app::after{display:none!important}
-#app .page-create-v10-13{position:relative!important;isolation:isolate}
-#app .page-create-v10-13::before{
-  content:"";position:absolute;z-index:-1;top:52px;left:50%;
-  width:min(115%,1150px);height:370px;transform:translateX(-50%);
-  background:url("assets/catalogue-corridor-ink-v731.svg") center top/cover no-repeat;
-  opacity:.7;pointer-events:none;
-  -webkit-mask-image:linear-gradient(to bottom,black 4%,black 45%,transparent 100%);
-  mask-image:linear-gradient(to bottom,black 4%,black 45%,transparent 100%);
+#app .page-create-v10-13{
+  position:relative!important;isolation:isolate;
+  display:block!important;width:100%!important;max-width:100%!important;
+  min-width:0!important;box-sizing:border-box!important;
+  overflow-x:clip!important;overscroll-behavior-x:none!important;
 }
+#app .page-create-v10-13::before{
+  content:"";position:absolute;z-index:-1;
+  top:42px;left:0;right:0;width:100%;
+  height:230px;transform:none;
+  background:url("assets/catalogue-corridor-ink-v731.svg") center 0/cover no-repeat;
+  opacity:.68;filter:brightness(1.8) grayscale(1);pointer-events:none;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 11%,black 43%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 11%,black 43%,transparent 100%);
+}
+
 #app .page-create-v10-13 .page-head{position:relative!important;margin:0 0 17px!important;align-items:flex-start!important}
 #app .page-create-v10-13 .page-head h1{letter-spacing:-.048em!important;line-height:1.03!important}
 #app .page-create-v10-13 nav.igr-scenario-filters.igr-family-picker-v731{
   position:relative!important;top:auto!important;z-index:2!important;
   display:block!important;float:none!important;max-height:none!important;
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  transform:none!important;transform-origin:center!important;
   width:100%!important;min-width:0!important;box-sizing:border-box!important;
   margin:0 0 16px!important;padding:14px!important;
   background:rgba(7,8,9,.95)!important;border:1px solid rgba(190,190,187,.20)!important;
@@ -93,7 +103,7 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
 }
 #app .page-create-v10-13 :is(.omerta-head,.terror-head,.dlc-suite-head) :is(h2,p){color:#e5e5e2}
 @media(max-width:720px){
-  #app .page-create-v10-13::before{height:345px;top:62px;opacity:.52}
+  #app .page-create-v10-13::before{height:210px;top:37px;opacity:.60}
   #app .page-create-v10-13 .igr-collection-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
   #app .page-create-v10-13 .igr-collection-choice{min-height:55px;padding:9px 12px}
   #app .page-create-v10-13 .igr-collection-choice[data-family="base"]{grid-column:1/-1}
@@ -108,4 +118,22 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
 }
 @media(prefers-reduced-motion:reduce){
   #app .page-create-v10-13 .igr-collection-choice{transition:none}
+}
+
+/* v732: prevent legacy floating-drawer visibility styles from hiding the
+   direct collection control while a device upgrades its cached JS. */
+#app .page-create-v10-13 nav.igr-scenario-filters.igr-family-picker-v731.igr-filter-dock-panel{
+  position:relative!important;inset:auto!important;width:100%!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  transform:none!important;overflow:visible!important;
+  margin:0 0 12px!important;z-index:2!important;
+}
+#app .page-create-v10-13 > .scenario-panel-v10-13,
+#app .page-create-v10-13 > section.panel{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+@media(max-width:720px){
+  #app .page-create-v10-13 .page-head h1{
+    font-size:clamp(31px,7.1vw,42px)!important;
+    max-width:100%!important;overflow-wrap:normal!important;
+  }
 }
