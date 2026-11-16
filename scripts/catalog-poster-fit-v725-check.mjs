@@ -92,5 +92,5 @@ for(const id of ['029','030','031']){
  assert(existsSync(file),file+' missing');
  assert(read(file).includes('width="724" height="960"'),file+' ratio');
 }
-assert(read('index.html').includes('catalog-descriptions-v1.css?v=v728-approved-five-mockups-20261116'));
+assert(read('index.html').includes('catalog-descriptions-v1.css?v=v730-direct-dlc-selector-poster-fit-20261116'));
 console.log('PASS v728: source posters, independent five-family cards, responsive grid, 30-word cap.');
