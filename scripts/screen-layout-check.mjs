@@ -252,7 +252,7 @@ try{
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='contain',width+'px '+name+': stretched or cropped artwork (not contain)');
-        assert(m.artAlignment==='start',width+'px '+name+': poster must not be stretched by description height');
+        assert(['start','flex-start'].includes(m.artAlignment),width+'px '+name+': poster must not be stretched by description height');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
           assert(m.artColumnWidth>=130&&m.artColumnWidth<=154,
