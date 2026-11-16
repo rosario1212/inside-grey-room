@@ -196,7 +196,7 @@ try{
     const codeStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
-    const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
+    const cards=samples.map(sc=>'<article id="scenario-'+(sc.label.match(/\\d{3}/)?.[0]||'000')+'" class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
       '</h3><p class="igr-card-excerpt">'+preview(sc.description,30)+'</p><div class="tag-row">'+
@@ -292,7 +292,8 @@ try{
         assert(m.imageCount===1,width+'px '+name+': more than one image in family artwork');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='5'&&m.titleClamp==='2',width+'px '+name+': Omerta-format two-line title and five-line preview required');
-        assert(m.fit==='cover',width+'px '+name+': poster must fill Omerta-style artwork column');
+        const expectedFit=samples[i].klass==='omerta-scenario'?'cover':'contain';
+        assert(m.fit===expectedFit,width+'px '+name+': safe full-art fitting must match family');
         assert(m.artFloat==='none'&&m.cardDisplay==='grid'&&m.bodyLeft>=m.artRight-1,
           width+'px '+name+': approved layout needs two independent columns, not text wrapping under poster');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
@@ -300,7 +301,7 @@ try{
           assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
             width+'px '+name+': family-specific poster column width is incorrect '+m.artColumnWidth);
         }
-        assert(m.fullFit==='cover',width+'px '+name+': consistent Omerta edge-to-edge cover must apply');
+        assert(m.fullFit===expectedFit,width+'px '+name+': poster image must use safe family-specific fit');
         assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
         assert(m.copyBottom>0&&m.textVisible!==undefined,width+'px '+name+': description not rendered');
         assert(m.artFrameHeight>110&&m.artFrameHeight<300,width+'px '+name+': family poster frame size is implausible '+m.artFrameHeight);
@@ -433,7 +434,9 @@ try{
       }));
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=assets[i].name;
-        assert(m.fit==='cover',width+'px '+name+': image must use proportional Omerta cover framing');
+        const safe=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(assets[i].name.slice(0,3));
+        assert(m.fit===(safe?'contain':'cover'),
+          width+'px '+name+': '+(safe?'original must remain complete':'Omerta-approved cover must remain') );
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
         assert(Math.abs(m.width-m.contentWidth)<=1&&m.height<=m.contentHeight+1,
@@ -445,8 +448,8 @@ try{
           const reference=metrics[0];
           assert(Math.abs(m.displayAspect-reference.displayAspect)<=.025,
             width+'px '+name+': every poster must use the same Omerta-proportioned display frame '+JSON.stringify(m));
-          // object-fit:cover preserves the actual image ratio while eliminating
-          // letterbox bands, independently of portrait/landscape source art.
+          // Title-sensitive poster art uses object-fit:contain with the original
+          // image softly extended behind it. Omerta / 009–020 keep cover.
         }
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-native34-and-dlc.png'),fullPage:true});
