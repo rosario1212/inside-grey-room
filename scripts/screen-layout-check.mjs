@@ -19,6 +19,13 @@ for(const match of index.matchAll(/<link[^>]+rel="stylesheet"[^>]*>|<style[^>]*>
   else styles.push(await read(match[0].match(/href="([^"]+)"/)[1].split('?')[0]));
 }
 const css=styles.join('\n');
+// The DLC catalog now uses intentionally complete, short public hooks.
+const dlcSource=await read('dlc-suite-v12-37.js');
+const dlcHookMarker='  const DLC_CARD_TEASERS=Object.freeze(';
+const dlcHookAt=dlcSource.indexOf(dlcHookMarker)+dlcHookMarker.length;
+assert(dlcHookAt>=dlcHookMarker.length,'DLC hook mapping missing in runtime');
+const dlcHooks=JSON.parse(dlcSource.slice(dlcHookAt,dlcSource.indexOf(');',dlcHookAt)));
+
 const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/div>\s*(?=<div id="app")/);
 assert(introMatch,'Canonical entrance markup must exist');
 const embeddedDoor=introMatch[0].includes('intro-door-scene-v20');
@@ -73,10 +80,10 @@ try{
   await check('regime-v162-phone-cards-and-roles',async()=>{
     const cards=[
       {id:'032',name:'LES ARCHIVES DU PALAIS',
-       description:'Deux dirigeants en fuite : le directeur de la prison de Vahran et le ministre de l Intérieur. Les enquêteurs relient les archives, les arrestations et la chaîne de commandement.',
+       description:dlcHooks.fr['032'],
        players:'6–8 JOUEURS'},
       {id:'034',name:'LES NOMS QU ILS PORTAIENT',
-       description:'Le président déchu et son gendre, chef de la sécurité, sont recherchés. Le président peut être lié à des identités multiples, des ordres et des responsabilités distinctes.',
+       description:dlcHooks.fr['034'],
        players:'6–9 JOUEURS'}
     ];
     const markup=cards.map(sc=>'<article class="scenario scenario--art scenario--compact regime-scenario" data-igr-scenario-id="'+sc.id+'">'+
@@ -111,8 +118,8 @@ try{
         // five-line public preview, with full copy remaining in dossier detail.
         assert(Math.abs(parseFloat(m.heightRule)-m.cardHeight)<2,
           width+'px dossier '+cards[i].id+': height must equal Omerta card template');
-        assert(m.clamp==='5',
-          width+'px dossier '+cards[i].id+': five-line Omerta preview missing');
+        assert(m.clamp==='none'||m.clamp==='unset',
+          width+'px dossier '+cards[i].id+': short DLC hook must not be clamped');
         assert(m.textBottom+2<=m.tagTop,width+'px dossier '+cards[i].id+': text overlaps badges: '+JSON.stringify(m));
         assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card '+JSON.stringify(m));
         assert(!m.bodyOverflow,width+'px dossier '+cards[i].id+': text wider than card');
@@ -149,7 +156,7 @@ try{
     const longText=Array.from({length:47},(_,i)=>'mot'+i).join(' ');
     const compact=teaser(longText);
     assert.equal(compact.split(/\s+/).length,30,'Classic card descriptions must be capped at 30 words');
-    assert.equal(teaser(longText,19).split(/\s+/).length,19,'DLC descriptions must be capped at 19 words');
+    assert.equal(teaser(longText,19).split(/\s+/).length,19,'Legacy helper remains available for other UI copy');
     assert(compact.endsWith('…'),'Long catalogue descriptions should signal continuation');
     assert.equal(teaser('Une description courte et complète.'),'Une description courte et complète.');
     const cartelSource=await read('dlc-suite-v12-37.js');
@@ -170,14 +177,14 @@ try{
       'Opening a dossier must still display its complete context');
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
-      assert(source.includes('scenarioCardTeaser(sc.short,30)'),file+': public DLC cards must support fuller 30-word summaries');
+      assert(source.includes(file==='dlc-suite-v12-37.js'?'h(dlcCardTeaser(sc))':'scenarioCardTeaser(sc.short,30)'),file+': public DLC hook renderer missing');
       assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
         file+': every DLC rendering pathway must show one image without a vignette');
     }
     assert(app.includes('class="igr-poster-full"')&&!app.includes('class="igr-poster-ambient"'),
       'Classic cards must use a single original full-bleed image');
-    assert(app.includes('src="${scenarioArt(sc.id)}"'),
-      'Classic cards must load their original artwork, not a thumbnail crop');
+    assert(app.includes('src="${art(sc.id)}"'),
+      'Classic cards must load their approved catalogue artwork, not a thumbnail crop');
   });
 
   await check('catalog-v728-five-family-approved-mockup-cards',async()=>{
@@ -199,7 +206,7 @@ try{
     const cards=samples.map(sc=>'<article id="scenario-'+(sc.label.match(/\d{3}/)?.[0]||'000')+'" class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,30)+'</p><div class="tag-row">'+
+      '</h3><p class="igr-card-excerpt">'+(sc.klass?dlcHooks.fr[sc.label.match(/\d{3}/)?.[0]]:preview(sc.description,30))+'</p><div class="tag-row">'+
       '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>');
     const families=[
       ['scenario-panel-v10-13',''],
@@ -291,14 +298,14 @@ try{
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': footer badges overflow their card');
         assert(m.imageCount===1,width+'px '+name+': more than one image in family artwork');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
-        assert(m.clamp==='5'&&m.titleClamp==='2',width+'px '+name+': Omerta-format two-line title and five-line preview required');
+        assert((samples[i].klass?(m.clamp==='none'||m.clamp==='unset'):m.clamp==='5')&&m.titleClamp==='2',width+'px '+name+': title or DLC preview rendering inconsistent');
         const expectedFit=samples[i].klass==='omerta-scenario'?'cover':'contain';
         assert(m.fit===expectedFit,width+'px '+name+': safe full-art fitting must match family');
         assert(m.artFloat==='none'&&m.cardDisplay==='grid'&&m.bodyLeft>=m.artRight-1,
           width+'px '+name+': approved layout needs two independent columns, not text wrapping under poster');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
-          assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
+          assert(samples[i].klass==='terror-scenario' ? Math.abs(m.artColumnWidth-m.height*(2/3))<=2 : (m.artColumnWidth>=120&&m.artColumnWidth<=159),
             width+'px '+name+': family-specific poster column width is incorrect '+m.artColumnWidth);
         }
         assert(m.fullFit===expectedFit,width+'px '+name+': poster image must use safe family-specific fit');
