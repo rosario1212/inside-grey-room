@@ -63,11 +63,11 @@ const app=await read('app-v11.js');
 const dlc=await read('dlc-suite-v12-37.js');
 const premium=await read('premium-access-sync-v17.js');
 const cartelRuntime=await read('dlc-suite-v12-37.js');
-const cartelServiceWorker=await read('service-worker.js');
+const cartelServiceWorker=report.platform==='web'?await read('service-worker.js'):null;
 for(const id of ['029','030','031']){
   const name='cartel-'+id+'-poster-v2.svg';
   assert(cartelRuntime.includes(name),'Cartel generated gold-framed poster missing from runtime: '+id);
-  assert(cartelServiceWorker.includes(name),'PWA cache must retain the generated Cartel poster: '+id);
+  if(cartelServiceWorker)assert(cartelServiceWorker.includes(name),'PWA cache must retain the generated Cartel poster: '+id);
   const art=await read('assets/'+name);
   assert(art.includes('<svg ')&&art.includes('INSIDE GREY ROOM')&&art.includes('CARTEL'),
     'Cartel generated illustration or original graphic styling missing: '+id);
