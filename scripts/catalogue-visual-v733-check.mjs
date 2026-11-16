@@ -232,11 +232,11 @@ try{
       for(const item of allRows){
         assert(Math.abs(item.height-reference.height)<=1.1,
           `v737 ${width}px ${item.id}: card (${item.height}) must match Omerta 021 (${reference.height})`);
-        // TERREUR uses a deliberately wider native 3:4 art column (v748).
-        // Keep that approved family exception; all other cards still align with Omertà.
+        // TERREUR uses native 2:3 artwork. Its art column may be wider
+        // or narrower than Omertà depending on the responsive breakpoint.
         if(['026','027','028'].includes(item.id)){
-          assert(item.thumbRect.width>reference.thumbRect.width,
-            `v749 ${width}px ${item.id}: Terreur native poster column unexpectedly shrank`);
+          assert(Math.abs(item.thumbRect.width-item.height*(2/3))<=2,
+            `v752 ${width}px ${item.id}: Terreur 2:3 poster proportion changed`);
         }else{
           assert(Math.abs(item.thumbRect.width-reference.thumbRect.width)<=1.1,
             `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
