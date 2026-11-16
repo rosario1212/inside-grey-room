@@ -29,7 +29,7 @@ assert(!omertaHQ.includes('v53LightThumb'));
 assert(app.includes('const PUBLIC_LOBBY_SUMMARIES'), 'Keep canonical dossier copy intact');
 assert(app.includes('CATALOGUE_LONGER_INTROS'),'Longer intros must be presentation-only');
 assert(app.includes("'011':'Pendant trente-six heures"), '36 HEURES must have substantive catalogue copy');
-assert(app.includes('scenarioCardTeaser(scenarioCatalogueSynopsis(sc),Number(sc.id)>=9?30:23)'), 'Base catalogue previews must use full 30-word budget');
+assert(app.includes('scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,Number(sc.id)>=9?30:23)'), 'Base catalogue previews must use full 30-word budget');
 
 const start=app.indexOf('/* Catalogue-only descriptions:');
 const end=app.indexOf('function scenarioCardTeaser(',start);
