@@ -113,3 +113,12 @@
   .hplay-mode{font-size:7px}.hplay-back span{max-width:160px}.hplay-hub-intro h1{font-size:42px}.hplay-campaign-body>strong{font-size:38px}.hplay-campaign-foot b,.hplay-campaign-foot i{font-size:7px}.hplay-campaign-title h1{font-size:47px}.hplay-campaign-hero>div{right:14px;bottom:14px}.hplay-dossier-copy h1{font-size:39px}.hplay-stats{gap:6px}.hplay-stats span{padding:10px 5px}
 }
 @media(prefers-reduced-motion:reduce){.hplay *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+
+/* Same complete, compact role treatment in CENDRES, KUROI and MAÎTRE.
+   Card height follows the text instead of adding a three-dot truncation. */
+.hplay-private .hplay-role-short{margin:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;-webkit-line-clamp:unset!important;max-height:none!important;font-size:13px;line-height:1.5;color:var(--hp-muted)}
+.hplay-private .hplay-role-activity{justify-self:start;display:inline-flex;align-items:center;padding:6px 9px;border-radius:9px;border:1px solid rgba(192,158,110,.38);background:rgba(146,107,58,.13);color:#ddc29e;font-size:11px;font-weight:700;letter-spacing:.025em;white-space:nowrap}
+.hplay-private .hplay-role-full{min-width:0;padding:0 0 3px;border-bottom:1px solid rgba(255,255,255,.09)}
+.hplay-private .hplay-role-full summary{cursor:pointer;color:var(--hp-muted);padding:9px 0;font-size:12px;font-weight:650}
+.hplay-private .hplay-role-full p{margin:0 0 13px;font-size:13px;line-height:1.55;color:var(--hp-muted);white-space:normal;overflow:visible;text-overflow:clip}
