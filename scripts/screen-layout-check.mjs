@@ -150,10 +150,13 @@ try{
       {klass:'cartel-scenario',label:'CARTEL · DOSSIER 030',title:'LA COUR ACHETÉE',description:'Le cartel a massacré un gouverneur et sa famille, puis détruit un registre compromettant. Trois assaillants ont été capturés. La Grey Room doit reconstituer les noms et les crimes que ce registre contenait.',players:'7–9 JOUEURS'},
       {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 034',title:'LES NOMS QU’ILS PORTAIENT',description:'Le président déchu et son gendre, chef de la sécurité, tentent d’échapper à la justice. Faux noms, refuges et derniers fidèles brouillent leur trace. Une arrestation peut intervenir très tôt, mais le verdict exige des preuves.',players:'6–9 JOUEURS'}
     ];
+    const codeStart=app.indexOf('const SCENARIO_PREVIEW_MAX_WORDS=30;');
+    const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
+    const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+sc.description+'</p><div class="tag-row">'+
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description)+'</p><div class="tag-row">'+
       '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:820});
