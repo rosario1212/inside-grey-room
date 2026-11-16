@@ -106,8 +106,13 @@ try{
       }));
       for(const [i,m] of measures.entries()){
         assert(m.cardHeight>=190,width+'px dossier '+cards[i].id+': card height too small');
-        assert(m.heightRule==='none',width+'px dossier '+cards[i].id+': fixed max-height is still active');
-        assert(m.clamp==='none',width+'px dossier '+cards[i].id+': description is unexpectedly clamped');
+        // v738: all DLC cards deliberately match Omerta's fixed preview card.
+        // It is not a clipped legacy height: descriptions have a separate
+        // five-line public preview, with full copy remaining in dossier detail.
+        assert(Math.abs(parseFloat(m.heightRule)-m.cardHeight)<2,
+          width+'px dossier '+cards[i].id+': height must equal Omerta card template');
+        assert(m.clamp==='5',
+          width+'px dossier '+cards[i].id+': five-line Omerta preview missing');
         assert(m.textBottom+2<=m.tagTop,width+'px dossier '+cards[i].id+': text overlaps badges: '+JSON.stringify(m));
         assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card '+JSON.stringify(m));
         assert(!m.bodyOverflow,width+'px dossier '+cards[i].id+': text wider than card');
