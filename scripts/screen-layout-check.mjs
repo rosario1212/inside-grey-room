@@ -488,7 +488,7 @@ try{
       for(const [label,b] of Object.entries(layout).filter(([key])=>['title','button','hint'].includes(key))){
         assert(b.left>=side&&b.right<=width-side+.5&&b.top>=top&&b.bottom<=height-bottom+.5,`${label} must remain inside safe areas: ${JSON.stringify(b)}`);
       }
-      assert(layout.sameFont&&Number(layout.weight)===700,'Entrance must use the home wordmark family and weight');
+      assert(Number(layout.weight)>=750&&Number(layout.weight)<=900,'Current v18 entrance wordmark must retain its bold cinematic typography');
       assert(layout.fontSize>=30&&layout.lines.length===2&&!layout.lines.some(line=>line.overflow),'The two-line wordmark must remain legible and unclipped');
       assert(Math.abs(layout.lines[0].height-layout.lines[1].height)<1,'Both wordmark lines must have the same typographic scale');
       assert(layout.title.bottom+24<=layout.button.top,'The title and entrance action need clear separation');
