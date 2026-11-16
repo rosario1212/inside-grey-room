@@ -11,7 +11,7 @@ const fr=()=>window.IGR_LOCALE!=='en',copy=(a,b)=>fr()?a:b;
 const esc=v=>typeof window.h==='function'?window.h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const INVESTIGATION=new Set(['enqueteur','analyste','procureur','juge','inspecteur','expert']);
 const FINAL_LOCKERS=new Set(['enqueteur','analyste','procureur','juge','journaliste']);
-const ACTIVITY={enqueteur:5,suspect:4,procureur:4,juge:5,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5}; const COURTROOM_ACTIVITY=ACTIVITY;
+const ACTIVITY={enqueteur:5,suspect:4,procureur:4,juge:4,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5}; const COURTROOM_ACTIVITY=ACTIVITY;
 const activityRating=(r,global=false)=>ACTIVITY[r]||2;
 const LABELS={officier_liaison:'Officier',enqueteur:'Enquêteur',analyste:'Analyste',suspect:'Suspect',maitre:'Avocat',procureur:'Procureur',juge:'Juge',journaliste:'Journaliste',inspecteur:'Inspecteur',expert:'Expert',temoin:'Témoin'};
 const stars=n=>'★'.repeat(Math.max(0,Math.min(5,+n||0)))+'☆'.repeat(Math.max(0,5-(+n||0)));

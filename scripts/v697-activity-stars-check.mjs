@@ -4,7 +4,7 @@ import {runInNewContext} from 'node:vm';
 import {execFileSync} from 'node:child_process';
 const read=p=>readFileSync(p,'utf8');
 const natural=read('natural-role-gameplay-v50.js'),rules=read('self-guided-rules-v51.js');
-const expected={enqueteur:5,suspect:4,procureur:4,juge:5,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
+const expected={enqueteur:5,suspect:4,procureur:4,juge:4,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
 const readActivity=s=>{const m=s.match(/const ACTIVITY=(\{[^;\n]+\});/);assert(m,'missing activity map');return Function('return ('+m[1]+')')();};
 assert.deepEqual(readActivity(natural),expected,'lobby activity ratings do not match v697');
 assert.deepEqual(readActivity(rules),expected,'rulebook activity ratings must match lobby');
