@@ -170,7 +170,7 @@ try{
       'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
-  await check('catalog-v727-five-family-flow-layout',async()=>{
+  await check('catalog-v728-five-family-approved-mockup-cards',async()=>{
     const samples=[
       {klass:'',label:'DOSSIER 001',title:'LA CHAMBRE 222',description:'Maël Sénéchal est retrouvé mort, poignardé, dans la chambre 222. Trois personnes ont croisé sa route cette nuit-là. Leurs versions se contredisent.',players:'4–5 JOUEURS'},
       {klass:'',label:'DOSSIER 006',title:'LES CENDRES DU CHALET',description:'Cinq ans après la mort de Noé lors d’une randonnée, une ancienne vidéo bouleverse les témoignages de ses trois amis.',players:'4–5 JOUEURS'},
@@ -225,6 +225,12 @@ try{
           artHeight:el.querySelector('.scenario-thumb').getBoundingClientRect().height,
           artRatio:getComputedStyle(el.querySelector('.scenario-thumb')).aspectRatio,
           artFloat:getComputedStyle(el.querySelector('.scenario-thumb')).float,
+          cardDisplay:getComputedStyle(el).display,
+          bodyLeft:body.getBoundingClientRect().left,
+          artRight:el.querySelector('.scenario-thumb').getBoundingClientRect().right,
+          artFrameWidth:el.querySelector('.igr-poster-full').getBoundingClientRect().width,
+          artFrameHeight:el.querySelector('.igr-poster-full').getBoundingClientRect().height,
+          artFrameRatio:getComputedStyle(el.querySelector('.igr-poster-full')).aspectRatio,
           cardVisibility:getComputedStyle(el).contentVisibility,
           cardIntrinsic:getComputedStyle(el).containIntrinsicSize,
           titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
@@ -274,7 +280,8 @@ try{
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='contain',width+'px '+name+': stretched or cropped artwork (not contain)');
-        assert(m.artFloat==='left',width+'px '+name+': poster must float so longer text uses the whole card width');
+        assert(m.artFloat==='none'&&m.cardDisplay==='grid'&&m.bodyLeft>=m.artRight-1,
+          width+'px '+name+': approved layout needs two independent columns, not text wrapping under poster');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
           assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
@@ -283,14 +290,14 @@ try{
         assert(m.fullFit==='contain',width+'px '+name+': poster pixels must retain their original proportions');
         assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
         assert(m.textVisible,width+'px '+name+': description hidden');
-        assert(m.artHeight>110&&m.artHeight<275,width+'px '+name+': family poster size is implausible '+m.artHeight);
+        assert(m.artFrameHeight>110&&m.artFrameHeight<300,width+'px '+name+': family poster frame size is implausible '+m.artFrameHeight);
       }
       // Within every family, the card's text length must NEVER resize the poster.
       for(let j=0;j<samples.length;j+=2){
         const first=metrics[j],second=metrics[j+1];
         assert(samples[j].klass===samples[j+1].klass,'Poster pair belongs to different families');
-        assert(Math.abs(first.artColumnWidth-second.artColumnWidth)<.5 &&
-               Math.abs(first.artHeight-second.artHeight)<.5,
+        assert(Math.abs(first.artFrameWidth-second.artFrameWidth)<.5 &&
+               Math.abs(first.artFrameHeight-second.artFrameHeight)<.5,
           width+'px '+(samples[j].klass||'base')+': poster dimensions differ within one family: '+
           JSON.stringify({first,second}));
       }
@@ -299,7 +306,7 @@ try{
   });
 
 
-  await check('catalog-v727-base-009-020-common-3x4-frame',async()=>{
+  await check('catalog-v728-base-001-020-common-optical-frame',async()=>{
     const start=app.indexOf('const SCENARIOS = [');
     const end=app.indexOf('const SCENARIO_ROLES =',start);
     assert(start>=0&&end>start,'Cannot locate 001-020 canonical scenarios');
@@ -323,11 +330,13 @@ try{
         '</div></section></main></div></body></html>');
       const data=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
         const poster=el.querySelector('.scenario-thumb').getBoundingClientRect(),
+          posterFrame=el.querySelector('.igr-poster-full').getBoundingClientRect(),
           body=el.querySelector('.scenario-body').getBoundingClientRect(),
           footer=el.querySelector('.scenario-body > .tag-row').getBoundingClientRect(),
           card=el.getBoundingClientRect(),title=el.querySelector('h3'),
           style=getComputedStyle(el.querySelector('.igr-poster-full'));
         return {id:el.dataset.igrScenarioId,posterWidth:poster.width,posterHeight:poster.height,
+          posterFrameWidth:posterFrame.width,posterFrameHeight:posterFrame.height,
           posterBottom:poster.bottom,bodyBottom:body.bottom,footerTop:footer.top,footerBottom:footer.bottom,
           textBottom:el.querySelector('.igr-card-excerpt').getBoundingClientRect().bottom,
           cardBottom:card.bottom,fullFit:style.objectFit,titleVisible:title.scrollWidth<=title.clientWidth+1,
@@ -338,8 +347,8 @@ try{
       const first=data[0];
       for(const m of data){
         assert(m.fullFit==='contain',width+'px '+m.id+': artwork is cropped or distorted');
-        assert(Math.abs(m.posterWidth-first.posterWidth)<.5&&
-               Math.abs(m.posterHeight-first.posterHeight)<.5,
+        assert(Math.abs(m.posterFrameWidth-first.posterFrameWidth)<.5&&
+               Math.abs(m.posterFrameHeight-first.posterFrameHeight)<.5,
           width+'px '+m.id+': base poster differs from other dossiers 009–020');
         assert(m.footerTop>=m.textBottom+2,
           width+'px '+m.id+': player count must follow the synopsis with enough space');
@@ -414,8 +423,8 @@ try{
         assert(m.fit==='contain',width+'px '+name+': image must maintain its original aspect ratio');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
-        assert(Math.abs(m.width-m.contentWidth)<=1&&Math.abs(m.height-m.contentHeight)<=1,
-          width+'px '+name+': poster should fill its independent image slot '+JSON.stringify(m));
+        assert(Math.abs(m.width-m.contentWidth)<=1&&m.height<=m.contentHeight+1,
+          width+'px '+name+': original image frame must fit inside left column '+JSON.stringify(m));
         if(width===390){
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
@@ -424,7 +433,8 @@ try{
             assert(Math.abs(m.displayAspect-.75)<=.025,width+'px '+name+': every Base poster must use a 3:4 display frame '+JSON.stringify(m));
           }
           if(/^(029|030|031)/.test(name)){
-            assert(deviation<=.015,width+'px '+name+': Cartel artwork must fit 724:960 without distortion '+JSON.stringify(m));
+            assert(Math.abs(m.displayAspect-724/960)<=.015,
+              width+'px '+name+': Cartel display frame ratio is incorrect '+JSON.stringify(m));
           }
         }
       }
