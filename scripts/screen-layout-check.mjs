@@ -135,6 +135,20 @@ try{
     assert.equal(teaser(longText,19).split(/\s+/).length,19,'DLC descriptions must be capped at 19 words');
     assert(compact.endsWith('…'),'Long catalogue descriptions should signal continuation');
     assert.equal(teaser('Une description courte et complète.'),'Une description courte et complète.');
+    const cartelSource=await read('dlc-suite-v12-37.js');
+    const dossier029=cartelSource.match(/\{id:'029',title:'LE CYCLE MORT',short:'([^']+)',context:'([^']+)'/);
+    assert(dossier029,'Cartel 029 public French synopsis not found');
+    const cartelPreview=dossier029[1],cartelDetail=dossier029[2];
+    assert.equal(cartelPreview.trim().split(/\s+/).length,19,'Cartel 029 must use all 19 preview words');
+    assert.equal(teaser(cartelPreview,19),cartelPreview,'Cartel 029 must not be truncated in mid-description');
+    assert(cartelPreview.includes('Vingt personnes restent captives.'),
+      'Cartel 029 must state the hostage stakes in the public synopsis');
+    assert(cartelDetail.length>cartelPreview.length+100,
+      'Opening Cartel 029 must retain a more complete, substantive dossier synopsis');
+    assert(cartelDetail.includes('Los Salcedo')&&cartelDetail.includes('témoignages'),
+      'Cartel 029 full description must respect canon and psychological enquiry');
+    assert(cartelSource.includes("'029':{short:'Three survivors seek protection:"),
+      'Cartel 029 English public synopsis must be updated too');
     assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
       'Opening a dossier must still display its complete context');
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
