@@ -226,6 +226,13 @@ button:focus-visible,.tab:focus-visible,.pill-btn:focus-visible,.home-action:foc
   .intro-enter small{font-size:7px}
 }
 
+/* Match the raised CTA when the unbundled entry page is opened directly. */
+@media (max-width:700px) and (orientation:portrait){
+  #introGate #introEnterBtn{
+    bottom:calc(env(safe-area-inset-bottom,0px) + clamp(76px,13svh,112px))!important;
+  }
+}
+
 /* Tablet / desktop: keep the same cinematic art centered, never stretched. */
 @media (min-width:701px){
   .intro-art{

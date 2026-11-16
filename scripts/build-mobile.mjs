@@ -24,7 +24,7 @@ await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});cons
 for(const name of files){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing mobile runtime file: ${name}`);await cp(src,path.join(out,name),{recursive:true});runtimeText.push(await readFile(src,'utf8'))}
 
 const premiumHead=[
- '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=20261116-matte-black-entry">',
+ '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=20261116-entry-raised">',
  '  <link rel="stylesheet" href="heritage-v13-5.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-premium-v13-6.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-play-v13-7.css?v=v13.8-dual-play">',
