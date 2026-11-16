@@ -13,7 +13,7 @@ const fr=()=>window.IGR_LOCALE!=='en', copy=(a,b)=>fr()?a:b;
 const esc=v=>typeof window.h==='function'?window.h(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const INVESTIGATION=new Set(['enqueteur','analyste','procureur','juge','inspecteur','expert']);
 const REPORTERS=new Set(['suspect','enqueteur','analyste','procureur','juge','inspecteur','expert']);
-const ACTIVITY={enqueteur:5,suspect:4,procureur:4,juge:4,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
+const ACTIVITY={enqueteur:5,suspect:4,procureur:4,juge:4,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5,associato:3,uomo_onore:4,contabile:3,pentito:4,caporegime:4,consigliere:3,sottocapo:4,don:4,bras_droit:3,informateur:3};
 const COURTROOM_ACTIVITY=ACTIVITY;
 const activityRating=r=>ACTIVITY[r]||2;
 const ROLE_COPY={
