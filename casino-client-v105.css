@@ -87,3 +87,14 @@
 .casino-victory-rule{margin:18px 0;padding:15px 17px;border-left:3px solid #b2815d;background:#211618;color:#e8c9ae}
 .casino-victory-rule strong{display:block;font-size:12px;letter-spacing:.09em;margin-bottom:4px}
 @media(max-width:390px){.casino-victory-report{padding:16px}.casino-victory-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* HÉRITAGE IV — phase consent without a host-only fast-forward. */
+.casino-live .casino-phase-positions{margin:18px 0 24px;padding:17px clamp(14px,3vw,24px);
+  border:1px solid rgba(198,159,116,.4);border-radius:12px;background:linear-gradient(135deg,#21181a,#100d10);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:15px;align-items:center}
+.casino-live .casino-phase-positions strong{color:#dfbb91;letter-spacing:.08em;font-size:12px}
+.casino-live .casino-phase-positions p{margin:7px 0;color:#eddcd0;line-height:1.5}
+.casino-live .casino-phase-positions small{display:block;color:#baa99d;line-height:1.6}
+.casino-live .casino-phase-choice{display:flex;flex-wrap:wrap;gap:9px;justify-content:flex-end}
+.casino-live .casino-phase-choice .casino-action{min-height:44px;margin:0;border-color:#7d6353}
+@media(max-width:640px){.casino-live .casino-phase-positions{grid-template-columns:1fr}.casino-live .casino-phase-choice{justify-content:stretch}.casino-live .casino-phase-choice .casino-action{flex:1;min-width:130px}}
