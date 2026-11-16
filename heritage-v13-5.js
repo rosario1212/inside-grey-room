@@ -196,6 +196,68 @@ function addCrisisEvent(label,delta=0){
 function setCountdown(data){
   const c=getCampaign('cendres',true);c.cendres.countdown=data&&typeof data==='object'?{...data}:null;log(c,'countdown',c.cendres.countdown||{});saveCampaign(c);renderIfOpen('cendres');return c.cendres.countdown;
 }
+// KUROI: a verdict, the persistent register, the chronicle and the clan
+// directory must always be written together, never as separate saves.
+function commitKuroiDecision(input={}){
+  const chapter=Number(input.chapter),decision=text(input.decision,40);
+  if(!Number.isInteger(chapter)||chapter<1||chapter>5||!/^[a-z_]+$/.test(decision))
+    return {ok:false,reason:'invalid-decision'};
+  const flag=text(input.flag,40);
+  if(flag&&!new RegExp('^k'+chapter+'_[a-z0-9_]+$').test(flag))
+    return {ok:false,reason:'invalid-flag'};
+  const c=getCampaign('kuroi',true);
+  if(c.completed.includes(chapter))return {ok:true,already:true,campaign:c};
+  if(chapter!==c.currentChapter)return {ok:false,reason:'locked',campaign:c};
+  const k=c.kuroi;
+  const member=(group,id,name,role,status,note)=>{
+    const members=k.clans[group]?.members;
+    if(!members)return;
+    const entry={id,name,role,status,chapter,note:text(note,220)};
+    const at=members.findIndex(x=>x.id===id);
+    if(at>=0)members[at]={...members[at],...entry};else members.push(entry);
+  };
+  const debt=(id,from,to,reason,status='due')=>{
+    const entries=k.debts,at=entries.findIndex(x=>x.id===id);
+    const entry={id,type:'giri',from,to,reason:text(reason,220),status,private:false,chapter};
+    if(at>=0)entries[at]={...entries[at],...entry};else entries.push(entry);
+  };
+  const chronicle=(label)=>{
+    const val=text(label,220);
+    if(val)k.chronicle.push({id:uid(),at:nowISO(),chapter,label:val,visibility:'public'});
+  };
+  if(chapter===1){
+    member('kurokawa','oyabun-kurokawa','KENJI KUROKAWA','Oyabun','dead','Tué à la résidence avant l’ouverture de la campagne.');
+    member('kurokawa','daichi-ren','DAICHI REN','Kobun','active','Présent dans la chaîne d’accès au meurtre.');
+    member('police','mori','MORI','Inspecteur','active','Intermédiaire entre la police et Kurokawa.');
+    member('police','ishida','ISHIDA','Commissaire','active','Responsable institutionnel de l’enquête.');
+  }
+  if(Array.isArray(input.debt)&&input.debt.length===3)
+    debt('kuroi-debt-'+chapter+'-'+decision,text(input.debt[0],70),text(input.debt[1],70),input.debt[2]);
+  if(chapter===2&&decision==='mori_ren'){
+    member('kurokawa','daichi-ren','DAICHI REN','Kobun · débiteur de Mori','active','Une faveur sur le dossier de son père a été transformée en obligation.');
+    member('police','mori','MORI','Inspecteur · créancier','active','L’ancienne faveur sur la famille Ren est devenue un moyen de contrainte.');
+  }
+  if(chapter===4&&decision==='chain'){
+    const earlier=k.debts.find(x=>x.id==='kuroi-debt-2-mori_ren');
+    if(earlier){earlier.status='paid';earlier.reason='La dette a été mobilisée pour obtenir le meurtre puis identifiée.'}
+    else debt('kuroi-debt-2-mori_ren','MORI','DAICHI REN','L’obligation a été reconstituée après la découverte de la chaîne criminelle.','paid');
+    member('police','ishida','ISHIDA','Commissaire · mis en cause','active','La responsabilité du commandement est documentée ; aucune arrestation automatique.');
+    member('police','mori','MORI','Inspecteur · facilitateur mis en cause','active','A transmis les instructions et altéré des traces.');
+    member('kurokawa','daichi-ren','DAICHI REN','Kobun · exécutant mis en cause','active','A accompli le meurtre sous une contrainte liée à la dette.');
+  }
+  if(chapter===5){
+    const status=decision==='public'?'broken':decision==='internal'?'paid':'due';
+    for(const d of k.debts)if(['kuroi-debt-2-mori_ren','kuroi-debt-4-chain'].includes(d.id))d.status=status;
+  }
+  if(input.chron)chronicle(input.chron);
+  chronicle('Dossier 0'+chapter+' — '+text(input.title,80)+'. '+text(input.consequence,140));
+  if(flag)k.flags[flag]=true;
+  c.completed.push(chapter);c.completed.sort((a,b)=>a-b);
+  if(chapter===5){c.status='completed';c.currentChapter=5}else c.currentChapter=chapter+1;
+  log(c,'chapter-completed',{chapter,decision,flag});
+  if(!saveCampaign(c))return {ok:false,reason:'storage-failed'};
+  renderIfOpen('kuroi');return {ok:true,campaign:c};
+}
 function upsertClanMember(group,input){
   const c=getCampaign('kuroi',true);if(!c.kuroi.clans[group])return null;
   const members=c.kuroi.clans[group].members,id=text(input?.id,80)||uid(),idx=members.findIndex(m=>m.id===id);
@@ -331,6 +393,6 @@ window.IGR_HERITAGE=Object.freeze({
   version:VERSION,campaigns:CAMPAIGNS,open:renderHub,home,openCampaign:renderCampaign,openChapter:renderChapter,begin,keyOpen,
   get:id=>clone(getCampaign(id,false)),completeChapter,reset,backup,exportCampaign,importCampaign,
   cendres:Object.freeze({upsertNode:upsertCendresNode,link:linkCendres,addCrisisEvent,setCountdown,commitDecision:commitCendresDecision}),
-  kuroi:Object.freeze({upsertClanMember,addDebt,updateDebt,addChronicle})
+  kuroi:Object.freeze({upsertClanMember,addDebt,updateDebt,addChronicle,commitDecision:commitKuroiDecision})
 });
 })();
