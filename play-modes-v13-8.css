@@ -94,3 +94,109 @@
  .hnet .hnet-role-head{align-items:start;flex-direction:column}
  .hnet .hnet-role-card{min-height:auto;padding:14px}
 }
+
+
+/* v730 — One preparation layout for CENDRES, KUROI and MAÎTRE, distinct palettes.
+   Game logic/role pool and all sealed cards remain in their original modules. */
+.hnet .hnet-lobby{max-width:760px;display:grid;gap:12px;margin:12px auto 0;padding:clamp(15px,3.5vw,23px)}
+.hnet .hnet-title{margin:0}
+.hnet .hnet-title h1{font-size:clamp(29px,7.4vw,44px);line-height:1.06;margin:6px 0}
+.hnet .hnet-title>p{margin:4px 0 0;color:#abb3ba;font-size:12px;line-height:1.5}
+.hnet .hnet-code{
+  margin:0;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);
+  grid-template-rows:auto auto;align-items:center;gap:5px 12px;
+  padding:12px 15px;text-align:left;border-radius:12px;background:#090c10
+}
+.hnet .hnet-code span{grid-column:1;grid-row:1;align-self:end;font-size:10px;line-height:1.25}
+.hnet .hnet-code small{grid-column:1;grid-row:2;align-self:start;font-size:11px;line-height:1.3}
+.hnet .hnet-code strong{
+  grid-column:2;grid-row:1/3;align-self:center;
+  font:800 clamp(21px,4.5vw,29px)/1.2 'IBM Plex Mono',monospace;
+  letter-spacing:.11em;overflow-wrap:anywhere;text-align:right
+}
+.hnet .hnet-role-zone{margin:0;padding:clamp(12px,3vw,18px);border-radius:14px}
+.hnet .hnet-role-head{align-items:baseline;flex-wrap:wrap}
+.hnet .hnet-role-head h2{font-size:clamp(23px,5.6vw,28px)}
+.hnet .hnet-role-grid{gap:9px}
+.hnet .hnet-role-card{
+  min-height:98px;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:auto 1fr;gap:8px 10px;align-items:start;
+  align-content:start;padding:12px 13px;border-radius:11px
+}
+.hnet .hnet-role-card .hnet-role-top{grid-column:1/-1;gap:8px;align-items:baseline}
+.hnet .hnet-role-top b{font-size:13px;line-height:1.3}
+.hnet .hnet-role-top em{font-size:10px;line-height:1.3;letter-spacing:0}
+.hnet .hnet-role-card small{
+  grid-column:1;grid-row:2;font-size:12px!important;line-height:1.42!important;
+  min-width:0;align-self:start
+}
+.hnet .hnet-role-card .hnet-stars{
+  grid-column:2;grid-row:2;align-self:start;justify-self:end;
+  padding:4px 6px;border:1px solid rgba(204,178,147,.25);border-radius:6px;
+  background:rgba(146,107,58,.08);font-size:12px;white-space:nowrap
+}
+.hnet .hnet-role-random{grid-column:1/-1;min-height:74px}
+.hnet .hnet-role-random small{grid-column:1/-1}
+.hnet .hnet-role-zone>p.hnet-activity-note{
+  margin:12px 0 0;font-size:11px;line-height:1.5;color:#9ca8af
+}
+.hnet .hnet-roster-disclosure{
+  display:block;min-width:0;margin:0;border:1px solid rgba(235,241,245,.12);
+  border-radius:13px;background:#090d10;overflow:hidden
+}
+.hnet .hnet-roster-disclosure>summary{
+  display:flex;align-items:center;gap:12px;min-height:48px;
+  padding:11px 14px;cursor:pointer;list-style:none;
+  color:#e6ebee;font-size:13px;font-weight:700;line-height:1.35
+}
+.hnet .hnet-roster-disclosure>summary::-webkit-details-marker{display:none}
+.hnet .hnet-roster-disclosure>summary::before{
+  content:'▸';flex:none;color:#d2b593;
+  transition:transform .16s ease
+}
+.hnet .hnet-roster-disclosure[open]>summary::before{transform:rotate(90deg)}
+.hnet .hnet-roster-disclosure>summary span{
+  margin-left:auto;color:#aab5bc;font-size:11px;white-space:nowrap
+}
+.hnet .hnet-roster-disclosure .hnet-players{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;margin:0;padding:10px;border-top:1px solid rgba(235,241,245,.08)
+}
+.hnet .hnet-roster-disclosure .hnet-players>div{
+  min-height:44px;grid-template-columns:20px minmax(0,1fr);
+  grid-template-rows:auto auto;align-content:center;gap:2px 8px;padding:9px 11px
+}
+.hnet .hnet-roster-disclosure .hnet-players>div>span{grid-row:1/3;align-self:center}
+.hnet .hnet-roster-disclosure .hnet-players b{
+  grid-column:2;grid-row:1;font-size:12px;overflow-wrap:anywhere
+}
+.hnet .hnet-roster-disclosure .hnet-players small{
+  grid-column:2;grid-row:2;font-size:10px;text-align:left;line-height:1.35
+}
+.hnet .hnet-start{width:100%;margin:2px 0 0;min-height:50px}
+.hnet .hnet-wait{margin:0;border:1px dashed rgba(235,241,245,.12);border-radius:11px}
+.hnet .hnet-roster-disclosure>summary:focus-visible{
+  outline:2px solid #dfbb8e;outline-offset:-3px
+}
+/* MAÎTRE retains its ivory exterior, wine-red judicial detail and dark meeting room. */
+.maitre-page.hnet .hnet-lobby .hnet-code strong{
+  font-size:clamp(21px,4.5vw,29px)!important;letter-spacing:.11em!important
+}
+.maitre-page.hnet .hnet-lobby .hnet-role-zone{background:#080d10}
+.maitre-page.hnet .hnet-lobby .hnet-role-card.is-picked{
+  border-color:#c9a782;background:linear-gradient(145deg,#2c241e,#121618)
+}
+@media(max-width:620px){
+  .hnet .hnet-lobby{gap:11px;padding:14px}
+  .hnet .hnet-role-grid{grid-template-columns:1fr;gap:8px}
+  .hnet .hnet-role-card{min-height:0;padding:11px 12px;gap:5px 8px}
+  .hnet .hnet-role-card .hnet-stars{font-size:11px}
+  .hnet .hnet-roster-disclosure .hnet-players{grid-template-columns:1fr}
+  .hnet .hnet-code{padding:11px 12px;gap:4px 7px}
+  .hnet .hnet-code strong{font-size:clamp(20px,5.6vw,27px)}
+  .maitre-page.hnet .hnet-lobby .hnet-code strong{font-size:clamp(20px,5.6vw,27px)!important}
+  .hnet .hnet-role-head{align-items:start}
+}
+@media(prefers-reduced-motion:reduce){
+  .hnet .hnet-roster-disclosure>summary::before{transition:none}
+}
