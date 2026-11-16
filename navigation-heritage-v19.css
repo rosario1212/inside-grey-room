@@ -77,32 +77,53 @@ body.igr-game-active #igrNotifyBell .igr-notify-count{min-width:15px!important;h
 }
 @media(prefers-reduced-motion:reduce){.igr-universal-dock .igr-dock-pill,#igrNotifyBell{transition:none!important}}
 
-/* Catalogue: full-size readable floating navigation at all scroll positions.
-   Profile and active game retain their separate navigation behavior. */
+/* Catalogue: quiet navigation that yields while scrolling, then restores
+   readable Filtres / Accueil labels after the existing 360ms idle timer.
+   This affects only the scenario browser; no gameplay/profile overrides. */
 @media(max-width:700px){
   body.igr-scenario-browser .igr-universal-dock .igr-dock-pill:not(.is-dragging){
-    width:clamp(118px,31vw,134px)!important;
-    min-width:118px!important;
-    max-width:134px!important;
-    min-height:48px!important;
-    height:48px!important;
-    padding:0 14px!important;
-    gap:9px!important;
-    opacity:1!important;
-    background:rgba(5,8,10,.94)!important;
-    border-color:rgba(184,198,206,.32)!important;
-    box-shadow:0 12px 34px rgba(0,0,0,.42)!important;
+    height:46px!important;
+    min-height:46px!important;
+    border-radius:999px!important;
+    background:rgba(6,9,12,.93)!important;
+    border-color:rgba(184,198,206,.22)!important;
+    box-shadow:0 9px 26px rgba(0,0,0,.34)!important;
+    transition:width .22s ease,max-width .22s ease,min-width .22s ease,padding .22s ease,opacity .18s ease,background .18s ease!important;
     touch-action:manipulation!important;
+  }
+  body.igr-scenario-browser:not(.igr-dock-scrolling) .igr-universal-dock .igr-dock-pill:not(.is-dragging){
+    width:clamp(116px,31vw,132px)!important;
+    min-width:116px!important;
+    max-width:132px!important;
+    padding:0 13px!important;
+    gap:8px!important;
+    opacity:.98!important;
+  }
+  body.igr-scenario-browser.igr-dock-scrolling .igr-universal-dock .igr-dock-pill:not(.is-dragging){
+    width:45px!important;
+    min-width:45px!important;
+    max-width:45px!important;
+    padding:0!important;
+    gap:0!important;
+    opacity:.84!important;
   }
   body.igr-scenario-browser .igr-universal-dock .igr-dock-pill:not(.is-dragging) b{
     display:block!important;
+    font-size:11px!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    transition:max-width .20s ease,opacity .16s ease!important;
+  }
+  body.igr-scenario-browser:not(.igr-dock-scrolling) .igr-universal-dock .igr-dock-pill:not(.is-dragging) b{
     max-width:96px!important;
     opacity:1!important;
-    font-size:12px!important;
-    white-space:nowrap!important;
+  }
+  body.igr-scenario-browser.igr-dock-scrolling .igr-universal-dock .igr-dock-pill:not(.is-dragging) b{
+    max-width:0!important;
+    opacity:0!important;
   }
   body.igr-scenario-browser .igr-universal-dock .igr-dock-pill:not(.is-dragging) span{
-    font-size:18px!important;
+    font-size:17px!important;
   }
   body.igr-scenario-browser .igr-universal-dock .igr-dock-filters:not(.is-dragging){
     left:max(12px,env(safe-area-inset-left,0px))!important;

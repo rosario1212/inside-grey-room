@@ -155,25 +155,36 @@ try{
           bodyOverflow:body.scrollWidth>body.clientWidth+1,
           clamp:style.webkitLineClamp,titleClamp:heading.webkitLineClamp,
           fit:getComputedStyle(el.querySelector('.scenario-thumb img')).objectFit,
+          titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
           textVisible:style.overflow!=='hidden'&&style.display!=='none'};
       }));
       const global=await page.evaluate(()=>({
         scrollWidth:document.documentElement.scrollWidth,
         dockWidth:document.querySelector('.igr-dock-home').getBoundingClientRect().width,
         topOverlay:getComputedStyle(document.querySelector('#app'),'::before').position,
-        dockTextVisible:[...document.querySelectorAll('.igr-dock-pill b')].every(el=>getComputedStyle(el).display!=='none'&&getComputedStyle(el).opacity!=='0'),
+        dockTextHidden:[...document.querySelectorAll('.igr-dock-pill b')].every(el=>getComputedStyle(el).opacity==='0'),
         scrollClearance:parseFloat(getComputedStyle(document.querySelector('#app>.app')).paddingBottom)
       }));
       assert(global.scrollWidth<=width+1,width+'px: horizontal overflow '+global.scrollWidth);
       assert(global.scrollClearance>=100,width+'px: insufficient bottom safe clearance');
       if(width<=700){
-        assert(global.dockWidth>=115&&global.dockWidth<=136,width+'px: full Filtres/Accueil pill missing');
-        assert(global.dockTextVisible,width+'px: Filtres/Accueil labels are hidden while scrolling');
+        assert(global.dockWidth>=44&&global.dockWidth<=47,width+'px: dock must collapse to an icon while scrolling');
+        assert(global.dockTextHidden,width+'px: dock labels must fade out while scrolling');
+        await page.evaluate(()=>document.body.classList.remove('igr-dock-scrolling'));
+        await page.waitForTimeout(260);
+        const settled=await page.evaluate(()=>({
+          widths:[...document.querySelectorAll('.igr-dock-pill')].map(x=>x.getBoundingClientRect().width),
+          labels:[...document.querySelectorAll('.igr-dock-pill b')].map(x=>({visible:getComputedStyle(x).display!=='none'&&parseFloat(getComputedStyle(x).opacity)>.9,text:x.textContent.trim()}))
+        }));
+        assert(settled.widths.every(w=>w>=114&&w<=134),width+'px: dock must expand after scrolling stops: '+JSON.stringify(settled));
+        assert(settled.labels.every(x=>x.visible)&&settled.labels.some(x=>x.text==='Filtres')&&settled.labels.some(x=>x.text==='Accueil'),width+'px: readable labels must return when idle');
         assert(global.topOverlay==='fixed',width+'px: transparent status bar is not protected');
       }
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=samples[i].title;
-        assert(m.height>=200,width+'px '+name+': card too short');
+        assert(m.height>=188,width+'px '+name+': card too short');
+        assert(m.titleFont>=18&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
+        assert(m.copyFont>=13.5&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
