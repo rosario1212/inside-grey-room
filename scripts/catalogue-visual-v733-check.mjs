@@ -97,7 +97,7 @@ try{
     assert(data.scroll<=data.viewport+1,`${width}px: horizontal overflow ${data.scroll} > ${data.viewport}`);
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
-      const preserve=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031','032','033','034'].includes(c.id);
+      const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(c.id);
       assert.equal(c.imageFit,preserve?'contain':'cover',
         `${width}px ${c.id}: ${preserve?'full title-safe poster':'approved Omerta cover'} must be used`);
       if(preserve)assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
@@ -199,7 +199,7 @@ try{
           assert(item.bodyFits,`v737 ${width}px ${item.id}: content box unexpectedly overflowing`);
           assert(item.excerptClamp==='5',`v737 ${width}px ${item.id}: five-line Omerta-style excerpt missing`);
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
-          const preserve=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031','032','033','034'].includes(item.id);
+          const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(item.id);
           assert(item.imageFit===(preserve?'contain':'cover'),
             `v739 ${width}px ${item.id}: original artwork ${preserve?'must be fully framed':'retains approved cover'}`);
           if(preserve)assert(item.artUnderlay!=='none',

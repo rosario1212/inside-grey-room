@@ -166,7 +166,7 @@ for(const family of ['terror','cartel','regime'])
 assert(css.includes('background-image:var(--igr-cover-url)!important'),'Missing image-derived ambient edge fill');
 assert(!css.includes('#scenario-008,#scenario-018,'),'Dossier 018 must not be letterboxed');
 assert(css.includes('article.scenario.scenario--art.scenario--compact#scenario-017'),'Dossier 017 title treatment must remain');
-assert(app.includes('scenarioCatalogueArt(sc.id)'),'The base catalogue must use its dedicated poster lookup');
+assert(app.includes("const art=id=>String(id)==='018'"),'The base catalogue must use its dedicated image without external scope');
 assert(css.includes('background-size:96% auto!important'),'Poster titles must retain the source aspect ratio');
 assert(css.includes('/* v747 — dossier 018 approved catalogue asset'),'Dedicated 018 artwork treatment missing');
 assert(css.includes('mask-image:none!important;'),'018 must not mask its baked-in title');

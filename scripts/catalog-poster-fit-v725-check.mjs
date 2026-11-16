@@ -26,7 +26,7 @@ const thumbnail='src="$'+'{scenarioThumbArt(sc.id)}"';
 for(const [label,source] of [
  ['BASE',app],['OMERTÀ',omerta],['TERREUR',terror],['CARTEL/RÉGIME',dlc]
 ]){
-  assert(source.includes(label==='BASE' ? 'src="${scenarioCatalogueArt(sc.id)}"' : fullArt),label+' poster art mapping must be correct');
+  assert(source.includes(label==='BASE' ? 'src="${art(sc.id)}"' : fullArt),label+' poster art mapping must be correct');
   assert(!source.includes(thumbnail),label+' must not use thumbnails');
 }
 assert(premium.includes("function artFor(id){try{return typeof scenarioArt==='function'?scenarioArt(id):''}"));
