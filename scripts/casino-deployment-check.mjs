@@ -54,7 +54,7 @@ assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block e
 assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'none'/);
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
-assert.match(html,/casino-client-v105\.js\?v=105\.5/);
+assert.match(html,/casino-client-v105\.js\?v=105\.7/);
 assert(html.includes(publishedClientUrl),'The edge homepage is using an outdated application');
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'The live questionnaire is missing');
 assert.match(html,/investigation-deep-v286\.js\?v=nine-cases-v347-20261113/,'The live five-case questionnaire is missing');
