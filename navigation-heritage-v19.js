@@ -72,21 +72,16 @@ function ensureTopSettings(){
 function closeFilters(){
   const nav=document.querySelector('#app .igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
 }
-function refreshCatalogDepth(){
-  const depth=window.scrollY||document.documentElement?.scrollTop||0;
-  document.body.classList.toggle('igr-catalog-deep',!!scenarioPage()&&!isHome()&&depth>128);
-}
 function clearDockState(){
   closeFilters();
   document.getElementById('igrUniversalDock')?.remove();
-  document.body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view','igr-catalog-deep');
+  document.body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view');
 }
 function ensureDock(){
   const home=isHome(),page=scenarioPage(),profile=isProfile(),allowed=!!page||profile;
   document.body.classList.toggle('igr-at-home',home);
   document.body.classList.toggle('igr-scenario-browser',!!page&&!home);
   document.body.classList.toggle('igr-profile-view',profile&&!home);
-  refreshCatalogDepth();
   if(home||!allowed){clearDockState();return}
   const dock=document.getElementById('igrUniversalDock');if(!dock)return;
   const homeBtn=dock.querySelector('#igrDockHome'),filters=dock.querySelector('#igrDockFilters');
@@ -117,7 +112,6 @@ function schedule(){
   if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()});
 }
 function onScroll(){
-  refreshCatalogDepth();
   if(isHome()||(!scenarioPage()&&!isProfile()))return;
   document.body.classList.add('igr-dock-scrolling');
   clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>document.body.classList.remove('igr-dock-scrolling'),360);

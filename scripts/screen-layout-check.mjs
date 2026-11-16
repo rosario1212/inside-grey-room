@@ -140,7 +140,7 @@ try{
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:820});
       await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
-        '<style>'+css+'</style></head><body class="igr-scenario-browser igr-global-dock-active igr-catalog-deep">'+
+        '<style>'+css+'</style></head><body class="igr-scenario-browser igr-global-dock-active igr-dock-scrolling">'+
         '<div id="app"><div class="app"><main class="page page-create-v10-13">'+
         '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+cards+
         '</div></section></main></div></div>'+
@@ -161,12 +161,14 @@ try{
         scrollWidth:document.documentElement.scrollWidth,
         dockWidth:document.querySelector('.igr-dock-home').getBoundingClientRect().width,
         topOverlay:getComputedStyle(document.querySelector('#app'),'::before').position,
+        dockTextVisible:[...document.querySelectorAll('.igr-dock-pill b')].every(el=>getComputedStyle(el).display!=='none'&&getComputedStyle(el).opacity!=='0'),
         scrollClearance:parseFloat(getComputedStyle(document.querySelector('#app>.app')).paddingBottom)
       }));
       assert(global.scrollWidth<=width+1,width+'px: horizontal overflow '+global.scrollWidth);
       assert(global.scrollClearance>=100,width+'px: insufficient bottom safe clearance');
       if(width<=700){
-        assert(global.dockWidth<=52,width+'px: dock does not shrink during catalogue reading');
+        assert(global.dockWidth>=115&&global.dockWidth<=136,width+'px: full Filtres/Accueil pill missing');
+        assert(global.dockTextVisible,width+'px: Filtres/Accueil labels are hidden while scrolling');
         assert(global.topOverlay==='fixed',width+'px: transparent status bar is not protected');
       }
       for(let i=0;i<metrics.length;i++){
@@ -174,9 +176,9 @@ try{
         assert(m.height>=200,width+'px '+name+': card too short');
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
-        assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card');
+        assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
-        assert(m.fit==='contain',width+'px '+name+': original poster cropped');
+        assert(m.fit==='cover',width+'px '+name+': poster must fill the whole card column');
         assert(m.textVisible,width+'px '+name+': description hidden');
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v3-five-universes-iphone.png'),fullPage:true});
