@@ -245,13 +245,14 @@ try{
       const global=await page.evaluate(()=>({
         scrollWidth:document.documentElement.scrollWidth,
         dockWidth:document.querySelector('.igr-dock-home').getBoundingClientRect().width,
+        dockVisible:getComputedStyle(document.querySelector('.igr-dock-home')).display!=='none',
         topOverlay:getComputedStyle(document.querySelector('#app'),'::before').position,
         dockTextHidden:[...document.querySelectorAll('.igr-dock-pill b')].every(el=>getComputedStyle(el).opacity==='0'),
         scrollClearance:parseFloat(getComputedStyle(document.querySelector('#app>.app')).paddingBottom)
       }));
       assert(global.scrollWidth<=width+1,width+'px: horizontal overflow '+global.scrollWidth);
       assert(global.scrollClearance>=100,width+'px: insufficient bottom safe clearance');
-      if(width<=700){
+      if(width<=700&&global.dockVisible){
         assert(global.dockWidth>=44&&global.dockWidth<=47,width+'px: dock must collapse to an icon while scrolling');
         assert(global.dockTextHidden,width+'px: dock labels must fade out while scrolling');
         await page.evaluate(()=>document.body.classList.remove('igr-dock-scrolling'));
@@ -497,7 +498,9 @@ try{
       assert(layout.title.bottom+12<=layout.button.top,'Poster title and entrance action need clear separation');
       assert(layout.button.height>=44,'Entrance action needs a usable touch target');
       assert(layout.hint.height<=layout.hintLine*1.1,'The entrance hint must remain on one line');
-      assert(layout.art.width/layout.art.height<=941/1672+.001,'Wide viewports must retain the full height of the doorway');
+      if(modernDoor){
+        assert(Math.abs(layout.art.width-layout.frame.width)<=1&&Math.abs(layout.art.height-layout.frame.height)<=1,'CSS doorway must fill its own poster frame');
+      }else assert(layout.art.width/layout.art.height<=941/1672+.001,'Classic entrance must preserve source proportions');
       // v18 deliberately overlays the wordmark and button on the doorway poster,
       // unlike the older design which placed both beside the artwork.
       assert(layout.title.left>=layout.frame.left-.5&&layout.title.right<=layout.frame.right+.5,
