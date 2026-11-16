@@ -164,7 +164,30 @@ inspecteur:{label:'Inspecteur de terrain',win:'Choisis les bonnes pistes et aide
 expert:{label:'Expert / Médecin légiste',win:'Interprète correctement les éléments techniques essentiels.',body:'Une analyse complémentaire par cycle. Tu établis des faits techniques, jamais un coupable.'},
 temoin:{label:'Témoin',win:'Reste cohérent avec ta vérité et ton éventuel objectif secondaire.',body:'Tu peux être entendu pendant la fenêtre témoins. Tu peux devenir personne d’intérêt puis suspect.'},
 espion:{label:'Espion',win:'Accomplis ta mission sans être démasqué.',body:'Ton rôle public reste une couverture. Être Espion ne signifie pas être le responsable principal.'}
+
 };
+
+// Brèves pour les cartes de choix : les fiches complètes restent inchangées.
+const ROLE_PREVIEW = Object.freeze({
+ officier_liaison:'Commande les opérations militaires et leurs conséquences.',
+ enqueteur:'Dirige les interrogatoires et coordonne l’enquête.',
+ analyste:'Repère les contradictions et profile les suspects.',
+ suspect:'Mens, négocie et défends ta version.',
+ maitre:'Défends ton client et prépare sa défense.',
+ procureur:'Accuse, négocie et établis les responsabilités.',
+ juge:'Arbitre les procédures et préside le tribunal.',
+ journaliste:'Enquête et publie des révélations.',
+ inspecteur:'Explore les lieux et relève les indices.',
+ expert:'Analyse les preuves et éclaire l’enquête.',
+ temoin:'Témoigne sur ce que tu sais.',
+ espion:'Protège ta couverture et accomplis ta mission.'
+});
+function rolePreview(id,info){
+ const scenarioId=String(STATE?.sync?.room?.scenario_id||STATE?.selectedScenario||'');
+ if(scenarioId==='031'&&id==='maitre')return 'Défends le client désigné par le cartel.';
+ if(scenarioId==='031'&&id==='suspect')return 'Défends ta version et évite la prison.';
+ return ROLE_PREVIEW[id]||info.body;
+}
 
 const RULES = [
 {title:'1. ADN du jeu',items:['Inside Grey Room est une enquête psychologique asymétrique à informations cachées.','La vérité canonique ne change jamais ; les accès, réactions, relations, timings et trames disponibles peuvent changer.','Le système fournit les circonstances ; les joueurs produisent la tragédie.']},
@@ -1201,7 +1224,7 @@ function renderLobby(prefetched=null){
  const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:roleMissing?`Lancer · ${roleMissing} rôle${roleMissing>1?'s':''} attribué${roleMissing>1?'s':''} au hasard`:'Lancer le dossier';
  const omertaLobby=['021','022','023','024','025'].includes(String(sc.id));
  const randomRoleButton=`<button type="button" class="role-choice-card random-role-card" onclick="chooseRandomLobbyRole()"><span><b>Choix aléatoire</b><small>Tirage uniforme parmi les rôles publics encore disponibles. Chaque type de rôle a exactement une chance dans le tirage. ${omertaLobby?'Dans Omertà, les identités des personnages restent privées.':'L’Espion reste secret.'}</small></span><em>AU HASARD</em></button>`;
- const roleButtons=randomRoleButton+choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<div class="igr-role-option"><button type="button" class="role-choice-card ${mine?'selected':''} ${full?'full':''}" data-role-id="${h(x.id)}" aria-pressed="${mine}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.body)}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button><details class="igr-role-more" data-role-id="${h(x.id)}"><summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p></details></div>`}).join('');
+ const roleButtons=randomRoleButton+choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<div class="igr-role-option"><button type="button" class="role-choice-card ${mine?'selected':''} ${full?'full':''}" data-role-id="${h(x.id)}" aria-pressed="${mine}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(rolePreview(x.id,x.info))}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button><details class="igr-role-more" data-role-id="${h(x.id)}"><summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p></details></div>`}).join('');
  const reservations=d.room.state?.victory_reservations||[];
  const myReservation=reservations.find(x=>String(x.player_id)===String(me.id));
  const victoryRoleNotice=myReservation
@@ -2296,7 +2319,7 @@ function renderContinuationPanel(){
  if(cont.stage==='role_claims'){
    const selected=scenario(cont.selected_scenario),myClaim=myContinuationAction('next_role_claim')?.role||'';
    const count=(d.players||[]).length,roles=roleChoiceSummary(selected,count,[]);
-   const claimBox=isWinner?`<div class="continuation-action"><div class="next-scenario-picked"><span>Scénario choisi</span><b>${h(selected.id)} · ${h(selected.title)}</b></div><p>Choisis maintenant le rôle que tu veux réserver pour la prochaine partie.</p><div class="role-choice-grid compact">${roles.map(x=>`<button class="role-choice-card ${myClaim===x.id?'selected':''}" onclick="claimNextRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.body)}</small></span><em>${myClaim===x.id?'TON CHOIX':x.cap>1?`${x.cap} PLACES`:'1 PLACE'}</em></button>`).join('')}</div></div>`:`<div class="next-scenario-picked"><span>Scénario choisi</span><b>${h(selected.id)} · ${h(selected.title)}</b></div><p class="continuation-wait">Les vainqueurs choisissent leurs rôles prioritaires.</p>`;
+   const claimBox=isWinner?`<div class="continuation-action"><div class="next-scenario-picked"><span>Scénario choisi</span><b>${h(selected.id)} · ${h(selected.title)}</b></div><p>Choisis maintenant le rôle que tu veux réserver pour la prochaine partie.</p><div class="role-choice-grid compact">${roles.map(x=>`<button class="role-choice-card ${myClaim===x.id?'selected':''}" onclick="claimNextRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(rolePreview(x.id,x.info))}</small></span><em>${myClaim===x.id?'TON CHOIX':x.cap>1?`${x.cap} PLACES`:'1 PLACE'}</em></button>`).join('')}</div></div>`:`<div class="next-scenario-picked"><span>Scénario choisi</span><b>${h(selected.id)} · ${h(selected.title)}</b></div><p class="continuation-wait">Les vainqueurs choisissent leurs rôles prioritaires.</p>`;
    const host=STATE.hostToken?`<button class="btn block" ${Number(cont.claims_received||0)<wc?'disabled':''} onclick="finalizeNextRoles()">Attribuer les priorités · ${Number(cont.claims_received||0)}/${wc}</button>`:'';
    return `<div class="continuation-panel"><div class="kicker">PRIORITÉ DES VAINQUEURS</div><h3>Choix du prochain rôle</h3><p>Si plusieurs vainqueurs demandent le même rôle et qu’il n’y a pas assez de places, la plus grande <b>force de victoire</b> obtient la priorité. À score parfaitement égal, le serveur tire au sort.</p><div class="winner-score-list">${winnerRows}</div>${claimBox}${host}</div>`;
  }
