@@ -71,7 +71,7 @@ export function startRuntime(lobby,release,{undercoverIds,now,deck}){
     releaseId:release.id,privateCanon:pack,openingPokerComplete:false,phaseStartedAt:now,campaignStartedAt:now,
     politicalBase:Object.fromEntries(Object.values(state.roster).map(c=>[c.id,{influence:c.influence,legitimacy:c.legitimacy}])),
     casinoBank:100000,slotResults:{},loyalty:{},successionWagers:{},territories:{},messages:[],hearings:[],
-    rulings:[],organigram:[],npcEvents:[],publicEvents:[],corruption:[],support:{},bureauBallots:{},motions:[],privateNotes:{},usedMoves:[],usedNpcOffers:[],finale:null});
+    rulings:[],organigram:[],npcEvents:[],publicEvents:[],corruption:[],support:{},bureauBallots:{},phasePositions:{},motions:[],privateNotes:{},usedMoves:[],usedNpcOffers:[],finale:null});
   for(const t of pack.territories)state.territories[t.id]={id:t.id,name:t.name,controller:resolveId(state,t.controller),claims:[]};
   releasePhase(state);startPoker(state,{id:'opening',participants:state.players,deck,now});refreshPolitics(state);
   return state;
@@ -283,9 +283,23 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       }
       s.usedMoves.push(move.id);s.publicEvents.push({id:move.id,text:render(s,move.publicText||move.label),phase:numberPhase(s)});break;
     }
+    case 'PHASE_POSITION':{
+      check(s.members.some(m=>m.id===actor),'session_not_authorized');
+      check(['ready','more_time'].includes(payload.position),'invalid_phase_position');
+      s.phasePositions=s.phasePositions||{};
+      s.phasePositions[actor]=payload.position;
+      break;
+    }
     case 'ADVANCE_PHASE':{
       check(actor===s.hostId,'host_required');check(s.openingPokerComplete&&s.poker.stage==='settled','finish_poker_first');
-      if(s.chapter===1)check(now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs,'minimum_social_time');
+      const elapsed=Math.max(0,now-s.phaseStartedAt),min=s.privateCanon.minimumSocialMs;
+      check(elapsed>=min,'minimum_social_time');
+      // An explicit objection buys a protected discussion window; no-show seats never block forever.
+      if(s.chapter>1){
+        const positions=s.phasePositions||{},allReady=s.members.every(m=>positions[m.id]==='ready');
+        const objection=s.members.some(m=>positions[m.id]==='more_time');
+        check(allReady||elapsed>=min*(objection?3:2),'phase_participants_not_ready');
+      }
       if(s.chapter===3&&s.phase===2)throw Error('use_finish_campaign');
       if(s.chapter===1&&s.phase===3){
         const perfect=s.agentDecisions.length===5&&s.agentDecisions.every(d=>d.correct);
@@ -293,7 +307,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
         check(s.roomLocated,'agent_must_locate_room');
       }
       const next=applyCasinoCommand(current,{...command,actor:'system'});
-      next.phaseStartedAt=now;releasePhase(next);
+      next.phaseStartedAt=now;next.phasePositions={};releasePhase(next);
       // A separate human judge is optional. In their absence, a recorded
       // adversarial hearing and independent sources precede system custody.
       if(next.chapter===2&&next.phase===3&&!next.bureau.judge){
@@ -347,6 +361,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
     }
     case 'FINISH_CAMPAIGN':{
       check(actor===s.hostId&&s.chapter===3&&s.phase===2,'finale_not_open');
+      check(now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs,'minimum_social_time');
       const bureauMembers=Object.values(s.bureau),ballots=Object.keys(s.bureauBallots||{}).filter(id=>bureauMembers.includes(id));
       // Do not let the host finish while an active bureau is deliberating.
       // After a documented timeout the missing seats abstain; their votes are
@@ -443,6 +458,12 @@ export function viewRuntime(state,viewer){
     npcOffers:player?(state.privateCanon.npcOffers||[]).filter(o=>offerAllowed(state,o,viewer)).map(o=>({id:o.id,label:render(state,o.label),terms:render(state,o.terms),price:o.price||0})):[],
     continuityRole:player&&state.roster[viewer].status==='dead'?'witness':undefined,
     minimumSocialUntil:state.phaseStartedAt+state.privateCanon.minimumSocialMs,
+    phaseReadiness:state.status==='playing'?{
+      myPosition:state.phasePositions?.[viewer]||null,
+      ready:state.members.filter(m=>state.phasePositions?.[m.id]==='ready').length,
+      concerns:state.members.filter(m=>state.phasePositions?.[m.id]==='more_time').length,
+      seats:state.members.length
+    }:undefined,
     hostCanLocate:viewer===state.hostId&&state.chapter===1&&state.phase===3&&state.fallbackReady&&
       elapsed>=state.privateCanon.minimumSocialMs*3,
     hostCanCloseDefence:viewer===state.hostId&&state.chapter===3&&state.phase===2&&elapsed>=state.privateCanon.minimumSocialMs*5&&state.hearings.some(h=>h.defence===null),

@@ -83,8 +83,9 @@ export function casinoPersonalVictory(s,viewer,final){
       fulfilled=s.interpellationRequests.some(r=>r.requestedBy===viewer&&r.executed);
       objective='Obtenir une interpellation motivée et effectivement menée par l’Agent.';
     }else if(bureauRole==='analyst'){
-      fulfilled=s.intel.some(i=>i.reviewedBy===viewer&&i.evidenceIds?.length)
-        ||s.organigram.some(o=>o.filedBy===viewer&&accurateOwnLink(s,o));
+      fulfilled=s.intel.some(i=>i.reviewedBy===viewer&&i.checked===true&&
+        Array.isArray(i.evidenceIds)&&i.evidenceIds.some(id=>s.evidence.some(e=>e.id===id&&e.validated&&e.subjectId===i.subjectId)))
+        ||s.organigram.some(o=>o.filedBy===viewer&&accurateOwnLink(s,o)&&independent(s,o.evidenceIds,o.subject,o.offence));
       objective='Faire entrer une source vérifiée ou un lien exact dans le dossier.';
     }else if(bureauRole==='prosecutor'){
       fulfilled=s.hearings.some(h=>h.openedBy===viewer);

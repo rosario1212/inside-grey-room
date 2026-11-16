@@ -1,0 +1,54 @@
+name: HÉRITAGE v719 — Quatre campagnes et non-régression
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'casino/**'
+      - 'casino-client-v105.*'
+      - 'heritage-play-v13-7.js'
+      - 'heritage-maitre-v34.js'
+      - 'heritage-maitre-online-v34-4.js'
+      - 'scripts/casino-runtime-check.mjs'
+      - 'scripts/casino-v718-victory-check.mjs'
+      - '.github/workflows/heritage-v719-polish-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'casino/**'
+      - 'casino-client-v105.*'
+      - 'heritage-play-v13-7.js'
+      - 'heritage-maitre-v34.js'
+      - 'heritage-maitre-online-v34-4.js'
+      - 'scripts/casino-runtime-check.mjs'
+      - 'scripts/casino-v718-victory-check.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax of the four campaign interfaces and CASINO engine
+        run: |
+          set -euo pipefail
+          node --check casino/runtime.mjs
+          node --check casino/victory.mjs
+          node --check casino-client-v105.js
+          node --check heritage-play-v13-7.js
+          node --check heritage-maitre-v34.js
+          node --check heritage-maitre-online-v34-4.js
+      - name: Simulation and regression of all four campaigns
+        run: |
+          set -euo pipefail
+          node scripts/v713-cendres-playtest-check.mjs
+          node scripts/v714-cendres-final-hardening-check.mjs
+          node scripts/v715-kuroi-playtest-check.mjs
+          node scripts/v716-maitre-playtest-check.mjs
+          node scripts/v716-maitre-online-check.mjs
+          node scripts/casino-v718-victory-check.mjs
+          node scripts/casino-runtime-check.mjs

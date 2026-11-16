@@ -94,6 +94,14 @@ for(let count=4;count<=7;count++)for(const optional of [[],['judge'],['prosecuto
  assert.doesNotMatch(casinoVictoryBrief(s,'p0'),/mission privée|couverture cachée/);
  assert.match(casinoVictoryBrief(s,'p3'),/mission privée/);
 }
+// An analyst cannot win on unverified notes or an accurate but unsupported guess.
+{
+ const s=scored(fixture(4));
+ s.organigram=[];s.intel.push({id:'unverified',from:'p1',subjectId:'p1',checked:false,reviewedBy:'analyst',evidenceIds:['proof0']});
+ assert.equal(casinoPersonalVictory(s,'analyst',casinoVictory(s)).objectiveFulfilled,false);
+ s.organigram=[{...link,evidenceIds:['proof0']}];
+ assert.equal(casinoPersonalVictory(s,'analyst',casinoVictory(s)).objectiveFulfilled,false);
+}
 // Full eight-phase game: no host-only or judge-only bureau result.
 {
  let s=fixture(4);
@@ -114,21 +122,24 @@ for(let count=4;count<=7;count++)for(const optional of [[],['judge'],['prosecuto
  s=cmd(s,'agent','LOCATE_ROOM',{},195000);
  s=cmd(s,'p0','ADVANCE_PHASE',{},195001);
  assert.equal(s.chapter,2);
- for(let i=0;i<3;i++)s=cmd(s,'p0','ADVANCE_PHASE',{},195010+i);
+ assert.throws(()=>cmd(s,'p0','ADVANCE_PHASE',{},195010),/minimum_social_time/);
+ for(let i=0;i<3;i++)s=cmd(s,'p0','ADVANCE_PHASE',{},195001+(i+1)*140000);
  assert.equal(s.chapter,3);
- s=cmd(s,'p0','ADVANCE_PHASE',{},195015);
+ const last=195001+4*140000;
+ s=cmd(s,'p0','ADVANCE_PHASE',{},last);
  assert.equal(s.phase,2);
- assert.throws(()=>cmd(s,'p0','FINISH_CAMPAIGN',{},195016),/bureau_report_pending/);
- assert.throws(()=>cmd(s,'p0','BUREAU_VERDICT',{position:'established'},195016),/unauthorized_role/);
- assert.throws(()=>cmd(s,'agent','BUREAU_VERDICT',{position:'not-an-answer'},195016),/invalid_bureau_verdict/);
- s=cmd(s,'agent','BUREAU_VERDICT',{position:'established'},195016);
- s=cmd(s,'investigator','BUREAU_VERDICT',{position:'insufficient'},195017);
- s=cmd(s,'analyst','BUREAU_VERDICT',{position:'established'},195018);
+ assert.throws(()=>cmd(s,'p0','FINISH_CAMPAIGN',{},last+1),/minimum_social_time/);
+ assert.throws(()=>cmd(s,'p0','FINISH_CAMPAIGN',{},last+60001),/bureau_report_pending/);
+ assert.throws(()=>cmd(s,'p0','BUREAU_VERDICT',{position:'established'},last+60002),/unauthorized_role/);
+ assert.throws(()=>cmd(s,'agent','BUREAU_VERDICT',{position:'not-an-answer'},last+60003),/invalid_bureau_verdict/);
+ s=cmd(s,'agent','BUREAU_VERDICT',{position:'established'},last+60004);
+ s=cmd(s,'investigator','BUREAU_VERDICT',{position:'insufficient'},last+60005);
+ s=cmd(s,'analyst','BUREAU_VERDICT',{position:'established'},last+60006);
  assert.equal(viewRuntime(s,'agent').bureauVerdict.cast,3);
  assert.equal(viewRuntime(s,'agent').bureauVerdict.myVote,'established');
  assert.equal(viewRuntime(s,'p0').bureauVerdict,undefined,'Casino player cannot see private bureau position');
  assert.doesNotMatch(JSON.stringify(viewRuntime(s,'p0')),/"bureauBallots"/);
- s=cmd(s,'p0','FINISH_CAMPAIGN',{},195019);
+ s=cmd(s,'p0','FINISH_CAMPAIGN',{},last+60007);
  assert.equal(s.status,'finished');
  assert.equal(s.finale.victory.investigative.outcome,'victory');
  assert.equal(s.finale.victory.political.outcome,'recognised_claim');
@@ -143,7 +154,8 @@ for(let count=4;count<=7;count++)for(const optional of [[],['judge'],['prosecuto
  let missing=fixture(4);missing=scored(missing);missing.chapter=3;missing.phase=2;missing.phaseStartedAt=200000;
  missing.bureauBallots={agent:'established'};
  missing.poker.stage='settled';missing.openingPokerComplete=true;
- assert.throws(()=>cmd(missing,'p0','FINISH_CAMPAIGN',{},200001),/bureau_report_pending/);
+ assert.throws(()=>cmd(missing,'p0','FINISH_CAMPAIGN',{},200001),/minimum_social_time/);
+ assert.throws(()=>cmd(missing,'p0','FINISH_CAMPAIGN',{},260001),/bureau_report_pending/);
  missing=cmd(missing,'p0','FINISH_CAMPAIGN',{},380001);
  assert.equal(missing.finale.victory.investigative.outcome,'defeat','Host cannot synthesize missing votes');
 }
