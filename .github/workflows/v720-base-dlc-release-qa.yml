@@ -1,0 +1,50 @@
+name: V720 — Base et DLC, fiabilité et contrats
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app-v11.js'
+      - 'live-cell-v12-44.js'
+      - 'scripts/v720-base-dlc-reliability-check.mjs'
+      - '.github/workflows/v720-base-dlc-release-qa.yml'
+      - 'docs/qa-base-dlc-v720.md'
+  push:
+    branches: [main]
+    paths:
+      - 'app-v11.js'
+      - 'live-cell-v12-44.js'
+      - 'scripts/v720-base-dlc-reliability-check.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax, lost first sync, role rollback and host start
+        run: |
+          set -euo pipefail
+          node scripts/v720-base-dlc-reliability-check.mjs
+      - name: Verify base verdict, secret 007, and four DLC-specific mechanics
+        run: |
+          set -euo pipefail
+          node scripts/v294-007-release-behavior-check.mjs
+          node scripts/v711-majority-stars-check.mjs
+          node scripts/omerta-standalone-goal-scorer-check.mjs
+          node scripts/v704-terror-final-polish-check.mjs
+          node --test scripts/regime-v14-client-integrity.test.mjs
+      - name: Locked dependencies and complete 001-034 production build
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm run build
+      - name: Cartel 031 reconnection, role and confidential session invariants
+        run: |
+          set -euo pipefail
+          node scripts/cartel031-session-check.mjs dist
+          node scripts/v701-global-audit-check.mjs dist
