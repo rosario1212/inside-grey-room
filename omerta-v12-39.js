@@ -33,6 +33,41 @@
     don:{body:'Tu es au sommet, mais tu ne contrôles pas chaque acte commis en ton nom. Tu dois distinguer ce que tu as réellement ordonné, ce que tes hommes ont interprété et qui reste loyal.'}
   });
 
+  const ROLE_PREVIEWS_FR = Object.freeze({
+    enqueteur:'Interroge et démêle les secrets de la Famiglia.',
+    analyste:'Recoupe les versions et repère les loyautés.',
+    suspect:'Dissimule, négocie et défends tes intérêts.',
+    maitre:'Protège ton client face aux accusations.',
+    procureur:'Négocie les aveux et prépare les poursuites.',
+    juge:'Arbitre la procédure et préside le tribunal.',
+    informateur:'Échange tes renseignements contre ta sécurité.',
+    associato:'Négocie ta place au sein de la Famiglia.',
+    uomo_onore:'Protège les secrets et la loyauté du clan.',
+    contabile:'Analyse les comptes et garde tes secrets.',
+    pentito:'Négocie des révélations contre ta protection.',
+    caporegime:'Surveille ton équipe et décide des sanctions.',
+    consigliere:'Conseille le Don et déjoue les trahisons.',
+    sottocapo:'Coordonne la Famiglia et protège sa succession.',
+    don:'Dirige la Famiglia et éprouve les loyautés.'
+  });
+  const ROLE_PREVIEWS_EN = Object.freeze({
+    enqueteur:'Lead interrogations and expose the family secrets.',
+    analyste:'Cross-check accounts and identify conflicting loyalties.',
+    suspect:'Negotiate, conceal and defend your interests.',
+    maitre:'Defend your client against the charges.',
+    procureur:'Negotiate testimony and build the prosecution.',
+    juge:'Rule on procedure and preside over the trial.',
+    informateur:'Trade your information for protection.',
+    associato:'Negotiate your place within the family.',
+    uomo_onore:'Protect the clan’s secrets and loyalties.',
+    contabile:'Examine accounts and protect what you know.',
+    pentito:'Trade disclosures for legal protection.',
+    caporegime:'Watch your crew and decide sanctions.',
+    consigliere:'Advise the Don and uncover betrayal.',
+    sottocapo:'Coordinate the family and protect succession.',
+    don:'Lead the family and test loyalties.'
+  });
+
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
   const readSelectedScenarioId = () => String(STATE?.selectedScenario || STATE?.scenarioId || '');
   const readRoomScenarioId = () => String(
@@ -149,7 +184,8 @@
     const base = previousRoleInfo(id);
     if(!isOmerta(visibleScenarioId())) return base;
     const patch = ROLE_COPY[id];
-    return patch ? {...base, ...patch} : base;
+    const short = (window.IGR_LOCALE === 'en' ? ROLE_PREVIEWS_EN : ROLE_PREVIEWS_FR)[id];
+    return patch ? {...base, ...patch, ...(short ? {short} : {})} : (short ? {...base, short} : base);
   };
 
   function secureIndex(length){
