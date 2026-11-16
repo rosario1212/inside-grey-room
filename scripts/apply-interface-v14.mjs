@@ -82,7 +82,7 @@ try{
   let sw=await readFile(swPath,'utf8');
   sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v27-role-choice-nav';");
   if(!sw.includes('/premium-access-sync-v17.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/premium-access-sync-v17.css?v=v17-premium-sync','/premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/premium-access-sync-v17.css?v=v17-premium-sync','/premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit',");
   }
   if(!sw.includes('/interface-polish-v14.css')){
     sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/interface-polish-v14.css?v=v20-settings-nav','/interface-polish-v14.js?v=v20-settings-nav',");
