@@ -815,3 +815,12 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   transform:none!important;
   pointer-events:none!important;
 }
+
+/* v745 — 018 alone: reduce the recovered print size while keeping the
+   approved full-height art frame and the 017 poster unchanged. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article#scenario-018.scenario.scenario--art.scenario--compact
+  > .scenario-thumb.compact::after{
+  background-size:90% auto!important;
+  background-position:center bottom!important;
+}
