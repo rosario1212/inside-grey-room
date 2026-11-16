@@ -64,9 +64,9 @@ function playerCountLabel(sc){
 }
 // Single teaser contract for classic scenarios and every DLC catalogue.
  // Keep dossier facts in the detail page; the compact preview is deliberately short.
-const SCENARIO_PREVIEW_MAX_WORDS=30;
 function scenarioCardTeaser(raw){
  // Only the catalogue is shortened: sc.short and the opening dossier text remain intact.
+ const SCENARIO_PREVIEW_MAX_WORDS=30;
  const text=String(raw??'').replace(/\s+/g,' ').trim();
  if(!text)return '';
  const words=text.split(' ');
