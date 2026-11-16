@@ -37,7 +37,7 @@ function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data
    timedControls.some(key=>Boolean(state[key])!==Boolean(data[key]));
  state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
-function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Table à jour':credentials?'Connexion…':''}
+function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el){el.dataset.revision=state?String(state.revision):'';el.textContent=problem?message(problem):state&&syncedAt?'Table à jour':credentials?'Connexion…':''}}
 async function sync(){
  if(!credentials||!active||busy)return;if(polling)return polling;
  const epoch=generation;
