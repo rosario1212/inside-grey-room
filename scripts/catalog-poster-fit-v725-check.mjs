@@ -1,4 +1,4 @@
-// v725 — native artwork fit for Base 009–020 and every DLC.
+// v727 — one Base poster gabarit; independent DLCs; 30-word cap for all previews.
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import vm from 'node:vm';
@@ -10,44 +10,60 @@ const omertaHQ=read('omerta-v12-39.js');
 const terror=read('terror-v12-37.js');
 const dlc=read('dlc-suite-v12-37.js');
 const premium=read('premium-access-sync-v17.js');
+const finalCss=css.slice(css.indexOf('/* CATALOGUE STANDARD v727'));
+assert(finalCss.startsWith('/* CATALOGUE STANDARD v727'));
+assert(finalCss.includes('display:flow-root!important'));
+assert(finalCss.includes('float:left!important'));
+assert(finalCss.includes('object-fit:contain!important'));
+assert(finalCss.includes('--igr-poster-ratio:3/4'));
+assert(!finalCss.includes('#scenario-009')&&!finalCss.includes('#scenario-020'));
+assert(finalCss.includes('--igr-poster-ratio:724/960'));
 const fullArt='src="$'+'{scenarioArt(sc.id)}"';
 const thumbnail='src="$'+'{scenarioThumbArt(sc.id)}"';
-assert(css.includes('CATALOGUE FIT v13'));
-assert(css.includes('grid-template-areas:"poster content" "poster metadata"'), 'Player-count metadata belongs in the right text column');
-assert(css.includes('--igr-poster-ratio:1086/1448'));
-assert(css.includes('--igr-poster-ratio:724/960'));
-assert(css.includes('object-fit:contain!important'));
-assert(css.slice(css.indexOf('CATALOGUE FIT v13')).includes('-webkit-line-clamp:unset!important'), 'Dossier teaser must remain complete');
-assert(css.includes('grid-area:metadata!important'));
-for(const [label,source] of [['BASE',app],['OMERTÀ',omerta],['TERREUR',terror],['CARTEL/RÉGIME',dlc]]){
-  assert(source.includes(fullArt),label+' needs full artwork');
-  assert(!source.includes(thumbnail),label+' must not use thumbnail artwork');
+for(const [label,source] of [
+ ['BASE',app],['OMERTÀ',omerta],['TERREUR',terror],['CARTEL/RÉGIME',dlc]
+]){
+  assert(source.includes(fullArt),label+' uses original poster art');
+  assert(!source.includes(thumbnail),label+' must not use thumbnails');
 }
 assert(premium.includes("function artFor(id){try{return typeof scenarioArt==='function'?scenarioArt(id):''}"));
 assert(omertaHQ.includes("scenarioThumbArt = function(id){ return isOmerta(id) ? ART[String(id)] : previousThumb(id); }"));
 assert(!omertaHQ.includes('v53LightThumb'));
-assert(app.includes('const PUBLIC_LOBBY_SUMMARIES'), 'Keep canonical dossier copy intact');
-assert(app.includes('CATALOGUE_LONGER_INTROS'),'Longer intros must be presentation-only');
-assert(app.includes("'011':'Pendant trente-six heures"), '36 HEURES must have substantive catalogue copy');
-assert(app.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,Number(sc.id)>=9?30:23)"), 'Base catalogue previews must use full 30-word budget');
-
+for(const [label,source] of [
+ ['Base',app],['Omertà',omerta],['Terreur',terror],['Cartel/Régime',dlc],['Premium',premium]
+]){
+  assert(source.includes('</p><div class="tag-row" aria-label="Informations du dossier">'),
+    label+' must put badges inside the text block');
+  assert(source.includes('</div></div></article>'),label+' malformed nesting');
+  assert(source.includes('class="igr-card-excerpt"'),label+' must have a teaser');
+  if(label==='Base')
+    assert(source.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,30)"));
+  else
+    assert(source.includes('scenarioCardTeaser(sc.short,30)'),label+' must enforce 30 words');
+}
+assert(app.includes('CATALOGUE_LONGER_INTROS'),'Narrative catalogue copy stays presentation-only');
+assert(app.includes("'011':'Pendant trente-six heures"));
 const start=app.indexOf('/* Catalogue-only descriptions:');
 const end=app.indexOf('function scenarioCardTeaser(',start);
-assert(start>=0&&end>start,'Isolated catalogue intro functions missing');
+assert(start>=0&&end>start);
 const french=vm.runInNewContext(app.slice(start,end)+
  '\nscenarioCatalogueSynopsis({id:"011",short:"Old short description"})',
  {window:{IGR_LOCALE:'fr'}});
-assert(french.includes('Trois officiers')&&french.split(/\s+/).length>=25,
- '36 HEURES catalogue must be materially richer without altering canon');
+assert(french.includes('Trois officiers')&&french.split(/\s+/).length>=25);
 const english=vm.runInNewContext(app.slice(start,end)+
  '\nscenarioCatalogueSynopsis({id:"011",short:"English synopsis"})',
  {window:{IGR_LOCALE:'en'}});
-assert.equal(english,'English synopsis','Never overwrite translated dossier copy');
-for(const [name,source] of [['OMERTÀ',omerta],['TERREUR',terror],
- ['CARTEL/RÉGIME',dlc],['PREMIUM',premium]])
- assert(source.includes('scenarioCardTeaser(sc.short,28)'),
-   name+' catalogue must not collapse the intro at 19 words');
-
+assert.equal(english,'English synopsis');
+const helperEnd=app.indexOf('\nconst ADVANCED_SCENARIO_IDS=',end);
+const teaser=vm.runInNewContext(app.slice(end,helperEnd)+
+ '\nscenarioCardTeaser', {window:{}});
+for(const n of [0,1,5,20,30,31,45,80]){
+ const str=Array.from({length:n},(_,i)=>'mot'+i).join(' ');
+ const preview=teaser(str,30);
+ assert(preview.trim().split(/\s+/).filter(Boolean).length<=30,
+   'Pre-click text exceeds thirty words: '+n);
+}
+assert(app.includes('const PUBLIC_LOBBY_SUMMARIES'),'Canonical briefings preserved');
 function webpSize(file){
   assert(existsSync(file),'Missing artwork: '+file);
   const b=readFileSync(file);
@@ -73,5 +89,5 @@ for(const id of ['029','030','031']){
  assert(existsSync(file),file+' missing');
  assert(read(file).includes('width="724" height="960"'),file+' ratio');
 }
-assert(read('index.html').includes('catalog-descriptions-v1.css?v=v726-inline-pills-fuller-synopses-20261116'));
-console.log('PASS v726: full 009–034 posters, native ratio, no placeholders and right-column player badges.');
+assert(read('index.html').includes('catalog-descriptions-v1.css?v=v727-one-gabarit-30words-20261116'));
+console.log('PASS v727: 001–020 one poster frame, 021–034 separate families, no dead gaps, 30-word caps.');
