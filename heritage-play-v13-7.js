@@ -655,30 +655,12 @@ function applyResult(live){
       });
       if(!commit?.ok){toastSafe('Sauvegarde impossible : le dossier reste ouvert. Réessayez.');return}
     }else{
-      if(out.flag)api().completeChapter('kuroi',live.chapter,{flags:{[out.flag]:true}});else api().completeChapter('kuroi',live.chapter,{});
-      if(live.chapter===1){
-        api().kuroi.upsertClanMember('kurokawa',{id:'oyabun-kurokawa',name:'OYABUN KUROKAWA',role:'Chef du clan',status:'dead',chapter:1,note:'Assassiné avant l’ouverture de la campagne.'});
-        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun',status:'active',chapter:1,note:'Présent dans la chaîne d’accès au meurtre.'});
-        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur',status:'active',chapter:1,note:'Intermédiaire entre la police et Kurokawa.'});
-        api().kuroi.upsertClanMember('police',{id:'ishida',name:'ISHIDA',role:'Commissaire',status:'active',chapter:1,note:'Responsable institutionnel de l’enquête.'});
-      }
-      if(out.debt)api().kuroi.addDebt({id:`kuroi-debt-${live.chapter}-${live.decision}`,type:'giri',from:out.debt[0],to:out.debt[1],reason:out.debt[2],status:'due',chapter:live.chapter});
-      if(live.chapter===2&&live.decision==='mori_ren'){
-        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun · débiteur de Mori',status:'active',chapter:2,note:'Une ancienne faveur familiale est devenue GIRI.'});
-        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur · créancier',status:'active',chapter:2,note:'A transformé une faveur ancienne en obligation.'});
-      }
-      if(live.chapter===4&&live.decision==='chain'){
-        api().kuroi.updateDebt('kuroi-debt-2-mori_ren',{status:'paid',reason:'La dette Mori → Ren a été utilisée pour imposer le meurtre puis révélée.'});
-        api().kuroi.upsertClanMember('police',{id:'ishida',name:'ISHIDA',role:'Commissaire · donneur d’ordre',status:'detained',chapter:4,note:'La chaîne Ishida → Mori → Ren est établie.'});
-        api().kuroi.upsertClanMember('police',{id:'mori',name:'MORI',role:'Inspecteur · facilitateur',status:'detained',chapter:4,note:'A transmis l’ordre, ouvert l’accès et couvert les traces.'});
-        api().kuroi.upsertClanMember('kurokawa',{id:'daichi-ren',name:'DAICHI REN',role:'Kobun · exécutant',status:'detained',chapter:4,note:'A exécuté le meurtre sous le poids de sa dette.'});
-      }
-      if(live.chapter===5){
-        const status=live.decision==='public'?'broken':live.decision==='internal'?'paid':'due';
-        for(const id of ['kuroi-debt-2-mori_ren','kuroi-debt-4-chain'])api().kuroi.updateDebt(id,{status});
-      }
-      if(out.chron)api().kuroi.addChronicle(out.chron,'public');
-      api().kuroi.addChronicle(`Dossier 0${live.chapter} — ${live.result?.title}. ${live.result?.consequence}`,'public');
+      const commit=api()?.kuroi?.commitDecision?.({
+        chapter:live.chapter,decision:live.decision,flag:out.flag||'',
+        debt:out.debt||null,chron:out.chron||'',
+        title:live.result?.title||'',consequence:live.result?.consequence||''
+      });
+      if(!commit?.ok){toastSafe('Sauvegarde impossible : le dossier reste ouvert. Réessayez.');return}
     }
     rememberDecision(live.campaignId,live.chapter,live.decision);
   }
