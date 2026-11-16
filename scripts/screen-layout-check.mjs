@@ -132,18 +132,21 @@ try{
     const longText=Array.from({length:47},(_,i)=>'mot'+i).join(' ');
     const compact=teaser(longText);
     assert.equal(compact.split(/\s+/).length,30,'Classic card descriptions must be capped at 30 words');
-    assert.equal(teaser(longText,21).split(/\s+/).length,21,'DLC descriptions must be capped at 21 words');
+    assert.equal(teaser(longText,19).split(/\s+/).length,19,'DLC descriptions must be capped at 19 words');
     assert(compact.endsWith('…'),'Long catalogue descriptions should signal continuation');
     assert.equal(teaser('Une description courte et complète.'),'Une description courte et complète.');
     assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
       'Opening a dossier must still display its complete context');
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
-      assert(source.includes('scenarioCardTeaser(sc.short,21)'),file+': public DLC cards must use 21 words');
+      assert(source.includes('scenarioCardTeaser(sc.short,19)'),file+': public DLC cards must use 19 words');
       assert(source.includes('igr-poster-full')&&source.includes('igr-poster-ambient'),
         file+': every DLC rendering pathway must keep full portrait posters');
     }
-    assert(!app.includes('class="igr-poster-ambient"'),'Classic cards should keep a single cover thumbnail');
+    assert(app.includes('class="igr-poster-ambient"')&&app.includes('class="igr-poster-full"'),
+      'Classic cards must also have full-image foreground + ambient fill');
+    assert(app.includes('src="${scenarioArt(sc.id)}"'),
+      'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
   await check('catalog-v5-five-universes-responsive-cards',async()=>{
@@ -158,9 +161,9 @@ try{
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
-      (sc.klass ? '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" style="object-fit:contain!important;aspect-ratio:auto!important" src=""></div>' : '<div class="scenario-thumb compact"><img alt="Photo du dossier" src=""></div>')+
+      '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?21:30)+'</p><div class="tag-row">'+
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:30)+'</p><div class="tag-row">'+
       '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:820});
@@ -218,14 +221,9 @@ try{
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='cover',width+'px '+name+': artwork background must cover its column');
-        if(samples[i].klass){
-          assert(m.imageCount===2,width+'px '+name+': portrait DLC must have ambient + full poster layers');
-          assert(m.fullFit==='contain',width+'px '+name+': DLC poster lettering must remain inside its frame');
-          assert(parseFloat(m.fullPadding)<=5,width+'px '+name+': poster inset too large');
-        } else {
-          assert(m.imageCount===1,width+'px '+name+': classic artwork must not have extra letterboxed image');
-          assert(m.fullFit===null,width+'px '+name+': classic landscape must not use portrait framing');
-        }
+        assert(m.imageCount===2,width+'px '+name+': every dossier must use two image layers');
+        assert(m.fullFit==='contain',width+'px '+name+': full image must not lose any part, including its title');
+        assert(parseFloat(m.fullPadding)<=2,width+'px '+name+': foreground has too much padding');
         assert(m.textVisible,width+'px '+name+': description hidden');
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v3-five-universes-iphone.png'),fullPage:true});
