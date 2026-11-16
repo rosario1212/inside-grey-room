@@ -81,7 +81,7 @@ try{
     assert(data.scroll<=data.viewport+1,`${width}px: horizontal overflow ${data.scroll} > ${data.viewport}`);
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
-      assert.equal(c.imageFit,'contain',`${width}px ${c.id}: poster is cropped`);
+      assert.equal(c.imageFit,'cover',`${width}px ${c.id}: poster must fill Omerta-style frame`);
       assert(c.image.width>30&&c.image.height>30,`${width}px ${c.id}: poster collapsed`);
       assert(c.image.left>=c.thumb.left-2&&c.image.right<=c.thumb.right+2,`${width}px ${c.id}: poster outside column`);
       assert(c.image.top>=c.thumb.top-2&&c.image.bottom<=c.thumb.bottom+2,`${width}px ${c.id}: poster vertically clipped`);
@@ -178,7 +178,7 @@ try{
           assert(item.bodyFits,`v737 ${width}px ${item.id}: content box unexpectedly overflowing`);
           assert(item.excerptClamp==='5',`v737 ${width}px ${item.id}: five-line Omerta-style excerpt missing`);
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
-          assert(item.imageFit==='contain',`v737 ${width}px ${item.id}: original poster cropped`);
+          assert(item.imageFit==='cover',`v738 ${width}px ${item.id}: empty poster bars must be eliminated`);
           assert(Math.abs(item.posterRect.height-item.thumbRect.height)<2,
             `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
           assert(Math.abs(item.posterRect.width-item.thumbRect.width)<2,
@@ -198,7 +198,7 @@ try{
           `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalogue-v735-34-equal-heights-iphone.png'),fullPage:true});
-      console.log(`PASS v737 ${width}px: All 34 cards match Omerta 021 height and poster width, complete unwarped artwork`);
+      console.log(`PASS v738 ${width}px: All 34 cards match Omerta 021 height and poster width, edge-to-edge undistorted artwork`);
       await context.close();
     }
   }
@@ -234,16 +234,22 @@ try{
     assert(startWidths.every(w=>w>=98),'v736: buttons should be labeled and expanded at start');
     await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
     await page.waitForFunction(()=>document.body.classList.contains('igr-catalogue-scrolled'),null,{timeout:1500});
-    // The compact form remains while reading lower cards, even after scroll
-    // activity stops (the old behavior reverted to full width after 360ms).
-    await page.waitForTimeout(510);
+    // Small only while scrolling; once motion stops, both labels return
+    // even at dossier 020, as explicitly requested.
     const compact=await page.locator('#igrDockFilters,#igrDockHome').evaluateAll(nodes=>nodes.map(n=>({
       width:n.getBoundingClientRect().width,
       labelDisplay:getComputedStyle(n.querySelector('b')).display,
       clickArea:n.getBoundingClientRect().height
     })));
     assert(compact.every(x=>x.width<=45&&x.width>=42&&x.clickArea>=42&&x.labelDisplay==='none'),
-      'v736: Filtres and Accueil must stay compact, tappable and icon-only while scrolled: '+JSON.stringify(compact));
+      'v738: Filtres and Accueil should be icon-only during active scroll: '+JSON.stringify(compact));
+    await page.waitForFunction(()=>{
+      const nodes=[...document.querySelectorAll('#igrDockFilters,#igrDockHome')];
+      return !document.body.classList.contains('igr-catalogue-scrolled')&&
+        nodes.every(n=>n.getBoundingClientRect().width>=98&&getComputedStyle(n.querySelector('b')).display!=='none');
+    },null,{timeout:2300});
+    const idlePosition=await page.evaluate(()=>window.scrollY);
+    assert(idlePosition>400,'v738: dock must expand without scrolling back to the top');
     const final=await page.evaluate(()=>{
       const rect=selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height}};
       const panel=rect('.scenario-panel-v10-13'),footer=rect('.igr-beta-footer'),support=rect('.igr-beta-footer a'),filters=rect('#igrDockFilters'),home=rect('#igrDockHome'),selector=rect('.igr-scenario-filters');
@@ -276,7 +282,7 @@ try{
     await page.locator('#igrDockHome').click();
     assert.equal(await page.locator('body').getAttribute('data-test-home'),'yes',
       'v734: Accueil shortcut did not invoke home navigation');
-    console.log('PASS v736 390px: no footer void, two persistent compact scrolled shortcuts, Filters works despite drag flag, Accueil works');
+    console.log('PASS v738 390px: buttons shrink while scrolling, expand when idle at dossier 020; Filtres and Accueil work');
     await context.close();
   }
 }finally{await browser.close()}
