@@ -19,7 +19,9 @@ for(const match of index.matchAll(/<link[^>]+rel="stylesheet"[^>]*>|<style[^>]*>
   else styles.push(await read(match[0].match(/href="([^"]+)"/)[1].split('?')[0]));
 }
 const css=styles.join('\n');
-const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/button>\s*<\/div>/);
+// Extract the whole entrance even when a decorative caption follows its button.
+// Keep the required gate/button/hint assertions in the browser checks below.
+const introMatch=index.match(/<div\s+id=["']introGate["'][\s\S]*?<\/div>\s*(?=<div\s+id=["']app["'])/);
 assert(introMatch,'Canonical entrance markup must exist');
 const introArt=await readFile(path.join(target,'assets/intro-v10-14.webp'));
 const introHtml=introMatch[0].replace(/src="[^"]+"/,`src="data:image/webp;base64,${introArt.toString('base64')}"`);
