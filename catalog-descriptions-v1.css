@@ -201,6 +201,9 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   gap:0!important;
   overflow:hidden!important;
   isolation:isolate!important;
+  content-visibility:visible!important;
+  contain-intrinsic-size:none!important;
+  contain:none!important;
 }
 /* BASE 001–020: graphite, consistent poster frame and editorial sans. */
 #app .page-create-v10-13 .scenario-list-v10-13
