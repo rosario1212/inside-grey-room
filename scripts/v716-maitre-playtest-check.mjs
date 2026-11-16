@@ -128,7 +128,7 @@ for(const chapter of [2,5]){
 map.clear();window.IGR_HERITAGE.begin('maitre');
 {
   const st=JSON.parse(map.get('igr_heritage_v1'));
-  st.maitre.currentChapter=3;st.maitre.completed=[1,2];st.maitre.relationships.associe='aligned';
+  st.maitre.currentChapter=3;st.maitre.completed=[1,2];st.maitre.maitre.relationships.associe='aligned';
   map.set('igr_heritage_v1',JSON.stringify(st));
   t.startSession(3,['A','B','C','D','E']);
   ballot(t.readLive().players.map(p=>p.roleId==='associe'?'separate':'common'));
@@ -140,7 +140,7 @@ map.clear();window.IGR_HERITAGE.begin('maitre');
 map.clear();window.IGR_HERITAGE.begin('maitre');
 {
   const st=JSON.parse(map.get('igr_heritage_v1'));
-  st.maitre.currentChapter=3;st.maitre.completed=[1,2];st.maitre.relationships.associe='broken';
+  st.maitre.currentChapter=3;st.maitre.completed=[1,2];st.maitre.maitre.relationships.associe='broken';
   map.set('igr_heritage_v1',JSON.stringify(st));
   t.startSession(3,['A','B','C','D','E']);
   let live=t.readLive();live.stage='decision';live.ballot={round:1,index:0,votes:[],show:true};t.saveLive(live);
