@@ -51,7 +51,7 @@ assert.deepEqual(Array.from(maitreRoleIds(1,6)),['avocat','client','enqueteur','
 assert.equal(maitreRoleIds(3,7).length,7);
 
 const casinoLobbySource=casino.slice(casino.indexOf('function lobby(){'),casino.indexOf('function card(){'));
-const roleNames={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
+const roleNames={casino:'Personnage de Yonghe',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
 const casinoCtx={
  state:{viewer:'me',inviteCode:'TESTCODE',isHost:true,members:[
  {id:'me',name:'Jeanne',role:'casino',ready:false},{id:'p2',name:'Marc',role:'agent',ready:true}]},
