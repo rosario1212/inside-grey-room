@@ -10,6 +10,26 @@ assert(app.includes('<small>${h(x.info.short||x.info.body)}</small>'));
 assert(app.includes('info:roleInfo(id)'));
 assert(app.includes('<summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p>'));
 
+
+const omertaScenario=read('omerta-v12.js');
+const omertaRolebook=read('self-guided-rules-v51.js');
+const css=read('lobby-ui-fix-v13.css');
+const englishRoleCopy=read('i18n-en-v12.js');
+for(const role of ['enqueteur','analyste','suspect','maitre','procureur','juge','journaliste','inspecteur','expert','temoin','officier_liaison']){
+ const row=app.match(new RegExp(role+":\\{label:'[^']*',short:'([^']+)'"));
+ assert(row,'Missing short caption for '+role);
+ assert(!row[1].includes('…') && row[1].length<=68,'Caption is too long or truncated: '+role);
+}
+for(const role of ['associato','uomo_onore','contabile','pentito','caporegime','consigliere','sottocapo','don']){
+ assert(omertaScenario.includes(role+":{label:"),'Missing Omerta role '+role);
+ assert(omertaScenario.includes("short:'"),'Missing short Omerta caption');
+}
+assert(omertaScenario.includes("ROLE_SETS[sc.id].filter(id=>id!=='suspect')"),'Generic Suspect still offered in Omerta');
+assert(omertaScenario.includes("x!=='enqueteur'&&x!=='suspect'"),'Generic Suspect still listed in Omerta');
+assert(omertaRolebook.includes("order.splice(order.indexOf('suspect'),1)"),'Omerta rulebook still lists generic Suspect');
+assert(css.includes('-webkit-line-clamp:unset!important') && css.includes('overflow:visible!important'), 'Role descriptions are still truncated');
+assert(englishRoleCopy.includes("short:'Lead interrogations and coordinate the investigation.'"),'English captions not localized');
+
 const polish=read('omerta-polish-v12.js');
 const omerta=read('omerta-v12-39.js');
 const lobby=read('lobby-ui-fix-v13.js');
