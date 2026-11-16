@@ -280,6 +280,9 @@ try{
   await check('catalog-v11-real-uncropped-family-posters',async()=>{
     const assets=[
       {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
+      {klass:'',name:'006 — LES CENDRES DU CHALET',full:'scenario-006-v10-13.webp'},
+      {klass:'omerta-scenario',name:'021 — L’ENVELOPPE',full:'omerta-021-l-enveloppe.webp'},
+      {klass:'terror-scenario',name:'026 — LA VILLE TOMBE',full:'terror-026-la-ville-tombe.webp'},
       {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-poster-v2.svg'},
       {klass:'cartel-scenario',name:'030 — LA COUR ACHETÉE',full:'cartel-030-poster-v2.svg'},
       {klass:'cartel-scenario',name:'031 — LA DETTE',full:'cartel-031-poster-v2.svg'},
