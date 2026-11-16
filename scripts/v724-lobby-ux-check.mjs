@@ -6,7 +6,8 @@ const read=path=>readFileSync(path,'utf8');
 const natural=read('natural-role-gameplay-v50.js');
 const app=read('app-v11.js');
 assert(app.includes('const ROLE_PREVIEW = Object.freeze({'));
-assert(app.includes('<small>${h(rolePreview(x.id,x.info))}</small>'));
+assert(app.includes('<small>${h(x.info.short||x.info.body)}</small>'));
+assert(app.includes('short:rolePreview(id,info)'));
 assert(app.includes('<summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p>'));
 
 const polish=read('omerta-polish-v12.js');
