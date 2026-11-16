@@ -752,3 +752,25 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   transform:none!important;
 }
 /* Preserve Omertà and the 009–020 dossier covers, including 018. */
+
+/* v742 — 018 must fill the Omertà-sized column without chopping its
+   wide printed title. Cover owns the main photograph. Only the lower
+   title zone uses a feathered, full-width copy of the SAME source poster.
+   This keeps LES ASSIETTES VIDES readable with no inset or letterbox. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article#scenario-018.scenario.scenario--art.scenario--compact
+  > .scenario-thumb.compact::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:2!important;
+  background-image:var(--igr-cover-url)!important;
+  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 76%,#000 82%,#000 91%,transparent 96%);
+  mask-image:linear-gradient(to bottom,transparent 76%,#000 82%,#000 91%,transparent 96%);
+  opacity:1!important;
+  filter:none!important;
+  pointer-events:none!important;
+}
