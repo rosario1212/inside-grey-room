@@ -33,7 +33,7 @@ const posters={
   '007':await poster('scenario-007-v10-13.webp'),
   '008':await poster('scenario-008-v10-13.webp'),
   '014':await poster('scenario-014-v11-6.webp'),
-  '018':await poster('scenario-018-v11-6.webp'),
+  '018':await poster('scenario-018-catalog-v749.webp'),
   '020':await poster('scenario-020-v11-6.webp'),
   '021':await poster('omerta-021-l-enveloppe.webp'),
   '026':await poster('terror-026-la-ville-tombe.webp'),
@@ -208,6 +208,8 @@ try{
             `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
           assert(Math.abs(item.posterRect.width-item.thumbRect.width)<2,
             `v737 ${width}px ${item.id}: poster artwork frame not matched to Omerta`);
+          if(family==='base')assert(item.tagsTop-item.descriptionBottom<=27,
+            `v749 ${width}px ${item.id}: empty gap between synopsis and players is too large`);
           assert(item.tagsTop>=item.descriptionBottom-1,
             `v737 ${width}px ${item.id}: synopsis overlaps its player badges`);
           assert(item.badgesBottom<=item.cardBottom+1.5,`v737 ${width}px ${item.id}: player badge overflow`);
