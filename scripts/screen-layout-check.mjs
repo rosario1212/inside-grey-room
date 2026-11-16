@@ -306,13 +306,13 @@ try{
   });
 
 
-  await check('catalog-v728-base-001-020-common-optical-frame',async()=>{
+  await check('catalog-v730-base-001-020-common-optical-frame',async()=>{
     const start=app.indexOf('const SCENARIOS = [');
     const end=app.indexOf('const SCENARIO_ROLES =',start);
     assert(start>=0&&end>start,'Cannot locate 001-020 canonical scenarios');
     const baseScenarios=vm.runInNewContext(app.slice(start,end)+'; SCENARIOS')
-      .filter(sc=>Number(sc.id)>=9&&Number(sc.id)<=20);
-    assert.equal(baseScenarios.length,12,'Exactly 12 base dossiers 009–020 must be verified');
+      .filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20);
+    assert.equal(baseScenarios.length,20,'All twenty Base dossiers 001–020 must share a single poster frame');
     const helperStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
     const helperEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',helperStart);
     const preview=vm.runInNewContext(app.slice(helperStart,helperEnd)+'; scenarioCardTeaser');
@@ -349,7 +349,7 @@ try{
         assert(m.fullFit==='contain',width+'px '+m.id+': artwork is cropped or distorted');
         assert(Math.abs(m.posterFrameWidth-first.posterFrameWidth)<.5&&
                Math.abs(m.posterFrameHeight-first.posterFrameHeight)<.5,
-          width+'px '+m.id+': base poster differs from other dossiers 009–020');
+          width+'px '+m.id+': base poster differs from other dossiers 001–020');
         assert(m.footerTop>=m.textBottom+2,
           width+'px '+m.id+': player count must follow the synopsis with enough space');
         assert(m.footerBottom<=m.cardBottom+1,width+'px '+m.id+': badges escape the card');
@@ -358,7 +358,7 @@ try{
         assert(m.titleVisible,width+'px '+m.id+': scenario title is clipped');
         assert(!m.horizontalOverflow,width+'px '+m.id+': card overflows horizontally');
       }
-      if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-all-base-009-020.png'),fullPage:true});
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v730-all-base-001-020.png'),fullPage:true});
     }
   });
 
