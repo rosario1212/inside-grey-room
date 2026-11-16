@@ -94,6 +94,11 @@ function network(){return section('Réputations et positions',`<div class="casin
  (state.camp==='casino'?section('Négocier',form('transfer',people('to',c=>!c.npc&&c.id!==state.viewer)+field('Jetons à transmettre','amount','number','min="1" required'),'Transmettre les jetons')+form('npc',people('npcId',c=>c.npc)+area('Ta demande au personnage','text',700),'Prendre contact')):'')}
 function evidencePicker(){return `<fieldset><legend>Sources à joindre</legend>${(state.evidence||[]).map(e=>`<label class="casino-inline" data-casino-proof-label><input type="checkbox" name="evidenceIds" value="${esc(e.id)}" data-subject="${esc(e.subjectId)}" data-offence="${esc(e.offence)}">${esc(name(e.subjectId))} · ${esc(e.description)}</label>`).join('')}</fieldset>`}
 const offencePicker=field=>`<label>Infraction fondée sur les preuves<select name="${esc(field)}" data-casino-offence data-casino-draft required>${[...new Set((state.evidence||[]).map(e=>e.offence))].map(id=>option(id,id)).join('')}</select></label>`;
+function bureauVerdictPanel(){
+ const b=state?.bureauVerdict;if(!b)return '';
+ const ballot=form('bureau-verdict',`<label>Ta position finale<select name="position" data-casino-draft>${option('insufficient','Les preuves restent insuffisantes')}${option('established','Le schéma établit des liens criminels')}</select></label>`,b.myVote?'Modifier ma position':'Signer ma position');
+ return `<article class="casino-bureau-verdict"><span class="casino-victory-eyebrow">LE DERNIER RAPPORT · BUREAU</span><p>${b.cast}/${b.seats} positions enregistrées · majorité requise : ${b.majority}. Aucune voix ne peut être confiée à l’hôte ni au juge.</p><p>Les liens du schéma doivent correspondre aux faits et reposer sur deux sources indépendantes. Une accusation erronée affaiblit la conclusion collective.</p>${ballot}<small>${b.myVote?'Position enregistrée, modifiable jusqu’à la clôture.':'Ton vote reste confidentiel jusqu’au dénouement.'}</small></article>`;
+}
 function bureau(){return section('Bureau d’enquête',`<p>Les déclarations restent distinctes des pièces corroborées. Une arrestation n’équivaut pas à une condamnation.</p>
  ${(state.dossiers||[]).map(d=>`<article><h3>${esc(name(d.subjectId))} · ${esc(d.title)}</h3><p>${esc(d.context)}</p></article>`).join('')}
  ${(state.intel||[]).map(i=>`<p>Observation concernant <b>${esc(name(i.subjectId))}</b> : ${esc(i.text)} — ${i.reviewedBy?(i.checked?'Recoupement concordant':'Vérification non concluante'):'Non vérifiée'}</p>`).join('')}
@@ -104,6 +109,7 @@ function bureau(){return section('Bureau d’enquête',`<p>Les déclarations res
  ${(state.requests||[]).map(r=>`<article><p>Demande : ${esc(name(r.subjectId))} · ${esc(r.reasoning)}</p>${state.role==='agent'&&!r.executed?button('Procéder personnellement à l’interpellation','INTERPELLATE',{requestId:r.id}):''}</article>`).join('')}
  ${['analyst','investigator'].includes(state.role)?form('map',people('subject')+people('target')+`<label>Relation étayée<select name="relation" data-casino-draft>${['dirige','commande','finance','conserve les engagements','concède un droit commercial','négocie un financement'].map(v=>option(v,v)).join('')}</select></label>`+offencePicker('offence')+evidencePicker(),'Inscrire au schéma criminel'):''}
  ${(state.organigram||[]).map(e=>`<p>${esc(name(e.subject))} → ${esc(e.relation)} → ${esc(name(e.target))}</p>`).join('')}
+ ${bureauVerdictPanel()}
  ${['investigator','prosecutor'].includes(state.role)&&state.chapter>=2?form('hearing',people('subjectId')+offencePicker('offence')+area('Accusation à discuter','accusation')+evidencePicker(),'Ouvrir une audition contradictoire'):''}
  ${form('note',`<label>Tes notes privées<textarea name="text" maxlength="3000" data-casino-draft>${esc(state.ownNote)}</textarea></label>`,'Enregistrer mes notes')}`)}
 function setupEvidenceForm(f){
