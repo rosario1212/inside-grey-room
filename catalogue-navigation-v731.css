@@ -302,7 +302,8 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
   --igr-card-art-width:clamp(113px,34vw,145px);
 }
 #app .page-create-v10-13 .scenario-panel-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
-  max-height:228px!important;
+  /* The old 228px cap overrode v737 on 320px screens and left a black strip. */
+  max-height:100%!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
   min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
