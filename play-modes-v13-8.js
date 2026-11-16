@@ -279,7 +279,7 @@ function patchHBridge(d,stage){
         next.disabled=true;
         next.textContent='EN ATTENTE DE L’HÔTE…';
       }else if(next){
-        next.textContent=Number(d.room.phase_index)<3?'PHASE SUIVANTE →':'PASSER À LA DÉCISION →';
+        next.textContent=Number(d.room.phase_index)<3?'PHASE SUIVANTE →':(['cendres','kuroi'].includes(d.room.campaign_id)?'OUVRIR LE VOTE COLLECTIF →':'PASSER À LA DÉCISION →');
       }
     }
     const mode=$('.hplay-mode');
