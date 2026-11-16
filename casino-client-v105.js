@@ -71,6 +71,7 @@ function lobby(){const own=state.members.find(m=>m.id===state.viewer);return `<h
  ${state.isHost?'<button class="casino-action" data-casino-action="start">Distribuer les personnages</button>':''}
  <p>Les personnages et les éventuelles missions d’infiltration sont attribués au lancement.</p>`}
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
+ ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
  ${(c.relations||[]).map(r=>`<article><h3>${esc(name(r.target))}</h3><p>${esc(r.text)}</p></article>`).join('')}
  ${state.ownUndercoverBrief?`<div class="casino-secret"><strong>Mission confidentielle</strong><p>Seul ton personnage voit cette mission. Les observations reçues par le bureau restent non confirmées tant qu'elles ne sont pas recoupées.</p>${state.chapter===1?form('intel',people('subjectId',c=>c.id!==state.viewer)+area('Renseignement à transmettre discrètement','text',1000),'Transmettre au bureau'):''}</div>`:''}
  ${state.continuityRole?'<p>Tu poursuis comme témoin de continuité : rapporte des observations publiques au bureau.</p>':''}`)+
