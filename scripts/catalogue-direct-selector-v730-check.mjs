@@ -214,9 +214,10 @@ for(const language of ['fr','en']){
 assert(css.includes('/* v752 — short DLC catalogue copy'),'DLC excerpt clamping not disabled');
 const catalogueCssHref=html.match(/catalogue-navigation-v731\.css\?v=[^"']+/)?.[0];
 assert(catalogueCssHref,'New stylesheet not linked');
-assert(html.includes('dlc-suite-v12-37.js?v=v752-14-dlc-hooks-20261117'),'New picker JS not versioned');
+const dlcJsHref=html.match(/dlc-suite-v12-37\\.js\\?v=[^"']+/)?.[0];
+assert(dlcJsHref&&dlcJsHref.includes('v753-regime-silver-fullbleed-20261117'),'Updated picker JS version missing');
 assert(sw.includes('/'+catalogueCssHref),'PWA stylesheet version must match HTML');
-assert(sw.includes('/dlc-suite-v12-37.js?v=v752-14-dlc-hooks-20261117'),'PWA script not versioned');
+assert(sw.includes('/'+dlcJsHref),'PWA script version must match HTML');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 // Terreur 026–028 approved 2:3 posters: protect their native frame and fresh files.
 const terrorPosters=read('terror-v12-37.js');
