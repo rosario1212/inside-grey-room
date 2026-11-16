@@ -1,6 +1,7 @@
 // v725 — native artwork fit for Base 009–020 and every DLC.
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
+import vm from 'node:vm';
 const read=name=>readFileSync(name,'utf8');
 const css=read('catalog-descriptions-v1.css');
 const app=read('app-v11.js');
@@ -29,6 +30,24 @@ assert(app.includes('const PUBLIC_LOBBY_SUMMARIES'), 'Keep canonical dossier cop
 assert(app.includes('CATALOGUE_LONGER_INTROS'),'Longer intros must be presentation-only');
 assert(app.includes("'011':'Pendant trente-six heures"), '36 HEURES must have substantive catalogue copy');
 assert(app.includes('scenarioCardTeaser(scenarioCatalogueSynopsis(sc),Number(sc.id)>=9?30:23)'), 'Base catalogue previews must use full 30-word budget');
+
+const start=app.indexOf('/* Catalogue-only descriptions:');
+const end=app.indexOf('function scenarioCardTeaser(',start);
+assert(start>=0&&end>start,'Isolated catalogue intro functions missing');
+const french=vm.runInNewContext(app.slice(start,end)+
+ '\nscenarioCatalogueSynopsis({id:"011",short:"Old short description"})',
+ {window:{IGR_LOCALE:'fr'}});
+assert(french.includes('Trois officiers')&&french.split(/\s+/).length>=25,
+ '36 HEURES catalogue must be materially richer without altering canon');
+const english=vm.runInNewContext(app.slice(start,end)+
+ '\nscenarioCatalogueSynopsis({id:"011",short:"English synopsis"})',
+ {window:{IGR_LOCALE:'en'}});
+assert.equal(english,'English synopsis','Never overwrite translated dossier copy');
+for(const [name,source] of [['OMERTÀ',omerta],['TERREUR',terror],
+ ['CARTEL/RÉGIME',dlc],['PREMIUM',premium]])
+ assert(source.includes('scenarioCardTeaser(sc.short,28)'),
+   name+' catalogue must not collapse the intro at 19 words');
+
 function webpSize(file){
   assert(existsSync(file),'Missing artwork: '+file);
   const b=readFileSync(file);
@@ -55,4 +74,4 @@ for(const id of ['029','030','031']){
  assert(read(file).includes('width="724" height="960"'),file+' ratio');
 }
 assert(read('index.html').includes('catalog-descriptions-v1.css?v=v726-inline-pills-fuller-synopses-20261116'));
-console.log('PASS v725: full 009–034 posters, native ratio, no placeholders and right-column player badges.');
+console.log('PASS v726: full 009–034 posters, native ratio, no placeholders and right-column player badges.');
