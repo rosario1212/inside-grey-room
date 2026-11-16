@@ -257,11 +257,15 @@ try{
         '</div></section></main></div></body></html>');
       await page.waitForFunction(()=>[...document.querySelectorAll('.igr-poster-full')].every(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0));
       const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
-        const img=el.querySelector('.igr-poster-full'),container=el.querySelector('.scenario-thumb').getBoundingClientRect(),
-          box=img.getBoundingClientRect(),fit=getComputedStyle(img).objectFit;
+        const img=el.querySelector('.igr-poster-full'),holder=el.querySelector('.scenario-thumb'),
+          container=holder.getBoundingClientRect(),box=img.getBoundingClientRect(),fit=getComputedStyle(img).objectFit,
+          holderStyle=getComputedStyle(holder);
+        const borderX=parseFloat(holderStyle.borderLeftWidth)+parseFloat(holderStyle.borderRightWidth);
+        const borderY=parseFloat(holderStyle.borderTopWidth)+parseFloat(holderStyle.borderBottomWidth);
         return {fit,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,
           imageCount:el.querySelectorAll('.scenario-thumb img').length,
           width:box.width,height:box.height,containerWidth:container.width,containerHeight:container.height,
+          contentWidth:container.width-borderX,contentHeight:container.height-borderY,
           inside:box.left>=container.left-1&&box.right<=container.right+1&&box.top>=container.top-1&&box.bottom<=container.bottom+1};
       }));
       for(let i=0;i<metrics.length;i++){
@@ -269,8 +273,8 @@ try{
         assert(m.fit==='fill',width+'px '+name+': image is not full bleed');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
-        assert(Math.abs(m.width-m.containerWidth)<=1&&Math.abs(m.height-m.containerHeight)<=1,
-          width+'px '+name+': artwork does not fully occupy its column '+JSON.stringify(m));
+        assert(Math.abs(m.width-m.contentWidth)<=1&&Math.abs(m.height-m.contentHeight)<=1,
+          width+'px '+name+': artwork does not fully occupy the inner border-box '+JSON.stringify(m));
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v7-actual-artwork-001-and-032.png'),fullPage:true});
     }
