@@ -1,0 +1,47 @@
+name: CARTEL 029 — v722/v723 gameplay and privacy
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'cartel029-v107.js'
+      - 'cartel029-v121.js'
+      - 'supabase/migrations/20261116123000_igr_v722_cartel029_random_roles.sql'
+      - 'supabase/migrations/20261116123500_igr_v723_cartel029_collective_verdict.sql'
+      - 'scripts/cartel029-v723-polish-check.mjs'
+      - '.github/workflows/cartel029-v723-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cartel029-v107.js'
+      - 'cartel029-v121.js'
+      - 'supabase/migrations/20261116123000_igr_v722_cartel029_random_roles.sql'
+      - 'supabase/migrations/20261116123500_igr_v723_cartel029_collective_verdict.sql'
+      - 'scripts/cartel029-v723-polish-check.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Explicit 029 majority, role lottery and resilient shared report
+        run: |
+          set -euo pipefail
+          node scripts/cartel029-v723-polish-check.mjs
+      - name: Regressions — 6 to 11 players, protected four witnesses and past matches
+        run: |
+          set -euo pipefail
+          node scripts/cartel029-multiplayer-check.mjs
+          node scripts/cartel029-consolidation-check.mjs
+          node scripts/cartel029-rematch-privacy-check.mjs
+          node scripts/v140-cartel029-release-check.mjs
+      - name: Validate source JavaScript syntax
+        run: |
+          set -euo pipefail
+          node --check cartel029-v107.js
+          node --check cartel029-v121.js
