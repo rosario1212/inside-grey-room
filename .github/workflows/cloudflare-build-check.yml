@@ -99,8 +99,10 @@ jobs:
           node scripts/v697-lobby-sync-check.mjs
       - name: Simulate CENDRES Heritage campaigns (5 and 7 players)
         run: node scripts/v713-cendres-playtest-check.mjs
-      - name: Build canonical web bundle
-        run: npm run build
+      - name: Build canonical web bundle and verify live intro door
+        run: |
+          npm run build
+          node scripts/intro-door-v20-check.mjs dist
       - name: Validate full production release preflight
         run: |
           node --check scripts/casino-deployment-check.mjs

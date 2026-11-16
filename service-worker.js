@@ -1,10 +1,10 @@
-const CACHE='igr-catalogue-v732-visible-picker-20261116';
+const CACHE='igr-intro-original-door-v20-20261116';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
   '/catalog-descriptions-v1.css?v=v730-direct-dlc-selector-poster-fit-20261116',
   '/catalogue-navigation-v731.css?v=v732-visible-picker-20261116',
   '/assets/catalogue-corridor-ink-v731.svg',
-  '/intro-poster-v18.css?v=v19-full-height-20261116',
+  '/intro-poster-v18.css?v=v20-original-door-embedded-20261116',
   '/regime-live-v13.js?v=regime-v16-rosters-20261115',
   '/analyst-profiling-v700.css?v=v701-progressive-psychology',
   '/analyst-profiling-v700.js?v=v701-progressive-psychology',
