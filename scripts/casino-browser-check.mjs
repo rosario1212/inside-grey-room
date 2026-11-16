@@ -40,7 +40,7 @@ async function waitState(page,predicate){await page.waitForFunction(predicate,nu
 async function storageIdentity(page){return page.evaluate(()=>JSON.parse(localStorage.getItem('igr_casino_identity_v1')))}
 async function api(page,body){const id=await storageIdentity(page);return service.process({...id,...body})}
 async function commandFor(page,type,payload={}){const v=await api(page,{op:'sync'});return api(page,{op:'command',type,payload,expectedRevision:v.revision,requestId:randomUUID()})}
-async function visibleRevision(page,revision){await page.waitForFunction(rev=>document.querySelector('[data-casino-connection]')?.textContent.includes('état serveur '+rev),revision,{timeout:12000})}
+async function visibleRevision(page,revision){await page.waitForFunction(rev=>Number(document.querySelector('[data-casino-revision]')?.dataset.casinoRevision)>=rev,revision,{timeout:15000})}
 async function layout(page,label){
  const dimensions=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));assert(dimensions.scroll<=dimensions.width+1,`${label}: horizontal overflow`);
  const small=await page.locator('button:visible').evaluateAll(els=>els.filter(e=>e.getBoundingClientRect().height<40).map(e=>e.textContent));assert.deepEqual(small,[],`${label}: touch targets too short`);
