@@ -147,3 +147,21 @@ function accurateOwnLink(s,e){
   const mine=key(e.subject,e.target,e.relation);
   return (s.privateCanon.organigram||[]).some(c=>key(resolve(s,c.subject),resolve(s,c.target),c.relation)===mine);
 }
+
+/** Personal win rules are projected only to their owner. */
+export function casinoVictoryBrief(s,viewer){
+ const role=Object.entries(s.bureau).find(([,id])=>id===viewer)?.[0];
+ const mission={
+   agent:'Localiser la salle par cinq déductions exactes. Une interpellation ne remplace pas la preuve ; le bureau doit aussi gagner collectivement.',
+   investigator:'Faire exécuter au moins une demande d’interpellation fondée sur des sources indépendantes et contribuer à la victoire du dossier collectif.',
+   analyst:'Vérifier au moins un renseignement par document ou établir un vrai lien du réseau ; la conclusion du bureau doit obtenir une majorité.',
+   prosecutor:'Ouvrir une audience contradictoire étayée par plusieurs sources et soutenir un dossier collectif exact.',
+   judge:'Rendre au moins une décision fondée sur les éléments du dossier. La décision du Juge ne vaut jamais victoire collective à elle seule.'
+ };
+ if(role)return mission[role]||'Faire progresser une enquête fondée sur les preuves.';
+ if(s.undercoverIds.includes(viewer))
+   return 'Ta mission privée : fournir un renseignement recoupé et contribuer à une victoire collective du bureau. Ta couverture reste cachée aux autres.';
+ if(s.players.includes(viewer))
+   return 'Victoire politique : prendre la direction de Yonghe, faire vivre une scission, ou installer un allié par un pacte signé et un soutien assumé. Survivre ou gagner au poker ne suffit pas.';
+ return '';
+}
