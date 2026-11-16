@@ -938,12 +938,12 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 /* v753 — LE RÉGIME 032–034: silver 16:25 posters, exact native ratio.
    No crop, stretch, blurred duplicates, vignetting or unrelated DLC changes. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.regime-scenario{
+  > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034){
   --igr-poster-fit:cover!important;
   grid-template-columns:calc(var(--igr-omerta-card-height) * .64) minmax(0,1fr)!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.regime-scenario
+  > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
   > .scenario-thumb.compact{
   position:relative!important;
   display:block!important;
@@ -960,10 +960,10 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   box-shadow:none!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.regime-scenario
+  > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
   > .scenario-thumb.compact::before,
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.regime-scenario
+  > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
   > .scenario-thumb.compact::after{
   content:none!important;
   display:none!important;
@@ -974,7 +974,7 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   mask-image:none!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.regime-scenario
+  > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
   > .scenario-thumb.compact > img.igr-poster-full{
   position:absolute!important;
   display:block!important;
@@ -996,4 +996,41 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   transform:none!important;
   -webkit-mask-image:none!important;
   mask-image:none!important;
+}
+
+/* Small iPhones: full 16:25 cover and text + badges must coexist. */
+@media(max-width:374px){
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact{
+    --igr-card-heading:.93rem;
+    --igr-card-copy:.72rem;
+    --igr-card-label:.52rem;
+    --igr-card-line:1.22;
+    padding:9px 7px!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact h3{
+    margin:3px 0 5px!important;
+    line-height:1.1!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact > p.igr-card-excerpt{
+    flex:0 0 auto!important;
+    overflow:visible!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact > .tag-row{
+    margin:7px 0 0!important;
+    gap:3px!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact > .tag-row .tag{
+    font-size:.49rem!important;
+    padding:3px 4px!important;
+  }
 }
