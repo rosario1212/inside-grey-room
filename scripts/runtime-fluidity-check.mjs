@@ -53,9 +53,14 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
         await page.locator('.igr-utility-exit').click();
         assert.equal(await page.evaluate(()=>window.homeCalls),1,'The exit control must retain a single working action');
       }else if(mode==='create-list'){
-        await page.locator('#igrDockFilters').click();
-        assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('is-dock-open')),'Filters must remain usable');
-        await page.locator('#igrGlobalHome').click();
+        if(await page.locator('#igrDockFilters').isVisible()){
+          await page.locator('#igrDockFilters').click();
+          assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('is-dock-open')),'Visible filter drawer must work');
+          await page.locator('#igrGlobalHome').click();
+        }else{
+          assert(await page.locator('#igrDockHome').isHidden(),'Legacy dock must be hidden with direct DLC selection');
+          await page.getByRole('button',{name:'Accueil'}).click();
+        }
         assert.equal(await page.evaluate(()=>window.homeCalls),1,'Scenario navigation must remain usable');
       }else if(mode==='lobby'){
         assert.equal(await page.locator('.igr-choice-status-button').innerText(),locale==='fr'?'Retirer':'Remove');
