@@ -79,6 +79,10 @@ function lobby(){
  const own=state.members.find(m=>m.id===state.viewer),members=state.members;
  const taken=new Map(members.filter(m=>m.role!=='casino').map(m=>[m.role,m]));
  const casinoCount=members.filter(m=>m.role==='casino').length;
+ const required=['agent','investigator','analyst'],missing=required.filter(id=>!taken.has(id));
+ const allReady=members.every(m=>m.ready);
+ const canStart=members.length>=7&&members.length<=12&&casinoCount>=4&&casinoCount<=7&&!missing.length&&allReady;
+ const launchHint=casinoCount<4?`Encore ${4-casinoCount} joueur${4-casinoCount>1?'s':''} chez Yonghe.`:casinoCount>7?'Yonghe dépasse sept places. Certains joueurs doivent rejoindre le Bureau.':missing.length?`Fonctions indispensables à pourvoir : ${missing.map(id=>roles[id]).join(', ')}.`:!allReady?'Tous les joueurs doivent confirmer leur présence.':'La table est prête à jouer.';
  const buttons=Object.entries(roles).map(([id,label])=>{
   const mine=own.role===id,locked=id==='casino'?casinoCount>=7&&!mine:!!taken.get(id)&&!mine;
   const availability=id==='casino'?casinoCount+'/7 PLACES':(taken.has(id)?'COMPLET':'LIBRE');
@@ -96,8 +100,8 @@ function lobby(){
  </section>
  <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
  <button class="casino-action casino-ready" data-casino-action="ready">${own.ready?'ANNULER MA CONFIRMATION':'JE SUIS PRÊT'}</button>
- ${state.isHost?'<button class="casino-action casino-start" data-casino-action="start">LANCER LE DOSSIER</button>':''}
- <p class="casino-lobby-note">L’hôte lance quand les rôles requis sont présents et tous les joueurs prêts.</p>`;
+ ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${canStart?'LANCER LE DOSSIER':'PRÉPARATION INCOMPLÈTE'}</button>`:''}
+ <p class="casino-lobby-note">${esc(launchHint)}</p>`;
 }
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
