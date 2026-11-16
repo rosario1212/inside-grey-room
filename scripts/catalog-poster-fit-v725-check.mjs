@@ -10,14 +10,17 @@ const omertaHQ=read('omerta-v12-39.js');
 const terror=read('terror-v12-37.js');
 const dlc=read('dlc-suite-v12-37.js');
 const premium=read('premium-access-sync-v17.js');
-const finalCss=css.slice(css.indexOf('/* CATALOGUE STANDARD v727'));
-assert(finalCss.startsWith('/* CATALOGUE STANDARD v727'));
-assert(finalCss.includes('display:flow-root!important'));
-assert(finalCss.includes('float:left!important'));
+const finalCss=css.slice(css.indexOf('/* INSIDE GREY ROOM — CATALOGUE v728'));
+assert(finalCss.startsWith('/* INSIDE GREY ROOM — CATALOGUE v728'));
+assert(finalCss.includes('display:grid!important'));
+assert(finalCss.includes('float:none!important'));
+assert(finalCss.includes('grid-template-columns:var(--igr-card-art-width) minmax(0,1fr)!important'));
+assert(finalCss.includes('aspect-ratio:var(--igr-card-art-ratio)!important'));
 assert(finalCss.includes('object-fit:contain!important'));
-assert(finalCss.includes('--igr-poster-ratio:3/4'));
+assert(finalCss.includes('--igr-card-art-ratio:3/4'));
+assert(finalCss.includes('--igr-card-art-ratio:724/960'));
+assert(finalCss.includes('var(--igr-cover-url'));
 assert(!finalCss.includes('#scenario-009')&&!finalCss.includes('#scenario-020'));
-assert(finalCss.includes('--igr-poster-ratio:724/960'));
 const fullArt='src="$'+'{scenarioArt(sc.id)}"';
 const thumbnail='src="$'+'{scenarioThumbArt(sc.id)}"';
 for(const [label,source] of [
@@ -89,5 +92,5 @@ for(const id of ['029','030','031']){
  assert(existsSync(file),file+' missing');
  assert(read(file).includes('width="724" height="960"'),file+' ratio');
 }
-assert(read('index.html').includes('catalog-descriptions-v1.css?v=v727-uniform-base-and-dlc-layout-30words-20261116'));
-console.log('PASS v727: 001–020 one poster frame, 021–034 separate families, no dead gaps, 30-word caps.');
+assert(read('index.html').includes('catalog-descriptions-v1.css?v=v728-approved-five-mockups-20261116'));
+console.log('PASS v728: source posters, independent five-family cards, responsive grid, 30-word cap.');
