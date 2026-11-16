@@ -71,7 +71,7 @@ function scenarioCardTeaser(raw){
  if(!text)return '';
  const words=text.split(' ');
  if(words.length<=SCENARIO_PREVIEW_MAX_WORDS)return text;
- return words.slice(0,SCENARIO_PREVIEW_MAX_WORDS).join(' ').replace(/[\s,;:—–-]+$/g,'').trimEnd()+'…';
+ return words.slice(0,SCENARIO_PREVIEW_MAX_WORDS).join(' ').replace(/[\s.,!?;:—–-]+$/g,'').trimEnd()+'…';
 }
 
 const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
