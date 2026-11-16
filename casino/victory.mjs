@@ -106,7 +106,7 @@ export function casinoPersonalVictory(s,viewer,final){
   }
   if(!s.players.includes(viewer))return null;
   const c=s.roster[viewer],free=c?.status==='free';
-  const doubleCrossed=Object.values(s.agreements).some(a=>a.participants.includes(viewer)&&a.breachedBy?.length>0);
+  const signedDeals=Object.values(s.agreements),betrayer=signedDeals.some(a=>a.breachedBy?.includes(viewer)),betrayed=signedDeals.some(a=>a.participants.includes(viewer)&&a.breachedBy?.some(id=>id!==viewer));
   const statusPrice={
     dead:'Tu ne verras jamais celui qui encaissera les dettes de la nuit.',
     detained:'La porte s’est refermée sur toi. Les autres négocient désormais sans demander ton accord.',
@@ -140,7 +140,7 @@ export function casinoPersonalVictory(s,viewer,final){
     :'Tu n’as ni pouvoir reconnu ni levier durable. Les autres ont conservé tes promesses et repris tes mises.';
   const objective=kingpin?'Prendre le pouvoir.':dissident?'Établir une faction viable.':kingmaker?'Porter un allié au sommet avec un pacte encore valable.':
     'Conquérir le pouvoir, une scission ou une influence formalisée. Survivre seul n’est pas une victoire.';
-  return {outcome,title,narrative:narrative+(doubleCrossed?' Un accord rompu restera consigné contre toi.':'')+(statusPrice?' '+statusPrice:''),
+  return {outcome,title,narrative:narrative+(betrayer?' Tu as signé puis trahi : le Registre n’a pas effacé ton nom.':betrayed?' Quelqu’un a rompu un pacte que tu avais signé. À Macao, même les promesses ont un prix.':'')+(statusPrice?' '+statusPrice:''),
     objective,objectiveFulfilled:outcome==='victory'};
 }
 function accurateOwnLink(s,e){
