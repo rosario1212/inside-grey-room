@@ -70,6 +70,7 @@ const head={
 const document={createElement:tag=>{assert.equal(tag,'nav');return newNav()}};
 const root={
  dataset:{},
+ getBoundingClientRect:()=>({top:-620}),
  prepend:element=>{nav=element;element.parentElement=root},
  querySelector(sel){
    if(sel==='.igr-scenario-filters')return nav;
