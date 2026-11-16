@@ -126,3 +126,121 @@
 .casino-live .casino-ready,.casino-live .casino-start{display:block;min-height:49px;max-width:720px;width:100%}
 .casino-live .casino-start{background:linear-gradient(145deg,#7b3332,#4c2024);border-color:#c59971}
 @media(max-width:650px){.casino-live .casino-role-choice-grid{grid-template-columns:minmax(0,1fr)}.casino-live .casino-role-choice-card{min-height:auto}}
+
+
+/* v730 — HÉRITAGE / CASINO: two clearly separated camps, compact touch targets.
+   All selectors are scoped to Casino; other Heritage campaigns stay untouched. */
+.casino-live .casino-lobby-top,
+.casino-live .casino-roster-disclosure,
+.casino-live .casino-lobby-note{max-width:760px;margin-left:auto;margin-right:auto}
+.casino-live .casino-roster-disclosure{
+  margin-top:12px;padding:0;border:1px solid #49342e;border-radius:12px;
+  background:#120d0f;overflow:hidden
+}
+.casino-live .casino-roster-disclosure>summary{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:48px;padding:11px 15px;color:#e8d6bf;font-weight:700;
+  font-size:13px;cursor:pointer;list-style:none
+}
+.casino-live .casino-roster-disclosure>summary::-webkit-details-marker{display:none}
+.casino-live .casino-roster-disclosure>summary::before{
+  content:'▸';color:#d2a77b;flex:none;transition:transform .15s ease
+}
+.casino-live .casino-roster-disclosure[open]>summary::before{transform:rotate(90deg)}
+.casino-live .casino-roster-disclosure>summary span{
+  margin-left:auto;color:#bda99a;font-size:11px;font-weight:600
+}
+.casino-live .casino-members{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  margin:0;padding:10px;border-top:1px solid #3a2926
+}
+.casino-live .casino-members li{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 9px;
+  min-width:0;padding:10px 11px;border:1px solid #3a2b29;
+  border-radius:8px;background:#191113
+}
+.casino-live .casino-members li b{min-width:0;overflow-wrap:anywhere;font-size:12px}
+.casino-live .casino-members li span:first-of-type{grid-column:1;font-size:11px}
+.casino-live .casino-members li span:last-of-type{
+  grid-column:2;grid-row:1/3;align-self:center;
+  font-size:10px;line-height:1.3;text-align:right
+}
+.casino-live .casino-role-choice-zone{
+  max-width:760px;margin:16px auto 14px;padding:clamp(14px,3vw,22px);
+  background:#100d0f;border-color:#533b32;border-radius:15px
+}
+.casino-live .casino-role-choice-heading h2{
+  margin:4px 0 9px;font-size:clamp(23px,5vw,29px);line-height:1.13
+}
+.casino-live .casino-role-choice-zone>p:not(.casino-role-choice-footnote){
+  max-width:57ch;margin:0 0 15px;color:#c7b5aa;
+  font-size:13px;line-height:1.5
+}
+.casino-live .casino-role-choice-group{margin:0 0 15px}
+.casino-live .casino-role-choice-group--bureau{
+  padding-top:14px;border-top:1px solid #49352d
+}
+.casino-live .casino-role-group-heading{
+  display:flex;align-items:baseline;justify-content:space-between;
+  flex-wrap:wrap;gap:4px 12px;margin:0 0 9px
+}
+.casino-live .casino-role-group-heading strong{
+  color:#e6c29b;font-size:11px;letter-spacing:.11em
+}
+.casino-live .casino-role-group-heading span{
+  color:#a99589;font-size:10px;letter-spacing:.04em
+}
+.casino-live .casino-role-choice-grid--yonghe{grid-template-columns:1fr}
+.casino-live .casino-role-choice-grid--bureau{
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:9px
+}
+.casino-live .casino-role-choice-card{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:auto 1fr;align-items:start;gap:7px 10px;
+  min-width:0;min-height:98px;padding:12px 13px;
+  border-radius:11px;border-color:#61483e;
+  background:linear-gradient(145deg,#21181a,#151113);
+  transition:border-color .16s ease,background-color .16s ease
+}
+.casino-live .casino-role-choice-card:hover:not(:disabled){border-color:#b18a68}
+.casino-live .casino-role-choice-card.is-picked{
+  border-color:#dfb77f;box-shadow:inset 3px 0 0 #dfb77f;
+  background:linear-gradient(145deg,#3a2521,#211518)
+}
+.casino-live .casino-role-choice-card .casino-role-choice-top{
+  grid-column:1/-1;display:flex;align-items:baseline;
+  justify-content:space-between;gap:9px
+}
+.casino-live .casino-role-choice-top b{
+  color:#efdfcc;font-size:14px;line-height:1.25
+}
+.casino-live .casino-role-choice-top em{
+  flex:none;color:#d7b38c;font-size:10px;letter-spacing:.02em
+}
+.casino-live .casino-role-choice-card>small{
+  grid-column:1;grid-row:2;min-width:0;align-self:start;
+  color:#cbb9ac;font-size:12px;line-height:1.4
+}
+.casino-live .casino-role-choice-card .casino-role-activity{
+  grid-column:2;grid-row:2;align-self:start;justify-self:end;
+  margin:0;padding:4px 6px;border-radius:6px;
+  font-size:12px;letter-spacing:.035em
+}
+.casino-live .casino-role-choice-zone .casino-role-choice-footnote{
+  margin:4px 0 0;color:#ac988a;font-size:11px;line-height:1.45
+}
+.casino-live .casino-ready,.casino-live .casino-start{
+  max-width:760px;margin-left:auto;margin-right:auto
+}
+@media(max-width:650px){
+  .casino-live .casino-role-choice-grid--bureau{grid-template-columns:1fr;gap:8px}
+  .casino-live .casino-role-choice-card{min-height:0;padding:11px 12px;gap:5px 8px}
+  .casino-live .casino-role-choice-zone{margin-top:13px}
+  .casino-live .casino-role-choice-top b{font-size:14px}
+  .casino-live .casino-members{grid-template-columns:1fr}
+  .casino-live .casino-role-choice-card .casino-role-activity{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  .casino-live .casino-roster-disclosure>summary::before,
+  .casino-live .casino-role-choice-card{transition:none}
+}
