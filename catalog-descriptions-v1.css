@@ -177,105 +177,93 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   }
 }
 
-/* FAMILY POSTER SYSTEM v11 — five independent catalogue gabarits.
-   A poster is a fixed-ratio, top-aligned print, NOT a stretched column.
-   Descriptions may grow a card, never the poster. The original art is not
-   cropped or warped; native image proportions are preserved via contain.
-   Every print in one family is exactly the same display size per viewport.
-   Backgrounds, font families and accents remain owned by the DLC themes. */
+/* FAMILY CATALOGUE v12 — each universe owns its poster geometry.
+   The primary layout is two columns + one full-width, deliberate metadata
+   row. Copy never stretches, crops, or repositions a poster. The original
+   art and universe-specific colors, typefaces and borders remain unchanged.
+   No duplicated image, blur, letterbox thumbnail or forced image distortion. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact{
-  --igr-poster-width:clamp(118px,36vw,146px);
-  --igr-poster-ratio:3/4;
-  --igr-card-floor:228px;
-  --igr-family-title:1.23rem;
-  --igr-family-copy:.9rem;
-  --igr-family-gap:7px;
-  display:flex!important;
-  flex-flow:row nowrap!important;
-  align-items:flex-start!important;
+  > article.scenario.scenario--art.scenario--compact {
+  --igr-poster-width:clamp(112px,31vw,130px);
+  --igr-poster-ratio:9/16;
+  --igr-heading-size:clamp(1.10rem,4.55vw,1.26rem);
+  --igr-excerpt-size:clamp(.83rem,3.5vw,.91rem);
+  --igr-card-gap:10px;
+  display:grid!important;
+  grid-template-columns:var(--igr-poster-width) minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  grid-template-areas:"poster content" "metadata metadata"!important;
+  align-items:start!important;
+  column-gap:0!important;
+  row-gap:0!important;
+  width:100%!important;
   min-width:0!important;
-  min-height:var(--igr-card-floor)!important;
+  min-height:0!important;
   max-height:none!important;
   height:auto!important;
-  gap:0!important;
   overflow:hidden!important;
   isolation:isolate!important;
   content-visibility:visible!important;
   contain-intrinsic-size:none!important;
   contain:none!important;
 }
-/* BASE 001–020: graphite, consistent poster frame and editorial sans. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
-  --igr-poster-width:clamp(118px,34vw,143px);
+  --igr-poster-width:clamp(112px,31vw,130px);
   --igr-poster-ratio:9/16;
-  --igr-card-floor:247px;
-  --igr-family-title:1.22rem;
-  --igr-family-copy:.9rem;
-  --igr-family-gap:7px;
+  --igr-heading-size:clamp(1.10rem,4.45vw,1.25rem);
+  --igr-excerpt-size:clamp(.82rem,3.45vw,.91rem);
 }
-/* OMERTÀ 021–025: its own portrait frame, restrained serif and red accents. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.omerta-scenario{
-  --igr-poster-width:clamp(120px,36vw,148px);
+  > article.scenario.scenario--art.scenario--compact.omerta-scenario {
+  --igr-poster-width:clamp(115px,33vw,140px);
   --igr-poster-ratio:3/4;
-  --igr-card-floor:229px;
-  --igr-family-title:1.27rem;
-  --igr-family-copy:.9rem;
-  --igr-family-gap:8px;
+  --igr-heading-size:clamp(1.14rem,4.65vw,1.32rem);
+  --igr-excerpt-size:clamp(.83rem,3.55vw,.94rem);
 }
-/* TERREUR 026–028: distinct condensed type and graphite crisis frame. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.terror-scenario{
-  --igr-poster-width:clamp(120px,36.3vw,150px);
+  > article.scenario.scenario--art.scenario--compact.terror-scenario {
+  --igr-poster-width:clamp(115px,33vw,143px);
   --igr-poster-ratio:3/4;
-  --igr-card-floor:236px;
-  --igr-family-title:1.2rem;
-  --igr-family-copy:.9rem;
-  --igr-family-gap:7px;
+  --igr-heading-size:clamp(1.10rem,4.5vw,1.26rem);
+  --igr-excerpt-size:clamp(.83rem,3.55vw,.94rem);
 }
-/* CARTEL 029–031: source gold SVGs are 724×960, never stretched. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.cartel-scenario{
-  --igr-poster-width:clamp(122px,37vw,153px);
+  > article.scenario.scenario--art.scenario--compact.cartel-scenario {
+  --igr-poster-width:clamp(118px,34vw,145px);
   --igr-poster-ratio:724/960;
-  --igr-card-floor:233px;
-  --igr-family-title:1.2rem;
-  --igr-family-copy:.9rem;
-  --igr-family-gap:7px;
+  --igr-heading-size:clamp(1.10rem,4.65vw,1.29rem);
+  --igr-excerpt-size:clamp(.84rem,3.55vw,.95rem);
 }
-/* LE RÉGIME 032–034: fixed institutional poster and archival type. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact.regime-scenario{
-  --igr-poster-width:clamp(121px,35.5vw,148px);
+  > article.scenario.scenario--art.scenario--compact.regime-scenario {
+  --igr-poster-width:clamp(115px,32vw,140px);
   --igr-poster-ratio:3/4;
-  --igr-card-floor:241px;
-  --igr-family-title:1.19rem;
-  --igr-family-copy:.9rem;
-  --igr-family-gap:7px;
+  --igr-heading-size:clamp(1.06rem,4.3vw,1.22rem);
+  --igr-excerpt-size:clamp(.83rem,3.55vw,.93rem);
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact .scenario-thumb.compact{
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact {
+  grid-area:poster!important;
   position:relative!important;
-  align-self:flex-start!important;
-  flex:0 0 var(--igr-poster-width)!important;
   display:block!important;
+  align-self:start!important;
   width:var(--igr-poster-width)!important;
   height:auto!important;
+  min-width:0!important;
   min-height:0!important;
-  max-width:none!important;
+  max-width:100%!important;
   max-height:none!important;
   aspect-ratio:var(--igr-poster-ratio)!important;
   overflow:hidden!important;
-  margin:0!important;
   padding:0!important;
+  margin:0!important;
   border-top:0!important;
   border-bottom:0!important;
-  /* The existing family-owned background continues under taller copy. */
+  box-shadow:none!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact .scenario-thumb.compact > img.igr-poster-full{
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full {
   position:absolute!important;
   display:block!important;
   inset:0!important;
@@ -287,88 +275,130 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   min-height:0!important;
   margin:0!important;
   padding:0!important;
+  aspect-ratio:auto!important;
   border:0!important;
   border-radius:0!important;
-  aspect-ratio:auto!important;
   object-fit:contain!important;
-  object-position:center top!important;
-  transform:none!important;
-  filter:none!important;
+  object-position:center center!important;
   opacity:1!important;
+  filter:none!important;
+  transform:none!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
-  display:block!important;
-  flex:1 1 0%!important;
-  min-width:0!important;
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact {
+  grid-area:content!important;
+  display:flex!important;
+  flex-direction:column!important;
   align-self:stretch!important;
+  justify-content:flex-start!important;
+  flex:initial!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-height:none!important;
+  width:auto!important;
+  height:auto!important;
+  overflow:visible!important;
+  padding:10px 11px 9px!important;
+  gap:0!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact h3 {
+  font-size:var(--igr-heading-size)!important;
+  line-height:1.14!important;
+  margin:4px 0 8px!important;
+  max-width:100%!important;
+  max-height:none!important;
+  overflow:visible!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  text-wrap:balance;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt {
+  display:block!important;
+  flex:0 0 auto!important;
+  font-size:var(--igr-excerpt-size)!important;
+  line-height:1.42!important;
+  margin:1px 0 0!important;
   min-height:0!important;
   max-height:none!important;
   height:auto!important;
   overflow:visible!important;
-  padding:11px 11px 12px!important;
-}
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact .scenario-body.compact h3{
-  font-size:var(--igr-family-title)!important;
-  line-height:1.15!important;
-  margin:4px 0 8px!important;
-  max-height:none!important;
-  overflow-wrap:anywhere!important;
-  word-break:normal!important;
-}
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact .scenario-body.compact > p.igr-card-excerpt{
-  font-size:var(--igr-family-copy)!important;
-  line-height:1.42!important;
-  margin:1px 0 8px!important;
-  max-height:none!important;
-  overflow:visible!important;
   white-space:normal!important;
+  overflow-wrap:break-word!important;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact .scenario-body.compact .tag-row{
-  gap:var(--igr-family-gap)!important;
-  margin-top:10px!important;
-  padding-top:3px!important;
+  > article.scenario.scenario--art.scenario--compact > .tag-row {
+  grid-area:metadata!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:8px 10px 9px!important;
+  border-top:1px solid rgba(160,169,177,.12)!important;
+  background:rgba(0,0,0,.07)!important;
+  position:static!important;
 }
-/* A neutral continuation of the illustration's column: it is not a duplicate,
-   a miniature or a blurred image. It never affects the print's size. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact .scenario-thumb.compact{
-  background-color:transparent!important;
+  > article.scenario.scenario--art.scenario--compact > .tag-row .tag {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:25px!important;
+  padding:4px 9px!important;
+  font-size:clamp(.54rem,2.35vw,.62rem)!important;
+  line-height:1.30!important;
+  letter-spacing:.04em!important;
+  white-space:nowrap!important;
+  overflow-wrap:normal!important;
+  text-align:center!important;
 }
-/* A smaller phone needs breathing room for text, not a squeezed poster. */
+/* Compact canvas where 009–020 and DLC titles otherwise wrap excessively.
+   Never resize the poster vertically based on text length. */
 @media(max-width:374px){
   #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--art.scenario--compact{
-    --igr-poster-width:clamp(100px,34vw,118px);
-    --igr-card-floor:267px;
-    --igr-family-title:1.13rem;
-    --igr-family-copy:.86rem;
-    --igr-family-gap:5px;
+    > article.scenario.scenario--art.scenario--compact {
+    --igr-poster-width:clamp(96px,31vw,108px);
+    --igr-heading-size:1.06rem;
+    --igr-excerpt-size:.82rem;
   }
   #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
-    --igr-poster-width:clamp(100px,32.5vw,113px);
-    --igr-card-floor:295px;
+    > article.scenario.scenario--art.scenario--compact.omerta-scenario,
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.terror-scenario,
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.cartel-scenario,
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario {
+    --igr-poster-width:clamp(102px,33vw,116px);
   }
   #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--art.scenario--compact.cartel-scenario{
-    --igr-poster-width:clamp(104px,34.5vw,120px);
+    > article.scenario.scenario--art.scenario--compact > .scenario-body.compact {
+    padding:9px 9px 8px!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact > .tag-row {
+    padding:7px 8px 8px!important;
+    gap:5px!important;
   }
 }
 @media(min-width:700px){
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--art.scenario--compact{
-    --igr-poster-width:154px;
-    --igr-card-floor:232px;
-    --igr-family-title:1.38rem;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
     --igr-poster-width:146px;
-    --igr-card-floor:245px;
+    --igr-heading-size:1.35rem;
+    --igr-excerpt-size:.93rem;
   }
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--art.scenario--compact.omerta-scenario{
@@ -376,7 +406,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   }
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--art.scenario--compact.terror-scenario{
-    --igr-poster-width:156px;
+    --igr-poster-width:155px;
   }
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--art.scenario--compact.cartel-scenario{
@@ -384,10 +414,6 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   }
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--art.scenario--compact.regime-scenario{
-    --igr-poster-width:155px;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
-    padding:14px 15px 14px!important;
+    --igr-poster-width:154px;
   }
 }
