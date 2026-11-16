@@ -125,21 +125,25 @@ try{
 
 
   await check('catalog-v5-30word-preview-preserves-full-details',async()=>{
-    const start=app.indexOf('function scenarioCardTeaser(raw)');
+    const start=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
     const end=app.indexOf('const ADVANCED_SCENARIO_IDS=',start);
     assert(start>=0&&end>start,'Shared 30-word catalogue teaser helper is missing');
     const teaser=vm.runInNewContext(app.slice(start,end)+'; scenarioCardTeaser');
     const longText=Array.from({length:47},(_,i)=>'mot'+i).join(' ');
     const compact=teaser(longText);
-    assert.equal(compact.split(/\s+/).length,30,'Catalogue descriptions must be capped at 30 words');
+    assert.equal(compact.split(/\s+/).length,30,'Classic card descriptions must be capped at 30 words');
+    assert.equal(teaser(longText,21).split(/\s+/).length,21,'DLC descriptions must be capped at 21 words');
     assert(compact.endsWith('…'),'Long catalogue descriptions should signal continuation');
     assert.equal(teaser('Une description courte et complète.'),'Une description courte et complète.');
     assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
       'Opening a dossier must still display its complete context');
-    for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js']){
+    for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
-      assert(source.includes('scenarioCardTeaser('),file+': catalogue must reuse word limit');
+      assert(source.includes('scenarioCardTeaser(sc.short,21)'),file+': public DLC cards must use 21 words');
+      assert(source.includes('igr-poster-full')&&source.includes('igr-poster-ambient'),
+        file+': every DLC rendering pathway must keep full portrait posters');
     }
+    assert(!app.includes('class="igr-poster-ambient"'),'Classic cards should keep a single cover thumbnail');
   });
 
   await check('catalog-v5-five-universes-responsive-cards',async()=>{
@@ -150,13 +154,13 @@ try{
       {klass:'cartel-scenario',label:'CARTEL · DOSSIER 030',title:'LA COUR ACHETÉE',description:'Le cartel a massacré un gouverneur et sa famille, puis détruit un registre compromettant. Trois assaillants ont été capturés. La Grey Room doit reconstituer les noms et les crimes que ce registre contenait.',players:'7–9 JOUEURS'},
       {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 034',title:'LES NOMS QU’ILS PORTAIENT',description:'Le président déchu et son gendre, chef de la sécurité, tentent d’échapper à la justice. Faux noms, refuges et derniers fidèles brouillent leur trace. Une arrestation peut intervenir très tôt, mais le verdict exige des preuves.',players:'6–9 JOUEURS'}
     ];
-    const codeStart=app.indexOf('function scenarioCardTeaser(raw)');
+    const codeStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
-      '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
+      (sc.klass ? '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" style="object-fit:contain!important;aspect-ratio:auto!important" src=""></div>' : '<div class="scenario-thumb compact"><img alt="Photo du dossier" src=""></div>')+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description)+'</p><div class="tag-row">'+
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?21:30)+'</p><div class="tag-row">'+
       '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:820});
@@ -175,9 +179,10 @@ try{
         return {height:card.height,copyBottom:copy.bottom,tagsTop:tag.top,tagsBottom:tag.bottom,cardBottom:card.bottom,
           bodyOverflow:body.scrollWidth>body.clientWidth+1,
           clamp:style.webkitLineClamp,titleClamp:heading.webkitLineClamp,
-          fit:getComputedStyle(el.querySelector('.scenario-thumb .igr-poster-ambient')).objectFit,
-          fullFit:getComputedStyle(el.querySelector('.scenario-thumb .igr-poster-full')).objectFit,
-          fullPadding:getComputedStyle(el.querySelector('.scenario-thumb .igr-poster-full')).paddingTop,
+          fit:getComputedStyle(el.querySelector('.scenario-thumb .igr-poster-ambient')||el.querySelector('.scenario-thumb img')).objectFit,
+          fullFit:el.querySelector('.igr-poster-full')?getComputedStyle(el.querySelector('.igr-poster-full')).objectFit:null,
+          fullPadding:el.querySelector('.igr-poster-full')?getComputedStyle(el.querySelector('.igr-poster-full')).paddingTop:null,
+          imageCount:el.querySelectorAll('.scenario-thumb img').length,
           titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
           textVisible:style.overflow!=='hidden'&&style.display!=='none'};
       }));
@@ -212,9 +217,15 @@ try{
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
-        assert(m.fit==='cover',width+'px '+name+': ambient poster must fill the artwork column');
-        assert(m.fullFit==='contain',width+'px '+name+': whole poster must be framed without cropping');
-        assert(parseFloat(m.fullPadding)<=5,width+'px '+name+': poster inset too large');
+        assert(m.fit==='cover',width+'px '+name+': artwork background must cover its column');
+        if(samples[i].klass){
+          assert(m.imageCount===2,width+'px '+name+': portrait DLC must have ambient + full poster layers');
+          assert(m.fullFit==='contain',width+'px '+name+': DLC poster lettering must remain inside its frame');
+          assert(parseFloat(m.fullPadding)<=5,width+'px '+name+': poster inset too large');
+        } else {
+          assert(m.imageCount===1,width+'px '+name+': classic artwork must not have extra letterboxed image');
+          assert(m.fullFit===null,width+'px '+name+': classic landscape must not use portrait framing');
+        }
         assert(m.textVisible,width+'px '+name+': description hidden');
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v3-five-universes-iphone.png'),fullPage:true});
