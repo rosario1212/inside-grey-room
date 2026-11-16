@@ -1,20 +1,20 @@
-/* Inside Grey Room — catalogue v3.
+/* Inside Grey Room — catalogue v4: calmer, compact and readable.
    Shared geometry only. Typography families, colors, borders and atmosphere
    continue to belong to each DLC. No ellipsis or clamped public summaries. */
 
 #app .page-create-v10-13 .scenario-list-v10-13{
   min-width:0;
-  row-gap:14px;
+  row-gap:12px;
   align-items:stretch;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
   display:grid!important;
-  grid-template-columns:clamp(104px,28vw,128px) minmax(0,1fr)!important;
+  grid-template-columns:clamp(100px,26.5vw,120px) minmax(0,1fr)!important;
   align-items:stretch!important;
   gap:0!important;
   min-width:0!important;
-  min-height:214px!important;
+  min-height:188px!important;
   height:auto!important;
   max-height:none!important;
   overflow:hidden!important;
@@ -27,7 +27,7 @@
   align-self:stretch!important;
   width:100%!important;
   max-width:none!important;
-  min-height:214px!important;
+  min-height:188px!important;
   height:auto!important;
   max-height:none!important;
   aspect-ratio:auto!important;
@@ -66,10 +66,10 @@
   height:auto!important;
   max-height:none!important;
   overflow:visible!important;
-  padding:16px 15px 15px!important;
+  padding:13px 13px 13px!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact .scenario-id{
-  font-size:.64rem!important;
+  font-size:.61rem!important;
   line-height:1.44!important;
   max-width:100%;
   overflow-wrap:break-word;
@@ -77,9 +77,9 @@
 /* Uniform optical scale, without taking over theme font or title color. */
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
   display:block!important;
-  font-size:clamp(1.39rem,5.65vw,1.66rem)!important;
-  line-height:1.12!important;
-  margin:6px 0 11px!important;
+  font-size:clamp(1.18rem,4.75vw,1.35rem)!important;
+  line-height:1.14!important;
+  margin:4px 0 8px!important;
   max-width:100%!important;
   max-height:none!important;
   min-width:0!important;
@@ -94,9 +94,9 @@
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-body.compact > p.igr-card-excerpt{
   display:block!important;
   flex:0 0 auto!important;
-  font-size:clamp(.90rem,3.45vw,.99rem)!important;
-  line-height:1.5!important;
-  margin:2px 0 15px!important;
+  font-size:clamp(.875rem,3.6vw,.94rem)!important;
+  line-height:1.46!important;
+  margin:1px 0 11px!important;
   min-height:0!important;
   height:auto!important;
   max-height:none!important;
@@ -116,11 +116,11 @@
   flex-wrap:wrap!important;
   align-items:center!important;
   flex:0 0 auto!important;
-  gap:7px!important;
+  gap:6px!important;
   width:100%!important;
   min-width:0!important;
   margin-top:auto!important;
-  padding-top:7px!important;
+  padding-top:5px!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .tag-row .tag{
   position:static!important;
@@ -130,19 +130,19 @@
   flex:0 1 auto!important;
   max-width:100%!important;
   min-width:0!important;
-  min-height:28px!important;
-  padding:6px 9px!important;
-  font-size:.60rem!important;
+  min-height:27px!important;
+  padding:5px 8px!important;
+  font-size:.58rem!important;
   line-height:1.32!important;
   white-space:normal!important;
   overflow-wrap:break-word!important;
   text-align:center!important;
 }
 /* Section rhythm only: preserve DLC illustrations, backgrounds and palettes. */
-#app .page-create-v10-13 > section.panel + section.panel{margin-top:24px!important}
+#app .page-create-v10-13 > section.panel + section.panel{margin-top:20px!important}
 #app .page-create-v10-13 :is(.omerta-head,.terror-head,.dlc-suite-head){
-  gap:12px;
-  margin-bottom:19px!important;
+  gap:9px;
+  margin-bottom:17px!important;
 }
 #app .page-create-v10-13 :is(.omerta-head,.terror-head,.dlc-suite-head) p{
   font-size:clamp(.88rem,3vw,.98rem)!important;
@@ -179,15 +179,15 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 @media(max-width:390px){
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
-    grid-template-columns:clamp(94px,27vw,108px) minmax(0,1fr)!important;
+    grid-template-columns:clamp(91px,26.5vw,103px) minmax(0,1fr)!important;
   }
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact{
-    padding:13px 11px 14px!important;
+    padding:11px 11px 11px!important;
   }
 }
 @media(max-width:360px){
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
-    font-size:1.30rem!important;
+    font-size:1.16rem!important;
     line-height:1.13!important;
   }
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .tag-row .tag{
@@ -198,13 +198,13 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 @media(min-width:700px){
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
-    grid-template-columns:132px minmax(0,1fr)!important;
+    grid-template-columns:120px minmax(0,1fr)!important;
   }
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact{
-    padding:18px 18px 17px!important;
+    padding:15px 15px 14px!important;
   }
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
-    font-size:clamp(1.45rem,2.15vw,1.8rem)!important;
+    font-size:clamp(1.25rem,2vw,1.5rem)!important;
   }
 }
 
@@ -212,7 +212,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art{
   grid-template-rows:auto!important;
   height:auto!important;
-  min-height:214px!important;
+  min-height:188px!important;
   max-height:none!important;
   align-self:stretch!important;
 }
@@ -220,7 +220,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   height:auto!important;
   max-height:none!important;
   min-height:max-content!important;
-  padding-bottom:28px!important;
+  padding-bottom:20px!important;
   overflow:visible!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact img{
