@@ -25,6 +25,7 @@ const poster=async(file,mime='image/webp')=>{
 const posters={
   '001':await poster('scenario-001-v10-13.webp'),
   '014':await poster('scenario-014-v11-6.webp'),
+  '020':await poster('scenario-020-v11-6.webp'),
   '021':await poster('omerta-021-l-enveloppe.webp'),
   '026':await poster('terror-026-la-ville-tombe.webp'),
   '029':await poster('cartel-029-poster-v2.svg','image/svg+xml'),
@@ -147,7 +148,7 @@ try{
     assert(final.selector.height>35,'v734: top collection selector hidden');
     await page.screenshot({path:path.join(report,'catalogue-v734-footer-and-shortcuts-iphone.png'),fullPage:true});
     await page.locator('#igrDockFilters').click();
-    await page.waitForFunction(()=>window.scrollY<140,{timeout:3000});
+    await page.waitForFunction(()=>window.scrollY<140,null,{timeout:3500});
     assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('igr-picker-attention')),
       'v734: Filtres shortcut did not highlight visible collections');
     await page.locator('#igrDockHome').click();
