@@ -263,49 +263,6 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   filter:drop-shadow(0 2px 9px rgba(0,0,0,.55))!important;
 }
 
-/* Poster profiles v6: never apply the same fit to classic landscape and DLC
-   portrait artworks. Card dimensions, palette, type and dock stay unchanged. */
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--compact.scenario--art:not(.omerta-scenario):not(.terror-scenario):not(.cartel-scenario):not(.regime-scenario)
-  .scenario-thumb.compact > img{
-  object-fit:cover!important;
-  object-position:center!important;
-  aspect-ratio:auto!important;
-  padding:0!important;
-  filter:none!important;
-  transform:none!important;
-}
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
-  .scenario-thumb.compact > img.igr-poster-ambient{
-  position:absolute!important;
-  width:100%!important;
-  height:100%!important;
-  inset:0!important;
-  object-fit:cover!important;
-  aspect-ratio:auto!important;
-  filter:blur(11px) brightness(.42) saturate(.78)!important;
-  opacity:.94!important;
-  transform:scale(1.14)!important;
-}
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
-  .scenario-thumb.compact > img.igr-poster-full{
-  position:absolute!important;
-  width:100%!important;
-  height:100%!important;
-  inset:0!important;
-  box-sizing:border-box!important;
-  padding:5px 3px!important;
-  object-fit:contain!important;
-  object-position:center!important;
-  aspect-ratio:auto!important;
-  max-width:none!important;
-  max-height:none!important;
-  transform:none!important;
-  filter:drop-shadow(0 2px 8px rgba(0,0,0,.45))!important;
-}
-
 /* Unified full-frame poster v7 — the whole artwork must always be visible.
    Classic dossiers use the original full image rather than a cropped thumbnail.
    The ambient layer fills the portrait column, preventing flat letterboxing
