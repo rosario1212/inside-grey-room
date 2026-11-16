@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {assertPwaRevision} from './pwa-release-consistency.mjs';
 import {readFileSync} from 'node:fs';
 
 const app=readFileSync('app-v11.js','utf8');
@@ -32,7 +33,6 @@ assert(db.includes("'{expert_actions}'"),'Expert has no actual choices');
 assert(db.includes("'{protected}'"),'008 Judge has no protected procedural items');
 assert(prosecutorVariant.includes('igr_private.igr_v371_011_pinned_pack(p_room)'), '011 prosecutor must use pinned A/B/C variant');
 assert(index.includes('santoro-display-audit-20261108'));
-assert(sw.includes("igr-santoro-display-audit-20261108"));
-assert(sw.includes('santoro-display-audit-20261108'));
+assertPwaRevision(index,sw);
 assert(finalizer.includes("const clientVersion='santoro-display-audit-20261108'"),'Production finalizer would restore stale role cache');
 console.log('Optional-role 003/008/009/011 contract: PASS (4/5-player rosters preserved; 6-player roles, private release guards, action content and PWA checked).');

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {assertPwaRevision} from './pwa-release-consistency.mjs';
 import {readFile} from 'node:fs/promises';
 const app=await readFile('app-v11.js','utf8');
 const files=[
@@ -28,5 +29,5 @@ assert.match(app,/currentCase==='013'\?\['knowledge','command','security'\]/);
 assert.match(app,/STATE\.sync\?\.room\?\.scenario_id==='013'/);
 const html=await readFile('index.html','utf8'),sw=await readFile('service-worker.js','utf8');
 assert(['20261024-013-variants','20261024-014-variants','santoro-display-audit-20261108'].some(v=>html.includes(v)));
-assert(['igr-v42-013-variants','igr-v44-014-variants','igr-santoro-display-audit-20261108'].some(v=>sw.includes(v)));
+assertPwaRevision(html,sw);
 console.log('013 integration contracts: PASS (server smoke tests required separately).');

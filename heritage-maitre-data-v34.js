@@ -22,13 +22,13 @@ const VARIANTS=Object.freeze({
 });
 
 const ROLES=Object.freeze([
-  {id:'avocat',name:'AVOCAT',public:'Vous défendez le Client. Votre force vient de l’angle que vous construisez, pas d’une vérité fournie par l’application.'},
-  {id:'client',name:'CLIENT',public:'Vous êtes le point d’entrée du dossier. Vous n’êtes pas automatiquement le centre du réseau et vous ne dites pas forcément tout à votre avocat.'},
-  {id:'enqueteur',name:'ENQUÊTEUR',public:'Vous devez établir la place exacte du Client : proximité, connaissance, bénéfice, aveuglement, complicité ou responsabilité directe.'},
-  {id:'procureur',name:'PROCUREUR',public:'Vous transformez ce qui est légalement exploitable en théorie d’accusation, sans disposer de la vérité canonique complète.'},
-  {id:'juge',name:'JUGE',public:'Vous ne connaissez jamais la vérité canonique. Vous présidez l’audience, classez les éléments selon leur force probante et garantissez que la délibération collective distingue preuve, hypothèse et interprétation.'},
-  {id:'associe',name:'ASSOCIÉ',public:'Vous appartenez à l’entourage du Client. À partir du dossier III, vous pouvez devenir le second mis en cause défendu par le même avocat.'},
-  {id:'temoin',name:'TÉMOIN / EXPERT',public:'Vous détenez une pièce de contexte : comptabilité, chronologie, relation ou témoignage qui peut déplacer la lecture du dossier.'}
+  {id:'avocat',name:'AVOCAT',short:'Défend le Client et construit sa stratégie.',activity:5,public:'Vous défendez le Client. Votre force vient de l’angle que vous construisez, pas d’une vérité fournie par l’application.'},
+  {id:'client',name:'CLIENT',short:'Défend ses actes et décide de coopérer.',activity:4,public:'Vous êtes le point d’entrée du dossier. Vous n’êtes pas automatiquement le centre du réseau et vous ne dites pas forcément tout à votre avocat.'},
+  {id:'enqueteur',name:'ENQUÊTEUR',short:'Établit les faits et les responsabilités.',activity:5,public:'Vous devez établir la place exacte du Client : proximité, connaissance, bénéfice, aveuglement, complicité ou responsabilité directe.'},
+  {id:'procureur',name:'PROCUREUR',short:'Construit l’accusation à partir des preuves.',activity:4,public:'Vous transformez ce qui est légalement exploitable en théorie d’accusation, sans disposer de la vérité canonique complète.'},
+  {id:'juge',name:'JUGE',short:'Préside l’audience et garantit les droits.',activity:4,public:'Vous ne connaissez jamais la vérité canonique. Vous présidez l’audience, classez les éléments selon leur force probante et garantissez que la délibération collective distingue preuve, hypothèse et interprétation.'},
+  {id:'associe',name:'ASSOCIÉ',short:'Défend sa version et ses intérêts.',activity:4,public:'Vous appartenez à l’entourage du Client. À partir du dossier III, vous pouvez devenir le second mis en cause défendu par le même avocat.'},
+  {id:'temoin',name:'TÉMOIN / EXPERT',short:'Éclaire le dossier par des faits vérifiables.',activity:3,public:'Vous détenez une pièce de contexte : comptabilité, chronologie, relation ou témoignage qui peut déplacer la lecture du dossier.'}
 ]);
 
 const PACK=Object.freeze({

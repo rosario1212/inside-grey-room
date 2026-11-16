@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {assertPwaRevision} from './pwa-release-consistency.mjs';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 const read=p=>readFileSync(p,'utf8');
@@ -15,8 +16,7 @@ const deploy=read('.github/workflows/cloudflare-production-deploy.yml');
 const v='santoro-display-audit-20261108';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+v),'020 HTML cache stale');
-assert(sw.includes("const CACHE='igr-"+v+"'"),'020 SW cache mismatch');
-assert(sw.includes('/app-v11.js?v='+v),'020 SW shell stale');
+assertPwaRevision(html,sw);
 assert(app.includes("id:'020',title:'L’APOTHÉOSE'"),'020 catalog missing');
 assert(app.includes('min:13,max:16'),'020 must support 13-16 players');
 assert(app.includes("'020':{required:['Enquêteur','Analyste','Inspecteur','Procureur','Juge','Expert','4 suspects','Avocat','Journaliste','Témoin']"),'020 core roles mismatch');

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {assertPwaRevision} from './pwa-release-consistency.mjs';
 import {readFile} from 'node:fs/promises';
 const names=["20261025000000_igr_v450_015_private_pack_preview.sql","20261025000100_igr_v451_015_private_pinned_variants.sql","20261025000200_igr_v452_015_pin_on_start.sql","20261025000300_igr_v453_015_private_pack_readers.sql","20261025000400_igr_v454_015_investigation_sync.sql","20261025000500_igr_v455_015_private_investigations.sql","20261025000600_igr_v456_015_final_lock.sql","20261025000700_igr_v457_015_reconstruction_scoring.sql","20261025000900_igr_v459_015_guard_room_creation.sql"];
 const sql=(await Promise.all(names.map(f=>readFile('supabase/migrations/'+f,'utf8')))).join('\n');
@@ -14,5 +15,5 @@ assert.match(app,/currentCase==='015'\?\['authority','continuation','records'\]/
 assert(!app.includes('Une médecin est retrouvée morte alors qu’elle enquêtait sur ÉLIGIBLES'),'015 wrong public premise');
 const html=await readFile('index.html','utf8'),sw=await readFile('service-worker.js','utf8');
 assert(html.includes('santoro-display-audit-20261108'));
-assert(sw.includes('igr-santoro-display-audit-20261108'));
+assertPwaRevision(html,sw);
 console.log('015 private pack, 5–7 player, UI and release contracts PASS');
