@@ -211,7 +211,7 @@ export function applyCasinoCommand(current, command) {
       const evidence = s.evidence.filter(e => e.subjectId === payload.subjectId && (payload.evidenceIds || []).includes(e.id));
       ensure(evidence.length >= 2 && unique(evidence.map(e=>e.sourceId)), 'insufficient_corroboration');
       ensure(compact(payload.allegedOffence, 150) && compact(payload.reasoning, 700), 'missing_reasoned_request');
-      s.interpellationRequests.push({id,subjectId:payload.subjectId,evidenceIds:payload.evidenceIds,allegedOffence:payload.allegedOffence,reasoning:payload.reasoning,executed:false});
+      s.interpellationRequests.push({id,subjectId:payload.subjectId,evidenceIds:payload.evidenceIds,allegedOffence:payload.allegedOffence,reasoning:payload.reasoning,requestedBy:actor,executed:false});
       break;
     }
     case 'INTERPELLATE': {
