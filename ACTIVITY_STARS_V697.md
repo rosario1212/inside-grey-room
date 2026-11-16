@@ -18,4 +18,23 @@ Les étoiles reflètent la **fréquence attendue des interventions, décisions e
 
 L'Expert et le Témoin n'obtiennent pas automatiquement 3 étoiles : leur volume d'actions reste partiellement dépendant des convocations ou des options proposées. Une influence décisive est possible malgré 2 étoiles.
 
+## Rôles spécifiques des DLC
+
+Ces évaluations utilisent la même échelle d'activité, indépendamment des choix du Juge ou des sièges occupés.
+
+| Rôle | Activité |
+|---|---|
+| Associato (Omertà) | ★★★☆☆ |
+| Uomo d'Onore (Omertà) | ★★★★☆ |
+| Contabile (Omertà) | ★★★☆☆ |
+| Pentito (Omertà) | ★★★★☆ |
+| Caporegime (Omertà) | ★★★★☆ |
+| Consigliere (Omertà) | ★★★☆☆ |
+| Sottocapo (Omertà) | ★★★★☆ |
+| Don (Omertà / Cartel) | ★★★★☆ |
+| Bras droit (Cartel) | ★★★☆☆ |
+| Informateur (cas particuliers) | ★★★☆☆ |
+
+Dans Omertà, les personnages mafieux relèvent du type interne `suspect`, mais la carte générique **Suspect** n'est pas proposée au choix. Les rangs disponibles sont affichés à sa place. Cela ne modifie pas l'attribution canonique du dossier.
+
 Les mêmes notes doivent apparaître dans **les cartes de choix des rôles** et dans **Règles → Comment jouer chaque rôle**, en français et en anglais. Fichier canonique de la sélection : \`natural-role-gameplay-v50.js\`; règlement : \`self-guided-rules-v51.js\`. Le contrôle \`v697-activity-stars-check.mjs\` empêche une divergence entre les deux.
