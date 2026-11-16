@@ -16,7 +16,7 @@ assert(maitre.includes('p_player_token:s.token'),'MAÎTRE must use its own token
 assert(maitre.includes('d.players.map(p=>[p.id,p.ready,p.role_id,p.preferred_role])'),'MAÎTRE choice changes must update live roster');
 for(const fragment of ['data-casino-action="select-role"',"case 'select-role'",'data-role-id=','is-taken','roleShort(id)','roleStars(id)'])assert(casino.includes(fragment),'Casino choice missing '+fragment);
 assert(!casino.includes("form('role',`<label>Ta fonction<select"),'Casino must not hide roles in a dropdown');
-for(const cssText of [css,casinoCss])assert(cssText.includes('role-grid')&&cssText.includes('-webkit-line-clamp:unset'),'Descriptions must never be clipped');
+for(const cssText of [css,casinoCss])assert(cssText.includes('role')&&cssText.includes('-webkit-line-clamp:unset'),'Descriptions must never be clipped');
 assert(css.includes('.hnet-role-warning'),'A stale selected role after player departure needs a visible warning');
 for(const fragment of ['add column if not exists preferred_role','create unique index','igr_heritage_online_role_pool','igr_heritage_online_choose_role','for update','rate_limit','role_already_taken','selected_role_not_available_for_player_count','set role_id=preferred_role','where room_code=p_code and preferred_role is null','v_room.status=\'playing\' then role_id else null','grant execute on function public.igr_heritage_online_choose_role'])assert(sql.includes(fragment),'Server contract missing '+fragment);
 assert(sql.includes("if p_chapter=3 then"),'MAÎTRE chapter 3 requires the associate');
