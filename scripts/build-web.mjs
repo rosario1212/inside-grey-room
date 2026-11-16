@@ -15,7 +15,7 @@ await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});cons
 for(const name of runtimeFiles){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing web runtime file: ${name}`);const dst=path.join(out,name);await mkdir(path.dirname(dst),{recursive:true});await cp(src,dst,{recursive:true});searchableText.push(await readFile(src,'utf8'))}
 
 const premiumHead=[
- '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=20261116-entry-raised">',
+ '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=20261116-entry-safearea-v728">',
  '  <link rel="stylesheet" href="heritage-v13-5.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-premium-v13-6.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-play-v13-7.css?v=v13.8-dual-play">',
@@ -30,7 +30,7 @@ const premiumScripts=[
  '  <script src="heritage-context-v71.js?v=v71-heritage-release"></script>',
  '  <script src="play-modes-v13-8.js?v=v13.8-dual-play"></script>',
  '  <script src="heritage-access-code-v14.js?v=v14-heritage-code"></script>',
- '  <script src="premium-access-sync-v17.js?v=v727-uniform-base-and-dlc-layout-30words-20261116"></script>'
+ '  <script src="premium-access-sync-v17.js?v=v728-approved-five-mockups-20261116"></script>'
 ].join('\n');
 const durationHead='  <link rel="stylesheet" href="duration-modes-v35.css?v=v35-duration-modes">';
 const durationScript='  <script src="duration-modes-v35.js?v=v35-duration-modes"></script>';
@@ -42,7 +42,7 @@ for(const page of ['index.html','en.html']){
   else if(!html.includes('premium-access-sync-v17.css'))html=html.replace('</head>',`  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">\n</head>`);
   if(!html.includes('duration-modes-v35.css'))html=html.replace('</head>',`${durationHead}\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
-  else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v727-uniform-base-and-dlc-layout-30words-20261116"></script>\n</body>`);
+  else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v728-approved-five-mockups-20261116"></script>\n</body>`);
   if(!html.includes('duration-modes-v35.js'))html=html.replace('</body>',`${durationScript}\n</body>`);
   if(!html.includes('store-catalog-v69.js')){
     if(html.includes('premium-access-sync-v17.js'))html=html.replace(/(<script[^>]+src=["']premium-access-sync-v17\.js[^>]*><\/script>)/i,`${storeCatalogScript}\n$1`);
