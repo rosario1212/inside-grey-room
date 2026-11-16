@@ -21,7 +21,7 @@ has(test,"SELECT public.igr_v50_reveal_legacy('C711J')");
 has(test,"SELECT public.igr_v50_reveal_legacy('C711N')");
 has(test,'Absent voter still counted');
 for(const s of [natural,rules])has(s,'enqueteur:5');
-for(const s of [natural,rules])has(s,'juge:5');
+for(const s of [natural,rules])has(s,'juge:4');
 for(const s of [natural,rules])has(s,'expert:2');
 for(const s of [natural,rules])has(s,'Math.min(5');
 has(natural,'stars(activityRating(r))');
