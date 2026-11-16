@@ -75,7 +75,7 @@ try{
        players:'6–9 JOUEURS'}
     ];
     const markup=cards.map(sc=>'<article class="scenario scenario--art scenario--compact regime-scenario" data-igr-scenario-id="'+sc.id+'">'+
-      '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
+      '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">LE RÉGIME · DOSSIER '+sc.id+'</div>'+
       '<h3>'+sc.name+'</h3><p class="igr-card-excerpt">'+sc.description+'</p>'+
       '<div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></div></article>').join('');
@@ -140,11 +140,11 @@ try{
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
       assert(source.includes('scenarioCardTeaser(sc.short,19)'),file+': public DLC cards must use 19 words');
-      assert(source.includes('igr-poster-full')&&source.includes('igr-poster-ambient'),
-        file+': every DLC rendering pathway must keep full portrait posters');
+      assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
+        file+': every DLC rendering pathway must show one image without a vignette');
     }
-    assert(app.includes('class="igr-poster-ambient"')&&app.includes('class="igr-poster-full"'),
-      'Classic cards must also have full-image foreground + ambient fill');
+    assert(app.includes('class="igr-poster-full"')&&!app.includes('class="igr-poster-ambient"'),
+      'Classic cards must use a single original full-bleed image');
     assert(app.includes('src="${scenarioArt(sc.id)}"'),
       'Classic cards must load their original artwork, not a thumbnail crop');
   });
@@ -161,7 +161,7 @@ try{
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
-      '<div class="scenario-thumb compact"><img class="igr-poster-ambient" alt="" aria-hidden="true" src=""><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
+      '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
       '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:30)+'</p><div class="tag-row">'+
       '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
@@ -220,10 +220,10 @@ try{
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
-        assert(m.fit==='cover',width+'px '+name+': artwork background must cover its column');
-        assert(m.imageCount===2,width+'px '+name+': every dossier must use two image layers');
-        assert(m.fullFit==='contain',width+'px '+name+': full image must not lose any part, including its title');
-        assert(parseFloat(m.fullPadding)<=2,width+'px '+name+': foreground has too much padding');
+        assert(m.fit==='fill',width+'px '+name+': artwork must fill the left column without inset');
+        assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
+        assert(m.fullFit==='fill',width+'px '+name+': artwork must not be cropped or letterboxed');
+        assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
         assert(m.textVisible,width+'px '+name+': description hidden');
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v3-five-universes-iphone.png'),fullPage:true});
@@ -233,8 +233,8 @@ try{
 
   await check('catalog-v7-real-full-posters-001-032',async()=>{
     const assets=[
-      {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp',ambient:'scenario-thumb-001.webp'},
-      {klass:'regime-scenario',name:'032 — LES ARCHIVES DU PALAIS',full:'regime-032-les-archives-du-palais.webp',ambient:'regime-032-les-archives-du-palais.webp'}
+      {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
+      {klass:'regime-scenario',name:'032 — LES ARCHIVES DU PALAIS',full:'regime-032-les-archives-du-palais.webp'}
     ];
     const toData=async file=>{
       const bytes=await readFile(path.join(target,'assets',file));
@@ -242,9 +242,8 @@ try{
     };
     const markup=[];
     for(const item of assets){
-      const [foreground,background]=await Promise.all([toData(item.full),toData(item.ambient)]);
+      const foreground=await toData(item.full);
       markup.push('<article class="scenario scenario--art scenario--compact '+item.klass+'"><div class="scenario-thumb compact">'+
-        '<img class="igr-poster-ambient" alt="" aria-hidden="true" src="'+background+'">'+
         '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
         '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
         '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
@@ -259,20 +258,19 @@ try{
       await page.waitForFunction(()=>[...document.querySelectorAll('.igr-poster-full')].every(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0));
       const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
         const img=el.querySelector('.igr-poster-full'),container=el.querySelector('.scenario-thumb').getBoundingClientRect(),
-          box=img.getBoundingClientRect(),fit=getComputedStyle(img).objectFit,
-          ambient=getComputedStyle(el.querySelector('.igr-poster-ambient')).objectFit;
-        const scale=Math.min(box.width/img.naturalWidth,box.height/img.naturalHeight);
-        return {fit,ambient,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,
-          boxWidth:box.width,boxHeight:box.height,renderedWidth:img.naturalWidth*scale,
-          renderedHeight:img.naturalHeight*scale,inside:box.left>=container.left-1&&box.right<=container.right+1&&box.top>=container.top-1&&box.bottom<=container.bottom+1};
+          box=img.getBoundingClientRect(),fit=getComputedStyle(img).objectFit;
+        return {fit,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,
+          imageCount:el.querySelectorAll('.scenario-thumb img').length,
+          width:box.width,height:box.height,containerWidth:container.width,containerHeight:container.height,
+          inside:box.left>=container.left-1&&box.right<=container.right+1&&box.top>=container.top-1&&box.bottom<=container.bottom+1};
       }));
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=assets[i].name;
-        assert(m.fit==='contain',width+'px '+name+': image is cropped');
-        assert(m.ambient==='cover',width+'px '+name+': ambient background leaves hard bands');
+        assert(m.fit==='fill',width+'px '+name+': image is not full bleed');
+        assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
-        assert(m.renderedWidth<=m.boxWidth+1&&m.renderedHeight<=m.boxHeight+1,
-          width+'px '+name+': original image cannot fit its frame');
+        assert(Math.abs(m.width-m.containerWidth)<=1&&Math.abs(m.height-m.containerHeight)<=1,
+          width+'px '+name+': artwork does not fully occupy its column');
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v7-actual-artwork-001-and-032.png'),fullPage:true});
     }
