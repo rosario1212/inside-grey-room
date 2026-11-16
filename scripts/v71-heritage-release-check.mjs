@@ -14,7 +14,8 @@ ok(play.includes("label=opt.qualitative?'Choix d’héritage'"),'KUROI V still r
 ok(play.includes("live.online?live.campaignCarry"),'online CENDRES/KUROI do not consume host campaign carry');
 ok(play.includes("CRISE · Les annexes des rôles absents sont retenues"),'CENDRES crisis has no mechanical information-delay effect');
 ok(!play.includes('K-9')&&!play.includes('VENN'),'obsolete CENDRES jargon remains');
-ok(play.includes("api().kuroi.upsertClanMember")&&play.includes("api().kuroi.updateDebt"),'KUROI persistent tree/debt state still inert');
+const heritageEngine=await read('heritage-v13-5.js');
+ok(play.includes('api()?.kuroi?.commitDecision?.(')&&heritageEngine.includes('function commitKuroiDecision(')&&heritageEngine.includes('commitDecision:commitKuroiDecision'),'KUROI atomic debt/chronicle persistence is missing');
 ok(maitre.includes("L’Avocat doit formuler un ANGLE"),'MAÎTRE local Angle gate missing');
 ok(maitre.includes("ownerRole=live.chapter===1||live.chapter===4?'juge':live.chapter===2?'client':'avocat'"),'MAÎTRE local decision authority missing');
 ok(maitre.includes("roleCard:(chapter,roleId,variantKey,carry)"),'MAÎTRE shared role-card accessor missing');
