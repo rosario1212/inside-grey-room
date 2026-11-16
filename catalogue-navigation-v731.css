@@ -890,3 +890,19 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   -webkit-mask-image:none!important;
   mask-image:none!important;
 }
+
+/* v749 — base dossiers only: keep the player badge beside the synopsis
+   visually. Center the entire information group inside the existing card
+   rather than pushing the badge to the bottom and leaving a large dark gap.
+   Poster columns, card sizes and all DLC-specific cards stay unchanged. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario):not(.terror-scenario):not(.cartel-scenario):not(.regime-scenario)
+  > .scenario-body.compact{
+  justify-content:safe center!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario):not(.terror-scenario):not(.cartel-scenario):not(.regime-scenario)
+  > .scenario-body.compact > .tag-row{
+  margin:12px 0 0!important;
+  padding:0!important;
+}

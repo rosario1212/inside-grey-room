@@ -169,6 +169,9 @@ assert(css.includes('article.scenario.scenario--art.scenario--compact#scenario-0
 assert(app.includes("const art=id=>String(id)==='018'"),'The base catalogue must use its dedicated image without external scope');
 assert(css.includes('background-size:96% auto!important'),'Poster titles must retain the source aspect ratio');
 assert(css.includes('/* v747 — dossier 018 approved catalogue asset'),'Dedicated 018 artwork treatment missing');
+assert(css.includes('/* v749 — base dossiers only'),'Base-card spacing policy missing');
+assert(css.includes('margin:12px 0 0!important;'),'Badges should follow descriptions');
+assert(app.includes('assets/scenario-018-catalog-v749.webp'),'Updated 018 artwork must be included');
 assert(css.includes('mask-image:none!important;'),'018 must not mask its baked-in title');
 assert(css.includes('content:none!important;'),'018 must not overlay duplicate titles');
 assert(css.includes('transparent 72%,#000 79%,#000 94%,transparent 99%'),'Poster title mask must begin BEFORE printed lettering');
@@ -192,9 +195,9 @@ assert(css.includes('max-height:100%!important'),'Classics must fill the same Om
 assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
-assert(html.includes('catalogue-navigation-v731.css?v=v747-018-approved-catalog-asset-20261116'),'New stylesheet not linked');
+assert(html.includes('catalogue-navigation-v731.css?v=v749-base-badge-title-018-20261116'),'New stylesheet not linked');
 assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
-assert(sw.includes('/catalogue-navigation-v731.css?v=v747-018-approved-catalog-asset-20261116'),'PWA stylesheet not versioned');
+assert(sw.includes('/catalogue-navigation-v731.css?v=v749-base-badge-title-018-20261116'),'PWA stylesheet not versioned');
 assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 console.log('PASS v731: Five visible direct collections, complete classic scroll, isolated DLCs, monochrome illustrated background.');
