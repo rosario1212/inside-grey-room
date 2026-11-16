@@ -16,7 +16,11 @@ function initial({count=4,judge=false,prosecutor=false,undercoverIds=[]}={}){
  return startRuntime({id:randomUUID(),hostId:'p0',members},fixtureRelease(),{undercoverIds,now:0,deck:shuffledDeck(n=>n-1)});
 }
 let counter=0;
-const command=(s,actor,type,payload={},now=0)=>applyRuntime(s,{id:'cmd-'+(++counter),actor,type,payload},{now});
+// Unspecified deadlines use a valid, reproducible simulated late time;
+ // explicit timestamps continue to test the real server-side deadline.
+const command=(s,actor,type,payload={},now=0)=>applyRuntime(s,{id:'cmd-'+(++counter),actor,type,payload},
+  {now:now===0&&['ADVANCE_PHASE','FINISH_CAMPAIGN'].includes(type)
+    ?s.phaseStartedAt+s.privateCanon.minimumSocialMs*3+1:now});
 function finishPoker(s){while(s.poker.stage!=='settled')s=command(s,s.poker.turn,'POKER_ACTION',{action:s.poker.stage==='draw'?'draw':'check'});return s}
 function finishCampaign(s){for(const participant of Object.values(s.bureau))s=command(s,participant,'BUREAU_VERDICT',{position:'insufficient'});return command(s,'p0','FINISH_CAMPAIGN')}
 await test('all poker categories, straight-low ace, kickers, ties and invalid cards',()=>{
@@ -155,6 +159,27 @@ function chapterTwo(s,{badAnswers=false}={}){
  s=command(s,'agent','LOCATE_ROOM',{},badAnswers?240000:180000);
  return command(s,'p0','ADVANCE_PHASE',{},badAnswers?240000:180000);
 }
+await test('phase pacing protects every role in chapters II–III; individual objections remain private',()=>{
+ let s=chapterTwo(initial());
+ const t=s.phaseStartedAt,m=s.privateCanon.minimumSocialMs;
+ assert.throws(()=>command(s,'p0','ADVANCE_PHASE',{},t+m-1),/minimum_social_time/);
+ assert.throws(()=>command(s,'p0','ADVANCE_PHASE',{},t+m),/phase_participants_not_ready/);
+ s=command(s,'p1','PHASE_POSITION',{position:'more_time'},t+10);
+ assert.equal(viewRuntime(s,'p1').phaseReadiness.myPosition,'more_time');
+ assert.equal(viewRuntime(s,'p0').phaseReadiness.myPosition,null);
+ assert.equal(viewRuntime(s,'p0').phaseReadiness.concerns,1);
+ assert.throws(()=>command(s,'p0','ADVANCE_PHASE',{},t+2*m),/phase_participants_not_ready/);
+ assert.throws(()=>command(s,'p0','PHASE_POSITION',{position:'yes'},t+11),/invalid_phase_position/);
+ for(const member of s.members)s=command(s,member.id,'PHASE_POSITION',{position:'ready'},t+12);
+ assert.equal(viewRuntime(s,'p0').phaseReadiness.ready,s.members.length);
+ s=command(s,'p0','ADVANCE_PHASE',{},t+m);
+ assert.equal(s.phasePositions.p1,undefined,'Readiness must reset on the next phase');
+ assert.equal(s.chapter,2);
+ let fallback=chapterTwo(initial()),ft=fallback.phaseStartedAt;
+ fallback=command(fallback,'p2','PHASE_POSITION',{position:'more_time'},ft+10);
+ fallback=command(fallback,'p0','ADVANCE_PHASE',{},ft+3*m+1);
+ assert.equal(fallback.phase,2,'A disconnected or objecting member cannot block forever');
+});
 await test('five private deductions, minimum social time and authored late fallback',()=>{
  let s=initial();assert.throws(()=>command(s,'agent','LOCATE_ROOM'),/minimum_social_time/);
  s=chapterTwo(s,{badAnswers:true});assert.equal(s.chapter,2);assert(s.roomLocated);
