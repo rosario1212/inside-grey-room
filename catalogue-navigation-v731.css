@@ -840,3 +840,53 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   content:none!important;
   display:none!important;
 }
+
+
+/* v747 — TERREUR 026–028, true full-bleed covers.
+   Current source posters are 1086×1448 (native 3:4).
+   Match the exact artwork ratio to the shared card height, so the complete
+   poster fills every pixel with neither cropping nor stretch; do not overlay
+   a blurred duplicate. All other dossier families remain untouched. */
+#app .page-create-v10-13{--igr-terror-native-width:171px}
+@media(min-width:375px) and (max-width:699px){
+  #app .page-create-v10-13{--igr-terror-native-width:189px}
+}
+@media(min-width:700px){
+  #app .page-create-v10-13{--igr-terror-native-width:183px}
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.terror-scenario{
+  --igr-poster-fit:cover!important;
+  grid-template-columns:var(--igr-terror-native-width) minmax(0,1fr)!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.terror-scenario
+  > .scenario-thumb.compact{
+  background:#070809!important;
+  overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.terror-scenario
+  > .scenario-thumb.compact::before,
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.terror-scenario
+  > .scenario-thumb.compact::after{
+  content:none!important;
+  display:none!important;
+  background-image:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.terror-scenario
+  > .scenario-thumb.compact > img.igr-poster-full{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  aspect-ratio:auto!important;
+  filter:none!important;
+  transform:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
