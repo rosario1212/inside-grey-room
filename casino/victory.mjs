@@ -113,15 +113,6 @@ export function casinoPersonalVictory(s,viewer,final){
     interpellated:'La police t’a pris avant que la succession soit arrêtée.',
     deposed:'Ton nom a été rayé des décisions. Ceux qui avaient besoin de toi parlent déjà au passé.'
   }[c?.status]||'';
-  if(s.undercoverIds.includes(viewer)){
-    const delivered=verifiedWitness(s,viewer),won=delivered&&final.investigative.outcome==='victory';
-    const outcome=won?'victory':delivered?'partial':'defeat';
-    return {outcome,title:won?'TA COUVERTURE AVAIT UN PRIX':delivered?'LA SOURCE EST ARRIVÉE TROP TARD':'PERSONNE NE CONFIRME TES MOTS',
-      narrative:(won?'Ton renseignement recoupé a servi à un dossier gagnant. Tu as rempli ta mission, mais personne ne t’a promis de sortie propre.':
-        delivered?'Ton information a été vérifiée. Le bureau n’a pas remporté le dossier ; elle restera une pièce, pas un acquittement.':
-        'Tu as traversé la nuit, mais aucun renseignement utilisable provenant de toi n’a été confirmé.')+(statusPrice?' '+statusPrice:''),
-      objective:'Transmettre un renseignement recoupé qui contribue à une victoire collective du bureau.',objectiveFulfilled:won};
-  }
   const kingpin=free&&final.political.outcome==='recognised_claim'&&s.finale.successor===viewer;
   const split=s.finale.split;
   const dissident=free&&final.political.outcome==='split'&&(split?.founder===viewer||split?.acceptedSupporters?.includes(viewer));
@@ -130,6 +121,19 @@ export function casinoPersonalVictory(s,viewer,final){
     s.support[viewer]===s.finale.successor&&pact;
   const survival=free&&(Object.values(s.territories).some(t=>t.controller===viewer)
     ||Object.values(s.agreements).some(a=>a.status==='signed'&&a.breachedBy.length===0&&a.participants.includes(viewer)));
+  if(s.undercoverIds.includes(viewer)){
+    const delivered=verifiedWitness(s,viewer),won=delivered&&final.investigative.outcome==='victory';
+    const turncoat=!won&&(kingpin||dissident||kingmaker);
+    const outcome=won||turncoat?'victory':delivered?'partial':'defeat';
+    return {outcome,title:won?'TA COUVERTURE AVAIT UN PRIX':turncoat?'LE DOUBLE JEU A PAYÉ':delivered?'LA SOURCE EST ARRIVÉE TROP TARD':'PERSONNE NE CONFIRME TES MOTS',
+      narrative:(won?'Ton renseignement recoupé a servi à un dossier gagnant. Tu as rempli ta mission, mais personne ne t’a promis de sortie propre.':
+        turncoat?'Ton infiltration n’est pas une réussite. Tu as pourtant gagné du pouvoir au sein de Yonghe. Ce soir, la fidélité n’a pas été ta dernière mise.':
+        delivered?'Ton information a été vérifiée. Le bureau n’a pas remporté le dossier ; elle restera une pièce, pas un acquittement.':
+        'Tu as traversé la nuit, mais aucun renseignement utilisable provenant de toi n’a été confirmé.')+(statusPrice?' '+statusPrice:''),
+      objective:'Mission initiale : renseignement vérifié et victoire collective du bureau. Une victoire politique peut exister à la place, sans valider cette mission.',objectiveFulfilled:won,
+      victoryTrack:won?'infiltration':turncoat?'political':'none'};
+  }
+
   const outcome=kingpin||dissident||kingmaker?'victory':survival?'partial':'defeat';
   const title=kingpin?'LE SIÈGE EST À TOI':dissident?'UNE FAMILLE DÉCHIRÉE':kingmaker?'LE ROI TE DOIT SON TRÔNE':
     survival?'TU AS SAUVÉ TA PEAU':'LE CASINO T’A AVALÉ';
@@ -160,7 +164,7 @@ export function casinoVictoryBrief(s,viewer){
  };
  if(role)return mission[role]||'Faire progresser une enquête fondée sur les preuves.';
  if(s.undercoverIds.includes(viewer))
-   return 'Ta mission privée : fournir un renseignement recoupé et contribuer à une victoire collective du bureau. Ta couverture reste cachée aux autres.';
+   return 'Ta mission privée : fournir un renseignement recoupé et contribuer à la victoire du bureau. Tu peux aussi choisir le pouvoir à Yonghe, mais cette voie ne comptera pas comme une infiltration réussie.';
  if(s.players.includes(viewer))
    return 'Victoire politique : prendre la direction de Yonghe, faire vivre une scission, ou installer un allié par un pacte signé et un soutien assumé. Survivre ou gagner au poker ne suffit pas.';
  return '';
