@@ -65,6 +65,20 @@ function ensureTopHome(){
 }
 function toggleFilters(){
   const nav=document.querySelector('#app .igr-scenario-filters');if(!nav)return;
+  // The direct five-collection selector is already visible. Never turn it into
+  // a hidden floating panel: the shortcut simply returns to its position.
+  if(nav.classList.contains('igr-family-picker-v731')){
+    nav.classList.remove('igr-filter-dock-panel','is-dock-open');
+    document.body.classList.remove('igr-filter-dock-open');
+    document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
+    nav.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+    nav.classList.remove('igr-picker-attention');
+    void nav.offsetWidth;
+    nav.classList.add('igr-picker-attention');
+    clearTimeout(window.__igrPickerAttentionTimeout);
+    window.__igrPickerAttentionTimeout=setTimeout(()=>nav.classList.remove('igr-picker-attention'),1100);
+    return;
+  }
   const open=!nav.classList.contains('is-dock-open');
   nav.classList.toggle('is-dock-open',open);
   document.body.classList.toggle('igr-filter-dock-open',open);
@@ -90,7 +104,8 @@ function ensureDock(){
   if(home){setMarkup(home,isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>');home.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');home.hidden=false}
   const filterNav=isScenarioBrowser()?document.querySelector('#app .igr-scenario-filters'):null;
   if(filters){setMarkup(filters,isFr()?'<span aria-hidden="true">☷</span><b>Filtres</b>':'<span aria-hidden="true">☷</span><b>Filters</b>');filters.setAttribute('aria-label',isFr()?'Ouvrir les filtres':'Open filters');filters.hidden=!filterNav}
-  if(filterNav)filterNav.classList.add('igr-filter-dock-panel');
+  if(filterNav&&!filterNav.classList.contains('igr-family-picker-v731'))filterNav.classList.add('igr-filter-dock-panel');
+  else filterNav?.classList.remove('igr-filter-dock-panel','is-dock-open');
   document.body.classList.add('igr-global-dock-active');
   if(!filterNav)closeFilters();
 }

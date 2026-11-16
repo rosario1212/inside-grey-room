@@ -100,9 +100,16 @@ function ensureDock(){
   // Collections v731+ are first-class page navigation, NOT the old floating Filters panel.
   const directPicker=!!nav?.classList.contains('igr-family-picker-v731');
   if(filters){
-    filters.hidden=!nav||directPicker;
+    filters.hidden=!nav;
     if(nav&&!directPicker){makeDraggable(filters,'filters');restorePosition(filters,'filters')}
-    else clearInlinePosition(filters);
+    else{
+      // In the catalogue, both shortcuts stay fixed and tappable; old drag
+      // positions are irrelevant for the direct collection selector.
+      clearInlinePosition(filters);
+      filters.removeAttribute('data-igr-draggable');
+      filters.removeAttribute('data-igr-dragged');
+      filters.classList.remove('is-dragging');
+    }
   }
   if(directPicker){
     nav.classList.remove('igr-filter-dock-panel','is-dock-open');

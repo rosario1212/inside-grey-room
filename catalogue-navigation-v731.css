@@ -2,9 +2,8 @@
 body:has(#app .page-create-v10-13){background:#030405!important;overflow-x:clip!important}
 html:has(#app .page-create-v10-13){overflow-x:clip!important}
 body:has(#app .page-create-v10-13) .bg-vignette{opacity:.44!important}
-body:has(#app .page-create-v10-13) #igrUniversalDock,
-body:has(#app .page-create-v10-13) #igrDockFilters,
-body:has(#app .page-create-v10-13) #igrDockHome{display:none!important}
+/* The two bottom navigation shortcuts are intentionally retained.
+   Do not hide the actual dock when entering the catalogue. */
 body:has(#app .page-create-v10-13) #app::after{display:none!important}
 #app .page-create-v10-13{
   position:relative!important;isolation:isolate;
@@ -322,5 +321,74 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
     --igr-card-art-width:clamp(103px,34vw,119px);
     --igr-card-heading:1.06rem;
     --igr-card-body-padding:10px;
+  }
+}
+
+/* v734 — keep the two compact bottom shortcuts, no phantom footer spacer.
+   The five collection choices stay visible in the page; the Filters shortcut
+   scrolls back to them, without reintroducing the legacy hidden drawer. */
+body:has(#app .page-create-v10-13) #app{
+  min-height:0!important;height:auto!important;
+}
+body:has(#app .page-create-v10-13) #app > .app{
+  min-height:0!important;height:auto!important;
+  padding-bottom:14px!important;
+}
+body:has(#app .page-create-v10-13) #app .page-create-v10-13{
+  min-height:0!important;height:auto!important;
+  margin-bottom:0!important;padding-bottom:0!important;
+}
+body:has(#app .page-create-v10-13) > .igr-beta-footer{
+  margin:0!important;
+  padding:8px 14px calc(64px + env(safe-area-inset-bottom,0px))!important;
+  min-height:0!important;
+  font-size:11px!important;
+}
+body:has(#app .page-create-v10-13) > .igr-beta-footer a{min-height:36px!important}
+body.igr-scenario-browser:has(#app .page-create-v10-13) #igrUniversalDock{
+  display:block!important;pointer-events:none!important;
+}
+body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igrDockHome){
+  display:inline-flex!important;
+  position:fixed!important;top:auto!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 13px)!important;
+  align-items:center!important;justify-content:center!important;
+  min-height:42px!important;height:42px!important;
+  width:clamp(104px,29vw,126px)!important;
+  min-width:0!important;max-width:126px!important;
+  padding:0 11px!important;gap:7px!important;
+  border-radius:999px!important;
+  background:rgba(6,8,10,.95)!important;
+  border:1px solid rgba(190,197,201,.27)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.35)!important;
+  color:#e9ebeb!important;
+  opacity:.97!important;visibility:visible!important;pointer-events:auto!important;
+  cursor:pointer!important;touch-action:manipulation!important;
+  transform:none!important;
+}
+body.igr-scenario-browser:has(#app .page-create-v10-13) #igrDockFilters{
+  left:max(12px,env(safe-area-inset-left,0px))!important;right:auto!important;
+}
+body.igr-scenario-browser:has(#app .page-create-v10-13) #igrDockHome{
+  right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;
+}
+body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igrDockHome) b{
+  display:inline!important;max-width:none!important;opacity:1!important;
+  font-size:11px!important;line-height:1!important;font-weight:750!important;
+}
+body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igrDockHome) span{
+  font-size:16px!important;line-height:1!important;
+}
+body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igrDockHome):focus-visible{
+  outline:2px solid #e5e5df!important;outline-offset:2px!important;
+}
+#app .page-create-v10-13 .igr-family-picker-v731.igr-picker-attention{
+  border-color:rgba(231,235,235,.66)!important;
+  box-shadow:0 0 0 2px rgba(231,235,235,.19),0 16px 35px rgba(0,0,0,.3)!important;
+  scroll-margin-top:calc(env(safe-area-inset-top,0px) + 20px);
+}
+@media(max-width:360px){
+  body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igrDockHome){
+    width:100px!important;min-height:40px!important;height:40px!important;
   }
 }

@@ -25,6 +25,7 @@ const poster=async(file,mime='image/webp')=>{
 const posters={
   '001':await poster('scenario-001-v10-13.webp'),
   '014':await poster('scenario-014-v11-6.webp'),
+  '020':await poster('scenario-020-v11-6.webp'),
   '021':await poster('omerta-021-l-enveloppe.webp'),
   '026':await poster('terror-026-la-ville-tombe.webp'),
   '029':await poster('cartel-029-poster-v2.svg','image/svg+xml'),
@@ -100,6 +101,60 @@ try{
     assert(panelBy.cartel.background!==panelBy.omerta.background,`${width}px: DLC panels flattened to the same background`);
     if(width===390)await page.screenshot({path:path.join(report,'catalogue-v733-themed-cards-iphone.png'),fullPage:true});
     console.log(`PASS v733 ${width}px: 6 real posters fitted, DLC palettes distinct, no overflow or overlapping tags`);
+    await context.close();
+  }
+  // v734 regression — real navigation scripts + fixed footer links.
+  // Scrolling to the last dossier must not reveal a phantom empty screen.
+  {
+    const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+    const page=await context.newPage();
+    const fakeCollectionNav='<nav class="igr-scenario-filters igr-family-picker igr-family-picker-v731" aria-label="Collections">'+
+      '<div class="igr-collection-choices"><button data-family="base">Classiques</button><button data-family="omerta">Omertà</button>'+
+      '<button data-family="terror">Terreur</button><button data-family="cartel">Cartel</button><button data-family="regime">Le Régime</button></div></nav>';
+    const lastCard=card({...entries[1],id:'020',title:"L’APOTHÉOSE",label:'DOSSIER 020'});
+    await page.setContent(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+      <style>${css}</style></head><body>
+      <div id="app"><div class="app"><main class="page page-create-v10-13">
+      <div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div></div>
+      ${fakeCollectionNav}
+      <section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">
+      ${Array.from({length:6},()=>lastCard).join('')}</div></section>
+      </main></div></div>
+      <footer class="igr-beta-footer"><a href="support.html">Signaler un problème</a></footer>
+      </body></html>`,{waitUntil:'load'});
+    await page.evaluate(()=>{
+      window.STATE={view:'create-list'};
+      window.IGR_LOCALE='fr';
+      window.goHome=()=>{document.body.dataset.testHome='yes'};
+    });
+    await page.addScriptTag({content:await read('navigation-theme-v18.js')});
+    await page.addScriptTag({content:await read('navigation-heritage-v19.js')});
+    await page.locator('#igrDockFilters').waitFor({state:'visible'});
+    await page.locator('#igrDockHome').waitFor({state:'visible'});
+    await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+    const final=await page.evaluate(()=>{
+      const rect=selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height}};
+      const panel=rect('.scenario-panel-v10-13'),footer=rect('.igr-beta-footer'),support=rect('.igr-beta-footer a'),filters=rect('#igrDockFilters'),home=rect('#igrDockHome'),selector=rect('.igr-scenario-filters');
+      return {gap:footer.top-panel.bottom,footer,support,filters,home,selector,
+        viewport:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,
+        isFilterShown:getComputedStyle(document.querySelector('#igrDockFilters')).display!=='none'};
+    });
+    assert(final.gap>=0&&final.gap<=55,'v734: unexpected empty screen between dossier 020 and support: '+JSON.stringify(final));
+    assert(final.scrollWidth<=final.viewport+1,'v734: horizontal scroll from floating navigation');
+    assert(final.isFilterShown,'v734: Filters button hidden');
+    assert(final.filters.height>=38&&final.home.height>=38,'v734: shortcut hit areas collapsed');
+    assert(final.filters.right<final.home.left,'v734: Filtres and Accueil overlap');
+    assert(final.support.bottom<=Math.min(final.filters.top,final.home.top)-2,'v734: support link covered by floating buttons');
+    assert(final.selector.height>35,'v734: top collection selector hidden');
+    await page.screenshot({path:path.join(report,'catalogue-v734-footer-and-shortcuts-iphone.png'),fullPage:true});
+    await page.locator('#igrDockFilters').click();
+    await page.waitForFunction(()=>window.scrollY<140,null,{timeout:3500});
+    assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('igr-picker-attention')),
+      'v734: Filtres shortcut did not highlight visible collections');
+    await page.locator('#igrDockHome').click();
+    assert.equal(await page.locator('body').getAttribute('data-test-home'),'yes',
+      'v734: Accueil shortcut did not invoke home navigation');
+    console.log('PASS v734 390px: footer close to dossier 020, two fixed shortcuts, Filters scrolls to collections, Accueil works');
     await context.close();
   }
 }finally{await browser.close()}

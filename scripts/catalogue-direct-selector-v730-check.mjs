@@ -142,7 +142,17 @@ assert(css.includes('catalogue-corridor-ink-v731.svg'),'Illustrated backdrop mis
 assert(css.includes('opacity:1!important;visibility:visible!important;pointer-events:auto!important'),'Collection choices hidden by legacy drawer');
 assert(css.includes('overflow-x:clip!important'),'Horizontal scroll regression');
 assert(css.includes('height:210px;top:37px'),'Background still too tall on mobile');
-assert(css.includes('#igrUniversalDock'),'Redundant bottom navigation not suppressed');
+assert(css.includes('#igrUniversalDock'),'Catalogue dock rule missing');
+assert(!css.includes('body:has(#app .page-create-v10-13) #igrDockFilters,'),
+  'Direct catalogue must not hide Filtres / Accueil');
+assert(css.includes('padding-bottom:14px!important'),'Catalog still has large empty bottom padding');
+assert(css.includes('> .igr-beta-footer'),'Footer must be close to last dossier');
+assert(css.includes('body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igrDockHome)'),
+  'Compact bottom buttons not restored');
+const navTheme=read('navigation-theme-v18.js');
+const navHeritage=read('navigation-heritage-v19.js');
+assert(navTheme.includes("nav.scrollIntoView("),'Filters shortcut must jump to collection picker');
+assert(navHeritage.includes('filters.hidden=!nav;'),'Filters button must be visible for direct collections');
 assert(css.includes('background:#030405!important'),'Deep black catalogue missing');
 for(const [klass,accent] of [
  ['omerta-scenario','#230e14'],['terror-scenario','#1b1b1d'],
@@ -155,9 +165,9 @@ assert(css.includes('max-height:228px!important'),'Classic 001–020 tall-poster
 assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
-assert(html.includes('catalogue-navigation-v731.css?v=v733-dlc-identity-poster-20261116'),'New stylesheet not linked');
+assert(html.includes('catalogue-navigation-v731.css?v=v734-compact-dock-footer-20261116'),'New stylesheet not linked');
 assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
-assert(sw.includes('/catalogue-navigation-v731.css?v=v733-dlc-identity-poster-20261116'),'PWA stylesheet not versioned');
+assert(sw.includes('/catalogue-navigation-v731.css?v=v734-compact-dock-footer-20261116'),'PWA stylesheet not versioned');
 assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 console.log('PASS v731: Five visible direct collections, complete classic scroll, isolated DLCs, monochrome illustrated background.');
