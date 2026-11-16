@@ -1,0 +1,36 @@
+name: HÉRITAGE v729 — Sélection des rôles multijoueur
+on:
+  push:
+    paths:
+      - 'play-modes-v13-8.js'
+      - 'heritage-play-v13-7.js'
+      - 'heritage-maitre-online-v34-4.js'
+      - 'casino-client-v105.js'
+      - 'scripts/v729-heritage-online-role-selection-check.mjs'
+      - 'supabase/migrations/*heritage_online_role_selection_v729.sql'
+      - '.github/workflows/heritage-role-choice-v729-qa.yml'
+  pull_request:
+    paths:
+      - 'play-modes-v13-8.js'
+      - 'heritage-play-v13-7.js'
+      - 'heritage-maitre-online-v34-4.js'
+      - 'casino-client-v105.js'
+      - 'scripts/v729-heritage-online-role-selection-check.mjs'
+      - 'supabase/migrations/*heritage_online_role_selection_v729.sql'
+      - '.github/workflows/heritage-role-choice-v729-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selection:
+    name: Choice UI, roster and private-data contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/v729-heritage-online-role-selection-check.mjs
