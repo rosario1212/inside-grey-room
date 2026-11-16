@@ -428,3 +428,191 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
     --igr-poster-width:154px;
   }
 }
+
+
+/* CATALOGUE FIT v13 — corrective layer for Base 009–020 and DLC 021–034.
+   All posters retain native source proportions; never stretch or crop artwork.
+   The summary is only a preview, full dossier descriptions are untouched. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact {
+  grid-template-columns:var(--igr-poster-width) minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,auto) auto!important;
+  grid-template-areas:"poster content" "metadata metadata"!important;
+  align-items:stretch!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  gap:0!important;
+  overflow:hidden!important;
+  border-radius:18px!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(
+    #scenario-009,#scenario-010,#scenario-011,#scenario-012,
+    #scenario-013,#scenario-014,#scenario-015,#scenario-016,
+    #scenario-017,#scenario-018,#scenario-019,#scenario-020
+  ) {
+  --igr-poster-ratio:1086/1448;
+  --igr-poster-width:clamp(114px,32vw,130px);
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(
+    .omerta-scenario,.terror-scenario,.regime-scenario
+  ) {--igr-poster-ratio:1086/1448;}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.cartel-scenario {
+  --igr-poster-ratio:724/960;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact {
+  grid-area:poster!important;
+  position:relative!important;
+  display:block!important;
+  align-self:start!important;
+  width:var(--igr-poster-width)!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-height:none!important;
+  height:auto!important;
+  aspect-ratio:var(--igr-poster-ratio)!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  box-shadow:none!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full {
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  aspect-ratio:auto!important;
+  border:0!important;
+  margin:0!important;
+  padding:0!important;
+  filter:none!important;
+  transform:none!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact {
+  grid-area:content!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:stretch!important;
+  align-self:stretch!important;
+  min-width:0!important;
+  min-height:0!important;
+  width:auto!important;
+  height:auto!important;
+  max-height:none!important;
+  padding:10px 11px!important;
+  overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact h3 {
+  display:block!important;
+  max-width:100%!important;
+  max-height:none!important;
+  margin:4px 0 7px!important;
+  overflow:visible!important;
+  overflow-wrap:break-word!important;
+  text-wrap:balance;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt {
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:3!important;
+  line-clamp:3!important;
+  flex:0 1 auto!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:4.26em!important;
+  margin:0!important;
+  line-height:1.42!important;
+  white-space:normal!important;
+  overflow:hidden!important;
+  overflow-wrap:break-word!important;
+  text-overflow:ellipsis!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .tag-row {
+  grid-area:metadata!important;
+  position:static!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  gap:6px!important;
+  margin:0!important;
+  padding:8px 10px 9px!important;
+  border-top:1px solid rgba(160,169,177,.14)!important;
+  background:rgba(0,0,0,.07)!important;
+  overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .tag-row > .tag {
+  position:static!important;
+  display:inline-flex!important;
+  flex:0 1 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:26px!important;
+  padding:5px 8px!important;
+  margin:0!important;
+  font-size:clamp(.54rem,2.28vw,.62rem)!important;
+  line-height:1.30!important;
+  letter-spacing:.035em!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  text-align:center!important;
+}
+@media(max-width:374px){
+ #app .page-create-v10-13 .scenario-list-v10-13
+   > article.scenario.scenario--art.scenario--compact:is(
+     #scenario-009,#scenario-010,#scenario-011,#scenario-012,#scenario-013,#scenario-014,
+     #scenario-015,#scenario-016,#scenario-017,#scenario-018,#scenario-019,#scenario-020,
+     .omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario
+   ) {--igr-poster-width:clamp(104px,33vw,116px);}
+ #app .page-create-v10-13 .scenario-list-v10-13
+   > article.scenario.scenario--art.scenario--compact > .scenario-body.compact{
+   padding:9px 9px!important;
+ }
+ #app .page-create-v10-13 .scenario-list-v10-13
+   > article.scenario.scenario--art.scenario--compact > .scenario-body.compact h3{
+   font-size:1.08rem!important;
+ }
+ #app .page-create-v10-13 .scenario-list-v10-13
+   > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt{
+   font-size:.80rem!important;
+ }
+}
+@media(min-width:700px){
+ #app .page-create-v10-13 .scenario-list-v10-13
+   > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt{
+   -webkit-line-clamp:4!important;
+   line-clamp:4!important;
+   max-height:5.68em!important;
+ }
+}
