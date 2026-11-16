@@ -51,7 +51,7 @@ assert.deepEqual(Array.from(maitreRoleIds(1,6)),['avocat','client','enqueteur','
 assert.equal(maitreRoleIds(3,7).length,7);
 
 const casinoLobbySource=casino.slice(casino.indexOf('function lobby(){'),casino.indexOf('function card(){'));
-const roleNames={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
+const roleNames={casino:'Personnage de Yonghe',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
 const casinoCtx={
  state:{viewer:'me',inviteCode:'TESTCODE',isHost:true,members:[
  {id:'me',name:'Jeanne',role:'casino',ready:false},{id:'p2',name:'Marc',role:'agent',ready:true}]},
@@ -62,5 +62,13 @@ const casinoHTML=casinoLobby();
 assert(casinoHTML.includes('CHOISIS')||casinoHTML.includes('Choisis ton rôle'),'Casino role selection title missing');
 assert(casinoHTML.includes('data-role-id="agent"')&&casinoHTML.includes('COMPLET'),'Taken Bureau function must be disabled');
 assert(casinoHTML.includes('data-role-id="casino"')&&casinoHTML.includes('TON RÔLE'),'Own Casino role must be selected');
+
+assert(casinoHTML.includes('casino-role-choice-group--yonghe')&&casinoHTML.includes('casino-role-choice-group--bureau'),'Yonghe camp must be distinct from Bureau professions');
+assert(casinoHTML.includes('Personnage de Yonghe')&&casinoHTML.includes('4 À 7 PERSONNAGES'),'Casino must no longer masquerade as a profession');
+assert(casinoHTML.includes('casino-roster-disclosure')&&casinoHTML.includes('Participants · 2/12'),'Roster should be compact and collapsible');
+assert(casinoHTML.includes('data-role-id="judge"')&&casinoHTML.includes('data-role-id="prosecutor"'),'Optional Bureau roles must remain selectable');
+assert(casino.includes("?.role!==selected"),'Re-selecting the same role must not reset player readiness');
+assert(casinoCss.includes('casino-role-choice-grid--bureau')&&casinoCss.includes('casino-role-choice-footnote'),'Responsive grouped role UI must be styled');
+
 
 console.log('PASS v729: CENDRES/KUROI/MAÎTRE role reservations, Casino cards, 5-7 seats, private role boundaries, mobile UI and SQL contracts');

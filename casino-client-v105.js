@@ -4,9 +4,9 @@ const KEY='igr_casino_identity_v1',ROOT='casino-live-v105';
 const API=window.Capacitor?.isNativePlatform?.()?'https://inside-grey-room-last.alial-khafaji2002.workers.dev/api/casino':'/api/casino';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const roles={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
+const roles={casino:'Personnage de Yonghe',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
 const ROLE_SHORT=Object.freeze({
- casino:'Négocie, mise et défend les intérêts de Yonghe.',
+ casino:'Incarne un membre de Yonghe. Identité révélée au lancement.',
  agent:'Mène les opérations et les interpellations.',
  investigator:'Recoupe les preuves et conduit les enquêtes.',
  analyst:'Analyse les dossiers et les contradictions.',
@@ -81,21 +81,23 @@ function lobby(){
  const casinoCount=members.filter(m=>m.role==='casino').length;
  const buttons=Object.entries(roles).map(([id,label])=>{
   const mine=own.role===id,locked=id==='casino'?casinoCount>=7&&!mine:!!taken.get(id)&&!mine;
-  const availability=id==='casino'?casinoCount+'/7':(taken.has(id)?'1/1':'0/1');
+  const availability=id==='casino'?casinoCount+'/7 PLACES':(taken.has(id)?'COMPLET':'LIBRE');
   return `<button type="button" class="casino-role-choice-card ${mine?'is-picked':''} ${locked?'is-taken':''}" data-casino-action="select-role" data-role-id="${esc(id)}" aria-pressed="${mine}" ${locked?'disabled':''}>
    <span class="casino-role-choice-top"><b>${esc(label)}</b><em>${mine?'TON RÔLE':locked?'COMPLET':availability}</em></span>
-   <small>${esc(roleShort(id))}</small><span class="casino-role-activity">ACTIVITÉ · ${roleStars(id)}</span>
+   <small>${esc(roleShort(id))}</small><span class="casino-role-activity" aria-label="Activité estimée">${roleStars(id)}</span>
   </button>`;
- }).join('');
- return `<section class="casino-lobby-top"><h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code</button><output data-casino-invite></output><p>${members.length}/12 participants · 7 à 12 joueurs au total, dont 4 à 7 au casino. Les invités rejoignent gratuitement la table.</p></section>
- <ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul>
+ });
+ return `<section class="casino-lobby-top"><h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code</button><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
+ <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
  <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div>
- <p>Choisis une fonction libre. Les fonctions du bureau sont uniques ; plusieurs joueurs peuvent appartenir au Casino. Les identités, intrigues et éventuelles infiltrations restent secrètes.</p>
- <div class="casino-role-choice-grid">${buttons}</div>
+ <p>Choisis ton camp ou ta fonction. Chez Yonghe, ton personnage sera révélé au lancement.</p>
+ <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
+ <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1).join('')}</div></div>
+ <p class="casino-role-choice-footnote">Procureur et juge facultatifs. ★ = activité estimée, pas importance.</p>
  </section>
- <button class="casino-action casino-ready" data-casino-action="ready">${own.ready?'Modifier ma préparation':'JE SUIS PRÊT'}</button>
+ <button class="casino-action casino-ready" data-casino-action="ready">${own.ready?'ANNULER MA CONFIRMATION':'JE SUIS PRÊT'}</button>
  ${state.isHost?'<button class="casino-action casino-start" data-casino-action="start">LANCER LE DOSSIER</button>':''}
- <p class="casino-lobby-note">L’hôte lance lorsque les fonctions indispensables sont représentées et que les joueurs sont prêts. Les personnages privés seront attribués ensuite.</p>`;
+ <p class="casino-lobby-note">L’hôte lance quand les rôles requis sont présents et tous les joueurs prêts.</p>`;
 }
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
@@ -182,6 +184,8 @@ function finale(){const f=state.finale;return section('Le dénouement',`${victor
 function render(){if(!active)return;const root=$('#app');if(!root)return;
  const drafts=Array.from(root.querySelectorAll('[data-casino-draft]')).map(e=>({name:e.name,form:e.closest('form')?.dataset.casinoForm,value:e.value}));
  const toggles=Array.from(root.querySelectorAll('form input[type=checkbox]')).map(e=>({name:e.name,form:e.closest('form')?.dataset.casinoForm,value:e.value,checked:e.checked}));
+ const rosterWasOpen=!!root.querySelector('.casino-roster-disclosure[open]');
+ const lobbyScroll=state?.status==='lobby'&&root.querySelector('.casino-role-choice-zone')?window.scrollY:null;
  const focus=document.activeElement,focused=focus?.name?{name:focus.name,form:focus.closest('form')?.dataset.casinoForm,start:focus.selectionStart,end:focus.selectionEnd}:null;
  const tabs=state&&state.status!=='lobby'?[['card','Ma fiche'],['table','Jeux'],['registry','Registre'],['network','Réseaux'],...(state.camp==='bureau'?[['bureau','Enquête']]:[]),['justice',state.camp==='casino'?'Prison / contacts':'Auditions']]:[];
  const body=!state?welcome():state.status==='lobby'?lobby():state.status==='finished'?finale():`<div class="casino-tabs" role="tablist">${tabs.map(([id,label])=>`<button type="button" role="tab" aria-selected="${tab===id}" data-casino-tab="${id}">${label}</button>`).join('')}</div>${({card,table,registry,network,bureau,justice}[tab]||card)()}`;
@@ -195,6 +199,8 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  </section>`:''}
  ${state?.isHost&&state.status==='playing'?`<section class="casino-phase-controls">${state.hostCanLocate?button('Poursuivre via une voie de secours','HOST_AUTHORIZE_CONTINUITY'):''}${state.hostCanCloseCourt?button('Clore les audiences en attente après délai','HOST_COURT_CONTINUITY'):''}${state.hostCanCloseDefence?(state.hostPendingHearings||[]).map(h=>button('Audience en attente : '+name(h.subjectId),'HOST_CLOSE_ABSENT_HEARING',{hearingId:h.id})).join(''):''}${advanceConfirm?'<p class="casino-phase-warning" role="status">Confirmer mettra fin aux échanges de cette phase pour tous les joueurs. Vérifie que les participants ont terminé leurs actions.</p>':''}${button(advanceConfirm?(state.chapter===3&&state.phase===2?'Confirmer la clôture':'Confirmer le passage'):(state.chapter===3&&state.phase===2?'Clore la campagne':'Passer à la phase suivante'),state.chapter===3&&state.phase===2?'FINISH_CAMPAIGN':'ADVANCE_PHASE')}${advanceConfirm?'<button type="button" class="casino-action" data-casino-action="cancel-advance">Annuler</button>':''}</section>`:''}
  ${state?'<details class="casino-recovery"><summary>Ma clé de reprise personnelle</summary><p>Cette clé ouvre ton personnage sur un autre appareil. Garde-la pour toi et conserve-la avant de changer de table.</p><button class="casino-action" data-casino-action="copy">Copier ma clé personnelle</button><output data-casino-key></output></details><button class="casino-action" data-casino-action="switch" '+(busy||pending?'disabled':'')+'>'+(state.status==='finished'?'Nouvelle partie':'Changer de table')+'</button>':''}</main>`;
+ if(rosterWasOpen)root.querySelector('.casino-roster-disclosure')?.setAttribute('open','');
+ if(lobbyScroll!==null)window.scrollTo(0,lobbyScroll);
  for(const d of drafts){const el=Array.from(root.querySelectorAll('[data-casino-draft]')).find(e=>e.name===d.name&&e.closest('form')?.dataset.casinoForm===d.form);if(el)el.value=d.value}
  for(const item of toggles){const el=Array.from(root.querySelectorAll('form input[type=checkbox]')).find(e=>e.name===item.name&&e.value===item.value&&e.closest('form')?.dataset.casinoForm===item.form);if(el)el.checked=item.checked}
  if(focused){const el=$$('[data-casino-draft]',root).find(e=>e.name===focused.name&&e.closest('form')?.dataset.casinoForm===focused.form);if(el){el.focus({preventScroll:true});if(el.setSelectionRange&&typeof focused.start==='number')try{el.setSelectionRange(focused.start,focused.end)}catch{}}}
@@ -219,7 +225,7 @@ document.addEventListener('click',async event=>{
  switch(el.dataset.casinoAction){
   case 'close':close();break;case 'cancel-advance':advanceConfirm=false;render();break;case 'resume':credentials=load();await sync();break;case 'retry':await mutate({},true);break;
   case 'switch':if(busy||pending)break;generation++;state=null;credentials=null;joinDraft=null;problem='';tab='card';render();break;
-  case 'select-role':if(!busy&&!pending){const selected=el.dataset.roleId;if(Object.hasOwn(roles,selected)&&state?.status==='lobby')await mutate({op:'role',role:selected})}break;
+  case 'select-role':if(!busy&&!pending){const selected=el.dataset.roleId;if(Object.hasOwn(roles,selected)&&state?.status==='lobby'&&state.members.find(m=>m.id===state.viewer)?.role!==selected)await mutate({op:'role',role:selected})}break;
    case 'ready':await mutate({op:'ready',ready:!state.members.find(m=>m.id===state.viewer).ready});break;
   case 'start':await mutate({op:'start'});break;
   case 'draw':await mutate({op:'command',type:'POKER_ACTION',payload:{action:'draw',discard:$$('input[name="discard"]:checked').map(e=>Number(e.value))}});break;
