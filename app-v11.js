@@ -64,6 +64,23 @@ function playerCountLabel(sc){
 }
 // Single teaser contract for classic scenarios and every DLC catalogue.
  // Keep dossier facts in the detail page; the compact preview is deliberately short.
+/* Catalogue-only descriptions: no changes to canonical briefings, variants
+   or role dossiers. Avoid the over-short language-layer excerpts on small cards. */
+const CATALOGUE_LONGER_INTROS=Object.freeze({
+ '011':'Pendant trente-six heures, une opération militaire ravage plusieurs villages. Des civils meurent, des familles disparaissent. Trois officiers se renvoient la responsabilité des ordres et des violences.',
+ '014':'Une fuite compromet onze informateurs et leurs familles. Dans un service fondé sur le secret, plusieurs personnes contrôlaient les informations sensibles. L’enquête doit reconstituer la transmission et les responsabilités.',
+ '015':'Un patient meurt pendant le programme hospitalier ÉLIGIBLES malgré plusieurs alertes. Après sa mort, des notes sont modifiées. L’enquête doit comprendre qui savait, décidait et pouvait encore intervenir.',
+ '016':'Une victime est droguée, humiliée et filmée, puis retrouvée morte. L’enregistrement s’arrête avant les faits décisifs. Il faut distinguer les violences documentées des circonstances encore inconnues de la mort.',
+ '017':'Deux personnes sont enlevées pour faire pression sur un ancien comptable. L’une meurt en captivité, l’autre survit sous la menace. Les responsabilités dépassent l’enlèvement initial.',
+ '019':'Un ancien responsable financier est assassiné pendant un gala. Il s’apprêtait à remettre des documents révélant une fraude à laquelle il avait lui-même participé. Plusieurs intérêts s’opposent autour du dossier.'
+});
+function scenarioCatalogueSynopsis(sc){
+ if(!sc)return'';
+ return window.IGR_LOCALE==='en'
+   ? String(sc.short||'')
+   : (CATALOGUE_LONGER_INTROS[String(sc.id||'')]||String(sc.short||''));
+}
+
 function scenarioCardTeaser(raw,maxWords=30){
  // Catalogue only: keep full sc.short, sc.context and canonical briefings untouched.
  const text=String(raw??'').replace(/\s+/g,' ').trim();
@@ -606,7 +623,7 @@ async function refresh007PublishState(force=false){
 }
 function renderCreateList(){
  const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
- byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(sc.short,Number(sc.id)>=9?17:23):sc.short)}</p></div><div class="tag-row" aria-label="Informations du dossier"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></article>`).join('')}</div></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(scenarioCatalogueSynopsis(sc),Number(sc.id)>=9?30:23):scenarioCatalogueSynopsis(sc))}</p></div><div class="tag-row" aria-label="Informations du dossier"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></article>`).join('')}</div></section></main>`)
  if(typeof refresh007PublishState==='function')void refresh007PublishState();
 }
 function selectScenario(id){
