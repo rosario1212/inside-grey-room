@@ -230,6 +230,54 @@ try{
     }
   });
 
+
+  await check('catalog-v7-real-full-posters-001-032',async()=>{
+    const assets=[
+      {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp',ambient:'scenario-thumb-001.webp'},
+      {klass:'regime-scenario',name:'032 — LES ARCHIVES DU PALAIS',full:'regime-032-les-archives-du-palais.webp',ambient:'regime-032-les-archives-du-palais.webp'}
+    ];
+    const toData=async file=>{
+      const bytes=await readFile(path.join(target,'assets',file));
+      return 'data:image/webp;base64,'+bytes.toString('base64');
+    };
+    const markup=[];
+    for(const item of assets){
+      const [foreground,background]=await Promise.all([toData(item.full),toData(item.ambient)]);
+      markup.push('<article class="scenario scenario--art scenario--compact '+item.klass+'"><div class="scenario-thumb compact">'+
+        '<img class="igr-poster-ambient" alt="" aria-hidden="true" src="'+background+'">'+
+        '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
+        '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
+        '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
+        '<div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></div></article>');
+    }
+    for(const width of [320,390,430]){
+      await page.setViewportSize({width,height:812});
+      await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
+        '<style>'+css+'</style></head><body><div id="app"><main class="page page-create-v10-13">'+
+        '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+markup.join('')+
+        '</div></section></main></div></body></html>');
+      await page.waitForFunction(()=>[...document.querySelectorAll('.igr-poster-full')].every(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0));
+      const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
+        const img=el.querySelector('.igr-poster-full'),container=el.querySelector('.scenario-thumb').getBoundingClientRect(),
+          box=img.getBoundingClientRect(),fit=getComputedStyle(img).objectFit,
+          ambient=getComputedStyle(el.querySelector('.igr-poster-ambient')).objectFit;
+        const scale=Math.min(box.width/img.naturalWidth,box.height/img.naturalHeight);
+        return {fit,ambient,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,
+          boxWidth:box.width,boxHeight:box.height,renderedWidth:img.naturalWidth*scale,
+          renderedHeight:img.naturalHeight*scale,inside:box.left>=container.left-1&&box.right<=container.right+1&&box.top>=container.top-1&&box.bottom<=container.bottom+1};
+      }));
+      for(let i=0;i<metrics.length;i++){
+        const m=metrics[i],name=assets[i].name;
+        assert(m.fit==='contain',width+'px '+name+': image is cropped');
+        assert(m.ambient==='cover',width+'px '+name+': ambient background leaves hard bands');
+        assert(m.inside,width+'px '+name+': image overflows the artwork column');
+        assert(m.renderedWidth<=m.boxWidth+1&&m.renderedHeight<=m.boxHeight+1,
+          width+'px '+name+': original image cannot fit its frame');
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v7-actual-artwork-001-and-032.png'),fullPage:true});
+    }
+  });
+
   await check('desktop-standard-multiplayer-button-launch',async()=>{
     await page.setViewportSize({width:1366,height:768});
     await page.setContent('<!doctype html><html><head><style>'+css+'</style></head><body><div id="app"><main class="page page-confirm-v10-13"><section class="panel confirm-panel-v10-13"><div class="confirm"><label>Ton pseudo<input id="createPseudo" value="Test Desktop"></label><button class="btn primary block" type="button">Ouvrir la cellule</button></div></section></main></div></body></html>');
