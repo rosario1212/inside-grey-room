@@ -214,7 +214,7 @@ for(const language of ['fr','en']){
 assert(css.includes('/* v752 — short DLC catalogue copy'),'DLC excerpt clamping not disabled');
 const catalogueCssHref=html.match(/catalogue-navigation-v731\.css\?v=[^"']+/)?.[0];
 assert(catalogueCssHref,'New stylesheet not linked');
-const dlcJsHref=html.match(/dlc-suite-v12-37\\.js\\?v=[^"']+/)?.[0];
+const dlcJsHref=html.match(/dlc-suite-v12-37\.js\?v=[^"']+/)?.[0];
 assert(dlcJsHref&&dlcJsHref.includes('v753-regime-silver-fullbleed-20261117'),'Updated picker JS version missing');
 assert(sw.includes('/'+catalogueCssHref),'PWA stylesheet version must match HTML');
 assert(sw.includes('/'+dlcJsHref),'PWA script version must match HTML');
