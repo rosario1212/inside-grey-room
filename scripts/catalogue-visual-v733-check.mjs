@@ -25,12 +25,25 @@ const poster=async(file,mime='image/webp')=>{
 };
 const posters={
   '001':await poster('scenario-001-v10-13.webp'),
+  '002':await poster('scenario-002-v10-13.webp'),
+  '003':await poster('scenario-003-v10-13.webp'),
+  '004':await poster('scenario-004-v10-13.webp'),
+  '005':await poster('scenario-005-v10-13.webp'),
+  '006':await poster('scenario-006-v10-13.webp'),
+  '007':await poster('scenario-007-v10-13.webp'),
+  '008':await poster('scenario-008-v10-13.webp'),
   '014':await poster('scenario-014-v11-6.webp'),
   '020':await poster('scenario-020-v11-6.webp'),
   '021':await poster('omerta-021-l-enveloppe.webp'),
   '026':await poster('terror-026-la-ville-tombe.webp'),
+  '027':await poster('terror-027-la-zone-rouge.webp'),
+  '028':await poster('terror-028-dernier-perimetre.webp'),
   '029':await poster('cartel-029-poster-v2.svg','image/svg+xml'),
-  '032':await poster('regime-032-les-archives-du-palais.webp')
+  '030':await poster('cartel-030-poster-v2.svg','image/svg+xml'),
+  '031':await poster('cartel-031-poster-v2.svg','image/svg+xml'),
+  '032':await poster('regime-032-les-archives-du-palais.webp'),
+  '033':await poster('regime-033-la-dynastie.webp'),
+  '034':await poster('regime-034-les-noms-quils-portaient.webp')
 };
 const entries=[
  {id:'001',family:'base',title:'LA CHAMBRE 222',label:'DOSSIER 001',description:'Maël Sénéchal est retrouvé mort, poignardé, dans la chambre 222. Trois personnes ont croisé sa route cette nuit-là. Leurs versions se contredisent.',players:'4–5 JOUEURS'},
@@ -71,6 +84,8 @@ try{
           const img=card.querySelector('img'),thumb=card.querySelector('.scenario-thumb'),body=card.querySelector('.scenario-body'),text=card.querySelector('p'),tags=card.querySelector('.tag-row');
           return{id:card.dataset.igrScenarioId,card:rect(card),image:rect(img),thumb:rect(thumb),description:rect(text),tags:rect(tags),
           imageFit:getComputedStyle(img).objectFit,posterRatio:getComputedStyle(img).aspectRatio,
+          sourceRatio:img.naturalWidth&&img.naturalHeight?img.naturalWidth/img.naturalHeight:null,
+          artUnderlay:getComputedStyle(thumb,'::before').backgroundImage,
           label:getComputedStyle(card.querySelector('.scenario-id')).color,
           border:rgb(getComputedStyle(card).borderTopColor),
           bodyOverflow:body.scrollWidth>body.clientWidth+1,clamp:getComputedStyle(text).webkitLineClamp};
@@ -81,7 +96,10 @@ try{
     assert(data.scroll<=data.viewport+1,`${width}px: horizontal overflow ${data.scroll} > ${data.viewport}`);
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
-      assert.equal(c.imageFit,'cover',`${width}px ${c.id}: poster must fill Omerta-style frame`);
+      const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(c.id);
+      assert.equal(c.imageFit,preserve?'contain':'cover',
+        `${width}px ${c.id}: ${preserve?'full title-safe poster':'approved Omerta cover'} must be used`);
+      if(preserve)assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
       assert(c.image.width>30&&c.image.height>30,`${width}px ${c.id}: poster collapsed`);
       assert(c.image.left>=c.thumb.left-2&&c.image.right<=c.thumb.right+2,`${width}px ${c.id}: poster outside column`);
       assert(c.image.top>=c.thumb.top-2&&c.image.bottom<=c.thumb.bottom+2,`${width}px ${c.id}: poster vertically clipped`);
@@ -156,6 +174,8 @@ try{
               excerptClamp:getComputedStyle(excerpt).webkitLineClamp,
               excerptHeight:excerpt.getBoundingClientRect().height,
               imageFit:getComputedStyle(img).objectFit,
+              sourceRatio:img.naturalWidth&&img.naturalHeight?img.naturalWidth/img.naturalHeight:null,
+              artUnderlay:getComputedStyle(article.querySelector('.scenario-thumb'),'::before').backgroundImage,
               posterRect:img.getBoundingClientRect().toJSON(),
               thumbRect:article.querySelector('.scenario-thumb').getBoundingClientRect().toJSON(),
               tagsTop:tags.getBoundingClientRect().top,
@@ -178,7 +198,11 @@ try{
           assert(item.bodyFits,`v737 ${width}px ${item.id}: content box unexpectedly overflowing`);
           assert(item.excerptClamp==='5',`v737 ${width}px ${item.id}: five-line Omerta-style excerpt missing`);
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
-          assert(item.imageFit==='cover',`v738 ${width}px ${item.id}: empty poster bars must be eliminated`);
+          const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(item.id);
+          assert(item.imageFit===(preserve?'contain':'cover'),
+            `v739 ${width}px ${item.id}: original artwork ${preserve?'must be fully framed':'retains approved cover'}`);
+          if(preserve)assert(item.artUnderlay!=='none',
+            `v739 ${width}px ${item.id}: no ambient source-art backing to fill poster edge`);
           assert(Math.abs(item.posterRect.height-item.thumbRect.height)<2,
             `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
           assert(Math.abs(item.posterRect.width-item.thumbRect.width)<2,
@@ -198,7 +222,7 @@ try{
           `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalogue-v735-34-equal-heights-iphone.png'),fullPage:true});
-      console.log(`PASS v738 ${width}px: All 34 cards match Omerta 021 height and poster width, edge-to-edge undistorted artwork`);
+      console.log(`PASS v739 ${width}px: All 34 cards match Omerta 021 height and poster width, safe full-poster typography with ambient source-art extension`);
       await context.close();
     }
   }
@@ -288,7 +312,7 @@ try{
     await page.locator('#igrDockHome').click();
     assert.equal(await page.locator('body').getAttribute('data-test-home'),'yes',
       'v734: Accueil shortcut did not invoke home navigation');
-    console.log('PASS v738 390px: buttons shrink while scrolling, expand when idle at dossier 020; Filtres and Accueil work');
+    console.log('PASS v739 390px: buttons shrink while scrolling, expand when idle at dossier 020; Filtres and Accueil work');
     await context.close();
   }
 }finally{await browser.close()}
