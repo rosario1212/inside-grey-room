@@ -23,8 +23,10 @@ jobs:
           cache: 'npm'
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
-      - name: Build web app
-        run: npm run build
+      - name: Build web app and verify introduction artwork
+        run: |
+          npm run build
+          node scripts/intro-door-v20-check.mjs dist
       - name: Verify public access and private room sessions before any production deployment
         run: |
           node --check cloudflare-worker.mjs
