@@ -78,16 +78,19 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
   color:#979c9b;white-space:normal
 }
 #app .page-create-v10-13 .igr-collection-choice.is-active .igr-family-range{color:#d0d1cb}
-#app .page-create-v10-13 > .scenario-panel-v10-13,
-#app .page-create-v10-13 > section.panel:is(.omerta-dlc-section,.terror-dlc-section,.cartel-dlc-section,.regime-dlc-section){
+/* Keep the neutral plate for the 001–020 classics ONLY.
+   The four DLC collections own their separate art direction below. */
+#app .page-create-v10-13 > .scenario-panel-v10-13{
   position:relative!important;margin-top:0!important;margin-bottom:0!important;
-  background:rgba(6,7,8,.90)!important;border:1px solid rgba(255,255,255,.105)!important;
+  background:rgba(6,7,8,.94)!important;border:1px solid rgba(255,255,255,.12)!important;
   box-shadow:none!important;border-radius:18px!important;overflow:hidden!important
 }
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
-  --igr-card-ground:linear-gradient(112deg,#101113 0%,#0c0d0f 56%,#090a0b 100%)!important;
-  --igr-card-stroke:rgba(165,169,170,.24)!important;
-  --igr-card-glow:rgba(160,167,169,.025)!important;
+/* Do not force gray variables on DLC posters; this is the exact cause
+   of the lost red Omertà / gilded Cartel card backgrounds. */
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario):not(.terror-scenario):not(.cartel-scenario):not(.regime-scenario){
+  --igr-card-ground:linear-gradient(112deg,#101113 0%,#0c0d0f 56%,#090a0b 100%);
+  --igr-card-stroke:rgba(165,169,170,.24);
+  --igr-card-glow:rgba(160,167,169,.025);
   background:var(--igr-card-ground)!important;
   border-color:var(--igr-card-stroke)!important;
   box-shadow:0 8px 25px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.02)!important;
@@ -95,9 +98,9 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact:focus-visible{
   outline:2px solid rgba(240,240,236,.78)!important;outline-offset:2px!important
 }
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .scenario-id{color:#9fa6a7!important}
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .igr-card-excerpt{color:#bec2c2!important}
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .tag{
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario):not(.terror-scenario):not(.cartel-scenario):not(.regime-scenario) .scenario-id{color:#9fa6a7!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario):not(.terror-scenario):not(.cartel-scenario):not(.regime-scenario) .igr-card-excerpt{color:#bec2c2!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario):not(.terror-scenario):not(.cartel-scenario):not(.regime-scenario) .tag{
   color:#c9cbcb!important;border-color:rgba(176,181,181,.23)!important;
   background:rgba(12,14,16,.72)!important
 }
@@ -135,5 +138,189 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
   #app .page-create-v10-13 .page-head h1{
     font-size:clamp(31px,7.1vw,42px)!important;
     max-width:100%!important;overflow-wrap:normal!important;
+  }
+}
+
+/* v733 — KEEP THE DLC ART DIRECTION.
+   Theme the collection itself rather than tinting the whole application. */
+#app .page-create-v10-13 > section.panel:is(.omerta-dlc-section,.terror-dlc-section,.cartel-dlc-section,.regime-dlc-section){
+  position:relative!important;isolation:isolate!important;
+  width:100%!important;box-sizing:border-box!important;
+  margin-top:0!important;margin-bottom:0!important;
+  border-radius:18px!important;overflow:hidden!important;
+}
+#app .page-create-v10-13 > section.panel.omerta-dlc-section{
+  --igr-family-accent:#c4474e;--igr-family-line:rgba(173,43,53,.47);
+  border:1px solid rgba(173,43,53,.46)!important;
+  background:radial-gradient(ellipse at 92% 0%,rgba(113,21,35,.20),transparent 46%),
+    linear-gradient(150deg,#1a0d12 0%,#0b080a 56%,#060608 100%)!important;
+  box-shadow:inset 0 1px rgba(220,108,116,.06),0 16px 38px rgba(0,0,0,.26)!important;
+}
+#app .page-create-v10-13 > section.panel.terror-dlc-section{
+  --igr-family-accent:#aab0b5;--igr-family-line:rgba(150,150,158,.38);
+  border:1px solid rgba(150,150,158,.34)!important;
+  background:radial-gradient(ellipse at 90% 0%,rgba(118,126,130,.10),transparent 43%),
+    linear-gradient(160deg,#131416,#090a0c 62%,#050506)!important;
+  box-shadow:inset 0 1px rgba(218,218,218,.035),0 16px 38px rgba(0,0,0,.26)!important;
+}
+#app .page-create-v10-13 > section.panel.cartel-dlc-section{
+  --igr-family-accent:#d5af60;--igr-family-line:rgba(187,141,62,.50);
+  border:1px solid rgba(194,149,71,.52)!important;
+  background:radial-gradient(ellipse at 90% 2%,rgba(174,111,31,.18),transparent 45%),
+    linear-gradient(150deg,#21180c 0%,#110d08 54%,#070707 100%)!important;
+  box-shadow:inset 0 1px rgba(244,208,135,.08),0 16px 38px rgba(0,0,0,.27)!important;
+}
+#app .page-create-v10-13 > section.panel.regime-dlc-section{
+  --igr-family-accent:#a6bdcb;--igr-family-line:rgba(105,142,165,.43);
+  border:1px solid rgba(112,149,173,.44)!important;
+  background:radial-gradient(ellipse at 88% 0%,rgba(79,112,139,.17),transparent 44%),
+    linear-gradient(160deg,#14202a 0%,#0b1117 57%,#07090b 100%)!important;
+  box-shadow:inset 0 1px rgba(186,206,219,.055),0 16px 38px rgba(0,0,0,.27)!important;
+}
+/* Restore recognizable color to section headings, price lines and labels.
+   The source posters are never recolored. */
+#app .page-create-v10-13 > section.panel:is(.omerta-dlc-section,.terror-dlc-section,.cartel-dlc-section,.regime-dlc-section)
+  :is(.igr-premium-eyebrow,.omerta-eyebrow,.terror-eyebrow,.dlc-suite-eyebrow){
+  color:var(--igr-family-accent)!important
+}
+#app .page-create-v10-13 > section.panel:is(.omerta-dlc-section,.terror-dlc-section,.cartel-dlc-section,.regime-dlc-section)
+  :is(.igr-premium-access-pill,.omerta-access-pill,.terror-access-pill,.dlc-access-note){
+  border-color:var(--igr-family-line)!important;
+  color:var(--igr-family-accent)!important;
+  background:rgba(0,0,0,.22)!important;
+}
+#app .page-create-v10-13 > section.panel.cartel-dlc-section :is(.igr-premium-head h2,.dlc-suite-head h2){
+  font-family:Baskerville,Georgia,serif!important;
+  color:#e7be75!important;
+}
+#app .page-create-v10-13 > section.panel.omerta-dlc-section :is(.igr-premium-head h2,.omerta-head h2){
+  font-family:Georgia,'Times New Roman',serif!important;
+  color:#f0e5e3!important;
+}
+#app .page-create-v10-13 > section.panel.regime-dlc-section :is(.igr-premium-head h2,.dlc-suite-head h2){
+  color:#e0eaf0!important;
+}
+/* The selector is monochrome until an actual collection is selected. */
+#app .page-create-v10-13 .igr-collection-choice[data-family="omerta"].is-active{
+  background:linear-gradient(115deg,#2b1218,#130e11)!important;
+  border-color:rgba(190,58,68,.72)!important;
+  box-shadow:inset 3px 0 0 #c4474e!important
+}
+#app .page-create-v10-13 .igr-collection-choice[data-family="terror"].is-active{
+  background:linear-gradient(115deg,#242729,#111315)!important;
+  border-color:rgba(179,184,187,.65)!important;
+  box-shadow:inset 3px 0 0 #aab0b5!important
+}
+#app .page-create-v10-13 .igr-collection-choice[data-family="cartel"].is-active{
+  background:linear-gradient(115deg,#302516,#14110c)!important;
+  border-color:rgba(216,173,92,.75)!important;
+  box-shadow:inset 3px 0 0 #d5af60!important
+}
+#app .page-create-v10-13 .igr-collection-choice[data-family="regime"].is-active{
+  background:linear-gradient(115deg,#1c2b37,#10151a)!important;
+  border-color:rgba(157,187,207,.65)!important;
+  box-shadow:inset 3px 0 0 #a6bdcb!important
+}
+#app .page-create-v10-13 .igr-collection-choice[data-family="omerta"].is-active .igr-family-range{color:#dda6ac!important}
+#app .page-create-v10-13 .igr-collection-choice[data-family="cartel"].is-active .igr-family-range{color:#e4c99a!important}
+#app .page-create-v10-13 .igr-collection-choice[data-family="terror"].is-active .igr-family-range{color:#d0d3d5!important}
+#app .page-create-v10-13 .igr-collection-choice[data-family="regime"].is-active .igr-family-range{color:#b8cbd9!important}
+
+/* Card colors are scoped by DLC: never apply a gray !important wash to all. */
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.omerta-scenario{
+  --igr-card-ground:linear-gradient(115deg,#230e14 0%,#120a0d 57%,#0a080a 100%);
+  --igr-card-stroke:rgba(179,48,62,.54);
+  --igr-card-glow:rgba(148,20,38,.10);
+  background:var(--igr-card-ground)!important;
+  border-color:var(--igr-card-stroke)!important;
+  box-shadow:inset 0 1px rgba(210,94,108,.05),0 9px 24px rgba(0,0,0,.26)!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.terror-scenario{
+  --igr-card-ground:linear-gradient(115deg,#1b1b1d 0%,#111113 55%,#08090a 100%);
+  --igr-card-stroke:rgba(154,150,151,.37);
+  --igr-card-glow:rgba(167,157,157,.06);
+  background:var(--igr-card-ground)!important;
+  border-color:var(--igr-card-stroke)!important;
+  box-shadow:inset 0 1px rgba(213,217,219,.035),0 9px 24px rgba(0,0,0,.26)!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.cartel-scenario{
+  --igr-card-ground:linear-gradient(115deg,#271b0c 0%,#160f09 54%,#0a0907 100%);
+  --igr-card-stroke:rgba(195,145,57,.60);
+  --igr-card-glow:rgba(174,117,26,.11);
+  background:var(--igr-card-ground)!important;
+  border-color:var(--igr-card-stroke)!important;
+  box-shadow:inset 0 1px rgba(255,210,130,.09),0 9px 24px rgba(0,0,0,.29)!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.regime-scenario{
+  --igr-card-ground:linear-gradient(115deg,#15222d 0%,#0d151c 58%,#070a0d 100%);
+  --igr-card-stroke:rgba(115,156,180,.47);
+  --igr-card-glow:rgba(103,148,177,.08);
+  background:var(--igr-card-ground)!important;
+  border-color:var(--igr-card-stroke)!important;
+  box-shadow:inset 0 1px rgba(186,208,219,.045),0 9px 24px rgba(0,0,0,.28)!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.omerta-scenario .scenario-id{color:#db7b84!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.terror-scenario .scenario-id{color:#c0b7b9!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.cartel-scenario .scenario-id{color:#dfb76e!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.regime-scenario .scenario-id{color:#a1c0d3!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.omerta-scenario .tag{border-color:rgba(179,48,62,.43)!important;background:rgba(59,13,22,.26)!important;color:#eed0d2!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.terror-scenario .tag{border-color:rgba(154,150,151,.33)!important;background:rgba(21,22,23,.34)!important;color:#d3d2d0!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.cartel-scenario .tag{border-color:rgba(196,145,58,.45)!important;background:rgba(65,41,12,.30)!important;color:#ead4a7!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact.regime-scenario .tag{border-color:rgba(115,156,180,.39)!important;background:rgba(25,48,67,.27)!important;color:#d7e5ec!important}
+/* Individual title typography remains under Omertà/Cartel/Regime/TERREUR source rules. */
+
+/* v733 — Every dossier uses a predictable poster frame. The full original
+   artwork is contained, never cropped or stretched, including tall 014.
+   Only a blurred copy fills letterboxed areas in the poster column. */
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+  grid-template-columns:var(--igr-card-art-width) minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,auto)!important;
+  min-height:190px!important;height:auto!important;max-height:none!important;
+  align-items:stretch!important;overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact{
+  position:relative!important;display:flex!important;flex-direction:column!important;
+  justify-content:center!important;align-items:center!important;
+  min-width:0!important;width:100%!important;
+  min-height:0!important;height:100%!important;max-height:none!important;
+  aspect-ratio:auto!important;overflow:hidden!important;
+  border-radius:0!important;transform:none!important;
+}
+/* Scope to the direct poster only: confirmation art is intentionally untouched. */
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
+  display:block!important;position:relative!important;inset:auto!important;
+  flex:0 0 auto!important;align-self:center!important;
+  width:100%!important;height:auto!important;max-width:100%!important;max-height:248px!important;
+  aspect-ratio:var(--igr-card-art-ratio)!important;
+  object-fit:contain!important;object-position:center center!important;
+  margin:auto 0!important;padding:0!important;opacity:1!important;
+  filter:none!important;transform:none!important;
+}
+/* Tight consistent base 001–020 proportions: 014 is not allowed to become a
+   taller thumbnail just because its original poster is portrait-oriented. */
+#app .page-create-v10-13 .scenario-panel-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+  --igr-card-art-ratio:3/4;
+  --igr-card-art-width:clamp(113px,34vw,145px);
+}
+#app .page-create-v10-13 .scenario-panel-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
+  max-height:228px!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
+  min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .scenario-body.compact h3{
+  max-width:100%!important;min-width:0!important;word-break:normal!important;
+  overflow-wrap:break-word!important;text-overflow:clip!important;
+}
+@media(max-width:374px){
+  #app .page-create-v10-13 .scenario-panel-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+    --igr-card-art-width:clamp(100px,33vw,116px);
+    --igr-card-body-padding:10px;
+    --igr-card-copy:.82rem;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+    --igr-card-art-width:clamp(103px,34vw,119px);
+    --igr-card-heading:1.06rem;
+    --igr-card-body-padding:10px;
   }
 }

@@ -144,11 +144,20 @@ assert(css.includes('overflow-x:clip!important'),'Horizontal scroll regression')
 assert(css.includes('height:210px;top:37px'),'Background still too tall on mobile');
 assert(css.includes('#igrUniversalDock'),'Redundant bottom navigation not suppressed');
 assert(css.includes('background:#030405!important'),'Deep black catalogue missing');
+for(const [klass,accent] of [
+ ['omerta-scenario','#230e14'],['terror-scenario','#1b1b1d'],
+ ['cartel-scenario','#271b0c'],['regime-scenario','#15222d']
+])assert(css.includes(klass)&&css.includes(accent),'Lost DLC-specific card tint '+klass);
+assert(css.includes('> section.panel.cartel-dlc-section')&&css.includes('rgba(194,149,71,.52)'),'Cartel gold panel is missing');
+assert(css.includes('> section.panel.omerta-dlc-section')&&css.includes('rgba(173,43,53,.46)'),'Omerta red panel is missing');
+assert(css.includes('object-fit:contain!important'),'Full poster must be contained');
+assert(css.includes('max-height:228px!important'),'Classic 001–020 tall-poster guard missing');
+assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
-assert(html.includes('catalogue-navigation-v731.css?v=v732-visible-picker-20261116'),'New stylesheet not linked');
+assert(html.includes('catalogue-navigation-v731.css?v=v733-dlc-identity-poster-20261116'),'New stylesheet not linked');
 assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
-assert(sw.includes('/catalogue-navigation-v731.css?v=v732-visible-picker-20261116'),'PWA stylesheet not versioned');
+assert(sw.includes('/catalogue-navigation-v731.css?v=v733-dlc-identity-poster-20261116'),'PWA stylesheet not versioned');
 assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 console.log('PASS v731: Five visible direct collections, complete classic scroll, isolated DLCs, monochrome illustrated background.');
