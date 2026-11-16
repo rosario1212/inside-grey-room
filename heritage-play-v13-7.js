@@ -19,22 +19,22 @@ const isFr=()=>window.IGR_LOCALE!=='en';
 
 const ROLES={
   cendres:[
-    {id:'chef',name:'CHEF DE CELLULE',public:'Coordonne l’analyse, répartit les priorités et tranche quand les informations restent contradictoires.'},
-    {id:'sigint',name:'ANALYSTE COMMUNICATIONS',public:'Recoupe horaires, métadonnées, accès numériques et anomalies de transmission.'},
-    {id:'terrain',name:'AGENT TERRAIN',public:'Travaille les lieux, déplacements, contraintes physiques et témoignages de proximité.'},
-    {id:'source',name:'OFFICIER TRAITANT',public:'Évalue les sources humaines, ce qu’elles savent réellement et ce qu’elles cherchent à obtenir.'},
-    {id:'liaison',name:'LIAISON INSTITUTIONNELLE',public:'Coordonne avec la direction et les autorités sans laisser la pression politique remplacer les faits.'},
-    {id:'legal',name:'ANALYSTE JUDICIAIRE',public:'Sépare preuve primaire, document dérivé, hypothèse et élément juridiquement exploitable.'},
-    {id:'archive',name:'ANALYSTE DOCUMENTAIRE',public:'Recoupe les archives, habilitations, versions de documents et traces administratives anciennes.'}
+    {id:'chef',name:'CHEF DE CELLULE',short:'Coordonne l’équipe et arbitre les priorités.',activity:5,public:'Coordonne l’analyse, répartit les priorités et tranche quand les informations restent contradictoires.'},
+    {id:'sigint',name:'ANALYSTE COMMUNICATIONS',short:'Recoupe les communications et leurs anomalies.',activity:4,public:'Recoupe horaires, métadonnées, accès numériques et anomalies de transmission.'},
+    {id:'terrain',name:'AGENT TERRAIN',short:'Examine les lieux, les trajets et les témoignages.',activity:4,public:'Travaille les lieux, déplacements, contraintes physiques et témoignages de proximité.'},
+    {id:'source',name:'OFFICIER TRAITANT',short:'Évalue les sources et leurs motivations.',activity:4,public:'Évalue les sources humaines, ce qu’elles savent réellement et ce qu’elles cherchent à obtenir.'},
+    {id:'liaison',name:'LIAISON INSTITUTIONNELLE',short:'Gère les autorités et la pression institutionnelle.',activity:3,public:'Coordonne avec la direction et les autorités sans laisser la pression politique remplacer les faits.'},
+    {id:'legal',name:'ANALYSTE JUDICIAIRE',short:'Évalue les preuves et leur portée juridique.',activity:4,public:'Sépare preuve primaire, document dérivé, hypothèse et élément juridiquement exploitable.'},
+    {id:'archive',name:'ANALYSTE DOCUMENTAIRE',short:'Vérifie les archives et les traces administratives.',activity:3,public:'Recoupe les archives, habilitations, versions de documents et traces administratives anciennes.'}
   ],
   kuroi:[
-    {id:'waka_k',name:'WAKAGASHIRA KUROKAWA',public:'Numéro deux du clan Kurokawa. Il protège la continuité de la Famille.'},
-    {id:'kobun_k',name:'KOBUN KUROKAWA',public:'Exécutant du clan. Les ordres reçus et les dettes anciennes le suivent.'},
-    {id:'waka_a',name:'WAKAGASHIRA ARAKIDA',public:'Cadre du clan rival. Il veut empêcher Kurokawa de contrôler le récit.'},
-    {id:'kobun_a',name:'KOBUN ARAKIDA',public:'Homme de terrain Arakida. Il voit ce que les chefs préfèrent ignorer.'},
-    {id:'commissaire',name:'COMMISSAIRE',public:'Dirige l’enquête officielle et protège l’institution.'},
-    {id:'inspecteur',name:'INSPECTEUR',public:'Travaille les scènes, les accès et les contradictions de la police.'},
-    {id:'bengoshi',name:'BENGOSHI',public:'Avocat de la Famille. Il détient des documents que personne ne veut voir publics.'}
+    {id:'waka_k',name:'WAKAGASHIRA KUROKAWA',short:'Dirige Kurokawa et protège sa succession.',activity:5,public:'Numéro deux du clan Kurokawa. Il protège la continuité de la Famille.'},
+    {id:'kobun_k',name:'KOBUN KUROKAWA',short:'Exécute les ordres et défend ses loyautés.',activity:4,public:'Exécutant du clan. Les ordres reçus et les dettes anciennes le suivent.'},
+    {id:'waka_a',name:'WAKAGASHIRA ARAKIDA',short:'Conduit Arakida face au clan rival.',activity:5,public:'Cadre du clan rival. Il veut empêcher Kurokawa de contrôler le récit.'},
+    {id:'kobun_a',name:'KOBUN ARAKIDA',short:'Agit sur le terrain pour le clan Arakida.',activity:4,public:'Homme de terrain Arakida. Il voit ce que les chefs préfèrent ignorer.'},
+    {id:'commissaire',name:'COMMISSAIRE',short:'Dirige l’enquête et défend l’institution.',activity:4,public:'Dirige l’enquête officielle et protège l’institution.'},
+    {id:'inspecteur',name:'INSPECTEUR',short:'Recoupe les scènes et les contradictions.',activity:4,public:'Travaille les scènes, les accès et les contradictions de la police.'},
+    {id:'bengoshi',name:'BENGOSHI',short:'Défend le clan et protège ses documents.',activity:3,public:'Avocat de la Famille. Il détient des documents que personne ne veut voir publics.'}
   ]
 };
 
@@ -471,7 +471,7 @@ function renderReveal(live,show){
   shellPut(`<main class="page hplay hplay-reveal hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="abort">× <span>Quitter</span></button><div class="hplay-mode">CARTE PRIVÉE ${live.revealIndex+1}/${total}</div></header>
     <section class="hplay-private ${show?'is-open':'is-closed'}">
-      ${show?`<span class="hplay-eyebrow">${esc(p.name)}</span><h1>${esc(role.name)}</h1><p>${esc(role.public)}</p><div class="hplay-secret"><span>INFORMATION PRIVÉE</span><b>${esc(sec[0])}</b></div><div class="hplay-objective"><span>OBJECTIF PERSONNEL</span><b>${esc(sec[1])}</b></div><button class="btn primary" data-hp-action="hide-next">MASQUER & PASSER</button>`:`<div class="hplay-sealed">◇</div><span class="hplay-eyebrow">PASSEZ LE TÉLÉPHONE À</span><h1>${esc(p.name)}</h1><p>Personne d’autre ne doit regarder l’écran.</p><button class="btn primary" data-hp-action="reveal">RÉVÉLER MA CARTE</button>`}
+      ${show?`<span class="hplay-eyebrow">${esc(p.name)}</span><h1>${esc(role.name)}</h1><p class="hplay-role-short">${esc(role.short||role.public)}</p><span class="hplay-role-activity" aria-label="Activité estimée">${'ACTIVITÉ · '+'★'.repeat(Math.max(0,Math.min(5,Number(role.activity)||0)))+'☆'.repeat(Math.max(0,5-(Number(role.activity)||0)))}</span><details class="hplay-role-full"><summary>Lire la fiche complète</summary><p>${esc(role.public)}</p></details><div class="hplay-secret"><span>INFORMATION PRIVÉE</span><b>${esc(sec[0])}</b></div><div class="hplay-objective"><span>OBJECTIF PERSONNEL</span><b>${esc(sec[1])}</b></div><button class="btn primary" data-hp-action="hide-next">MASQUER & PASSER</button>`:`<div class="hplay-sealed">◇</div><span class="hplay-eyebrow">PASSEZ LE TÉLÉPHONE À</span><h1>${esc(p.name)}</h1><p>Personne d’autre ne doit regarder l’écran.</p><button class="btn primary" data-hp-action="reveal">RÉVÉLER MA CARTE</button>`}
     </section>
   </main>`);
 }
