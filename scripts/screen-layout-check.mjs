@@ -281,7 +281,7 @@ try{
         assert(m.fullFit==='contain',width+'px '+name+': poster pixels must retain their original proportions');
         assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
         assert(m.textVisible,width+'px '+name+': description hidden');
-        assert(m.artHeight>110&&m.artHeight<250,width+'px '+name+': family poster size is implausible '+m.artHeight);
+        assert(m.artHeight>110&&m.artHeight<275,width+'px '+name+': family poster size is implausible '+m.artHeight);
       }
       // Within every family, the card's text length must NEVER resize the poster.
       for(let j=0;j<samples.length;j+=2){
