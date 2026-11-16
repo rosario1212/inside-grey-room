@@ -125,7 +125,7 @@ const readVersionedRelease=async (name,accept)=>{
   }
   throw new Error(name+' not verified for commit '+expected.slice(0,12)+': '+last);
 };
-const meta=await readVersionedRelease('casino-release',v=>v.version==='105.6'&&
+const meta=await readVersionedRelease('casino-release',v=>v.version==='105.7'&&
  (!expected||v.commit===expected));
 const cartel=await readVersionedRelease('cartel030-release',v=>
  v.version==='v173-cartel031-negotiation'&&(!expected||v.commit===expected));
