@@ -58,7 +58,8 @@ export function casinoService(storage,{clock=Date.now,rng=randomInt,makeId=()=>c
         check(room.state.members.length<12,'room_full');
         check(!room.state.members.some(m=>m.name.toLocaleLowerCase()===body.name.trim().toLocaleLowerCase()),'name_already_in_use');
         check(uuid(body.requestId),'request_id_required');
-        const joined={id:makeId(),name:body.name.trim(),role:'casino',ready:false,tokenHash:hash};
+        const initialRole=room.state.members.filter(m=>m.role==='casino').length<7?'casino':null;
+        const joined={id:makeId(),name:body.name.trim(),role:initialRole,ready:false,tokenHash:hash};
         const state=structuredClone(room.state);state.members.push(joined);
         const fp=await fingerprint({op:'join',name:body.name.trim(),tokenHash:hash});
         try{room=await persist(room,body.requestId,'join:'+hash,fp,{type:'JOIN',member:joined},state);return view(room.state,selectMember(room.state,hash),room)}
@@ -82,12 +83,14 @@ export function casinoService(storage,{clock=Date.now,rng=randomInt,makeId=()=>c
       check(state.status==='lobby','lobby_closed');const own=state.members.find(m=>m.id===member.id);
       if(body.op==='role'){
         check(roles.has(body.role),'invalid_role');
+        check(body.role!=='casino'||own.role==='casino'||state.members.filter(m=>m.role==='casino').length<7,'casino_full');
         check(body.role==='casino'||!state.members.some(m=>m.id!==own.id&&m.role===body.role),'role_already_taken');
         own.role=body.role;own.ready=false;
-      }else{check(typeof body.ready==='boolean','invalid_ready');own.ready=body.ready}
+      }else{check(typeof body.ready==='boolean','invalid_ready');check(!body.ready||roles.has(own.role),'role_required');own.ready=body.ready}
       command={type:body.op.toUpperCase(),actor:member.id,payload:input};
     }else if(body.op==='start'){
       check(state.status==='lobby'&&member.id===state.hostId,'host_required');
+      check(state.members.every(m=>roles.has(m.role)),'role_required');
       const releases=await storage.releases();
       check(releases.length===3&&['A','B','C'].every(v=>releases.some(r=>r.variant===v))&&
         releases.every(r=>r.content.humanReviewApproved===true&&r.content.editorialStatus==='ready'),'casino_editorial_release_required');
