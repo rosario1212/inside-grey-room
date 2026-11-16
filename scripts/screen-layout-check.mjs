@@ -186,6 +186,7 @@ try{
           fullFit:el.querySelector('.igr-poster-full')?getComputedStyle(el.querySelector('.igr-poster-full')).objectFit:null,
           fullPadding:el.querySelector('.igr-poster-full')?getComputedStyle(el.querySelector('.igr-poster-full')).paddingTop:null,
           imageCount:el.querySelectorAll('.scenario-thumb img').length,
+          artColumnWidth:el.querySelector('.scenario-thumb').getBoundingClientRect().width,
           titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
           textVisible:style.overflow!=='hidden'&&style.display!=='none'};
       }));
@@ -222,6 +223,10 @@ try{
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='fill',width+'px '+name+': artwork must fill the left column without inset');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
+        if(width===390&&samples[i].klass){
+          assert(m.artColumnWidth>=130&&m.artColumnWidth<=145,
+            width+'px '+name+': DLC column still uses the too-narrow stretched poster format '+m.artColumnWidth);
+        }
         assert(m.fullFit==='fill',width+'px '+name+': artwork must not be cropped or letterboxed');
         assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
         assert(m.textVisible,width+'px '+name+': description hidden');
@@ -234,6 +239,9 @@ try{
   await check('catalog-v7-real-full-posters-001-032',async()=>{
     const assets=[
       {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
+      {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-le-cycle-mort.webp'},
+      {klass:'cartel-scenario',name:'030 — LA COUR ACHETÉE',full:'cartel-030-la-cour-achetee.webp'},
+      {klass:'cartel-scenario',name:'031 — LA DETTE',full:'cartel-031-la-dette.webp'},
       {klass:'regime-scenario',name:'032 — LES ARCHIVES DU PALAIS',full:'regime-032-les-archives-du-palais.webp'}
     ];
     const toData=async file=>{
@@ -266,6 +274,7 @@ try{
           imageCount:el.querySelectorAll('.scenario-thumb img').length,
           width:box.width,height:box.height,containerWidth:container.width,containerHeight:container.height,
           contentWidth:container.width-borderX,contentHeight:container.height-borderY,
+          sourceAspect:img.naturalWidth/img.naturalHeight,displayAspect:box.width/box.height,
           inside:box.left>=container.left-1&&box.right<=container.right+1&&box.top>=container.top-1&&box.bottom<=container.bottom+1};
       }));
       for(let i=0;i<metrics.length;i++){
@@ -275,6 +284,11 @@ try{
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
         assert(Math.abs(m.width-m.contentWidth)<=1&&Math.abs(m.height-m.contentHeight)<=1,
           width+'px '+name+': artwork does not fully occupy the inner border-box '+JSON.stringify(m));
+        if(width===390&&name.includes('CARTEL')===false&&name.startsWith('029')||width===390&&name.startsWith('030')||width===390&&name.startsWith('031')){
+          const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
+          console.log('Cartel ratio',name,'source',m.sourceAspect.toFixed(3),'display',m.displayAspect.toFixed(3),'deviation',deviation.toFixed(3));
+          assert(deviation<=.36,width+'px '+name+': severe remaining poster stretch '+JSON.stringify(m));
+        }
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v7-actual-artwork-001-and-032.png'),fullPage:true});
     }
