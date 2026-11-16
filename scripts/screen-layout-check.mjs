@@ -21,10 +21,12 @@ for(const match of index.matchAll(/<link[^>]+rel="stylesheet"[^>]*>|<style[^>]*>
 const css=styles.join('\n');
 const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/div>\s*(?=<div id="app")/);
 assert(introMatch,'Canonical entrance markup must exist');
-const introPath=introMatch[0].match(/<img class="intro-art" src="([^"]+)"/)?.[1]?.split('?')[0];
-assert(introPath&&introPath.startsWith('assets/'),'Canonical entrance artwork must exist');
+const modernDoor=introMatch[0].includes('intro-door-scene-v20');
+const introPath=(introMatch[0].match(/<img class="intro-art" src="([^"]+)"/)?.[1]||index.match(/<link rel="preload" as="image" href="([^"]+)"/)?.[1]||'').split('?')[0];
+assert(introPath.startsWith('assets/'),'Canonical entrance artwork or preload must exist');
 const introArt=await readFile(path.join(target,introPath));
-const introHtml=introMatch[0].replace(/(<img class="intro-art" )src="[^"]+"/,`$1src="data:image/webp;base64,${introArt.toString('base64')}"`);
+if(modernDoor)assert(css.includes('data:image/webp;base64,'),'Current v20 door artwork must be embedded in the entrance CSS');
+const introHtml=modernDoor?introMatch[0]:introMatch[0].replace(/(<img class="intro-art" )src="[^"]+"/,`$1src="data:image/webp;base64,${introArt.toString('base64')}"`);
 const app=await read('app-v11.js');
 const playModes=await read('play-modes-v13-8.js');
 const homeStart=app.indexOf('function shell('),homeEnd=app.indexOf('function goHome(',homeStart);
@@ -473,12 +475,13 @@ try{
       const safeCss=css.replace(/env\(safe-area-inset-(top|bottom|left|right)(?:,\s*0px)?\)/g,(_,edge)=>`${({top,bottom,left:side,right:side})[edge]}px`);
       const entrance=locale==='en'?introHtml.replace('ENTRER','ENTER').replace('TOUCHEZ POUR OUVRIR LA PORTE','TOUCH TO OPEN THE DOOR'):introHtml;
       await page.setContent(`<!doctype html><html lang="${locale}" class="home-locked"><head><style>${safeCss}</style></head><body class="home-locked">${entrance}<div id="app">${homeHtml(false)}</div></body></html>`);
-      await page.locator('.intro-art').evaluate(img=>img.decode());
+      if(!modernDoor)await page.locator('.intro-art').evaluate(img=>img.decode());
+      else assert((await page.locator('.intro-door-scene-v20').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('data:image/webp;base64,'),'New doorway background must be rendered');
       const layout=await page.evaluate(()=>{
         const box=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
         const title=document.querySelector('.intro-title'),home=document.querySelector('.home-title-spaced');
         return {
-          title:box('.intro-title'),art:box('.intro-art'),frame:box('.intro-poster-frame'),button:box('#introEnterBtn'),hint:box('#introHint'),
+          title:box('.intro-title'),art:box(document.querySelector('.intro-door-scene-v20')?'.intro-door-scene-v20':'.intro-art'),frame:box('.intro-poster-frame'),button:box('#introEnterBtn'),hint:box('#introHint'),
           lines:[...title.children].map(el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:r.height,overflow:el.scrollWidth>el.clientWidth}}),
           sameFont:getComputedStyle(title).fontFamily===getComputedStyle(home).fontFamily,
           weight:getComputedStyle(title).fontWeight,fontSize:parseFloat(getComputedStyle(title).fontSize),
@@ -509,7 +512,7 @@ try{
       assert.equal(await page.evaluate(()=>document.activeElement?.id),'introEnterBtn','Entrance must remain keyboard accessible');
       await page.emulateMedia({reducedMotion:'reduce'});
       await page.locator('#introGate').evaluate(el=>el.classList.add('opening'));
-      assert.equal(await page.locator('.intro-art').evaluate(el=>getComputedStyle(el).animationName),'none','Reduced motion must skip the door zoom');
+      assert.equal(await page.locator(modernDoor?'.intro-door-scene-v20':'.intro-art').evaluate(el=>getComputedStyle(el).animationName),'none','Reduced motion must skip the door zoom');
       await page.emulateMedia({reducedMotion:'no-preference'});
     });
   }
