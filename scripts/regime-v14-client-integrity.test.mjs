@@ -137,7 +137,7 @@ test('Regime 8th witness and 034-only 9th journalist are selectable and active',
  assert.match(courtSql,/testimony/);
  assert.match(privateSql,/igr_regime_v16_civic_card/);
  assert.match(lifecycleSql,/igr_regime_v16_civic_card/);
- assert.match(index,/dlc-suite-v12-40\\.css\\?v=[^"']+/,'Regime styling must remain linked on scenario pages');
+ assert.ok(index.includes('dlc-suite-v12-40.css?v='),'Regime styling must remain linked on scenario pages');
 });
 test('Regime expanded server capacity, tribunal and majority remain consistent',async()=>{
  const rosterMigration=await read('supabase/migrations/20261115230900_igr_regime_v16_optional_roster_limits.sql');
@@ -172,8 +172,8 @@ test('Regime phone cards clamp copy and keep badges beneath the text',async()=>{
   '.roles-availability .roles-row',
   'white-space:normal!important'
  ])assert.ok(css.includes(selector),'missing responsive CSS: '+selector);
- assert.match(index,/dlc-suite-v12-40\\.css\\?v=[^"']+/,'Regime responsive stylesheet must remain loaded');
- assert.match(sw,/dlc-suite-v12-40\\.css\\?v=[^"']+/,'Regime responsive CSS must remain cached');
+  assert.ok(index.includes('dlc-suite-v12-40.css?v='),'Regime responsive stylesheet must remain loaded');
+  assert.ok(sw.includes('/dlc-suite-v12-40.css?v='),'Regime responsive CSS must remain cached');
 });
 
 test('last loaded mobile CSS overrides the offending fixed 190px regime cards',async()=>{
