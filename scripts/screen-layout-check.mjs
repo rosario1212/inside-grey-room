@@ -284,7 +284,7 @@ try{
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
         assert(Math.abs(m.width-m.contentWidth)<=1&&Math.abs(m.height-m.contentHeight)<=1,
           width+'px '+name+': artwork does not fully occupy the inner border-box '+JSON.stringify(m));
-        if(width===390&&name.includes('CARTEL')===false&&name.startsWith('029')||width===390&&name.startsWith('030')||width===390&&name.startsWith('031')){
+        if(width===390&&/^(029|030|031)/.test(name)){
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
           console.log('Cartel ratio',name,'source',m.sourceAspect.toFixed(3),'display',m.displayAspect.toFixed(3),'deviation',deviation.toFixed(3));
           assert(deviation<=.36,width+'px '+name+': severe remaining poster stretch '+JSON.stringify(m));
