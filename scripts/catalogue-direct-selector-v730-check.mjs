@@ -198,9 +198,18 @@ assert(css.includes('max-height:100%!important'),'Classics must fill the same Om
 assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
-assert(html.includes('catalogue-navigation-v731.css?v=v750-all-dlc-badge-spacing-20261116'),'New stylesheet not linked');
+const catalogueCssHref=html.match(/catalogue-navigation-v731\.css\?v=[^"']+/)?.[0];
+assert(catalogueCssHref,'New stylesheet not linked');
 assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
-assert(sw.includes('/catalogue-navigation-v731.css?v=v750-all-dlc-badge-spacing-20261116'),'PWA stylesheet not versioned');
+assert(sw.includes('/'+catalogueCssHref),'PWA stylesheet version must match HTML');
 assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
+// Terreur 026–028 approved 2:3 posters: protect their native frame and fresh files.
+const terrorPosters=read('terror-v12-37.js');
+assert(css.includes('--igr-terror-native-width:calc(var(--igr-omerta-card-height) * 0.666666667)'),
+  'Terreur poster frame must respect the native 2:3 aspect ratio');
+for(const poster of ['terror-026-la-ville-tombe','terror-027-la-zone-rouge','terror-028-dernier-perimetre']){
+  assert(terrorPosters.includes('assets/'+poster+'-v750.webp'),'Terreur poster missing from game: '+poster);
+  assert(sw.includes('/assets/'+poster+'-v750.webp'),'Terreur poster missing from PWA cache: '+poster);
+}
 console.log('PASS v731: Five visible direct collections, complete classic scroll, isolated DLCs, monochrome illustrated background.');
