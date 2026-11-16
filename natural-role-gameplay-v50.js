@@ -61,11 +61,8 @@ function decorateRoleCards(){
   }
   const rating=`${copy('ACTIVITÉ','ACTIVITY')} · ${stars(activityRating(r))}`;
   if(tag.textContent!==rating)tag.textContent=rating;
-  const fullText=ROLE_COPY[r];
-  const sm=btn.querySelector('small');
-  if(sm&&fullText&&sm.textContent!==fullText)sm.textContent=fullText;
-  const info=btn.closest('.igr-role-option')?.querySelector('.igr-role-more p');
-  if(info&&fullText&&info.textContent!==fullText)info.textContent=fullText;
+  // The role summary and expanded fiche come from the active scenario's
+  // roleInfo. Never replace them with the generic ROLE_COPY while decorating.
  });
 }
 function currentAssembly(){return room()?.phase==='investigation_assembly'}
@@ -118,7 +115,7 @@ window.igr50OfferCooperation=async()=>{const s=document.getElementById('igr50Coo
 const baseTabs=typeof window.gameTabs==='function'?window.gameTabs:(typeof gameTabs==='function'?gameTabs:null);if(baseTabs){const f=function(){const t=baseTabs.apply(this,arguments)||[];const add=(id,label)=>{if(!t.some(x=>x?.id===id)){const i=t.findIndex(x=>x?.id==='rules');t.splice(i>=0?i:t.length,0,{id,label})}};if(role()==='inspecteur')add('field50',copy('Terrain','Field'));if(role()==='expert')add('expert50',copy('Expertise','Expert'));if(role()==='journaliste')add('press50',copy('Presse','Press'));return t};try{gameTabs=f}catch(_){}window.gameTabs=f}
 const baseTab=typeof window.renderGameTab==='function'?window.renderGameTab:(typeof renderGameTab==='function'?renderGameTab:null);if(baseTab){const f=function(){if(S()?.tab==='field50')return inspectorPage();if(S()?.tab==='expert50')return expertPage();if(S()?.tab==='press50')return journalistPage();if(S()?.tab==='prosecutor'&&role()==='procureur')return prosecutorPage();if(S()?.tab==='rules'){const out=baseTab.apply(this,arguments);return rulesHtml()+complaintForm()+String(out||'')}const out=baseTab.apply(this,arguments);return out};try{renderGameTab=f}catch(_){}window.renderGameTab=f}
 const baseGame=typeof window.renderGame==='function'?window.renderGame:(typeof renderGame==='function'?renderGame:null);if(baseGame){const f=function(){const out=baseGame.apply(this,arguments);setTimeout(()=>{decorateRoleCards();injectLive();cleanupLegacy();appendRoleGuideToCard()},0);return out};try{renderGame=f}catch(_){}window.renderGame=f}
-const baseLobby=typeof window.renderLobby==='function'?window.renderLobby:(typeof renderLobby==='function'?renderLobby:null);if(baseLobby){const f=function(){const out=baseLobby.apply(this,arguments);setTimeout(decorateRoleCards,0);return out};try{renderLobby=f}catch(_){}window.renderLobby=f}
+const baseLobby=typeof window.renderLobby==='function'?window.renderLobby:(typeof renderLobby==='function'?renderLobby:null);if(baseLobby){const f=function(){const out=baseLobby.apply(this,arguments);scheduleRoleCardDecoration();return out};try{renderLobby=f}catch(_){}window.renderLobby=f}
 const baseRules=typeof window.renderRules==='function'?window.renderRules:(typeof renderRules==='function'?renderRules:null);if(baseRules){const f=function(){const out=baseRules.apply(this,arguments);setTimeout(()=>{const list=document.querySelector('.rule-list');if(list&&!document.querySelector('.igr50-rules'))list.insertAdjacentHTML('beforebegin',rulesHtml())},0);return out};try{renderRules=f}catch(_){}window.renderRules=f}
 const baseReveal=typeof window.renderReveal==='function'?window.renderReveal:(typeof renderReveal==='function'?renderReveal:null);if(baseReveal){const f=function(){const out=baseReveal.apply(this,arguments);try{const e=events().filter(x=>x.event_type==='reveal').at(-1),p=e?.payload||{},camp=p.camp_investigation||{},jr=(p.results||[]).find(x=>x.player_id===me()?.id&&x.public_role==='journaliste');let extra='';if(camp.score_percent!=null)extra+=`<article class="igr50-score"><small>${copy('SCORE CAMP ENQUÊTE','INVESTIGATION SCORE')}</small><h3>${camp.score_percent}/100</h3><p>${copy('Base','Base')} ${camp.base_score_percent??camp.score_percent}/100${camp.score_adjustment?` · ${camp.score_adjustment>0?'+':''}${camp.score_adjustment}`:''}</p></article>`;if(jr?.conduct_score_percent!=null)extra+=`<article class="igr50-score"><small>${copy('CONDUITE JOURNALISTE','JOURNALIST CONDUCT')}</small><h3>${jr.conduct_score_percent}/100</h3><p>${jr.score_adjustment?`${jr.score_adjustment>0?'+':''}${jr.score_adjustment}`:copy('Aucune pénalité','No penalty')}</p></article>`;return extra?String(out).replace('<div class="result-list">',`${extra}<div class="result-list">`):out}catch(_){return out}};try{renderReveal=f}catch(_){}window.renderReveal=f}
 
@@ -129,7 +126,21 @@ const style=document.createElement('style');style.dataset.igrV50=VERSION;style.t
 .role-choice-card:not(.random-role-card){padding:clamp(16px,3vw,22px);line-height:1.55}
 .igr50-activity{display:inline-flex;width:max-content;max-width:100%;margin-top:11px;padding:8px 11px;border:1px solid #60533e;border-radius:9px;background:#28241d;font:700 11px 'IBM Plex Mono',monospace;letter-spacing:.05em;color:#e0c69f;line-height:1.45;white-space:normal}
 `;document.head.appendChild(style);
-const observer=new MutationObserver(()=>decorateRoleCards());observer.observe(document.documentElement,{subtree:true,childList:true});
+// A new badge, message or avatar must not trigger a full role-list scan.
+let roleActivityQueued=false;
+function scheduleRoleCardDecoration(){
+ if(roleActivityQueued)return;
+ roleActivityQueued=true;
+ const run=()=>{roleActivityQueued=false;decorateRoleCards()};
+ if(typeof requestAnimationFrame==='function')requestAnimationFrame(run);else setTimeout(run,0);
+}
+const observer=new MutationObserver(records=>{
+ if(records.some(record=>[...record.addedNodes].some(node=>
+  node.nodeType===1&&(node.matches?.('.role-choice-card')||node.querySelector?.('.role-choice-card'))
+ )))scheduleRoleCardDecoration();
+});
+observer.observe(document.documentElement,{subtree:true,childList:true});
+scheduleRoleCardDecoration(); // Apply to a restored lobby already in the DOM.
 const every50=(key,ms,fn)=>window.IGR_RUNTIME_COORDINATOR?.every?window.IGR_RUNTIME_COORDINATOR.every(key,ms,fn):setInterval(fn,ms);
 every50('v50-role-state',2200,()=>refresh(false));
 setTimeout(()=>refresh(true),250);

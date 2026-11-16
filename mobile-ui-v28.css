@@ -521,3 +521,10 @@ body.igr-theme-regime #app .page-confirm-v10-13 .confirm .roles-availability .ro
     min-height:216px!important;
   }
 }
+
+/* v724: lock all lobby choice surfaces without removing or resizing cards. */
+.role-choice-zone.igr-role-selecting :is(.role-choice-card,.igr-random-role-cta,.igr-choice-status-button,.omerta-role-status button){
+ pointer-events:none!important;
+ touch-action:none!important;
+}
+.role-choice-zone.igr-role-selecting{cursor:progress}
