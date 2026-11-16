@@ -61,3 +61,29 @@
 @media(max-width:560px){
  .casino-live .casino-phase-controls .casino-action{display:block;width:100%;margin:10px 0 0}
 }
+
+/* v718 — CASINO wins must read like a case file, not a scoreboard arcade. */
+.casino-bureau-verdict{margin-top:22px;padding:18px!important;border:1px solid #8b594a!important;
+ background:linear-gradient(145deg,#241518,#100d0e 78%);border-radius:10px}
+.casino-bureau-verdict p{color:#e2c9bd}
+.casino-bureau-verdict small{display:block;color:#bfa69b;font-size:12px;line-height:1.65}
+.casino-victory-eyebrow{display:block;color:#cd9879;font:700 11px/1.55 ui-monospace,monospace;letter-spacing:.16em}
+.casino-victory-report{margin:0 0 26px;padding:clamp(18px,3vw,26px);
+ background:radial-gradient(ellipse at 20% 0%,#361c21,#110d0e 75%);
+ border:1px solid rgba(171,95,72,.58);border-radius:13px}
+.casino-victory-report>h2{margin:7px 0 10px!important;color:#efcfaa!important;
+ font:800 clamp(23px,4vw,34px)/1.12 Georgia,serif!important;letter-spacing:.035em}
+.casino-victory-intro{color:#dbc3b6;font-size:15px!important;max-width:70ch}
+.casino-victory-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,285px),1fr));margin-top:20px}
+.casino-victory-grid article{border:1px solid #5c3932;border-radius:10px;padding:17px;margin:0;
+ background:linear-gradient(160deg,#1d1416,#100e10)}
+.casino-victory-grid article.casino-victory-victory{border-color:#95714d}
+.casino-victory-grid article.casino-victory-defeat{border-color:#783f3e}
+.casino-victory-grid article.casino-victory-partial{border-color:#67594b}
+.casino-victory-grid article>strong{display:block;color:#d9ab87;font:700 11px/1.5 ui-monospace,monospace;letter-spacing:.075em}
+.casino-victory-grid article h3{margin:9px 0 6px;color:#f2dbc1;font:800 20px/1.15 Georgia,serif}
+.casino-victory-grid article p{color:#ded0c8;font-size:13px;line-height:1.65}
+.casino-victory-grid article small{display:block;color:#bda99d;line-height:1.6;font-size:11px}
+.casino-victory-rule{margin:18px 0;padding:15px 17px;border-left:3px solid #b2815d;background:#211618;color:#e8c9ae}
+.casino-victory-rule strong{display:block;font-size:12px;letter-spacing:.09em;margin-bottom:4px}
+@media(max-width:390px){.casino-victory-report{padding:16px}.casino-victory-grid{grid-template-columns:minmax(0,1fr)}}
