@@ -108,6 +108,22 @@ assert(renderedMaitre.html.indexOf('<section class="hnet-role-zone"')<renderedMa
 assert(renderedMaitre.html.includes('CODE D’INVITATION')&&renderedMaitre.html.includes('Participants à la table'),'MAÎTRE invitation or expandable roster missing');
 assert(casinoHTML.indexOf('<section class="casino-role-choice-zone"')<casinoHTML.indexOf('<details class="casino-roster-disclosure"'),'Casino roles must precede roster');
 assert(casinoHTML.includes('casino-lobby-access'),'Casino invite code should use compact shared hierarchy');
+
+assert(casinoHTML.includes('PRÉPARATION INCOMPLÈTE'),'Casino cannot launch with fewer than seven players or missing mandatory roles');
+const casinoReadyLobby=runInNewContext(casinoLobbySource+';lobby',{
+ state:{viewer:'me',inviteCode:'TESTCODE',isHost:true,members:[
+  {id:'me',name:'J1',role:'casino',ready:true},
+  {id:'p2',name:'J2',role:'casino',ready:true},
+  {id:'p3',name:'J3',role:'casino',ready:true},
+  {id:'p4',name:'J4',role:'casino',ready:true},
+  {id:'p5',name:'J5',role:'agent',ready:true},
+  {id:'p6',name:'J6',role:'investigator',ready:true},
+  {id:'p7',name:'J7',role:'analyst',ready:true}
+ ]},
+ roles:roleNames,roleShort:x=>'Brève du rôle '+x,roleStars:()=> '★★★★☆',esc:x=>String(x)
+},{timeout:1000});
+assert(casinoReadyLobby().includes('LANCER LE DOSSIER')&&!casinoReadyLobby().includes('PRÉPARATION INCOMPLÈTE'),'Casino valid configuration should enable host launch');
+
 assert(js.includes('savedScroll=preserveLobby')&&maitre.includes('savedScroll=preserveLobby'),'Live lobby updates must not jump to top');
 assert(js.includes("getAttribute('aria-pressed')!=='true'")&&maitre.includes("getAttribute('aria-pressed')==='true'"),'An already selected role must not trigger a redundant network request');
 for(const marker of ['hnet-activity-note','hnet-roster-disclosure','hnet-code strong','hnet-role-random'])assert(css.includes(marker),'Unifying Heritage CSS missing '+marker);
