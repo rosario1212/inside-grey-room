@@ -30,6 +30,6 @@ if(process.argv[2]){
  const target=process.argv[2];
  assert(existsSync(target+'/terror-command-v694.js'),'live military panel missing from bundle');
  const entry=read(target+'/index.html');
- assert(entry.includes('terror-documentary-copy-v694-20261115'),'owner-approved teaser cache tag missing');
+ assert(entry.includes('terror-v12-37.js?v=catalog-30word-preview-poster-20261116'),'current TERREUR catalogue asset version missing');
 }
 console.log('PASS TERREUR v695: 9 sealed A/B/C variants, canonical source isolation, 20 authored (9 guaranteed, 11 optional), verdicts, officer and approved final copy.');
