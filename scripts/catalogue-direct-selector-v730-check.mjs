@@ -139,13 +139,16 @@ for(const family of ['omerta','terror','cartel','regime'])
  assert(originalCss.includes('> .'+family+'-dlc-section{display:none!important}'),'Async gate missing: '+family);
 assert(originalCss.includes('object-fit:contain!important'),'Poster crop regression');
 assert(css.includes('catalogue-corridor-ink-v731.svg'),'Illustrated backdrop missing');
+assert(css.includes('opacity:1!important;visibility:visible!important;pointer-events:auto!important'),'Collection choices hidden by legacy drawer');
+assert(css.includes('overflow-x:clip!important'),'Horizontal scroll regression');
+assert(css.includes('height:210px;top:37px'),'Background still too tall on mobile');
 assert(css.includes('#igrUniversalDock'),'Redundant bottom navigation not suppressed');
 assert(css.includes('background:#030405!important'),'Deep black catalogue missing');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
-assert(html.includes('catalogue-navigation-v731.css?v=v731-20261116'),'New stylesheet not linked');
+assert(html.includes('catalogue-navigation-v731.css?v=v732-visible-picker-20261116'),'New stylesheet not linked');
 assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
-assert(sw.includes('/catalogue-navigation-v731.css?v=v731-20261116'),'PWA stylesheet not versioned');
+assert(sw.includes('/catalogue-navigation-v731.css?v=v732-visible-picker-20261116'),'PWA stylesheet not versioned');
 assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 console.log('PASS v731: Five visible direct collections, complete classic scroll, isolated DLCs, monochrome illustrated background.');
