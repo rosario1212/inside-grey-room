@@ -253,6 +253,8 @@ try{
       assert(global.scrollWidth<=width+1,width+'px: horizontal overflow '+global.scrollWidth);
       assert(global.scrollClearance>=100,width+'px: insufficient bottom safe clearance');
       if(width<=700){
+        // Direct family navigation intentionally hides the legacy floating dock.
+        if(global.dockWidth>0){
         assert(global.dockWidth>=44&&global.dockWidth<=47,width+'px: dock must collapse to an icon while scrolling');
         assert(global.dockTextHidden,width+'px: dock labels must fade out while scrolling');
         await page.evaluate(()=>document.body.classList.remove('igr-dock-scrolling'));
@@ -263,6 +265,7 @@ try{
         }));
         assert(settled.widths.every(w=>w>=114&&w<=134),width+'px: dock must expand after scrolling stops: '+JSON.stringify(settled));
         assert(settled.labels.every(x=>x.visible)&&settled.labels.some(x=>x.text==='Filtres')&&settled.labels.some(x=>x.text==='Accueil'),width+'px: readable labels must return when idle');
+        }else assert.equal(global.dockWidth,0,'The obsolete dock must be completely hidden by the direct selector');
         assert(global.topOverlay==='fixed',width+'px: transparent status bar is not protected');
       }
       for(let i=0;i<metrics.length;i++){
