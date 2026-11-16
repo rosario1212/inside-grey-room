@@ -170,7 +170,7 @@ for(const [klass,accent] of [
 assert(css.includes('> section.panel.cartel-dlc-section')&&css.includes('rgba(194,149,71,.52)'),'Cartel gold panel is missing');
 assert(css.includes('> section.panel.omerta-dlc-section')&&css.includes('rgba(173,43,53,.46)'),'Omerta red panel is missing');
 assert(css.includes('object-fit:contain!important'),'Full poster must be contained');
-assert(css.includes('max-height:228px!important'),'Classic 001–020 tall-poster guard missing');
+assert(css.includes('max-height:100%!important'),'Classics must fill the same Omerta artwork frame without old 228px cap');
 assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
