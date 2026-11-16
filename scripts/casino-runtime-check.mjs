@@ -18,6 +18,7 @@ function initial({count=4,judge=false,prosecutor=false,undercoverIds=[]}={}){
 let counter=0;
 const command=(s,actor,type,payload={},now=0)=>applyRuntime(s,{id:'cmd-'+(++counter),actor,type,payload},{now});
 function finishPoker(s){while(s.poker.stage!=='settled')s=command(s,s.poker.turn,'POKER_ACTION',{action:s.poker.stage==='draw'?'draw':'check'});return s}
+function finishCampaign(s){for(const participant of Object.values(s.bureau))s=command(s,participant,'BUREAU_VERDICT',{position:'insufficient'});return command(s,'p0','FINISH_CAMPAIGN')}
 await test('all poker categories, straight-low ace, kickers, ties and invalid cards',()=>{
  const hands=[[8,[8,9,10,11,12]],[7,[12,25,38,51,2]],[6,[12,25,38,11,24]],[5,[1,3,5,7,10]],[4,[12,0,14,28,42]],
   [3,[12,25,38,1,3]],[2,[12,25,11,24,2]],[1,[12,25,1,3,5]],[0,[12,24,1,3,5]]];
@@ -84,12 +85,12 @@ await test('succession requires independent supporters, self-loyalty is rejected
  s=command(s,'p0','SPLIT_FACTION',{name:'Branche contestée'});
  s=chapterTwo(s);
  for(let i=0;i<4;i++)s=command(s,'p0','ADVANCE_PHASE');
- s=command(s,'p0','FINISH_CAMPAIGN');
+ s=finishCampaign(s);
  assert.equal(s.finale.successor,null);assert.equal(s.finale.split,null);
  assert.equal(s.finale.political,'dragon_retained');
  let t=initial();t=command(t,'p0','CLAIM_SUCCESSION');t=command(t,'p1','PLEDGE_LOYALTY',{to:'p0'});
  t=chapterTwo(t);for(let i=0;i<4;i++)t=command(t,'p0','ADVANCE_PHASE');
- t=command(t,'p0','FINISH_CAMPAIGN');assert.equal(t.finale.successor,'p0');
+ t=finishCampaign(t);assert.equal(t.finale.successor,'p0');
 });
 await test('analyst evaluates existing documents without manufacturing court evidence',()=>{
  let s=initial({undercoverIds:['p3']});s=command(s,'p3','REPORT_INTEL',{subjectId:'p1',text:'Observation fictive.'});
@@ -119,7 +120,7 @@ await test('court continuity respects independent evidence and unanswered defenc
  assert.throws(()=>command(s,'judge','RULING',{hearingId,decision:'convict',reasoning:'Non recevable.'}),/judicial_elements_not_established/);
  s=command(s,'p0','HOST_COURT_CONTINUITY',{},at+300000);
  assert.equal(s.rulings.at(-1).decision,'acquit');
- s=command(s,'p0','FINISH_CAMPAIGN');assert.equal(s.status,'finished');
+ s=finishCampaign(s);assert.equal(s.status,'finished');
 });
 await test('slot paytable, bank escrow and no duplicate/client-forged payout',()=>{
  let s=finishPoker(initial());s=command(s,'p0','ADVANCE_PHASE',{},60000);
@@ -177,7 +178,7 @@ await test('corroborated personal arrest, distinct custody, adversarial hearing,
  assert.throws(()=>command(s,'p1','TRANSFER_CHIPS',{to:'p0',amount:1}),/invalid_transfer/);
  s=command(s,'p0','ADVANCE_PHASE');assert.equal(s.chapter,3);
  s=command(s,'judge','RULING',{hearingId,decision:'acquit',reasoning:'Les documents ne suffisent pas à imputer une responsabilité personnelle.'});
- s=command(s,'p0','ADVANCE_PHASE');s=command(s,'p0','FINISH_CAMPAIGN');assert.equal(s.status,'finished');assert.equal(s.roster.p1.status,'free');
+ s=command(s,'p0','ADVANCE_PHASE');s=finishCampaign(s);assert.equal(s.status,'finished');assert.equal(s.roster.p1.status,'free');
 });
 await test('all optional-role configurations and zero to two hidden informants',()=>{
  for(let count=4;count<=7;count++)for(const judge of [false,true])for(const prosecutor of [false,true])for(let n=0;n<=(count===4?1:2);n++){
@@ -195,7 +196,7 @@ await test('eight phases with and without magistrates; factual system verdicts a
   const hearingId=s.hearings[0].id;s=command(s,'p1','DEFENCE',{hearingId,text:'Défense enregistrée.'});
   s=command(s,'p0','ADVANCE_PHASE');s=command(s,'p0','ADVANCE_PHASE');s=command(s,'p0','ADVANCE_PHASE');
   if(judge)s=command(s,'judge','RULING',{hearingId,decision:'convict',reasoning:'Faits fictifs établis.'});
-  s=command(s,'p0','ADVANCE_PHASE');s=command(s,'p0','FINISH_CAMPAIGN');
+  s=command(s,'p0','ADVANCE_PHASE');s=finishCampaign(s);
   assert.equal(s.status,'finished');assert.equal(s.finale.successor,'p0');assert.equal(s.finale.political,'recognised_claim');
   assert.equal(s.finale.judicial.find(r=>r.hearingId===hearingId).decision,'convict');
   assert.equal(s.roster.p1.status,'detained');assert.equal(s.players.length,count);
@@ -203,7 +204,7 @@ await test('eight phases with and without magistrates; factual system verdicts a
  let s=chapterTwo(initial());s.evidence[0].facts=['act'];s.evidence[1].facts=['act'];
  s=command(s,'investigator','OPEN_HEARING',{subjectId:'p1',evidenceIds:['proof0','proof1'],offence:'infraction fictive',accusation:'Une intention reste à établir.'});
  s=command(s,'p1','DEFENCE',{hearingId:s.hearings[0].id,text:'Mon intention n’est pas établie.'});
- for(let i=0;i<4;i++)s=command(s,'p0','ADVANCE_PHASE');s=command(s,'p0','FINISH_CAMPAIGN');
+ for(let i=0;i<4;i++)s=command(s,'p0','ADVANCE_PHASE');s=finishCampaign(s);
  assert.equal(s.finale.judicial.at(-1).decision,'acquit','Two sources alone cannot establish every element of responsibility');
 });
 await test('authored NPC nomination requires authority, secret conditions and prior warning for a lethal branch',()=>{
@@ -229,7 +230,7 @@ await test('unplayed characters negotiate authored offers, retain consent and ca
  s=chapterTwo(s);s.evidence.push(...s.evidence.slice(0,2).map((e,i)=>({...e,id:'npc-proof-'+i,subjectId:'c4'})));
  s=command(s,'investigator','OPEN_HEARING',{subjectId:'c4',evidenceIds:['npc-proof-0','npc-proof-1'],offence:'infraction fictive',accusation:'Pièces à confronter.'});
  assert(s.hearings[0].defence,'A synthetic NPC gives its authored defence without a deadlock');
- for(let i=0;i<4;i++)s=command(s,'p0','ADVANCE_PHASE');s=command(s,'p0','FINISH_CAMPAIGN');assert.equal(s.status,'finished');
+ for(let i=0;i<4;i++)s=command(s,'p0','ADVANCE_PHASE');s=finishCampaign(s);assert.equal(s.status,'finished');
 });
 await test('succession stake, single split and traceable personal or collective corruption',()=>{
  let s=finishPoker(initial());s=command(s,'p0','ADVANCE_PHASE',{},60000);s=command(s,'p0','ADVANCE_PHASE',{},120000);
