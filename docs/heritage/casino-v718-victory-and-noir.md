@@ -39,6 +39,7 @@ L'objectif narratif privé demeure dans la fiche existante. Le résultat ci-dess
 - **Victoire** : le bureau gagne et le joueur a lui-même transmis un renseignement ensuite vérifié à partir d'une pièce de provenance correspondante.
 - **Gain partiel** : renseignement recoupé, mais dossier collectif perdu.
 - **Échec** : renseignement non confirmé. Si l'infiltré est détenu ou mort, son dénouement porte cette conséquence, sans prétendre qu'il a été officiellement découvert.
+- **Voie de rupture** : l'infiltré peut abandonner sa mission et gagner politiquement comme chef reconnu, dissident actif ou faiseur de roi avec pacte valide. Le jeu annonce **victoire politique, mission d'infiltration non accomplie**. Cette voie ne fait jamais gagner le bureau d'enquête.
 
 ### Bureau (mission de rôle + succès collectif)
 - **Agent** : localise la salle à partir de cinq déductions exactes ; un raccourci de secours n'est pas présenté comme une prouesse.
