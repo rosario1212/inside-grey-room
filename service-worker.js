@@ -1,8 +1,8 @@
-const CACHE='igr-catalogue-v740-poster-018-20261116';
+const CACHE='igr-catalogue-v741-018-cover-20261116';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
   '/catalog-descriptions-v1.css?v=v730-direct-dlc-selector-poster-fit-20261116',
-  '/catalogue-navigation-v731.css?v=v740-protect-poster-018-20261116',
+  '/catalogue-navigation-v731.css?v=v741-018-edge-to-edge-20261116',
   '/assets/catalogue-corridor-ink-v731.svg',
   '/intro-poster-v18.css?v=v20-original-door-embedded-20261116',
   '/regime-live-v13.js?v=regime-v16-rosters-20261115',
