@@ -23,7 +23,7 @@ const lobbyActivity=mapOfActivity(natural);
 assert.deepEqual(mapOfActivity(rules),lobbyActivity,'Lobby and rules star ratings differ');
 for(const id of new Set([...core,...santoro])){
  const source=santoro.includes(id)&&id!=='don'?omerta:app;
- const hit=source.match(new RegExp('\\b'+id+":\\{label:'[^']+',short:'([^']+)'"));
+ const hit=source.match(new RegExp('\\b'+id+":\\{label:'[^']+'[^\\n]*?short:'([^']+)'"));
  assert(hit,'Missing concise description '+id);
  shortEnough(hit[1],id);
  assert(Number.isInteger(lobbyActivity[id])&&lobbyActivity[id]>=1&&lobbyActivity[id]<=5,'Missing 5-star rating '+id);
