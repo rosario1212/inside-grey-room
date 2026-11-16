@@ -37,7 +37,7 @@ function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data
    timedControls.some(key=>Boolean(state[key])!==Boolean(data[key]));
  state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
-function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Synchronisé · état serveur '+state.revision:credentials?'Connexion…':''}
+function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Table à jour':credentials?'Connexion…':''}
 async function sync(){
  if(!credentials||!active||busy)return;if(polling)return polling;
  const epoch=generation;
@@ -104,9 +104,9 @@ function lobby(){
  <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
  <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1,4).join('')}</div></div>
  <details class="casino-optional-roles"><summary>Autres fonctions · facultatives</summary><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(4).join('')}</div></details>
- <div class="casino-selected-role"><span>TON CHOIX</span><b>${esc(roles[own.role]||'Aucun rôle sélectionné')}</b><small>${esc(roles[own.role]?roleShort(own.role):'Choisis une fonction disponible pour participer.')}</small>${roles[own.role]?`<em>ACTIVITÉ · ${roleStars(own.role)}</em>`:''}</div>
+ <div class="casino-selected-role"><span>TON CHOIX</span><b>${esc(roles[own.role]||'Aucun rôle sélectionné')}</b>${roles[own.role]?`<em>ACTIVITÉ · ${roleStars(own.role)}</em>`:'<small>Choisis une fonction disponible.</small>'}</div>
  </section>
- <section class="casino-launch-readiness" aria-label="Conditions de lancement"><div class="casino-launch-readiness-head"><span>ÉTAPE 2 · PRÉPARER LA TABLE</span><strong>${readyCount}/${members.length} prêts</strong></div><p>${esc(launchHint)}</p><ul>${requirements.map(x=>`<li class="${x.ok?'is-done':''}"><span aria-hidden="true">${x.ok?'✓':'○'}</span>${esc(x.text)}</li>`).join('')}</ul></section>
+ <section class="casino-launch-readiness" aria-label="Conditions de lancement"><div class="casino-launch-readiness-head"><span>ÉTAPE 2 · PRÉPARER LA TABLE</span><strong>${readyCount}/${members.length} prêts</strong></div><p>${esc(launchHint)}</p><ul>${canStart?'<li class="is-done"><span aria-hidden="true">✓</span> Conditions réunies · début possible</li>':requirements.filter(x=>!x.ok).map(x=>`<li><span aria-hidden="true">○</span>${esc(x.text)}</li>`).join('')}</ul></section>
  <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role]||'À CHOISIR')}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
  <button class="casino-action casino-ready" data-casino-action="ready" ${Object.hasOwn(roles,own.role)?'':'disabled'}>${!Object.hasOwn(roles,own.role)?'CHOISIS D’ABORD UN RÔLE':own.ready?'✓ CONFIRMÉ · MODIFIER':'CONFIRMER MA PARTICIPATION'}</button>
  ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${canStart?'COMMENCER LA PARTIE':members.length<7?`EN ATTENTE · ${7-members.length} À INVITER`:'EN ATTENTE DES JOUEURS'}</button>`:''}
