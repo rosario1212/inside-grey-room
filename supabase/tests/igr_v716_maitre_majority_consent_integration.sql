@@ -51,6 +51,7 @@ begin
       o:=public.igr_heritage_online_maitre_ballot_status(room,tokens[1]);
       if (o->>'votes_cast')::integer<>1 or o->>'my_vote'<>opts[2]
         then raise exception 'Repeat token counted more than once: %/%',n,ch; end if;
+      perform public.igr_heritage_online_vote_maitre(room,tokens[1],opts[1]);
       -- A split without absolute majority must reopen a clean second round.
       for i in 2..n loop
         selected:=case when i<=n/2 then opts[1] when i<=2*(n/2) then opts[2] else opts[3] end;
@@ -108,7 +109,7 @@ begin
     target:=case when ch=3 then 'common' else opts[1] end;
     role_index:=case when ch=2 then 2 when ch=3 then 3 else 1 end;
     for i in 1..5 loop
-      o:=public.igr_heritage_online_vote_maitre(room,tokens[i],case when i=role_index then opts[2] else target end);
+      o:=public.igr_heritage_online_vote_maitre(room,tokens[i],case when i=role_index then (case when ch=3 then opts[1] else opts[2] end) else target end);
     end loop;
     if coalesce((o->>'new_round')::boolean,false)=false or o->>'reason'<>'consent_required'
       then raise exception 'Owner forced by majority: chapter %',ch; end if;
