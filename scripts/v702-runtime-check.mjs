@@ -126,10 +126,10 @@ assert(mobileCss.includes('height:auto!important'),'Cards must retain fluid heig
 assert(mobileCss.includes('.scenario--compact.regime-scenario'),'Regime must share the universal layout');
 assert(desktopCss.includes('v163: the widescreen two-column browser'),
   'Desktop must keep adaptive card proportions');
-assert(fullCopyCss.includes('CATALOGUE FIT v13')&&fullCopyCss.includes('-webkit-line-clamp:3!important'),
-  'Final catalogue CSS must cap the mobile preview without changing the full dossier');
-assert(fullCopyCss.includes('height:auto!important')&&fullCopyCss.includes('max-height:4.26em!important'),
-  'Fluid cards need a bounded catalogue teaser without clipping the full dossier');
+assert(fullCopyCss.includes('CATALOGUE FIT v13')&&fullCopyCss.slice(fullCopyCss.indexOf('CATALOGUE FIT v13')).includes('-webkit-line-clamp:unset!important'),
+  'Final catalogue CSS must keep mobile copy readable without cutting content');
+assert(fullCopyCss.includes('height:auto!important')&&fullCopyCss.slice(fullCopyCss.indexOf('CATALOGUE FIT v13')).includes('max-height:none!important'),
+  'Fluid cards must expand with all visible catalogue text');
 assert(fullCopyCss.includes('FAMILY CATALOGUE v12')&&fullCopyCss.includes('object-fit:contain!important'),
   'Catalogue must use independent poster templates with no artwork distortion');
 assert(fullCopyCss.includes('grid-template-areas:"poster content" "metadata metadata"'),
@@ -156,7 +156,7 @@ assert(!fullCopyCss.includes('Unified full-frame poster v7'),
 assert(html.includes('catalog-descriptions-v1.css') || report.bundles.some(b=>
   b.sourceUrls?.some(url=>url.startsWith('catalog-descriptions-v1.css'))),
   'Full-length dossier styles must be included in the published bundle');
-console.log('PASS v725 — fluid cards, balanced catalogue teaser and full dossier preserved across web/native');
+console.log('PASS v725 — fluid cards, complete readable catalogue copy and full dossier preserved across web/native');
 
 console.log('PASS v702 '+report.platform+' — CSS '+main.before.css+'→'+main.after.css+
  ' / JS '+main.before.js+'→'+main.after.js+
