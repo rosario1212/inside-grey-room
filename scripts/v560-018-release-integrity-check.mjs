@@ -17,7 +17,8 @@ const names=[
 const [app,html,sw,core,actions,hooks,sync,inspector,check,deploy]=await Promise.all(names.map(get));
 const cache='santoro-display-audit-20261108';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
-assert(html.includes('app-v11.js?v='+cache),'HTML cache version mismatch');
+const appUrl=html.match(/app-v11\.js\?v=[^\"']+/)?.[0];
+assert(appUrl&&sw.includes('/'+appUrl),'HTML cache version mismatch: source and PWA must agree');
 assertPwaRevision(html,sw);
 assert(app.includes("id:'018',title:'LES ASSIETTES VIDES'"),'018 absent');
 assert(app.includes("min:6,max:9"),'018 supports 6 to 9 players');
