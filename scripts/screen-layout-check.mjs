@@ -176,7 +176,7 @@ try{
         assert(m.height>=200,width+'px '+name+': card too short');
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
-        assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card');
+        assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='cover',width+'px '+name+': poster must fill the whole card column');
         assert(m.textVisible,width+'px '+name+': description hidden');
