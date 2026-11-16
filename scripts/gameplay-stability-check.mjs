@@ -105,8 +105,8 @@ ok(files.apply.includes("'if(window.MutationObserver){'"),'Build patch must enab
 ok(files.finalize.includes("const CACHE='igr-v36-1-parasite-fix'"),'Finalizer must own the v36.1 service-worker cache version');
 ok(files.finalize.includes('final runtime integrity verified'),'Final runtime integrity verifier marker missing');
 ok(files.apply.includes("navigation-theme-v18.js?v=v27-role-choice-nav"),'Built HTML must load the v27 navigation-theme runtime');
-ok(files.apply.includes("navigation-heritage-v19.js?v=v28-catalog-safe-dock-20261116"),'Built HTML must load the current navigation behavior');
-ok(files.apply.includes("navigation-heritage-v19.css?v=v28-catalog-safe-dock-20261116"),'Built HTML must load the current navigation CSS');
+ok(files.apply.includes("navigation-heritage-v19.js?v=v29-full-catalog-pills-20261116"),'Built HTML must load the current navigation behavior');
+ok(files.apply.includes("navigation-heritage-v19.css?v=v29-full-catalog-pills-20261116"),'Built HTML must load the current navigation CSS');
 ok(files.apply.includes("role-tree-polish-v12-29.css?v=v27-role-choice-nav"),'Built HTML must load the restored TON CHOIX CSS');
 ok(files.apply.includes("role-tree-polish-v12-29.js?v=v25-role-fluidity"),'Built HTML must retain the v25 role-selection runtime');
 ok(files.apply.includes("local-mode-theme-v25.css?v=v25-role-fluidity"),'Built HTML must load the v25 play-mode theme asset');
@@ -121,8 +121,8 @@ try{
   const presentationFinalized=presentationVersion&&(distSw.includes(`const CACHE='igr-${presentationVersion}';`)||distSw.includes(`const CACHE='igr-${presentationVersion}-`));
   const navigationThemeUrl='navigation-theme-v18.js?v='+(presentationFinalized?presentationVersion:'v27-role-choice-nav');
   ok(distIndex.includes(navigationThemeUrl),'dist/index.html has stale navigation-theme asset');
-  ok(distIndex.includes('navigation-heritage-v19.js?v=v28-catalog-safe-dock-20261116'),'dist/index.html has stale navigation behavior');
-  ok(distIndex.includes('navigation-heritage-v19.css?v=v28-catalog-safe-dock-20261116'),'dist/index.html has stale navigation CSS');
+  ok(distIndex.includes('navigation-heritage-v19.js?v=v29-full-catalog-pills-20261116'),'dist/index.html has stale navigation behavior');
+  ok(distIndex.includes('navigation-heritage-v19.css?v=v29-full-catalog-pills-20261116'),'dist/index.html has stale navigation CSS');
   ok(distIndex.includes('cell-controls-stability-v23.js?v=v24-gameplay-stability'),'dist/index.html has stale cell stability asset');
   ok(distIndex.includes('role-tree-polish-v12-29.js?v=v25-role-fluidity'),'dist/index.html has stale role-selection runtime');
   ok(distIndex.includes('role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/index.html has stale role-selection CSS');
@@ -141,7 +141,7 @@ try{
     ok(distIndex.includes(asset+'?v=v59-role-finale-integrity'),'dist/index.html: stale finale asset '+asset);
     ok(distSw.includes('/'+asset+'?v=v59-role-finale-integrity'),'dist/service-worker.js: stale finale asset '+asset);
   }
-  ok(distSw.includes('/navigation-heritage-v19.js?v=v28-catalog-safe-dock-20261116'),'dist/service-worker.js is missing the current navigation assets');
+  ok(distSw.includes('/navigation-heritage-v19.js?v=v29-full-catalog-pills-20261116'),'dist/service-worker.js is missing the current navigation assets');
   ok(distSw.includes('/'+navigationThemeUrl),'dist/service-worker.js is missing the current navigation-theme asset');
   ok(distSw.includes('/role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/service-worker.js is missing restored TON CHOIX CSS');
   ok(distIndex.includes('live-cell-v12-44.js?v='+(finalLobbyCache?lobbyVersion:'v36.1-parasite-fix')),'dist/index.html did not bump the live-cell runtime');
