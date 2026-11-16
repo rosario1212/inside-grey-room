@@ -753,12 +753,11 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 }
 /* Preserve Omertà and the 009–020 dossier covers, including 018. */
 
-/* v743 — cases 017 and 018 are 1086×1448 (3:4) originals, but the
-   shared Omertà-width card art column is narrower than 3:4. `contain`
-   visibly letterboxes; naïve `cover` crops the long printed titles.
-   Fill the whole column with the untouched cover image, then draw ONLY the
-   lower inscription from the same source at its native aspect ratio.
-   Both cases keep the same card size, and neither is stretched. */
+/* v744 — 017/018: keep the cards full-bleed and restore the printed
+   poster titles. Their source posters are native 3:4, but the shared card
+   art column is narrower. The main artwork stays cover-fitted; a softly
+   blended native-aspect title detail restores the full printed lettering.
+   Crucially, no opaque lower overlay can hide the recovered title. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018){
   --igr-poster-fit:cover!important;
@@ -786,37 +785,33 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   transform:none!important;
   filter:none!important;
 }
+/* Remove the v743 opaque lower gradient that concealed both poster titles.
+   The unbroken full-bleed photo now remains visible beneath the title detail. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018)
   > .scenario-thumb.compact::before{
-  content:""!important;
-  position:absolute!important;
-  inset:75% 0 0!important;
-  z-index:2!important;
-  background:linear-gradient(to bottom,
-    transparent 0%,rgba(3,5,7,.90) 20%,#030507 33%,#030507 100%)!important;
-  filter:none!important;
-  transform:none!important;
-  opacity:1!important;
-  pointer-events:none!important;
+  content:none!important;
+  display:none!important;
 }
+/* Native aspect-ratio copy of the SOURCE poster, centered at the bottom.
+   The printed title actually begins around 80–86% of this card, so the old
+   82%→87% mask started too late and faded out its first line. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018)
   > .scenario-thumb.compact::after{
   content:""!important;
+  display:block!important;
   position:absolute!important;
   inset:0!important;
   z-index:3!important;
-  /* 94% uses the poster's original aspect ratio and gives its long titles
-     a 3% side margin. Center bottom places the source title at ~87% card. */
   background-image:var(--igr-cover-url)!important;
-  background-size:94% auto!important;
+  background-size:96% auto!important;
   background-position:center bottom!important;
   background-repeat:no-repeat!important;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 82%,#000 87%,#000 96%,transparent 99%)!important;
-  mask-image:linear-gradient(to bottom,transparent 82%,#000 87%,#000 96%,transparent 99%)!important;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 72%,#000 79%,#000 94%,transparent 99%)!important;
+  mask-image:linear-gradient(to bottom,transparent 72%,#000 79%,#000 94%,transparent 99%)!important;
+  opacity:1!important;
   filter:none!important;
   transform:none!important;
-  opacity:1!important;
   pointer-events:none!important;
 }
