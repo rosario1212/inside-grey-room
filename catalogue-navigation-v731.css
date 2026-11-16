@@ -417,3 +417,37 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
   min-height:0!important;
   max-height:none!important;
 }
+
+/* v736 — the old v734 selector has high specificity and previously kept both
+   buttons wide even when igr-dock-scrolling was applied. The persistent
+   igr-catalogue-scrolled state intentionally wins until returning to top. */
+@media(max-width:700px){
+  body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
+    :is(#igrDockFilters,#igrDockHome){
+    display:inline-flex!important;
+    width:44px!important;
+    min-width:44px!important;
+    max-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+    padding:0!important;
+    gap:0!important;
+    opacity:.85!important;
+    border-radius:999px!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    box-shadow:0 7px 19px rgba(0,0,0,.3)!important;
+  }
+  body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
+    :is(#igrDockFilters,#igrDockHome) b{
+    display:none!important;
+    max-width:0!important;
+    opacity:0!important;
+  }
+  body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
+    :is(#igrDockFilters,#igrDockHome) span{
+    display:inline!important;
+    font-size:18px!important;
+    line-height:1!important;
+  }
+}
