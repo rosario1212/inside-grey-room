@@ -56,11 +56,11 @@
   function addScenarioData(){
     for(const sc of SCENARIO_DATA)if(!SCENARIOS.some(x=>x.id===sc.id))SCENARIOS.push(sc);
     Object.assign(SCENARIO_ROLES,{
-      '021':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Suspect']},
-      '022':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Suspect']},
-      '023':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Sottocapo','Suspect']},
-      '024':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Pentito','Suspect']},
-      '025':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Sottocapo','Pentito','Don','Suspect']}
+      '021':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere']},
+      '022':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere']},
+      '023':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Sottocapo']},
+      '024':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Pentito']},
+      '025':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Sottocapo','Pentito','Don']}
     });
     Object.assign(ROLE_INFO,{
       associato:{label:'Associato',win:'Améliore ta position sans devenir sacrifiable.',short:'Négocie ta place au sein de la Famiglia.',body:'Membre non initié : tu peux coopérer, mentir ou protéger la Famiglia. Chaque parole a un prix.'},
@@ -98,7 +98,7 @@
   const baseRolesBlock=rolesBlock;
   rolesBlock=function(sc){
     if(!isOmerta(sc?.id))return baseRolesBlock(sc);
-    const roles=ROLE_SETS[sc.id].filter(x=>x!=='enqueteur').map(x=>roleInfo(x).label);
+    const roles=ROLE_SETS[sc.id].filter(x=>x!=='enqueteur'&&x!=='suspect').map(x=>roleInfo(x).label);
     return `<div class="roles-availability omerta-roles-block"><div class="roles-row"><span>Fil conducteur</span><p>Enquêteur · attribué si personne ne le choisit</p></div><div class="roles-row optional"><span>Rôles facultatifs</span><p>${roles.map(h).join(' · ')}</p></div><small>Aucun rôle Mafia n’exige une composition précise : les rôles absents restent hors joueur.</small></div>`;
   };
 
@@ -106,7 +106,8 @@
   roleChoiceSummary=function(sc,count,players){
     if(!isOmerta(sc?.id))return baseRoleChoiceSummary(sc,count,players);
     const taken={};(players||[]).forEach(p=>{if(p.preferred_role)taken[p.preferred_role]=(taken[p.preferred_role]||0)+1});
-    return ROLE_SETS[sc.id].map(id=>({id,cap:id==='suspect'?7:1,taken:taken[id]||0,info:roleInfo(id)}));
+    // The server still uses suspect as the Mafia cast category; this hides only the generic lobby choice.
+    return ROLE_SETS[sc.id].filter(id=>id!=='suspect').map(id=>({id,cap:1,taken:taken[id]||0,info:roleInfo(id)}));
   };
 
   function dlcCard(sc){
