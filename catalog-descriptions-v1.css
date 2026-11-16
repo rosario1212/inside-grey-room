@@ -291,6 +291,16 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
     grid-template-columns:clamp(116px,35.5vw,144px) minmax(0,1fr)!important;
   }
 }
+/* The three Cartel titles retain their italic typeface. This slight optical
+   adjustment saves a second title line on narrow phones, preventing the
+   taller body from re-stretching the 3:4 luxury poster. */
+@media(min-width:375px) and (max-width:699px){
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--compact.scenario--art.cartel-scenario .scenario-body.compact h3{
+    font-size:clamp(1.14rem,4.85vw,1.23rem)!important;
+    letter-spacing:-.01em;
+  }
+}
 @media(max-width:360px){
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
