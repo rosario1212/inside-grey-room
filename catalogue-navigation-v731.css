@@ -842,17 +842,13 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 }
 
 
-/* v747 — TERREUR 026–028, true full-bleed covers.
-   Current source posters are 1086×1448 (native 3:4).
-   Match the exact artwork ratio to the shared card height, so the complete
-   poster fills every pixel with neither cropping nor stretch; do not overlay
-   a blurred duplicate. All other dossier families remain untouched. */
-#app .page-create-v10-13{--igr-terror-native-width:171px}
-@media(min-width:375px) and (max-width:699px){
-  #app .page-create-v10-13{--igr-terror-native-width:189px}
-}
-@media(min-width:700px){
-  #app .page-create-v10-13{--igr-terror-native-width:183px}
+/* v751 — TERREUR 026–028: approved vertical 2:3 posters, true full bleed.
+   Match the card's fixed height with a proportional image column. This
+   shows the complete artwork and its printed titles without crop, stretch,
+   duplicated blurred backgrounds, overlays or gutters on mobile/desktop.
+   Other DLC geometry and artwork remain unchanged. */
+#app .page-create-v10-13{
+  --igr-terror-native-width:calc(var(--igr-omerta-card-height) * 0.666666667);
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact.terror-scenario{

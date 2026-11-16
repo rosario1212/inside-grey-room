@@ -8,9 +8,9 @@
     {id:'028',title:'DERNIER PÉRIMÈTRE',short:'La capitale cède secteur après secteur. Le FDR menace les prisonniers et prétend avoir un relais jusque dans la Grey Room. Les communications coupées et les anciens accès cachent-ils une infiltration ou une opération d’intimidation ?',context:'Les unités gouvernementales reculent et les communications tombent par intermittence. Dans les territoires conquis, le Front de la Restauration (FDR) impose des arrestations et des représailles ; la Grey Room conserve encore les dossiers de ses victimes. Le FDR annonce qu’un complice se trouve déjà dans le périmètre protégé. Des autorisations anciennes et des messages reçus tardivement semblent appuyer cette menace sans prouver une présence actuelle. Deux détenus cherchent à coopérer ; le troisième entretient le doute. L’enquête doit établir les crimes passés et vérifier l’alerte présente sans condamner quelqu’un sur une rumeur.',mood:'Représailles · communications coupées · suspicion d’infiltration.',min:6,max:6,sound:'pulse',mechanics:['Périmètre critique','Cellule intérieure','Coopération']}
   ];
   const ART = Object.freeze({
-    '026':'assets/terror-026-la-ville-tombe.webp?v=12.37-final',
-    '027':'assets/terror-027-la-zone-rouge.webp?v=12.37-final',
-    '028':'assets/terror-028-dernier-perimetre.webp?v=12.37-final'
+    '026':'assets/terror-026-la-ville-tombe-v750.webp?v=v751-terreur-fullbleed',
+    '027':'assets/terror-027-la-zone-rouge-v750.webp?v=v751-terreur-fullbleed',
+    '028':'assets/terror-028-dernier-perimetre-v750.webp?v=v751-terreur-fullbleed'
   });
 
   const isTerror = id => IDS.has(String(id || ''));
