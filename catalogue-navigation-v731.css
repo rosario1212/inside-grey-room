@@ -392,3 +392,28 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
     width:100px!important;min-height:40px!important;height:40px!important;
   }
 }
+
+/* v735 — one card rhythm per collection, without sacrificing real text.
+   The tallest public synopsis/title defines the track; every sibling card
+   stretches to that track. No fixed 190px/206px cap, no image stretching,
+   no clamped copy and no JS measurement/ResizeObserver loops. */
+#app .page-create-v10-13 .scenario-list-v10-13:has(> article.scenario.scenario--art.scenario--compact){
+  display:grid!important;
+  grid-auto-rows:minmax(max-content,1fr)!important;
+  align-items:stretch!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact{
+  align-self:stretch!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+}
+/* The poster's ambient backing fills excess space while the artwork
+   itself remains fully contained at its original ratio. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact{
+  align-self:stretch!important;
+  min-height:0!important;
+  max-height:none!important;
+}
