@@ -33,6 +33,7 @@ const posters={
   '007':await poster('scenario-007-v10-13.webp'),
   '008':await poster('scenario-008-v10-13.webp'),
   '014':await poster('scenario-014-v11-6.webp'),
+  '018':await poster('scenario-018-v11-6.webp'),
   '020':await poster('scenario-020-v11-6.webp'),
   '021':await poster('omerta-021-l-enveloppe.webp'),
   '026':await poster('terror-026-la-ville-tombe.webp'),
@@ -96,7 +97,7 @@ try{
     assert(data.scroll<=data.viewport+1,`${width}px: horizontal overflow ${data.scroll} > ${data.viewport}`);
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
-      const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(c.id);
+      const preserve=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031','032','033','034'].includes(c.id);
       assert.equal(c.imageFit,preserve?'contain':'cover',
         `${width}px ${c.id}: ${preserve?'full title-safe poster':'approved Omerta cover'} must be used`);
       if(preserve)assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
@@ -198,7 +199,7 @@ try{
           assert(item.bodyFits,`v737 ${width}px ${item.id}: content box unexpectedly overflowing`);
           assert(item.excerptClamp==='5',`v737 ${width}px ${item.id}: five-line Omerta-style excerpt missing`);
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
-          const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(item.id);
+          const preserve=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031','032','033','034'].includes(item.id);
           assert(item.imageFit===(preserve?'contain':'cover'),
             `v739 ${width}px ${item.id}: original artwork ${preserve?'must be fully framed':'retains approved cover'}`);
           if(preserve)assert(item.artUnderlay!=='none',
@@ -222,7 +223,7 @@ try{
           `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalogue-v735-34-equal-heights-iphone.png'),fullPage:true});
-      console.log(`PASS v739 ${width}px: All 34 cards match Omerta 021 height and poster width, safe full-poster typography with ambient source-art extension`);
+      console.log(`PASS v740 ${width}px: All 34 cards match Omerta 021 height and poster width, safe full-poster typography with ambient source-art extension`);
       await context.close();
     }
   }
@@ -312,7 +313,7 @@ try{
     await page.locator('#igrDockHome').click();
     assert.equal(await page.locator('body').getAttribute('data-test-home'),'yes',
       'v734: Accueil shortcut did not invoke home navigation');
-    console.log('PASS v739 390px: buttons shrink while scrolling, expand when idle at dossier 020; Filtres and Accueil work');
+    console.log('PASS v740 390px: buttons shrink while scrolling, expand when idle at dossier 020; Filtres and Accueil work');
     await context.close();
   }
 }finally{await browser.close()}
