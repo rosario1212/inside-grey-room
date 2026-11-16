@@ -101,11 +101,13 @@ begin
     if not blocked then raise exception 'Vote accepted after closure: %',n; end if;
   end loop;
 
-  -- Kuroi retains host-mediated decision authority: no unintended regression.
+  -- KUROI is a different campaign: no CENDRES ballot may decide its room.
+  -- This remains valid before and after the KUROI majority migration.
   insert into public.igr_heritage_online_rooms(code,campaign_id,chapter)
      values ('HQA09','kuroi',3) returning host_token into host;
-  perform public.igr_heritage_online_decide('HQA09',host,'police_hand');
-  if (select decision_id from public.igr_heritage_online_rooms where code='HQA09')<>'police_hand'
-    then raise exception 'KUROI regression'; end if;
+  blocked:=false;
+  begin perform public.igr_heritage_online_vote_cendres('HQA09',gen_random_uuid(),'b');
+  exception when others then blocked:=position('cendres only' in sqlerrm)>0; end;
+  if not blocked then raise exception 'CENDRES ballot was accepted by KUROI'; end if;
 end
 $check$;
