@@ -164,6 +164,7 @@ for(const id of ['001','002','003','004','005','006','007','008'])
 for(const family of ['terror','cartel','regime'])
   assert(css.includes('.'+family+'-scenario'),'Missing safe framing for '+family);
 assert(css.includes('background-image:var(--igr-cover-url)!important'),'Missing image-derived ambient edge fill');
+assert(css.includes('#scenario-008,#scenario-018,'),'Dossier 018 poster must preserve its full typography');
 assert(css.includes('object-fit:var(--igr-poster-fit,cover)!important'),'Omerta card fit must remain variable by art sensitivity');
 assert(css.includes('body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)'),
   'Compact on-scroll dock rule missing');
@@ -182,9 +183,9 @@ assert(css.includes('max-height:100%!important'),'Classics must fill the same Om
 assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
-assert(html.includes('catalogue-navigation-v731.css?v=v739-preserve-poster-text-20261116'),'New stylesheet not linked');
+assert(html.includes('catalogue-navigation-v731.css?v=v740-protect-poster-018-20261116'),'New stylesheet not linked');
 assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
-assert(sw.includes('/catalogue-navigation-v731.css?v=v739-preserve-poster-text-20261116'),'PWA stylesheet not versioned');
+assert(sw.includes('/catalogue-navigation-v731.css?v=v740-protect-poster-018-20261116'),'PWA stylesheet not versioned');
 assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 console.log('PASS v731: Five visible direct collections, complete classic scroll, isolated DLCs, monochrome illustrated background.');
