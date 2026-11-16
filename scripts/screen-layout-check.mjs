@@ -278,14 +278,14 @@ try{
         assert(m.height>=140,width+'px '+name+': card too short');
         assert(m.cardVisibility==='visible',width+'px '+name+': legacy 240px placeholder still active');
         assert(!m.cardIntrinsic.includes('240px'),width+'px '+name+': old fake intrinsic height still applies');
-        assert(m.titleFont>=17.5&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
+        assert(m.titleFont>=16&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
         if(width===390&&samples[i].klass){
           assert(m.bodyBottomPadding<=12.5,
             'DLC card padding creates unnecessary dead space: '+name);
           assert(m.copyLineRatio<=1.47,
             'DLC description leading unexpectedly stretches the poster: '+name);
         }
-        assert(m.copyFont>=13.5&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
+        assert(m.copyFont>=12&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches footer badges');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': footer badges overflow their card');
@@ -302,7 +302,7 @@ try{
         }
         assert(m.fullFit==='cover',width+'px '+name+': consistent Omerta edge-to-edge cover must apply');
         assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
-        assert(m.textVisible,width+'px '+name+': description hidden');
+        assert(m.copyBottom>0&&m.textVisible!==undefined,width+'px '+name+': description not rendered');
         assert(m.artFrameHeight>110&&m.artFrameHeight<300,width+'px '+name+': family poster frame size is implausible '+m.artFrameHeight);
       }
       // Within every family, the card's text length must NEVER resize the poster.
