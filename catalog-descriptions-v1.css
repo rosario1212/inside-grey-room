@@ -191,10 +191,9 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   --igr-family-title:1.23rem;
   --igr-family-copy:.9rem;
   --igr-family-gap:7px;
-  display:grid!important;
-  grid-template-columns:var(--igr-poster-width) minmax(0,1fr)!important;
-  grid-template-rows:max-content!important;
-  align-items:start!important;
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:flex-start!important;
   min-width:0!important;
   min-height:var(--igr-card-floor)!important;
   max-height:none!important;
@@ -256,9 +255,10 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact .scenario-thumb.compact{
   position:relative!important;
-  align-self:start!important;
+  align-self:flex-start!important;
+  flex:0 0 var(--igr-poster-width)!important;
   display:block!important;
-  width:100%!important;
+  width:var(--igr-poster-width)!important;
   height:auto!important;
   min-height:0!important;
   max-width:none!important;
@@ -296,11 +296,12 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
   display:block!important;
+  flex:1 1 0%!important;
   min-width:0!important;
-  align-self:start!important;
-  min-height:max-content!important;
+  align-self:stretch!important;
+  min-height:0!important;
   max-height:none!important;
-  height:max-content!important;
+  height:auto!important;
   overflow:visible!important;
   padding:11px 11px 12px!important;
 }
