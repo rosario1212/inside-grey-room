@@ -9,6 +9,9 @@ const random=readFileSync('supabase/migrations/20261116123000_igr_v722_cartel029
 const verdict=readFileSync('supabase/migrations/20261116123500_igr_v723_cartel029_collective_verdict.sql','utf8');
 
 for(const source of [report,roles])assert.doesNotThrow(()=>new vm.Script(source));
+assert.match(random,/end\s*\$function\$;/,'Random role migration must terminate its function statement');
+assert.equal((verdict.match(/end\s*\$function\$;/g)||[]).length,2,
+ 'Both overwritten PostgreSQL functions must end with semicolons');
 assert.match(random,/\('don'\),\('bras_droit'\)/);
 assert.match(random,/igr_v4_role_capacity\(r.scenario_id,player_count,q.role\)/);
 assert.match(verdict,/BEFORE UPDATE OF status ON public\.igr_v4_rooms/);

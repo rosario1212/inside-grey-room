@@ -30,7 +30,7 @@ begin
  if picked is null then raise exception 'no role available'; end if;
  update public.igr_v4_players set preferred_role=picked where id=p.id;
  return jsonb_build_object('ok',true,'role',picked,'scenario_id',r.scenario_id,'player_count',player_count);
-end $function$
+end $function$;
 
 DO $v722$
 BEGIN
