@@ -1,93 +1,198 @@
-/* Public catalogue: complete, spoiler-safe descriptions on every dossier.
-   Avoid the legacy 62–77-character JS cutoff and 3-line mobile CSS clamps.
-   This shared rule covers BASE, OMERTÀ, TERREUR, CARTEL and LE RÉGIME. */
+/* Inside Grey Room — catalogue v3.
+   Shared geometry only. Typography families, colors, borders and atmosphere
+   continue to belong to each DLC. No ellipsis or clamped public summaries. */
+
+#app .page-create-v10-13 .scenario-list-v10-13{
+  min-width:0;
+  row-gap:14px;
+  align-items:stretch;
+}
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
   display:grid!important;
-  grid-template-columns:clamp(104px,28vw,132px) minmax(0,1fr)!important;
-  gap:0!important;
+  grid-template-columns:clamp(104px,28vw,128px) minmax(0,1fr)!important;
   align-items:stretch!important;
-  height:auto!important;
+  gap:0!important;
+  min-width:0!important;
   min-height:214px!important;
+  height:auto!important;
   max-height:none!important;
   overflow:hidden!important;
+  isolation:isolate;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-thumb,
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-thumb{
   position:relative!important;
   display:block!important;
   align-self:stretch!important;
-  height:auto!important;
-  min-height:214px!important;
-  max-height:none!important;
   width:100%!important;
+  max-width:none!important;
+  min-height:214px!important;
+  height:auto!important;
+  max-height:none!important;
   aspect-ratio:auto!important;
   overflow:hidden!important;
+  background:linear-gradient(180deg,#121519,#050607)!important;
 }
-#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-thumb img{
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-thumb img,
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-thumb img{
   position:absolute!important;
   inset:0!important;
+  display:block!important;
   width:100%!important;
   height:100%!important;
   min-height:0!important;
   max-height:none!important;
-  object-fit:cover!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+  object-position:50% 0%!important;
 }
+/* Full poster in its own dark mount, never cropped at the dossier lettering. */
+#app .page-create-v10-13 .omerta-scenario .scenario-thumb{background:linear-gradient(180deg,#1a0c0f,#080608)!important}
+#app .page-create-v10-13 .terror-scenario .scenario-thumb{background:linear-gradient(180deg,#101113,#030405)!important}
+#app .page-create-v10-13 .cartel-scenario .scenario-thumb{background:linear-gradient(180deg,#1a1208,#080704)!important}
+#app .page-create-v10-13 .regime-scenario .scenario-thumb{background:linear-gradient(180deg,#101921,#05080b)!important}
+
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact,
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-body.compact{
   display:flex!important;
   flex-direction:column!important;
-  justify-content:flex-start!important;
   align-self:stretch!important;
+  justify-content:flex-start!important;
+  gap:0!important;
   min-width:0!important;
   min-height:0!important;
   width:auto!important;
   height:auto!important;
   max-height:none!important;
   overflow:visible!important;
-  padding:15px 14px 14px!important;
+  padding:16px 15px 15px!important;
 }
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact .scenario-id{
+  font-size:.64rem!important;
+  line-height:1.44!important;
+  max-width:100%;
+  overflow-wrap:break-word;
+}
+/* Uniform optical scale, without taking over theme font or title color. */
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
   display:block!important;
-  -webkit-line-clamp:unset!important;
-  line-clamp:unset!important;
+  font-size:clamp(1.39rem,5.65vw,1.66rem)!important;
+  line-height:1.12!important;
+  margin:6px 0 11px!important;
+  max-width:100%!important;
   max-height:none!important;
+  min-width:0!important;
   overflow:visible!important;
   overflow-wrap:break-word;
+  word-break:normal;
+  text-wrap:balance;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact > p.igr-card-excerpt,
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario .scenario-body.compact > p.igr-card-excerpt{
   display:block!important;
-  -webkit-line-clamp:unset!important;
-  line-clamp:unset!important;
-  max-height:none!important;
+  flex:0 0 auto!important;
+  font-size:clamp(.90rem,3.45vw,.99rem)!important;
+  line-height:1.5!important;
+  margin:2px 0 15px!important;
   min-height:0!important;
   height:auto!important;
-  flex:0 0 auto!important;
+  max-height:none!important;
   overflow:visible!important;
   text-overflow:clip!important;
   white-space:normal!important;
   overflow-wrap:break-word!important;
-  margin:2px 0 14px!important;
-  font-size:clamp(.9rem,3vw,.98rem)!important;
-  line-height:1.5!important;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
+}
+#app .page-create-v10-13 .omerta-scenario .scenario-body.compact > p.igr-card-excerpt{
+  color:#c4b7b9!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact .tag-row{
   position:static!important;
   display:flex!important;
   flex-wrap:wrap!important;
-  align-items:flex-end!important;
+  align-items:center!important;
+  flex:0 0 auto!important;
+  gap:7px!important;
+  width:100%!important;
   min-width:0!important;
   margin-top:auto!important;
-  padding-top:6px!important;
+  padding-top:7px!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .tag-row .tag{
+  position:static!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 1 auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:28px!important;
+  padding:6px 9px!important;
+  font-size:.60rem!important;
+  line-height:1.32!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  text-align:center!important;
+}
+/* Section rhythm only: preserve DLC illustrations, backgrounds and palettes. */
+#app .page-create-v10-13 > section.panel + section.panel{margin-top:24px!important}
+#app .page-create-v10-13 :is(.omerta-head,.terror-head,.dlc-suite-head){
+  gap:12px;
+  margin-bottom:19px!important;
+}
+#app .page-create-v10-13 :is(.omerta-head,.terror-head,.dlc-suite-head) p{
+  font-size:clamp(.88rem,3vw,.98rem)!important;
+  line-height:1.5!important;
+  margin-top:7px!important;
+}
+#app .page-create-v10-13 .dlc-access-row{margin-bottom:16px!important}
+
+/* A single final scroll clearance for the fixed dock, not padding on every card. */
+body.igr-scenario-browser #app > .app{
+  padding-bottom:calc(102px + env(safe-area-inset-bottom,0px))!important;
+}
+body.igr-scenario-browser.igr-global-dock-active #app::after{
+  height:0!important;
+}
+
+/* In edge-to-edge iOS view, scrolled content must not print through the
+   transparent system-status bar. Restrict the scrim to the catalogue. */
+@media(max-width:700px){
+  body.igr-scenario-browser #app::before{
+    content:"";
+    position:fixed;
+    inset:0 0 auto;
+    height:max(60px,calc(env(safe-area-inset-top,0px) + 19px));
+    z-index:360;
+    pointer-events:none;
+    background:linear-gradient(to bottom,
+      rgba(4,6,8,.99) 0%,
+      rgba(4,6,8,.99) 62%,
+      rgba(4,6,8,.84) 78%,
+      rgba(4,6,8,0) 100%);
+  }
 }
 @media(max-width:390px){
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
-    grid-template-columns:clamp(96px,27vw,108px) minmax(0,1fr)!important;
+    grid-template-columns:clamp(94px,27vw,108px) minmax(0,1fr)!important;
   }
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact{
-    padding:12px 11px 13px!important;
+    padding:13px 11px 14px!important;
+  }
+}
+@media(max-width:360px){
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
+    font-size:1.30rem!important;
+    line-height:1.13!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .tag-row .tag{
+    padding:5px 7px!important;
+    font-size:.57rem!important;
   }
 }
 @media(min-width:700px){
@@ -95,34 +200,30 @@
   #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
     grid-template-columns:132px minmax(0,1fr)!important;
   }
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact{
+    padding:18px 18px 17px!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
+    font-size:clamp(1.45rem,2.15vw,1.8rem)!important;
+  }
 }
 
-/* Shared title sizing; fonts, weights, tracking, colors remain theme-specific. */
-#app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3 {
-  font-size:clamp(1.38rem,5.8vw,1.72rem)!important;
-  line-height:1.09!important;
-  /* Keep each DLC's own font weight and letter spacing. */
-  margin:6px 0 11px!important;
-  max-width:100%;
+/* Final cascade guard: the legacy v28 stylesheet loads after this catalogue
+   layer. Keep images intact and the grid's row sized by the *full* copy. */
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art{
+  grid-template-rows:max-content!important;
+  height:auto!important;
+  min-height:214px!important;
   max-height:none!important;
+  align-self:stretch!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-body.compact{
+  height:auto!important;
+  max-height:none!important;
+  min-height:max-content!important;
   overflow:visible!important;
-  overflow-wrap:break-word;
-  word-break:normal;
-  text-wrap:balance;
 }
-@media(max-width:360px){
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3 {
-    font-size:1.31rem!important;
-    line-height:1.1!important;
-  }
-}
-@media(min-width:700px){
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3 {
-    font-size:clamp(1.4rem,2.2vw,1.75rem)!important;
-  }
-}
-
-/* OMERTÀ keeps its muted crimson; CARTEL, TERREUR and RÉGIME keep their own text colors. */
-#app .page-create-v10-13 .omerta-scenario .scenario-body.compact > p.igr-card-excerpt{
-  color:#c4b7b9!important;
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact img{
+  object-fit:contain!important;
+  object-position:50% 0%!important;
 }
