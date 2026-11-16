@@ -382,7 +382,7 @@ function setupIntro(){
  if(window.PointerEvent)btn.addEventListener('pointerdown',activate,{passive:false});
  else btn.addEventListener('touchstart',activate,{passive:false});
  btn.addEventListener('click',e=>{if(e.detail===0)activate(e)});
- setIntroHint('TOUCHEZ POUR ENTRER');
+ setIntroHint('TOUCHEZ POUR OUVRIR LA PORTE');
 }
 function showIntroGate(message='TOUCHEZ POUR OUVRIR LA PORTE'){
  const gate=byId('introGate'),btn=byId('introEnterBtn');
