@@ -42,9 +42,9 @@ const posters={
   '018':await poster('scenario-018-catalog-v749.webp'),
   '020':await poster('scenario-020-v11-6.webp'),
   '021':await poster('omerta-021-l-enveloppe.webp'),
-  '026':await poster('terror-026-la-ville-tombe.webp'),
-  '027':await poster('terror-027-la-zone-rouge.webp'),
-  '028':await poster('terror-028-dernier-perimetre.webp'),
+  '026':await poster('terror-026-la-ville-tombe-v750.webp'),
+  '027':await poster('terror-027-la-zone-rouge-v750.webp'),
+  '028':await poster('terror-028-dernier-perimetre-v750.webp'),
   '029':await poster('cartel-029-poster-v2.svg','image/svg+xml'),
   '030':await poster('cartel-030-poster-v2.svg','image/svg+xml'),
   '031':await poster('cartel-031-poster-v2.svg','image/svg+xml'),
@@ -103,7 +103,7 @@ try{
     assert(data.scroll<=data.viewport+1,`${width}px: horizontal overflow ${data.scroll} > ${data.viewport}`);
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
-      const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(c.id);
+      const preserve=['001','002','003','004','005','006','007','008','029','030','031','032','033','034'].includes(c.id);
       assert.equal(c.imageFit,preserve?'contain':'cover',
         `${width}px ${c.id}: ${preserve?'full title-safe poster':'approved Omerta cover'} must be used`);
       if(preserve)assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
@@ -210,7 +210,7 @@ try{
             assert(item.excerptFits,`v752 ${width}px ${item.id}: DLC description clipped`);
           }
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
-          const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(item.id);
+          const preserve=['001','002','003','004','005','006','007','008','029','030','031','032','033','034'].includes(item.id);
           assert(item.imageFit===(preserve?'contain':'cover'),
             `v739 ${width}px ${item.id}: original artwork ${preserve?'must be fully framed':'retains approved cover'}`);
           if(preserve)assert(item.artUnderlay!=='none',
