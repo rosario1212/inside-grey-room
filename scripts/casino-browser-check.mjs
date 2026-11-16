@@ -92,10 +92,10 @@ try{
  for(let i=0;i<7;i++){
   const p=people[i].page;
   await visibleRevision(p,(await storage.read(room.id)).revision);
-  if(i>=4){await p.locator('[data-casino-form=role] select').selectOption(['agent','investigator','analyst'][i-4]);await p.locator('[data-casino-form=role] button').click();await p.waitForFunction(()=>!document.querySelector('.casino-content').disabled)}
+  if(i>=4){const nextRole=['agent','investigator','analyst'][i-4];await p.locator('[data-casino-action="select-role"][data-role-id="'+nextRole+'"]').click();await p.waitForFunction(()=>!document.querySelector('.casino-content').disabled)}
   await p.locator('[data-casino-action=ready]').click();await p.waitForFunction(()=>!document.querySelector('.casino-content').disabled);
  }
- await hostPage.waitForFunction(()=>[...document.querySelectorAll('.casino-members li')].every(e=>e.textContent.includes('Prêt')));
+ await hostPage.waitForFunction(()=>[...document.querySelectorAll('.casino-members li')].every(e=>e.textContent.toLocaleLowerCase('fr').includes('prêt')));
  await hostPage.locator('[data-casino-action=start]').click();
  await Promise.all(people.map(p=>p.page.locator('[data-casino-tab=card]').waitFor()));
  assert((await hostPage.locator('body').textContent()).includes('Fiche fictive de Ali.'));
