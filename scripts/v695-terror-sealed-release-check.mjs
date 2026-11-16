@@ -30,7 +30,7 @@ if(process.argv[2]){
  const target=process.argv[2];
  assert(existsSync(target+'/terror-command-v694.js'),'live military panel missing from bundle');
  const entry=read(target+'/index.html');
- assert(/terror-v12-37\\.js\\?v=[a-z0-9-]+/i.test(entry),'current TERREUR catalogue asset version missing');
+ assert(entry.includes('terror-v12-37.js?v='),'current TERREUR catalogue asset version missing');
  assert(intro.includes('terror-world-context')&&intro.includes('CONTEXTE DU CONFLIT')&&intro.includes('FRONT DE LA RESTAURATION'),'FDR context must be visible before Terror dossiers');
  const terrorCss=read(target+'/terror-v12-40.css');
  assert(terrorCss.includes('.terror-world-context')&&entry.includes('terror-v12-40.css?v='),'FDR context styling must ship with Terror catalogue');
