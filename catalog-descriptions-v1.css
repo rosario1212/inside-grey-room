@@ -627,6 +627,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   grid-template-columns:var(--igr-poster-width) minmax(0,1fr)!important;
   grid-template-rows:max-content minmax(0,1fr)!important;
   grid-template-areas:"poster content" "poster metadata"!important;
+  min-height:188px!important;
   align-items:start!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
