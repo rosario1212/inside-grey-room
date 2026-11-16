@@ -75,8 +75,8 @@ for(const id of ['029','030','031']){
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
 assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing shared bounded scenario teaser function');
-assert(app.includes('scenarioCardTeaser(sc.short,Number(sc.id)>=9?17:23)'),
- 'Base 009–020 must use compact previews while preserving longer dossier details');
+assert(app.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,Number(sc.id)>=9?30:23)"),
+ 'Base 009–020 must present fuller public intros without changing dossier detail');
 for(const [name,source] of [['base',app],['Omertà',await read('omerta-v12.js')],
   ['Terreur',await read('terror-v12-37.js')],['Cartel/Régime',dlc],['premium',premium]]){
   assert(source.includes('</p></div><div class="tag-row" aria-label="Informations du dossier">'),
@@ -84,7 +84,7 @@ for(const [name,source] of [['base',app],['Omertà',await read('omerta-v12.js')]
 }
 for(const [label,source] of [['DLC',dlc],['premium catalogue',premium]]){
  assert(source.includes('class="igr-card-excerpt"'),label+' card must show a teaser');
- assert(source.includes('scenarioCardTeaser(sc.short,19)'),label+' card must use the shorter DLC-specific preview');
+ assert(source.includes('scenarioCardTeaser(sc.short,28)'),label+' card must use the shorter DLC-specific preview');
  assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
    label+' must use only one full-bleed poster, without inset or duplicate thumbnail');
 }
@@ -130,10 +130,10 @@ assert(fullCopyCss.includes('CATALOGUE FIT v13')&&fullCopyCss.slice(fullCopyCss.
   'Final catalogue CSS must keep mobile copy readable without cutting content');
 assert(fullCopyCss.includes('height:auto!important')&&fullCopyCss.slice(fullCopyCss.indexOf('CATALOGUE FIT v13')).includes('max-height:none!important'),
   'Fluid cards must expand with all visible catalogue text');
-assert(fullCopyCss.includes('FAMILY CATALOGUE v12')&&fullCopyCss.includes('object-fit:contain!important'),
+assert(fullCopyCss.includes('v726 — one reading column')&&fullCopyCss.includes('object-fit:contain!important'),
   'Catalogue must use independent poster templates with no artwork distortion');
-assert(fullCopyCss.includes('grid-template-areas:"poster content" "metadata metadata"'),
-  'Catalogue must reserve an independent full-width badge row');
+assert(fullCopyCss.includes('grid-template-areas:"poster content" "poster metadata"'),
+  'Catalogue metadata must sit below the synopsis in the right column');
 assert(fullCopyCss.includes('content-visibility:visible!important'),
   'Do not reintroduce fake 240px content-height placeholders');
 for(const family of ['omerta','terror','cartel','regime']){
