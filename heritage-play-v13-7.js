@@ -598,10 +598,10 @@ function ensureCendresBallot(live){
 }
 function renderDecision(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter];
-  if(live.campaignId==='cendres'&&!live.online){
+  if((live.campaignId==='cendres'||live.campaignId==='kuroi')&&!live.online){
     const b=ensureCendresBallot(live),p=live.players[b.index];
     if(!p)return;
-    shellPut(`<main class="page hplay hplay-decision hplay-theme-cendres">
+    shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
       <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">VOTE ${b.index+1}/${live.players.length} · TOUR ${b.round}</div></header>
       <section class="hplay-decision-head"><span class="hplay-eyebrow">MAJORITÉ COLLECTIVE · VOTE PRIVÉ</span><h1>${b.show?esc(pc.question):`Passez le téléphone à ${esc(p.name)}`}</h1>
         <p>${b.show?'Choisissez votre propre hypothèse. Votre vote sera masqué au joueur suivant.':'Tous les membres de la cellule doivent voter. La décision ne sera révélée qu’après le dernier vote.'}</p>
@@ -613,15 +613,15 @@ function renderDecision(live){
   }
   shellPut(`<main class="page hplay hplay-decision hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="play">← <span>Discussion</span></button><div class="hplay-mode">DÉCISION</div></header>
-    <section class="hplay-decision-head"><span class="hplay-eyebrow">${live.campaignId==='cendres'?'VOTE COLLECTIF · UN BULLETIN PAR JOUEUR':'CHOIX IRRÉVERSIBLE'}</span><h1>${esc(pc.question)}</h1><p>${live.campaignId==='cendres'?'Votez sur votre propre téléphone. Le résultat n’est dévoilé qu’après le scrutin et une majorité absolue.':'Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.'}</p></section>
-    <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>${live.campaignId==='cendres'?'VOTER →':'VERROUILLER →'}</i></button>`).join('')}</section>
+    <section class="hplay-decision-head"><span class="hplay-eyebrow">${(live.campaignId==='cendres'||live.campaignId==='kuroi')?'VOTE COLLECTIF · UN BULLETIN PAR JOUEUR':'CHOIX IRRÉVERSIBLE'}</span><h1>${esc(pc.question)}</h1><p>${(live.campaignId==='cendres'||live.campaignId==='kuroi')?'Votez sur votre propre téléphone. Le résultat n’est dévoilé qu’après le scrutin et une majorité absolue.':'Le groupe doit arrêter une seule réponse. Le résultat sera ajouté à la campagne si ce dossier n’a pas déjà été archivé.'}</p></section>
+    <section class="hplay-options">${pc.options.map(o=>`<button type="button" data-hp-option="${o.id}"><span>${esc(o.title)}</span><small>${esc(o.detail)}</small><i>${(live.campaignId==='cendres'||live.campaignId==='kuroi')?'VOTER →':'VERROUILLER →'}</i></button>`).join('')}</section>
   </main>`);
 }
 function chooseOption(id){
   const l=readLive();if(!l)return;
   const pc=PACKS[l.campaignId].chapters[l.chapter];let opt=pc.options.find(o=>o.id===id);
   if(!opt)return;
-  if(l.campaignId==='cendres'&&!l.online){
+  if((l.campaignId==='cendres'||l.campaignId==='kuroi')&&!l.online){
     const b=ensureCendresBallot(l);
     if(!b.show||b.index>=l.players.length)return;
     b.votes.push(id);b.index++;b.show=false;
@@ -671,7 +671,7 @@ function decisionKey(id,n){return `igr_heritage_decision_${id}_${n}`}
 function rememberDecision(id,n,v){try{store().setItem(decisionKey(id,n),v)}catch{}}
 function findPreviousDecision(id,n){try{return store().getItem(decisionKey(id,n))||'archive'}catch{return 'archive'}}
 
-function resumeLive(){const l=readLive();if(!l)return renderHub();if(l.stage==='reveal')return renderReveal(l,false);if(l.stage==='play')return renderPlay(l);if(l.stage==='decision'){if(l.campaignId==='cendres'&&!l.online&&l.ballot?.show){l.ballot.show=false;saveLive(l)}return renderDecision(l)}if(l.stage==='result')return renderResult(l);renderChapter(l.campaignId,l.chapter)}
+function resumeLive(){const l=readLive();if(!l)return renderHub();if(l.stage==='reveal')return renderReveal(l,false);if(l.stage==='play')return renderPlay(l);if(l.stage==='decision'){if((l.campaignId==='cendres'||l.campaignId==='kuroi')&&!l.online&&l.ballot?.show){l.ballot.show=false;saveLive(l)}return renderDecision(l)}if(l.stage==='result')return renderResult(l);renderChapter(l.campaignId,l.chapter)}
 function sessionMenu(){const l=readLive();if(!l)return;const ok=confirm('Quitter cette partie ? La session restera enregistrée et pourra être reprise depuis le dossier.');if(ok)renderChapter(l.campaignId,l.chapter)}
 function abortSession(){if(!confirm('Abandonner cette partie Héritage ? La session en cours sera effacée.'))return;const l=readLive();clearLive();if(l)renderChapter(l.campaignId,l.chapter);else renderHub()}
 
@@ -709,8 +709,8 @@ function handleClick(e){
     if(a==='phase-next'){const l=readLive();if(l){l.phaseIndex=Math.min(PACKS[l.campaignId].chapters[l.chapter].phases.length-1,(l.phaseIndex||0)+1);saveLive(l);renderPlay(l)}return}
     if(a==='phase-prev'){const l=readLive();if(l){l.phaseIndex=Math.max(0,(l.phaseIndex||0)-1);saveLive(l);renderPlay(l)}return}
     if(a==='decision'){const l=readLive();if(l){l.stage='decision';saveLive(l);renderDecision(l)}return}
-    if(a==='ballot-reveal'){const l=readLive();if(l?.campaignId==='cendres'&&!l.online&&l.stage==='decision'){ensureCendresBallot(l).show=true;saveLive(l);renderDecision(l)}return}
-    if(a==='play'){const l=readLive();if(l){if(l.campaignId==='cendres'&&!l.online&&l.ballot)l.ballot.show=false;l.stage='play';saveLive(l);renderPlay(l)}return}
+    if(a==='ballot-reveal'){const l=readLive();if((l?.campaignId==='cendres'||l?.campaignId==='kuroi')&&!l.online&&l.stage==='decision'){ensureCendresBallot(l).show=true;saveLive(l);renderDecision(l)}return}
+    if(a==='play'){const l=readLive();if(l){if((l.campaignId==='cendres'||l.campaignId==='kuroi')&&!l.online&&l.ballot)l.ballot.show=false;l.stage='play';saveLive(l);renderPlay(l)}return}
     if(a==='finish'){const l=readLive();if(l)applyResult(l);return}
     if(a==='session-menu')return sessionMenu();
     if(a==='abort')return abortSession();
