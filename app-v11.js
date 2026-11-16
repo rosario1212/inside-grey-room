@@ -938,6 +938,26 @@ function previewSound(){
 }
 
 
+// A successful join/create can be followed by a transient failed first snapshot.
+// Preserve the issued credentials and show a recovery panel instead of leaving the
+// user looking at a stale entry form or suggesting their valid room is missing.
+function pendingRoomSyncPanel(){
+ if(!STATE.room||!STATE.token||STATE.sync)return;
+ const target=byId('app');if(!target)return;
+ target.innerHTML=shell(`<main class="page igr-room-sync-pending" role="status">
+  <section class="panel">
+   <h1>Connexion à la cellule…</h1>
+   <p>Ta place et ta clé de reprise sont enregistrées sur cet appareil. Le serveur met du temps à confirmer l’écran du salon ; ne crée pas une seconde cellule.</p>
+   <p><strong>Code : ${h(STATE.room)}</strong></p>
+   <button class="btn primary" type="button" onclick="retryRoomSync()">Réessayer la synchronisation</button>
+  </section>
+ </main>`);
+}
+async function retryRoomSync(){
+ if(!STATE.room||!STATE.token)return;
+ const current=await syncNow(true);
+ if(!current)pendingRoomSyncPanel();
+}
 async function createRoom(){
  primeNarrationFromGesture();wakeAudioFromGesture().catch?.(()=>{});
  const pseudo=(byId('createPseudo')?.value||'').trim();
@@ -961,6 +981,7 @@ async function createRoom(){
  startRoomWatcher();
  const fresh=await syncNow(true);
  if(fresh?.room?.status==='lobby')renderLobby(fresh);
+ else if(!fresh)pendingRoomSyncPanel();
  void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
  void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
 }
@@ -975,6 +996,7 @@ async function joinRoom(){
   saveSession();startRoomWatcher();
   const fresh=await syncNow(true);
   if(fresh?.room?.status==='lobby')renderLobby(fresh);
+  else if(!fresh)pendingRoomSyncPanel();
   void pushProfileAvatar().catch(error=>console.warn('avatar upload',error));
   void pushProfileCosmetics().catch(error=>console.warn('profile cosmetics',error));
  }catch(e){
@@ -1239,7 +1261,27 @@ async function startGame(){
  }
  const d=STATE.sync,autoCount=(d?.players||[]).filter(p=>!p.preferred_role).length;
  cancelBriefingVoice();stopAmbient();
- try{const result=await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});await syncNow(true);startRoomWatcher();if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`)}catch(e){console.error(e);toast('Impossible de lancer : vérifie le nombre de joueurs.')}
+ try{
+  const result=await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});
+  const fresh=await syncNow(true);startRoomWatcher();
+  if(!fresh)pendingRoomSyncPanel();
+  if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`);
+ }catch(e){
+  console.error(e);
+  // The server may have started the match even if the response was lost.
+  // Always reconcile first; never tell the host to retry a committed launch.
+  const recovered=await syncNow(true).catch(()=>null);
+  if(recovered?.room?.status==='playing'){startRoomWatcher();return}
+  const detail=String(e?.message||'');
+  if(/chosen roles|role allocation|invalid role|role unavailable|role already taken|composition/i.test(detail))
+   toast('Impossible de lancer : une attribution de rôle est incompatible. Vérifie les choix du salon.');
+  else if(/too many players|not enough players/i.test(detail))
+   toast('Impossible de lancer : vérifie le nombre de joueurs.');
+  else if(/unavailable|not approved|not released|gated|release blocked|cannot be pinned/i.test(detail))
+   toast('Ce dossier n’est pas actuellement disponible au démarrage. Sa publication doit être vérifiée.');
+  else toast('Démarrage non confirmé. La cellule est conservée : vérifie la connexion et son état avant de réessayer.');
+ }
+
 }
 function cancelBriefingVoice(){
  NARRATION.generation++;hideAudioWakePrompt();
