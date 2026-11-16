@@ -210,7 +210,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 
 /* The legacy v28 stylesheet loads later: retain the fluid card row and full-bleed image. */
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art{
-  grid-template-rows:max-content!important;
+  grid-template-rows:auto!important;
   height:auto!important;
   min-height:214px!important;
   max-height:none!important;
@@ -220,6 +220,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   height:auto!important;
   max-height:none!important;
   min-height:max-content!important;
+  padding-bottom:28px!important;
   overflow:visible!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact img{
