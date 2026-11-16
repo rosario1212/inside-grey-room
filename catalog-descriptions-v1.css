@@ -193,7 +193,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   --igr-family-gap:7px;
   display:grid!important;
   grid-template-columns:var(--igr-poster-width) minmax(0,1fr)!important;
-  grid-template-rows:auto!important;
+  grid-template-rows:max-content!important;
   align-items:start!important;
   min-width:0!important;
   min-height:var(--igr-card-floor)!important;
@@ -298,7 +298,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   min-width:0!important;
   align-self:stretch!important;
   justify-content:flex-start!important;
-  min-height:0!important;
+  min-height:max-content!important;
   max-height:none!important;
   height:auto!important;
   overflow:visible!important;
