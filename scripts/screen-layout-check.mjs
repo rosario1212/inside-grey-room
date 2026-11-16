@@ -299,6 +299,58 @@ try{
   });
 
 
+  await check('catalog-v12-base-009-020-uniform-full-posters',async()=>{
+    const start=app.indexOf('const SCENARIOS = [');
+    const end=app.indexOf('const SCENARIO_ROLES =',start);
+    assert(start>=0&&end>start,'Cannot locate 001-020 canonical scenarios');
+    const baseScenarios=vm.runInNewContext(app.slice(start,end)+'; SCENARIOS')
+      .filter(sc=>Number(sc.id)>=9&&Number(sc.id)<=20);
+    assert.equal(baseScenarios.length,12,'Exactly 12 base dossiers 009–020 must be verified');
+    const helperStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
+    const helperEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',helperStart);
+    const preview=vm.runInNewContext(app.slice(helperStart,helperEnd)+'; scenarioCardTeaser');
+    const cards=baseScenarios.map(sc=>'<article class="scenario scenario--art scenario--compact" data-igr-scenario-id="'+sc.id+'">'+
+      '<div class="scenario-thumb compact"><img class="igr-poster-full" src="" alt=""></div>'+
+      '<div class="scenario-body compact"><div class="scenario-id">DOSSIER '+sc.id+'</div>'+
+      '<h3>'+sc.title+'</h3><p class="igr-card-excerpt">'+preview(sc.short,17)+'</p></div>'+
+      '<div class="tag-row" aria-label="Informations du dossier">'+
+      '<span class="tag">'+sc.min+'–'+sc.max+' JOUEURS</span><span class="tag">ENQUÊTE</span></div></article>').join('');
+    for(const width of [320,375,390,430]){
+      await page.setViewportSize({width,height:812});
+      await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
+        '<style>'+css+'</style></head><body><div id="app"><main class="page page-create-v10-13">'+
+        '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+cards+
+        '</div></section></main></div></body></html>');
+      const data=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
+        const poster=el.querySelector('.scenario-thumb').getBoundingClientRect(),
+          body=el.querySelector('.scenario-body').getBoundingClientRect(),
+          footer=el.querySelector(':scope > .tag-row').getBoundingClientRect(),
+          card=el.getBoundingClientRect(),title=el.querySelector('h3'),
+          style=getComputedStyle(el.querySelector('.igr-poster-full'));
+        return {id:el.dataset.igrScenarioId,posterWidth:poster.width,posterHeight:poster.height,
+          posterBottom:poster.bottom,bodyBottom:body.bottom,footerTop:footer.top,footerBottom:footer.bottom,
+          cardBottom:card.bottom,fullFit:style.objectFit,titleVisible:title.scrollWidth<=title.clientWidth+1,
+          footerWidth:footer.width,cardWidth:card.width,
+          horizontalOverflow:el.scrollWidth>el.clientWidth+1};
+      }));
+      const first=data[0];
+      for(const m of data){
+        assert(m.fullFit==='contain',width+'px '+m.id+': artwork is cropped or distorted');
+        assert(Math.abs(m.posterWidth-first.posterWidth)<.5&&
+               Math.abs(m.posterHeight-first.posterHeight)<.5,
+          width+'px '+m.id+': base poster differs from other dossiers 009–020');
+        assert(m.footerTop>=Math.max(m.bodyBottom,m.posterBottom)-1,
+          width+'px '+m.id+': badges overlap the poster or synopsis');
+        assert(m.footerBottom<=m.cardBottom+1,width+'px '+m.id+': badges escape the card');
+        assert(Math.abs(m.footerWidth-m.cardWidth)<=2,
+          width+'px '+m.id+': badge footer must span the whole card');
+        assert(m.titleVisible,width+'px '+m.id+': scenario title is clipped');
+        assert(!m.horizontalOverflow,width+'px '+m.id+': card overflows horizontally');
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-all-base-009-020.png'),fullPage:true});
+    }
+  });
+
   await check('catalog-v11-real-uncropped-family-posters',async()=>{
     const assets=[
       {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
