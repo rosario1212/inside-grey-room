@@ -51,7 +51,7 @@ assert.deepEqual(Array.from(maitreRoleIds(1,6)),['avocat','client','enqueteur','
 assert.equal(maitreRoleIds(3,7).length,7);
 
 const casinoLobbySource=casino.slice(casino.indexOf('function lobby(){'),casino.indexOf('function card(){'));
-const roleNames={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
+const roleNames={casino:'Membre de Yonghe',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
 const casinoCtx={
  state:{viewer:'me',inviteCode:'TESTCODE',isHost:true,members:[
  {id:'me',name:'Jeanne',role:'casino',ready:false},{id:'p2',name:'Marc',role:'agent',ready:true}]},
@@ -59,8 +59,16 @@ const casinoCtx={
 };
 const casinoLobby=runInNewContext(casinoLobbySource+';lobby',casinoCtx,{timeout:1000});
 const casinoHTML=casinoLobby();
-assert(casinoHTML.includes('CHOISIS')||casinoHTML.includes('Choisis ton rôle'),'Casino role selection title missing');
+assert(casinoHTML.includes('Choisis ta place'),'Casino role selection title missing');
+assert(casinoHTML.includes('RÉSEAU CRIMINEL')&&casinoHTML.includes('ENQUÊTE INTERNATIONALE'),'Casino must separate faction and Bureau');
+assert(casinoHTML.includes('Rejoindre Yonghe')&&!casinoHTML.includes('<b>Casino</b>'),'Casino is not an individual profession');
+assert(casinoHTML.includes('minimum 4')&&casinoHTML.includes('3 fonctions requises'),'Required seats must be explained');
+assert(casinoCss.includes('.casino-faction-card')&&casinoCss.includes('.casino-role-group-bureau'),'Both camps need distinct styling');
 assert(casinoHTML.includes('data-role-id="agent"')&&casinoHTML.includes('COMPLET'),'Taken Bureau function must be disabled');
-assert(casinoHTML.includes('data-role-id="casino"')&&casinoHTML.includes('TON RÔLE'),'Own Casino role must be selected');
+assert(casinoHTML.includes('data-role-id="casino"')&&casinoHTML.includes('TON CAMP'),'Own Yonghe choice must be selected');
+assert(casinoHTML.includes('BUREAU INCOMPLET')||casinoHTML.includes('YONGHE INCOMPLET'),'Incomplete lobby must not appear launchable');
+const service=read('casino/service.mjs');
+for(const fragment of ["role:initialRole","role_required","casino_full","length<7?'casino':null"])assert(service.includes(fragment),'Casino server capacity contract missing: '+fragment);
+assert(service.includes("own.ready=false"),'Switching roles must clear ready state');
 
 console.log('PASS v729: CENDRES/KUROI/MAÎTRE role reservations, Casino cards, 5-7 seats, private role boundaries, mobile UI and SQL contracts');
