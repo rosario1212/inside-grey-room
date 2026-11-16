@@ -1,6 +1,6 @@
 /* Inside Grey Room — catalogue v4: calmer, compact and readable.
-   Shared geometry only. Typography families, colors, borders and atmosphere
-   continue to belong to each DLC. No ellipsis or clamped public summaries. */
+   Common readability only. Family geometry is defined below; colors and typefaces
+   continue to belong to each DLC. Detailed summaries remain available after opening. */
 
 #app .page-create-v10-13 .scenario-list-v10-13{
   min-width:0;
@@ -176,149 +176,214 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
       rgba(4,6,8,0) 100%);
   }
 }
-@media(max-width:390px){
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
-    grid-template-columns:clamp(91px,26.5vw,103px) minmax(0,1fr)!important;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact{
-    padding:11px 11px 11px!important;
-  }
-}
-@media(max-width:360px){
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
-    font-size:1.16rem!important;
-    line-height:1.13!important;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .tag-row .tag{
-    padding:5px 7px!important;
-    font-size:.57rem!important;
-  }
-}
-@media(min-width:700px){
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact,
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact.regime-scenario{
-    grid-template-columns:120px minmax(0,1fr)!important;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact{
-    padding:15px 15px 14px!important;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13 > .scenario--compact .scenario-body.compact h3{
-    font-size:clamp(1.25rem,2vw,1.5rem)!important;
-  }
-}
 
-/* The legacy v28 stylesheet loads later: retain the fluid card row and full-bleed image. */
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art{
+/* FAMILY POSTER SYSTEM v11 — five independent catalogue gabarits.
+   A poster is a fixed-ratio, top-aligned print, NOT a stretched column.
+   Descriptions may grow a card, never the poster. The original art is not
+   cropped or warped; native image proportions are preserved via contain.
+   Every print in one family is exactly the same display size per viewport.
+   Backgrounds, font families and accents remain owned by the DLC themes. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact{
+  --igr-poster-width:clamp(118px,36vw,146px);
+  --igr-poster-ratio:3/4;
+  --igr-card-floor:228px;
+  --igr-family-title:1.23rem;
+  --igr-family-copy:.9rem;
+  --igr-family-gap:7px;
+  display:grid!important;
+  grid-template-columns:var(--igr-poster-width) minmax(0,1fr)!important;
   grid-template-rows:auto!important;
-  height:auto!important;
-  min-height:188px!important;
+  align-items:start!important;
+  min-width:0!important;
+  min-height:var(--igr-card-floor)!important;
   max-height:none!important;
-  align-self:stretch!important;
-}
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-body.compact{
   height:auto!important;
-  max-height:none!important;
-  min-height:max-content!important;
-  padding-bottom:20px!important;
-  overflow:visible!important;
-}
-/* Catalogue card text must be laid out, not estimated at 240px.
-   The legacy .scenario content-visibility:auto + contain-intrinsic-size:240px
-   reserves a fixed-height placeholder while skipped. This can put long copy
-   and badges visibly outside their card, at both phone and desktop widths.
-   Keep lazy loading for images, but give interactive compact cards their
-   actual intrinsic height and stable touch targets. */
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact{
-  content-visibility:visible!important;
-  contain-intrinsic-size:none!important;
-}
-
-/* Catalogue poster v8: true edge-to-edge image treatment.
-   Do not create inset posters, ambient duplicates, black letterbox bands, or
-   destructive object-fit:cover crops. A single complete original artwork
-   occupies the complete left column, regardless of the card's text height.
-   Width and height fit the slot independently when ratios differ: this avoids
-   cropping image lettering, while retaining the previously approved card UI.
-   DLC font and palette stay untouched. */
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact{
-  position:relative!important;
+  gap:0!important;
   overflow:hidden!important;
-  background:transparent!important;
   isolation:isolate!important;
-  padding:0!important;
+}
+/* BASE 001–020: graphite, consistent poster frame and editorial sans. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
+  --igr-poster-width:clamp(118px,34vw,143px);
+  --igr-poster-ratio:2/3;
+  --igr-card-floor:247px;
+  --igr-family-title:1.22rem;
+  --igr-family-copy:.9rem;
+  --igr-family-gap:7px;
+}
+/* OMERTÀ 021–025: its own portrait frame, restrained serif and red accents. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.omerta-scenario{
+  --igr-poster-width:clamp(120px,36vw,148px);
+  --igr-poster-ratio:3/4;
+  --igr-card-floor:229px;
+  --igr-family-title:1.27rem;
+  --igr-family-copy:.9rem;
+  --igr-family-gap:8px;
+}
+/* TERREUR 026–028: distinct condensed type and graphite crisis frame. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.terror-scenario{
+  --igr-poster-width:clamp(120px,36.3vw,150px);
+  --igr-poster-ratio:3/4;
+  --igr-card-floor:236px;
+  --igr-family-title:1.2rem;
+  --igr-family-copy:.9rem;
+  --igr-family-gap:7px;
+}
+/* CARTEL 029–031: source gold SVGs are 724×960, never stretched. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.cartel-scenario{
+  --igr-poster-width:clamp(122px,37vw,153px);
+  --igr-poster-ratio:724/960;
+  --igr-card-floor:233px;
+  --igr-family-title:1.2rem;
+  --igr-family-copy:.9rem;
+  --igr-family-gap:7px;
+}
+/* LE RÉGIME 032–034: fixed institutional poster and archival type. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.regime-scenario{
+  --igr-poster-width:clamp(121px,35.5vw,148px);
+  --igr-poster-ratio:3/4;
+  --igr-card-floor:241px;
+  --igr-family-title:1.19rem;
+  --igr-family-copy:.9rem;
+  --igr-family-gap:7px;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact > img.igr-poster-full{
+  > article.scenario.scenario--art.scenario--compact .scenario-thumb.compact{
+  position:relative!important;
+  align-self:start!important;
   display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  aspect-ratio:var(--igr-poster-ratio)!important;
+  overflow:hidden!important;
+  margin:0!important;
+  padding:0!important;
+  border-top:0!important;
+  border-bottom:0!important;
+  /* The existing family-owned background continues under taller copy. */
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact .scenario-thumb.compact > img.igr-poster-full{
   position:absolute!important;
+  display:block!important;
   inset:0!important;
   width:100%!important;
   height:100%!important;
-  min-width:100%!important;
-  min-height:100%!important;
-  max-width:none!important;
-  max-height:none!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
   margin:0!important;
   padding:0!important;
   border:0!important;
   border-radius:0!important;
-  box-sizing:border-box!important;
   aspect-ratio:auto!important;
-  object-fit:fill!important;
-  object-position:center!important;
+  object-fit:contain!important;
+  object-position:center top!important;
   transform:none!important;
   filter:none!important;
   opacity:1!important;
-  pointer-events:none!important;
 }
-
-/* Catalogue DLC layout v10 — one compact, predictable rhythm for the four
-   DLC universes. Artwork remains one full-bleed image; palettes, typefaces,
-   roles, scenarios and floating navigation are not redefined here.
-   The base 001–020 use their independent card geometry. */
-@media(max-width:699px){
-  #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
-    grid-template-columns:clamp(116px,35.5vw,144px) minmax(0,1fr)!important;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
-    .scenario-body.compact{
-    padding:10px 11px 10px!important;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
-    .scenario-body.compact > p.igr-card-excerpt{
-    line-height:1.40!important;
-    margin:1px 0 7px!important;
-    text-wrap:pretty;
-    hyphens:none;
-  }
-  #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
-    .scenario-body.compact .tag-row{
-    gap:5px!important;
-    padding-top:4px!important;
-  }
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
+  min-width:0!important;
+  align-self:stretch!important;
+  justify-content:flex-start!important;
+  min-height:0!important;
+  max-height:none!important;
+  height:auto!important;
+  overflow:visible!important;
+  padding:11px 11px 12px!important;
 }
-@media(min-width:375px) and (max-width:699px){
-  #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--compact.scenario--art.cartel-scenario .scenario-body.compact h3{
-    font-size:clamp(1.14rem,4.85vw,1.23rem)!important;
-    letter-spacing:-.01em;
-  }
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact .scenario-body.compact h3{
+  font-size:var(--igr-family-title)!important;
+  line-height:1.15!important;
+  margin:4px 0 8px!important;
+  max-height:none!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
 }
-@media(max-width:360px){
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact .scenario-body.compact > p.igr-card-excerpt{
+  font-size:var(--igr-family-copy)!important;
+  line-height:1.42!important;
+  margin:1px 0 8px!important;
+  max-height:none!important;
+  overflow:visible!important;
+  white-space:normal!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact .scenario-body.compact .tag-row{
+  gap:var(--igr-family-gap)!important;
+  margin-top:auto!important;
+  padding-top:6px!important;
+}
+/* A neutral continuation of the illustration's column: it is not a duplicate,
+   a miniature or a blurred image. It never affects the print's size. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact .scenario-thumb.compact{
+  background-color:transparent!important;
+}
+/* A smaller phone needs breathing room for text, not a squeezed poster. */
+@media(max-width:374px){
   #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
-    grid-template-columns:clamp(104px,34vw,122px) minmax(0,1fr)!important;
+    > article.scenario.scenario--art.scenario--compact{
+    --igr-poster-width:clamp(100px,34vw,118px);
+    --igr-card-floor:267px;
+    --igr-family-title:1.13rem;
+    --igr-family-copy:.86rem;
+    --igr-family-gap:5px;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
+    --igr-poster-width:clamp(100px,32.5vw,113px);
+    --igr-card-floor:295px;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.cartel-scenario{
+    --igr-poster-width:clamp(104px,34.5vw,120px);
   }
 }
 @media(min-width:700px){
   #app .page-create-v10-13 .scenario-list-v10-13
-    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
-    grid-template-columns:148px minmax(0,1fr)!important;
+    > article.scenario.scenario--art.scenario--compact{
+    --igr-poster-width:154px;
+    --igr-card-floor:232px;
+    --igr-family-title:1.38rem;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
+    --igr-poster-width:146px;
+    --igr-card-floor:245px;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.omerta-scenario{
+    --igr-poster-width:154px;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.terror-scenario{
+    --igr-poster-width:156px;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.cartel-scenario{
+    --igr-poster-width:158px;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario{
+    --igr-poster-width:155px;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
+    padding:14px 15px 14px!important;
   }
 }
