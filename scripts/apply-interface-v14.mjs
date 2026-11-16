@@ -56,8 +56,8 @@ for(const page of ['index.html','en.html']){
   html=html.replace(/dlc-profile-ui-v12-44\.js\?v=[^"']+/g,'dlc-profile-ui-v12-44.js?v=v20-settings-nav');
   html=html.replace(/dlc-suite-v12-40\.css\?v=[^"']+/g,'dlc-suite-v12-40.css?v=v20-settings-nav');
   html=html.replace(/terror-v12-40\.css\?v=[^"']+/g,'terror-v12-40.css?v=v20-settings-nav');
-  html=html.replace(/dlc-suite-v12-37\.js\?v=[^"']+/g,'dlc-suite-v12-37.js?v=v20-settings-nav');
-  html=html.replace(/omerta-v12\.js\?v=[^"']+/g,'omerta-v12.js?v=v20-settings-nav');
+  html=html.replace(/dlc-suite-v12-37\.js\?v=[^"']+/g,'dlc-suite-v12-37.js?v=v20-settings-nav-v12-footer');
+  html=html.replace(/omerta-v12\.js\?v=[^"']+/g,'omerta-v12.js?v=v20-settings-nav-v12-footer');
   html=html.replace(/dlc-invites-v12-45\.js\?v=[^"']+/g,'dlc-invites-v12-45.js?v=v20-settings-nav');
 
   html=html.replace(/<link\s+rel="apple-touch-icon"[^>]*>/i,'<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v15.png?v=v15-ios-home">');
@@ -82,7 +82,7 @@ try{
   let sw=await readFile(swPath,'utf8');
   sw=sw.replace(/const CACHE='[^']+';/,"const CACHE='igr-v27-role-choice-nav';");
   if(!sw.includes('/premium-access-sync-v17.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/premium-access-sync-v17.css?v=v17-premium-sync','/premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit-v8-no-thumbnails',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/premium-access-sync-v17.css?v=v17-premium-sync','/premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit-v8-no-thumbnails-v12-footer',");
   }
   if(!sw.includes('/interface-polish-v14.css')){
     sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/interface-polish-v14.css?v=v20-settings-nav','/interface-polish-v14.js?v=v20-settings-nav',");
@@ -118,8 +118,8 @@ try{
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.js\?v=[^']+/g,'/dlc-profile-ui-v12-44.js?v=v20-settings-nav');
   sw=sw.replace(/\/dlc-suite-v12-40\.css\?v=[^']+/g,'/dlc-suite-v12-40.css?v=v20-settings-nav');
   sw=sw.replace(/\/terror-v12-40\.css\?v=[^']+/g,'/terror-v12-40.css?v=v20-settings-nav');
-  sw=sw.replace(/\/dlc-suite-v12-37\.js\?v=[^']+/g,'/dlc-suite-v12-37.js?v=v20-settings-nav');
-  sw=sw.replace(/\/omerta-v12\.js\?v=[^']+/g,'/omerta-v12.js?v=v20-settings-nav');
+  sw=sw.replace(/\/dlc-suite-v12-37\.js\?v=[^']+/g,'/dlc-suite-v12-37.js?v=v20-settings-nav-v12-footer');
+  sw=sw.replace(/\/omerta-v12\.js\?v=[^']+/g,'/omerta-v12.js?v=v20-settings-nav-v12-footer');
   sw=sw.replace(/\/dlc-invites-v12-45\.js\?v=[^']+/g,'/dlc-invites-v12-45.js?v=v20-settings-nav');
   sw=sw.replace("'/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png'","'/assets/icon-192-v14.png','/assets/icon-512-v14.png','/assets/apple-touch-icon-v15.png','/assets/favicon-v14.png'");
   sw=sw.replaceAll('/assets/apple-touch-icon-v14.png','/assets/apple-touch-icon-v15.png');
