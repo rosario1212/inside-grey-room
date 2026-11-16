@@ -4,9 +4,9 @@ const KEY='igr_casino_identity_v1',ROOT='casino-live-v105';
 const API=window.Capacitor?.isNativePlatform?.()?'https://inside-grey-room-last.alial-khafaji2002.workers.dev/api/casino':'/api/casino';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const roles={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
+const roles={casino:'Membre de Yonghe',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
 const ROLE_SHORT=Object.freeze({
- casino:'Négocie, mise et défend les intérêts de Yonghe.',
+ casino:'Négocie, joue et défend les intérêts de Yonghe.',
  agent:'Mène les opérations et les interpellations.',
  investigator:'Recoupe les preuves et conduit les enquêtes.',
  analyst:'Analyse les dossiers et les contradictions.',
@@ -21,7 +21,7 @@ let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,ge
 const freshToken=()=>[...crypto.getRandomValues(new Uint8Array(32))].map(n=>n.toString(16).padStart(2,'0')).join('');
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY+'_pending')||localStorage.getItem(KEY)||'null');return (v?.roomId||v?.inviteCode)&&v?.sessionToken?v:null}catch{return null}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(credentials));localStorage.removeItem(KEY+'_pending')}catch{}}
-function message(error){const map={revision_conflict:'La table a évolué. Relis le nouvel état avant de confirmer ton choix.',casino_editorial_release_required:'Le lancement attend la validation des trois intrigues privées.',session_not_authorized:'Cette clé ne permet pas de reprendre ce personnage.',minimum_social_time:'Laisse encore du temps aux échanges avant de poursuivre.',judicial_elements_not_established:'Les éléments constitutifs de cette infraction ne sont pas tous démontrés par les sources retenues.',continuity_not_available:'La procédure de secours nécessite une attente prolongée.',territory_agreement_requires_asset:'Désigne le territoire exact de cet accord.',intel_requires_documentary_source:'Sélectionne au moins une source documentaire liée à ce personnage.',agent_must_locate_room:'L’Agent doit d’abord localiser la salle.',finish_poker_first:'La main de poker doit être terminée.',players_not_ready:'Chaque participant doit confirmer sa présence.',incomplete_lobby_roles:'Il faut 4 à 7 joueurs au casino, un Agent, un Enquêteur et un Analyste.',name_already_in_use:'Ce prénom est déjà utilisé. Une reprise demande la clé personnelle.',role_already_taken:'Ce rôle vient d’être choisi par une autre personne.',storage_unavailable:'La sauvegarde serveur est momentanément indisponible.',casino_service_unavailable:'Le service Casino est momentanément indisponible.',network_uncertain:'La réponse n’est pas arrivée. Réessaie la même action pour vérifier son enregistrement.',bureau_report_pending:'Le dernier rapport attend les voix du bureau. Après le délai de secours, les absents restent abstentionnistes.',bureau_verdict_not_open:'Le rapport s’ouvre au dernier cycle du Dernier Dragon.',invalid_bureau_verdict:'Position non recevable.',invalid_phase_position:'Réponse de préparation non reconnue.',phase_participants_not_ready:'Des joueurs terminent encore leurs échanges. Attends leurs accords ou le délai de continuité.'};return map[error]||'Action refusée : '+String(error).replaceAll('_',' ')}
+function message(error){const map={revision_conflict:'La table a évolué. Relis le nouvel état avant de confirmer ton choix.',casino_editorial_release_required:'Le lancement attend la validation des trois intrigues privées.',session_not_authorized:'Cette clé ne permet pas de reprendre ce personnage.',minimum_social_time:'Laisse encore du temps aux échanges avant de poursuivre.',judicial_elements_not_established:'Les éléments constitutifs de cette infraction ne sont pas tous démontrés par les sources retenues.',continuity_not_available:'La procédure de secours nécessite une attente prolongée.',territory_agreement_requires_asset:'Désigne le territoire exact de cet accord.',intel_requires_documentary_source:'Sélectionne au moins une source documentaire liée à ce personnage.',agent_must_locate_room:'L’Agent doit d’abord localiser la salle.',finish_poker_first:'La main de poker doit être terminée.',players_not_ready:'Chaque participant doit confirmer sa présence.',incomplete_lobby_roles:'Il faut 4 à 7 joueurs au casino, un Agent, un Enquêteur et un Analyste.',name_already_in_use:'Ce prénom est déjà utilisé. Une reprise demande la clé personnelle.',role_already_taken:'Ce rôle vient d’être choisi par une autre personne.',casino_full:'Les sept places de Yonghe sont occupées. Choisis une fonction du bureau.',role_required:'Choisis ta place avant de confirmer.',storage_unavailable:'La sauvegarde serveur est momentanément indisponible.',casino_service_unavailable:'Le service Casino est momentanément indisponible.',network_uncertain:'La réponse n’est pas arrivée. Réessaie la même action pour vérifier son enregistrement.',bureau_report_pending:'Le dernier rapport attend les voix du bureau. Après le délai de secours, les absents restent abstentionnistes.',bureau_verdict_not_open:'Le rapport s’ouvre au dernier cycle du Dernier Dragon.',invalid_bureau_verdict:'Position non recevable.',invalid_phase_position:'Réponse de préparation non reconnue.',phase_participants_not_ready:'Des joueurs terminent encore leurs échanges. Attends leurs accords ou le délai de continuité.'};return map[error]||'Action refusée : '+String(error).replaceAll('_',' ')}
 async function request(body){
  const controller=new AbortController(),deadline=setTimeout(()=>controller.abort(),12000);
  try{
@@ -76,26 +76,49 @@ function welcome(){return `<h1>Une table à Macao</h1><p>Un écran par participa
  ${load()?'<button class="casino-action" data-casino-action="resume">Reprendre mon personnage</button>':''}
  <details><summary>Reprendre sur un autre appareil</summary>${form('recover',area('Ta clé personnelle','recovery',110),'Reprendre ma partie')}</details>`}
 function lobby(){
- const own=state.members.find(m=>m.id===state.viewer),members=state.members;
- const taken=new Map(members.filter(m=>m.role!=='casino').map(m=>[m.role,m]));
+ const members=state.members,own=members.find(m=>m.id===state.viewer)||{role:null,ready:false};
+ const required=['agent','investigator','analyst'];
+ const taken=new Map(members.filter(m=>m.role&&m.role!=='casino').map(m=>[m.role,m]));
  const casinoCount=members.filter(m=>m.role==='casino').length;
- const buttons=Object.entries(roles).map(([id,label])=>{
-  const mine=own.role===id,locked=id==='casino'?casinoCount>=7&&!mine:!!taken.get(id)&&!mine;
-  const availability=id==='casino'?casinoCount+'/7':(taken.has(id)?'1/1':'0/1');
+ const readyCount=members.filter(m=>m.ready).length;
+ const missing=required.filter(id=>!taken.has(id));
+ const selected=roles[own.role]||'Aucune place choisie';
+ const casinoMine=own.role==='casino',casinoFull=casinoCount>=7&&!casinoMine;
+ const canStart=casinoCount>=4&&casinoCount<=7&&missing.length===0&&members.length>=7&&members.length<=12&&readyCount===members.length&&members.every(m=>m.role&&Object.hasOwn(roles,m.role));
+ const casinoCard=`<button type="button" class="casino-role-choice-card casino-faction-card ${casinoMine?'is-picked':''} ${casinoFull?'is-taken':''}" data-casino-action="select-role" data-role-id="casino" aria-pressed="${casinoMine}" ${casinoFull?'disabled':''}>
+    <span class="casino-role-choice-top"><b>Rejoindre Yonghe</b><em>${casinoMine?'TON CAMP':casinoFull?'COMPLET':casinoCount+'/7 PLACES'}</em></span>
+    <small>Entre dans le réseau criminel. Ton personnage, ses alliances et ses secrets seront révélés au lancement.</small>
+    <span class="casino-faction-meta">${casinoCount}/7 places occupées · minimum 4</span>
+   </button>`;
+ const bureauCards=Object.entries(roles).filter(([id])=>id!=='casino').map(([id,label])=>{
+  const mine=own.role===id,locked=!!taken.get(id)&&!mine,essential=required.includes(id);
   return `<button type="button" class="casino-role-choice-card ${mine?'is-picked':''} ${locked?'is-taken':''}" data-casino-action="select-role" data-role-id="${esc(id)}" aria-pressed="${mine}" ${locked?'disabled':''}>
-   <span class="casino-role-choice-top"><b>${esc(label)}</b><em>${mine?'TON RÔLE':locked?'COMPLET':availability}</em></span>
-   <small>${esc(roleShort(id))}</small><span class="casino-role-activity">ACTIVITÉ · ${roleStars(id)}</span>
-  </button>`;
+    <span class="casino-role-choice-top"><b>${esc(label)}</b><em>${mine?'TON RÔLE':locked?'COMPLET':'CHOISIR'}</em></span>
+    <small>${esc(roleShort(id))}</small>
+    <span class="casino-role-choice-footer"><span class="casino-role-activity">ACTIVITÉ · ${roleStars(id)}</span><span class="casino-role-necessity">${essential?'REQUIS':'OPTIONNEL'}</span></span>
+   </button>`;
  }).join('');
- return `<section class="casino-lobby-top"><h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code</button><output data-casino-invite></output><p>${members.length}/12 participants · 7 à 12 joueurs au total, dont 4 à 7 au casino. Les invités rejoignent gratuitement la table.</p></section>
- <ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul>
- <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div>
- <p>Choisis une fonction libre. Les fonctions du bureau sont uniques ; plusieurs joueurs peuvent appartenir au Casino. Les identités, intrigues et éventuelles infiltrations restent secrètes.</p>
- <div class="casino-role-choice-grid">${buttons}</div>
+ const pending=casinoCount<4?'Encore '+(4-casinoCount)+' membre(s) à Yonghe':missing.length?'Fonctions requises manquantes : '+missing.map(id=>roles[id]).join(', '):readyCount<members.length?'En attente des confirmations':'Composition de la table prête';
+ const launchLabel=casinoCount<4?'YONGHE INCOMPLET':missing.length?'BUREAU INCOMPLET':members.some(m=>!m.role)?'CHOIX MANQUANTS':readyCount<members.length?'EN ATTENTE DES JOUEURS':'LANCER LE DOSSIER';
+ return `<section class="casino-lobby-top"><h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code</button><output data-casino-invite></output><p>${members.length}/12 participants · minimum 7. Chaque joueur rejoint Yonghe ou occupe une fonction du bureau.</p></section>
+ <ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role]||'Rôle à choisir')}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul>
+ <section class="casino-role-choice-zone" aria-label="Choix des places">
+  <div class="casino-role-choice-heading"><span>PRÉPARATION · HÉRITAGE / CASINO</span><h2>Choisis ta place</h2></div>
+  <p>Deux camps. À Yonghe, tu choisis ton camp ; au bureau, tu réserves une fonction précise. Les identités et infiltrations restent secrètes.</p>
+  <div class="casino-role-group casino-role-group-yonghe">
+   <div class="casino-role-group-heading"><div><span>01 · RÉSEAU CRIMINEL</span><h3>Yonghe</h3></div><small>4–7 joueurs</small></div>
+   ${casinoCard}
+  </div>
+  <div class="casino-role-group casino-role-group-bureau">
+   <div class="casino-role-group-heading"><div><span>02 · ENQUÊTE INTERNATIONALE</span><h3>Le bureau</h3></div><small>3 fonctions requises</small></div>
+   <div class="casino-role-choice-grid">${bureauCards}</div>
+  </div>
+  <div class="casino-role-selection-status" role="status">Ta place : <strong>${esc(selected)}</strong>${own.ready?' · prêt':' · à confirmer'}</div>
  </section>
- <button class="casino-action casino-ready" data-casino-action="ready">${own.ready?'Modifier ma préparation':'JE SUIS PRÊT'}</button>
- ${state.isHost?'<button class="casino-action casino-start" data-casino-action="start">LANCER LE DOSSIER</button>':''}
- <p class="casino-lobby-note">L’hôte lance lorsque les fonctions indispensables sont représentées et que les joueurs sont prêts. Les personnages privés seront attribués ensuite.</p>`;
+ <div class="casino-lobby-progress" aria-label="Préparation de la partie"><span>${casinoCount}/4 Yonghe min.</span><span>${3-missing.length}/3 fonctions requises</span><span>${readyCount}/${members.length} prêts</span></div>
+ <button class="casino-action casino-ready" data-casino-action="ready" ${!own.role?'disabled':''}>${own.ready?'MODIFIER MA PRÉPARATION':'CONFIRMER MA PLACE'}</button>
+ ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${launchLabel}</button>`:''}
+ <p class="casino-lobby-note">${esc(pending)}. Le rôle de chaque personnage de Yonghe sera révélé individuellement après le lancement.</p>`;
 }
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
