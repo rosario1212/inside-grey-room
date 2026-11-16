@@ -4,7 +4,7 @@ import {runInNewContext} from 'node:vm';
 import {execFileSync} from 'node:child_process';
 const read=p=>readFileSync(p,'utf8');
 const natural=read('natural-role-gameplay-v50.js'),rules=read('self-guided-rules-v51.js');
-const expected={enqueteur:5,suspect:4,procureur:4,juge:4,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5};
+const expected={enqueteur:5,suspect:4,procureur:4,juge:4,maitre:4,journaliste:3,inspecteur:3,analyste:3,expert:2,temoin:2,officier_liaison:5,associato:3,uomo_onore:4,contabile:3,pentito:4,caporegime:4,consigliere:3,sottocapo:4,don:4,bras_droit:3,informateur:3};
 const readActivity=s=>{const m=s.match(/const ACTIVITY=(\{[^;\n]+\});/);assert(m,'missing activity map');return Function('return ('+m[1]+')')();};
 assert.deepEqual(readActivity(natural),expected,'lobby activity ratings do not match v697');
 assert.deepEqual(readActivity(rules),expected,'rulebook activity ratings must match lobby');
@@ -23,6 +23,9 @@ for(const lang of ['fr','en']){
  assert(rendered.includes(lang==='fr'?'Officier':'Officer'),'Terror officer missing');
  const stars=[...rendered.matchAll(/(?:ACTIVITÉ ESTIMÉE|ESTIMATED ACTIVITY) · ([★☆]{5})/g)].map(x=>x[1]);
  assert.equal(stars.length,11,'expected 11 visible public role ratings');
+ assert.equal(expected.juge,4,'Judge must reflect procedural activity, not sole decision power');
+ assert.equal(expected.don,4,'Omerta Don activity rating must be covered');
+ assert.equal(expected.bras_droit,3,'Cartel right-hand activity rating must be covered');
  assert.equal(stars[10],'★★★★★','Officer must have 5 stars');
  assert.equal(stars[1],'★★★☆☆','Analyst must have 3 stars');
  assert.equal(stars[7],'★★☆☆☆','Expert must have 2 stars');
