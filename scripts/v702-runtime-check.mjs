@@ -64,12 +64,14 @@ const dlc=await read('dlc-suite-v12-37.js');
 const premium=await read('premium-access-sync-v17.js');
 const cartelRuntime=await read('dlc-suite-v12-37.js');
 const cartelServiceWorker=await read('service-worker.js');
-for(const asset of ['cartel-029-le-cycle-mort.webp','cartel-030-la-cour-achetee.webp','cartel-031-la-dette.webp']){
-  assert(cartelRuntime.includes('assets/'+asset),'Cartel runtime points to a missing/obsolete poster: '+asset);
-  assert(cartelServiceWorker.includes('/assets/'+asset),'PWA offline cache omits an existing Cartel poster: '+asset);
+for(const id of ['029','030','031']){
+  const name='cartel-'+id+'-poster-v2.svg';
+  assert(cartelRuntime.includes(name),'Cartel generated gold-framed poster missing from runtime: '+id);
+  assert(cartelServiceWorker.includes(name),'PWA cache must retain the generated Cartel poster: '+id);
+  const art=await read('assets/'+name);
+  assert(art.includes('<svg ')&&art.includes('INSIDE GREY ROOM')&&art.includes('CARTEL'),
+    'Cartel generated illustration or original graphic styling missing: '+id);
 }
-assert(!/cartel-0(?:29|30|31)-poster-v2\.svg/.test(cartelRuntime+cartelServiceWorker),
-  'Missing Cartel SVG references must not survive release.');
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
 assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing shared bounded scenario teaser function');
