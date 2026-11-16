@@ -332,7 +332,7 @@ body:has(#app .page-create-v10-13) #app{
 }
 body:has(#app .page-create-v10-13) #app > .app{
   min-height:0!important;height:auto!important;
-  padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))!important;
+  padding-bottom:14px!important;
 }
 body:has(#app .page-create-v10-13) #app .page-create-v10-13{
   min-height:0!important;height:auto!important;
@@ -340,7 +340,7 @@ body:has(#app .page-create-v10-13) #app .page-create-v10-13{
 }
 body:has(#app .page-create-v10-13) > .igr-beta-footer{
   margin:0!important;
-  padding:7px 14px calc(12px + env(safe-area-inset-bottom,0px))!important;
+  padding:8px 14px calc(64px + env(safe-area-inset-bottom,0px))!important;
   min-height:0!important;
   font-size:11px!important;
 }
