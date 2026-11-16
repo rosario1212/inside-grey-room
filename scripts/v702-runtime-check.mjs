@@ -132,6 +132,13 @@ for(const family of ['omerta','terror','cartel','regime']){
 }
 assert(fullCopyCss.includes('--igr-poster-ratio:724/960'),
   'Cartel art must keep its original 724×960 aspect ratio');
+assert(fullCopyCss.includes('--igr-poster-ratio:9/16')&&fullCopyCss.includes('--igr-poster-ratio:3/4'),
+  'Classic poster slots must support both native 9:16 and 3:4 artwork');
+for(let i=9;i<=20;i++){
+  const id=String(i).padStart(3,'0');
+  assert(fullCopyCss.includes('#scenario-'+id),
+    'Classic dossier '+id+' must use its own 3:4 artwork format, not the 001–008 9:16 format');
+}
 assert(!fullCopyCss.includes('object-fit:fill!important'),
   'Stretch-to-card legacy poster formatting must be removed');
 assert(!fullCopyCss.includes('Unified full-frame poster v7'),

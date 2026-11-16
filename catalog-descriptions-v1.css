@@ -215,6 +215,27 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   --igr-family-copy:.9rem;
   --igr-family-gap:7px;
 }
+/* Base dossier original formats: 001–008 are 9:16; 009–020 are 3:4.
+   Do not force 009–020 into a 9:16 print: it inserts visible empty bands.
+   Keep the SAME poster column width, title typography, tags and card styling
+   as 001–008. This changes only the art frame's native image ratio. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(
+    #scenario-009,
+    #scenario-010,
+    #scenario-011,
+    #scenario-012,
+    #scenario-013,
+    #scenario-014,
+    #scenario-015,
+    #scenario-016,
+    #scenario-017,
+    #scenario-018,
+    #scenario-019,
+    #scenario-020
+  ){
+  --igr-poster-ratio:3/4;
+}
 /* OMERTÀ 021–025: its own portrait frame, restrained serif and red accents. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact.omerta-scenario{

@@ -301,6 +301,18 @@ try{
     const assets=[
       {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
       {klass:'',name:'006 — LES CENDRES DU CHALET',full:'scenario-006-v10-13.webp'},
+      {klass:'',name:'009 — LE SUJET 17',full:'scenario-009-v11-6.webp'},
+      {klass:'',name:'010 — LE BRUIT DES MURS',full:'scenario-010-v11-6.webp'},
+      {klass:'',name:'011 — 36 HEURES',full:'scenario-011-v11-6.webp'},
+      {klass:'',name:'012 — FIDÈLES',full:'scenario-012-v11-6.webp'},
+      {klass:'',name:'013 — LIGNE DE MIRE',full:'scenario-013-v11-6.webp'},
+      {klass:'',name:'014 — SOUS SECRET',full:'scenario-014-v11-6.webp'},
+      {klass:'',name:'015 — AVANT LA MORT',full:'scenario-015-v11-6.webp'},
+      {klass:'',name:'016 — LE DERNIER ÉTAGE',full:'scenario-016-v11-6.webp'},
+      {klass:'',name:'017 — LE PRIX DU SILENCE',full:'scenario-017-v11-6.webp'},
+      {klass:'',name:'018 — LES ASSIETTES VIDES',full:'scenario-018-v11-6.webp'},
+      {klass:'',name:'019 — LE GRAND BAL',full:'scenario-019-v11-6.webp'},
+      {klass:'',name:'020 — L’APOTHÉOSE',full:'scenario-020-v11-6.webp'},
       {klass:'omerta-scenario',name:'021 — L’ENVELOPPE',full:'omerta-021-l-enveloppe.webp'},
       {klass:'terror-scenario',name:'026 — LA VILLE TOMBE',full:'terror-026-la-ville-tombe.webp'},
       {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-poster-v2.svg'},
@@ -315,7 +327,7 @@ try{
     const markup=[];
     for(const item of assets){
       const foreground=await toData(item.full);
-      markup.push('<article class="scenario scenario--art scenario--compact '+item.klass+'"><div class="scenario-thumb compact">'+
+      markup.push('<article id="scenario-'+item.name.slice(0,3)+'" class="scenario scenario--art scenario--compact '+item.klass+'"><div class="scenario-thumb compact">'+
         '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
         '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
         '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
@@ -352,15 +364,16 @@ try{
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
-          if(/^(001|006)/.test(name)){
-            assert(deviation<=.025,width+'px '+name+': the Base 9:16 family poster is the wrong ratio '+JSON.stringify(m));
+          if(/^(00[1-8]|0(?:09|1[0-9]|20))/.test(name)){
+            assert(deviation<=.025,width+'px '+name+
+              ': base source ratio differs from its allocated poster frame (letterbox/vignette) '+JSON.stringify(m));
           }
           if(/^(029|030|031)/.test(name)){
             assert(deviation<=.015,width+'px '+name+': Cartel artwork must fit 724:960 without distortion '+JSON.stringify(m));
           }
         }
       }
-      if(width===390)await page.screenshot({path:path.join(report,'catalog-v11-real-family-artwork.png'),fullPage:true});
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-original-ratios.png'),fullPage:true});
     }
   });
 
