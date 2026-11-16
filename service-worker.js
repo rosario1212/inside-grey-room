@@ -1,8 +1,8 @@
-const CACHE='igr-catalogue-v730-selection-20261116';
+const CACHE='igr-intro-v19-full-height-20261116';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
   '/catalog-descriptions-v1.css?v=v730-direct-dlc-selector-poster-fit-20261116',
-  '/intro-poster-v18.css?v=poster-justice-hint-touch-target-20261116',
+  '/intro-poster-v18.css?v=v19-full-height-20261116',
   '/regime-live-v13.js?v=regime-v16-rosters-20261115',
   '/analyst-profiling-v700.css?v=v701-progressive-psychology',
   '/analyst-profiling-v700.js?v=v701-progressive-psychology',
