@@ -69,11 +69,11 @@ assert(app.includes('scenarioCardTeaser(sc.short)'), 'Classic cards must use the
 for(const [label,source] of [['DLC',dlc],['premium catalogue',premium]]){
  assert(source.includes('class="igr-card-excerpt"'),label+' card must show a teaser');
  assert(source.includes('scenarioCardTeaser(sc.short,19)'),label+' card must use the shorter DLC-specific preview');
- assert(source.includes('igr-poster-full')&&source.includes('igr-poster-ambient'),
-   label+' must render the actual contained poster over its ambient background');
+ assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
+   label+' must use only one full-bleed poster, without inset or duplicate thumbnail');
 }
-assert(app.includes('class="igr-poster-ambient"') && app.includes('class="igr-poster-full"'),
- 'Classic 001-020 must use a complete foreground image and full-height ambient backdrop');
+assert(app.includes('class="igr-poster-full"')&&!app.includes('class="igr-poster-ambient"'),
+ 'Classic 001-020 must render one edge-to-edge full artwork without a miniature');
 assert(app.includes('src="${scenarioArt(sc.id)}"'),
  'Classic cards must load original uncropped artwork, not reuse cropped thumbnails as foreground');
 const start=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
@@ -114,6 +114,10 @@ assert(fullCopyCss.includes('p.igr-card-excerpt')&&fullCopyCss.includes('-webkit
   'Final catalogue CSS must override the historical three-line truncation');
 assert(fullCopyCss.includes('max-height:none!important')&&fullCopyCss.includes('height:auto!important'),
   'Cards and summary paragraphs must grow with their public copy');
+assert(fullCopyCss.includes('Catalogue poster v8')&&fullCopyCss.includes('object-fit:fill!important'),
+  'Public catalogue must fit all of each original image edge-to-edge without letterbox cropping');
+assert(!fullCopyCss.includes('Unified full-frame poster v7'),
+  'Obsolete inset-poster styles must be removed rather than stacked');
 assert(html.includes('catalog-descriptions-v1.css') || report.bundles.some(b=>
   b.sourceUrls?.some(url=>url.startsWith('catalog-descriptions-v1.css'))),
   'Full-length dossier styles must be included in the published bundle');
