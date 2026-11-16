@@ -428,3 +428,25 @@
 @media(max-width:335px){
   .casino-live .casino-role-choice-grid--bureau{grid-template-columns:minmax(0,1fr)}
 }
+
+
+/* v733.1 — Final iPhone screenshot pass: one-line selection and actionable gaps. */
+.casino-live .casino-selected-role{
+  grid-template-columns:1fr auto;
+  grid-template-rows:auto auto;
+  align-items:center;
+  column-gap:10px;row-gap:3px;
+  padding:10px 12px;
+}
+.casino-live .casino-selected-role>span{grid-column:1/-1;font-size:9px}
+.casino-live .casino-selected-role>b{grid-column:1;grid-row:2;font-size:14px}
+.casino-live .casino-selected-role>em{
+  grid-column:2;grid-row:2;justify-self:end;text-align:right;
+  font-size:10px;white-space:nowrap
+}
+.casino-live .casino-selected-role>small{grid-column:1/-1}
+.casino-live .casino-role-choice-card.is-taken,
+.casino-live .casino-role-choice-card:disabled{opacity:.67}
+.casino-live .casino-role-choice-card.is-taken .casino-role-choice-top em{color:#c6a285}
+.casino-live .casino-launch-readiness li{font-size:12px;line-height:1.5}
+.casino-live .casino-launch-readiness li>span{font-size:13px}
