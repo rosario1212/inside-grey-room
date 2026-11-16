@@ -186,8 +186,8 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   > article.scenario.scenario--art.scenario--compact {
   --igr-poster-width:clamp(112px,31vw,130px);
   --igr-poster-ratio:9/16;
-  --igr-heading-size:clamp(1.10rem,4.55vw,1.26rem);
-  --igr-excerpt-size:clamp(.83rem,3.5vw,.91rem);
+  --igr-heading-size:clamp(1.125rem,4.55vw,1.26rem);
+  --igr-excerpt-size:clamp(.86rem,3.5vw,.91rem);
   --igr-card-gap:10px;
   display:grid!important;
   grid-template-columns:var(--igr-poster-width) minmax(0,1fr)!important;
@@ -211,36 +211,36 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
   --igr-poster-width:clamp(112px,31vw,130px);
   --igr-poster-ratio:9/16;
-  --igr-heading-size:clamp(1.10rem,4.45vw,1.25rem);
-  --igr-excerpt-size:clamp(.82rem,3.45vw,.91rem);
+  --igr-heading-size:clamp(1.125rem,4.45vw,1.25rem);
+  --igr-excerpt-size:clamp(.86rem,3.45vw,.91rem);
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact.omerta-scenario {
   --igr-poster-width:clamp(115px,33vw,140px);
   --igr-poster-ratio:3/4;
   --igr-heading-size:clamp(1.14rem,4.65vw,1.32rem);
-  --igr-excerpt-size:clamp(.83rem,3.55vw,.94rem);
+  --igr-excerpt-size:clamp(.86rem,3.55vw,.94rem);
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact.terror-scenario {
   --igr-poster-width:clamp(115px,33vw,143px);
   --igr-poster-ratio:3/4;
-  --igr-heading-size:clamp(1.10rem,4.5vw,1.26rem);
-  --igr-excerpt-size:clamp(.83rem,3.55vw,.94rem);
+  --igr-heading-size:clamp(1.125rem,4.5vw,1.26rem);
+  --igr-excerpt-size:clamp(.86rem,3.55vw,.94rem);
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact.cartel-scenario {
   --igr-poster-width:clamp(118px,34vw,145px);
   --igr-poster-ratio:724/960;
-  --igr-heading-size:clamp(1.10rem,4.65vw,1.29rem);
-  --igr-excerpt-size:clamp(.84rem,3.55vw,.95rem);
+  --igr-heading-size:clamp(1.125rem,4.65vw,1.29rem);
+  --igr-excerpt-size:clamp(.86rem,3.55vw,.95rem);
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact.regime-scenario {
   --igr-poster-width:clamp(115px,32vw,140px);
   --igr-poster-ratio:3/4;
-  --igr-heading-size:clamp(1.06rem,4.3vw,1.22rem);
-  --igr-excerpt-size:clamp(.83rem,3.55vw,.93rem);
+  --igr-heading-size:clamp(1.125rem,4.3vw,1.22rem);
+  --igr-excerpt-size:clamp(.86rem,3.55vw,.93rem);
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact {
@@ -370,8 +370,8 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--art.scenario--compact {
     --igr-poster-width:clamp(96px,31vw,108px);
-    --igr-heading-size:1.06rem;
-    --igr-excerpt-size:.82rem;
+    --igr-heading-size:1.125rem;
+    --igr-excerpt-size:.86rem;
   }
   #app .page-create-v10-13 .scenario-list-v10-13
     > article.scenario.scenario--art.scenario--compact.omerta-scenario,
