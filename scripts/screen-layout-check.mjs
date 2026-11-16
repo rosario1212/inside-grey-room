@@ -90,7 +90,14 @@ try{
           box=el.getBoundingClientRect(),textBox=p.getBoundingClientRect(),tagBox=t.getBoundingClientRect();
         return {cardHeight:box.height,textBottom:textBox.bottom,tagTop:tagBox.top,tagBottom:tagBox.bottom,
           cardBottom:box.bottom,bodyOverflow:body.scrollWidth>body.clientWidth+1,
-          heightRule:getComputedStyle(el).maxHeight,clamp:getComputedStyle(p).webkitLineClamp};
+          heightRule:getComputedStyle(el).maxHeight,clamp:getComputedStyle(p).webkitLineClamp,
+          cardDisplay:getComputedStyle(el).display,cardHeightCSS:getComputedStyle(el).height,
+          cardMinHeight:getComputedStyle(el).minHeight,cardContain:getComputedStyle(el).contain,
+          cardVisibility:getComputedStyle(el).contentVisibility,
+          cardIntrinsic:getComputedStyle(el).containIntrinsicSize,
+          bodyDisplay:getComputedStyle(body).display,bodyHeight:getComputedStyle(body).height,
+          bodyRectHeight:body.getBoundingClientRect().height,bodyScrollHeight:body.scrollHeight,
+          bodyPosition:getComputedStyle(body).position};
       }));
       for(const [i,m] of measures.entries()){
         assert(m.cardHeight>=190,width+'px dossier '+cards[i].id+': card height too small');
@@ -163,12 +170,17 @@ try{
       'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
-  await check('catalog-v5-five-universes-responsive-cards',async()=>{
+  await check('catalog-v11-five-separate-family-gabarits',async()=>{
     const samples=[
+      {klass:'',label:'DOSSIER 001',title:'LA CHAMBRE 222',description:'Maël Sénéchal est retrouvé mort, poignardé, dans la chambre 222. Trois personnes ont croisé sa route cette nuit-là. Leurs versions se contredisent.',players:'4–5 JOUEURS'},
       {klass:'',label:'DOSSIER 020',title:'L’APOTHÉOSE',description:'327 personnes meurent dans l’incendie du Bal des Fondateurs. Certaines portes pouvaient encore être ouvertes. Aucune décision n’explique seule le bilan.',players:'13–16 JOUEURS'},
-      {klass:'omerta-scenario',label:'OMERTÀ · DOSSIER 025',title:'IL DON',description:'Vittorio Santoro laisse ses hommes gérer les affaires du clan. Un racket mal maîtrisé met désormais en cause son entourage et son autorité.',players:'4–8 JOUEURS'},
+      {klass:'omerta-scenario',label:'OMERTÀ · DOSSIER 021',title:'L’ENVELOPPE',description:'À Brooklyn, une partie des recettes du racket manque à l’appel. Plusieurs hommes avaient accès à la collecte ; aucun ne veut en répondre.',players:'4–8 JOUEURS'},
+      {klass:'omerta-scenario',label:'OMERTÀ · DOSSIER 025',title:'IL DON',description:'Vittorio Santoro laisse ses hommes gérer les affaires du clan. Un racket mal maîtrisé met en cause son entourage et son autorité.',players:'4–8 JOUEURS'},
+      {klass:'terror-scenario',label:'TERREUR · DOSSIER 026',title:'LA VILLE TOMBE',description:'Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres.',players:'6 JOUEURS'},
       {klass:'terror-scenario',label:'TERREUR · DOSSIER 028',title:'DERNIER PÉRIMÈTRE',description:'La capitale cède secteur après secteur. Le FDR menace les prisonniers et prétend avoir un relais jusque dans la Grey Room. Les communications coupées et les anciens accès cachent-ils une infiltration ou une opération d’intimidation ?',players:'6 JOUEURS'},
+      {klass:'cartel-scenario',label:'CARTEL · DOSSIER 029',title:'LE CYCLE MORT',description:'Trois rescapés demandent protection : le cartel a envoyé la langue de leur compagnon exécuté. Vingt personnes restent captives.',players:'6–11 JOUEURS'},
       {klass:'cartel-scenario',label:'CARTEL · DOSSIER 030',title:'LA COUR ACHETÉE',description:'Le cartel a massacré un gouverneur et sa famille, puis détruit un registre compromettant. Trois assaillants ont été capturés. La Grey Room doit reconstituer les noms et les crimes que ce registre contenait.',players:'7–9 JOUEURS'},
+      {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 032',title:'LES ARCHIVES DU PALAIS',description:'Après la chute du régime, des responsables ont disparu. La Grey Room reconstitue les registres et les ordres.',players:'6–8 JOUEURS'},
       {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 034',title:'LES NOMS QU’ILS PORTAIENT',description:'Le président déchu et son gendre, chef de la sécurité, tentent d’échapper à la justice. Faux noms, refuges et derniers fidèles brouillent leur trace. Une arrestation peut intervenir très tôt, mais le verdict exige des preuves.',players:'6–9 JOUEURS'}
     ];
     const codeStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
@@ -178,14 +190,23 @@ try{
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
       '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:30)+'</p><div class="tag-row">'+
-      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
+      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>');
+    const families=[
+      ['scenario-panel-v10-13',''],
+      ['omerta-dlc-section','omerta-list'],
+      ['terror-dlc-section','terror-list'],
+      ['cartel-dlc-section','cartel-list'],
+      ['regime-dlc-section','regime-list']
+    ];
+    const groupedMarkup=families.map(([section,list],i)=>
+      '<section class="panel '+section+'"><div class="scenario-list scenario-list-v10-13 '+list+'">'+
+      cards.slice(i*2,i*2+2).join('')+'</div></section>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:820});
       await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
         '<style>'+css+'</style></head><body class="igr-scenario-browser igr-global-dock-active igr-dock-scrolling">'+
         '<div id="app"><div class="app"><main class="page page-create-v10-13">'+
-        '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+cards+
-        '</div></section></main></div></div>'+
+        groupedMarkup+'</main></div></div>'+
         '<nav id="igrUniversalDock" class="igr-universal-dock"><button class="igr-dock-pill igr-dock-filters"><span>☷</span><b>Filtres</b></button>'+
         '<button class="igr-dock-pill igr-dock-home"><span>⌂</span><b>Accueil</b></button></nav></body></html>');
       const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
@@ -201,6 +222,11 @@ try{
           fullPadding:el.querySelector('.igr-poster-full')?getComputedStyle(el.querySelector('.igr-poster-full')).paddingTop:null,
           imageCount:el.querySelectorAll('.scenario-thumb img').length,
           artColumnWidth:el.querySelector('.scenario-thumb').getBoundingClientRect().width,
+          artHeight:el.querySelector('.scenario-thumb').getBoundingClientRect().height,
+          artRatio:getComputedStyle(el.querySelector('.scenario-thumb')).aspectRatio,
+          artAlignment:getComputedStyle(el.querySelector('.scenario-thumb')).alignSelf,
+          cardVisibility:getComputedStyle(el).contentVisibility,
+          cardIntrinsic:getComputedStyle(el).containIntrinsicSize,
           titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
           bodyBottomPadding:parseFloat(getComputedStyle(body).paddingBottom),
           copyLineRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),
@@ -231,10 +257,12 @@ try{
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=samples[i].title;
         assert(m.height>=188,width+'px '+name+': card too short');
+        assert(m.cardVisibility==='visible',width+'px '+name+': legacy 240px placeholder still active');
+        assert(!m.cardIntrinsic.includes('240px'),width+'px '+name+': old fake intrinsic height still applies');
         assert(m.titleFont>=18&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
         if(width===390&&samples[i].klass){
-          assert(m.bodyBottomPadding<=10.5,
-            'Long DLC cards must not reserve extra empty space beneath badges: '+name);
+          assert(m.bodyBottomPadding<=12.5,
+            'DLC card padding creates unnecessary dead space: '+name);
           assert(m.copyLineRatio<=1.42,
             'DLC description leading unexpectedly stretches the poster: '+name);
         }
@@ -243,24 +271,38 @@ try{
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
-        assert(m.fit==='fill',width+'px '+name+': artwork must fill the left column without inset');
+        assert(m.fit==='contain',width+'px '+name+': stretched or cropped artwork (not contain)');
+        assert(['start','flex-start'].includes(m.artAlignment),width+'px '+name+': poster must not be stretched by description height');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
-          assert(m.artColumnWidth>=130&&m.artColumnWidth<=145,
-            width+'px '+name+': DLC column still uses the too-narrow stretched poster format '+m.artColumnWidth);
+          assert(m.artColumnWidth>=130&&m.artColumnWidth<=154,
+            width+'px '+name+': family-specific poster column width is incorrect '+m.artColumnWidth);
         }
-        assert(m.fullFit==='fill',width+'px '+name+': artwork must not be cropped or letterboxed');
+        assert(m.fullFit==='contain',width+'px '+name+': poster pixels must retain their original proportions');
         assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
         assert(m.textVisible,width+'px '+name+': description hidden');
+        assert(m.artHeight>110&&m.artHeight<275,width+'px '+name+': family poster size is implausible '+m.artHeight);
       }
-      if(width===390)await page.screenshot({path:path.join(report,'catalog-v3-five-universes-iphone.png'),fullPage:true});
+      // Within every family, the card's text length must NEVER resize the poster.
+      for(let j=0;j<samples.length;j+=2){
+        const first=metrics[j],second=metrics[j+1];
+        assert(samples[j].klass===samples[j+1].klass,'Poster pair belongs to different families');
+        assert(Math.abs(first.artColumnWidth-second.artColumnWidth)<.5 &&
+               Math.abs(first.artHeight-second.artHeight)<.5,
+          width+'px '+(samples[j].klass||'base')+': poster dimensions differ within one family: '+
+          JSON.stringify({first,second}));
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v11-five-family-gabarits.png'),fullPage:true});
     }
   });
 
 
-  await check('catalog-v7-real-full-posters-001-032',async()=>{
+  await check('catalog-v11-real-uncropped-family-posters',async()=>{
     const assets=[
       {klass:'',name:'001 — LA CHAMBRE 222',full:'scenario-001-v10-13.webp'},
+      {klass:'',name:'006 — LES CENDRES DU CHALET',full:'scenario-006-v10-13.webp'},
+      {klass:'omerta-scenario',name:'021 — L’ENVELOPPE',full:'omerta-021-l-enveloppe.webp'},
+      {klass:'terror-scenario',name:'026 — LA VILLE TOMBE',full:'terror-026-la-ville-tombe.webp'},
       {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-poster-v2.svg'},
       {klass:'cartel-scenario',name:'030 — LA COUR ACHETÉE',full:'cartel-030-poster-v2.svg'},
       {klass:'cartel-scenario',name:'031 — LA DETTE',full:'cartel-031-poster-v2.svg'},
@@ -301,18 +343,24 @@ try{
       }));
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=assets[i].name;
-        assert(m.fit==='fill',width+'px '+name+': image is not full bleed');
+        assert(m.fit==='contain',width+'px '+name+': image must maintain its original aspect ratio');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
         assert(Math.abs(m.width-m.contentWidth)<=1&&Math.abs(m.height-m.contentHeight)<=1,
-          width+'px '+name+': artwork does not fully occupy the inner border-box '+JSON.stringify(m));
-        if(width===390&&/^(029|030|031)/.test(name)){
+          width+'px '+name+': poster should fill its independent image slot '+JSON.stringify(m));
+        if(width===390){
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
-          console.log('Cartel ratio',name,'source',m.sourceAspect.toFixed(3),'display',m.displayAspect.toFixed(3),'deviation',deviation.toFixed(3));
-          assert(deviation<=.36,width+'px '+name+': severe remaining poster stretch '+JSON.stringify(m));
+          console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
+            'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
+          if(/^(001|006)/.test(name)){
+            assert(deviation<=.025,width+'px '+name+': the Base 9:16 family poster is the wrong ratio '+JSON.stringify(m));
+          }
+          if(/^(029|030|031)/.test(name)){
+            assert(deviation<=.015,width+'px '+name+': Cartel artwork must fit 724:960 without distortion '+JSON.stringify(m));
+          }
         }
       }
-      if(width===390)await page.screenshot({path:path.join(report,'catalog-v7-actual-artwork-001-and-032.png'),fullPage:true});
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v11-real-family-artwork.png'),fullPage:true});
     }
   });
 
