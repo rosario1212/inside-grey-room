@@ -110,7 +110,7 @@
   };
 
   function dlcCard(sc){
-    return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact omerta-scenario" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">OMERTÀ · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(sc.short,28):sc.short)}</p></div><div class="tag-row" aria-label="Informations du dossier"><span class="tag">4–8 joueurs</span><span class="tag omerta-tag">CONFIDENTIEL</span></div></article>`;
+    return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact omerta-scenario" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">OMERTÀ · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(sc.short,30):String(sc.short||'').trim().split(/\s+/).slice(0,30).join(' '))}</p><div class="tag-row" aria-label="Informations du dossier"><span class="tag">4–8 joueurs</span><span class="tag omerta-tag">CONFIDENTIEL</span></div></div></article>`;
   }
   function accessLabel(){
     if(ACCESS.level==='tester')return ACCESS.expiresAt?`LICENCE TEST HÔTE · jusqu’au ${new Date(ACCESS.expiresAt).toLocaleDateString('fr-CH')}`:'LICENCE TEST HÔTE';

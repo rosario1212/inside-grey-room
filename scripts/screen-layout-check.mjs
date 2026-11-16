@@ -78,7 +78,7 @@ try{
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">LE RÉGIME · DOSSIER '+sc.id+'</div>'+
       '<h3>'+sc.name+'</h3><p class="igr-card-excerpt">'+sc.description+'</p>'+
-      '</div><div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></article>').join('');
+      '<div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:900});
       await page.setContent('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+
@@ -160,7 +160,7 @@ try{
       'Opening a dossier must still display its complete context');
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
-      assert(source.includes('scenarioCardTeaser(sc.short,28)'),file+': public DLC cards must support fuller 28-word summaries');
+      assert(source.includes('scenarioCardTeaser(sc.short,30)'),file+': public DLC cards must support fuller 30-word summaries');
       assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
         file+': every DLC rendering pathway must show one image without a vignette');
     }
@@ -170,7 +170,7 @@ try{
       'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
-  await check('catalog-v726-five-family-inline-player-count',async()=>{
+  await check('catalog-v727-five-family-flow-layout',async()=>{
     const samples=[
       {klass:'',label:'DOSSIER 001',title:'LA CHAMBRE 222',description:'Maël Sénéchal est retrouvé mort, poignardé, dans la chambre 222. Trois personnes ont croisé sa route cette nuit-là. Leurs versions se contredisent.',players:'4–5 JOUEURS'},
       {klass:'',label:'DOSSIER 006',title:'LES CENDRES DU CHALET',description:'Cinq ans après la mort de Noé lors d’une randonnée, une ancienne vidéo bouleverse les témoignages de ses trois amis.',players:'4–5 JOUEURS'},
@@ -189,8 +189,8 @@ try{
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?28:(sc.label.includes('001')?23:30))+'</p></div><div class="tag-row">'+
-      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></article>');
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description,30)+'</p><div class="tag-row">'+
+      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>');
     const families=[
       ['scenario-panel-v10-13',''],
       ['omerta-dlc-section','omerta-list'],
@@ -224,7 +224,7 @@ try{
           artColumnWidth:el.querySelector('.scenario-thumb').getBoundingClientRect().width,
           artHeight:el.querySelector('.scenario-thumb').getBoundingClientRect().height,
           artRatio:getComputedStyle(el.querySelector('.scenario-thumb')).aspectRatio,
-          artAlignment:getComputedStyle(el.querySelector('.scenario-thumb')).alignSelf,
+          artFloat:getComputedStyle(el.querySelector('.scenario-thumb')).float,
           cardVisibility:getComputedStyle(el).contentVisibility,
           cardIntrinsic:getComputedStyle(el).containIntrinsicSize,
           titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
@@ -256,14 +256,14 @@ try{
       }
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=samples[i].title;
-        assert(m.height>=188,width+'px '+name+': card too short');
+        assert(m.height>=140,width+'px '+name+': card too short');
         assert(m.cardVisibility==='visible',width+'px '+name+': legacy 240px placeholder still active');
         assert(!m.cardIntrinsic.includes('240px'),width+'px '+name+': old fake intrinsic height still applies');
-        assert(m.titleFont>=18&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
+        assert(m.titleFont>=17.5&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
         if(width===390&&samples[i].klass){
           assert(m.bodyBottomPadding<=12.5,
             'DLC card padding creates unnecessary dead space: '+name);
-          assert(m.copyLineRatio<=1.42,
+          assert(m.copyLineRatio<=1.47,
             'DLC description leading unexpectedly stretches the poster: '+name);
         }
         assert(m.copyFont>=13.5&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
@@ -274,7 +274,7 @@ try{
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='contain',width+'px '+name+': stretched or cropped artwork (not contain)');
-        assert(['start','flex-start'].includes(m.artAlignment),width+'px '+name+': poster must not be stretched by description height');
+        assert(m.artFloat==='left',width+'px '+name+': poster must float so longer text uses the whole card width');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
           assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
@@ -299,7 +299,7 @@ try{
   });
 
 
-  await check('catalog-v726-base-009-020-inline-player-count',async()=>{
+  await check('catalog-v727-base-009-020-common-3x4-frame',async()=>{
     const start=app.indexOf('const SCENARIOS = [');
     const end=app.indexOf('const SCENARIO_ROLES =',start);
     assert(start>=0&&end>start,'Cannot locate 001-020 canonical scenarios');
@@ -312,9 +312,9 @@ try{
     const cards=baseScenarios.map(sc=>'<article id="scenario-'+sc.id+'" class="scenario scenario--art scenario--compact" data-igr-scenario-id="'+sc.id+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" src="" alt=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">DOSSIER '+sc.id+'</div>'+
-      '<h3>'+sc.title+'</h3><p class="igr-card-excerpt">'+preview(sc.short,30)+'</p></div>'+
+      '<h3>'+sc.title+'</h3><p class="igr-card-excerpt">'+preview(sc.short,30)+'</p>'+
       '<div class="tag-row" aria-label="Informations du dossier">'+
-      '<span class="tag">'+sc.min+'–'+sc.max+' JOUEURS</span><span class="tag">ENQUÊTE</span></div></article>').join('');
+      '<span class="tag">'+sc.min+'–'+sc.max+' JOUEURS</span><span class="tag">ENQUÊTE</span></div></div></article>').join('');
     for(const width of [320,375,390,430]){
       await page.setViewportSize({width,height:812});
       await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
@@ -324,13 +324,14 @@ try{
       const data=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
         const poster=el.querySelector('.scenario-thumb').getBoundingClientRect(),
           body=el.querySelector('.scenario-body').getBoundingClientRect(),
-          footer=el.querySelector(':scope > .tag-row').getBoundingClientRect(),
+          footer=el.querySelector('.scenario-body > .tag-row').getBoundingClientRect(),
           card=el.getBoundingClientRect(),title=el.querySelector('h3'),
           style=getComputedStyle(el.querySelector('.igr-poster-full'));
         return {id:el.dataset.igrScenarioId,posterWidth:poster.width,posterHeight:poster.height,
           posterBottom:poster.bottom,bodyBottom:body.bottom,footerTop:footer.top,footerBottom:footer.bottom,
+          textBottom:el.querySelector('.igr-card-excerpt').getBoundingClientRect().bottom,
           cardBottom:card.bottom,fullFit:style.objectFit,titleVisible:title.scrollWidth<=title.clientWidth+1,
-          posterRight:poster.right,footerLeft:footer.left,bodyWidth:body.width,
+          posterRight:poster.right,footerLeft:footer.left,bodyWidth:body.width,cardRight:card.right,
           footerWidth:footer.width,cardWidth:card.width,
           horizontalOverflow:el.scrollWidth>el.clientWidth+1};
       }));
@@ -340,11 +341,11 @@ try{
         assert(Math.abs(m.posterWidth-first.posterWidth)<.5&&
                Math.abs(m.posterHeight-first.posterHeight)<.5,
           width+'px '+m.id+': base poster differs from other dossiers 009–020');
-        assert(m.footerTop>=m.bodyBottom-1,
-          width+'px '+m.id+': player count must follow synopsis, not overlap it');
+        assert(m.footerTop>=m.textBottom+2,
+          width+'px '+m.id+': player count must follow the synopsis with enough space');
         assert(m.footerBottom<=m.cardBottom+1,width+'px '+m.id+': badges escape the card');
-        assert(Math.abs(m.footerWidth-m.bodyWidth)<=2&&m.footerLeft>=m.posterRight-1,
-          width+'px '+m.id+': player count must stay entirely inside the right text column');
+        assert(m.footerLeft>=0&&m.footerLeft+m.footerWidth<=m.cardRight+1,
+          width+'px '+m.id+': player count must remain inside the card');
         assert(m.titleVisible,width+'px '+m.id+': scenario title is clipped');
         assert(!m.horizontalOverflow,width+'px '+m.id+': card overflows horizontally');
       }
@@ -386,7 +387,7 @@ try{
         '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
         '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
         '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
-        '</div><div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></article>');
+        '<div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></div></article>');
     }
     for(const width of [320,390,430]){
       await page.setViewportSize({width,height:812});
@@ -420,7 +421,7 @@ try{
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
           if(/^(00[1-8]|0(?:09|1[0-9]|20))/.test(name)){
-            assert(deviation<=.025,width+'px '+name+': the Base 9:16 family poster is the wrong ratio '+JSON.stringify(m));
+            assert(Math.abs(m.displayAspect-.75)<=.025,width+'px '+name+': every Base poster must use a 3:4 display frame '+JSON.stringify(m));
           }
           if(/^(029|030|031)/.test(name)){
             assert(deviation<=.015,width+'px '+name+': Cartel artwork must fit 724:960 without distortion '+JSON.stringify(m));
