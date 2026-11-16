@@ -4,7 +4,8 @@ const app=readFileSync('app-v11.js','utf8');
 const index=readFileSync('index.html','utf8');
 const sw=readFileSync('service-worker.js','utf8');
 const standard=readFileSync('docs/standard-fiches-personnages.md','utf8');
-const cache='santoro-display-audit-20261108';
+const appAsset=index.match(/<script\s+src="(app-v11\.js\?v=[^"]+)"/)?.[1];
+const pwaRevision=sw.match(/^const CACHE='(igr-[^']+)'/m)?.[1];
 assert(app.includes("const conciseDossier=['001','002','003','004','005','006'].includes("),
   'Scenario 005 must use the same short-card layout as 001–004');
 assert(app.includes("valueBlock('CE QUE TU SAIS',ps.anchors)"),'Known facts must remain visible');
@@ -14,9 +15,9 @@ assert(section.includes('igr82RelationKnownOnly(entry?.text)'),'Relations must b
 assert(!section.includes('igr82-relation-question'),'No guided questions in relations');
 assert(/120 à 160 mots/.test(standard),'Standard must remain 120–160 words');
 assert(standard.includes('Ignorances réservées à l\'édition'),'Unknowns must remain private');
-assert(index.includes('app-v11.js?v='+cache),'HTML asset version mismatch');
-assert(sw.includes("const CACHE='igr-"+cache+"'"),'Service Worker version mismatch');
-assert(sw.includes('/app-v11.js?v='+cache),'SW pre-cache version mismatch');
+assert(appAsset,'Current app revision missing from HTML');
+assert(pwaRevision,'PWA cache revision must be versioned');
+assert(sw.includes("'/" + appAsset + "'"),'PWA precache must use the HTML app revision');
 console.log('v645: scenario 005 short cards, safe knowledge and cache all verified');
 
 assert(app.includes('Porté lors des coups, puis posé près du corps'),'A mask label');
