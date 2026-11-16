@@ -19,10 +19,12 @@ for(const match of index.matchAll(/<link[^>]+rel="stylesheet"[^>]*>|<style[^>]*>
   else styles.push(await read(match[0].match(/href="([^"]+)"/)[1].split('?')[0]));
 }
 const css=styles.join('\n');
-const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/button>\s*<\/div>/);
+const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/div>\s*(?=<div id="app")/);
 assert(introMatch,'Canonical entrance markup must exist');
-const introArt=await readFile(path.join(target,'assets/intro-v10-14.webp'));
-const introHtml=introMatch[0].replace(/src="[^"]+"/,`src="data:image/webp;base64,${introArt.toString('base64')}"`);
+const introPath=introMatch[0].match(/<img class="intro-art" src="([^"]+)"/)?.[1]?.split('?')[0];
+assert(introPath&&introPath.startsWith('assets/'),'Canonical entrance artwork must exist');
+const introArt=await readFile(path.join(target,introPath));
+const introHtml=introMatch[0].replace(/(<img class="intro-art" )src="[^"]+"/,`$1src="data:image/webp;base64,${introArt.toString('base64')}"`);
 const app=await read('app-v11.js');
 const playModes=await read('play-modes-v13-8.js');
 const homeStart=app.indexOf('function shell('),homeEnd=app.indexOf('function goHome(',homeStart);
