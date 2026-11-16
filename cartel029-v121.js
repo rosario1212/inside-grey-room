@@ -29,6 +29,7 @@ function wrap(name,fn){
   case 'renderReveal':renderReveal=newer;break;
   case 'renderFinalLockForm':renderFinalLockForm=newer;break;
   case 'phaseLabel':phaseLabel=newer;break;
+  case 'lockFinal':lockFinal=newer;break;
   } }catch(_){}
 }
 const roles={
@@ -242,6 +243,42 @@ wrap('phaseLabel',(orig,phase)=>{
  if(phase==='final_audience')return 'AUDIENCE DU DOSSIER';
  return orig(phase);
 });
+const investigateur029=new Set(['enqueteur','analyste','procureur','juge']);
+const vote029Actif=()=>active()&&d()?.room?.state?.cartel029_collective_v723===true;
+const ancienVote029=()=>[...(d()?.my_actions||[])].reverse().find(a=>a.action_type==='cartel029_final_opinion'&&+a.cycle===+d()?.room?.cycle);
+const choixAuteur029=[['unknown','Preuves insuffisantes'],['local','Direction locale'],['execution','Exécutant sur le terrain'],['finance','Responsable financier']];
+const choixTemoin029=[['unknown','Impossible à établir'],['innocent','Témoin innocent'],['coerced','Coopération sous contrainte'],['voluntary','Complicité volontaire'],['operative','Agent du cartel infiltré']];
+function vote029Select(id,question,values,current){
+ return '<label class="igr029-vote-field" for="'+id+'"><b>'+esc(question)+'</b><select id="'+id+'" '+(current?'disabled aria-disabled="true"':'')+'>'+
+ values.map(([v,label])=>'<option value="'+v+'" '+(v===(current||'unknown')?'selected':'')+'>'+esc(label)+'</option>').join('')+'</select></label>';
+}
+function vote029Form(){
+ const previous=ancienVote029()?.payload;
+ return '<section class="igr029-extras igr029-vote"><h3>Ton verdict individuel</h3>'+
+ '<p>Chaque membre du camp d’enquête répond. La majorité absolue sur chaque point détermine le verdict collectif ; une égalité ne suffit pas.</p>'+
+ vote029Select('igr029-responsibility','Qui a décidé la représaille ?',choixAuteur029,previous?.responsibility)+
+ vote029Select('igr029-witness4','Quel était le rôle réel du quatrième témoin ?',choixTemoin029,previous?.witness4)+
+ '<p class="igr029-hint">'+(previous?'Tes réponses sont scellées. Confirme ta clôture ci-dessous.':'Tes choix sont privés jusqu’à la révélation. Une fois scellés, ils ne peuvent pas être modifiés.')+'</p></section>';
+}
+let vote029Pending=false;
+wrap('lockFinal',async (orig,...args)=>{
+ if(!vote029Actif()||!investigateur029.has(me().public_role))return orig(...args);
+ if(vote029Pending)return;
+ const previous=ancienVote029()?.payload;
+ const answer=previous?.responsibility||document.getElementById('igr029-responsibility')?.value;
+ const witness=previous?.witness4||document.getElementById('igr029-witness4')?.value;
+ if(!choixAuteur029.some(([v])=>v===answer)||!choixTemoin029.some(([v])=>v===witness)){
+   toast('Réponds aux deux questions avant de clôturer.');return;
+ }
+ vote029Pending=true;
+ try{
+   await rpc('igr_v723_029_vote',{p_code:d().room.code,p_player_token:s().token,p_responsibility:answer,p_witness4:witness});
+   return await orig(...args);
+ }catch(error){
+   console.warn('[029 vote]',error?.message);
+   toast('Vote non confirmé : vérifie la connexion et réessaie. Le serveur refuse les doublons.');
+ }finally{vote029Pending=false}
+});
 wrap('renderFinalLockForm',(orig)=>{
  if(!active())return orig();
  if((d()?.my_actions||[]).some(a=>a.action_type==='final_lock'))return '<div class="locked-state">Ta conclusion est enregistrée.</div>';
@@ -250,8 +287,8 @@ wrap('renderFinalLockForm',(orig)=>{
  '<p>Défends ton angle à partir de ce que tu as réellement publié. 24 caractères minimum. Les sources déclarées ne sont pas certifiées automatiquement.</p>'+
  '<textarea id="finalText" maxlength="300" minlength="24" rows="4" placeholder="Quelle information peux-tu soutenir et quelles limites reconnais-tu ?"></textarea>'+
  '<button class="btn primary block" onclick="lockFinal()">Remettre ton angle</button></div>';
- if(['enqueteur','analyste','procureur','juge'].includes(role))return '<div class="final-form"><h3>Clôturer ta participation</h3>'+
- '<p>Les quatre témoins ne sont pas notés sur une échelle de culpabilité. Le rapport d’enquête sert de base au dénouement.</p>'+
+ if(['enqueteur','analyste','procureur','juge'].includes(role))return (vote029Actif()?vote029Form():'')+'<div class="final-form"><h3>Clôturer ta participation</h3>'+
+ '<p>'+(vote029Actif()?'Chaque membre du camp d’enquête vote sur la responsabilité et le quatrième témoin. Le rapport est une reconstruction partagée, pas un veto individuel.':'Les quatre témoins ne sont pas notés sur une échelle de culpabilité. Le rapport d’enquête sert de base au dénouement.')+'</p>'+
  '<label for="finalText">Observation de clôture (facultative)</label>'+
  '<textarea id="finalText" maxlength="300" rows="3" placeholder="Que retiens-tu de l’enquête ?"></textarea>'+
  '<button class="btn primary block" onclick="lockFinal()">Confirmer ma conclusion</button></div>';
@@ -275,6 +312,10 @@ const css=document.createElement('style');css.id='igr029-v121-css';css.textConte
 .igr029-detail{background:rgba(255,255,255,.034);border:1px solid rgba(255,255,255,.11);border-radius:10px}.igr029-detail summary{cursor:pointer;padding:12px 14px;font-size:.86rem;font-weight:650}.igr029-detail p{margin:0;padding:0 14px 14px;line-height:1.55;font-size:.86rem}.igr029-secret{border-color:rgba(170,75,69,.28)}
 .igr029-extras{margin:18px 0;padding:15px;border:1px solid rgba(197,166,141,.2);border-radius:12px;background:rgba(255,255,255,.022)}
 .igr029-extras h3{margin:0 0 9px;font-size:1rem}.igr029-extras p{line-height:1.5;font-size:.85rem}
+.igr029-vote{background:linear-gradient(135deg,rgba(54,27,27,.65),rgba(14,14,15,.9));border-color:rgba(197,166,141,.42)}
+.igr029-vote-field{display:grid;gap:7px;margin:15px 0}.igr029-vote-field b{font-size:.85rem}
+.igr029-vote-field select{width:100%;min-height:44px;border:1px solid #705d54;border-radius:8px;background:#191719;color:#eee4d9;padding:10px;font:inherit}
+.igr029-vote-field select:disabled{opacity:.85}.igr029-vote-field select:focus{outline:2px solid #bd9c86;outline-offset:2px}
 .igr029-actions{display:flex;flex-wrap:wrap;gap:8px}.igr029-wire{max-height:230px;overflow-y:auto;margin:10px 0;border:1px solid rgba(255,255,255,.08);padding:8px 12px;border-radius:8px}
 .igr029-compose{display:flex;gap:6px}.igr029-compose input{flex:1;min-width:0;background:#191a1b;color:#f1eee9;border:1px solid #4a4440;border-radius:8px;padding:11px}
 .igr029-ending article{padding:13px;border:1px solid rgba(255,255,255,.1);border-radius:10px;margin:8px 0;display:grid;gap:4px}
