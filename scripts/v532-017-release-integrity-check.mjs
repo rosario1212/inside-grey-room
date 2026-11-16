@@ -15,7 +15,8 @@ const [app,html,sw,db1,db2,db3,db4,workflow,prod]=await Promise.all([
 
 const cache='santoro-display-audit-20261108';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
-assert(html.includes('app-v11.js?v='+cache),'Source HTML has stale game cache');
+const appUrl=html.match(/app-v11\.js\?v=[^\"']+/)?.[0];
+assert(appUrl&&sw.includes('/'+appUrl),'Source HTML has stale game cache: source and PWA must agree');
 assertPwaRevision(html,sw);
 
 assert(app.includes("id:'017',title:'LE PRIX DU SILENCE'"),'017 missing from game catalog');
