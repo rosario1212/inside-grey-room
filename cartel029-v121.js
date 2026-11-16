@@ -124,7 +124,13 @@ window.igr029Protect=async target=>{
  protectionPending=true;
  try{await rpc('igr_v118_029_protection',{p_code:d().room.code,p_token:s().token,p_target:target});
  toast('Mesure enregistrée.');await syncNow(true)}
- catch(e){console.warn('[029 protection]',e?.message);toast('Action non disponible ou déjà utilisée.')}
+ catch(e){
+  console.warn('[029 protection]',e?.message);
+  try{await syncNow(true)}catch(_){}
+  toast(protectionProgress().used.has(target)
+   ?'Protection confirmée après reconnexion.'
+   :'Protection non confirmée. Vérifie la connexion et les mesures déjà prises.');
+ }
  finally{protectionPending=false}
 };
 function cartelWire(){
@@ -144,10 +150,18 @@ let messagePending=false;
 window.igr029Send=async ()=>{
  if(messagePending||!active()||!['don','bras_droit'].includes(me().public_role)||d()?.room?.status!=='playing')return;
  const text=document.getElementById('igr029-msg')?.value?.trim();if(!text)return;
+ const mine=e=>e.payload?.author===me().pseudo&&e.payload?.text===text;
+ const before=observed('cartel029_chat').filter(mine).length;
  messagePending=true;
  try{await rpc('igr_v118_029_cartel_message',{p_code:d().room.code,p_token:s().token,p_text:text});
  toast('Message envoyé.');await syncNow(true)}
- catch(e){console.warn('[029 cartel]',e?.message);toast('Message non envoyé.')}
+ catch(e){
+  console.warn('[029 cartel]',e?.message);
+  try{await syncNow(true)}catch(_){}
+  toast(observed('cartel029_chat').filter(mine).length>before
+   ?'Message confirmé après reconnexion.'
+   :'Message non confirmé : vérifie le canal avant de réessayer.');
+ }
  finally{messagePending=false}
 };
 function leadershipHtml(){
@@ -176,7 +190,13 @@ window.igr029LeaderDecision=async choice=>{
  leadershipPending=true;
  try{await rpc('igr_v155_029_leadership_decision',{p_code:d().room.code,p_token:s().token,p_choice:choice});
  toast('Ta stratégie a été enregistrée.');await syncNow(true)}
- catch(e){console.warn('[029 leadership]',e?.message);toast('Stratégie non disponible.')}
+ catch(e){
+  console.warn('[029 leadership]',e?.message);
+  try{await syncNow(true)}catch(_){}
+  const recorded=(d()?.my_actions||[]).some(a=>a.action_type==='cartel029_leadership'&&
+   +a.cycle===+d()?.room?.cycle&&a.payload?.choice===choice);
+  toast(recorded?'Stratégie confirmée après reconnexion.':'Stratégie non confirmée : vérifie la connexion avant de réessayer.');
+ }
  finally{leadershipPending=false}
 };
 function journalistGuideHtml(){
@@ -199,7 +219,13 @@ window.igr029Position=async c=>{
  if(positionPending||!active()||!permitted029Phase()||d()?.room?.status!=='playing'||+me()?.private_state?.['029_witness_index']!==4||!['loyal','cooperate'].includes(c))return;
  positionPending=true;
  try{await rpc('igr_v119_029_position',{p_code:d().room.code,p_token:s().token,p_choice:c});toast('Décision enregistrée.');await syncNow(true)}
- catch(e){console.warn('[029 choice]',e?.message);toast('Ce choix n’est pas disponible.')}
+ catch(e){
+  console.warn('[029 choice]',e?.message);
+  try{await syncNow(true)}catch(_){}
+  const recorded=(d()?.my_actions||[]).some(a=>a.action_type==='cartel029_position'&&
+   +a.cycle===+d()?.room?.cycle&&a.payload?.choice===c);
+  toast(recorded?'Décision confirmée après reconnexion.':'Décision non confirmée : vérifie la connexion avant de réessayer.');
+ }
  finally{positionPending=false}
 };
 wrap('renderGameTab',(orig)=>{
