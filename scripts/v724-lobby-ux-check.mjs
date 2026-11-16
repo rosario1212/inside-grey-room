@@ -4,6 +4,11 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 const read=path=>readFileSync(path,'utf8');
 const natural=read('natural-role-gameplay-v50.js');
+const app=read('app-v11.js');
+assert(app.includes('const ROLE_PREVIEW = Object.freeze({'));
+assert(app.includes('<small>${h(rolePreview(x.id,x.info))}</small>'));
+assert(app.includes('<summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p>'));
+
 const polish=read('omerta-polish-v12.js');
 const omerta=read('omerta-v12-39.js');
 const lobby=read('lobby-ui-fix-v13.js');
@@ -34,13 +39,13 @@ const card={
 };
 const badgeEnv={
  document:{querySelectorAll:()=>[card],createElement:()=>({textContent:'',className:''})},
- ACTIVITY:{juge:5},activityRating:r=>({juge:5}[r]||2),ROLE_COPY:{juge:'Generic incompatible description'},
+ ACTIVITY:{juge:4},activityRating:r=>({juge:4}[r]||2),ROLE_COPY:{juge:'Generic incompatible description'},
  copy:s=>s,stars:n=>'★'.repeat(n)+'☆'.repeat(5-n)
 };
 vm.runInNewContext(badgeSource+'\ndecorateRoleCards();decorateRoleCards();',badgeEnv);
 assert.equal(preview.textContent,'Juge dans le Cartel, mission propre au dossier 029');
 assert.equal(full.textContent,'Fiche du dossier 029 avec règles et pouvoirs spécifiques');
-assert.equal(badge.textContent,'ACTIVITÉ · ★★★★★');
+assert.equal(badge.textContent,'ACTIVITÉ · ★★★★☆');
 assert(!badgeSource.includes('sm.textContent=fullText'));
 assert(!natural.includes('new MutationObserver(()=>decorateRoleCards())'));
 
