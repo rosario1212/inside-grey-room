@@ -268,14 +268,15 @@ function heritageRoleCards(d){
  const random='<button type="button" class="hnet-role-card hnet-role-random'+(!selected?' is-picked':'')+'" data-hnet="role" data-role="" aria-pressed="'+(!selected)+'"><span class="hnet-role-top"><b>Attribution aléatoire</b><em>'+(!selected?'TON CHOIX':'LIBRE')+'</em></span><small>Un rôle encore disponible te sera attribué au lancement.</small></button>';
  const cards=candidates.map(r=>{
    const holder=used.get(r.id),mine=selected===r.id,taken=!!holder&&!mine,stars=Number(r.activity)||2;
-   return `<button type="button" class="hnet-role-card ${mine?'is-picked':''} ${taken?'is-taken':''}" data-hnet="role" data-role="${esc(r.id)}" aria-pressed="${mine}" ${taken?'disabled':''}>
+   return `<button type="button" class="hnet-role-card ${mine?'is-picked':''} ${taken?'is-taken':''}" data-hnet="role" data-role="${esc(r.id)}" aria-pressed="${mine}" aria-label="${esc(r.name+' — '+(r.short||r.public))}" ${taken?'disabled':''}>
       <span class="hnet-role-top"><b>${esc(r.name)}</b><em>${mine?'TON RÔLE':taken?'COMPLET':'CHOISIR'}</em></span>
-      <small>${esc(r.short||r.public)}</small><span class="hnet-stars" aria-label="Activité estimée">${'★'.repeat(stars)+'☆'.repeat(5-stars)}</span>
+      <span class="hnet-stars" aria-label="Activité estimée">${'★'.repeat(stars)+'☆'.repeat(5-stars)}</span>
     </button>`;
  }).join('');
- return {markup:`<section class="hnet-role-zone" aria-label="Choix des rôles"><div class="hnet-role-head"><div><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div><small>${candidates.length} rôles · 1 place par rôle</small></div>
-   <p>Choisis ton rôle ou laisse le tirage attribuer une fonction disponible. Les fiches privées restent secrètes.</p>
-   <div class="hnet-role-grid">${random}${cards}</div><p class="hnet-activity-note">★ = fréquence d’activité estimée, sans effet sur la victoire.</p>
+ const chosen=candidates.find(r=>r.id===selected)||null;
+ return {markup:`<section class="hnet-role-zone" aria-label="Choix des rôles"><div class="hnet-role-head"><div><span>ÉTAPE 1 · TON RÔLE</span><h2>Choisis ta fonction</h2></div><small>${candidates.length} rôles · 1 place par rôle</small></div>
+   <p>Sélectionne un rôle libre, ou conserve le hasard. Chacun découvrira sa fiche privée au lancement.</p>
+   <div class="hnet-role-grid">${random}${cards}</div><div class="hnet-selected-role"><span>TON CHOIX</span><b>${esc(chosen?.name||'Attribution aléatoire')}</b><small>${esc(chosen?.short||chosen?.public||'Un rôle disponible te sera attribué au lancement.')}</small>${chosen?`<em>ACTIVITÉ · ${'★'.repeat(Number(chosen.activity)||2)}${'☆'.repeat(5-(Number(chosen.activity)||2))}</em>`:''}</div><p class="hnet-activity-note">★ = activité estimée, pas une note de puissance.</p>
    ${invalid.length?`<p class="hnet-role-warning" role="alert">Le nombre de joueurs a changé. ${invalid.map(p=>esc(p.pseudo)).join(', ')} doit choisir un rôle encore disponible ou revenir au tirage aléatoire avant de lancer.</p>`:''}
  </section>`,invalid:invalid.length};
 }
@@ -289,10 +290,11 @@ function renderHLobby(d){
  const canStart=count>=5&&!roles.invalid;
  shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><header class="hnet-head"><button class="btn ghost small" data-hnet="leave">← Quitter</button><span>${esc(m?.title||'HÉRITAGE')} · DOSSIER 0${d.room.chapter}</span></header>
   <section class="hnet-lobby"><div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(ch?.title||'')}</h1><p>${count}/7 joueurs · minimum 5</p></div>
-   <div class="hnet-code"><span>CODE D’INVITATION</span><strong>${esc(d.room.code)}</strong><small>À communiquer aux joueurs</small></div>
+   <div class="hnet-code"><span>CODE D’INVITATION</span><strong>${esc(d.room.code)}</strong><small>Partage ce code pour rejoindre</small><button type="button" class="hnet-code-copy" data-hnet="copy-code" data-code="${esc(d.room.code)}" aria-label="Copier le code d’invitation">COPIER</button></div>
    ${roles.markup}
    <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Participants à la table <span>${count}/7</span></summary><div class="hnet-players">${roster}</div></details>
-   ${host?`<button class="btn primary block hnet-start" data-hnet="start" ${canStart?'':'disabled'}>${count<5?`ENCORE ${5-count} JOUEUR${5-count>1?'S':''}`:roles.invalid?'RÉVISER LES RÔLES':'LANCER LE DOSSIER'}</button>`:'<div class="hnet-wait">En attente de l’hôte…</div>'}
+   <p class="hnet-launch-hint">${count<5?`ÉTAPE 2 · Encore ${5-count} joueur${5-count>1?'s':''} à inviter (5 à 7 nécessaires).`:roles.invalid?'Certains rôles ne sont plus disponibles. Corrige la sélection.':'ÉTAPE 2 · Table complète : l’hôte peut lancer le dossier.'}</p>
+   ${host?`<button class="btn primary block hnet-start" data-hnet="start" ${canStart?'':'disabled'}>${count<5?`ATTENTE · ${5-count} À INVITER`:roles.invalid?'RÉVISER LES RÔLES':'COMMENCER LA PARTIE'}</button>`:'<div class="hnet-wait">L’hôte lance la partie dès que la table est prête.</div>'}
   </section></main>`,true);
 }
 async function chooseHeritageRole(roleId){
@@ -446,7 +448,7 @@ function renderHFinished(d){
 function resumeHeritageOnline(){if(!hSession())return toastX('Aucune cellule HÉRITAGE à reprendre.');startHWatcher(true)}
 
 function interceptHeritageOnline(e){const s=hSession();if(!s)return;const hp=e.target.closest?.('[data-hp-action],[data-hp-option]');if(!hp)return;const a=hp.dataset.hpAction;if(a==='hide-next'){e.preventDefault();e.stopImmediatePropagation();readyHeritageOnline();return}if(a==='phase-next'||a==='decision'){e.preventDefault();e.stopImmediatePropagation();advanceHeritageOnline();return}if(a==='phase-prev'){e.preventDefault();e.stopImmediatePropagation();return}if(hp.dataset.hpOption){e.preventDefault();e.stopImmediatePropagation();decideHeritageOnline(hp.dataset.hpOption);return}if(a==='abort'||a==='session-menu'){e.preventDefault();e.stopImmediatePropagation();leaveHeritageOnline();return}if(a==='finish'){e.preventDefault();e.stopImmediatePropagation();if(!s.hostToken){clearHSession();del(HERITAGE_LIVE_KEY);renderHome();return}void finishHeritageOnlineHost();return}}
-function handleHNetClick(e){const b=e.target.closest?.('[data-hnet]');if(!b)return;e.preventDefault();if(b.dataset.hnet==='role'){if(b.getAttribute('aria-pressed')!=='true')void chooseHeritageRole(b.dataset.role||'');return}if(b.dataset.hnet==='start')startHeritageOnline();if(b.dataset.hnet==='leave')leaveHeritageOnline()}
+function handleHNetClick(e){const b=e.target.closest?.('[data-hnet]');if(!b)return;e.preventDefault();if(b.dataset.hnet==='copy-code'){void navigator.clipboard?.writeText(b.dataset.code||'').then(()=>toastX('Code copié.')).catch(()=>toastX('Code : '+(b.dataset.code||'')));return}if(b.dataset.hnet==='role'){if(b.getAttribute('aria-pressed')!=='true')void chooseHeritageRole(b.dataset.role||'');return}if(b.dataset.hnet==='start')startHeritageOnline();if(b.dataset.hnet==='leave')leaveHeritageOnline()}
 
 /* ------------------------------------------------------------------
    BOOT / WRAPPERS
