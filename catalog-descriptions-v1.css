@@ -525,6 +525,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   max-width:100%!important;
   max-height:none!important;
   margin:4px 0 7px!important;
+  font-size:max(1.2rem,var(--igr-heading-size))!important;
   overflow:visible!important;
   overflow-wrap:break-word!important;
   text-wrap:balance;
@@ -543,6 +544,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   height:auto!important;
   max-height:none!important;
   margin:0!important;
+  font-size:max(.89rem,var(--igr-excerpt-size))!important;
   line-height:1.42!important;
   white-space:normal!important;
   overflow:visible!important;
