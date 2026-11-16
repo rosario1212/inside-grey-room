@@ -753,23 +753,23 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 }
 /* Preserve Omertà and the 009–020 dossier covers, including 018. */
 
-/* v744 — 017/018: keep the cards full-bleed and restore the printed
-   poster titles. Their source posters are native 3:4, but the shared card
+/* v744 — 017: keep the card full-bleed and restore the printed
+   poster title. The source poster is native 3:4, but the shared card
    art column is narrower. The main artwork stays cover-fitted; a softly
    blended native-aspect title detail restores the full printed lettering.
    Crucially, no opaque lower overlay can hide the recovered title. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018){
+  > article.scenario.scenario--art.scenario--compact#scenario-017{
   --igr-poster-fit:cover!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018)
+  > article.scenario.scenario--art.scenario--compact#scenario-017
   > .scenario-thumb.compact{
   background:transparent!important;
   overflow:hidden!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018)
+  > article.scenario.scenario--art.scenario--compact#scenario-017
   > .scenario-thumb.compact > img.igr-poster-full{
   position:absolute!important;
   inset:0!important;
@@ -788,7 +788,7 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 /* Remove the v743 opaque lower gradient that concealed both poster titles.
    The unbroken full-bleed photo now remains visible beneath the title detail. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018)
+  > article.scenario.scenario--art.scenario--compact#scenario-017
   > .scenario-thumb.compact::before{
   content:none!important;
   display:none!important;
@@ -797,7 +797,7 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
    The printed title actually begins around 80–86% of this card, so the old
    82%→87% mask started too late and faded out its first line. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--art.scenario--compact:is(#scenario-017,#scenario-018)
+  > article.scenario.scenario--art.scenario--compact#scenario-017
   > .scenario-thumb.compact::after{
   content:""!important;
   display:block!important;
@@ -816,19 +816,27 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   pointer-events:none!important;
 }
 
-/* v746 — 018 only: hide the original oversized title on the cover image,
-   then display its smaller source-image title. Keep 017 unchanged. */
+/* v747 — dossier 018 approved catalogue asset: a single art layer with its
+   printed title already composed to fit. No duplicated image or dark mask.
+   The native original remains available for briefing and confirmation. */
 #app .page-create-v10-13 .scenario-list-v10-13
-  > article#scenario-018.scenario.scenario--art.scenario--compact
-  > .scenario-thumb.compact > img.igr-poster-full{
-  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 81%)!important;
-  mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 81%)!important;
+  > article#scenario-018.scenario.scenario--art.scenario--compact{
+  --igr-poster-fit:cover!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article#scenario-018.scenario.scenario--art.scenario--compact
+  > .scenario-thumb.compact > img.igr-poster-full{
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article#scenario-018.scenario.scenario--art.scenario--compact
+  > .scenario-thumb.compact::before,
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article#scenario-018.scenario.scenario--art.scenario--compact
   > .scenario-thumb.compact::after{
-  background-size:86% auto!important;
-  background-position:center bottom!important;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 75%,#000 83%,#000 96%,transparent 100%)!important;
-  mask-image:linear-gradient(to bottom,transparent 75%,#000 83%,#000 96%,transparent 100%)!important;
+  content:none!important;
+  display:none!important;
 }
