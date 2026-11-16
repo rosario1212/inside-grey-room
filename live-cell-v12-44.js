@@ -505,24 +505,31 @@
   }
 
   chooseLobbyRole = async function(role){
+    // Remember the last server-confirmed choice BEFORE the optimistic render.
+    // Otherwise a rejected choice can remain visibly selected during an outage.
+    const confirmedAtStart=meRows()[0]?.preferred_role??null;
     ROLE.queued=role;
     optimisticRole(role);
     if(ROLE.busy) return;
     ROLE.busy=true;
-    let lastError=null;
+    let lastError=null,confirmed=confirmedAtStart;
     try{
       while(ROLE.queued!==undefined){
         const next=ROLE.queued;ROLE.queued=undefined;
         try{
           await commitRole(next);
+          confirmed=!next||['none','cancel','annuler'].includes(String(next).toLowerCase())?null:String(next);
           lastError=null;
         }catch(error){
           lastError=error;
+          // An unconfirmed role is never a valid lobby selection.
+          optimisticRole(confirmed);
           console.warn('role live update',error);
         }
       }
-      await syncNow(true);
-      if(lastError) toast('Ce rôle vient d’être pris ou n’est plus disponible.');
+      const snapshot=await syncNow(true);
+      if(!snapshot&&lastError) optimisticRole(confirmed);
+      if(lastError) toast('Rôle non confirmé : le choix précédent est conservé. Vérifie la connexion ou les places disponibles.');
     }finally{
       ROLE.busy=false;
       try{delete document.documentElement.dataset.igrRolePending;delete document.documentElement.dataset.igrCellAction}catch{}
