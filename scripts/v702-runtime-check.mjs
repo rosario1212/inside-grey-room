@@ -64,12 +64,16 @@ const dlc=await read('dlc-suite-v12-37.js');
 const premium=await read('premium-access-sync-v17.js');
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
-assert(app.includes('function scenarioCardTeaser(raw)'), 'Missing global scenario teaser function');
-for(const [label,source] of [['classics',app],['DLC',dlc],['premium catalogue',premium]]){
+assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing shared bounded scenario teaser function');
+assert(app.includes('scenarioCardTeaser(sc.short)'), 'Classic cards must use the shared 30-word preview');
+for(const [label,source] of [['DLC',dlc],['premium catalogue',premium]]){
  assert(source.includes('class="igr-card-excerpt"'),label+' card must show a teaser');
- assert(source.includes('scenarioCardTeaser(sc.short)'),label+' card must display the same teaser logic');
+ assert(source.includes('scenarioCardTeaser(sc.short,21)'),label+' card must use the shorter DLC-specific preview');
+ assert(source.includes('igr-poster-full')&&source.includes('igr-poster-ambient'),
+   label+' must render the actual contained poster over its ambient background');
 }
-const start=app.indexOf('function scenarioCardTeaser(raw)');
+assert(!app.includes('class="igr-poster-ambient"'),'Landscape classic thumbnails must not be letterboxed');
+const start=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
 const end=app.indexOf('\nconst ADVANCED_SCENARIO_IDS=',start);
 assert(start>=0&&end>start,'Cannot locate pure card teaser implementation');
 const context={window:{innerWidth:360}};
@@ -89,6 +93,10 @@ assert.equal(context.catalogueTeaser(longSynopsis).split(/\s+/).length,30,
   'Catalogue previews are capped at 30 words across all screen widths');
 assert(context.catalogueTeaser(longSynopsis).endsWith('…'),
   'Long catalogue previews must signal that more detail is available');
+assert.equal(context.catalogueTeaser(longSynopsis,21).split(/\s+/).length,21,
+  'DLC previews must stay within 21 words');
+assert(context.catalogueTeaser('Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres. Trois captifs racontent la suite.',21).endsWith('.'),
+  'DLC catalogue summaries should end at a complete sentence where possible');
 assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
   'The selected dossier must retain the complete narrative context');
 const fullCopyCss=await read('catalog-descriptions-v1.css');
