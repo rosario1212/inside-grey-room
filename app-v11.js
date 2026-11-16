@@ -232,8 +232,6 @@ const SCENARIO_THUMBS = {
  '020': `assets/scenario-thumb-020-v11-6.webp?v=${VERSION}`
 };
 function scenarioArt(id){ return SCENARIO_POSTERS[id] || SCENARIO_THUMBS[id] || SCENARIO_COVER_ART; }
-/* Dedicated portrait for the catalogue preview only; briefing and game art stay original. */
-function scenarioCatalogArt(id){ return String(id)==='018' ? 'assets/scenario-018-catalog-v747.webp?v=747' : scenarioArt(id); }
 function scenarioThumbArt(id){ return SCENARIO_THUMBS[id] || scenarioArt(id); }
 
 const PUBLIC_LOBBY_SUMMARIES = {
@@ -628,6 +626,8 @@ async function refresh007PublishState(force=false){
  if(STATE.view==='create-list')renderCreateList();
 }
 function renderCreateList(){
+ /* Approved 018 image only for this catalogue; never change gameplay poster art. */
+ const scenarioCatalogArt=id=>String(id)==='018' ? 'assets/scenario-018-catalog-v747.webp?v=747' : scenarioArt(id);
  const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
  byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact" style="--igr-cover-url:url('${scenarioCatalogArt(sc.id)}')"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioCatalogArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,30):String(sc.short||'').trim().split(/\s+/).slice(0,30).join(' '))}</p><div class="tag-row" aria-label="Informations du dossier"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
  if(typeof refresh007PublishState==='function')void refresh007PublishState();
