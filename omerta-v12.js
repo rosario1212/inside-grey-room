@@ -63,14 +63,14 @@
       '025':{required:['Enquêteur'],optional:['Analyste','Associato','Uomo d’Onore','Contabile','Caporegime','Consigliere','Sottocapo','Pentito','Don','Suspect']}
     });
     Object.assign(ROLE_INFO,{
-      associato:{label:'Associato',win:'Améliore ta position sans devenir sacrifiable.',body:'Membre non initié : tu peux coopérer, mentir ou protéger la Famiglia. Chaque parole a un prix.'},
-      uomo_onore:{label:'Uomo d’Onore',win:'Protège l’omertà sans te condamner inutilement.',body:'Tu peux parler et dire vrai, mais tu dois savoir exactement où t’arrêter.'},
-      contabile:{label:'Contabile',win:'Fais parler les chiffres sans révéler plus qu’ils ne prouvent.',body:'Les flux financiers valent cher pour la justice et peuvent trahir qui avait accès aux comptes.'},
-      pentito:{label:'Pentito',win:'Réduis ta peine et obtiens une protection avant d’être identifié.',body:'Après avoir parlé à l’oral, confirme seulement les révélations qui doivent devenir irréversibles.'},
-      caporegime:{label:'Caporegime',win:'Identifie correctement les fuites de ton crew.',body:'Surveille et sanctionne seulement après avoir interrogé. Une erreur peut tuer un homme loyal.'},
-      consigliere:{label:'Consigliere',win:'Protège l’équilibre de la Famiglia et le sommet.',body:'Tu reçois des conséquences indirectes et dois distinguer fuite réelle, peur et manipulation.'},
-      sottocapo:{label:'Sottocapo',win:'Préserve la continuité et ta place dans la succession.',body:'Tu agis dans la chaîne de commandement sans provoquer une guerre interne inutile.'},
-      don:{label:'Don',win:'Distingue loyauté, trahison et actes réellement commis sous ton autorité.',body:'Tu peux convoquer, surveiller, protéger ou autoriser une sanction sans jamais recevoir les réponses privées.'}
+      associato:{label:'Associato',win:'Améliore ta position sans devenir sacrifiable.',short:'Négocie ta place au sein de la Famiglia.',body:'Membre non initié : tu peux coopérer, mentir ou protéger la Famiglia. Chaque parole a un prix.'},
+      uomo_onore:{label:'Uomo d’Onore',win:'Protège l’omertà sans te condamner inutilement.',short:'Protège les secrets et la loyauté du clan.',body:'Tu peux parler et dire vrai, mais tu dois savoir exactement où t’arrêter.'},
+      contabile:{label:'Contabile',win:'Fais parler les chiffres sans révéler plus qu’ils ne prouvent.',short:'Analyse les comptes et garde tes secrets.',body:'Les flux financiers valent cher pour la justice et peuvent trahir qui avait accès aux comptes.'},
+      pentito:{label:'Pentito',win:'Réduis ta peine et obtiens une protection avant d’être identifié.',short:'Négocie des révélations contre ta protection.',body:'Après avoir parlé à l’oral, confirme seulement les révélations qui doivent devenir irréversibles.'},
+      caporegime:{label:'Caporegime',win:'Identifie correctement les fuites de ton crew.',short:'Surveille ton équipe et décide des sanctions.',body:'Surveille et sanctionne seulement après avoir interrogé. Une erreur peut tuer un homme loyal.'},
+      consigliere:{label:'Consigliere',win:'Protège l’équilibre de la Famiglia et le sommet.',short:'Conseille le Don et déjoue les trahisons.',body:'Tu reçois des conséquences indirectes et dois distinguer fuite réelle, peur et manipulation.'},
+      sottocapo:{label:'Sottocapo',win:'Préserve la continuité et ta place dans la succession.',short:'Coordonne la Famiglia et protège sa succession.',body:'Tu agis dans la chaîne de commandement sans provoquer une guerre interne inutile.'},
+      don:{label:'Don',win:'Distingue loyauté, trahison et actes réellement commis sous ton autorité.',short:'Dirige la Famiglia et éprouve les loyautés.',body:'Tu peux convoquer, surveiller, protéger ou autoriser une sanction sans jamais recevoir les réponses privées.'}
     });
   }
   addScenarioData();
