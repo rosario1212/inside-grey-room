@@ -79,6 +79,10 @@ function lobby(){
  const own=state.members.find(m=>m.id===state.viewer),members=state.members;
  const taken=new Map(members.filter(m=>m.role!=='casino').map(m=>[m.role,m]));
  const casinoCount=members.filter(m=>m.role==='casino').length;
+ const required=['agent','investigator','analyst'],missing=required.filter(id=>!taken.has(id));
+ const allReady=members.every(m=>m.ready);
+ const canStart=members.length>=7&&members.length<=12&&casinoCount>=4&&casinoCount<=7&&!missing.length&&allReady;
+ const launchHint=casinoCount<4?`Encore ${4-casinoCount} joueur${4-casinoCount>1?'s':''} chez Yonghe.`:casinoCount>7?'Yonghe dépasse sept places. Certains joueurs doivent rejoindre le Bureau.':missing.length?`Fonctions indispensables à pourvoir : ${missing.map(id=>roles[id]).join(', ')}.`:!allReady?'Tous les joueurs doivent confirmer leur présence.':'La table est prête à jouer.';
  const buttons=Object.entries(roles).map(([id,label])=>{
   const mine=own.role===id,locked=id==='casino'?casinoCount>=7&&!mine:!!taken.get(id)&&!mine;
   const availability=id==='casino'?casinoCount+'/7 PLACES':(taken.has(id)?'COMPLET':'LIBRE');
@@ -87,17 +91,17 @@ function lobby(){
    <small>${esc(roleShort(id))}</small><span class="casino-role-activity" aria-label="Activité estimée">${roleStars(id)}</span>
   </button>`;
  });
- return `<section class="casino-lobby-top"><h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code</button><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
- <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
+ return `<section class="casino-lobby-top"><div class="casino-lobby-access"><div><span>CODE D’INVITATION</span><h1>${esc(state.inviteCode)}</h1></div><button type="button" class="casino-action" data-casino-action="invite">Copier le code</button></div><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
  <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div>
  <p>Choisis ton camp ou ta fonction. Chez Yonghe, ton personnage sera révélé au lancement.</p>
  <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
  <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1).join('')}</div></div>
  <p class="casino-role-choice-footnote">Procureur et juge facultatifs. ★ = activité estimée, pas importance.</p>
  </section>
+ <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
  <button class="casino-action casino-ready" data-casino-action="ready">${own.ready?'ANNULER MA CONFIRMATION':'JE SUIS PRÊT'}</button>
- ${state.isHost?'<button class="casino-action casino-start" data-casino-action="start">LANCER LE DOSSIER</button>':''}
- <p class="casino-lobby-note">L’hôte lance quand les rôles requis sont présents et tous les joueurs prêts.</p>`;
+ ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${canStart?'LANCER LE DOSSIER':'PRÉPARATION INCOMPLÈTE'}</button>`:''}
+ <p class="casino-lobby-note">${esc(launchHint)}</p>`;
 }
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
