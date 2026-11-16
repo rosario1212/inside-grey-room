@@ -235,7 +235,7 @@ $function$;
 revoke all on function public.igr_heritage_online_leave(text,uuid) from public;
 grant execute on function public.igr_heritage_online_leave(text,uuid) to anon,authenticated;
 
-// Security: legacy, role-owner-only MAÎTRE RPCs cannot bypass the new ballot.
+-- Security: legacy role-owner-only MAÎTRE RPCs cannot bypass the new ballot.
 
 revoke all on function public.igr_heritage_online_decide_v55(text,uuid,text) from public,anon,authenticated;
 revoke all on function public.igr_heritage_online_decide_v71(text,uuid,text) from public,anon,authenticated;
