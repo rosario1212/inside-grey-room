@@ -30,7 +30,7 @@ const premiumScripts=[
  '  <script src="heritage-context-v71.js?v=v71-heritage-release"></script>',
  '  <script src="play-modes-v13-8.js?v=v13.8-dual-play"></script>',
  '  <script src="heritage-access-code-v14.js?v=v14-heritage-code"></script>',
- '  <script src="premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit-v8-no-thumbnails-v12-footer"></script>'
+ '  <script src="premium-access-sync-v17.js?v=v725-poster-native-fit-20261116"></script>'
 ].join('\n');
 const durationHead='  <link rel="stylesheet" href="duration-modes-v35.css?v=v35-duration-modes">';
 const durationScript='  <script src="duration-modes-v35.js?v=v35-duration-modes"></script>';
@@ -42,7 +42,7 @@ for(const page of ['index.html','en.html']){
   else if(!html.includes('premium-access-sync-v17.css'))html=html.replace('</head>',`  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">\n</head>`);
   if(!html.includes('duration-modes-v35.css'))html=html.replace('</head>',`${durationHead}\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
-  else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit-v8-no-thumbnails-v12-footer"></script>\n</body>`);
+  else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v725-poster-native-fit-20261116"></script>\n</body>`);
   if(!html.includes('duration-modes-v35.js'))html=html.replace('</body>',`${durationScript}\n</body>`);
   if(!html.includes('store-catalog-v69.js')){
     if(html.includes('premium-access-sync-v17.js'))html=html.replace(/(<script[^>]+src=["']premium-access-sync-v17\.js[^>]*><\/script>)/i,`${storeCatalogScript}\n$1`);
