@@ -5,6 +5,17 @@ const API=window.Capacitor?.isNativePlatform?.()?'https://inside-grey-room-last.
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const roles={casino:'Casino',agent:'Agent international',investigator:'Enquêteur',analyst:'Analyste',prosecutor:'Procureur',judge:'Juge'};
+const ROLE_SHORT=Object.freeze({
+ casino:'Négocie, mise et défend les intérêts de Yonghe.',
+ agent:'Mène les opérations et les interpellations.',
+ investigator:'Recoupe les preuves et conduit les enquêtes.',
+ analyst:'Analyse les dossiers et les contradictions.',
+ prosecutor:'Construit les accusations et ouvre les audiences.',
+ judge:'Préside les audiences et évalue les preuves.'
+});
+const ROLE_ACTIVITY=Object.freeze({casino:5,agent:4,investigator:5,analyst:4,prosecutor:4,judge:4});
+const roleShort=id=>ROLE_SHORT[id]||'Participe aux décisions de la table.';
+const roleStars=id=>'★'.repeat(ROLE_ACTIVITY[id]||2)+'☆'.repeat(5-(ROLE_ACTIVITY[id]||2));
 const statuses={guest:'Invité',free:'Libre',interpellated:'Interpellé',detained:'Détenu',dead:'Décédé',deposed:'Déchu'};
 let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,generation=0,active=false,pending=null,problem='',syncedAt=0,joinDraft=null,advanceConfirm=false;
 const freshToken=()=>[...crypto.getRandomValues(new Uint8Array(32))].map(n=>n.toString(16).padStart(2,'0')).join('');
@@ -66,11 +77,11 @@ function welcome(){return `<h1>Une table à Macao</h1><p>Un écran par participa
  <details><summary>Reprendre sur un autre appareil</summary>${form('recover',area('Ta clé personnelle','recovery',110),'Reprendre ma partie')}</details>`}
 function lobby(){const own=state.members.find(m=>m.id===state.viewer);return `<h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code de la table</button><output data-casino-invite></output><p>4 à 7 personnages au casino, 3 enquêteurs et jusqu’à 2 magistrats supplémentaires. Les invités rejoignent gratuitement la table de l’hôte.</p>
  <ul class="casino-members">${state.members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'Prêt':'En préparation'}</span></li>`).join('')}</ul>
- ${form('role',`<label>Ta fonction<select name="role">${Object.entries(roles).map(([r,label])=>`<option value="${r}" ${own.role===r?'selected':''}>${label}</option>`).join('')}</select></label>`,'Choisir cette fonction')}
+ ${form('role',`<label>Ta fonction<select name="role">${Object.entries(roles).map(([r,label])=>`<option value="${r}" ${own.role===r?'selected':''}>${label}</option>`).join('')}</select></label><div class="casino-role-explainer"><p data-casino-role-preview>${esc(roleShort(own.role))}</p><small data-casino-role-activity>ACTIVITÉ · ${roleStars(own.role)}</small></div>`,'Choisir cette fonction')}
  <button class="casino-action" data-casino-action="ready">${own.ready?'Modifier ma préparation':'Je suis prêt'}</button>
  ${state.isHost?'<button class="casino-action" data-casino-action="start">Distribuer les personnages</button>':''}
  <p>Les personnages et les éventuelles missions d’infiltration sont attribués au lancement.</p>`}
-function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
+function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
  ${(c.relations||[]).map(r=>`<article><h3>${esc(name(r.target))}</h3><p>${esc(r.text)}</p></article>`).join('')}
  ${state.ownUndercoverBrief?`<div class="casino-secret"><strong>Mission confidentielle</strong><p>Seul ton personnage voit cette mission. Les observations reçues par le bureau restent non confirmées tant qu'elles ne sont pas recoupées.</p>${state.chapter===1?form('intel',people('subjectId',c=>c.id!==state.viewer)+area('Renseignement à transmettre discrètement','text',1000),'Transmettre au bureau'):''}</div>`:''}
@@ -218,6 +229,13 @@ document.addEventListener('submit',async event=>{
  if(['interpellation','map','hearing','review-intel'].includes(kind))p.evidenceIds=data.getAll('evidenceIds');if(kind==='review-intel')p.confirmed=p.confirmed==='true';
  if(kind==='bet')p.action='bet';for(const k of ['amount','wager'])if(k in p)p[k]=Number(p[k]);
  await mutate({op:'command',type:commands[kind],payload:p});
+},true);
+document.addEventListener('change',event=>{
+ const select=event.target;
+ if(select?.name!=='role'||!select.closest?.('#'+ROOT))return;
+ const form=select.closest('form'),label=form?.querySelector('[data-casino-role-preview]'),activity=form?.querySelector('[data-casino-role-activity]');
+ if(label)label.textContent=roleShort(select.value);
+ if(activity)activity.textContent='ACTIVITÉ · '+roleStars(select.value);
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
 window.IGR_CASINO_CLIENT=Object.freeze({version:'105.5',open,close,sync});
