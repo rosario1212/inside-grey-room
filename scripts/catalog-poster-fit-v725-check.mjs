@@ -16,7 +16,7 @@ assert(css.includes('grid-template-areas:"poster content" "metadata metadata"'))
 assert(css.includes('--igr-poster-ratio:1086/1448'));
 assert(css.includes('--igr-poster-ratio:724/960'));
 assert(css.includes('object-fit:contain!important'));
-assert(css.includes('-webkit-line-clamp:3!important'));
+assert(css.slice(css.indexOf('CATALOGUE FIT v13')).includes('-webkit-line-clamp:unset!important'), 'Dossier teaser must remain complete');
 assert(css.includes('grid-area:metadata!important'));
 for(const [label,source] of [['BASE',app],['OMERTÀ',omerta],['TERREUR',terror],['CARTEL/RÉGIME',dlc]]){
   assert(source.includes(fullArt),label+' needs full artwork');
