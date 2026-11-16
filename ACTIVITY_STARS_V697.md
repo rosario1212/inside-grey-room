@@ -45,7 +45,7 @@ Les rôles Cendres/Kuroi/Maître sont distribués à la révélation privée et 
 | Maître | Juge | ★★★★☆ |
 | Maître | Associé | ★★★★☆ |
 | Maître | Témoin / Expert | ★★★☆☆ |
-| Casino | Casino | ★★★★★ |
+| Casino | Personnage de Yonghe (camp, identité attribuée au lancement) | ★★★★★ |
 | Casino | Agent international | ★★★★☆ |
 | Casino | Enquêteur | ★★★★★ |
 | Casino | Analyste | ★★★★☆ |
