@@ -36,13 +36,13 @@ for(const page of ['index.html','en.html']){
 
   if(!html.includes('navigation-theme-v18.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-theme-v18.css?v=v27-role-choice-nav">\n</head>');
   else html=html.replace(/navigation-theme-v18\.css\?v=[^"']+/g,'navigation-theme-v18.css?v=v27-role-choice-nav');
-  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v27-role-choice-nav"></script>\n</body>');
-  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v27-role-choice-nav');
+  if(!html.includes('navigation-theme-v18.js'))html=html.replace('</body>','  <script src="navigation-theme-v18.js?v=v734-collection-shortcut-20261116"></script>\n</body>');
+  else html=html.replace(/navigation-theme-v18\.js\?v=[^"']+/g,'navigation-theme-v18.js?v=v734-collection-shortcut-20261116');
 
   if(!html.includes('navigation-heritage-v19.css'))html=html.replace('</head>','  <link rel="stylesheet" href="navigation-heritage-v19.css?v=v30-scroll-expand-20261116">\n</head>');
   else html=html.replace(/navigation-heritage-v19\.css\?v=[^"']+/g,'navigation-heritage-v19.css?v=v30-scroll-expand-20261116');
-  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v29-full-catalog-pills-20261116"></script>\n</body>');
-  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v29-full-catalog-pills-20261116');
+  if(!html.includes('navigation-heritage-v19.js'))html=html.replace('</body>','  <script src="navigation-heritage-v19.js?v=v734-collection-shortcut-20261116"></script>\n</body>');
+  else html=html.replace(/navigation-heritage-v19\.js\?v=[^"']+/g,'navigation-heritage-v19.js?v=v734-collection-shortcut-20261116');
 
   if(!html.includes('cell-controls-stability-v23.js'))html=html.replace('</body>','  <script src="cell-controls-stability-v23.js?v=v24-gameplay-stability"></script>\n</body>');
   else html=html.replace(/cell-controls-stability-v23\.js\?v=[^"']+/g,'cell-controls-stability-v23.js?v=v24-gameplay-stability');
@@ -91,16 +91,16 @@ try{
     sw=sw.replace(/\/interface-polish-v14\.js\?v=[^']+/g,'/interface-polish-v14.js?v=v20-settings-nav');
   }
   if(!sw.includes('/navigation-theme-v18.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v27-role-choice-nav','/navigation-theme-v18.js?v=v27-role-choice-nav',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-theme-v18.css?v=v27-role-choice-nav','/navigation-theme-v18.js?v=v734-collection-shortcut-20261116',");
   }else{
     sw=sw.replace(/\/navigation-theme-v18\.css\?v=[^']+/g,'/navigation-theme-v18.css?v=v27-role-choice-nav');
-    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v27-role-choice-nav');
+    sw=sw.replace(/\/navigation-theme-v18\.js\?v=[^']+/g,'/navigation-theme-v18.js?v=v734-collection-shortcut-20261116');
   }
   if(!sw.includes('/navigation-heritage-v19.css')){
-    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v30-scroll-expand-20261116','/navigation-heritage-v19.js?v=v29-full-catalog-pills-20261116',");
+    sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/navigation-heritage-v19.css?v=v30-scroll-expand-20261116','/navigation-heritage-v19.js?v=v734-collection-shortcut-20261116',");
   }else{
     sw=sw.replace(/\/navigation-heritage-v19\.css\?v=[^']+/g,'/navigation-heritage-v19.css?v=v30-scroll-expand-20261116');
-    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v29-full-catalog-pills-20261116');
+    sw=sw.replace(/\/navigation-heritage-v19\.js\?v=[^']+/g,'/navigation-heritage-v19.js?v=v734-collection-shortcut-20261116');
   }
   if(!sw.includes('/cell-controls-stability-v23.js')){
     sw=sw.replace("  '/', '/index.html', '/en.html',","  '/', '/index.html', '/en.html',\n  '/cell-controls-stability-v23.js?v=v24-gameplay-stability',");
