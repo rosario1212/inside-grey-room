@@ -536,7 +536,7 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
   aspect-ratio:auto!important;
   /* Cover fills the artwork column exactly as on Omerta; no black bands.
      Only a small outer crop is permitted, never stretch or letterbox. */
-  object-fit:cover!important;
+  object-fit:var(--igr-poster-fit,cover)!important;
   object-position:center center!important;
   border:0!important;
   transform:none!important;
@@ -672,7 +672,7 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
   width:100%!important;
   height:100%!important;
   max-height:100%!important;
-  object-fit:cover!important;
+  object-fit:var(--igr-poster-fit,cover)!important;
 }
 
 /* Omerta-format panels need room for five synopsis lines plus two badges
@@ -700,3 +700,55 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   #igrUniversalDock :is(#igrDockFilters,#igrDockHome) b{
   display:none!important;
 }
+
+/* v739 — poster safety, not a new card size.
+   Omertà's original edge-to-edge cover remains the approved reference.
+   Certain classics (001–008) and the three other DLCs have art/text close
+   to their edges; cover crops those titles on the 228–252px iPhone frames.
+   Draw the WHOLE original poster over a softly extended duplicate instead:
+   same Omertà frame, no black bands and no clipped poster lettering. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(
+    #scenario-001,#scenario-002,#scenario-003,#scenario-004,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    .terror-scenario,.cartel-scenario,.regime-scenario
+  ){
+  --igr-poster-fit:contain;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(
+    #scenario-001,#scenario-002,#scenario-003,#scenario-004,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    .terror-scenario,.cartel-scenario,.regime-scenario
+  ) > .scenario-thumb.compact{
+  /* The atmospheric underlay continues the original photo into any unused
+     sliver. It is an extension of the art, never a solid dark stripe. */
+  background-color:#0c0d0e!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(
+    #scenario-001,#scenario-002,#scenario-003,#scenario-004,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    .terror-scenario,.cartel-scenario,.regime-scenario
+  ) > .scenario-thumb.compact::before{
+  inset:-7px!important;
+  background-image:var(--igr-cover-url)!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  opacity:1!important;
+  filter:blur(7px) brightness(.76) saturate(.84)!important;
+  transform:scale(1.035)!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(
+    #scenario-001,#scenario-002,#scenario-003,#scenario-004,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    .terror-scenario,.cartel-scenario,.regime-scenario
+  ) > .scenario-thumb.compact > img.igr-poster-full{
+  object-fit:contain!important;
+  object-position:center center!important;
+  filter:none!important;
+  transform:none!important;
+}
+/* Never override Omertà, or the already approved dossiers 009–020. */
