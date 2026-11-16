@@ -703,14 +703,14 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 
 /* v739 — poster safety, not a new card size.
    Omertà's original edge-to-edge cover remains the approved reference.
-   Certain classics (001–008) and the three other DLCs have art/text close
+   Certain classics (001–008, 018) and the three other DLCs have art/text close
    to their edges; cover crops those titles on the 228–252px iPhone frames.
    Draw the WHOLE original poster over a softly extended duplicate instead:
    same Omertà frame, no black bands and no clipped poster lettering. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:is(
     #scenario-001,#scenario-002,#scenario-003,#scenario-004,
-    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,#scenario-018,
     .terror-scenario,.cartel-scenario,.regime-scenario
   ){
   --igr-poster-fit:contain;
@@ -718,7 +718,7 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:is(
     #scenario-001,#scenario-002,#scenario-003,#scenario-004,
-    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,#scenario-018,
     .terror-scenario,.cartel-scenario,.regime-scenario
   ) > .scenario-thumb.compact{
   /* The atmospheric underlay continues the original photo into any unused
@@ -728,7 +728,7 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:is(
     #scenario-001,#scenario-002,#scenario-003,#scenario-004,
-    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,#scenario-018,
     .terror-scenario,.cartel-scenario,.regime-scenario
   ) > .scenario-thumb.compact::before{
   inset:-7px!important;
@@ -743,7 +743,7 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:is(
     #scenario-001,#scenario-002,#scenario-003,#scenario-004,
-    #scenario-005,#scenario-006,#scenario-007,#scenario-008,
+    #scenario-005,#scenario-006,#scenario-007,#scenario-008,#scenario-018,
     .terror-scenario,.cartel-scenario,.regime-scenario
   ) > .scenario-thumb.compact > img.igr-poster-full{
   object-fit:contain!important;
@@ -751,4 +751,4 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   filter:none!important;
   transform:none!important;
 }
-/* Never override Omertà, or the already approved dossiers 009–020. */
+/* Preserve Omertà and the approved 009–017 / 019–020 dossiers. */
