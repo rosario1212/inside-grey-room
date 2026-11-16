@@ -37,7 +37,7 @@ function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data
    timedControls.some(key=>Boolean(state[key])!==Boolean(data[key]));
  state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
-function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el)el.textContent=problem?message(problem):state&&syncedAt?'Table à jour':credentials?'Connexion…':''}
+function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el){el.dataset.revision=state?String(state.revision):'';el.textContent=problem?message(problem):state&&syncedAt?'Table à jour':credentials?'Connexion…':''}}
 async function sync(){
  if(!credentials||!active||busy)return;if(polling)return polling;
  const epoch=generation;
@@ -274,5 +274,5 @@ document.addEventListener('change',event=>{
  if(activity)activity.textContent='ACTIVITÉ · '+roleStars(select.value);
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.9',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.10',open,close,sync});
 })();
