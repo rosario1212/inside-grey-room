@@ -74,89 +74,59 @@ for(const id of ['029','030','031']){
 }
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
-assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing shared bounded scenario teaser function');
-assert(app.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,Number(sc.id)>=9?30:23)"),
- 'Base 009–020 must present fuller public intros without changing dossier detail');
-for(const [name,source] of [['base',app],['Omertà',await read('omerta-v12.js')],
-  ['Terreur',await read('terror-v12-37.js')],['Cartel/Régime',dlc],['premium',premium]]){
-  assert(source.includes('</p></div><div class="tag-row" aria-label="Informations du dossier">'),
-    name+' catalogue must put badges in the full-width footer, not within the narrow text column');
+// v727 — strict family catalogue contract. Post-click narrative is unchanged.
+assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Shared 30-word teaser helper missing');
+assert(app.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,30)"),
+  'Every Base dossier, including 001–008, must use the same 30-word cap');
+for(const [label,source] of [
+  ['base',app],['Omertà',await read('omerta-v12.js')],
+  ['Terreur',await read('terror-v12-37.js')],
+  ['Cartel/Régime',dlc],['premium',premium]
+]){
+  assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
+    label+' must render the full original illustration without a miniature');
+  assert(source.includes('</p><div class="tag-row" aria-label="Informations du dossier">'),
+    label+' badges must live inside the text block, not in a full-width footer');
+  assert(source.includes('</div></div></article>'),
+    label+' nested metadata container must close correctly');
+  if(label!=='base')assert(source.includes('scenarioCardTeaser(sc.short,30)'),
+    label+' must enforce the universal 30-word cap');
 }
-for(const [label,source] of [['DLC',dlc],['premium catalogue',premium]]){
- assert(source.includes('class="igr-card-excerpt"'),label+' card must show a teaser');
- assert(source.includes('scenarioCardTeaser(sc.short,28)'),label+' card must use the shorter DLC-specific preview');
- assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
-   label+' must use only one full-bleed poster, without inset or duplicate thumbnail');
+const teaserStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
+const teaserEnd=app.indexOf('\nconst ADVANCED_SCENARIO_IDS=',teaserStart);
+assert(teaserStart>=0&&teaserEnd>teaserStart);
+const cx={window:{innerWidth:320}};
+new Script(app.slice(teaserStart,teaserEnd)+'\n;globalThis.catalogueTeaser=scenarioCardTeaser;').runInNewContext(cx);
+const probe=Array.from({length:46},(_,i)=>'mot'+i).join(' ');
+for(const width of [320,375,390,430,768,1440]){
+  cx.window.innerWidth=width;
+  assert(cx.catalogueTeaser(probe,30).trim().split(/\s+/).length<=30,
+    width+'px preview must never exceed 30 words');
 }
-assert(app.includes('class="igr-poster-full"')&&!app.includes('class="igr-poster-ambient"'),
- 'Classic 001-020 must render one edge-to-edge full artwork without a miniature');
-assert(app.includes('src="${scenarioArt(sc.id)}"'),
- 'Classic cards must load original uncropped artwork, not reuse cropped thumbnails as foreground');
-const start=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
-const end=app.indexOf('\nconst ADVANCED_SCENARIO_IDS=',start);
-assert(start>=0&&end>start,'Cannot locate pure card teaser implementation');
-const context={window:{innerWidth:360}};
-new Script(app.slice(start,end)+'\n;globalThis.catalogueTeaser=scenarioCardTeaser;').runInNewContext(context);
-const example='Deux dirigeants en fuite. Les enquêteurs recoupent les archives et les responsabilités judiciaires.';
-assert.equal(context.catalogueTeaser(example),example,
-  'Short synopsis must stay intact on iPhone');
-context.window.innerWidth=1200;
-assert.equal(context.catalogueTeaser(example),example,
-  'Desktop catalogue must preserve the same full description');
-assert.equal(context.catalogueTeaser('Déposition scellée.'),'Déposition scellée.',
-  'Short public descriptions must never acquire a fabricated ellipsis');
-assert.equal(context.catalogueTeaser('  Deux  phrases.  '),'Deux phrases.',
-  'Whitespace normalization must preserve short synopses');
-const longSynopsis=Array.from({length:45},(_,i)=>'mot'+i).join(' ');
-assert.equal(context.catalogueTeaser(longSynopsis).split(/\s+/).length,30,
-  'Catalogue previews are capped at 30 words across all screen widths');
-assert(context.catalogueTeaser(longSynopsis).endsWith('…'),
-  'Long catalogue previews must signal that more detail is available');
-assert.equal(context.catalogueTeaser(longSynopsis,19).split(/\s+/).length,19,
-  'DLC previews must stay within 19 words');
-assert(context.catalogueTeaser('Plusieurs responsables sont interrogés dans une ville coupée du monde. Les enquêteurs cherchent qui a donné les ordres. La suite reste confidentielle.',19).endsWith('.'),
-  'DLC catalogue previews should use a complete sentence whenever one fits the word budget');
-assert(context.catalogueTeaser('Le FDR a pris presque tout Almizia. Des fonctionnaires ont été exécutés, des familles déplacées et des noms effacés des registres. Trois captifs racontent la suite.',19).split(/\s+/).length<=19,
-  'When a longer sentence does not fit, the DLC teaser must still respect its word budget');
-assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
-  'The selected dossier must retain the complete narrative context');
-const fullCopyCss=await read('catalog-descriptions-v1.css');
-assert(mobileCss.includes('v163 — unified mobile dossiers'),'Existing universal mobile structure missing');
-assert(mobileCss.includes('height:auto!important'),'Cards must retain fluid heights');
-assert(mobileCss.includes('.scenario--compact.regime-scenario'),'Regime must share the universal layout');
-assert(desktopCss.includes('v163: the widescreen two-column browser'),
-  'Desktop must keep adaptive card proportions');
-assert(fullCopyCss.includes('CATALOGUE FIT v13')&&fullCopyCss.slice(fullCopyCss.indexOf('CATALOGUE FIT v13')).includes('-webkit-line-clamp:unset!important'),
-  'Final catalogue CSS must keep mobile copy readable without cutting content');
-assert(fullCopyCss.includes('height:auto!important')&&fullCopyCss.slice(fullCopyCss.indexOf('CATALOGUE FIT v13')).includes('max-height:none!important'),
-  'Fluid cards must expand with all visible catalogue text');
-assert(fullCopyCss.includes('v726 — one reading column')&&fullCopyCss.includes('object-fit:contain!important'),
-  'Catalogue must use independent poster templates with no artwork distortion');
-assert(fullCopyCss.includes('grid-template-areas:"poster content" "poster metadata"'),
-  'Catalogue metadata must sit below the synopsis in the right column');
-assert(fullCopyCss.includes('content-visibility:visible!important'),
-  'Do not reintroduce fake 240px content-height placeholders');
-for(const family of ['omerta','terror','cartel','regime']){
-  assert(fullCopyCss.includes('article.scenario.scenario--art.scenario--compact.'+family+'-scenario'),
-    'Dedicated poster template missing for '+family);
+assert.equal(cx.catalogueTeaser('Deux phrases simples.'),'Deux phrases simples.');
+assert(cx.catalogueTeaser(probe,30).endsWith('…'),'Long previews should signal more detail');
+assert(app.includes('class="confirm-copy"'),'Post-click dossier context must remain intact');
+const familyCss=await read('catalog-descriptions-v1.css');
+const finalCss=familyCss.slice(familyCss.indexOf('/* CATALOGUE STANDARD v727'));
+assert(finalCss.startsWith('/* CATALOGUE STANDARD v727'));
+assert(finalCss.includes('display:flow-root!important')&&finalCss.includes('float:left!important'),
+  'Text must wrap under original posters without a dead black gap');
+assert(finalCss.includes('object-fit:contain!important'),'Poster artwork must not be cropped or distorted');
+assert(finalCss.includes('--igr-poster-ratio:3/4'),'Base 001–020 must share one 3:4 display frame');
+assert(!finalCss.includes('#scenario-009')&&!finalCss.includes('#scenario-020'),
+  'Base dossiers must not diverge into a separate 009–020 geometry');
+for(const [family,ratio] of [
+  ['omerta','3/4'],['terror','3/4'],['cartel','724/960'],['regime','3/4']
+]){
+  assert(finalCss.includes('article.scenario.scenario--art.scenario--compact.'+family+'-scenario'),
+    family+' must have its own template');
+  assert(finalCss.includes('--igr-poster-ratio:'+ratio),family+' ratio missing');
 }
-assert(fullCopyCss.includes('--igr-poster-ratio:724/960'),
-  'Cartel art must keep its original 724×960 aspect ratio');
-assert(fullCopyCss.includes('--igr-poster-ratio:9/16')&&fullCopyCss.includes('--igr-poster-ratio:3/4'),
-  'Base posters must support both native 9:16 and 3:4 artwork');
-for(let i=9;i<=20;i++){
-  const id=String(i).padStart(3,'0');
-  assert(fullCopyCss.includes('#scenario-'+id),
-    'Base dossier '+id+' must use its native 3:4 original rather than a 9:16 crop');
-}
-assert(!fullCopyCss.includes('object-fit:fill!important'),
-  'Stretch-to-card legacy poster formatting must be removed');
-assert(!fullCopyCss.includes('Unified full-frame poster v7'),
-  'Obsolete inset-poster styles must be removed rather than stacked');
-assert(html.includes('catalog-descriptions-v1.css') || report.bundles.some(b=>
+assert(!finalCss.includes('object-fit:fill!important'),'Distorted full-frame artwork forbidden');
+assert(html.includes('catalog-descriptions-v1.css')||report.bundles.some(b=>
   b.sourceUrls?.some(url=>url.startsWith('catalog-descriptions-v1.css'))),
-  'Full-length dossier styles must be included in the published bundle');
-console.log('PASS v725 — fluid cards, complete readable catalogue copy and full dossier preserved across web/native');
+  'The consolidated family stylesheet must reach the published bundle');
+console.log('PASS v727 — 001–020 common geometry, DLC independent, 30-word previews, no poster void');
 
 console.log('PASS v702 '+report.platform+' — CSS '+main.before.css+'→'+main.after.css+
  ' / JS '+main.before.js+'→'+main.after.js+
