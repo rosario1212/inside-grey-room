@@ -816,11 +816,19 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   pointer-events:none!important;
 }
 
-/* v745 — 018 alone: reduce the recovered print size while keeping the
-   approved full-height art frame and the 017 poster unchanged. */
+/* v746 — 018 only: hide the original oversized title on the cover image,
+   then display its smaller source-image title. Keep 017 unchanged. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article#scenario-018.scenario.scenario--art.scenario--compact
+  > .scenario-thumb.compact > img.igr-poster-full{
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 81%)!important;
+  mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 81%)!important;
+}
 #app .page-create-v10-13 .scenario-list-v10-13
   > article#scenario-018.scenario.scenario--art.scenario--compact
   > .scenario-thumb.compact::after{
-  background-size:90% auto!important;
+  background-size:86% auto!important;
   background-position:center bottom!important;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 75%,#000 83%,#000 96%,transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,transparent 75%,#000 83%,#000 96%,transparent 100%)!important;
 }
