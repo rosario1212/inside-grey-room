@@ -187,8 +187,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
    Only pre-click summaries are restricted to 30 words by the renderers. */
 
 #app .page-create-v10-13 .scenario-list-v10-13 {
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
+  /* Keep responsive desktop columns from screen-polish-v73. */
   gap:12px!important;
   min-width:0!important;
   align-items:stretch!important;
@@ -213,6 +212,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   overflow:hidden!important;
   isolation:isolate!important;
   contain:none!important;
+  contain-intrinsic-size:none!important;
   content-visibility:visible!important;
   border-radius:18px!important;
 }
