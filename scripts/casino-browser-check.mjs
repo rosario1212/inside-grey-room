@@ -79,13 +79,13 @@ try{
  const host=await context({width:390,height:844}),hostPage=host.page;
  await hostPage.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
  await hostPage.locator('[data-casino-form=create] input[name=name]').fill('Ali');
- await hostPage.locator('[data-casino-form=create] button').click();await hostPage.locator('.casino-members').waitFor();
+ await hostPage.locator('[data-casino-form=create] button').click();await hostPage.locator('.casino-roster-disclosure').waitFor();
  const hostId=await storageIdentity(hostPage),room=await storage.read(hostId.roomId),people=[host];
  for(let i=1;i<7;i++){
   const person=await context(i%2?{width:820,height:1180}:{width:1440,height:900});people.push(person);
   await person.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await person.page.locator('[data-casino-form=join] input[name=name]').fill('Joueur '+i);
   await person.page.locator('[data-casino-form=join] input[name=inviteCode]').fill(room.inviteCode);
-  await person.page.locator('[data-casino-form=join] button').click();await person.page.locator('.casino-members').waitFor();
+  await person.page.locator('[data-casino-form=join] button').click();await person.page.locator('.casino-roster-disclosure').waitFor();
  }
  await hostPage.waitForFunction(()=>document.querySelectorAll('.casino-members li').length===7);
  checks.push('Sept sessions indépendantes : les arrivées modifient les écrans sans actualisation');
@@ -193,7 +193,7 @@ try{
  const entrance=full.locator('#introGate button');if(await entrance.first().isVisible())await entrance.first().click();
  await full.waitForFunction(()=>document.getElementById('introGate')?.getAttribute('aria-hidden')==='true');
  await full.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
- await full.locator('[data-casino-form=create] input[name=name]').fill('Intégration');await full.locator('[data-casino-form=create] button').click();await full.locator('.casino-members').waitFor();
+ await full.locator('[data-casino-form=create] input[name=name]').fill('Intégration');await full.locator('[data-casino-form=create] button').click();await full.locator('.casino-roster-disclosure').waitFor();
  await full.waitForTimeout(2600);assert.equal(await full.locator('.casino-members').count(),1,'Existing runtimes must not replace the Casino screen');
  await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();
  await full.evaluate(()=>window.IGR_HERITAGE_PLAY.open());await full.locator('.casino-entry').waitFor();
@@ -219,7 +219,7 @@ try{
  await full.locator('button[onclick*="joinRoom("]').click();await full.locator('[data-casino-form=join]').waitFor();
  assert.equal(await full.locator('[data-casino-form=join] [name=inviteCode]').inputValue(),integratedRoom.inviteCode);
  assert.equal(await full.locator('[data-casino-form=join] [name=name]').inputValue(),'Invité sans licence');
- await full.locator('[data-casino-form=join] button').click();await full.locator('.casino-members').waitFor();
+ await full.locator('[data-casino-form=join] button').click();await full.locator('.casino-roster-disclosure').waitFor();
  assert.equal(await full.locator('.casino-members li').count(),2);
  checks.push('Accueil → Rejoindre : invitation Casino accessible à un invité sans licence Héritage');
  // Closing the page after a committed creation must retain its new recovery
@@ -236,7 +236,7 @@ try{
  const candidate=await interrupted.page.evaluate(()=>JSON.parse(localStorage.getItem('igr_casino_identity_v1_pending')));
  const committed=await storage.read(candidate.roomId);assert(committed);
  await interrupted.page.unroute('**/api/casino');await interrupted.page.reload();await interrupted.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());
- await interrupted.page.locator('.casino-members').waitFor();const recoveredCreation=await storageIdentity(interrupted.page);
+ await interrupted.page.locator('.casino-roster-disclosure').waitFor();const recoveredCreation=await storageIdentity(interrupted.page);
  assert.equal(recoveredCreation.roomId,candidate.roomId);assert.equal((await storage.read(recoveredCreation.roomId)).state.members.length,1);
  const interruptedJoin=await context({width:820,height:1180});await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());let droppedJoin=false;
  await interruptedJoin.page.route('**/api/casino',async route=>{
@@ -246,7 +246,7 @@ try{
  await interruptedJoin.page.locator('[name=inviteCode]').fill(committed.inviteCode);
  await interruptedJoin.page.locator('[data-casino-form=join] [name=name]').fill('Reprise arrivée');await interruptedJoin.page.locator('[data-casino-form=join] button').click();
  await interruptedJoin.page.locator('[data-casino-action=retry]').waitFor();await interruptedJoin.page.unroute('**/api/casino');
- await interruptedJoin.page.reload();await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await interruptedJoin.page.locator('.casino-members').waitFor();
+ await interruptedJoin.page.reload();await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await interruptedJoin.page.locator('.casino-roster-disclosure').waitFor();
  assert.equal((await storage.read(recoveredCreation.roomId)).state.members.length,2);
  checks.push('Création et arrivée reprises après perte de leur première réponse et fermeture, sans nouvelle identité');
  assert.deepEqual(errors,[],'No browser runtime errors');

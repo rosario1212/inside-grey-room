@@ -6,7 +6,7 @@ const $=(s,r=document)=>r.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']
 const st=()=>{try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}},read=k=>{try{return JSON.parse(st().getItem(k)||'null')}catch{return null}},write=(k,v)=>st().setItem(k,JSON.stringify(v));
 const sess=()=>{const s=read(H);return s?.campaign==='maitre'?s:null},role=id=>ROLES.find(r=>r.id===id)||{name:String(id||'RÔLE').toUpperCase(),public:''},pc=n=>PACK.chapters[Number(n)];
 const rpcx=(n,a)=>typeof rpc==='function'?rpc(n,a):Promise.reject(new Error('rpc unavailable')),toastx=m=>{try{toast?.(m)}catch{console.log(m)}};
-function put(x){const a=$('#app');if(a)a.innerHTML=typeof shell==='function'?shell(x,false):x;requestAnimationFrame(()=>scrollTo({top:0,behavior:'auto'}))}
+function put(x,preserveLobby=false){const a=$('#app');if(!a)return;const savedScroll=preserveLobby&&a.querySelector('.hnet-lobby')?window.scrollY:null;a.innerHTML=typeof shell==='function'?shell(x,false):x;requestAnimationFrame(()=>window.scrollTo({top:savedScroll??0,behavior:'auto'}))}
 function clear(){try{st().removeItem(H);st().removeItem(G)}catch{};last=''}
 function code(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',a=new Uint32Array(4);try{crypto.getRandomValues(a)}catch{for(let i=0;i<4;i++)a[i]=Math.random()*2**32}return'H'+[...a].map(x=>c[x%c.length]).join('')}
 function variant(){try{let s=window.IGR_HERITAGE_MAITRE?.get?.()||window.IGR_HERITAGE?.get?.('maitre');if(!s){window.IGR_HERITAGE?.begin?.('maitre');s=window.IGR_HERITAGE?.get?.('maitre')}return s?.maitre?.canon?.variant||'blind'}catch{return'blind'}}
@@ -30,23 +30,24 @@ function lobby(d){
   const rating=Math.max(1,Math.min(5,Number(r.activity)||2));
   return `<button type="button" class="hnet-role-card ${mine?'is-picked':''} ${locked?'is-taken':''}" data-mnet="role" data-role="${esc(id)}" aria-pressed="${mine}" ${locked?'disabled':''}>
     <span class="hnet-role-top"><b>${esc(r.name)}</b><em>${mine?'TON RÔLE':locked?'COMPLET':'CHOISIR'}</em></span>
-    <small>${esc(r.short||r.public)}</small><span class="hnet-stars">ACTIVITÉ · ${'★'.repeat(rating)+'☆'.repeat(5-rating)}</span>
+    <small>${esc(r.short||r.public)}</small><span class="hnet-stars" aria-label="Activité estimée">${'★'.repeat(rating)+'☆'.repeat(5-rating)}</span>
   </button>`;
  }).join('');
+ const rosterOpen=!!$('.hnet-lobby .hnet-roster-disclosure[open]');
  const roster=d.players.map((p,i)=>`<div><span>${i+1}</span><b>${esc(p.pseudo)}</b><small>${p.preferred_role?esc(names.get(p.preferred_role)||p.preferred_role):'AU HASARD'}${p.is_host?' · HÔTE':''}</small></div>`).join('');
  const canStart=c>=5&&!invalid.length;
  put(`<main class="page hnet hplay-theme-maitre maitre-page"><header class="hnet-head"><button class="btn ghost small" data-mnet="leave">← Quitter</button><span>MAÎTRE · DOSSIER 0${n}</span></header>
-  <section class="hnet-lobby"><div class="hnet-code"><span>CODE DE CELLULE</span><strong>${esc(d.room.code)}</strong><small>Rejoindre une partie → ${esc(d.room.code)}</small></div>
-  <div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(pc(n).title)}</h1><p>${c}/7 joueurs · minimum 5</p></div>
-  <div class="hnet-players">${roster}</div>
+  <section class="hnet-lobby"><div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(pc(n).title)}</h1><p>${c}/7 joueurs · minimum 5</p></div>
+  <div class="hnet-code"><span>CODE D’INVITATION</span><strong>${esc(d.room.code)}</strong><small>À communiquer aux joueurs</small></div>
   <section class="hnet-role-zone" aria-label="Choix des rôles">
    <div class="hnet-role-head"><div><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div><small>${pool.length} rôles · 1 place par rôle</small></div>
-   <p>Choix facultatif et réservé dès validation. Sans choix, attribution au hasard. Les secrets du procès restent privés.</p>
-   <div class="hnet-role-grid"><button type="button" class="hnet-role-card hnet-role-random ${!picked?'is-picked':''}" data-mnet="role" data-role="" aria-pressed="${!picked}"><span class="hnet-role-top"><b>Attribution aléatoire</b><em>${!picked?'TON CHOIX':'LIBRE'}</em></span><small>Un rôle libre te sera attribué au lancement.</small></button>${cards}</div>
+   <p>Choisis ton rôle ou laisse le tirage attribuer une fonction disponible. Les secrets du procès restent privés.</p>
+   <div class="hnet-role-grid"><button type="button" class="hnet-role-card hnet-role-random ${!picked?'is-picked':''}" data-mnet="role" data-role="" aria-pressed="${!picked}"><span class="hnet-role-top"><b>Attribution aléatoire</b><em>${!picked?'TON CHOIX':'LIBRE'}</em></span><small>Un rôle libre te sera attribué au lancement.</small></button>${cards}</div><p class="hnet-activity-note">★ = fréquence d’activité estimée, sans effet sur la victoire.</p>
    ${invalid.length?`<p class="hnet-role-warning" role="alert">Le nombre de joueurs a changé : ${invalid.map(p=>esc(p.pseudo)).join(', ')} doit changer de rôle ou revenir au tirage aléatoire.</p>`:''}
   </section>
+  <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Participants à la table <span>${c}/7</span></summary><div class="hnet-players">${roster}</div></details>
   ${h?`<button class="btn primary block hnet-start" data-mnet="start" ${canStart?'':'disabled'}>${c<5?`ENCORE ${5-c} JOUEUR${5-c>1?'S':''}`:invalid.length?'RÉVISER LES RÔLES':'LANCER LE DOSSIER'}</button>`:'<div class="hnet-wait">En attente de l’hôte…</div>'}
-  </section></main>`);
+  </section></main>`,true);
 }
 function reveal(d){const r=role(d.player.role_id),s=secret(d.room.chapter,d.player.role_id,d.room.maitre_variant,d.room.campaign_carry),ready=d.player.ready,c=d.players.filter(x=>x.ready).length;put(`<main class="page hplay hplay-reveal hplay-theme-maitre maitre-page mnet"><header class="hplay-top"><button class="hplay-back" data-mnet="leave">× <span>Quitter</span></button><div class="hplay-mode">EN LIGNE · ${c}/${d.players.length} PRÊTS</div></header><section class="hplay-private is-open"><span class="hplay-eyebrow">${esc(d.player.pseudo)}</span><h1>${esc(r.name)}</h1><p class="hplay-role-short">${esc(r.short||r.public)}</p><span class="hplay-role-activity">${'ACTIVITÉ · '+'★'.repeat(Number(r.activity)||2)+'☆'.repeat(5-(Number(r.activity)||2))}</span><details class="hplay-role-full"><summary>Lire la fiche complète</summary><p>${esc(r.public)}</p></details><div class="hplay-secret"><span>INFORMATION PRIVÉE</span><b>${esc(s[0])}</b></div><div class="hplay-objective"><span>OBJECTIF</span><b>${esc(s[1])}</b></div><button class="btn primary" data-mnet="ready" ${ready?'disabled':''}>${ready?'PRÊT · EN ATTENTE':'J’AI LU · PRÊT'}</button></section></main>`)}
 function maitreOnlineHearingGuide(cycle){
@@ -144,7 +145,7 @@ async function finishOnline(){
   finally{finishPending=false}
 }
 async function click(n){const a=n.dataset.mnet,ch=Number(n.dataset.ch||sess()?.chapter||1);if(a==='create')return createView(ch);if(a==='resume'||a==='retry'){suspended=false;return sync(true)}if(a==='home')return window.IGR_HERITAGE_MAITRE?.open?.();if(a==='back')return window.IGR_HERITAGE_MAITRE?.openChapter?.(ch);if(a==='local'){if(sess()){if(lastStage&&lastStage!=='lobby'&&lastStage!=='finished')return toastx('Cette salle est en cours : reprenez la session avant de passer en local.');await rpcx('igr_heritage_online_leave',{p_code:sess().code,p_player_token:sess().token});clear()}const t=document.createElement('button');t.hidden=true;t.dataset.maitreAction=n.dataset.act||'setup';t.dataset.chapter=String(ch);document.body.appendChild(t);t.click();t.remove();return}if(a==='createNow')return createNow(ch);if(a==='leave')return leave();const s=sess();if(!s)return;if(a==='role'){
-  if(rolePending)return;
+  if(rolePending||n.getAttribute('aria-pressed')==='true')return;
   rolePending=true;
   try{await rpcx('igr_heritage_online_choose_role',{p_code:s.code,p_player_token:s.token,p_role_id:n.dataset.role||null});await sync(true)}
   catch(e){const msg=String(e?.message||'');toastx(/role_already_taken/i.test(msg)?'Ce rôle est déjà réservé.':/role_not_available/i.test(msg)?'Rôle indisponible pour cette table.':'Choix impossible. Réessaie.');await sync(true).catch(()=>{})}
