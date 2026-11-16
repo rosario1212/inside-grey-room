@@ -1,4 +1,4 @@
-const CACHE='igr-catalogue-v728-fdr-20261116';
+const CACHE='igr-catalog-picker-v729-20261116';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
   '/catalog-descriptions-v1.css?v=v728-approved-five-mockups-20261116',
@@ -13,7 +13,7 @@ const SHELL=[
   '/startup-stability-v13-3.css?v=20261116-entry-safearea-v728','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
   '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
-  '/omerta-v12-40.css?v=v12.41-uniform-dlc','/omerta-money-intel-v1.css?v=om021-1','/omerta-santoro-verdict-v28.css?v=santoro-verdict-v28','/omerta-023-spy-v1.css?v=omerta-023-spy-v1','/terror-v12-40.css?v=terror-fdr-context-20261116','/dlc-suite-v12-40.css?v=regime-v16-1-mobile-cards-20261115','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
+  '/omerta-v12-40.css?v=v12.41-uniform-dlc','/omerta-money-intel-v1.css?v=om021-1','/omerta-santoro-verdict-v28.css?v=santoro-verdict-v28','/omerta-023-spy-v1.css?v=omerta-023-spy-v1','/terror-v12-40.css?v=terror-fdr-context-20261116','/dlc-suite-v12-40.css?v=catalog-picker-v729-20261116','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
   '/app-v11.js?v=santoro-display-audit-20261108-role-choices-v721-20261116-v12-footer-009-020-v728-mockups','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
   '/turn-v12-4.js?v=security-v701-room-authorized-20261115','/profile-dossier-v12.js?v=v12.22-mobile-ui','/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
   '/notifications-v12.js?v=v12.22-mobile-ui','/native-lifecycle-v12.js?v=v12.22-mobile-ui','/runtime-optimization-v12.js?v=v12.22-mobile-ui','/gameplay-simple-v12.js?v=v12.22-mobile-ui',
@@ -24,7 +24,7 @@ const SHELL=[
   '/language-v12.js?v=v12.22-mobile-ui','/i18n-en-v12.js?v=v12.22-mobile-ui',
   '/rules-v12.js?v=20261018-grey-room-protocol','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui','/locale-runtime-v12-23.js?v=v12.23-locale-home',
   '/omerta-v12.js?v=v728-approved-five-mockups-20261116','/omerta-polish-v12.js?v=santoro-visual-fix-20261108-v724-role-ux-20261116','/omerta-hotfix-v12.js?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.js?v=v12.29-role-tree','/omerta-v12-30.js?v=santoro-visual-fix-20261108',
-  '/omerta-v12-39.js?v=v725-poster-native-fit-20261116','/omerta-money-intel-v1.js?v=santoro-display-audit-20261108','/omerta-santoro-verdict-v28.js?v=omerta-023-spy-v1','/omerta-023-spy-v1.js?v=omerta-023-spy-v1','/terror-v12-37.js?v=v728-approved-five-mockups-20261116','/dlc-suite-v12-37.js?v=v728-approved-five-mockups-20261116','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=regime-v14-main-sync-20261115',
+  '/omerta-v12-39.js?v=v725-poster-native-fit-20261116','/omerta-money-intel-v1.js?v=santoro-display-audit-20261108','/omerta-santoro-verdict-v28.js?v=omerta-023-spy-v1','/omerta-023-spy-v1.js?v=omerta-023-spy-v1','/terror-v12-37.js?v=v728-approved-five-mockups-20261116','/dlc-suite-v12-37.js?v=catalog-picker-v729-20261116','/live-cell-v12-44.js?v=v12.44-live-cell','/dlc-profile-ui-v12-44.js?v=v12.44-ui','/dlc-invites-v12-45.js?v=v12.45-dlc-invites','/dlc-copy-v12-46.js?v=regime-v14-main-sync-20261115',
   '/manifest.webmanifest','/privacy.html','/terms.html','/delete-account.html','/support.html',
   '/assets/intro-v10-16.webp?v=20261018-intro-v16','/assets/home-v10-14.webp','/assets/icon-192-v9.png','/assets/icon-512-v9.png','/assets/apple-touch-icon-v9.png','/assets/favicon-v9.png',
   '/assets/heritage-cendres-01-personne-n-existe.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-02-04-17.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-03-la-chambre.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-04-cendres.webp?v=v13.6-heritage-premium','/assets/heritage-cendres-05-point-zero.webp?v=v13.6-heritage-premium',
