@@ -22,7 +22,68 @@
 '019':'Un lanceur d’alerte est retrouvé mort pendant un gala, quelques minutes avant de révéler un détournement de fonds. Plusieurs personnes avaient intérêt à l’empêcher de parler.',
 '020':'327 personnes meurent dans l’incendie du Bal des Fondateurs. Certaines portes auraient encore pu être ouvertes. Il faut comprendre quelles décisions ont transformé un départ de feu en 327 morts.'};
  const txt=v=>String(v??'').replace(/\s+/g,' ').replace(/\bcanonique\b/gi,'du dossier').replace(/\btrame\b/gi,'indice').replace(/\brecontextualisation\b/gi,'nouvelle lecture').replace(/\bverrouiller\b/gi,'confirmer').replace(/\bverrouillé(e)?\b/gi,'confirmé$1').trim();
- try{SCENARIOS.forEach(s=>{if(C[s.id]){s.short=C[s.id];s.context=C[s.id];PUBLIC_LOBBY_SUMMARIES[s.id]=C[s.id]}});publicScenarioSummary=id=>C[id]||scenario(id).short;canonicalBriefingText=id=>C[id]||scenario(id).context}catch{}
+ /* Un dossier classique doit être plus explicite après son ouverture.
+    La couche de jeu conserve ses briefings et ses vérités : seuls le catalogue
+    et le contexte public affiché sur la page de sélection sont différenciés. */
+ const CLASSIC_CATALOGUE_TEASERS=Object.freeze({
+ "001": "Un homme est retrouvé poignardé dans la chambre 222. Trois personnes racontent trois versions de sa dernière nuit.",
+ "002": "Léon s’est suicidé. Ses proches n’ont pas tous joué le même rôle dans les jours précédant sa mort.",
+ "003": "Une attaque biologique frappe une gare. Les pistes mènent à un centre de recherche et à ses décisions.",
+ "004": "Sofia meurt après une nuit d’appels à l’aide. Trois proches devront expliquer leur silence.",
+ "005": "Adrian Keller est retrouvé mort auprès d’un masque blanc, vestige d’une ancienne affaire.",
+ "006": "Cinq ans après la mort de Noé, une vidéo pousse trois amis à reparler de leur randonnée.",
+ "007": "Un héritage déchire une famille. Un décès transforme les rancunes en soupçons.",
+ "008": "Des témoins sous serment donnent des versions incompatibles. Qui ment, et pour protéger quoi ?",
+ "009": "Une expérience se poursuit malgré un retrait de consentement. Un médecin perd ensuite une partie de sa mémoire.",
+ "010": "Nora Weiss est retrouvée morte derrière un mur. Plusieurs personnes auraient pu entendre ou comprendre.",
+ "011": "Trente-six heures d’opération militaire, des villages dévastés et trois officiers qui se rejettent la faute.",
+ "012": "Sacha tente de quitter une communauté fermée. Il est battu et retenu contre son gré.",
+ "013": "Un président est assassiné. Le tireur est connu, mais ceux qui l’ont commandité restent dans l’ombre.",
+ "014": "Onze informateurs sont exposés par une fuite. Une information pouvait suffire à condamner leurs familles.",
+ "015": "Un patient meurt malgré plusieurs alertes au sein d’un programme hospitalier. Des notes sont ensuite modifiées.",
+ "016": "Une victime est humiliée devant une caméra, puis retrouvée morte. La vidéo ne montre pas l’issue.",
+ "017": "Deux personnes sont enlevées. L’une meurt, l’autre survit. Quelqu’un impose le silence.",
+ "018": "Un ancien directeur de foyer est retrouvé mort devant neuf assiettes portant chacune un nom.",
+ "019": "Pendant un gala, un responsable financier est assassiné avant de remettre des documents compromettants.",
+ "020": "327 personnes meurent dans l’incendie d’un bal. Plusieurs décisions auraient pu aggraver le bilan."
+});
+ const CLASSIC_OPEN_DETAILS=Object.freeze({
+ "001": "Dans la chambre 222 d’un hôtel, Maël Sénéchal est retrouvé poignardé. Trois personnes l’ont croisé au cours de la nuit, et chacune livre un récit qui semble tenir debout. Mais les horaires, les déplacements et les traces matérielles ne coïncident pas. L’enquête consiste à reconstruire une nuit dont aucun témoin ne possède seul la vérité.",
+ "002": "Léon s’est donné la mort, sans qu’aucune des personnes impliquées l’ait tué physiquement. Pourtant, dans les jours qui ont précédé son décès, des paroles, des décisions et des silences ont pu peser. Les protagonistes devront expliquer ce qu’ils savaient, ce qu’ils ont fait et ce qu’ils ont choisi d’ignorer. La question centrale est celle de leur responsabilité, sans confondre influence et certitude.",
+ "003": "Une attaque biologique provoque le chaos dans une gare. Les premiers éléments ramènent l’enquête vers le Centre Helios, où plusieurs équipes ont participé à la recherche, la validation et la circulation de données sensibles. Aucun geste isolé ne suffit à expliquer la catastrophe. Il faudra reconstituer les décisions, les ordres et les omissions qui ont permis que la menace devienne réelle.",
+ "004": "Sofia meurt après une nuit marquée par des appels à l’aide et des réponses incomplètes. Trois proches ont pu recevoir des informations différentes, à des moments différents. Tous ont quelque chose à expliquer, mais leur culpabilité ne se déduit pas de la seule issue tragique. L’enquête doit établir précisément qui savait quoi, à quel moment et ce qu’il était encore possible de faire.",
+ "005": "Adrian Keller est retrouvé mort dans son studio. Un masque blanc évoquant une ancienne série de crimes est présent sur la scène, mais sa seule présence ne prouve ni l’identité du meurtrier ni le déroulement des faits. Trois personnes liées à cette affaire détiennent des éléments incompatibles. L’enquête devra distinguer les apparences mises en scène de ce qui s’est réellement passé.",
+ "006": "Cinq ans après la chute mortelle de Noé lors d’une randonnée, une vidéo oubliée remet en cause le récit de ses trois amis. Un défi près du vide, des tensions anciennes et un retour précipité au chalet laissent des zones d’ombre. Chacun a vécu les mêmes minutes, mais personne ne les raconte de la même façon. Il faudra démêler souvenirs, mensonges et responsabilités.",
+ "007": "La lecture d’un testament ravive les fractures d’une famille déjà rongée par l’argent et les rancunes. Lorsque survient un décès inattendu, les intérêts de chacun changent de nature et les mensonges prennent un tout autre poids. Les héritiers ont tous des raisons de protéger une partie de l’histoire. Reste à déterminer lesquels se sont contentés de mentir et lesquels ont agi.",
+ "008": "Plusieurs personnes ont témoigné sous serment sur un même ensemble de faits. Leurs déclarations ne peuvent pourtant pas être vraies toutes à la fois. Un faux témoignage peut cacher une peur, une loyauté ou une implication plus grave, sans prouver à lui seul la responsabilité de son auteur. L’enquête devra comparer les récits, confronter les preuves et comprendre ce que chaque contradiction dissimule.",
+ "009": "Au sein du programme ORPHÉE, le Sujet 17 retire son consentement. La séance se poursuit malgré tout. Après un incident, le médecin responsable présente un trouble authentique de la mémoire récente, ce qui complique les témoignages sur la fin de l’expérience. Les archives demeurent cependant. Il faudra distinguer les décisions prises avant l’accident, les faits documentés et les souvenirs désormais incertains.",
+ "010": "Nora Weiss est découverte derrière un mur technique. L’endroit semblait inaccessible, mais des passages, des horaires et des bruits pourraient révéler qu’elle était encore en vie lorsque certains ont approché les lieux. Qui l’y a enfermée ? Qui aurait pu comprendre ce qui se passait ? L’enquête porte autant sur l’acte initial que sur les occasions éventuelles d’intervenir.",
+ "011": "Une opération militaire fictive dure trente-six heures. À son terme, des villages ont brûlé, des civils sont morts et des familles ont disparu. Trois officiers se renvoient la responsabilité de décisions prises dans l’urgence, de violences commises sur le terrain et de comptes rendus contestés. L’enquête doit reconstituer la chaîne des ordres et déterminer qui pouvait empêcher leur exécution ou leur aggravation.",
+ "012": "Sacha Morel tente de quitter une communauté fermée. Il est frappé, retenu et isolé pendant près de vingt heures avant de pouvoir s’échapper. Plusieurs membres connaissaient la situation, mais leurs pouvoirs et leur participation ne se confondaient pas. Il faudra comprendre qui a demandé les violences, qui les a commises et qui a choisi de ne pas empêcher leur poursuite.",
+ "013": "Le président Kessler a été assassiné par un tireur rémunéré. Le coup de feu et son exécutant ne suffisent pourtant pas à reconstituer l’affaire. D’autres personnes ont pu financer, préparer ou faciliter l’opération, puis chercher à en tirer profit. Les témoignages et les traces doivent permettre de distinguer le commandement, l’exécution et l’exploitation politique de l’attentat.",
+ "014": "Une fuite expose l’identité de onze informateurs et met leurs familles en danger. Dans un service construit autour du secret, plusieurs personnes avaient accès à certaines pièces du dossier, sans disposer des mêmes informations. Protection des sources, circulation des documents et intérêts contradictoires se mêlent. L’enquête devra comprendre comment l’information est sortie, qui a joué quel rôle et quels risques chacun connaissait.",
+ "015": "Un patient meurt alors que le programme hospitalier ÉLIGIBLES continue malgré des alertes et des recommandations de suspension. Après le décès, certaines notes du dossier sont modifiées, ajoutant des soupçons aux décisions déjà contestées. Direction, équipe clinique et administration n’avaient ni les mêmes informations ni les mêmes pouvoirs. Il faudra établir ce que chacun savait et pouvait réellement empêcher.",
+ "016": "Une victime est droguée, humiliée et filmée dans un contexte lié à un réseau de narcotiques. Elle est ensuite retrouvée morte, mais l’enregistrement s’interrompt avant les faits décisifs. Ceux qui apparaissent à l’image ne sont pas nécessairement les seuls impliqués. Il faudra distinguer les violences prouvées, les actes commis après la coupure et les occasions d’intervenir.",
+ "017": "Deux personnes sont enlevées pour exercer une pression sur un ancien comptable. L’une meurt pendant sa captivité ; l’autre est libérée sous la menace. Des accords, des ordres et des silences entourent ce qui s’est passé entre les deux issues. L’enquête ne se limite pas à identifier les ravisseurs : elle doit reconstruire les décisions qui ont prolongé la détention et celles qui ont entretenu le silence.",
+ "018": "L’ancien directeur d’un foyer marqué par des abus est retrouvé mort devant une table dressée pour neuf absents. Chaque assiette porte le nom d’un ancien résident. La scène semble avoir été pensée comme un message, mais rien ne dit encore qui l’a composé ni à quel moment. Il faudra séparer les circonstances du meurtre de ce que les objets ont été disposés pour suggérer.",
+ "019": "Au cours d’un gala, un ancien responsable financier est assassiné alors qu’il s’apprêtait à remettre des documents sur une fraude à laquelle il avait lui-même pris part. Une version publique et une version plus complète du dossier circulent, menaçant plusieurs personnes. Entre mécènes, sécurité et réseaux institutionnels, les intérêts se croisent. L’enquête devra établir qui a tenté de faire taire quoi, et pourquoi.",
+ "020": "Le Bal des Fondateurs tourne à la catastrophe lorsqu’un incendie fait 327 morts. Les portes, les alarmes, la maintenance, les matériaux et les décisions des responsables ont pu contribuer à l’ampleur du drame. Aucun élément ne raconte seul ce qui s’est produit. L’enquête doit reconstruire une chaîne de responsabilités, des choix les plus anciens aux minutes où des vies pouvaient encore être sauvées."
+});
+ try{
+  SCENARIOS.forEach(s=>{
+   if(!C[s.id])return;
+   s.short=C[s.id];
+   s.context=CLASSIC_OPEN_DETAILS[s.id]||s.context;
+   PUBLIC_LOBBY_SUMMARIES[s.id]=C[s.id];
+  });
+  const originalCatalogueSynopsis=typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis:null;
+  scenarioCatalogueSynopsis=sc=>{
+   if(window.IGR_LOCALE!=='en'&&CLASSIC_CATALOGUE_TEASERS[sc?.id])return CLASSIC_CATALOGUE_TEASERS[sc.id];
+   return originalCatalogueSynopsis?originalCatalogueSynopsis(sc):String(sc?.short||'');
+  };
+  publicScenarioSummary=id=>C[id]||scenario(id).short;
+  canonicalBriefingText=id=>C[id]||scenario(id).context;
+ }catch{}
  try{
   Object.assign(ROLE_INFO.enqueteur,{win:'Reconstitue les faits et attribue la bonne responsabilité à chacun.',body:'Tu mènes les interrogatoires et rends le verdict final.'});
   Object.assign(ROLE_INFO.analyste,{win:'Aide à reconstruire les faits sans te laisser piéger par les apparences.',body:'Tu repères les contradictions et aides l’Enquêteur.'});
