@@ -75,12 +75,28 @@ function welcome(){return `<h1>Une table à Macao</h1><p>Un écran par participa
  <section class="casino-entry-option" aria-labelledby="casino-join-title"><h2 id="casino-join-title">Rejoindre des amis</h2><p>Un hôte a déjà créé la table ? Entre son code et ton prénom.</p>${form('join',field('Code de la table','inviteCode','text','maxlength="10" required autocapitalize="characters" value="'+esc(joinDraft?.inviteCode||'')+'"')+field('Ton prénom','name','text','maxlength="22" required value="'+esc(joinDraft?.name||'')+'"'),'Rejoindre la table')}</section></div>
  ${load()?'<button class="casino-action" data-casino-action="resume">Reprendre mon personnage</button>':''}
  <details><summary>Reprendre sur un autre appareil</summary>${form('recover',area('Ta clé personnelle','recovery',110),'Reprendre ma partie')}</details>`}
-function lobby(){const own=state.members.find(m=>m.id===state.viewer);return `<h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code de la table</button><output data-casino-invite></output><p>4 à 7 personnages au casino, 3 enquêteurs et jusqu’à 2 magistrats supplémentaires. Les invités rejoignent gratuitement la table de l’hôte.</p>
- <ul class="casino-members">${state.members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'Prêt':'En préparation'}</span></li>`).join('')}</ul>
- ${form('role',`<label>Ta fonction<select name="role">${Object.entries(roles).map(([r,label])=>`<option value="${r}" ${own.role===r?'selected':''}>${label}</option>`).join('')}</select></label><div class="casino-role-explainer"><p data-casino-role-preview>${esc(roleShort(own.role))}</p><small data-casino-role-activity>ACTIVITÉ · ${roleStars(own.role)}</small></div>`,'Choisir cette fonction')}
- <button class="casino-action" data-casino-action="ready">${own.ready?'Modifier ma préparation':'Je suis prêt'}</button>
- ${state.isHost?'<button class="casino-action" data-casino-action="start">Distribuer les personnages</button>':''}
- <p>Les personnages et les éventuelles missions d’infiltration sont attribués au lancement.</p>`}
+function lobby(){
+ const own=state.members.find(m=>m.id===state.viewer),members=state.members;
+ const taken=new Map(members.filter(m=>m.role!=='casino').map(m=>[m.role,m]));
+ const casinoCount=members.filter(m=>m.role==='casino').length;
+ const buttons=Object.entries(roles).map(([id,label])=>{
+  const mine=own.role===id,locked=id==='casino'?casinoCount>=7&&!mine:!!taken.get(id)&&!mine;
+  const availability=id==='casino'?casinoCount+'/7':(taken.has(id)?'1/1':'0/1');
+  return `<button type="button" class="casino-role-choice-card ${mine?'is-picked':''} ${locked?'is-taken':''}" data-casino-action="select-role" data-role-id="${esc(id)}" aria-pressed="${mine}" ${locked?'disabled':''}>
+   <span class="casino-role-choice-top"><b>${esc(label)}</b><em>${mine?'TON RÔLE':locked?'COMPLET':availability}</em></span>
+   <small>${esc(roleShort(id))}</small><span class="casino-role-activity">ACTIVITÉ · ${roleStars(id)}</span>
+  </button>`;
+ }).join('');
+ return `<section class="casino-lobby-top"><h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code</button><output data-casino-invite></output><p>${members.length}/12 participants · 7 à 12 joueurs au total, dont 4 à 7 au casino. Les invités rejoignent gratuitement la table.</p></section>
+ <ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul>
+ <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div>
+ <p>Choisis une fonction libre. Les fonctions du bureau sont uniques ; plusieurs joueurs peuvent appartenir au Casino. Les identités, intrigues et éventuelles infiltrations restent secrètes.</p>
+ <div class="casino-role-choice-grid">${buttons}</div>
+ </section>
+ <button class="casino-action casino-ready" data-casino-action="ready">${own.ready?'Modifier ma préparation':'JE SUIS PRÊT'}</button>
+ ${state.isHost?'<button class="casino-action casino-start" data-casino-action="start">LANCER LE DOSSIER</button>':''}
+ <p class="casino-lobby-note">L’hôte lance lorsque les fonctions indispensables sont représentées et que les joueurs sont prêts. Les personnages privés seront attribués ensuite.</p>`;
+}
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
  ${(c.relations||[]).map(r=>`<article><h3>${esc(name(r.target))}</h3><p>${esc(r.text)}</p></article>`).join('')}
@@ -203,7 +219,8 @@ document.addEventListener('click',async event=>{
  switch(el.dataset.casinoAction){
   case 'close':close();break;case 'cancel-advance':advanceConfirm=false;render();break;case 'resume':credentials=load();await sync();break;case 'retry':await mutate({},true);break;
   case 'switch':if(busy||pending)break;generation++;state=null;credentials=null;joinDraft=null;problem='';tab='card';render();break;
-  case 'ready':await mutate({op:'ready',ready:!state.members.find(m=>m.id===state.viewer).ready});break;
+  case 'select-role':if(!busy&&!pending){const selected=el.dataset.roleId;if(Object.hasOwn(roles,selected)&&state?.status==='lobby')await mutate({op:'role',role:selected})}break;
+   case 'ready':await mutate({op:'ready',ready:!state.members.find(m=>m.id===state.viewer).ready});break;
   case 'start':await mutate({op:'start'});break;
   case 'draw':await mutate({op:'command',type:'POKER_ACTION',payload:{action:'draw',discard:$$('input[name="discard"]:checked').map(e=>Number(e.value))}});break;
   case 'invite':{try{await navigator.clipboard.writeText(state.inviteCode);$('[data-casino-invite]').textContent='Code copié.'}catch{$('[data-casino-invite]').textContent=state.inviteCode}break}
