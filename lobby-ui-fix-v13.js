@@ -132,6 +132,37 @@
   globalThis.igrBackToScenarios=returnToScenarioList;
   globalThis.igrLobbyOpenSettings=openLobbySettings;
 
+  // v724 shared role action gate: one pending server-side choice per client.
+  // Capture the effective handlers after all Omerta overrides have loaded.
+  let roleActionBusy=false,roleActionRoom=null,roleActionToken=null;
+  function reflectRoleAction(){
+    const zone=document.querySelector('.role-choice-zone');
+    if(!zone)return;
+    const active=roleActionBusy&&STATE?.room===roleActionRoom&&STATE?.token===roleActionToken;
+    zone.classList.toggle('igr-role-selecting',active);
+    if(active)zone.setAttribute('aria-busy','true');
+    else zone.removeAttribute('aria-busy');
+  }
+  async function runRoleAction(handler,context,args){
+    if(roleActionBusy||STATE?.view!=='lobby'||!STATE?.room||!STATE?.token)return;
+    roleActionBusy=true;roleActionRoom=STATE.room;roleActionToken=STATE.token;
+    reflectRoleAction();
+    try{return await handler.apply(context,args)}
+    finally{
+      roleActionBusy=false;roleActionRoom=null;roleActionToken=null;
+      reflectRoleAction();
+    }
+  }
+  const manualRoleHandler=window.chooseLobbyRole,randomRoleHandler=window.chooseRandomLobbyRole;
+  if(typeof manualRoleHandler==='function'){
+    window.chooseLobbyRole=function(...args){return runRoleAction(manualRoleHandler,this,args)};
+  }
+  if(typeof randomRoleHandler==='function'){
+    window.chooseRandomLobbyRole=function(...args){return runRoleAction(randomRoleHandler,this,args)};
+  }
+  window.IGR_ROLE_ACTION_V724=Object.freeze({isBusy:()=>roleActionBusy});
+  // v724 shared role action gate end
+
   function enhanceLobby(){
     if(enhancing)return;
     enhancing=true;
@@ -178,6 +209,7 @@
       setAttribute(settings,'aria-label',en?'Open settings without leaving the room':'Ouvrir les paramètres sans quitter la cellule');
 
       syncLobbyTheme();
+      reflectRoleAction();
     }finally{
       enhancing=false;
     }
@@ -196,6 +228,7 @@
       renderLobby=function(){
         const out=previous.apply(this,arguments);
         syncLobbyTheme();
+        reflectRoleAction();
         queueEnhanceLobby();
         return out;
       };
