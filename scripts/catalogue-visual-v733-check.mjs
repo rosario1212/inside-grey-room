@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import {readFile, mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {chromium} from 'playwright';
+import vm from 'node:vm';
 
 const root=process.cwd(),dist=path.join(root,'dist');
 const read=async relative=>readFile(path.join(dist,relative),'utf8');
@@ -40,13 +41,13 @@ const entries=[
  {id:'032',family:'regime',title:'LES ARCHIVES DU PALAIS',label:'LE RÉGIME · DOSSIER 032',description:'Après la chute du régime, le directeur de Vahran et le ministre de l’Intérieur ont disparu. Registres de détention, transferts et réseaux de protection permettent de remonter leur piste.',players:'6–8 JOUEURS'}
 ];
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const card=x=>`<article id="scenario-${x.id}" class="scenario scenario--art scenario--compact ${x.family==='base'?'':x.family+'-scenario'}" data-igr-scenario-id="${x.id}">
- <div class="scenario-thumb compact" style="--igr-cover-url:url('${posters[x.id]}')">
-  <img class="igr-poster-full" alt="Affiche ${x.id}" src="${posters[x.id]}" />
+const card=x=>{const art=posters[x.id]||posters[x.family==='cartel'?'029':x.family==='omerta'?'021':x.family==='terror'?'026':x.family==='regime'?'032':'001'];return `<article id="scenario-${x.id}" class="scenario scenario--art scenario--compact ${x.family==='base'?'':x.family+'-scenario'}" data-igr-scenario-id="${x.id}">
+ <div class="scenario-thumb compact" style="--igr-cover-url:url('${art}')">
+  <img class="igr-poster-full" alt="Affiche ${x.id}" src="${art}" />
  </div>
  <div class="scenario-body compact"><div class="scenario-id">${escape(x.label)}</div>
  <h3>${escape(x.title)}</h3><p class="igr-card-excerpt">${escape(x.description)}</p>
- <div class="tag-row"><span class="tag">${escape(x.players)}</span></div></div></article>`;
+ <div class="tag-row"><span class="tag">${escape(x.players)}</span></div></div></article>`;};
 const panel=(family,rows)=>`<section class="panel ${family==='base'?'scenario-panel-v10-13':family+'-dlc-section igr-premium-dlc-section igr-premium-dlc-section--'+family}" id="panel-${family}">
  <div class="scenario-list scenario-list-v10-13">${rows.map(card).join('')}</div></section>`;
 const panels=['base','omerta','terror','cartel','regime'].map(f=>panel(f,entries.filter(x=>x.family===f))).join('');
@@ -103,6 +104,84 @@ try{
     console.log(`PASS v733 ${width}px: 6 real posters fitted, DLC palettes distinct, no overflow or overlapping tags`);
     await context.close();
   }
+
+  // v735 — all 20 classical dossiers and each DLC are measured in Chromium.
+  // Uniform means equal complete CARD rectangles, not just equal image widths.
+  // Rich previews and long headings stay visible instead of being clamped.
+  {
+    const source=await read('app-v11.js');
+    const head='const SCENARIOS = [';
+    const at=source.indexOf(head);
+    const tail=source.indexOf('\n];',at);
+    assert(at>=0&&tail>at,'Canonical scenarios source unavailable');
+    const actualClassic=vm.runInNewContext(source.slice(at+head.length-1,tail+3));
+    assert.equal(actualClassic.length,20,'All 20 original dossiers must be measured');
+    const cases=actualClassic.map(sc=>({
+      id:sc.id,family:'base',title:sc.title,
+      label:'DOSSIER '+sc.id,
+      description:sc.short,players:sc.min===sc.max?sc.min+' JOUEURS':sc.min+'–'+sc.max+' JOUEURS'
+    }));
+    const familySize={omerta:5,terror:3,cartel:3,regime:3};
+    const familyStarts={omerta:21,terror:26,cartel:29,regime:32};
+    for(const [family,count] of Object.entries(familySize)){
+      const sample=entries.find(x=>x.family===family);
+      for(let i=0;i<count;i++)cases.push({
+        ...sample,id:String(familyStarts[family]+i).padStart(3,'0'),
+        title:i===1?sample.title+' — DEUXIÈME DOSSIER':sample.title,
+        description:i===count-1?sample.description+' '+sample.description:sample.description
+      });
+    }
+    assert.equal(cases.length,34,'Test needs all 34 scenario cards');
+    const allPanels=Object.keys({base:1,...familySize}).map(family=>panel(family,cases.filter(x=>x.family===family))).join('');
+    for(const width of [320,375,390,430,768,1280]){
+      const context=await browser.newContext({viewport:{width,height:920},deviceScaleFactor:2});
+      const page=await context.newPage();
+      await page.setContent(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+      <style>${css}</style></head><body><div id="app"><div class="app"><main class="page page-create-v10-13">${allPanels}</main></div></div></body></html>`,{waitUntil:'load'});
+      await page.locator('.scenario[data-igr-scenario-id="020"] img').waitFor({state:'visible'});
+      const result=await page.evaluate(()=>{
+        const groups={};
+        for(const section of document.querySelectorAll('section.panel')){
+          const key=section.id.replace('panel-','');
+          groups[key]=[...section.querySelectorAll('article.scenario')].map(article=>{
+            const rect=article.getBoundingClientRect();
+            const body=article.querySelector('.scenario-body');
+            const img=article.querySelector('img.igr-poster-full');
+            const excerpt=article.querySelector('.igr-card-excerpt');
+            const tags=article.querySelector('.tag-row');
+            return {
+              id:article.dataset.igrScenarioId,height:rect.height,width:rect.width,
+              bodyFits:body.scrollHeight<=body.clientHeight+2,
+              excerptFits:excerpt.scrollHeight<=excerpt.clientHeight+2,
+              excerptClamp:getComputedStyle(excerpt).webkitLineClamp,
+              imageFit:getComputedStyle(img).objectFit,
+              badgesBottom:tags.getBoundingClientRect().bottom,
+              cardBottom:rect.bottom,
+              right:rect.right
+            };
+          });
+        }
+        return{groups,viewport:document.documentElement.clientWidth,documentWidth:document.documentElement.scrollWidth};
+      });
+      assert(result.documentWidth<=result.viewport+1,'v735 '+width+'px: page horizontally overflowing');
+      for(const [family,items] of Object.entries(result.groups)){
+        assert.equal(items.length,family==='base'?20:familySize[family],`v735 ${width}px: wrong ${family} card count`);
+        const heights=items.map(item=>item.height);
+        assert(Math.max(...heights)-Math.min(...heights)<=1.1,
+          `v735 ${width}px: ${family} card heights diverge (${Math.min(...heights)}–${Math.max(...heights)}px): ${JSON.stringify(items.map(x=>[x.id,x.height]))}`);
+        for(const item of items){
+          assert(item.bodyFits,`v735 ${width}px ${item.id}: text box clipped`);
+          assert(item.excerptFits,`v735 ${width}px ${item.id}: synopsis clipped`);
+          assert(item.excerptClamp==='none',`v735 ${width}px ${item.id}: synopsis limited to 3 lines`);
+          assert(item.imageFit==='contain',`v735 ${width}px ${item.id}: poster cropped`);
+          assert(item.badgesBottom<=item.cardBottom+1.5,`v735 ${width}px ${item.id}: player badge overflow`);
+        }
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'catalogue-v735-34-equal-heights-iphone.png'),fullPage:true});
+      console.log(`PASS v735 ${width}px: 001–020 and 4 DLC families have equal card heights, full texts, intact posters`);
+      await context.close();
+    }
+  }
   // v734 regression — real navigation scripts + fixed footer links.
   // Scrolling to the last dossier must not reveal a phantom empty screen.
   {
@@ -131,7 +210,20 @@ try{
     await page.addScriptTag({content:await read('navigation-heritage-v19.js')});
     await page.locator('#igrDockFilters').waitFor({state:'visible'});
     await page.locator('#igrDockHome').waitFor({state:'visible'});
+    const startWidths=await page.locator('#igrDockFilters,#igrDockHome').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().width));
+    assert(startWidths.every(w=>w>=98),'v736: buttons should be labeled and expanded at start');
     await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+    await page.waitForFunction(()=>document.body.classList.contains('igr-catalogue-scrolled'),null,{timeout:1500});
+    // The compact form remains while reading lower cards, even after scroll
+    // activity stops (the old behavior reverted to full width after 360ms).
+    await page.waitForTimeout(510);
+    const compact=await page.locator('#igrDockFilters,#igrDockHome').evaluateAll(nodes=>nodes.map(n=>({
+      width:n.getBoundingClientRect().width,
+      labelDisplay:getComputedStyle(n.querySelector('b')).display,
+      clickArea:n.getBoundingClientRect().height
+    })));
+    assert(compact.every(x=>x.width<=45&&x.width>=42&&x.clickArea>=42&&x.labelDisplay==='none'),
+      'v736: Filtres and Accueil must stay compact, tappable and icon-only while scrolled: '+JSON.stringify(compact));
     const final=await page.evaluate(()=>{
       const rect=selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height}};
       const panel=rect('.scenario-panel-v10-13'),footer=rect('.igr-beta-footer'),support=rect('.igr-beta-footer a'),filters=rect('#igrDockFilters'),home=rect('#igrDockHome'),selector=rect('.igr-scenario-filters');
@@ -147,14 +239,24 @@ try{
     assert(final.support.bottom<=Math.min(final.filters.top,final.home.top)-2,'v734: support link covered by floating buttons');
     assert(final.selector.height>35,'v734: top collection selector hidden');
     await page.screenshot({path:path.join(report,'catalogue-v734-footer-and-shortcuts-iphone.png'),fullPage:true});
+    // Simulate an old iOS drag flag. This used to swallow the click in capture.
+    await page.locator('#igrDockFilters').evaluate(el=>{el.dataset.igrDragged='1'});
     await page.locator('#igrDockFilters').click();
     await page.waitForFunction(()=>window.scrollY<140,null,{timeout:3500});
+    await page.waitForFunction(()=>!document.body.classList.contains('igr-catalogue-scrolled'),null,{timeout:1500});
+    // Wait for the 360ms idle-state reset and the short CSS width animation.
+    // At the top, the labels should be readable again, not permanently hidden.
+    await page.waitForFunction(()=>{
+      const b=document.getElementById('igrDockFilters');
+      return b&&b.getBoundingClientRect().width>=98&&
+        getComputedStyle(b.querySelector('b')).display!=='none';
+    },null,{timeout:1800});
     assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('igr-picker-attention')),
       'v734: Filtres shortcut did not highlight visible collections');
     await page.locator('#igrDockHome').click();
     assert.equal(await page.locator('body').getAttribute('data-test-home'),'yes',
       'v734: Accueil shortcut did not invoke home navigation');
-    console.log('PASS v734 390px: footer close to dossier 020, two fixed shortcuts, Filters scrolls to collections, Accueil works');
+    console.log('PASS v736 390px: no footer void, two persistent compact scrolled shortcuts, Filters works despite drag flag, Accueil works');
     await context.close();
   }
 }finally{await browser.close()}

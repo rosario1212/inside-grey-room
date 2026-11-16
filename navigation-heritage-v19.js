@@ -72,16 +72,46 @@ function ensureTopSettings(){
 function closeFilters(){
   const nav=document.querySelector('#app .igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
 }
+function updateCatalogueScrollState(){
+  // Compact while browsing lower cards; restore labels only near the top.
+  const catalogue=!!scenarioPage()&&!isHome()&&
+    !!document.querySelector('#app .page-create-v10-13');
+  const y=Math.max(window.scrollY||0,document.documentElement?.scrollTop||0);
+  document.body.classList.toggle('igr-catalogue-scrolled',catalogue&&y>90);
+}
+function goToVisibleCollections(){
+  const page=document.querySelector('#app .page-create-v10-13');
+  const picker=page?.querySelector('nav.igr-scenario-filters.igr-family-picker-v731');
+  if(!picker)return false;
+  picker.classList.remove('igr-filter-dock-panel','is-dock-open');
+  document.body.classList.remove('igr-filter-dock-open');
+  const filter=document.getElementById('igrDockFilters');
+  if(filter){
+    filter.dataset.igrDragged='0';filter.setAttribute('aria-expanded','false');
+    filter.setAttribute('aria-label',isFr()?'Revenir aux collections':'Back to collections');
+  }
+  const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
+  // Beginning of the catalogue exposes all five choices and their heading.
+  try{window.scrollTo({top:0,left:0,behavior:reduce?'auto':'smooth'})}
+  catch{window.scrollTo(0,0)}
+  picker.classList.remove('igr-picker-attention');
+  void picker.offsetWidth;
+  picker.classList.add('igr-picker-attention');
+  clearTimeout(window.__igrPickerAttentionTimeout);
+  window.__igrPickerAttentionTimeout=setTimeout(()=>picker.classList.remove('igr-picker-attention'),1200);
+  return true;
+}
 function clearDockState(){
   closeFilters();
   document.getElementById('igrUniversalDock')?.remove();
-  document.body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view');
+  document.body.classList.remove('igr-global-dock-active','igr-dock-scrolling','igr-scenario-browser','igr-profile-view','igr-catalogue-scrolled');
 }
 function ensureDock(){
   const home=isHome(),page=scenarioPage(),profile=isProfile(),allowed=!!page||profile;
   document.body.classList.toggle('igr-at-home',home);
   document.body.classList.toggle('igr-scenario-browser',!!page&&!home);
   document.body.classList.toggle('igr-profile-view',profile&&!home);
+  updateCatalogueScrollState();
   if(home||!allowed){clearDockState();return}
   const dock=document.getElementById('igrUniversalDock');if(!dock)return;
   const homeBtn=dock.querySelector('#igrDockHome'),filters=dock.querySelector('#igrDockFilters');
@@ -129,6 +159,7 @@ function schedule(){
   if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()});
 }
 function onScroll(){
+  updateCatalogueScrollState();
   if(isHome()||(!scenarioPage()&&!isProfile()))return;
   document.body.classList.add('igr-dock-scrolling');
   clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>document.body.classList.remove('igr-dock-scrolling'),360);
@@ -136,6 +167,13 @@ function onScroll(){
 function boot(){
   forgetHomePosition();
   apply();const root=app();if(root&&window.MutationObserver){new MutationObserver(schedule).observe(root,{childList:true,subtree:true})}
+  // Capture before legacy drag listeners; Filters always opens direct choices.
+  document.addEventListener('click',event=>{
+    if(!event.target?.closest?.('#igrDockFilters'))return;
+    if(!document.querySelector('#app .page-create-v10-13 nav.igr-family-picker-v731'))return;
+    event.preventDefault();event.stopImmediatePropagation();
+    goToVisibleCollections();
+  },true);
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',schedule,{passive:true});addEventListener('pageshow',schedule,{passive:true});
   document.addEventListener('click',e=>{if(isHome())return;const nav=document.querySelector('.igr-filter-dock-panel.is-dock-open');if(nav&&!nav.contains(e.target)&&!e.target.closest?.('#igrDockFilters'))closeFilters()});
 }
