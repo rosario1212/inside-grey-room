@@ -477,14 +477,42 @@ function renderReveal(live,show){
 }
 function advanceReveal(){const l=readLive();if(!l)return;const idx=l.revealIndex;if(!l.revealed.includes(idx))l.revealed.push(idx);if(idx>=l.players.length-1){l.stage='play';l.phaseIndex=0;saveLive(l);renderPlay(l);return}l.revealIndex++;saveLive(l);renderReveal(l,false)}
 
+
+/* Facilitate equal participation without adding a role, decision or invented clue.
+   Public prompts are intentionally questions: no canonical answer is exported. */
+function heritageTableQuestion(live,carry){
+  const idx=Math.max(0,Math.min(3,live.phaseIndex||0));
+  if(live.campaignId==='cendres'){
+    if(live.players.length!==5)return '';
+    const questions=[
+      'Chacun nomme une donnée dont il connaît la provenance : observation, document original, copie ou témoignage. Aucune conclusion à ce stade.',
+      'Tour de table : chaque fonction indique ce qu’elle sait, puis ce qu’elle ne peut pas prouver. Les fonctions absentes sont couvertes par les annexes publiques.',
+      'Confrontez deux versions incompatibles. Qui a constaté le fait, qui l’a seulement retransmis et à quelle date ?',
+      'Avant de voter, cinq prises de parole : une hypothèse, une preuve vérifiable, puis la principale incertitude. Le chef ne décide pas seul.'
+    ];
+    return questions[idx];
+  }
+  if(live.campaignId==='kuroi'){
+    const due=(carry?.kuroi?.debts||[]).filter(d=>d.status==='due').length;
+    const questions=[
+      'Avant d’accuser, chacun distingue intérêt de clan, dette personnelle et preuve indépendante.',
+      'Qui doit quelque chose à qui ? Distinguez promesse, obligation et ordre : aucun ne prouve automatiquement les deux autres.',
+      'Confrontez la pièce matérielle à la parole de celui qui la détient. Sa conservation a-t-elle un témoin indépendant ?',
+      'Avant le Conseil, formulez le prix de chaque choix : dette encore ouverte, sécurité des témoins et qualité de la preuve.'
+    ];
+    return (live.chapter>1?due+' dette(s) encore ouverte(s) dans le registre. ':'')+questions[idx];
+  }
+  return '';
+}
+
 function renderPlay(live){
   const pc=PACKS[live.campaignId].chapters[live.chapter],idx=Math.max(0,Math.min(pc.phases.length-1,live.phaseIndex||0)),phase=pc.phases[idx];
-  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live,idx,s):'',late=cendresLateEvidence(live,idx,s)||kuroiLateEvidence(live,idx,s);
+  const s=live.online?live.campaignCarry:state(live.campaignId),conditional=conditionalIntel(live.campaignId,live.chapter,s),annex=idx>=1?missingRoleIntel(live,idx,s):'',late=cendresLateEvidence(live,idx,s)||kuroiLateEvidence(live,idx,s),discussion=idx>=1?heritageTableQuestion(live,s):'';
   shellPut(`<main class="page hplay hplay-session hplay-theme-${live.campaignId}">
     <header class="hplay-top"><button class="hplay-back" data-hp-action="session-menu">••• <span>Session</span></button><div class="hplay-mode">PHASE ${idx+1}/${pc.phases.length}</div></header>
     <section class="hplay-session-head"><span class="hplay-eyebrow">${esc(PACKS[live.campaignId].title)} · DOSSIER 0${live.chapter}</span><h1>${esc(phase[0])}</h1><p>${esc(phase[1])}</p></section>
     <section class="hplay-session-grid">
-      <div class="hplay-panel hplay-table-card"><span>AU CENTRE DE LA TABLE</span><h2>${idx===0?'Briefing commun':idx===pc.phases.length-1?'Décision à verrouiller':'Recoupement en cours'}</h2><p>${idx===0?esc(pc.briefing):idx===pc.phases.length-1?esc(pc.question):'Posez les informations à voix haute. Une information privée peut être racontée, jamais montrée directement.'}</p>${conditional?`<div class="hplay-conditional"><b>HÉRITAGE ACTIF</b><span>${esc(conditional)}</span></div>`:''}${late?`<div class="hplay-conditional hplay-audit"><b>RECOUPEMENT TARDIF</b><span>${esc(late)}</span></div>`:''}${annex?`<div class="hplay-conditional hplay-annex"><b>ANNEXE DE CELLULE</b><span>${esc(annex)}</span></div>`:''}</div>
+      <div class="hplay-panel hplay-table-card"><span>AU CENTRE DE LA TABLE</span><h2>${idx===0?'Briefing commun':idx===pc.phases.length-1?'Décision à verrouiller':'Recoupement en cours'}</h2><p>${idx===0?esc(pc.briefing):idx===pc.phases.length-1?esc(pc.question):'Posez les informations à voix haute. Une information privée peut être racontée, jamais montrée directement.'}</p>${conditional?`<div class="hplay-conditional"><b>HÉRITAGE ACTIF</b><span>${esc(conditional)}</span></div>`:''}${late?`<div class="hplay-conditional hplay-audit"><b>RECOUPEMENT TARDIF</b><span>${esc(late)}</span></div>`:''}${annex?`<div class="hplay-conditional hplay-annex"><b>ANNEXE DE CELLULE</b><span>${esc(annex)}</span></div>`:''}${discussion?`<div class="hplay-conditional hplay-discussion"><b>TOUR DE TABLE</b><span>${esc(discussion)}</span></div>`:''}</div>
       <aside class="hplay-panel hplay-roster"><span>RÔLES À TABLE</span>${live.players.map(p=>`<div><b>${esc(p.name)}</b><small>${esc(roleFor(live.campaignId,p.roleId)?.name||'')}</small></div>`).join('')}</aside>
     </section>
     <nav class="hplay-session-nav"><button class="btn ghost" data-hp-action="phase-prev" ${idx===0?'disabled':''}>← PRÉCÉDENT</button>${idx<pc.phases.length-1?`<button class="btn primary" data-hp-action="phase-next">PHASE SUIVANTE →</button>`:`<button class="btn primary" data-hp-action="decision">OUVRIR LE VOTE COLLECTIF →</button>`}</nav>
