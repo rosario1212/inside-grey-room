@@ -8,6 +8,8 @@ const origin='https://inside-grey-room-last.alial-khafaji2002.workers.dev';
 const [publishedHtml,publishedSw]=await Promise.all([
   readFile('dist/index.html','utf8'),readFile('dist/service-worker.js','utf8')
 ]);
+const casinoBundle=JSON.parse(await readFile('dist/casino-release.json','utf8'));
+assert.match(casinoBundle.version,/^\d{3}\.\d+$/,'Invalid generated Casino release version');
 // Every build receives a unique immutable JS asset. Verify the asset actually
 // referenced by the completed bundle, not a previous generation's filename.
 const clientMatch=publishedHtml.match(/\b(app-v11-[A-Za-z0-9._-]+\.js)\?v=([A-Za-z0-9._-]+)/);
@@ -54,7 +56,7 @@ assert.equal(home.headers.get('X-Frame-Options'),'DENY','Cloudflare must block e
 assert.match(home.headers.get('Content-Security-Policy')||'',/frame-ancestors 'none'/);
 assert.equal(home.headers.get('X-Content-Type-Options'),'nosniff');
 assert.equal(home.headers.get('X-IGR-Release'),'igr-003-008-009-011-secure-20261025','Stale Worker version');
-assert.match(html,/casino-client-v105\.js\?v=105\.7/);
+assert(html.includes('casino-client-v105.js?v='+casinoBundle.version),'Casino client version differs from the built release');
 assert(html.includes(publishedClientUrl),'The edge homepage is using an outdated application');
 assert.match(html,/investigation-accuracy-v284\.js\?v=006-detail-v284-20261112/,'The live questionnaire is missing');
 assert.match(html,/investigation-deep-v286\.js\?v=nine-cases-v347-20261113/,'The live five-case questionnaire is missing');
@@ -125,7 +127,7 @@ const readVersionedRelease=async (name,accept)=>{
   }
   throw new Error(name+' not verified for commit '+expected.slice(0,12)+': '+last);
 };
-const meta=await readVersionedRelease('casino-release',v=>v.version==='105.8'&&
+const meta=await readVersionedRelease('casino-release',v=>v.version===casinoBundle.version&&
  (!expected||v.commit===expected));
 const cartel=await readVersionedRelease('cartel030-release',v=>
  v.version==='v173-cartel031-negotiation'&&(!expected||v.commit===expected));
