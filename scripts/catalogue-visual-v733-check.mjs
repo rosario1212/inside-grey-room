@@ -210,7 +210,20 @@ try{
     await page.addScriptTag({content:await read('navigation-heritage-v19.js')});
     await page.locator('#igrDockFilters').waitFor({state:'visible'});
     await page.locator('#igrDockHome').waitFor({state:'visible'});
+    const startWidths=await page.locator('#igrDockFilters,#igrDockHome').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().width));
+    assert(startWidths.every(w=>w>=98),'v736: buttons should be labeled and expanded at start');
     await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+    await page.waitForFunction(()=>document.body.classList.contains('igr-catalogue-scrolled'),null,{timeout:1500});
+    // The compact form remains while reading lower cards, even after scroll
+    // activity stops (the old behavior reverted to full width after 360ms).
+    await page.waitForTimeout(510);
+    const compact=await page.locator('#igrDockFilters,#igrDockHome').evaluateAll(nodes=>nodes.map(n=>({
+      width:n.getBoundingClientRect().width,
+      labelDisplay:getComputedStyle(n.querySelector('b')).display,
+      clickArea:n.getBoundingClientRect().height
+    })));
+    assert(compact.every(x=>x.width<=45&&x.width>=42&&x.clickArea>=42&&x.labelDisplay==='none'),
+      'v736: Filtres and Accueil must stay compact, tappable and icon-only while scrolled: '+JSON.stringify(compact));
     const final=await page.evaluate(()=>{
       const rect=selector=>{const b=document.querySelector(selector).getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height}};
       const panel=rect('.scenario-panel-v10-13'),footer=rect('.igr-beta-footer'),support=rect('.igr-beta-footer a'),filters=rect('#igrDockFilters'),home=rect('#igrDockHome'),selector=rect('.igr-scenario-filters');
@@ -226,14 +239,19 @@ try{
     assert(final.support.bottom<=Math.min(final.filters.top,final.home.top)-2,'v734: support link covered by floating buttons');
     assert(final.selector.height>35,'v734: top collection selector hidden');
     await page.screenshot({path:path.join(report,'catalogue-v734-footer-and-shortcuts-iphone.png'),fullPage:true});
+    // Simulate an old iOS drag flag. This used to swallow the click in capture.
+    await page.locator('#igrDockFilters').evaluate(el=>{el.dataset.igrDragged='1'});
     await page.locator('#igrDockFilters').click();
     await page.waitForFunction(()=>window.scrollY<140,null,{timeout:3500});
+    await page.waitForFunction(()=>!document.body.classList.contains('igr-catalogue-scrolled'),null,{timeout:1500});
+    const restoredWidth=await page.locator('#igrDockFilters').evaluate(el=>el.getBoundingClientRect().width);
+    assert(restoredWidth>=98,'v736: button labels should return at top after Filter shortcut');
     assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('igr-picker-attention')),
       'v734: Filtres shortcut did not highlight visible collections');
     await page.locator('#igrDockHome').click();
     assert.equal(await page.locator('body').getAttribute('data-test-home'),'yes',
       'v734: Accueil shortcut did not invoke home navigation');
-    console.log('PASS v734 390px: footer close to dossier 020, two fixed shortcuts, Filters scrolls to collections, Accueil works');
+    console.log('PASS v736 390px: no footer void, two persistent compact scrolled shortcuts, Filters works despite drag flag, Accueil works');
     await context.close();
   }
 }finally{await browser.close()}
