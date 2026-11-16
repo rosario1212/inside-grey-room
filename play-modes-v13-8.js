@@ -208,7 +208,7 @@ function handleLocalSubmit(e){if(e.target.id!=='localVerdictForm')return;e.preve
 /* ------------------------------------------------------------------
    HÉRITAGE · LOCAL + ONLINE
 ------------------------------------------------------------------ */
-let hWatcher=null,hLastSig='',hLastStage='',hVotePending=false,hFinishPending=false;
+let hWatcher=null,hLastSig='',hLastStage='',hVotePending=false,hFinishPending=false,hRolePending=false;
 function hSession(){return readJSON(HNET_KEY)}
 function saveHSession(v){writeJSON(HNET_KEY,v)}
 function clearHSession(){del(HNET_KEY);hLastSig='';hLastStage='';if(hWatcher){clearInterval(hWatcher);hWatcher=null}}
@@ -250,7 +250,7 @@ async function syncHeritageOnline(force=false){
     document.dispatchEvent(new CustomEvent('igr-heritage-sync',{detail:d}));
     const ballot=d.room?.ballot_status;
     const sig=JSON.stringify([d.room?.status,d.room?.stage,d.room?.phase_index,d.room?.decision_id,
-      ballot?.vote_round,ballot?.votes_cast,ballot?.my_vote,(d.players||[]).map(p=>[p.id,p.ready,p.role_id])]);
+      ballot?.vote_round,ballot?.votes_cast,ballot?.my_vote,(d.players||[]).map(p=>[p.id,p.ready,p.role_id,p.preferred_role])]);
     if(!force&&sig===hLastSig)return;
     routeHOnline(d);hLastSig=sig;
   }catch(e){
@@ -259,8 +259,67 @@ async function syncHeritageOnline(force=false){
   }
 }
 function routeHOnline(d){const stage=d.room?.stage;if(stage==='lobby')return renderHLobby(d);if(stage==='role_reading')return renderHRole(d);if(stage==='play')return bridgeHPlay(d,'play');if(stage==='decision')return bridgeHPlay(d,'decision');if(stage==='reveal')return bridgeHPlay(d,'result');if(stage==='finished')return hFinishPending?null:renderHFinished(d)}
-function renderHLobby(d){const s=hSession(),host=!!s?.hostToken,count=d.players?.length||0;const m=heritageMeta(d.room.campaign_id),ch=m?.chapters?.[d.room.chapter-1];shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><header class="hnet-head"><button class="btn ghost small" data-hnet="leave">← Quitter</button><span>${esc(m?.title||'HÉRITAGE')} · DOSSIER 0${d.room.chapter}</span></header><section class="hnet-lobby"><div class="hnet-code"><span>CODE DE CELLULE</span><strong>${esc(d.room.code)}</strong><small>Les autres joueurs : Rejoindre une partie → ${esc(d.room.code)}</small></div><div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(ch?.title||'')}</h1><p>${count}/7 joueurs · minimum 5</p></div><div class="hnet-players">${(d.players||[]).map((p,i)=>`<div><span>${i+1}</span><b>${esc(p.pseudo)}</b><small>${p.is_host?'HÔTE':'CONNECTÉ'}</small></div>`).join('')}</div>${host?`<button class="btn primary block" data-hnet="start" ${count<5?'disabled':''}>${count<5?`ENCORE ${5-count} JOUEUR${5-count>1?'S':''}`:'LANCER LE DOSSIER'}</button>`:`<div class="hnet-wait">En attente de l’hôte…</div>`}</section></main>`)}
-async function startHeritageOnline(){const s=hSession();if(!s?.hostToken)return;try{await rpc('igr_heritage_online_start',{p_code:s.code,p_host_token:s.hostToken});await syncHeritageOnline(true)}catch(e){console.error(e);toastX('Il faut 5 à 7 joueurs pour lancer.') }}
+function heritageRoleCards(d){
+ const selected=d.player?.preferred_role||null,players=d.players||[],count=players.length;
+ const candidates=window.IGR_HERITAGE_PLAY?.publicRoles?.(d.room.campaign_id,Math.max(5,count))||[];
+ const used=new Map(players.filter(p=>p.preferred_role).map(p=>[p.preferred_role,p]));
+ const available=new Set(candidates.map(r=>r.id));
+ const invalid=players.filter(p=>p.preferred_role&&!available.has(p.preferred_role));
+ const random='<button type="button" class="hnet-role-card hnet-role-random'+(!selected?' is-picked':'')+'" data-hnet="role" data-role="" aria-pressed="'+(!selected)+'"><span class="hnet-role-top"><b>Attribution aléatoire</b><em>'+(!selected?'TON CHOIX':'LIBRE')+'</em></span><small>Un rôle encore disponible te sera attribué au lancement.</small></button>';
+ const cards=candidates.map(r=>{
+   const holder=used.get(r.id),mine=selected===r.id,taken=!!holder&&!mine,stars=Number(r.activity)||2;
+   return `<button type="button" class="hnet-role-card ${mine?'is-picked':''} ${taken?'is-taken':''}" data-hnet="role" data-role="${esc(r.id)}" aria-pressed="${mine}" ${taken?'disabled':''}>
+      <span class="hnet-role-top"><b>${esc(r.name)}</b><em>${mine?'TON RÔLE':taken?'COMPLET':'CHOISIR'}</em></span>
+      <small>${esc(r.short||r.public)}</small><span class="hnet-stars">ACTIVITÉ · ${'★'.repeat(stars)+'☆'.repeat(5-stars)}</span>
+    </button>`;
+ }).join('');
+ return {markup:`<section class="hnet-role-zone" aria-label="Choix des rôles"><div class="hnet-role-head"><div><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div><small>${candidates.length} rôles · 1 place par rôle</small></div>
+   <p>Choix facultatif et réservé dès validation. Sans choix, attribution aléatoire au lancement. Les fiches privées restent secrètes.</p>
+   <div class="hnet-role-grid">${random}${cards}</div>
+   ${invalid.length?`<p class="hnet-role-warning" role="alert">Le nombre de joueurs a changé. ${invalid.map(p=>esc(p.pseudo)).join(', ')} doit choisir un rôle encore disponible ou revenir au tirage aléatoire avant de lancer.</p>`:''}
+ </section>`,invalid:invalid.length};
+}
+function renderHLobby(d){
+ const s=hSession(),host=!!s?.hostToken,count=d.players?.length||0;
+ const m=heritageMeta(d.room.campaign_id),ch=m?.chapters?.[d.room.chapter-1],roles=heritageRoleCards(d);
+ const assigned=Object.fromEntries((d.players||[]).map(p=>[p.id,p.preferred_role||null]));
+ const names=new Map((window.IGR_HERITAGE_PLAY?.publicRoles?.(d.room.campaign_id,7)||[]).map(r=>[r.id,r.name]));
+ const roster=(d.players||[]).map((p,i)=>`<div><span>${i+1}</span><b>${esc(p.pseudo)}</b><small>${p.preferred_role?esc(names.get(assigned[p.id])||p.preferred_role):'AU HASARD'}${p.is_host?' · HÔTE':''}</small></div>`).join('');
+ const canStart=count>=5&&!roles.invalid;
+ shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><header class="hnet-head"><button class="btn ghost small" data-hnet="leave">← Quitter</button><span>${esc(m?.title||'HÉRITAGE')} · DOSSIER 0${d.room.chapter}</span></header>
+  <section class="hnet-lobby"><div class="hnet-code"><span>CODE DE CELLULE</span><strong>${esc(d.room.code)}</strong><small>Rejoindre une partie → ${esc(d.room.code)}</small></div>
+   <div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(ch?.title||'')}</h1><p>${count}/7 joueurs · minimum 5</p></div>
+   <div class="hnet-players">${roster}</div>${roles.markup}
+   ${host?`<button class="btn primary block hnet-start" data-hnet="start" ${canStart?'':'disabled'}>${count<5?`ENCORE ${5-count} JOUEUR${5-count>1?'S':''}`:roles.invalid?'RÉVISER LES RÔLES':'LANCER LE DOSSIER'}</button>`:'<div class="hnet-wait">En attente de l’hôte…</div>'}
+  </section></main>`);
+}
+async function chooseHeritageRole(roleId){
+ const s=hSession();if(!s||hRolePending)return;
+ hRolePending=true;
+ try{
+  await rpc('igr_heritage_online_choose_role',{p_code:s.code,p_player_token:s.token,p_role_id:roleId||null});
+  await syncHeritageOnline(true);
+ }catch(e){
+  const error=String(e?.message||'');
+  toastX(/role_already_taken/i.test(error)?'Ce rôle vient d’être réservé par un autre joueur.'
+    :/role_not_available/i.test(error)?'Ce rôle n’est plus disponible pour ce nombre de joueurs.'
+    :/role_selection_closed/i.test(error)?'La partie a déjà commencé.'
+    :'Impossible de réserver ce rôle. Réessaie.');
+  await syncHeritageOnline(true).catch(()=>{});
+ }finally{hRolePending=false}
+}
+async function startHeritageOnline(){
+ const s=hSession();if(!s?.hostToken)return;
+ try{await rpc('igr_heritage_online_start',{p_code:s.code,p_host_token:s.hostToken});await syncHeritageOnline(true)}
+ catch(e){console.error(e);
+  const err=String(e?.message||'');
+  toastX(/selected_role_not_available/i.test(err)?'Un rôle choisi n’est plus disponible : vérifiez les réservations.'
+    :/role_already_taken/i.test(err)?'Deux joueurs ont réservé le même rôle.'
+    :/need 5 to 7/i.test(err)?'Il faut 5 à 7 joueurs pour lancer.'
+    :'Lancement impossible. Vérifiez les rôles et réessayez.');
+  await syncHeritageOnline(true).catch(()=>{});
+ }
+}
 function bridgeBase(d,stage){const s=hSession(),players=(d.players||[]).map(p=>({id:p.id,name:p.pseudo,roleId:p.role_id}));return {version:2,online:true,campaignCarry:d.room.campaign_carry||null,campaignId:d.room.campaign_id,chapter:Number(d.room.chapter),players,revealIndex:Math.max(0,players.findIndex(p=>p.id===d.player.id)),revealed:[],phaseIndex:Number(d.room.phase_index||0),stage,decision:d.room.decision_id||null,result:d.room.decision_id?heritageResult(d.room.campaign_id,d.room.chapter,d.room.decision_id):null,practice:!!s?.practice,startedAt:new Date().toISOString(),finished:false}}
 function patchOnlineRoleScreen(d=null){if(!hSession()||!$('.hplay-reveal'))return;const head=$('.hplay-reveal .hplay-mode');if(head&&d)head.textContent=`EN LIGNE · ${d.players.filter(p=>p.ready).length}/${d.players.length} PRÊTS`;const quit=$('[data-hp-action="abort"]');if(quit)quit.textContent='← Quitter';const action=$('[data-hp-action="hide-next"]');if(action)action.textContent='J’AI LU · PRÊT';const pass=$('.hplay-private.is-closed .hplay-eyebrow');if(pass&&/PASSEZ LE TÉLÉPHONE/i.test(pass.textContent||''))pass.textContent='VOTRE CARTE PRIVÉE';const p=$('.hplay-private.is-closed p');if(p&&/Personne d’autre/i.test(p.textContent||''))p.textContent='Uniquement visible sur votre téléphone.'}
 function renderHRole(d){const live=bridgeBase(d,'reveal');writeJSON(HERITAGE_LIVE_KEY,live);window.IGR_HERITAGE_PLAY?.resume?.();setTimeout(()=>patchOnlineRoleScreen(d),0)}
@@ -385,7 +444,7 @@ function renderHFinished(d){
 function resumeHeritageOnline(){if(!hSession())return toastX('Aucune cellule HÉRITAGE à reprendre.');startHWatcher(true)}
 
 function interceptHeritageOnline(e){const s=hSession();if(!s)return;const hp=e.target.closest?.('[data-hp-action],[data-hp-option]');if(!hp)return;const a=hp.dataset.hpAction;if(a==='hide-next'){e.preventDefault();e.stopImmediatePropagation();readyHeritageOnline();return}if(a==='phase-next'||a==='decision'){e.preventDefault();e.stopImmediatePropagation();advanceHeritageOnline();return}if(a==='phase-prev'){e.preventDefault();e.stopImmediatePropagation();return}if(hp.dataset.hpOption){e.preventDefault();e.stopImmediatePropagation();decideHeritageOnline(hp.dataset.hpOption);return}if(a==='abort'||a==='session-menu'){e.preventDefault();e.stopImmediatePropagation();leaveHeritageOnline();return}if(a==='finish'){e.preventDefault();e.stopImmediatePropagation();if(!s.hostToken){clearHSession();del(HERITAGE_LIVE_KEY);renderHome();return}void finishHeritageOnlineHost();return}}
-function handleHNetClick(e){const b=e.target.closest?.('[data-hnet]');if(!b)return;e.preventDefault();if(b.dataset.hnet==='start')startHeritageOnline();if(b.dataset.hnet==='leave')leaveHeritageOnline()}
+function handleHNetClick(e){const b=e.target.closest?.('[data-hnet]');if(!b)return;e.preventDefault();if(b.dataset.hnet==='role'){void chooseHeritageRole(b.dataset.role||'');return}if(b.dataset.hnet==='start')startHeritageOnline();if(b.dataset.hnet==='leave')leaveHeritageOnline()}
 
 /* ------------------------------------------------------------------
    BOOT / WRAPPERS
