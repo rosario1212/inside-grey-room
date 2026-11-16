@@ -1,4 +1,4 @@
-const CACHE='igr-catalog-018-isolated-v748-20261116';
+const CACHE='igr-catalog-018-terror-modes-v2-20261116';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
   '/catalog-descriptions-v1.css?v=v730-direct-dlc-selector-poster-fit-20261116',
@@ -9,7 +9,7 @@ const SHELL=[
   '/analyst-profiling-v700.css?v=v701-progressive-psychology',
   '/analyst-profiling-v700.js?v=v701-progressive-psychology',
   '/terror-crisis-v696.css?v=terror-carbon-v697-20261115',
-  '/terror-lobby-unified-v1.css?v=terror-lobby-city-v1-20261116',
+  '/terror-lobby-unified-v1.css?v=terror-lobby-modes-v2-20261116',
   '/', '/index.html', '/en.html',
   '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=v701-analyst-guidance',
   '/styles-v11.css?v=20261116-entry-raised','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
