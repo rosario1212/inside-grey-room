@@ -13,7 +13,7 @@ const service=readFileSync('casino/service.mjs','utf8');
 const pack=fixtureRelease();
 assert.equal(validateRelease(pack.content),true);
 assert.match(hubSource,/CAMPAGNE IV \/ IV/);
-assert.match(hubSource,/data\.heritageSequence='4'/);
+assert.match(hubSource,/dataset\.heritageSequence='4'/);
 assert.match(hubSource,/aucun progrès dans les campagnes précédentes n’est exigé/);
 assert.match(client,/DOSSIER '\+state\.chapter\+'\/3 · PHASE/);
 assert.match(client,/Aucune audience n’a été enregistrée/);
