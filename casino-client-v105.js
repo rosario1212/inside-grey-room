@@ -87,14 +87,14 @@ function lobby(){
    <small>${esc(roleShort(id))}</small><span class="casino-role-activity" aria-label="Activité estimée">${roleStars(id)}</span>
   </button>`;
  });
- return `<section class="casino-lobby-top"><h1>Table ${esc(state.inviteCode)}</h1><button class="casino-action" data-casino-action="invite">Copier le code</button><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
- <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
+ return `<section class="casino-lobby-top"><div class="casino-lobby-access"><div><span>CODE D’INVITATION</span><h1>${esc(state.inviteCode)}</h1></div><button type="button" class="casino-action" data-casino-action="invite">Copier le code</button></div><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
  <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>PRÉPARATION</span><h2>Choisis ton rôle</h2></div>
  <p>Choisis ton camp ou ta fonction. Chez Yonghe, ton personnage sera révélé au lancement.</p>
  <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
  <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1).join('')}</div></div>
  <p class="casino-role-choice-footnote">Procureur et juge facultatifs. ★ = activité estimée, pas importance.</p>
  </section>
+ <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role])}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
  <button class="casino-action casino-ready" data-casino-action="ready">${own.ready?'ANNULER MA CONFIRMATION':'JE SUIS PRÊT'}</button>
  ${state.isHost?'<button class="casino-action casino-start" data-casino-action="start">LANCER LE DOSSIER</button>':''}
  <p class="casino-lobby-note">L’hôte lance quand les rôles requis sont présents et tous les joueurs prêts.</p>`;
