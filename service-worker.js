@@ -13,7 +13,7 @@ const SHELL=[
   '/role-cadence-v694.css?v=role-balance-v694-20261115','/role-cadence-v694.js?v=v701-analyst-guidance',
   '/styles-v11.css?v=20261116-entry-raised','/polish-v12.css?v=v12.22-mobile-ui','/ui-polish-v12.css?v=v12.22-mobile-ui',
   '/gameplay-flow-v13.css?v=v13.2-final','/dlc-experience-v13.css?v=v13.2-final','/lobby-ui-fix-v13.css?v=role-choices-v721-20261116',
-  '/startup-stability-v13-3.css?v=20261116-entry-safearea-v728','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v13.8-dual-play',
+  '/startup-stability-v13-3.css?v=20261116-entry-safearea-v728','/heritage-v13-5.css?v=v13.8-dual-play','/heritage-premium-v13-6.css?v=v13.8-dual-play','/heritage-play-v13-7.css?v=v13.8-dual-play','/play-modes-v13-8.css?v=v733-role-lobby',
   '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
   '/omerta-v12-40.css?v=v12.41-uniform-dlc','/omerta-money-intel-v1.css?v=om021-1','/omerta-santoro-verdict-v28.css?v=santoro-verdict-v28','/omerta-023-spy-v1.css?v=omerta-023-spy-v1','/terror-v12-40.css?v=terror-fdr-context-20261116','/dlc-suite-v12-40.css?v=catalog-picker-v729-20261116','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
