@@ -19,10 +19,12 @@ for(const match of index.matchAll(/<link[^>]+rel="stylesheet"[^>]*>|<style[^>]*>
   else styles.push(await read(match[0].match(/href="([^"]+)"/)[1].split('?')[0]));
 }
 const css=styles.join('\n');
-const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/button>\s*<\/div>/);
+const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/div>\s*(?=<div id="app")/);
 assert(introMatch,'Canonical entrance markup must exist');
-const introArt=await readFile(path.join(target,'assets/intro-v10-14.webp'));
-const introHtml=introMatch[0].replace(/src="[^"]+"/,`src="data:image/webp;base64,${introArt.toString('base64')}"`);
+const introPath=introMatch[0].match(/<img class="intro-art" src="([^"]+)"/)?.[1]?.split('?')[0];
+assert(introPath&&introPath.startsWith('assets/'),'Canonical entrance artwork must exist');
+const introArt=await readFile(path.join(target,introPath));
+const introHtml=introMatch[0].replace(/(<img class="intro-art" )src="[^"]+"/,`$1src="data:image/webp;base64,${introArt.toString('base64')}"`);
 const app=await read('app-v11.js');
 const playModes=await read('play-modes-v13-8.js');
 const homeStart=app.indexOf('function shell('),homeEnd=app.indexOf('function goHome(',homeStart);
@@ -476,7 +478,7 @@ try{
         const box=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
         const title=document.querySelector('.intro-title'),home=document.querySelector('.home-title-spaced');
         return {
-          title:box('.intro-title'),art:box('.intro-art'),button:box('#introEnterBtn'),hint:box('#introHint'),
+          title:box('.intro-title'),art:box('.intro-art'),frame:box('.intro-poster-frame'),button:box('#introEnterBtn'),hint:box('#introHint'),
           lines:[...title.children].map(el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:r.height,overflow:el.scrollWidth>el.clientWidth}}),
           sameFont:getComputedStyle(title).fontFamily===getComputedStyle(home).fontFamily,
           weight:getComputedStyle(title).fontWeight,fontSize:parseFloat(getComputedStyle(title).fontSize),
@@ -486,18 +488,21 @@ try{
       for(const [label,b] of Object.entries(layout).filter(([key])=>['title','button','hint'].includes(key))){
         assert(b.left>=side&&b.right<=width-side+.5&&b.top>=top&&b.bottom<=height-bottom+.5,`${label} must remain inside safe areas: ${JSON.stringify(b)}`);
       }
-      assert(layout.sameFont&&Number(layout.weight)===700,'Entrance must use the home wordmark family and weight');
-      assert(layout.fontSize>=30&&layout.lines.length===2&&!layout.lines.some(line=>line.overflow),'The two-line wordmark must remain legible and unclipped');
+      assert(Number(layout.weight)>=750&&Number(layout.weight)<=900,'Current v18 entrance wordmark must retain its bold cinematic typography');
+      assert(layout.fontSize>=14&&layout.lines.length===2&&!layout.lines.some(line=>line.overflow),'The two-line poster wordmark must remain complete and unclipped');
       assert(Math.abs(layout.lines[0].height-layout.lines[1].height)<1,'Both wordmark lines must have the same typographic scale');
-      assert(layout.title.bottom+24<=layout.button.top,'The title and entrance action need clear separation');
+      assert(layout.title.bottom+12<=layout.button.top,'Poster title and entrance action need clear separation');
       assert(layout.button.height>=44,'Entrance action needs a usable touch target');
       assert(layout.hint.height<=layout.hintLine*1.1,'The entrance hint must remain on one line');
       assert(layout.art.width/layout.art.height<=941/1672+.001,'Wide viewports must retain the full height of the doorway');
-      if((width/height>=4/3&&height<=600)||(width>=1100&&height>=601))assert(layout.title.right+16<=layout.art.left&&layout.button.right+16<=layout.art.left,'Landscape identity and action must leave the door unobstructed');
-      else {
-        assert(layout.title.bottom+12<=layout.art.top+layout.art.height*.233,'Wordmark must leave space above the doorway');
-        assert(layout.art.top+layout.art.height*.86+20<=layout.button.top,'The door threshold must remain visible above the entrance button');
-      }
+      // v18 deliberately overlays the wordmark and button on the doorway poster,
+      // unlike the older design which placed both beside the artwork.
+      assert(layout.title.left>=layout.frame.left-.5&&layout.title.right<=layout.frame.right+.5,
+        'The cinematic wordmark must remain within the poster frame');
+      assert(layout.button.left>=layout.frame.left-.5&&layout.button.right<=layout.frame.right+.5,
+        'The entrance action must remain within the poster frame');
+      assert(layout.art.left>=layout.frame.left-.5&&layout.art.right<=layout.frame.right+.5,
+        'The full doorway artwork must stay in the poster frame');
       assert.equal(await page.evaluate(()=>{scrollTo(0,500);return scrollY}),0,'Entrance must remain fixed without scrolling');
       if(locale==='fr'&&['phone','safe-area','landscape','desktop','desktop-large'].includes(name))await page.screenshot({path:path.join(report,'entrance-'+name+'.png')});
       await page.keyboard.press('Tab');

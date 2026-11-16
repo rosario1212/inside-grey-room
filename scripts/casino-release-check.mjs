@@ -41,6 +41,16 @@ for(const dir of process.argv.slice(2).length?process.argv.slice(2):['dist']){
      ?html.includes('src="'+url+'"'):html.includes('href="'+url+'"');
    const packed=(optimization?.bundles||[]).filter(item=>item.kind===kind&&
      item.sourceUrls.includes(url)&&html.includes((kind==='js'?'src="':'href="')+item.file+'"'));
+   if(Number(direct)+packed.length!==1){
+    const related=(optimization?.bundles||[]).filter(item=>
+      item.sourceUrls?.some(u=>u.includes('casino-client-v105')));
+    console.error('[CASINO ASSET DIAG]',JSON.stringify({page,kind,url,direct,
+      related:related.map(item=>({file:item.file,kind:item.kind,urls:item.sourceUrls,
+        inHtml:html.includes('src="'+item.file+'"')||html.includes('href="'+item.file+'"')})),
+      hasLiteral:html.includes('casino-client-v105'),
+      scriptTags:[...html.matchAll(/<script\s+src="([^"]+)"/g)].map(m=>m[1]).slice(-15)
+    }));
+   }
    assert.equal(Number(direct)+packed.length,1,
     'Public Casino '+kind+' must be loaded exactly once by '+page+' or its redirect destination');
   }
