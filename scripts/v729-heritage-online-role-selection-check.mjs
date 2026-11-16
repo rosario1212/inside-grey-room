@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+const read=p=>readFileSync(p,'utf8');
+const js=read('play-modes-v13-8.js'),maitre=read('heritage-maitre-online-v34-4.js');
+const heritage=read('heritage-play-v13-7.js'),casino=read('casino-client-v105.js');
+const css=read('play-modes-v13-8.css'),casinoCss=read('casino-client-v105.css');
+const sql=read('supabase/migrations/20261116190500_heritage_online_role_selection_v729.sql');
+for(const f of ['play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-play-v13-7.js','casino-client-v105.js'])execFileSync(process.execPath,['--check',f]);
+for(const fragment of ['function heritageRoleCards(d)','hnet-role-card','data-hnet="role"','data-role=""','Attribution aléatoire','hRolePending','p.preferred_role','p_player_token:s.token','igr_heritage_online_choose_role','selected_role_not_available'])assert(js.includes(fragment),'Missing Cendres/Kuroi role choice: '+fragment);
+assert(js.includes('(d.players||[]).map(p=>[p.id,p.ready,p.role_id,p.preferred_role])'),'Role picks must propagate to all devices');
+assert(heritage.includes('publicRoles:(campaign,count=5)=>'),'Public role roster not exposed safely');
+for(const role of ['chef','sigint','terrain','source','liaison','legal','archive','waka_k','kobun_k','waka_a','kobun_a','commissaire','inspecteur','bengoshi'])assert(heritage.includes("id:'"+role+"'"),'Missing role '+role);
+for(const fragment of ['function maitreRoleIds(chapter,count)','n>=6','Number(chapter)===3','hnet-role-grid','data-mnet="role"','rolePending','igr_heritage_online_choose_role','p.preferred_role','d.player?.preferred_role','p.player_token','case']){if(fragment==='p.player_token'||fragment==='case')continue;assert(maitre.includes(fragment),'Missing MAÎTRE role choice: '+fragment)}
+assert(maitre.includes('p_player_token:s.token'),'MAÎTRE must use its own token');
+assert(maitre.includes('d.players.map(p=>[p.id,p.ready,p.role_id,p.preferred_role])'),'MAÎTRE choice changes must update live roster');
+for(const fragment of ['data-casino-action="select-role"',"case 'select-role'",'data-role-id=','is-taken','roleShort(id)','roleStars(id)'])assert(casino.includes(fragment),'Casino choice missing '+fragment);
+assert(!casino.includes("form('role',`<label>Ta fonction<select"),'Casino must not hide roles in a dropdown');
+for(const cssText of [css,casinoCss])assert(cssText.includes('role-grid')&&cssText.includes('-webkit-line-clamp:unset'),'Descriptions must never be clipped');
+assert(css.includes('.hnet-role-warning'),'A stale selected role after player departure needs a visible warning');
+for(const fragment of ['add column if not exists preferred_role','create unique index','igr_heritage_online_role_pool','igr_heritage_online_choose_role','for update','rate_limit','role_already_taken','selected_role_not_available_for_player_count','set role_id=preferred_role','where room_code=p_code and preferred_role is null','v_room.status=\'playing\' then role_id else null','grant execute on function public.igr_heritage_online_choose_role'])assert(sql.includes(fragment),'Server contract missing '+fragment);
+assert(sql.includes("if p_chapter=3 then"),'MAÎTRE chapter 3 requires the associate');
+assert(sql.includes("when 5 then array['waka_k','kobun_k','waka_a','commissaire','inspecteur']"),'KUROI five-seat repertoire must not change');
+console.log('PASS v729: CENDRES/KUROI/MAÎTRE role reservations, Casino cards, 5-7 seats, private role boundaries, mobile UI and SQL contracts');
