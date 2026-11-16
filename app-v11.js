@@ -64,14 +64,22 @@ function playerCountLabel(sc){
 }
 // Single teaser contract for classic scenarios and every DLC catalogue.
  // Keep dossier facts in the detail page; the compact preview is deliberately short.
-function scenarioCardTeaser(raw){
- // Only the catalogue is shortened: sc.short and the opening dossier text remain intact.
- const SCENARIO_PREVIEW_MAX_WORDS=30;
+function scenarioCardTeaser(raw,maxWords=30){
+ // Catalogue only: keep full sc.short, sc.context and canonical briefings untouched.
  const text=String(raw??'').replace(/\s+/g,' ').trim();
  if(!text)return '';
+ const limit=Number.isFinite(maxWords)?Math.max(8,Math.min(30,Math.floor(maxWords))):30;
  const words=text.split(' ');
- if(words.length<=SCENARIO_PREVIEW_MAX_WORDS)return text;
- return words.slice(0,SCENARIO_PREVIEW_MAX_WORDS).join(' ').replace(/[\s.,!?;:—–-]+$/g,'').trimEnd()+'…';
+ if(words.length<=limit)return text;
+ const preview=words.slice(0,limit).join(' ');
+ // Prefer a natural complete sentence where possible; avoid mid-word or mid-thought ellipses.
+ const boundaries=[...preview.matchAll(/[.!?](?=\s|$)/g)];
+ for(const minWords of [12,8]){
+   const candidates=boundaries.map(m=>preview.slice(0,m.index+1).trim())
+     .filter(part=>part.split(/\s+/).length>=minWords);
+   if(candidates.length)return candidates[candidates.length-1];
+ }
+ return preview.replace(/[\s.,!?;:—–-]+$/g,'').trimEnd()+'…';
 }
 
 const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
@@ -598,7 +606,7 @@ async function refresh007PublishState(force=false){
 }
 function renderCreateList(){
  const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
- byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img class="igr-poster-ambient" loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="" aria-hidden="true"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(sc.short):sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact"><img loading="lazy" decoding="async" src="${scenarioThumbArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(sc.short):sc.short)}</p><div class="tag-row"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
  if(typeof refresh007PublishState==='function')void refresh007PublishState();
 }
 function selectScenario(id){
