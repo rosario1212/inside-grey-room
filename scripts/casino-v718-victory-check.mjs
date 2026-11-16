@@ -84,6 +84,12 @@ for(let count=4;count<=7;count++)for(const optional of [[],['judge'],['prosecuto
  s.roster.p3.status='detained';
  assert.equal(casinoPersonalVictory(s,'p3',fin).outcome,'victory','Success may carry imprisonment');
  assert.match(casinoPersonalVictory(s,'p3',fin).narrative,/La porte s’est refermée/);
+ const defector=structuredClone(s);defector.roster.p3.status='free';defector.intel=[];
+ defector.finale.political='recognised_claim';defector.finale.successor='p3';
+ const defectorFinal=casinoVictory(defector),doubleAgent=casinoPersonalVictory(defector,'p3',defectorFinal);
+ assert.equal(doubleAgent.outcome,'victory','An infiltrator can win the criminal power game by changing allegiance');
+ assert.equal(doubleAgent.objectiveFulfilled,false,'Political victory cannot be mislabeled as successful infiltration');
+ assert.equal(doubleAgent.victoryTrack,'political');
  assert.doesNotMatch(JSON.stringify(viewRuntime(s,'p0')),/"undercoverIds"|"privateCanon"/);
  assert.doesNotMatch(casinoVictoryBrief(s,'p0'),/mission privée|couverture cachée/);
  assert.match(casinoVictoryBrief(s,'p3'),/mission privée/);
