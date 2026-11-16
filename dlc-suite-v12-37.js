@@ -208,24 +208,23 @@
 
 
   // One native picker replaces ten competing chips; preserve old DLC choices on upgrade.
+  // v730: 20 classic dossiers share the normal scroll; DLCs are individual
+  // collections, never sections stacked beneath the base or each other.
   const CATALOG_FILTER_OPTIONS = Object.freeze([
-    ['all','Tous les scénarios','All scenarios'],
-    ['base','Dossiers de base · 001–020','Base cases · 001–020'],
-    ['original','Dossiers 001–008','Cases 001–008'],
-    ['second','Dossiers 009–020','Cases 009–020'],
-    ['dlc','Tous les DLC','All DLCs'],
-    ['omerta','Omertà','Omertà'],
-    ['terror','Terreur','Terror'],
-    ['cartel','Cartel','Cartel'],
-    ['regime','Le Régime','The Regime']
+    ['base','Dossiers classiques · 001–020','Base cases · 001–020'],
+    ['omerta','Omertà · 021–025','Omertà · 021–025'],
+    ['terror','Terreur · 026–028','Terror · 026–028'],
+    ['cartel','Cartel · 029–031','Cartel · 029–031'],
+    ['regime','Le Régime · 032–034','The Regime · 032–034']
   ]);
   function readFilter(){
     try{
-      const stored=sessionStorage.getItem(FILTER_KEY)||'all';
-      const legacyDlc=sessionStorage.getItem(DLC_FILTER_KEY)||'all';
-      const value=stored==='dlc'&&['omerta','terror','cartel','regime'].includes(legacyDlc)?legacyDlc:stored;
-      return CATALOG_FILTER_OPTIONS.some(option=>option[0]===value)?value:'all';
-    }catch{return 'all'}
+      const stored=sessionStorage.getItem(FILTER_KEY)||'base';
+      const oldDlc=sessionStorage.getItem(DLC_FILTER_KEY)||'all';
+      const value=stored==='dlc'&&['omerta','terror','cartel','regime'].includes(oldDlc)
+        ?oldDlc:stored;
+      return CATALOG_FILTER_OPTIONS.some(option=>option[0]===value)?value:'base';
+    }catch{return 'base'}
   }
   function storeFilter(value){
     try{
@@ -236,35 +235,45 @@
   function ensureFilters(root){
     let nav=root.querySelector('.igr-scenario-filters');
     if(!nav){
-      nav=document.createElement('div');
-      nav.className='igr-scenario-filters';
-      nav.setAttribute('role','group');
-      nav.setAttribute('aria-label','Filtrer les scénarios');
+      nav=document.createElement('nav');
+      nav.className='igr-scenario-filters igr-family-picker';
+      nav.setAttribute('aria-label','Choisir la collection de scénarios');
       root.insertBefore(nav,root.querySelector('.panel')||root.firstChild);
     }
+    nav.classList.add('igr-family-picker');
     const en=window.IGR_LOCALE==='en';
     if(!nav.querySelector('#igrCatalogFilter')){
-      nav.innerHTML=`<label class="igr-catalog-label" for="igrCatalogFilter">${en?'AFFICHAGE':'AFFICHER'}</label><div class="igr-catalog-select-wrap"><select id="igrCatalogFilter" class="igr-catalog-select" aria-label="${en?'Show cases':'Afficher les scénarios'}">${CATALOG_FILTER_OPTIONS.map(option=>`<option value="${option[0]}">${en?option[2]:option[1]}</option>`).join('')}</select><span class="igr-catalog-chevron" aria-hidden="true">⌄</span></div><span class="igr-catalog-count" aria-live="polite"></span>`;
+      nav.innerHTML='<label class="igr-catalog-label" for="igrCatalogFilter">'+
+        (en?'COLLECTION':'COLLECTION')+'</label>'+
+        '<div class="igr-catalog-select-wrap"><select id="igrCatalogFilter" class="igr-catalog-select" aria-label="'+
+        (en?'Choose a scenario collection':'Choisir la collection de scénarios')+'">'+
+        CATALOG_FILTER_OPTIONS.map(option=>'<option value="'+option[0]+'">'+
+          (en?option[2]:option[1])+'</option>').join('')+
+        '</select><span class="igr-catalog-chevron" aria-hidden="true">⌄</span></div>'+
+        '<span class="igr-catalog-count" aria-live="polite"></span>';
     }
     nav.onchange=event=>{
       if(event.target?.id!=='igrCatalogFilter')return;
       storeFilter(event.target.value);
       applyFilters(root);
+      // A user arriving from dossier 019 must see the top of the chosen DLC,
+      // not an unrelated deep position inherited from the base catalogue.
+      try{
+        const y=root.getBoundingClientRect().top+window.scrollY;
+        window.scrollTo({top:Math.max(0,y),behavior:'auto'});
+      }catch{}
     };
     const picker=nav.querySelector('#igrCatalogFilter');
     if(picker&&picker.value!==readFilter())picker.value=readFilter();
   }
   function scenarioVisible(id,filter=readFilter()){
     const meta=META[String(id||'')];
-    if(!meta)return filter==='all';
-    if(filter==='all')return true;
-    if(filter==='base')return meta.origin==='base';
-    if(filter==='dlc')return meta.origin==='dlc';
-    return meta.collection===filter;
+    if(!meta)return false;
+    return filter==='base'?meta.origin==='base':meta.collection===filter;
   }
   function setFilteredVisibility(element,visible){
     if(!element)return;
-    // Inline important is required: the poster layouts set display:grid!important.
+    // Card CSS uses display:grid!important: inline important is mandatory.
     element.hidden=!visible;
     if(visible)element.style.removeProperty('display');
     else element.style.setProperty('display','none','important');
@@ -272,25 +281,22 @@
   function applyFilters(root){
     markExistingCards(root);
     const filter=readFilter();
+    root.dataset.igrCatalogFamily=filter;
     root.querySelectorAll('[data-igr-scenario-id]').forEach(card=>
       setFilteredVisibility(card,scenarioVisible(card.dataset.igrScenarioId,filter))
     );
     const base=root.querySelector('.scenario-panel-v10-13');
-    if(base){
-      const cards=[...base.querySelectorAll('[data-igr-scenario-id]')];
-      setFilteredVisibility(base,cards.some(card=>scenarioVisible(card.dataset.igrScenarioId,filter)));
-    }
-    root.querySelectorAll('section[data-collection]').forEach(section=>{
-      const collection=section.dataset.collection;
-      setFilteredVisibility(section,filter==='all'||filter==='dlc'||filter===collection);
-    });
+    setFilteredVisibility(base,filter==='base');
+    root.querySelectorAll('section[data-collection]').forEach(section=>
+      setFilteredVisibility(section,section.dataset.collection===filter)
+    );
     const nav=root.querySelector('.igr-scenario-filters');
     const picker=nav?.querySelector('#igrCatalogFilter');
     if(picker&&picker.value!==filter)picker.value=filter;
     const count=nav?.querySelector('.igr-catalog-count');
     if(count){
       const n=Object.keys(META).filter(id=>scenarioVisible(id,filter)).length;
-      count.textContent=window.IGR_LOCALE==='en'?`${n} cases`:`${n} dossiers`;
+      count.textContent=window.IGR_LOCALE==='en'?n+' cases':n+' dossiers';
     }
   }
 
