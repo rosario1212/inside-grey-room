@@ -36,7 +36,7 @@ for(const dir of process.argv.slice(2).length?process.argv.slice(2):['dist']){
   if(redirect)assert.match(pageHtml,/localStorage\.setItem\(['"]igr_locale['"],['"]en['"]\)/,
    'The English redirect must preserve its locale before loading the main page');
   const html=redirect?mainHtml:pageHtml;
-  for(const [kind,url] of [['js','casino-client-v105.js?v=105.5'],['css','casino-client-v105.css?v=105.5']]){
+  for(const [kind,url] of [['js','casino-client-v105.js?v=105.6'],['css','casino-client-v105.css?v=105.6']]){
    const direct=kind==='js'
      ?html.includes('src="'+url+'"'):html.includes('href="'+url+'"');
    const packed=(optimization?.bundles||[]).filter(item=>item.kind===kind&&
