@@ -34,7 +34,7 @@ const card={
 };
 const badgeEnv={
  document:{querySelectorAll:()=>[card],createElement:()=>({textContent:'',className:''})},
- ACTIVITY:{juge:5},ROLE_COPY:{juge:'Generic incompatible description'},
+ ACTIVITY:{juge:5},activityRating:r=>({juge:5}[r]||2),ROLE_COPY:{juge:'Generic incompatible description'},
  copy:s=>s,stars:n=>'★'.repeat(n)+'☆'.repeat(5-n)
 };
 vm.runInNewContext(badgeSource+'\ndecorateRoleCards();decorateRoleCards();',badgeEnv);
