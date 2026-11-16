@@ -1,0 +1,89 @@
+/* TERREUR lobby — continuity with the upper Ville card, visual-only. */
+#app .page > .lobby-v11[data-igr-lobby-theme="terror"]{
+  --igr-lobby-accent:#dfa2a7;
+  --igr-lobby-line:rgba(157,85,98,.33);
+  --igr-lobby-selected-line:#ba626d;
+  --igr-lobby-card:#0c0b0d;
+  --igr-lobby-selected:#211419;
+  --igr-lobby-chip:#1b1418;
+  color:#f0f2f4!important;
+  border:1px solid rgba(168,79,91,.46)!important;
+  border-radius:21px!important;
+  background:radial-gradient(ellipse at 100% 0%,rgba(145,46,65,.12),transparent 48%),linear-gradient(145deg,rgba(16,15,17,.99),rgba(7,7,8,.995) 79%)!important;
+  box-shadow:inset 0 1px 0 rgba(243,200,202,.045),0 18px 42px rgba(0,0,0,.29)!important;
+}
+/* Room identity, status and participants share dark layered surfaces. */
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-code{
+  margin:0 0 12px;padding:18px 12px 15px;
+  border:1px solid rgba(157,85,98,.23)!important;border-radius:15px;
+  background:linear-gradient(155deg,rgba(17,14,16,.96),rgba(7,7,8,.98))!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-code span{color:#cb9b9f!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-code strong{color:#f2f3f5!important;text-shadow:none!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-status{
+  margin:0 0 14px;padding:13px 15px!important;
+  border:1px solid rgba(157,85,98,.24)!important;border-radius:13px;
+  background:linear-gradient(155deg,rgba(18,15,17,.94),rgba(8,8,9,.98))!important;color:#ebedef!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-status strong{color:#f0f2f4!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-status span{color:#bdb5bb!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .player-list{margin:14px 0 18px;background:transparent!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .player-line{
+  background:linear-gradient(155deg,rgba(18,15,17,.96),rgba(8,8,9,.99))!important;
+  border:1px solid rgba(157,85,98,.22)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;color:#ecedef!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-player-name b{color:#eceff1!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-role-pending{color:#b1a8ad!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-role-picked{color:#dca5aa!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .player-line .btn.ghost{
+  border-color:rgba(157,85,98,.30)!important;background:#131013!important;color:#e0d8dc!important;
+}
+/* The selection wrapper is the visible card; inner role buttons stay transparent. */
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-zone{
+  border:1px solid rgba(157,85,98,.29)!important;
+  background:linear-gradient(155deg,rgba(15,13,15,.97),rgba(6,6,7,.995))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03)!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-zone .section-title h2{color:#f0f2f4!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-help{color:#c0b7bd!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-role-option{
+  border-color:rgba(157,85,98,.28)!important;
+  background:linear-gradient(155deg,rgba(21,17,20,.98),rgba(9,8,10,.99))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-role-option:has(> .role-choice-card.selected){
+  border-color:rgba(192,94,107,.76)!important;
+  background:linear-gradient(155deg,rgba(66,29,39,.67),rgba(15,11,14,.99))!important;
+  box-shadow:inset 3px 0 0 #b75c68,inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-role-option > .role-choice-card:not(.random-role-card){
+  background:transparent!important;box-shadow:none!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-card em,
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-random-role-cta em{
+  border-color:rgba(157,85,98,.28)!important;background:#21171b!important;color:#dfccd0!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .role-choice-zone .random-role-card,
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-random-role-cta{
+  border-color:rgba(157,85,98,.28)!important;
+  background:linear-gradient(155deg,#171216,#0b0a0c)!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-choice-status{
+  border:1px solid rgba(171,88,101,.39)!important;
+  background:linear-gradient(155deg,rgba(52,25,34,.60),rgba(10,9,11,.99))!important;box-shadow:none!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .igr-choice-status-button{
+  border-color:rgba(157,85,98,.33)!important;background:#21171b!important;color:#f1e6e8!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .lobby-note{
+  border-left-color:#b95e69!important;background:rgba(19,14,18,.65)!important;color:#bdb3b9!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] .waiting-pulse{color:#bdb3b9!important}
+#app .lobby-v11[data-igr-lobby-theme="terror"] > .btn.primary{
+  min-height:52px;border-color:#bd606b!important;border-radius:13px!important;
+  background:linear-gradient(135deg,#a84955,#722b39)!important;color:#fff3f4!important;
+}
+#app .lobby-v11[data-igr-lobby-theme="terror"] :is(.role-choice-card,.igr-random-role-cta,.igr-role-more>summary,.igr-choice-status-button,.btn):focus-visible{
+  outline:2px solid #dfa2a7!important;outline-offset:3px!important;
+}
