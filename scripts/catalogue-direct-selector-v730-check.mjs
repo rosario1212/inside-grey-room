@@ -159,7 +159,12 @@ assert(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))!important'),'
 const navJs=read('navigation-heritage-v19.js');
 assert(navJs.includes("},430);"),'Dock must restore full size when scrolling becomes idle');
 assert(css.includes('--igr-omerta-art-width:clamp(120px,37vw,159px)'),'Omerta reference poster column missing');
-assert(css.includes('object-fit:cover!important'),'All families must fill Omerta poster column edge to edge');
+for(const id of ['001','002','003','004','005','006','007','008'])
+  assert(css.includes('#scenario-'+id),'Missing safe art treatment for classic '+id);
+for(const family of ['terror','cartel','regime'])
+  assert(css.includes('.'+family+'-scenario'),'Missing safe framing for '+family);
+assert(css.includes('background-image:var(--igr-cover-url)!important'),'Missing image-derived ambient edge fill');
+assert(css.includes('object-fit:var(--igr-poster-fit,cover)!important'),'Omerta card fit must remain variable by art sensitivity');
 assert(css.includes('body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)'),
   'Compact on-scroll dock rule missing');
 const navigator=read('navigation-heritage-v19.js');
@@ -172,14 +177,14 @@ for(const [klass,accent] of [
 ])assert(css.includes(klass)&&css.includes(accent),'Lost DLC-specific card tint '+klass);
 assert(css.includes('> section.panel.cartel-dlc-section')&&css.includes('rgba(194,149,71,.52)'),'Cartel gold panel is missing');
 assert(css.includes('> section.panel.omerta-dlc-section')&&css.includes('rgba(173,43,53,.46)'),'Omerta red panel is missing');
-assert(css.includes('object-fit:cover!important'),'Poster treatment must eliminate dark letterbox bars');
+assert(css.includes('--igr-poster-fit:contain;'),'Sensitive posters must preserve their entire artwork');
 assert(css.includes('max-height:100%!important'),'Classics must fill the same Omerta artwork frame without old 228px cap');
 assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
 assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
-assert(html.includes('catalogue-navigation-v731.css?v=v738-omerta-edge-to-edge-20261116'),'New stylesheet not linked');
+assert(html.includes('catalogue-navigation-v731.css?v=v739-preserve-poster-text-20261116'),'New stylesheet not linked');
 assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
-assert(sw.includes('/catalogue-navigation-v731.css?v=v738-omerta-edge-to-edge-20261116'),'PWA stylesheet not versioned');
+assert(sw.includes('/catalogue-navigation-v731.css?v=v739-preserve-poster-text-20261116'),'PWA stylesheet not versioned');
 assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 console.log('PASS v731: Five visible direct collections, complete classic scroll, isolated DLCs, monochrome illustrated background.');
