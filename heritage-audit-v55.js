@@ -31,7 +31,7 @@ function immediateFocus(d,card){
   if(d.room?.campaign_id==='maitre'){
     if(phase===0)return role==='avocat'?'Fais reconstruire les faits sans annoncer encore ta stratégie.':'Expose uniquement ce que ton rôle sait et teste les contradictions.';
     if(phase===1)return role==='avocat'?'Formule un ANGLE clair : une thèse défendable qui organise les faits sans en inventer.':'Teste l’Angle de l’Avocat : cherche ce qui le confirme, le fragilise ou reste non prouvé.';
-    if(phase===2)return role==='juge'?'Sépare ce qui est établi, probable et seulement supposé avant la conclusion.':role==='avocat'?'Défends l’Angle et indique précisément ce qu’il permet — et ce qu’il ne permet pas — de conclure.':'Confronte la stratégie aux faits avant que le rôle décisionnaire verrouille la conclusion.';
+    if(phase===2)return role==='juge'?'Sépare ce qui est établi, probable et seulement supposé avant la conclusion.':role==='avocat'?'Défends l’Angle et indique précisément ce qu’il permet — et ce qu’il ne permet pas — de conclure.':'Confronte la stratégie aux faits avant que le groupe vote, sans confondre les arguments et les preuves.';
   }
   if(phase===0)return 'Écoute le briefing puis situe ton information privée sans la montrer aux autres.';
   if(phase===1)return 'Partage les faits utiles de ta carte et demande aux autres ce qui peut les confirmer.';
@@ -106,21 +106,13 @@ function enhanceMaitreDecision(d){
   if(d.room.campaign_id!=='maitre')return;
   const page=$('.maitre-page.mnet.hplay-decision,.maitre-page.hplay-decision');
   if(!page||!markOnlinePage(page,d))return;
-  const chapter=Number(d.room.chapter),ownerRole=chapter===1||chapter===4?'juge':chapter===2?'client':'avocat';
-  const owner=(d.players||[]).find(p=>p.role_id===ownerRole),canLock=d.player.role_id===ownerRole||(!owner&&d.player.is_host);
-  const ownerLabel=ownerRole==='juge'?'JUGE':ownerRole==='client'?'CLIENT':'AVOCAT';
-  const head=$('.hplay-decision-head',page);
-  if(head){
-    head.querySelector('p')?.remove();
-    head.insertAdjacentHTML('beforeend',`<div class="h55-decision-owner" data-h55-injected="1"><b>${canLock?`TU ES LE ${ownerLabel}`:`DÉCISION DU ${ownerLabel}`}</b><span>${canLock?'Verrouille le choix discuté à la table.':owner?`${esc(owner.pseudo)} verrouille la conclusion.`:'L’hôte reprend le verrouillage faute de rôle décisionnaire.'}</span></div>`);
+  // The campaign runtime is the sole owner of decision buttons and their
+  // player-token RPC. Never replace its vote controls with a judge-only bypass.
+  const b=d.room.ballot_status,head=$('.hplay-decision-head',page);
+  if(head&&b){
+    head.insertAdjacentHTML('beforeend',`<div class="h55-decision-owner" data-h55-injected="1"><b>DÉLIBÉRATION COLLECTIVE</b><span>${b.votes_cast}/${b.players} voix enregistrées · majorité absolue de ${b.majority}. Le Juge conduit l’audience ; le Client et l’Avocat conservent leur consentement personnel.</span></div>`);
   }
-  const options=$('.hplay-options',page);
-  if(options)$('button',options).forEach(btn=>{
-    const id=btn.dataset.id||btn.dataset.h55Decide;if(!id)return;
-    btn.removeAttribute('data-mnet');btn.dataset.h55Decide=id;btn.disabled=!canLock;
-    const i=$('i',btn);if(i)i.textContent=canLock?'VERROUILLER →':`EN ATTENTE DU ${ownerLabel}`;
-  });
-  const mode=$('.hplay-mode',page);if(mode)mode.textContent='EN LIGNE · CONCLUSION';
+  const mode=$('.hplay-mode',page);if(mode)mode.textContent='EN LIGNE · VOTE COLLECTIF';
 }
 function enhanceLobby(d){
   if(d.room.campaign_id!=='maitre')return;
@@ -132,17 +124,6 @@ function enhanceLobby(d){
 function enhanceResult(d){
   const page=$('.hplay-result');if(!page||!markOnlinePage(page,d))return;
   page.insertAdjacentHTML('afterbegin',`<div class="h55-result-context" data-h55-injected="1"><span>${esc(campaignName(d.room.campaign_id))}</span><b>${esc(roleCard(d)?.name||'')}</b></div>`);
-}
-async function decideMaitre(button){
-  const s=session();if(!s||s.campaign!=='maitre'||button.disabled)return;
-  button.disabled=true;
-  try{
-    await rpcx('igr_heritage_online_decide_v71',{p_code:s.code,p_player_token:s.token,p_option_id:button.dataset.h55Decide});
-    window.IGR_HERITAGE_MAITRE_ONLINE?.resume?.();
-  }catch(err){
-    console.error(err);button.disabled=false;
-    toastx(/decision owner|judge|client|lawyer|avocat/i.test(err?.message||'')?'Ce rôle ne peut pas verrouiller cette conclusion.':'Décision impossible.');
-  }
 }
 async function syncOnline(){
   const s=session();if(!s||syncBusy||document.hidden)return;
@@ -184,10 +165,6 @@ function schedule(){
   if(scheduled)return;scheduled=true;
   queueMicrotask(()=>{scheduled=false;simplifyMaitreCampaign();collapseMobileCampaign();void syncOnline()});
 }
-document.addEventListener('click',e=>{
-  const b=e.target.closest?.('[data-h55-decide]');if(!b)return;
-  e.preventDefault();e.stopImmediatePropagation();void decideMaitre(b);
-},true);
 const mo=new MutationObserver(schedule);mo.observe(document.documentElement,{childList:true,subtree:true});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()});
 window.addEventListener('pageshow',schedule,{passive:true});
