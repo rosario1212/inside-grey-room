@@ -244,8 +244,13 @@ try{
     await page.locator('#igrDockFilters').click();
     await page.waitForFunction(()=>window.scrollY<140,null,{timeout:3500});
     await page.waitForFunction(()=>!document.body.classList.contains('igr-catalogue-scrolled'),null,{timeout:1500});
-    const restoredWidth=await page.locator('#igrDockFilters').evaluate(el=>el.getBoundingClientRect().width);
-    assert(restoredWidth>=98,'v736: button labels should return at top after Filter shortcut');
+    // Wait for the 360ms idle-state reset and the short CSS width animation.
+    // At the top, the labels should be readable again, not permanently hidden.
+    await page.waitForFunction(()=>{
+      const b=document.getElementById('igrDockFilters');
+      return b&&b.getBoundingClientRect().width>=98&&
+        getComputedStyle(b.querySelector('b')).display!=='none';
+    },null,{timeout:1800});
     assert(await page.locator('.igr-scenario-filters').evaluate(el=>el.classList.contains('igr-picker-attention')),
       'v734: Filtres shortcut did not highlight visible collections');
     await page.locator('#igrDockHome').click();
