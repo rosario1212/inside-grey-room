@@ -339,6 +339,9 @@ try{
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
+          if(/^(001|006)/.test(name)){
+            assert(deviation<=.025,width+'px '+name+': the Base 9:16 family poster is the wrong ratio '+JSON.stringify(m));
+          }
           if(/^(029|030|031)/.test(name)){
             assert(deviation<=.015,width+'px '+name+': Cartel artwork must fit 724:960 without distortion '+JSON.stringify(m));
           }
