@@ -1,7 +1,7 @@
 const CACHE='igr-santoro-display-audit-20261108';
 const SHELL=[
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
-  '/catalog-descriptions-v1.css?v=calm-cards-and-scroll-pills-20261116-preview30-posterfull-20261116-v6-classic-cover-dlc-contain-20261116-v7-all-artwork-fit-v8-no-thumbnails-v9-cartel-proportions',
+  '/catalog-descriptions-v1.css?v=calm-cards-and-scroll-pills-20261116-preview30-posterfull-20261116-v6-classic-cover-dlc-contain-20261116-v7-all-artwork-fit-v8-no-thumbnails-v9-cartel-proportions-v9-1-vertical-rhythm',
   '/regime-live-v13.js?v=regime-v16-rosters-20261115',
   '/analyst-profiling-v700.css?v=v701-progressive-psychology',
   '/analyst-profiling-v700.js?v=v701-progressive-psychology',

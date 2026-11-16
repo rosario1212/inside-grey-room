@@ -313,3 +313,22 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
     grid-template-columns:148px minmax(0,1fr)!important;
   }
 }
+
+/* DLC card rhythm v9.1: descriptions may grow cards much taller than their
+   original 3:4 posters. Reclaim purely decorative vertical space (not text)
+   to reduce residual poster elongation on long cards, particularly 030.
+   The original fonts, colors, words and image framing remain untouched. */
+@media(max-width:699px){
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
+    .scenario-body.compact{
+    padding-top:11px!important;
+    padding-bottom:10px!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
+    .scenario-body.compact > p.igr-card-excerpt{
+    line-height:1.40!important;
+    margin-bottom:7px!important;
+  }
+}

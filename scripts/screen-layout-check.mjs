@@ -188,6 +188,8 @@ try{
           imageCount:el.querySelectorAll('.scenario-thumb img').length,
           artColumnWidth:el.querySelector('.scenario-thumb').getBoundingClientRect().width,
           titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
+          bodyBottomPadding:parseFloat(getComputedStyle(body).paddingBottom),
+          copyLineRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),
           textVisible:style.overflow!=='hidden'&&style.display!=='none'};
       }));
       const global=await page.evaluate(()=>({
@@ -216,6 +218,12 @@ try{
         const m=metrics[i],name=samples[i].title;
         assert(m.height>=188,width+'px '+name+': card too short');
         assert(m.titleFont>=18&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
+        if(width===390&&samples[i].klass){
+          assert(m.bodyBottomPadding<=10.5,
+            'Long DLC cards must not reserve extra empty space beneath badges: '+name);
+          assert(m.copyLineRatio<=1.42,
+            'DLC description leading unexpectedly stretches the poster: '+name);
+        }
         assert(m.copyFont>=13.5&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
