@@ -906,3 +906,22 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   margin:12px 0 0!important;
   padding:0!important;
 }
+
+/* v750 — DLC catalogue cards: same readable synopsis-to-badges flow as
+   the approved 001–020 cards. Never push player/difficulty pills to the
+   bottom: center the entire text group while maintaining safe overflow.
+   Scope to the four DLCs only; keep each family's poster, type, color,
+   art-column width and fixed Omerta card geometry untouched. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
+  > .scenario-body.compact{
+  justify-content:safe center!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
+  > .scenario-body.compact > .tag-row{
+  margin:12px 0 0!important;
+  padding:0!important;
+  flex-wrap:wrap!important;
+  overflow:visible!important;
+}
