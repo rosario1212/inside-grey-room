@@ -163,8 +163,17 @@ try{
  await hostPage.locator('[data-casino-action=cancel-advance]').click();
  assert.equal(await hostPage.locator('.casino-phase-warning').count(),0);
  checks.push('Changement de phase avec confirmation explicite et annulation sans mutation');
- for(let i=0;i<4;i++)await commandFor(hostPage,'ADVANCE_PHASE');
- await assert.rejects(commandFor(hostPage,'FINISH_CAMPAIGN'),/bureau_report_pending/,'Host must not silence a missing investigative report');
+ // v719: the host cannot bypass discussion in chapter II/III.
+ // Advance the synthetic test clock rather than weakening production rules.
+ await assert.rejects(commandFor(hostPage,'ADVANCE_PHASE'),/minimum_social_time/,
+   'An immediate host advance must be refused');
+ for(let i=0;i<4;i++){
+  now+=120001; // Continuity at two minimum social windows when nobody confirms readiness
+  await commandFor(hostPage,'ADVANCE_PHASE');
+ }
+ now+=60001; // The final deliberation also has a non-skippable minimum.
+ await assert.rejects(commandFor(hostPage,'FINISH_CAMPAIGN'),/bureau_report_pending/,
+   'Host must not silence a missing investigative report');
  for(let i=4;i<7;i++)await commandFor(people[i].page,'BUREAU_VERDICT',{position:i===4?'established':'insufficient'});
  await commandFor(hostPage,'FINISH_CAMPAIGN');
  await Promise.all(people.map(p=>p.page.getByRole('heading',{name:'Le dénouement',exact:true}).waitFor()));
