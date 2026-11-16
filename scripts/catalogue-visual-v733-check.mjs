@@ -103,10 +103,10 @@ try{
     assert(data.scroll<=data.viewport+1,`${width}px: horizontal overflow ${data.scroll} > ${data.viewport}`);
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
-      const preserve=['001','002','003','004','005','006','007','008','029','030','031','032','033','034'].includes(c.id);
+      const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(c.id);
       assert.equal(c.imageFit,(['026','027','028'].includes(c.id)||preserve)?'contain':'cover',
         `${width}px ${c.id}: ${preserve?'full title-safe poster':'approved Omerta cover'} must be used`);
-      if(preserve)assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
+      if(preserve&&!['026','027','028'].includes(c.id))assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
       assert(c.image.width>30&&c.image.height>30,`${width}px ${c.id}: poster collapsed`);
       assert(c.image.left>=c.thumb.left-2&&c.image.right<=c.thumb.right+2,`${width}px ${c.id}: poster outside column`);
       assert(c.image.top>=c.thumb.top-2&&c.image.bottom<=c.thumb.bottom+2,`${width}px ${c.id}: poster vertically clipped`);
@@ -210,10 +210,10 @@ try{
             assert(item.excerptFits,`v752 ${width}px ${item.id}: DLC description clipped`);
           }
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
-          const preserve=['001','002','003','004','005','006','007','008','029','030','031','032','033','034'].includes(item.id);
+          const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(item.id);
           assert(item.imageFit===((['026','027','028'].includes(item.id)||preserve)?'contain':'cover'),
             `v739 ${width}px ${item.id}: original artwork ${preserve?'must be fully framed':'retains approved cover'}`);
-          if(preserve)assert(item.artUnderlay!=='none',
+          if(preserve&&!['026','027','028'].includes(item.id))assert(item.artUnderlay!=='none',
             `v739 ${width}px ${item.id}: no ambient source-art backing to fill poster edge`);
           assert(Math.abs(item.posterRect.height-item.thumbRect.height)<2,
             `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
