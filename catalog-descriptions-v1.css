@@ -206,7 +206,7 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact:not(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
   --igr-poster-width:clamp(118px,34vw,143px);
-  --igr-poster-ratio:2/3;
+  --igr-poster-ratio:9/16;
   --igr-card-floor:247px;
   --igr-family-title:1.22rem;
   --igr-family-copy:.9rem;
