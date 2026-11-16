@@ -124,8 +124,16 @@ assert(fullCopyCss.includes('p.igr-card-excerpt')&&fullCopyCss.includes('-webkit
   'Final catalogue CSS must override the historical three-line truncation');
 assert(fullCopyCss.includes('max-height:none!important')&&fullCopyCss.includes('height:auto!important'),
   'Cards and summary paragraphs must grow with their public copy');
-assert(fullCopyCss.includes('Catalogue poster v8')&&fullCopyCss.includes('object-fit:fill!important'),
-  'Public catalogue must fit all of each original image edge-to-edge without letterbox cropping');
+assert(fullCopyCss.includes('FAMILY POSTER SYSTEM v11')&&fullCopyCss.includes('object-fit:contain!important'),
+  'Catalogue must use independently sized family poster templates without artwork distortion');
+for(const family of ['omerta','terror','cartel','regime']){
+  assert(fullCopyCss.includes('article.scenario.scenario--art.scenario--compact.'+family+'-scenario'),
+    'Dedicated poster template missing for '+family);
+}
+assert(fullCopyCss.includes('--igr-poster-ratio:724/960'),
+  'Cartel art must keep its original 724×960 aspect ratio');
+assert(!fullCopyCss.includes('object-fit:fill!important'),
+  'Stretch-to-card legacy poster formatting must be removed');
 assert(!fullCopyCss.includes('Unified full-frame poster v7'),
   'Obsolete inset-poster styles must be removed rather than stacked');
 assert(html.includes('catalog-descriptions-v1.css') || report.bundles.some(b=>
