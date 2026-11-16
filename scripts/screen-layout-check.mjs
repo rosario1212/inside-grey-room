@@ -71,15 +71,20 @@ try{
   await runDesktopChecks({page,css,app,read,check,report});
 
   await check('regime-v162-phone-cards-and-roles',async()=>{
+    // Mirror the current short pre-click hooks instead of the obsolete long
+    // Omertà-clamped preview; full stories remain in dossier details.
+    const regimeHookSource=await read('dlc-suite-v12-37.js');
+    const hookHeader='  const DLC_CARD_TEASERS=Object.freeze(';
+    const hookStart=regimeHookSource.indexOf(hookHeader)+hookHeader.length;
+    assert(hookStart>=hookHeader.length,'DLC hooks missing');
+    const publicHooks=JSON.parse(regimeHookSource.slice(hookStart,regimeHookSource.indexOf(');',hookStart)));
     const cards=[
       {id:'032',name:'LES ARCHIVES DU PALAIS',
-       description:'Deux dirigeants en fuite : le directeur de la prison de Vahran et le ministre de l Intérieur. Les enquêteurs relient les archives, les arrestations et la chaîne de commandement.',
-       players:'6–8 JOUEURS'},
+       description:publicHooks.fr['032'],players:'6–8 JOUEURS'},
       {id:'034',name:'LES NOMS QU ILS PORTAIENT',
-       description:'Le président déchu et son gendre, chef de la sécurité, sont recherchés. Le président peut être lié à des identités multiples, des ordres et des responsabilités distinctes.',
-       players:'6–9 JOUEURS'}
+       description:publicHooks.fr['034'],players:'6–9 JOUEURS'}
     ];
-    const markup=cards.map(sc=>'<article class="scenario scenario--art scenario--compact regime-scenario" data-igr-scenario-id="'+sc.id+'">'+
+    const markup=cards.map(sc=>'<article id="scenario-'+sc.id+'" class="scenario scenario--art scenario--compact regime-scenario" data-igr-scenario-id="'+sc.id+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">LE RÉGIME · DOSSIER '+sc.id+'</div>'+
       '<h3>'+sc.name+'</h3><p class="igr-card-excerpt">'+sc.description+'</p>'+
@@ -106,13 +111,12 @@ try{
       }));
       for(const [i,m] of measures.entries()){
         assert(m.cardHeight>=190,width+'px dossier '+cards[i].id+': card height too small');
-        // v738: all DLC cards deliberately match Omerta's fixed preview card.
-        // It is not a clipped legacy height: descriptions have a separate
-        // five-line public preview, with full copy remaining in dossier detail.
+        // v753: preserve the Omertà-sized card but show the short public DLC
+        // teaser without truncating it or hiding player badges.
         assert(Math.abs(parseFloat(m.heightRule)-m.cardHeight)<2,
           width+'px dossier '+cards[i].id+': height must equal Omerta card template');
-        assert(m.clamp==='5',
-          width+'px dossier '+cards[i].id+': five-line Omerta preview missing');
+        assert(m.clamp==='none'||m.clamp==='unset',
+          width+'px dossier '+cards[i].id+': DLC teaser must not be clamped');
         assert(m.textBottom+2<=m.tagTop,width+'px dossier '+cards[i].id+': text overlaps badges: '+JSON.stringify(m));
         assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card '+JSON.stringify(m));
         assert(!m.bodyOverflow,width+'px dossier '+cards[i].id+': text wider than card');
@@ -395,7 +399,7 @@ try{
       {klass:'',name:'019 — BASE',full:'scenario-019-v11-6.webp'},
       {klass:'',name:'020 — BASE',full:'scenario-020-v11-6.webp'},
       {klass:'omerta-scenario',name:'021 — L’ENVELOPPE',full:'omerta-021-l-enveloppe.webp'},
-      {klass:'terror-scenario',name:'026 — LA VILLE TOMBE',full:'terror-026-la-ville-tombe.webp'},
+      {klass:'terror-scenario',name:'026 — LA VILLE TOMBE',full:'terror-026-la-ville-tombe-v750.webp'},
       {klass:'cartel-scenario',name:'029 — LE CYCLE MORT',full:'cartel-029-poster-v2.svg'},
       {klass:'cartel-scenario',name:'030 — LA COUR ACHETÉE',full:'cartel-030-poster-v2.svg'},
       {klass:'cartel-scenario',name:'031 — LA DETTE',full:'cartel-031-poster-v2.svg'},
@@ -436,9 +440,11 @@ try{
       }));
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=assets[i].name;
-        const safe=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031','032','033','034'].includes(assets[i].name.slice(0,3));
-        assert(m.fit===(safe?'contain':'cover'),
-          width+'px '+name+': '+(safe?'original must remain complete':'Omerta-approved cover must remain') );
+        const id=assets[i].name.slice(0,3);
+        const regimeSilver=['032','033','034'].includes(id);
+        const safe=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031'].includes(id);
+        assert(m.fit===(regimeSilver?'cover':safe?'contain':'cover'),
+          width+'px '+name+': artwork must match its native sizing rules');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
         assert(Math.abs(m.width-m.contentWidth)<=1&&m.height<=m.contentHeight+1,
@@ -448,10 +454,15 @@ try{
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
           const reference=metrics[0];
-          assert(Math.abs(m.displayAspect-reference.displayAspect)<=.025,
-            width+'px '+name+': every poster must use the same Omerta-proportioned display frame '+JSON.stringify(m));
-          // Title-sensitive poster art uses object-fit:contain with the original
-          // image softly extended behind it. Omerta / 009–020 keep cover.
+          if(regimeSilver){
+            assert(Math.abs(m.displayAspect-16/25)<=.012,
+              width+'px '+name+': Regime poster must fill its native 16:25 frame');
+          }else{
+            assert(Math.abs(m.displayAspect-reference.displayAspect)<=.025,
+              width+'px '+name+': non-Regime poster frame unexpectedly changed '+JSON.stringify(m));
+          }
+          // Only the new Regime series uses native 16:25 edge-to-edge artwork;
+          // older title-sensitive posters retain their independent policy.
         }
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-native34-and-dlc.png'),fullPage:true});
