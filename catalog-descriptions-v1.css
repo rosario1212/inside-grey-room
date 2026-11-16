@@ -295,12 +295,12 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
+  display:block!important;
   min-width:0!important;
-  align-self:stretch!important;
-  justify-content:flex-start!important;
+  align-self:start!important;
   min-height:max-content!important;
   max-height:none!important;
-  height:auto!important;
+  height:max-content!important;
   overflow:visible!important;
   padding:11px 11px 12px!important;
 }
@@ -325,8 +325,8 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact .scenario-body.compact .tag-row{
   gap:var(--igr-family-gap)!important;
-  margin-top:auto!important;
-  padding-top:6px!important;
+  margin-top:10px!important;
+  padding-top:3px!important;
 }
 /* A neutral continuation of the illustration's column: it is not a duplicate,
    a miniature or a blurred image. It never affects the print's size. */
