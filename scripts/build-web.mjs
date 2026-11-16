@@ -19,7 +19,7 @@ const premiumHead=[
  '  <link rel="stylesheet" href="heritage-v13-5.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-premium-v13-6.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-play-v13-7.css?v=v13.8-dual-play">',
- '  <link rel="stylesheet" href="play-modes-v13-8.css?v=v13.8-dual-play">',
+ '  <link rel="stylesheet" href="play-modes-v13-8.css?v=v733-role-lobby">',
  '  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">'
 ].join('\n');
 const premiumScripts=[
