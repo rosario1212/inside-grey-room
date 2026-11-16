@@ -361,3 +361,127 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{height:0!important}
       rgba(4,6,8,.84) 78%,rgba(4,6,8,0) 100%);
   }
 }
+
+/* v730 — navigate five separate collections rather than mixing 34 dossiers.
+   The existing native accessible control is retained, with one clear choice. */
+#app .page-create-v10-13 nav.igr-scenario-filters.igr-family-picker{
+  position:sticky!important;
+  top:calc(env(safe-area-inset-top,0px) + 8px)!important;
+  z-index:49!important;
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  gap:8px 12px!important;
+  align-items:center!important;
+  padding:11px 13px!important;
+  margin:0 0 17px!important;
+  min-width:0!important;
+  max-width:100%!important;
+  border:1px solid rgba(132,149,162,.30)!important;
+  border-radius:16px!important;
+  background:linear-gradient(115deg,rgba(19,26,32,.985),rgba(8,12,16,.985))!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.035)!important;
+  overflow:visible!important;
+}
+#app .page-create-v10-13 .igr-family-picker .igr-catalog-label{
+  color:#c4cfda!important;
+  font-size:.69rem!important;
+  font-weight:800!important;
+  letter-spacing:.15em!important;
+}
+#app .page-create-v10-13 .igr-family-picker .igr-catalog-select{
+  min-width:0!important;
+  width:100%!important;
+  height:46px!important;
+  border:1px solid rgba(150,166,179,.36)!important;
+  border-radius:11px!important;
+  background:#15202a!important;
+  color:#f0f4f7!important;
+  font-size:clamp(.78rem,3.25vw,.94rem)!important;
+  font-weight:720!important;
+  text-overflow:ellipsis;
+}
+#app .page-create-v10-13 .igr-family-picker .igr-catalog-count{
+  color:#93a4b3!important;
+  font-size:.72rem!important;
+  font-weight:700!important;
+}
+#app .page-create-v10-13 .igr-family-picker .igr-catalog-chevron{
+  color:#a7bbcb!important;
+}
+#app .page-create-v10-13[data-igr-catalog-family="omerta"] .igr-catalog-select{
+  border-color:rgba(166,66,79,.5)!important;background:#27141b!important;
+}
+#app .page-create-v10-13[data-igr-catalog-family="terror"] .igr-catalog-select{
+  border-color:rgba(162,72,80,.5)!important;background:#21161a!important;
+}
+#app .page-create-v10-13[data-igr-catalog-family="cartel"] .igr-catalog-select{
+  border-color:rgba(183,158,82,.5)!important;background:#272116!important;
+}
+#app .page-create-v10-13[data-igr-catalog-family="regime"] .igr-catalog-select{
+  border-color:rgba(106,147,177,.5)!important;background:#192632!important;
+}
+/* The entitlement sync may replace DLC elements after initial render.
+   Attribute gates keep nonselected collections hidden in every case. */
+#app .page-create-v10-13[data-igr-catalog-family]:not([data-igr-catalog-family="base"])
+  > .scenario-panel-v10-13{display:none!important}
+#app .page-create-v10-13[data-igr-catalog-family]:not([data-igr-catalog-family="omerta"])
+  > .omerta-dlc-section{display:none!important}
+#app .page-create-v10-13[data-igr-catalog-family]:not([data-igr-catalog-family="terror"])
+  > .terror-dlc-section{display:none!important}
+#app .page-create-v10-13[data-igr-catalog-family]:not([data-igr-catalog-family="cartel"])
+  > .cartel-dlc-section{display:none!important}
+#app .page-create-v10-13[data-igr-catalog-family]:not([data-igr-catalog-family="regime"])
+  > .regime-dlc-section{display:none!important}
+
+@media(max-width:390px){
+  #app .page-create-v10-13 nav.igr-scenario-filters.igr-family-picker{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:6px!important;
+    padding:10px 11px!important;
+  }
+  #app .page-create-v10-13 .igr-family-picker .igr-catalog-count{
+    display:block!important;
+    font-size:.68rem!important;
+  }
+}
+/* Poster geometry: the image is an undistorted 3:4 optical frame for every
+   base dossier, including native 9:16 posters, and its own native frame for
+   each DLC. Preserve the entire artwork with object-fit:contain.
+   Blurred ambience occupies any extra card height, rather than black void. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  float:none!important;
+  align-self:stretch!important;
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  max-height:none!important;
+  min-height:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
+  position:relative!important;
+  inset:auto!important;
+  display:block!important;
+  align-self:center!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  max-height:none!important;
+  min-height:0!important;
+  margin:auto 0!important;
+  padding:0!important;
+  aspect-ratio:var(--igr-card-art-ratio)!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  filter:none!important;
+  transform:none!important;
+}
