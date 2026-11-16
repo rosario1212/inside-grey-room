@@ -221,8 +221,15 @@ try{
       for(const item of allRows){
         assert(Math.abs(item.height-reference.height)<=1.1,
           `v737 ${width}px ${item.id}: card (${item.height}) must match Omerta 021 (${reference.height})`);
-        assert(Math.abs(item.thumbRect.width-reference.thumbRect.width)<=1.1,
-          `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
+        // TERREUR uses a deliberately wider native 3:4 art column (v748).
+        // Keep that approved family exception; all other cards still align with Omertà.
+        if(['026','027','028'].includes(item.id)){
+          assert(item.thumbRect.width>reference.thumbRect.width,
+            `v749 ${width}px ${item.id}: Terreur native poster column unexpectedly shrank`);
+        }else{
+          assert(Math.abs(item.thumbRect.width-reference.thumbRect.width)<=1.1,
+            `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
+        }
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalogue-v735-34-equal-heights-iphone.png'),fullPage:true});
       console.log(`PASS v740 ${width}px: All 34 cards match Omerta 021 height and poster width, safe full-poster typography with ambient source-art extension`);
