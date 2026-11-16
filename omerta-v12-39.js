@@ -18,7 +18,7 @@
   const ROLE_COPY = Object.freeze({
     enqueteur:{body:'Tu conduis les interrogatoires, décides certaines orientations de l’enquête et portes la reconstruction finale. Dans OMERTÀ, tu dois distinguer aveu sincère, peur et calcul.'},
     analyste:{body:'Tu repères les contradictions, les changements de version et les liens discrets entre les faits. Tu aides l’Enquêteur à remonter la chaîne des responsabilités.'},
-    suspect:{body:'Tu protèges ta position selon ce que ton identité permet : nier, minimiser, négocier, accuser ou coopérer. Sauver ta peau peut exposer quelqu’un d’autre.'},
+    suspect:{label:'Mis en cause',body:'Tu protèges ta position selon ce que ton identité permet : nier, minimiser, négocier, accuser ou coopérer. Sauver ta peau peut exposer quelqu’un d’autre.'},
     maitre:{body:'Tu protèges ton client, contestes les accusations fragiles et limites les conséquences d’un aveu. Une bonne intervention peut modifier l’équilibre de l’enquête.'},
     procureur:{body:'Tu exploites les contradictions et la coopération pour transformer des déclarations en charges solides. Ton objectif est de faire remonter les responsabilités.'},
     juge:{body:'Tu arbitres les décisions qui exigent une autorité neutre. Tu dois séparer preuves, versions intéressées et pression de la Famiglia.'},
@@ -53,7 +53,7 @@
   const ROLE_PREVIEWS_EN = Object.freeze({
     enqueteur:'Lead interrogations and expose the family secrets.',
     analyste:'Cross-check accounts and identify conflicting loyalties.',
-    suspect:'Negotiate, conceal and defend your interests.',
+    suspect:'Negotiate and defend your version of events.',
     maitre:'Defend your client against the charges.',
     procureur:'Negotiate testimony and build the prosecution.',
     juge:'Rule on procedure and preside over the trial.',
@@ -185,7 +185,9 @@
     if(!isOmerta(visibleScenarioId())) return base;
     const patch = ROLE_COPY[id];
     const short = (window.IGR_LOCALE === 'en' ? ROLE_PREVIEWS_EN : ROLE_PREVIEWS_FR)[id];
-    return patch ? {...base, ...patch, ...(short ? {short} : {})} : (short ? {...base, short} : base);
+    const resolved = patch ? {...base, ...patch, ...(short ? {short} : {})} : (short ? {...base, short} : base);
+    if(id === 'suspect' && window.IGR_LOCALE === 'en') resolved.label = 'Person of interest';
+    return resolved;
   };
 
   function secureIndex(length){
