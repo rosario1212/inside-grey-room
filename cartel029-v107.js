@@ -53,14 +53,14 @@ function mission(){
  fields.slice(0,3).map(f=>'<li>'+esc(tr(f[1],f[2]))+'</li>').join('')+'</ol><p>'+esc(tr('En parallèle : protéger les rescapés, leurs familles et les vingt captifs. Une menace ne prouve pas qu’elle a été exécutée.','Also: protect the survivors, their families and the twenty captives. A threat is not evidence that harm has occurred.'))+'</p></section>';
 }
 function finalChoice(key,label,options){
- const disabled=record?.status==='submitted';
+ const disabled=record?.status==='submitted'||sync()?.room?.status==='finished';
  const previous=draft?.[key]??record?.fields?.[key]??'unknown';
  return '<label class="igr029-field"><b>'+esc(label)+'</b><select data-igr029-field="'+key+'" '+(disabled?'disabled':'')+' onchange="igr029MarkDirty()">'+options.map(([v,t])=>'<option value="'+v+'" '+(v===previous?'selected':'')+'>'+esc(t)+'</option>').join('')+'</select></label>';
 }
 function reportBody(){
  if(!record&&!draft)return '<p class="igr029-note">'+esc(message||tr('Chargement du rapport…','Loading report…'))+'</p>';
  const disabled=record?.status==='submitted'||sync()?.room?.status==='finished';
- return '<p class="igr029-note">'+esc(tr('Répondez simplement aux trois questions. Enregistrez à tout moment ; l’enquêteur et l’analyste partagent ce brouillon.','Answer the three questions. Save any time; the investigator and analyst share the draft.'))+'</p>'+
+ return '<p class="igr029-note">'+esc(tr('Trois conclusions essentielles, plus les mesures de protection. L’enquêteur et l’analyste partagent le brouillon : enregistre tes réponses avant de quitter l’onglet.','Three essential findings, plus protection measures. The investigator and analyst share the draft; save your answers before leaving the tab.'))+'</p>'+
  fields.map((f,i)=>'<label class="igr029-field"><b>'+(i<3?i+1+'. ':'')+esc(tr(f[1],f[2]))+'</b><small>'+esc(f[3])+'</small><textarea data-igr029-field="'+f[0]+'" maxlength="1200" rows="3" '+(disabled?'readonly':'')+' oninput="igr029MarkDirty()">'+esc(draft?.[f[0]]??record?.fields?.[f[0]]??'')+'</textarea></label>').join('')+
  (Number(sync()?.room?.cycle)===3?'<div class="igr029-final-choices"><h4>'+esc(tr('Deux conclusions finales','Two final conclusions'))+'</h4>'+
  finalChoice('responsibility_choice',tr('Qui a décidé la représaille ?','Who ordered the reprisal?'),[
@@ -110,7 +110,28 @@ async function save(submit){
   if(!value||!['draft','submitted'].includes(value.status))throw Error('Invalid save');
   record=value;clearDraft();message=submit?tr('Rapport remis.','Report submitted.'):tr('Rapport enregistré.','Report saved.');repaint();
  }catch(e){
-  message=tr('Enregistrement non confirmé : tes réponses sont conservées dans cet onglet. Vérifie la connexion et réessaie.','Save not confirmed: your answers are preserved in this tab. Check your connection and retry.');
+  // The server might have committed the save before its response was lost.
+  // Re-read the authenticated report before claiming failure or allowing a duplicate submit.
+  let confirmed=false;
+  try{
+   const current=await rpc('igr_v107_029_report',{
+    p_code:sync().room.code,p_player_token:state().token,p_patch:null,p_submit:false
+   });
+   if(k===key()&&['draft','submitted'].includes(current?.status)){
+    const matches=Object.entries(patch).every(([name,value])=>
+      String(current.fields?.[name]??'')===String(value??'').trim());
+    if(matches&&(current.status==='submitted'||!submit)){
+     record=current;clearDraft();confirmed=true;
+     message=current.status==='submitted'
+      ?tr('Rapport remis et confirmé par le serveur.','Report submitted and confirmed by the server.')
+      :tr('Enregistrement confirmé après reconnexion.','Save confirmed after reconnecting.');
+    }else if(current.status==='submitted'){
+     record=current;clearDraft();confirmed=true;
+     message=tr('Le rapport a déjà été remis. Il est maintenant verrouillé.','The report has already been submitted and is locked.');
+    }
+   }
+  }catch(recoveryError){console.warn('[029 report reconciliation]',recoveryError?.message||recoveryError)}
+  if(!confirmed)message=tr('Enregistrement non confirmé : tes réponses sont conservées dans cet onglet. Vérifie la connexion et réessaie.','Save not confirmed: your answers are preserved in this tab. Check your connection and retry.');
   repaint();console.warn('[029 save]',e?.message||e)
  }
  finally{loading=false}
