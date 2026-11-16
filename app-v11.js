@@ -148,46 +148,24 @@ function lobbyRoleSlots(sc,count){
 function roleCapacityMap(sc,count){return lobbyRoleSlots(sc,count).reduce((a,r)=>(a[r]=(a[r]||0)+1,a),{})}
 function roleChoiceSummary(sc,count,players){
  const caps=roleCapacityMap(sc,count),taken={};(players||[]).forEach(p=>{if(p.preferred_role)taken[p.preferred_role]=(taken[p.preferred_role]||0)+1});
- return Object.entries(caps).map(([id,cap])=>{const info=roleInfo(id);return {id,cap,taken:taken[id]||0,info:{...info,short:rolePreview(id,info)}}});
+ return Object.entries(caps).map(([id,cap])=>({id,cap,taken:taken[id]||0,info:roleInfo(id)}));
 }
 
 const ROLE_INFO = {
-officier_liaison:{label:'Officier',win:'Préserve la dernière capitale libre grâce aux renseignements vérifiés et à tes décisions militaires.',body:'Trois décisions militaires chronométrées par cycle avec répercussions immédiates. Tu interviens auprès d’un suspect différent chaque cycle et peux rejoindre une confrontation supplémentaire aux cycles 2 et 3. Tu ne décides pas du verdict.'},
-enqueteur:{label:'Enquêteur',win:'Reconstruis correctement les faits, les responsabilités et le degré réel d’implication.',body:'Tu diriges les interrogatoires, choisis certaines décisions d’enquête et portes la reconstruction factuelle finale.'},
-analyste:{label:'Analyste',win:'Produis la reconstruction psychologique la plus juste.',body:'Tu observes les interrogatoires, utilises le Canal Enquête et participes aux entretiens annexes avec l’Enquêteur.'},
-suspect:{label:'Suspect',win:'Fais respecter la frontière réelle de ta responsabilité.',body:'Tu peux mentir, manipuler, accuser, minimiser ou admettre partiellement. Être compromis ne signifie pas automatiquement perdre.'},
-maitre:{label:'Maître',win:'Protège la responsabilité exacte de ton unique client officiel.',body:'Tu peux parler librement aux suspects hors procédure. Tu accompagnes ton client dans les procédures officielles et partages son temps de défense finale. Chacun de vous peut mettre fin à la représentation pendant la partie.'},
-procureur:{label:'Procureur',win:'Poursuis correctement les responsabilités sans surpayer tes accords.',body:'Tu parles directement aux joueurs disponibles, négocies des coopérations puis utilises l’application uniquement pour formaliser les accords et ta décision.'},
-juge:{label:'Juge',win:'Rends une décision exacte sans sacrifier ton objectif personnel.',body:'Tu arbitres les saisines et les accès protégés. Tu peux consommer au maximum 3 protections ; la 3e fait échouer ton objectif personnel.'},
-journaliste:{label:'Journaliste',win:'Publie utilement sans détruire ta crédibilité ni ton objectif.',body:'Tu enquêtes librement et peux publier jusqu’à 3 Breaking News par cycle, 6 sur toute la partie.'},
-inspecteur:{label:'Inspecteur de terrain',win:'Choisis les bonnes pistes et aide à établir les faits matériels essentiels.',body:'Tu peux explorer jusqu’à 3 lieux par cycle ; les résultats matériels alimentent l’enquête sans désigner automatiquement un coupable.'},
-expert:{label:'Expert / Médecin légiste',win:'Interprète correctement les éléments techniques essentiels.',body:'Une analyse complémentaire par cycle. Tu établis des faits techniques, jamais un coupable.'},
-temoin:{label:'Témoin',win:'Reste cohérent avec ta vérité et ton éventuel objectif secondaire.',body:'Tu peux être entendu pendant la fenêtre témoins. Tu peux devenir personne d’intérêt puis suspect.'},
-espion:{label:'Espion',win:'Accomplis ta mission sans être démasqué.',body:'Ton rôle public reste une couverture. Être Espion ne signifie pas être le responsable principal.'}
+officier_liaison:{label:'Officier',short:'Commande les opérations militaires et leurs conséquences.',win:'Préserve la dernière capitale libre grâce aux renseignements vérifiés et à tes décisions militaires.',body:'Trois décisions militaires chronométrées par cycle avec répercussions immédiates. Tu interviens auprès d’un suspect différent chaque cycle et peux rejoindre une confrontation supplémentaire aux cycles 2 et 3. Tu ne décides pas du verdict.'},
+enqueteur:{label:'Enquêteur',short:'Dirige les interrogatoires et coordonne l’enquête.',win:'Reconstruis correctement les faits, les responsabilités et le degré réel d’implication.',body:'Tu diriges les interrogatoires, choisis certaines décisions d’enquête et portes la reconstruction factuelle finale.'},
+analyste:{label:'Analyste',short:'Repère les contradictions et profile les suspects.',win:'Produis la reconstruction psychologique la plus juste.',body:'Tu observes les interrogatoires, utilises le Canal Enquête et participes aux entretiens annexes avec l’Enquêteur.'},
+suspect:{label:'Suspect',short:'Mens, négocie et défends ta version.',win:'Fais respecter la frontière réelle de ta responsabilité.',body:'Tu peux mentir, manipuler, accuser, minimiser ou admettre partiellement. Être compromis ne signifie pas automatiquement perdre.'},
+maitre:{label:'Maître',short:'Défends ton client et prépare sa défense.',win:'Protège la responsabilité exacte de ton unique client officiel.',body:'Tu peux parler librement aux suspects hors procédure. Tu accompagnes ton client dans les procédures officielles et partages son temps de défense finale. Chacun de vous peut mettre fin à la représentation pendant la partie.'},
+procureur:{label:'Procureur',short:'Accuse, négocie et établis les responsabilités.',win:'Poursuis correctement les responsabilités sans surpayer tes accords.',body:'Tu parles directement aux joueurs disponibles, négocies des coopérations puis utilises l’application uniquement pour formaliser les accords et ta décision.'},
+juge:{label:'Juge',short:'Arbitre les procédures et préside le tribunal.',win:'Rends une décision exacte sans sacrifier ton objectif personnel.',body:'Tu arbitres les saisines et les accès protégés. Tu peux consommer au maximum 3 protections ; la 3e fait échouer ton objectif personnel.'},
+journaliste:{label:'Journaliste',short:'Enquête et publie des révélations.',win:'Publie utilement sans détruire ta crédibilité ni ton objectif.',body:'Tu enquêtes librement et peux publier jusqu’à 3 Breaking News par cycle, 6 sur toute la partie.'},
+inspecteur:{label:'Inspecteur de terrain',short:'Explore les lieux et relève les indices.',win:'Choisis les bonnes pistes et aide à établir les faits matériels essentiels.',body:'Tu peux explorer jusqu’à 3 lieux par cycle ; les résultats matériels alimentent l’enquête sans désigner automatiquement un coupable.'},
+expert:{label:'Expert / Médecin légiste',short:'Analyse les preuves et éclaire l’enquête.',win:'Interprète correctement les éléments techniques essentiels.',body:'Une analyse complémentaire par cycle. Tu établis des faits techniques, jamais un coupable.'},
+temoin:{label:'Témoin',short:'Témoigne sur ce que tu sais.',win:'Reste cohérent avec ta vérité et ton éventuel objectif secondaire.',body:'Tu peux être entendu pendant la fenêtre témoins. Tu peux devenir personne d’intérêt puis suspect.'},
+espion:{label:'Espion',short:'Protège ta couverture et accomplis ta mission.',win:'Accomplis ta mission sans être démasqué.',body:'Ton rôle public reste une couverture. Être Espion ne signifie pas être le responsable principal.'}
 
 };
-
-// Brèves pour les cartes de choix : les fiches complètes restent inchangées.
-const ROLE_PREVIEW = Object.freeze({
- officier_liaison:'Commande les opérations militaires et leurs conséquences.',
- enqueteur:'Dirige les interrogatoires et coordonne l’enquête.',
- analyste:'Repère les contradictions et profile les suspects.',
- suspect:'Mens, négocie et défends ta version.',
- maitre:'Défends ton client et prépare sa défense.',
- procureur:'Accuse, négocie et établis les responsabilités.',
- juge:'Arbitre les procédures et préside le tribunal.',
- journaliste:'Enquête et publie des révélations.',
- inspecteur:'Explore les lieux et relève les indices.',
- expert:'Analyse les preuves et éclaire l’enquête.',
- temoin:'Témoigne sur ce que tu sais.',
- espion:'Protège ta couverture et accomplis ta mission.'
-});
-function rolePreview(id,info){
- const scenarioId=String(STATE?.sync?.room?.scenario_id||STATE?.selectedScenario||'');
- if(scenarioId==='031'&&id==='maitre')return 'Défends le client désigné par le cartel.';
- if(scenarioId==='031'&&id==='suspect')return 'Défends ta version et évite la prison.';
- return ROLE_PREVIEW[id]||info.body;
-}
 
 const RULES = [
 {title:'1. ADN du jeu',items:['Inside Grey Room est une enquête psychologique asymétrique à informations cachées.','La vérité canonique ne change jamais ; les accès, réactions, relations, timings et trames disponibles peuvent changer.','Le système fournit les circonstances ; les joueurs produisent la tragédie.']},
