@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#090b0d"/><stop offset="1" stop-color="#030405"/></linearGradient>
+  <radialGradient id="doorLight"><stop stop-color="#c3c9c9" stop-opacity=".23"/><stop offset=".52" stop-color="#979b9b" stop-opacity=".07"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <pattern id="hatch" patternUnits="userSpaceOnUse" width="15" height="15" patternTransform="rotate(27)"><path d="M0 0V15" stroke="#acb1ae" stroke-opacity=".028" stroke-width=".8"/></pattern>
+  <filter id="soft"><feGaussianBlur stdDeviation="16"/></filter>
+</defs>
+<rect width="1200" height="700" fill="url(#bg)"/>
+<rect width="1200" height="700" fill="url(#hatch)"/>
+<g fill="none" stroke="#b1b5b4" stroke-width="1.45" stroke-opacity=".19">
+<path d="M0 88 448 200 448 466 0 620M1200 88 752 200 752 466 1200 620"/>
+<path d="M0 170 448 241M1200 170 752 241M0 580 448 445M1200 580 752 445"/>
+<path d="M30 0 475 182M1170 0 725 182M30 700 475 482M1170 700 725 482"/>
+<path d="M160 0 504 170M1040 0 696 170"/>
+<path d="M0 350 450 352M1200 350 750 352"/>
+<path d="M448 200H752V466H448z"/>
+<path d="M484 214H716V459H484zM503 224H697V447H503z"/>
+<path d="M537 235H663V442H537z"/>
+<path d="M559 258H641V429H559z"/>
+<path d="M557 255V431M644 255V431"/>
+<path d="M598 264V419"/>
+<ellipse cx="625" cy="350" rx="4" ry="5" fill="#aeb1ab" fill-opacity=".4"/>
+<path d="M440 472 0 690M760 472 1200 690"/>
+<path d="M480 483 355 700M720 483 845 700"/>
+<path d="M515 493 460 700M685 493 740 700"/>
+<path d="M600 472V700M0 660H1200M170 590H1030M300 530H900"/>
+</g>
+<g fill="none" stroke="#d2d0c8" stroke-width=".7" stroke-opacity=".075">
+<path d="M0 107 449 219M0 124 449 237M0 143 449 257M1200 107 751 219M1200 124 751 237M1200 143 751 257"/>
+<path d="M0 493 446 409M0 509 446 424M1200 493 754 409M1200 509 754 424"/>
+<path d="M490 250V455M710 250V455M525 260V444M675 260V444"/>
+<path d="M512 240H688M510 447H690"/>
+</g>
+<ellipse cx="600" cy="350" rx="238" ry="290" fill="url(#doorLight)" opacity=".55"/>
+<path d="M560 270H640V420H560z" fill="#adb5b1" opacity=".018"/>
+<g stroke="#e3e0d7" stroke-opacity=".085" stroke-width=".8">
+<path d="M70 450H190M1000 450H1130M70 464H164M1042 464H1130M130 490H220M960 490H1050"/>
+<path d="M80 286 180 309M1020 309 1120 286"/>
+</g>
+<rect width="1200" height="700" fill="url(#bg)" opacity=".27"/>
+</svg>

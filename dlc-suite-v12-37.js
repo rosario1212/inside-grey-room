@@ -231,39 +231,42 @@
       sessionStorage.removeItem(DLC_FILTER_KEY);
     }catch{}
   }
+  // v731 — collections are primary navigation, never a hidden filter drawer.
+  // Buttons stay in the page itself (above the cards) and survive rerenders.
   function ensureFilters(root){
     let nav=root.querySelector('.igr-scenario-filters');
-    if(!nav){
-      nav=document.createElement('nav');
-      nav.className='igr-scenario-filters igr-family-picker';
-      nav.setAttribute('aria-label','Choisir la collection de scénarios');
-      root.insertBefore(nav,root.querySelector('.panel')||root.firstChild);
-    }
-    nav.classList.add('igr-family-picker');
+    if(!nav)nav=document.createElement('nav');
+    nav.className='igr-scenario-filters igr-family-picker igr-family-picker-v731';
+    nav.setAttribute('aria-label',window.IGR_LOCALE==='en'?'Scenario collections':'Collections de scénarios');
+    const head=root.querySelector('.page-head');
+    if(head&&head.nextElementSibling!==nav)head.insertAdjacentElement('afterend',nav);
+    else if(!nav.parentElement)root.prepend(nav);
     const en=window.IGR_LOCALE==='en';
-    if(!nav.querySelector('#igrCatalogFilter')){
-      nav.innerHTML='<label class="igr-catalog-label" for="igrCatalogFilter">'+
-        (en?'COLLECTION':'COLLECTION')+'</label>'+
-        '<div class="igr-catalog-select-wrap"><select id="igrCatalogFilter" class="igr-catalog-select" aria-label="'+
-        (en?'Choose a scenario collection':'Choisir la collection de scénarios')+'">'+
-        CATALOG_FILTER_OPTIONS.map(option=>'<option value="'+option[0]+'">'+
-          (en?option[2]:option[1])+'</option>').join('')+
-        '</select><span class="igr-catalog-chevron" aria-hidden="true">⌄</span></div>'+
-        '<span class="igr-catalog-count" aria-live="polite"></span>';
+    if(!nav.querySelector('.igr-collection-choices')){
+      const counts={base:'20',omerta:'5',terror:'3',cartel:'3',regime:'3'};
+      nav.innerHTML='<div class="igr-collection-top"><span class="igr-catalog-label">'+
+        (en?'SELECT A COLLECTION':'CHOISIR UNE COLLECTION')+'</span>'+
+        '<span class="igr-catalog-count" aria-live="polite"></span></div>'+
+        '<div class="igr-collection-choices" role="group" aria-label="'+
+        (en?'Choose case collection':'Choisir les dossiers')+'">'+
+        CATALOG_FILTER_OPTIONS.map(option=>
+          '<button type="button" class="igr-collection-choice" data-family="'+option[0]+'" aria-pressed="false">'+
+          '<span class="igr-family-name">'+(en?option[2].split(' · ')[0]:option[1].split(' · ')[0])+'</span>'+
+          '<span class="igr-family-range">'+option[1].split(' · ')[1]+' · '+counts[option[0]]+(en?' cases':' dossiers')+'</span>'+
+          '</button>').join('')+'</div>';
+      nav.querySelector('.igr-collection-choices').addEventListener('click',event=>{
+        const btn=event.target.closest('button[data-family]');
+        if(!btn||!nav.contains(btn))return;
+        const next=btn.dataset.family;
+        if(!CATALOG_FILTER_OPTIONS.some(o=>o[0]===next))return;
+        if(readFilter()===next)return;
+        storeFilter(next);
+        applyFilters(root);
+        // A deliberate DLC switch begins at the start of its list.
+        const targetTop=root.getBoundingClientRect().top+window.scrollY;
+        window.scrollTo({top:Math.max(0,targetTop),behavior:'auto'});
+      });
     }
-    nav.onchange=event=>{
-      if(event.target?.id!=='igrCatalogFilter')return;
-      storeFilter(event.target.value);
-      applyFilters(root);
-      // A user arriving from dossier 019 must see the top of the chosen DLC,
-      // not an unrelated deep position inherited from the base catalogue.
-      try{
-        const y=root.getBoundingClientRect().top+window.scrollY;
-        window.scrollTo({top:Math.max(0,y),behavior:'auto'});
-      }catch{}
-    };
-    const picker=nav.querySelector('#igrCatalogFilter');
-    if(picker&&picker.value!==readFilter())picker.value=readFilter();
   }
   function scenarioVisible(id,filter=readFilter()){
     const meta=META[String(id||'')];
@@ -290,8 +293,11 @@
       setFilteredVisibility(section,section.dataset.collection===filter)
     );
     const nav=root.querySelector('.igr-scenario-filters');
-    const picker=nav?.querySelector('#igrCatalogFilter');
-    if(picker&&picker.value!==filter)picker.value=filter;
+    nav?.querySelectorAll('.igr-collection-choice').forEach(button=>{
+      const selected=button.dataset.family===filter;
+      button.classList.toggle('is-active',selected);
+      button.setAttribute('aria-pressed',String(selected));
+    });
     const count=nav?.querySelector('.igr-catalog-count');
     if(count){
       const n=Object.keys(META).filter(id=>scenarioVisible(id,filter)).length;
