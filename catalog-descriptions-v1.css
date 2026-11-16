@@ -207,3 +207,23 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
     font-size:clamp(1.45rem,2.15vw,1.8rem)!important;
   }
 }
+
+/* Final cascade guard: the legacy v28 stylesheet loads after this catalogue
+   layer. Keep images intact and the grid's row sized by the *full* copy. */
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art{
+  grid-template-rows:max-content!important;
+  height:auto!important;
+  min-height:214px!important;
+  max-height:none!important;
+  align-self:stretch!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-body.compact{
+  height:auto!important;
+  max-height:none!important;
+  min-height:max-content!important;
+  overflow:visible!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact img{
+  object-fit:contain!important;
+  object-position:50% 0%!important;
+}
