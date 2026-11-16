@@ -434,7 +434,7 @@ try{
       }));
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=assets[i].name;
-        const safe=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(assets[i].name.slice(0,3));
+        const safe=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031','032','033','034'].includes(assets[i].name.slice(0,3));
         assert(m.fit===(safe?'contain':'cover'),
           width+'px '+name+': '+(safe?'original must remain complete':'Omerta-approved cover must remain') );
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
