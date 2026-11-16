@@ -75,7 +75,7 @@ for(const id of ['029','030','031']){
 const mobileCss=await read('mobile-ui-v28.css');
 const desktopCss=await read('screen-polish-v73.css');
 assert(app.includes('function scenarioCardTeaser(raw,maxWords=30)'), 'Missing shared bounded scenario teaser function');
-assert(app.includes('scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,Number(sc.id)>=9?30:23)'),
+assert(app.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,Number(sc.id)>=9?30:23)"),
  'Base 009–020 must present fuller public intros without changing dossier detail');
 for(const [name,source] of [['base',app],['Omertà',await read('omerta-v12.js')],
   ['Terreur',await read('terror-v12-37.js')],['Cartel/Régime',dlc],['premium',premium]]){
