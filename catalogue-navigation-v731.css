@@ -680,6 +680,7 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
 body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
   #igrUniversalDock :is(#igrDockFilters,#igrDockHome){
   box-sizing:border-box!important;
+  transition:none!important;
   display:inline-flex!important;
   width:44px!important;
   min-width:44px!important;
