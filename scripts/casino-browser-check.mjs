@@ -79,7 +79,23 @@ try{
  const host=await context({width:390,height:844}),hostPage=host.page;
  await hostPage.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
  await hostPage.locator('[data-casino-form=create] input[name=name]').fill('Ali');
- await hostPage.locator('[data-casino-form=create] button').click();await hostPage.locator('.casino-members').waitFor();
+ await hostPage.locator('[data-casino-form=create] button').click();
+ try{await hostPage.locator('.casino-members').waitFor({timeout:10000})}
+ catch(error){
+  const debug=await hostPage.evaluate(()=>{
+   const el=document.querySelector('.casino-members');
+   const chain=[];for(let x=el;x&&chain.length<7;x=x.parentElement){
+    const css=getComputedStyle(x),box=x.getBoundingClientRect();
+    chain.push({tag:x.tagName,cls:String(x.className),display:css.display,visibility:css.visibility,opacity:css.opacity,
+     width:box.width,height:box.height,hidden:x.hidden})
+   }
+   return {chain,errors:[...document.querySelectorAll('.casino-error')].map(x=>x.textContent),
+    room:document.querySelector('.casino-live')?.textContent?.slice(0,1200),html:el?.outerHTML?.slice(0,1800)}
+  });
+  console.error('CASINO LOBBY VISIBILITY DIAGNOSTIC',JSON.stringify({debug,errors}));
+  await hostPage.screenshot({path:join(resultDir,'host-create-lobby-debug.png'),fullPage:true});
+  throw error;
+ }
  const hostId=await storageIdentity(hostPage),room=await storage.read(hostId.roomId),people=[host];
  for(let i=1;i<7;i++){
   const person=await context(i%2?{width:820,height:1180}:{width:1440,height:900});people.push(person);
