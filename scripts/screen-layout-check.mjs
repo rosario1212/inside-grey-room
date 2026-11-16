@@ -90,7 +90,14 @@ try{
           box=el.getBoundingClientRect(),textBox=p.getBoundingClientRect(),tagBox=t.getBoundingClientRect();
         return {cardHeight:box.height,textBottom:textBox.bottom,tagTop:tagBox.top,tagBottom:tagBox.bottom,
           cardBottom:box.bottom,bodyOverflow:body.scrollWidth>body.clientWidth+1,
-          heightRule:getComputedStyle(el).maxHeight,clamp:getComputedStyle(p).webkitLineClamp};
+          heightRule:getComputedStyle(el).maxHeight,clamp:getComputedStyle(p).webkitLineClamp,
+          cardDisplay:getComputedStyle(el).display,cardHeightCSS:getComputedStyle(el).height,
+          cardMinHeight:getComputedStyle(el).minHeight,cardContain:getComputedStyle(el).contain,
+          cardVisibility:getComputedStyle(el).contentVisibility,
+          cardIntrinsic:getComputedStyle(el).containIntrinsicSize,
+          bodyDisplay:getComputedStyle(body).display,bodyHeight:getComputedStyle(body).height,
+          bodyRectHeight:body.getBoundingClientRect().height,bodyScrollHeight:body.scrollHeight,
+          bodyPosition:getComputedStyle(body).position};
       }));
       for(const [i,m] of measures.entries()){
         assert(m.cardHeight>=190,width+'px dossier '+cards[i].id+': card height too small');
