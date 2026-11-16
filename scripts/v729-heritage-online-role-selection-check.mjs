@@ -124,6 +124,18 @@ const casinoReadyLobby=runInNewContext(casinoLobbySource+';lobby',{
 },{timeout:1000});
 assert(casinoReadyLobby().includes('LANCER LE DOSSIER')&&!casinoReadyLobby().includes('PRÉPARATION INCOMPLÈTE'),'Casino valid configuration should enable host launch');
 
+const casinoUnassignedLobby=runInNewContext(casinoLobbySource+';lobby',{
+ state:{viewer:'p8',inviteCode:'TESTCODE',isHost:false,members:[
+  ...Array.from({length:7},(_,i)=>({id:'p'+i,name:'Yonghe '+i,role:'casino',ready:false})),
+  {id:'p8',name:'Nouveau joueur',role:null,ready:false}
+ ]},
+ roles:roleNames,roleShort:x=>'Brève du rôle '+x,roleStars:()=> '★★★★☆',esc:x=>String(x)
+},{timeout:1000})();
+assert(casinoUnassignedLobby.includes('À CHOISIR'),'Unassigned player must see an explicit roster status');
+assert(casinoUnassignedLobby.includes('CHOISIS D’ABORD UN RÔLE'),'Unassigned player must be unable to confirm ready');
+assert(casinoUnassignedLobby.includes('data-role-id="casino"')&&casinoUnassignedLobby.includes('is-taken'),'Full Yonghe camp must not accept an eighth player');
+
+
 assert(js.includes('savedScroll=preserveLobby')&&maitre.includes('savedScroll=preserveLobby'),'Live lobby updates must not jump to top');
 assert(js.includes("getAttribute('aria-pressed')!=='true'")&&maitre.includes("getAttribute('aria-pressed')==='true'"),'An already selected role must not trigger a redundant network request');
 for(const marker of ['hnet-activity-note','hnet-roster-disclosure','hnet-code strong','hnet-role-random'])assert(css.includes(marker),'Unifying Heritage CSS missing '+marker);

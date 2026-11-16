@@ -291,6 +291,25 @@ await test('continuity buttons respect actual server eligibility and refresh wit
  assert.match(client,/timedControls\.some\(key=>Boolean\(state\[key\]\)!==Boolean\(data\[key\]\)\)/,
   'Polling must repaint time-sensitive host controls at the same saved revision');
 });
+await test('Casino lobby never allocates an eighth Yonghe seat',async()=>{
+ const store=new MemoryStorage(),service=casinoService(store);
+ const roomId=randomUUID(),hostToken=token();
+ const created=await service.process({op:'create',roomId,sessionToken:hostToken,name:'Hôte',profileId:randomUUID(),profileToken:'fixture'});
+ let last=null,lastToken=null;
+ for(let i=1;i<=7;i++){
+  lastToken=token();
+  last=await service.process({op:'join',inviteCode:created.inviteCode,sessionToken:lastToken,name:'Participant '+i,requestId:randomUUID()});
+ }
+ assert.equal(last.members.filter(m=>m.role==='casino').length,7);
+ assert.equal(last.members.find(m=>m.id===last.viewer).role,null,'Eighth participant must explicitly select a Bureau role');
+ await assert.rejects(()=>service.process({op:'role',roomId,sessionToken:lastToken,role:'casino',expectedRevision:last.revision,requestId:randomUUID()}),/casino_full/);
+ await assert.rejects(()=>service.process({op:'ready',roomId,sessionToken:lastToken,ready:true,expectedRevision:last.revision,requestId:randomUUID()}),/role_required/);
+ const promoted=await service.process({op:'role',roomId,sessionToken:lastToken,role:'agent',expectedRevision:last.revision,requestId:randomUUID()});
+ assert.equal(promoted.members.find(m=>m.id===promoted.viewer).role,'agent');
+ assert.equal(promoted.members.filter(m=>m.role==='casino').length,7);
+ const confirmed=await service.process({op:'ready',roomId,sessionToken:lastToken,ready:true,expectedRevision:promoted.revision,requestId:randomUUID()});
+ assert.equal(confirmed.members.find(m=>m.id===confirmed.viewer).ready,true);
+});
 await test('real service API: recovery, concurrent actions, idempotent retries, stale responses and approval lock',async()=>{
  const store=new MemoryStorage();let now=0;const service=casinoService(store,{clock:()=>now});
  const hostToken=token(),roomId=randomUUID(),create={op:'create',roomId,sessionToken:hostToken,name:'Ali',profileId:randomUUID(),profileToken:'fixture'};
