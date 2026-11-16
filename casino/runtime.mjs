@@ -2,7 +2,7 @@
 // to a browser; viewRuntime is the sole client projection.
 import {createCasinoCampaign, applyCasinoCommand, casinoView} from './campaign-core.mjs';
 import {startPoker,pokerAction,pokerView,spinSlot,expirePokerTurn,SLOT_RULES} from './games.mjs';
-import {casinoVictory,casinoPersonalVictory} from './victory.mjs';
+import {casinoVictory,casinoPersonalVictory,casinoVictoryBrief} from './victory.mjs';
 const check=(ok,code)=>{if(!ok)throw Error(code)};
 const text=(v,max=700)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
 const uniq=a=>Array.isArray(a)&&new Set(a).size===a.length;
@@ -423,7 +423,7 @@ export function viewRuntime(state,viewer){
       dossiers:(state.privateCanon.publicDossiers||[]).map(d=>({subjectId:resolveId(state,d.subjectId),title:d.title,context:render(state,d.context)}))}:{}),
     participants:state.members.map(({id,name,role})=>({id,name,role})),
     bureauRecipients:state.members.filter(m=>m.role!=='casino').map(({id,name,role})=>({id,name,role})),
-    ownCard:render(state,ownCard),characters:base.characters.map(c=>({...c,npc:state.roster[c.id].npc,
+    ownCard:render(state,ownCard),ownVictoryRule:casinoVictoryBrief(state,viewer),characters:base.characters.map(c=>({...c,npc:state.roster[c.id].npc,
       title:state.privateCanon.characters.find(r=>resolveId(state,r.id)===c.id)?.title||''})),
     phaseTitle:state.privateCanon.phases[p-1].title,poker:pokerView(state,viewer),
     slotRules:SLOT_RULES,ownSlotResult:player?state.slotResults[viewer]||null:undefined,
