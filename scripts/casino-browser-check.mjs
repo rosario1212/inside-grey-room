@@ -80,6 +80,9 @@ try{
  await hostPage.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
  await hostPage.locator('[data-casino-form=create] input[name=name]').fill('Ali');
  await hostPage.locator('[data-casino-form=create] button').click();await hostPage.locator('.casino-roster-disclosure').waitFor();
+ assert(await hostPage.locator('[data-casino-action=start]').isDisabled(),'One player cannot start a seven-player Casino campaign');
+ assert((await hostPage.locator('.casino-launch-readiness').textContent()).includes('1/7 joueurs minimum'),'Host must see exact missing-player requirement');
+ await layout(hostPage,'casino-lobby-one-player-iphone');
  const hostId=await storageIdentity(hostPage),room=await storage.read(hostId.roomId),people=[host];
  for(let i=1;i<7;i++){
   const person=await context(i%2?{width:820,height:1180}:{width:1440,height:900});people.push(person);
@@ -88,6 +91,7 @@ try{
   await person.page.locator('[data-casino-form=join] button').click();await person.page.locator('.casino-roster-disclosure').waitFor();
  }
  await hostPage.waitForFunction(()=>document.querySelectorAll('.casino-members li').length===7);
+ assert(await hostPage.locator('[data-casino-action=start]').isDisabled(),'Seven unconfirmed players cannot start early');
  checks.push('Sept sessions indépendantes : les arrivées modifient les écrans sans actualisation');
  for(let i=0;i<7;i++){
   const p=people[i].page;
@@ -96,6 +100,9 @@ try{
   await p.locator('[data-casino-action=ready]').click();await p.waitForFunction(()=>!document.querySelector('.casino-content').disabled);
  }
  await hostPage.waitForFunction(()=>[...document.querySelectorAll('.casino-members li')].every(e=>e.textContent.toLocaleLowerCase('fr').includes('prêt')));
+ assert(!(await hostPage.locator('[data-casino-action=start]').isDisabled()),'Seven validated participants must enable launch');
+ assert((await hostPage.locator('.casino-launch-readiness').textContent()).includes('La table est prête'),'Host must see ready confirmation');
+ await layout(hostPage,'casino-lobby-ready-iphone');
  await hostPage.locator('[data-casino-action=start]').click();
  await Promise.all(people.map(p=>p.page.locator('[data-casino-tab=card]').waitFor()));
  assert((await hostPage.locator('body').textContent()).includes('Fiche fictive de Ali.'));
