@@ -66,3 +66,31 @@
   .hnet-players>div{grid-template-columns:28px minmax(0,1fr);grid-template-rows:auto auto;padding-block:8px}.hnet-players small{grid-column:2}
 }
 @media(prefers-reduced-motion:reduce){.local-spinner{animation:none}.dual-mode-card{transition:none!important}}
+
+
+/* v729 — Heritage online role selection, same semantic flow as the base-game lobby. */
+.hnet .hnet-role-zone{margin:17px 0 20px;padding:17px;border:1px solid rgba(232,240,245,.12);border-radius:18px;background:#080d10}
+.hnet .hnet-role-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:8px}
+.hnet .hnet-role-head>div>span{color:#86939d;font:800 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.13em}
+.hnet .hnet-role-head h2{margin:6px 0 0;font-size:20px;line-height:1.15;letter-spacing:-.02em;color:#eef0f2}
+.hnet .hnet-role-head>small{font-size:10px;color:#94a0a8}
+.hnet .hnet-role-zone>p{margin:0 0 14px;font-size:12px;line-height:1.55;color:#acb6bc}
+.hnet .hnet-role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hnet .hnet-role-card{appearance:none;display:grid;align-content:start;gap:9px;min-height:125px;padding:15px 14px;background:linear-gradient(150deg,#151a1e,#0b0e11);border:1px solid rgba(235,241,245,.15);border-radius:15px;text-align:left;color:#e7ebef;cursor:pointer;touch-action:manipulation}
+.hnet .hnet-role-card:focus-visible{outline:2px solid #f3c899;outline-offset:3px}
+.hnet .hnet-role-card.is-picked{border-color:rgba(235,209,174,.8);background:linear-gradient(155deg,#28241e,#121618)}
+.hnet .hnet-role-card.is-taken,.hnet .hnet-role-card:disabled{opacity:.52;cursor:not-allowed}
+.hnet .hnet-role-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;min-width:0}
+.hnet .hnet-role-top b{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.hnet .hnet-role-top em{flex-shrink:0;font:750 8px/1.4 'IBM Plex Mono',monospace;font-style:normal;color:#c4a887}
+.hnet .hnet-role-card small{display:block!important;font-size:12px!important;line-height:1.45!important;color:#b6c0c6!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;-webkit-line-clamp:unset!important;word-break:normal;overflow-wrap:break-word}
+.hnet .hnet-stars{align-self:end;color:#d9ba91;font:700 10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.03em}
+.hnet .hnet-role-warning{padding:10px 12px;border-left:2px solid #cf8b69;background:rgba(110,55,33,.15);color:#f1c8b3!important}
+.hnet .hnet-start{min-height:52px}
+.hnet .hnet-players>div{grid-template-columns:30px minmax(0,1fr) minmax(70px,auto)}
+.hnet .hnet-players small{text-align:right;line-height:1.4;font-size:9px}
+@media(max-width:620px){
+ .hnet .hnet-role-grid{grid-template-columns:minmax(0,1fr)}
+ .hnet .hnet-role-head{align-items:start;flex-direction:column}
+ .hnet .hnet-role-card{min-height:auto;padding:14px}
+}
