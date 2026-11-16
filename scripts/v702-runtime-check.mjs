@@ -76,14 +76,21 @@ const context={window:{innerWidth:360}};
 new Script(app.slice(start,end)+'\n;globalThis.catalogueTeaser=scenarioCardTeaser;').runInNewContext(context);
 const example='Deux dirigeants en fuite. Les enquêteurs recoupent les archives et les responsabilités judiciaires.';
 assert.equal(context.catalogueTeaser(example),example,
-  'Narrow iPhone catalogue must preserve the complete public description');
+  'Short synopsis must stay intact on iPhone');
 context.window.innerWidth=1200;
 assert.equal(context.catalogueTeaser(example),example,
   'Desktop catalogue must preserve the same full description');
 assert.equal(context.catalogueTeaser('Déposition scellée.'),'Déposition scellée.',
   'Short public descriptions must never acquire a fabricated ellipsis');
 assert.equal(context.catalogueTeaser('  Deux  phrases.  '),'Deux phrases.',
-  'Only whitespace normalization is permitted in public summaries');
+  'Whitespace normalization must preserve short synopses');
+const longSynopsis=Array.from({length:45},(_,i)=>'mot'+i).join(' ');
+assert.equal(context.catalogueTeaser(longSynopsis).split(/\s+/).length,30,
+  'Catalogue previews are capped at 30 words across all screen widths');
+assert(context.catalogueTeaser(longSynopsis).endsWith('…'),
+  'Long catalogue previews must signal that more detail is available');
+assert(app.includes('<p class="confirm-copy">${h(sc.context)}</p>'),
+  'The selected dossier must retain the complete narrative context');
 const fullCopyCss=await read('catalog-descriptions-v1.css');
 assert(mobileCss.includes('v163 — unified mobile dossiers'),'Existing universal mobile structure missing');
 assert(mobileCss.includes('height:auto!important'),'Cards must retain fluid heights');
