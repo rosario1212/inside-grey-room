@@ -164,9 +164,13 @@ try{
  assert.equal(await hostPage.locator('.casino-phase-warning').count(),0);
  checks.push('Changement de phase avec confirmation explicite et annulation sans mutation');
  for(let i=0;i<4;i++)await commandFor(hostPage,'ADVANCE_PHASE');
+ await assert.rejects(commandFor(hostPage,'FINISH_CAMPAIGN'),/bureau_report_pending/,'Host must not silence a missing investigative report');
+ for(let i=4;i<7;i++)await commandFor(people[i].page,'BUREAU_VERDICT',{position:i===4?'established':'insufficient'});
  await commandFor(hostPage,'FINISH_CAMPAIGN');
  await Promise.all(people.map(p=>p.page.getByRole('heading',{name:'Le dénouement',exact:true}).waitFor()));
  for(const p of people)assert.equal(await p.page.locator('[data-casino-command]').count(),0,'No game command after the campaign ends');
+ assert.equal(await hostPage.locator('.casino-victory-report').count(),1,'Three-layer endgame verdict missing on host phone');
+ assert.equal(await people[4].page.locator('.casino-victory-report').count(),1,'Bureau verdict missing on investigator phone');
  for(const [i,label]of [[0,'iphone'],[1,'ipad'],[2,'desktop']])await layout(people[i].page,'finale-'+label);
  checks.push('Transitions des trois scénarios et des huit phases jusqu’au dénouement sur tous les écrans');
  await hostPage.locator('[data-casino-action=switch]').click();await hostPage.locator('[data-casino-form=create]').waitFor();
