@@ -12,6 +12,45 @@
   const DLC_IDS=new Set(['021','022','023','024','025','026','027','028','029','030','031','032','033','034']);
   const DLC_ACCESS={loaded:false,items:{},loading:null};
 
+  // v752: catalogue-only public hooks, never replacing full dossier contexts.
+  const DLC_CARD_TEASERS=Object.freeze({
+  "fr": {
+    "021": "Une enveloppe disparaît. Dans la Famiglia, personne ne veut répondre.",
+    "022": "Nino Caruso est mort. Deux témoins se contredisent.",
+    "023": "Trois familles négocient une trêve. Une embuscade change tout.",
+    "024": "Massimo De Luca envisage de parler. Le clan le soupçonne.",
+    "025": "Un racket tourne mal. L’autorité du Don vacille.",
+    "026": "Almizia tombe. Trois captifs parlent.",
+    "027": "Le FDR dit la zone vide. Où sont les otages ?",
+    "028": "La capitale tombe. La Grey Room serait infiltrée.",
+    "029": "Trois rescapés demandent protection. Vingt personnes restent captives.",
+    "030": "Un gouverneur est massacré avec sa famille. Un registre disparaît.",
+    "031": "Six agents abattus près de la frontière. Trois chefs de commando arrêtés.",
+    "032": "Deux dirigeants sont en fuite. Les archives pourraient les trahir.",
+    "033": "Le fils du président et son cousin sont en fuite. Le clan se fissure.",
+    "034": "Le président déchu se cache. Ses fidèles brouillent les pistes."
+  },
+  "en": {
+    "021": "An envelope disappears. No one in the Family will answer for it.",
+    "022": "Nino Caruso is dead. Two witnesses contradict each other.",
+    "023": "Three families negotiate a truce. An ambush changes everything.",
+    "024": "Massimo De Luca may talk. His clan grows suspicious.",
+    "025": "A protection racket goes wrong. The Don's authority is shaken.",
+    "026": "Almizia falls. Three captives speak.",
+    "027": "The FDR says the zone is empty. Are there hostages?",
+    "028": "The capital falls. The Grey Room may be infiltrated.",
+    "029": "Three survivors seek protection. Twenty people remain captive.",
+    "030": "A governor and his family are murdered. A ledger vanishes.",
+    "031": "Six agents killed near the border. Three unit chiefs arrested.",
+    "032": "Two officials are on the run. The archives may expose them.",
+    "033": "The president's son and cousin are fugitives. The clan fractures.",
+    "034": "The fallen president is hiding. His loyalists cover his tracks."
+  }
+});
+  function dlcCardTeaser(sc){
+    return DLC_CARD_TEASERS[window.IGR_LOCALE==='en'?'en':'fr'][String(sc.id)] || String(sc.short||'').trim();
+  }
+
   // Shared public canon only: all places and characters are fictional.
   // Never encode A/B/C culprit, secret loyalties or evidence outcomes here.
   const CARTEL=[
@@ -148,7 +187,7 @@
   }
   function lockedBlock(collection){return `<div class="dlc-owner-lock"><strong>DLC NON DÉTENU</strong><p>Ce profil ne possède pas encore ce contenu.</p>${accessBadge(collection)}</div>`}
   function card(sc,collection,label,tag){
-    return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact" style="--igr-cover-url:url('${scenarioArt(sc.id)}')"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(sc.short,30):String(sc.short||'').trim().split(/\s+/).slice(0,30).join(' '))}</p><div class="tag-row" aria-label="Informations du dossier"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span>${typeof scenarioDifficultyTag==='function'?scenarioDifficultyTag(sc):''}</div></div></article>`;
+    return `<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact ${collection}-scenario" data-igr-scenario-id="${sc.id}" role="button" tabindex="0" onclick="selectScenario('${sc.id}')"><div class="scenario-thumb compact" style="--igr-cover-url:url('${scenarioArt(sc.id)}')"><img class="igr-poster-full" loading="lazy" decoding="async" src="${scenarioArt(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">${label} · Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(dlcCardTeaser(sc))}</p><div class="tag-row" aria-label="Informations du dossier"><span class="tag">${h(playerCountLabel(sc))}</span><span class="tag ${collection}-tag">${tag}</span>${typeof scenarioDifficultyTag==='function'?scenarioDifficultyTag(sc):''}</div></div></article>`;
   }
   function accessRow(collection){return `<div class="dlc-access-row dlc-access-row--top">${accessBadge(collection)}</div>`}
   // Public-only preview. Never include hidden loyalties or inferred influence in this tree.

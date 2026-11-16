@@ -23,6 +23,12 @@ const poster=async(file,mime='image/webp')=>{
   const contents=await readFile(path.join(dist,'assets',file));
   return 'data:'+mime+';base64,'+contents.toString('base64');
 };
+// Render the same public hooks that players see in the DLC catalogue.
+const teaserSource=await read('dlc-suite-v12-37.js');
+const teaserMarker='  const DLC_CARD_TEASERS=Object.freeze(';
+const teaserStart=teaserSource.indexOf(teaserMarker)+teaserMarker.length;
+assert(teaserStart>=teaserMarker.length,'Missing DLC teaser source');
+const dlcTeasers=JSON.parse(teaserSource.slice(teaserStart,teaserSource.indexOf(');',teaserStart)));
 const posters={
   '001':await poster('scenario-001-v10-13.webp'),
   '002':await poster('scenario-002-v10-13.webp'),
@@ -36,9 +42,9 @@ const posters={
   '018':await poster('scenario-018-catalog-v749.webp'),
   '020':await poster('scenario-020-v11-6.webp'),
   '021':await poster('omerta-021-l-enveloppe.webp'),
-  '026':await poster('terror-026-la-ville-tombe.webp'),
-  '027':await poster('terror-027-la-zone-rouge.webp'),
-  '028':await poster('terror-028-dernier-perimetre.webp'),
+  '026':await poster('terror-026-la-ville-tombe-v750.webp'),
+  '027':await poster('terror-027-la-zone-rouge-v750.webp'),
+  '028':await poster('terror-028-dernier-perimetre-v750.webp'),
   '029':await poster('cartel-029-poster-v2.svg','image/svg+xml'),
   '030':await poster('cartel-030-poster-v2.svg','image/svg+xml'),
   '031':await poster('cartel-031-poster-v2.svg','image/svg+xml'),
@@ -60,7 +66,7 @@ const card=x=>{const art=posters[x.id]||posters[x.family==='cartel'?'029':x.fami
   <img class="igr-poster-full" alt="Affiche ${x.id}" src="${art}" />
  </div>
  <div class="scenario-body compact"><div class="scenario-id">${escape(x.label)}</div>
- <h3>${escape(x.title)}</h3><p class="igr-card-excerpt">${escape(x.description)}</p>
+ <h3>${escape(x.title)}</h3><p class="igr-card-excerpt">${escape(dlcTeasers.fr[x.id]||x.description)}</p>
  <div class="tag-row"><span class="tag">${escape(x.players)}</span></div></div></article>`;};
 const panel=(family,rows)=>`<section class="panel ${family==='base'?'scenario-panel-v10-13':family+'-dlc-section igr-premium-dlc-section igr-premium-dlc-section--'+family}" id="panel-${family}">
  <div class="scenario-list scenario-list-v10-13">${rows.map(card).join('')}</div></section>`;
@@ -98,16 +104,17 @@ try{
     assert.equal(data.cards.length,6,`${width}px: one of the six dossiers is absent`);
     for(const c of data.cards){
       const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(c.id);
-      assert.equal(c.imageFit,preserve?'contain':'cover',
+      assert.equal(c.imageFit,(['026','027','028'].includes(c.id)||preserve)?'contain':'cover',
         `${width}px ${c.id}: ${preserve?'full title-safe poster':'approved Omerta cover'} must be used`);
-      if(preserve)assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
+      if(preserve&&!['026','027','028'].includes(c.id))assert(c.artUnderlay!=='none',`${width}px ${c.id}: atmospheric image extension missing`);
       assert(c.image.width>30&&c.image.height>30,`${width}px ${c.id}: poster collapsed`);
       assert(c.image.left>=c.thumb.left-2&&c.image.right<=c.thumb.right+2,`${width}px ${c.id}: poster outside column`);
       assert(c.image.top>=c.thumb.top-2&&c.image.bottom<=c.thumb.bottom+2,`${width}px ${c.id}: poster vertically clipped`);
       assert(c.tags.top>=c.description.bottom-2,`${width}px ${c.id}: synopsis touches badges`);
       assert(c.tags.bottom<=c.card.bottom+2,`${width}px ${c.id}: badges outside card`);
       assert(!c.bodyOverflow,`${width}px ${c.id}: text overflowing horizontally`);
-      assert.equal(c.clamp,'5',`${width}px ${c.id}: synopsis needs consistent five-line Omerta preview`);
+      if(['001','014'].includes(c.id))assert.equal(c.clamp,'5',`${width}px ${c.id}: base excerpt clamp changed`);
+      else assert(c.clamp==='none'||c.clamp==='unset',`${width}px ${c.id}: DLC hook still clamped`);
     }
     const [base001,base014]=data.cards;
     assert(Math.abs(base001.image.width-base014.image.width)<2,`${width}px: 014 has an anomalous poster width`);
@@ -197,12 +204,16 @@ try{
           `v737 ${width}px: ${family} card heights diverge: ${JSON.stringify(items.map(x=>[x.id,x.height]))}`);
         for(const item of items){
           assert(item.bodyFits,`v737 ${width}px ${item.id}: content box unexpectedly overflowing`);
-          assert(item.excerptClamp==='5',`v737 ${width}px ${item.id}: five-line Omerta-style excerpt missing`);
+          if(family==='base')assert(item.excerptClamp==='5',`v752 ${width}px ${item.id}: base excerpt clamp changed`);
+          else {
+            assert(item.excerptClamp==='none'||item.excerptClamp==='unset',`v752 ${width}px ${item.id}: DLC hook still clamped`);
+            assert(item.excerptFits,`v752 ${width}px ${item.id}: DLC description clipped`);
+          }
           assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
           const preserve=['001','002','003','004','005','006','007','008','026','027','028','029','030','031','032','033','034'].includes(item.id);
-          assert(item.imageFit===(preserve?'contain':'cover'),
+          assert(item.imageFit===((['026','027','028'].includes(item.id)||preserve)?'contain':'cover'),
             `v739 ${width}px ${item.id}: original artwork ${preserve?'must be fully framed':'retains approved cover'}`);
-          if(preserve)assert(item.artUnderlay!=='none',
+          if(preserve&&!['026','027','028'].includes(item.id))assert(item.artUnderlay!=='none',
             `v739 ${width}px ${item.id}: no ambient source-art backing to fill poster edge`);
           assert(Math.abs(item.posterRect.height-item.thumbRect.height)<2,
             `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
@@ -221,11 +232,11 @@ try{
       for(const item of allRows){
         assert(Math.abs(item.height-reference.height)<=1.1,
           `v737 ${width}px ${item.id}: card (${item.height}) must match Omerta 021 (${reference.height})`);
-        // TERREUR uses a deliberately wider native 3:4 art column (v748).
-        // Keep that approved family exception; all other cards still align with Omertà.
+        // TERREUR uses native 2:3 artwork. Its art column may be wider
+        // or narrower than Omertà depending on the responsive breakpoint.
         if(['026','027','028'].includes(item.id)){
-          assert(item.thumbRect.width>reference.thumbRect.width,
-            `v749 ${width}px ${item.id}: Terreur native poster column unexpectedly shrank`);
+          assert(Math.abs(item.thumbRect.width-item.height*(2/3))<=2,
+            `v752 ${width}px ${item.id}: Terreur 2:3 poster proportion changed`);
         }else{
           assert(Math.abs(item.thumbRect.width-reference.thumbRect.width)<=1.1,
             `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);

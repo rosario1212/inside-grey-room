@@ -41,6 +41,8 @@ for(const [label,source] of [
   assert(source.includes('class="igr-card-excerpt"'),label+' must have a teaser');
   if(label==='Base')
     assert(source.includes("scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,30)"));
+  else if(label==='Cartel/Régime')
+    assert(source.includes('h(dlcCardTeaser(sc))'),'The four DLC collections must use the curated short hooks');
   else
     assert(source.includes('scenarioCardTeaser(sc.short,30)'),label+' must enforce 30 words');
 }

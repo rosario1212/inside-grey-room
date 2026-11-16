@@ -89,7 +89,9 @@ for(const [label,source] of [
     label+' badges must live inside the text block, not in a full-width footer');
   assert(source.includes('</div></div></article>'),
     label+' nested metadata container must close correctly');
-  if(label!=='base')assert(source.includes('scenarioCardTeaser(sc.short,30)'),
+  if(label==='Cartel/Régime')
+    assert(source.includes('h(dlcCardTeaser(sc))'),'DLC cards must use complete, curated public teasers');
+  else if(label!=='base')assert(source.includes('scenarioCardTeaser(sc.short,30)'),
     label+' must enforce the universal 30-word cap');
 }
 const teaserStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
