@@ -197,12 +197,26 @@ assert(css.includes('--igr-poster-fit:contain;'),'Sensitive posters must preserv
 assert(css.includes('max-height:100%!important'),'Classics must fill the same Omerta artwork frame without old 228px cap');
 assert(css.includes('var(--igr-card-art-ratio)'),'DLC native poster ratio configuration lost');
 assert(app.includes('SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>'),'Base 20-card scroll changed');
-assert(source.includes('scenarioCardTeaser(sc.short,30)'),'DLC teaser contract changed');
+assert(source.includes('h(dlcCardTeaser(sc))'),'DLC must show hand-written previews');
+const hookPrefix='  const DLC_CARD_TEASERS=Object.freeze(';
+const hookFrom=source.indexOf(hookPrefix)+hookPrefix.length;
+assert(hookFrom>=hookPrefix.length,'Missing DLC hook map');
+const hookMap=JSON.parse(source.slice(hookFrom,source.indexOf(');',hookFrom)));
+const hookIds=Array.from({length:14},(_,i)=>String(i+21).padStart(3,'0'));
+for(const language of ['fr','en']){
+ assert.deepEqual(Object.keys(hookMap[language]).sort(),hookIds,'DLC hook coverage '+language);
+ for(const id of hookIds){
+  const value=hookMap[language][id];
+  assert(value.length<=82&&/[.!?]$/.test(value)&&!value.includes('…')&&!value.includes('...'),
+    'DLC pre-click copy must be short and complete: '+language+' '+id);
+ }
+}
+assert(css.includes('/* v752 — short DLC catalogue copy'),'DLC excerpt clamping not disabled');
 const catalogueCssHref=html.match(/catalogue-navigation-v731\.css\?v=[^"']+/)?.[0];
 assert(catalogueCssHref,'New stylesheet not linked');
-assert(html.includes('dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'New picker JS not versioned');
+assert(html.includes('dlc-suite-v12-37.js?v=v752-14-dlc-hooks-20261117'),'New picker JS not versioned');
 assert(sw.includes('/'+catalogueCssHref),'PWA stylesheet version must match HTML');
-assert(sw.includes('/dlc-suite-v12-37.js?v=v731-direct-collections-20261116'),'PWA script not versioned');
+assert(sw.includes('/dlc-suite-v12-37.js?v=v752-14-dlc-hooks-20261117'),'PWA script not versioned');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
 // Terreur 026–028 approved 2:3 posters: protect their native frame and fresh files.
 const terrorPosters=read('terror-v12-37.js');
