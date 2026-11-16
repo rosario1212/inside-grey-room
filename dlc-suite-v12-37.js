@@ -206,44 +206,92 @@
     root.querySelector('.terror-dlc-section')?.setAttribute('data-collection','terror');
   }
 
-  function readFilter(){try{return sessionStorage.getItem(FILTER_KEY)||'all'}catch{return'all'}}
-  function readDlcFilter(){try{return sessionStorage.getItem(DLC_FILTER_KEY)||'all'}catch{return'all'}}
-  function storeFilter(key,value){try{sessionStorage.setItem(key,value)}catch{}}
-  function filterButton(value,label,current,kind='primary'){return `<button type="button" class="igr-filter-chip ${current===value?'active':''}" data-filter-kind="${kind}" data-filter="${value}" aria-pressed="${current===value?'true':'false'}">${label}</button>`}
 
+  // One native picker replaces ten competing chips; preserve old DLC choices on upgrade.
+  const CATALOG_FILTER_OPTIONS = Object.freeze([
+    ['all','Tous les scénarios','All scenarios'],
+    ['base','Dossiers de base · 001–020','Base cases · 001–020'],
+    ['original','Dossiers 001–008','Cases 001–008'],
+    ['second','Dossiers 009–020','Cases 009–020'],
+    ['dlc','Tous les DLC','All DLCs'],
+    ['omerta','Omertà','Omertà'],
+    ['terror','Terreur','Terror'],
+    ['cartel','Cartel','Cartel'],
+    ['regime','Le Régime','The Regime']
+  ]);
+  function readFilter(){
+    try{
+      const stored=sessionStorage.getItem(FILTER_KEY)||'all';
+      const legacyDlc=sessionStorage.getItem(DLC_FILTER_KEY)||'all';
+      const value=stored==='dlc'&&['omerta','terror','cartel','regime'].includes(legacyDlc)?legacyDlc:stored;
+      return CATALOG_FILTER_OPTIONS.some(option=>option[0]===value)?value:'all';
+    }catch{return 'all'}
+  }
+  function storeFilter(value){
+    try{
+      sessionStorage.setItem(FILTER_KEY,value);
+      sessionStorage.removeItem(DLC_FILTER_KEY);
+    }catch{}
+  }
   function ensureFilters(root){
     let nav=root.querySelector('.igr-scenario-filters');
-    if(!nav){nav=document.createElement('nav');nav.className='igr-scenario-filters';nav.setAttribute('aria-label','Filtrer les scénarios');root.insertBefore(nav,root.querySelector('.panel')||root.firstChild)}
-    const primary=readFilter(),secondary=readDlcFilter();
-    nav.innerHTML=`<div class="igr-filter-row" role="group" aria-label="Catégories">${[
-      ['all','TOUS'],['base','BASE 001–020'],['original','001–008'],['second','009–020'],['dlc','DLC']
-    ].map(([v,l])=>filterButton(v,l,primary)).join('')}</div><div class="igr-filter-row igr-filter-row-secondary ${primary==='dlc'?'':'is-hidden'}" role="group" aria-label="DLC">${[
-      ['all','TOUS LES DLC'],['omerta','OMERTÀ'],['terror','TERREUR'],['cartel','CARTEL'],['regime','LE RÉGIME']
-    ].map(([v,l])=>filterButton(v,l,secondary,'dlc')).join('')}</div>`;
-    nav.onclick=e=>{const b=e.target.closest('.igr-filter-chip');if(!b)return;if(b.dataset.filterKind==='dlc')storeFilter(DLC_FILTER_KEY,b.dataset.filter);else storeFilter(FILTER_KEY,b.dataset.filter);ensureFilters(root);applyFilters(root)};
+    if(!nav){
+      nav=document.createElement('div');
+      nav.className='igr-scenario-filters';
+      nav.setAttribute('role','group');
+      nav.setAttribute('aria-label','Filtrer les scénarios');
+      root.insertBefore(nav,root.querySelector('.panel')||root.firstChild);
+    }
+    const en=window.IGR_LOCALE==='en';
+    if(!nav.querySelector('#igrCatalogFilter')){
+      nav.innerHTML=`<label class="igr-catalog-label" for="igrCatalogFilter">${en?'AFFICHAGE':'AFFICHER'}</label><div class="igr-catalog-select-wrap"><select id="igrCatalogFilter" class="igr-catalog-select" aria-label="${en?'Show cases':'Afficher les scénarios'}">${CATALOG_FILTER_OPTIONS.map(option=>`<option value="${option[0]}">${en?option[2]:option[1]}</option>`).join('')}</select><span class="igr-catalog-chevron" aria-hidden="true">⌄</span></div><span class="igr-catalog-count" aria-live="polite"></span>`;
+    }
+    nav.onchange=event=>{
+      if(event.target?.id!=='igrCatalogFilter')return;
+      storeFilter(event.target.value);
+      applyFilters(root);
+    };
+    const picker=nav.querySelector('#igrCatalogFilter');
+    if(picker&&picker.value!==readFilter())picker.value=readFilter();
   }
-
-  function scenarioVisible(id){
-    const meta=META[id];if(!meta)return true;
-    const primary=readFilter(),secondary=readDlcFilter();
-    if(primary==='all')return true;
-    if(primary==='base')return meta.origin==='base';
-    if(primary==='original')return meta.collection==='original';
-    if(primary==='second')return meta.collection==='second';
-    if(primary==='dlc')return meta.origin==='dlc'&&(secondary==='all'||meta.collection===secondary);
-    return true;
+  function scenarioVisible(id,filter=readFilter()){
+    const meta=META[String(id||'')];
+    if(!meta)return filter==='all';
+    if(filter==='all')return true;
+    if(filter==='base')return meta.origin==='base';
+    if(filter==='dlc')return meta.origin==='dlc';
+    return meta.collection===filter;
+  }
+  function setFilteredVisibility(element,visible){
+    if(!element)return;
+    // Inline important is required: the poster layouts set display:grid!important.
+    element.hidden=!visible;
+    if(visible)element.style.removeProperty('display');
+    else element.style.setProperty('display','none','important');
   }
   function applyFilters(root){
     markExistingCards(root);
-    root.querySelectorAll('[data-igr-scenario-id]').forEach(card=>{card.style.display=scenarioVisible(card.dataset.igrScenarioId)?'':'none'});
-    const primary=readFilter(),secondary=readDlcFilter();
-    root.querySelectorAll('[data-collection]').forEach(section=>{
+    const filter=readFilter();
+    root.querySelectorAll('[data-igr-scenario-id]').forEach(card=>
+      setFilteredVisibility(card,scenarioVisible(card.dataset.igrScenarioId,filter))
+    );
+    const base=root.querySelector('.scenario-panel-v10-13');
+    if(base){
+      const cards=[...base.querySelectorAll('[data-igr-scenario-id]')];
+      setFilteredVisibility(base,cards.some(card=>scenarioVisible(card.dataset.igrScenarioId,filter)));
+    }
+    root.querySelectorAll('section[data-collection]').forEach(section=>{
       const collection=section.dataset.collection;
-      if(primary==='base'||primary==='original'||primary==='second'){section.style.display='none';return}
-      if(primary==='dlc'&&secondary!=='all'){section.style.display=collection===secondary?'':'none';return}
-      const cards=[...section.querySelectorAll('[data-igr-scenario-id]')];
-      section.style.display=cards.length?cards.some(x=>x.style.display!=='none')?'':'none':'';
+      setFilteredVisibility(section,filter==='all'||filter==='dlc'||filter===collection);
     });
+    const nav=root.querySelector('.igr-scenario-filters');
+    const picker=nav?.querySelector('#igrCatalogFilter');
+    if(picker&&picker.value!==filter)picker.value=filter;
+    const count=nav?.querySelector('.igr-catalog-count');
+    if(count){
+      const n=Object.keys(META).filter(id=>scenarioVisible(id,filter)).length;
+      count.textContent=window.IGR_LOCALE==='en'?`${n} cases`:`${n} dossiers`;
+    }
   }
 
   function updateBodyTheme(){
