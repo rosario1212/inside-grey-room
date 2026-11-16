@@ -7,7 +7,7 @@ for(const p of ['heritage-audit-v55.js','scripts/apply-heritage-audit-v55.mjs'])
 const runtime=await read('heritage-audit-v55.js'),generic=await read('heritage-play-v13-7.js'),maitre=await read('heritage-maitre-online-v34-4.js'),migration=await read('supabase/migrations/20261006_heritage_multiplayer_audit_v55.sql');
 ok(runtime.includes('MA CARTE PRIVÉE'),'v55 personal role card missing');
 ok(runtime.includes('À FAIRE MAINTENANT'),'v55 immediate role objective missing');
-ok(runtime.includes('data-h55-decide'),'v55 Judge decision control missing');
+ok(runtime.includes('DÉLIBÉRATION COLLECTIVE')&&!runtime.includes('data-h55-decide'),'MAÎTRE majority vote must not be hijacked by the legacy audit overlay');
 ok(runtime.includes('DOSSIER VIVANT'),'v55 MAÎTRE compact dossier missing');
 ok(generic.includes('roleCard:(campaign,chapter,roleId)'),'CENDRES/KUROI safe role-card accessor missing');
 ok(maitre.includes("roleCard:(chapter,roleId,variantKey"),'MAÎTRE safe role-card accessor missing');

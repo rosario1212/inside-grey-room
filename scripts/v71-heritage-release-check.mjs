@@ -17,20 +17,21 @@ ok(!play.includes('K-9')&&!play.includes('VENN'),'obsolete CENDRES jargon remain
 const heritageEngine=await read('heritage-v13-5.js');
 ok(play.includes('api()?.kuroi?.commitDecision?.(')&&heritageEngine.includes('function commitKuroiDecision(')&&heritageEngine.includes('commitDecision:commitKuroiDecision'),'KUROI atomic debt/chronicle persistence is missing');
 ok(maitre.includes("L’Avocat doit formuler un ANGLE"),'MAÎTRE local Angle gate missing');
-ok(maitre.includes("ownerRole=live.chapter===1||live.chapter===4?'juge':live.chapter===2?'client':'avocat'"),'MAÎTRE local decision authority missing');
+ok(maitre.includes('function consentToMaitreVerdict(')&&maitre.includes('function ensureMaitreBallot('),'MAÎTRE local collective ballot and role consent missing');
 ok(maitre.includes("roleCard:(chapter,roleId,variantKey,carry)"),'MAÎTRE shared role-card accessor missing');
 ok(online.includes("IGR_HERITAGE_CONTEXT_V71?.publish"),'MAÎTRE host carry is not published');
 ok(online.includes("d.room.campaign_carry"),'MAÎTRE guests do not consume host carry');
 ok(online.includes("roleCard:(chapter,roleId,variantKey,carry)")&&audit.includes("d.room.maitre_variant,d.room.campaign_carry"),'MAÎTRE private-card overlay must consume the host campaign carry');
-ok(online.includes("igr_heritage_online_decide_v71")&&online.includes("igr_heritage_online_advance_v71"),'MAÎTRE v71 RPCs not wired');
+ok(online.includes('igr_heritage_online_vote_maitre')&&online.includes("igr_heritage_online_advance_v71"),'MAÎTRE online majority ballot and v71 angle gate missing');
 ok(online.includes("Formule un ANGLE avant de passer au Cycle III.")&&online.includes("p_angle:angle"),'MAÎTRE online advance must validate and persist the current Angle first');
 ok(audit.includes('function immediateFocus'),'phase-contextual role guidance missing');
-ok(audit.includes("if(options)$('button',options).forEach"),'MAÎTRE decision buttons must use the collection selector');
+ok(!audit.includes("if(options)$('button',options).forEach")&&audit.includes('DÉLIBÉRATION COLLECTIVE'),'MAÎTRE overlay must not break or replace private voting buttons');
 ok(context.includes("igr_heritage_online_context_v57"),'v71 public carry publisher missing server sync');
 ok(context.includes("IGR_HERITAGE_MAITRE?.get?.()"),'MAÎTRE carry must read from the canonical MAÎTRE engine');
 ok(!context.includes("maitre_variant")&&!context.includes(".canon"),'v71 carry publisher leaks hidden MAÎTRE truth');
 ok(modes.includes("campaignCarry:d.room.campaign_carry||null"),'generic online bridge does not propagate campaign carry');
-ok(migration.includes("when v_room.chapter in (1,4) then 'juge'")&&migration.includes("when v_room.chapter=2 then 'client'")&&migration.includes("when v_room.chapter in (3,5) then 'avocat'"),'server decision authority mapping missing');
+const majoritySql=await read('supabase/migrations/20261116020000_heritage_maitre_majority_consent_v716.sql');
+ok(majoritySql.includes("v_room.chapter in (2,5)")&&majoritySql.includes("igr_heritage_online_vote_maitre")&&majoritySql.includes("igr_heritage_online_maitre_ballot_status"),'MAÎTRE collective verdict and role consent missing on server');
 ok(migration.includes("maitre angle required"),'server Angle gate missing');
 try{
  await stat(path.join(target,'index.html'));
