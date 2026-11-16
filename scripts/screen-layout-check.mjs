@@ -77,7 +77,7 @@ try{
     const markup=cards.map(sc=>'<article class="scenario scenario--art scenario--compact regime-scenario" data-igr-scenario-id="'+sc.id+'">'+
       '<div class="scenario-thumb compact"><img alt="" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">LE RÉGIME · DOSSIER '+sc.id+'</div>'+
-      '<h3>'+sc.name+'</h3><p>'+sc.description+'</p>'+
+      '<h3>'+sc.name+'</h3><p class="igr-card-excerpt">'+sc.description+'</p>'+
       '<div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:900});
@@ -95,7 +95,7 @@ try{
       for(const [i,m] of measures.entries()){
         assert(m.cardHeight>=190,width+'px dossier '+cards[i].id+': card height too small');
         assert(m.heightRule==='none',width+'px dossier '+cards[i].id+': fixed max-height is still active');
-        assert(m.clamp==='3',width+'px dossier '+cards[i].id+': four-line clamp still overrides');
+        assert(m.clamp==='none',width+'px dossier '+cards[i].id+': description is unexpectedly clamped');
         assert(m.textBottom+2<=m.tagTop,width+'px dossier '+cards[i].id+': text overlaps badges: '+JSON.stringify(m));
         assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card');
         assert(!m.bodyOverflow,width+'px dossier '+cards[i].id+': text wider than card');
@@ -121,6 +121,66 @@ try{
     assert(rows[0].end+5<=rows[1].start,'Regime mandatory and optional roles are too compressed');
     assert(rows.every(row=>!row.overflow&&!row.pOverflow),'Role names must wrap inside the roster panel');
     await page.screenshot({path:path.join(report,'regime-v162-iphone-roles.png'),fullPage:true});
+  });
+
+
+  await check('catalog-v3-five-universes-responsive-cards',async()=>{
+    const samples=[
+      {klass:'',label:'DOSSIER 020',title:'L’APOTHÉOSE',description:'327 personnes meurent dans l’incendie du Bal des Fondateurs. Certaines portes pouvaient encore être ouvertes. Aucune décision n’explique seule le bilan.',players:'13–16 JOUEURS'},
+      {klass:'omerta-scenario',label:'OMERTÀ · DOSSIER 025',title:'IL DON',description:'Vittorio Santoro laisse ses hommes gérer les affaires du clan. Un racket mal maîtrisé met désormais en cause son entourage et son autorité.',players:'4–8 JOUEURS'},
+      {klass:'terror-scenario',label:'TERREUR · DOSSIER 028',title:'DERNIER PÉRIMÈTRE',description:'La capitale cède secteur après secteur. Le FDR menace les prisonniers et prétend avoir un relais jusque dans la Grey Room. Les communications coupées et les anciens accès cachent-ils une infiltration ou une opération d’intimidation ?',players:'6 JOUEURS'},
+      {klass:'cartel-scenario',label:'CARTEL · DOSSIER 030',title:'LA COUR ACHETÉE',description:'Le cartel a massacré un gouverneur et sa famille, puis détruit un registre compromettant. Trois assaillants ont été capturés. La Grey Room doit reconstituer les noms et les crimes que ce registre contenait.',players:'7–9 JOUEURS'},
+      {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 034',title:'LES NOMS QU’ILS PORTAIENT',description:'Le président déchu et son gendre, chef de la sécurité, tentent d’échapper à la justice. Faux noms, refuges et derniers fidèles brouillent leur trace. Une arrestation peut intervenir très tôt, mais le verdict exige des preuves.',players:'6–9 JOUEURS'}
+    ];
+    const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
+      '<div class="scenario-thumb compact"><img alt="" src=""></div>'+
+      '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
+      '</h3><p class="igr-card-excerpt">'+sc.description+'</p><div class="tag-row">'+
+      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
+    for(const width of [320,375,390,430,768,1280]){
+      await page.setViewportSize({width,height:820});
+      await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
+        '<style>'+css+'</style></head><body class="igr-scenario-browser igr-global-dock-active igr-catalog-deep">'+
+        '<div id="app"><div class="app"><main class="page page-create-v10-13">'+
+        '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+cards+
+        '</div></section></main></div></div>'+
+        '<nav id="igrUniversalDock" class="igr-universal-dock"><button class="igr-dock-pill igr-dock-filters"><span>☷</span><b>Filtres</b></button>'+
+        '<button class="igr-dock-pill igr-dock-home"><span>⌂</span><b>Accueil</b></button></nav></body></html>');
+      const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
+        const body=el.querySelector('.scenario-body'),title=body.querySelector('h3'),
+          excerpt=body.querySelector('.igr-card-excerpt'),tags=body.querySelector('.tag-row'),
+          card=el.getBoundingClientRect(),copy=excerpt.getBoundingClientRect(),tag=tags.getBoundingClientRect(),
+          style=getComputedStyle(excerpt),heading=getComputedStyle(title);
+        return {height:card.height,copyBottom:copy.bottom,tagsTop:tag.top,tagsBottom:tag.bottom,cardBottom:card.bottom,
+          bodyOverflow:body.scrollWidth>body.clientWidth+1,
+          clamp:style.webkitLineClamp,titleClamp:heading.webkitLineClamp,
+          fit:getComputedStyle(el.querySelector('.scenario-thumb img')).objectFit,
+          textVisible:style.overflow!=='hidden'&&style.display!=='none'};
+      }));
+      const global=await page.evaluate(()=>({
+        scrollWidth:document.documentElement.scrollWidth,
+        dockWidth:document.querySelector('.igr-dock-home').getBoundingClientRect().width,
+        topOverlay:getComputedStyle(document.querySelector('#app'),'::before').position,
+        scrollClearance:parseFloat(getComputedStyle(document.querySelector('#app>.app')).paddingBottom)
+      }));
+      assert(global.scrollWidth<=width+1,width+'px: horizontal overflow '+global.scrollWidth);
+      assert(global.scrollClearance>=100,width+'px: insufficient bottom safe clearance');
+      if(width<=700){
+        assert(global.dockWidth<=52,width+'px: dock does not shrink during catalogue reading');
+        assert(global.topOverlay==='fixed',width+'px: transparent status bar is not protected');
+      }
+      for(let i=0;i<metrics.length;i++){
+        const m=metrics[i],name=samples[i].title;
+        assert(m.height>=200,width+'px '+name+': card too short');
+        assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
+        assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
+        assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card');
+        assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
+        assert(m.fit==='contain',width+'px '+name+': original poster cropped');
+        assert(m.textVisible,width+'px '+name+': description hidden');
+      }
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v3-five-universes-iphone.png'),fullPage:true});
+    }
   });
 
   await check('desktop-standard-multiplayer-button-launch',async()=>{
