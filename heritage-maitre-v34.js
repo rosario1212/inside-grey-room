@@ -91,7 +91,7 @@ const COURT_ROLE_CARDS={
 };
 function maitrePublicExhibit(chapter,cycle,carry){
   if(cycle<1)return '';
-  const decisions=carry?.maitre?.decisions||state()?.maitre?.decisions||{};
+  const decisions=carry===undefined?(state()?.maitre?.decisions||{}):(carry?.maitre?.decisions||{});
   const evidence={
     1:'PIÈCE D’AUDIENCE — Deux relevés attribuent les mêmes versements à des intitulés différents. Comparez la source originale et le classement comptable avant d’inférer la destination.',
     2:'PROJET D’ACCORD — La concession du parquet est conditionnée à une information vérifiable. Le procès-verbal ne transforme pas une hypothèse du Client en aveu d’un tiers.',
@@ -133,7 +133,7 @@ function consentToMaitreVerdict(live,id,votes){
 }
 function maitreInheritedEnd(live,o,carry){
   if(!o||Number(live.chapter)!==5)return o?.trace||o?.detail||'';
-  const s=carry||state(),d=s?.maitre?.decisions||{},relation=s?.maitre?.relationships?.associe||'unknown';
+  const s=carry===undefined?state():carry,d=s?.maitre?.decisions||{},relation=s?.maitre?.relationships?.associe||'unknown';
   if(o.id==='defender')return d['4']==='network'
     ?'LE DÉFENSEUR — Le procès a retenu une implication large. L’Avocat poursuit néanmoins une défense fondée sur la preuve sans blanchir les actes établis.'
     :'LE DÉFENSEUR — Le tribunal n’a pas établi une responsabilité générale. L’Avocat maintient la distinction entre faits, soupçons et réputation du Client.';
