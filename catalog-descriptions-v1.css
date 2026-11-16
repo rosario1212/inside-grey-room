@@ -648,8 +648,8 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   min-width:0!important;
   max-width:100%!important;
   height:auto!important;
-  margin:0!important;
-  padding:9px 11px 12px!important;
+  margin:8px 0 0!important;
+  padding:2px 11px 12px!important;
   gap:6px!important;
   background:transparent!important;
   border:0!important;
