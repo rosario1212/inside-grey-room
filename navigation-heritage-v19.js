@@ -97,8 +97,18 @@ function ensureDock(){
     forgetHomePosition();
   }
   const nav=page?document.querySelector('#app .igr-scenario-filters'):null;
-  if(filters){filters.hidden=!nav;if(nav){makeDraggable(filters,'filters');restorePosition(filters,'filters')}else clearInlinePosition(filters)}
-  if(nav)nav.classList.add('igr-filter-dock-panel');else closeFilters();
+  // Collections v731+ are first-class page navigation, NOT the old floating Filters panel.
+  const directPicker=!!nav?.classList.contains('igr-family-picker-v731');
+  if(filters){
+    filters.hidden=!nav||directPicker;
+    if(nav&&!directPicker){makeDraggable(filters,'filters');restorePosition(filters,'filters')}
+    else clearInlinePosition(filters);
+  }
+  if(directPicker){
+    nav.classList.remove('igr-filter-dock-panel','is-dock-open');
+    document.body.classList.remove('igr-filter-dock-open');
+  }else if(nav)nav.classList.add('igr-filter-dock-panel');
+  else closeFilters();
   document.body.classList.toggle('igr-global-dock-active',!!homeBtn||!!nav);
 }
 function bindDockClicks(){
