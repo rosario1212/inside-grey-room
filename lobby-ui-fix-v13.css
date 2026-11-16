@@ -219,10 +219,11 @@
  font-size:18px!important;line-height:1.22!important;letter-spacing:-.02em
 }
 #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card small{
- display:block!important;-webkit-line-clamp:unset!important;-webkit-box-orient:unset!important;
- overflow:visible!important;text-overflow:clip!important;white-space:normal!important;
- font-size:12.5px!important;line-height:1.4!important;min-height:2.8em!important;
- color:#bbc3ca!important;overflow-wrap:break-word!important
+ display:block!important;-webkit-line-clamp:unset!important;-webkit-box-orient:initial!important;
+ line-clamp:unset!important;overflow:visible!important;text-overflow:clip!important;
+ white-space:normal!important;max-height:none!important;height:auto!important;
+ font-size:12.5px!important;line-height:1.4!important;
+ color:#bbc3ca!important;overflow-wrap:break-word
 }
 #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card em{
  min-width:67px!important;max-width:88px!important;min-height:34px!important;
@@ -264,7 +265,8 @@
  min-height:80px!important;padding:13px 14px!important;gap:12px!important
 }
 #app .lobby-v11[data-igr-lobby-theme] .role-choice-zone .random-role-card small{
- display:block!important;-webkit-line-clamp:unset!important;-webkit-box-orient:unset!important;overflow:visible!important;white-space:normal!important;text-overflow:clip!important;
+ display:block!important;-webkit-line-clamp:unset!important;line-clamp:unset!important;
+ overflow:visible!important;text-overflow:clip!important;white-space:normal!important;
  font-size:12.5px!important;line-height:1.4!important
 }
 #app .lobby-v11[data-igr-lobby-theme] .role-choice-zone .role-choice-help{
