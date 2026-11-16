@@ -38,7 +38,7 @@ const premiumScripts=[
  '  <script src="heritage-play-v13-7.js?v=v13.8-dual-play"></script>',
  '  <script src="heritage-context-v71.js?v=v71-heritage-release"></script>',
  '  <script src="play-modes-v13-8.js?v=v13.8-dual-play"></script>',
- '  <script src="premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit"></script>'
+ '  <script src="premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit-v8-no-thumbnails"></script>'
 ].join('\n');
 const storeBoundary='  <script src="native-store-boundary-v14.js?v=v14-store-boundary"></script>';
 const storeCatalogScript='  <script src="store-catalog-v69.js?v=v69-host-pays"></script>';
@@ -53,7 +53,7 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('play-modes-v13-8.css'))html=html.replace('</head>',`${premiumHead}\n</head>`);
   else if(!html.includes('premium-access-sync-v17.css'))html=html.replace('</head>',`  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
-  else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit"></script>\n</body>`);
+  else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit-v8-no-thumbnails"></script>\n</body>`);
   if(!html.includes('store-catalog-v69.js')){
     if(html.includes('premium-access-sync-v17.js'))html=html.replace(/(<script[^>]+src=["']premium-access-sync-v17\.js[^>]*><\/script>)/i,`${storeCatalogScript}\n$1`);
     else html=html.replace('</body>',`${storeCatalogScript}\n</body>`);

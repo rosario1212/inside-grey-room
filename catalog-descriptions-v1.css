@@ -239,60 +239,20 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   contain-intrinsic-size:none!important;
 }
 
-/* Catalogue artwork, v5: readable full poster in a quiet ambient mount.
-   The same image is reused by the browser cache; no new assets or DLC palette. */
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact{
-  isolation:isolate;
-}
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact img.igr-poster-ambient{
-  z-index:0!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  filter:blur(12px) brightness(.36) saturate(.68)!important;
-  opacity:.85!important;
-  transform:scale(1.12)!important;
-  pointer-events:none!important;
-}
-#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact img.igr-poster-full{
-  z-index:1!important;
-  object-fit:contain!important;
-  object-position:center!important;
-  box-sizing:border-box!important;
-  padding:3px 2px!important;
-  transform:none!important;
-  filter:drop-shadow(0 2px 9px rgba(0,0,0,.55))!important;
-}
-
-/* Unified full-frame poster v7 — the whole artwork must always be visible.
-   Classic dossiers use the original full image rather than a cropped thumbnail.
-   The ambient layer fills the portrait column, preventing flat letterboxing
-   without sacrificing door numbers, embedded text or the poster's framing.
-   This is intentionally scoped to the scenario catalogue only. */
+/* Catalogue poster v8: true edge-to-edge image treatment.
+   Do not create inset posters, ambient duplicates, black letterbox bands, or
+   destructive object-fit:cover crops. A single complete original artwork
+   occupies the complete left column, regardless of the card's text height.
+   Width and height fit the slot independently when ratios differ: this avoids
+   cropping image lettering, while retaining the previously approved card UI.
+   DLC font and palette stay untouched. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact{
   position:relative!important;
-  isolation:isolate!important;
   overflow:hidden!important;
-  background-color:#080a0d!important;
-}
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact > img.igr-poster-ambient{
-  display:block!important;
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  max-width:none!important;
-  max-height:none!important;
+  background:transparent!important;
+  isolation:isolate!important;
   padding:0!important;
-  aspect-ratio:auto!important;
-  z-index:0!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  filter:blur(8px) brightness(.60) saturate(.78)!important;
-  opacity:.97!important;
-  transform:scale(1.10)!important;
-  pointer-events:none!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--compact.scenario--art .scenario-thumb.compact > img.igr-poster-full{
@@ -301,22 +261,20 @@ body.igr-scenario-browser.igr-global-dock-active #app::after{
   inset:0!important;
   width:100%!important;
   height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
   max-width:none!important;
   max-height:none!important;
-  padding:1px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
   box-sizing:border-box!important;
   aspect-ratio:auto!important;
-  z-index:1!important;
-  object-fit:contain!important;
-  object-position:center center!important;
-  filter:drop-shadow(0 1px 6px rgba(0,0,0,.38))!important;
-  opacity:1!important;
+  object-fit:fill!important;
+  object-position:center!important;
   transform:none!important;
+  filter:none!important;
+  opacity:1!important;
   pointer-events:none!important;
-}
-/* Lower-brightness treatment belongs to each DLC; keep their own palettes. */
-#app .page-create-v10-13 .scenario-list-v10-13
-  > article.scenario.scenario--compact.scenario--art:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
-  .scenario-thumb.compact > img.igr-poster-ambient{
-  filter:blur(9px) brightness(.50) saturate(.72)!important;
 }
