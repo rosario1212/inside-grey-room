@@ -94,6 +94,14 @@ for(let count=4;count<=7;count++)for(const optional of [[],['judge'],['prosecuto
  assert.doesNotMatch(casinoVictoryBrief(s,'p0'),/mission privée|couverture cachée/);
  assert.match(casinoVictoryBrief(s,'p3'),/mission privée/);
 }
+// An analyst cannot win on unverified notes or an accurate but unsupported guess.
+{
+ const s=scored(fixture(4));
+ s.organigram=[];s.intel.push({id:'unverified',from:'p1',subjectId:'p1',checked:false,reviewedBy:'analyst',evidenceIds:['proof0']});
+ assert.equal(casinoPersonalVictory(s,'analyst',casinoVictory(s)).objectiveFulfilled,false);
+ s.organigram=[{...link,evidenceIds:['proof0']}];
+ assert.equal(casinoPersonalVictory(s,'analyst',casinoVictory(s)).objectiveFulfilled,false);
+}
 // Full eight-phase game: no host-only or judge-only bureau result.
 {
  let s=fixture(4);
@@ -146,7 +154,8 @@ for(let count=4;count<=7;count++)for(const optional of [[],['judge'],['prosecuto
  let missing=fixture(4);missing=scored(missing);missing.chapter=3;missing.phase=2;missing.phaseStartedAt=200000;
  missing.bureauBallots={agent:'established'};
  missing.poker.stage='settled';missing.openingPokerComplete=true;
- assert.throws(()=>cmd(missing,'p0','FINISH_CAMPAIGN',{},200001),/bureau_report_pending/);
+ assert.throws(()=>cmd(missing,'p0','FINISH_CAMPAIGN',{},200001),/minimum_social_time/);
+ assert.throws(()=>cmd(missing,'p0','FINISH_CAMPAIGN',{},260001),/bureau_report_pending/);
  missing=cmd(missing,'p0','FINISH_CAMPAIGN',{},380001);
  assert.equal(missing.finale.victory.investigative.outcome,'defeat','Host cannot synthesize missing votes');
 }
