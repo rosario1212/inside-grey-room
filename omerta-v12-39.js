@@ -18,7 +18,7 @@
   const ROLE_COPY = Object.freeze({
     enqueteur:{body:'Tu conduis les interrogatoires, décides certaines orientations de l’enquête et portes la reconstruction finale. Dans OMERTÀ, tu dois distinguer aveu sincère, peur et calcul.'},
     analyste:{body:'Tu repères les contradictions, les changements de version et les liens discrets entre les faits. Tu aides l’Enquêteur à remonter la chaîne des responsabilités.'},
-    suspect:{body:'Tu protèges ta position selon ce que ton identité permet : nier, minimiser, négocier, accuser ou coopérer. Sauver ta peau peut exposer quelqu’un d’autre.'},
+    suspect:{label:'Mis en cause',body:'Tu protèges ta position selon ce que ton identité permet : nier, minimiser, négocier, accuser ou coopérer. Sauver ta peau peut exposer quelqu’un d’autre.'},
     maitre:{body:'Tu protèges ton client, contestes les accusations fragiles et limites les conséquences d’un aveu. Une bonne intervention peut modifier l’équilibre de l’enquête.'},
     procureur:{body:'Tu exploites les contradictions et la coopération pour transformer des déclarations en charges solides. Ton objectif est de faire remonter les responsabilités.'},
     juge:{body:'Tu arbitres les décisions qui exigent une autorité neutre. Tu dois séparer preuves, versions intéressées et pression de la Famiglia.'},
@@ -31,6 +31,41 @@
     consigliere:{body:'Tu lis les rapports de force, les silences et les conséquences indirectes. Ton rôle est de protéger l’équilibre de la Famiglia sans confondre peur, manipulation et trahison.'},
     sottocapo:{body:'Tu te situes juste sous le sommet et dois préserver la continuité du commandement. Chaque choix de succession ou de protection peut éviter une guerre interne — ou l’accélérer.'},
     don:{body:'Tu es au sommet, mais tu ne contrôles pas chaque acte commis en ton nom. Tu dois distinguer ce que tu as réellement ordonné, ce que tes hommes ont interprété et qui reste loyal.'}
+  });
+
+  const ROLE_PREVIEWS_FR = Object.freeze({
+    enqueteur:'Interroge et démêle les secrets de la Famiglia.',
+    analyste:'Recoupe les versions et repère les loyautés.',
+    suspect:'Dissimule, négocie et défends tes intérêts.',
+    maitre:'Protège ton client face aux accusations.',
+    procureur:'Négocie les aveux et prépare les poursuites.',
+    juge:'Arbitre la procédure et préside le tribunal.',
+    informateur:'Échange tes renseignements contre ta sécurité.',
+    associato:'Négocie ta place au sein de la Famiglia.',
+    uomo_onore:'Protège les secrets et la loyauté du clan.',
+    contabile:'Analyse les comptes et garde tes secrets.',
+    pentito:'Négocie des révélations contre ta protection.',
+    caporegime:'Surveille ton équipe et décide des sanctions.',
+    consigliere:'Conseille le Don et déjoue les trahisons.',
+    sottocapo:'Coordonne la Famiglia et protège sa succession.',
+    don:'Dirige la Famiglia et éprouve les loyautés.'
+  });
+  const ROLE_PREVIEWS_EN = Object.freeze({
+    enqueteur:'Lead interrogations and expose the family secrets.',
+    analyste:'Cross-check accounts and identify conflicting loyalties.',
+    suspect:'Negotiate and defend your version of events.',
+    maitre:'Defend your client against the charges.',
+    procureur:'Negotiate testimony and build the prosecution.',
+    juge:'Rule on procedure and preside over the trial.',
+    informateur:'Trade your information for protection.',
+    associato:'Negotiate your place within the family.',
+    uomo_onore:'Protect the clan’s secrets and loyalties.',
+    contabile:'Examine accounts and protect what you know.',
+    pentito:'Trade disclosures for legal protection.',
+    caporegime:'Watch your crew and decide sanctions.',
+    consigliere:'Advise the Don and uncover betrayal.',
+    sottocapo:'Coordinate the family and protect succession.',
+    don:'Lead the family and test loyalties.'
   });
 
   const isOmerta = id => OMERTA_IDS.has(String(id || ''));
@@ -149,7 +184,10 @@
     const base = previousRoleInfo(id);
     if(!isOmerta(visibleScenarioId())) return base;
     const patch = ROLE_COPY[id];
-    return patch ? {...base, ...patch} : base;
+    const short = (window.IGR_LOCALE === 'en' ? ROLE_PREVIEWS_EN : ROLE_PREVIEWS_FR)[id];
+    const resolved = patch ? {...base, ...patch, ...(short ? {short} : {})} : (short ? {...base, short} : base);
+    if(id === 'suspect' && window.IGR_LOCALE === 'en') resolved.label = 'Person of interest';
+    return resolved;
   };
 
   function secureIndex(length){
