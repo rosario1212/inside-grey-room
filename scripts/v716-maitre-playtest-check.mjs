@@ -86,7 +86,8 @@ for(const n of [5,6,7])for(const [variant,answers] of Object.entries(paths)){
   assert.equal(saved.status,'completed');
   assert.equal(saved.maitre.canon.variant,variant);
   assert.equal(Object.keys(saved.maitre.decisions).length,5);
-  assert.ok(saved.maitre.traces.length>=15,'Angle, final and chronicle are missing');
+  assert.equal(saved.maitre.traces.filter(x=>x.category==='angle').length,5,'Missing campaign strategy trace');
+  assert.equal(saved.maitre.traces.filter(x=>x.category==='conclusion').length,5,'Missing five judicial conclusions');
   const snapshot=JSON.stringify(saved);
   t.startSession(1,Array.from({length:n},(_,i)=>'Nouvelle '+i));
   assert.equal(t.readLive().practice,true);
