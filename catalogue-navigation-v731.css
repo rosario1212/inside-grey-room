@@ -490,9 +490,8 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
   overflow:hidden!important;
   border-radius:17px!important;
 }
-/* A single full-height poster column across classics / Omertà / Terror /
-   Cartel / Régime. Blurred source-art underlay fills any letterboxed edge,
-   but the original foreground poster is NEVER cropped or stretched. */
+/* One full-height, edge-to-edge Omerta-style poster column for all families.
+   A consistent proportional cover crop removes the ugly empty bands. */
 #app .page-create-v10-13 .scenario-list-v10-13
   > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact{
   grid-column:1!important;
@@ -535,7 +534,9 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
   margin:0!important;
   padding:0!important;
   aspect-ratio:auto!important;
-  object-fit:contain!important;
+  /* Cover fills the artwork column exactly as on Omerta; no black bands.
+     Only a small outer crop is permitted, never stretch or letterbox. */
+  object-fit:cover!important;
   object-position:center center!important;
   border:0!important;
   transform:none!important;
@@ -652,4 +653,24 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
     --igr-card-copy:.90rem;
     --igr-card-heading:1.32rem;
   }
+}
+
+/* v738 — recover the established two-column desktop catalogue. */
+@media(min-width:1024px){
+  #app .page-create-v10-13 .scenario-list-v10-13:has(> article.scenario.scenario--art.scenario--compact){
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-rows:var(--igr-omerta-card-height)!important;
+  }
+  #app .page-create-v10-13{
+    --igr-omerta-art-width:clamp(150px,14vw,185px);
+  }
+}
+/* Preserve the full artwork column even when an older family supplies
+   an image max-height cap; every family now uses the same poster treatment. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  object-fit:cover!important;
 }
