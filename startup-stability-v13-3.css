@@ -44,11 +44,11 @@
   bottom:calc(env(safe-area-inset-bottom,0px) + clamp(28px,6svh,64px))!important;
   width:min(calc(100% - 48px),340px)!important;min-height:72px!important;
   padding:16px 20px!important;gap:7px;border-radius:20px;
-  border:1px solid rgba(205,205,205,.68)!important;
-  /* Neutral steel / charcoal: no blue cast, matching the real door. */
-  background:linear-gradient(160deg,#383838 0%,#292929 42%,#171717 100%)!important;
-  color:#f4f4f4!important;
-  box-shadow:0 15px 36px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.35);
+  border:1px solid #4a4a4a!important;
+  /* Matte anthracite steel: near-black, no glossy metallic gradient. */
+  background:#101010!important;
+  color:#f2f2f2!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.24),inset 0 0 0 1px rgba(255,255,255,.018);
   backdrop-filter:none;-webkit-backdrop-filter:none;
 }
 #introGate #introEnterBtn span{
@@ -57,11 +57,11 @@
   letter-spacing:.14em!important;padding-left:.14em;
 }
 #introGate #introEnterBtn small{
-  color:#c8c8c8!important;margin:0!important;
+  color:#a9a9a9!important;margin:0!important;
   font-size:9px;line-height:1.4;letter-spacing:.08em;
 }
-@media(hover:hover){#introGate #introEnterBtn:hover{border-color:#e0e0e0!important;background:linear-gradient(160deg,#424242,#202020)!important}}
-#introGate #introEnterBtn:active{border-color:#e6e9ec!important}
+@media(hover:hover){#introGate #introEnterBtn:hover{border-color:#777!important;background:#151515!important}}
+#introGate #introEnterBtn:active{border-color:#969696!important;background:#191919!important}
 #introGate.opening .intro-title,#introGate.boot-waiting .intro-title{opacity:0}
 /* A compact two-column composition keeps the full doorway visible in landscape. */
 @media(min-aspect-ratio:4/3) and (max-height:600px){
