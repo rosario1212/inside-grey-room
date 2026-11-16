@@ -60,6 +60,12 @@
   color:#a9a9a9!important;margin:0!important;
   font-size:9px;line-height:1.4;letter-spacing:.08em;
 }
+/* Portrait phones: lift the entry CTA closer to the door, keeping its matte-black style. */
+@media (max-width:700px) and (orientation:portrait){
+  #introGate #introEnterBtn{
+    bottom:calc(env(safe-area-inset-bottom,0px) + clamp(76px,13svh,112px))!important;
+  }
+}
 @media(hover:hover){#introGate #introEnterBtn:hover{border-color:#777!important;background:#101010!important}}
 #introGate #introEnterBtn:active{border-color:#969696!important;background:#151515!important}
 #introGate.opening .intro-title,#introGate.boot-waiting .intro-title{opacity:0}
