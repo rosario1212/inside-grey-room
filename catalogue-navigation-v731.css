@@ -1,0 +1,111 @@
+/* IGR v731 — one calm illustrated catalogue, one direct collection navigation. */
+body:has(#app .page-create-v10-13){background:#030405!important}
+body:has(#app .page-create-v10-13) .bg-vignette{opacity:.44!important}
+body:has(#app .page-create-v10-13) #igrUniversalDock,
+body:has(#app .page-create-v10-13) #igrDockFilters,
+body:has(#app .page-create-v10-13) #igrDockHome{display:none!important}
+body:has(#app .page-create-v10-13) #app::after{display:none!important}
+#app .page-create-v10-13{position:relative!important;isolation:isolate}
+#app .page-create-v10-13::before{
+  content:"";position:absolute;z-index:-1;top:52px;left:50%;
+  width:min(115%,1150px);height:370px;transform:translateX(-50%);
+  background:url("assets/catalogue-corridor-ink-v731.svg") center top/cover no-repeat;
+  opacity:.7;pointer-events:none;
+  -webkit-mask-image:linear-gradient(to bottom,black 4%,black 45%,transparent 100%);
+  mask-image:linear-gradient(to bottom,black 4%,black 45%,transparent 100%);
+}
+#app .page-create-v10-13 .page-head{position:relative!important;margin:0 0 17px!important;align-items:flex-start!important}
+#app .page-create-v10-13 .page-head h1{letter-spacing:-.048em!important;line-height:1.03!important}
+#app .page-create-v10-13 nav.igr-scenario-filters.igr-family-picker-v731{
+  position:relative!important;top:auto!important;z-index:2!important;
+  display:block!important;float:none!important;max-height:none!important;
+  width:100%!important;min-width:0!important;box-sizing:border-box!important;
+  margin:0 0 16px!important;padding:14px!important;
+  background:rgba(7,8,9,.95)!important;border:1px solid rgba(190,190,187,.20)!important;
+  border-radius:17px!important;overflow:visible!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.40),inset 0 1px rgba(255,255,255,.035)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  transform:none!important;left:auto!important;right:auto!important;bottom:auto!important;
+}
+#app .page-create-v10-13 .igr-family-picker-v731 .igr-collection-top{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin:0 0 10px;min-height:13px
+}
+#app .page-create-v10-13 .igr-family-picker-v731 .igr-catalog-label{
+  color:#d5d6d3!important;font:750 10px/1.4 'Inter',system-ui,sans-serif!important;
+  letter-spacing:.16em!important
+}
+#app .page-create-v10-13 .igr-family-picker-v731 .igr-catalog-count{
+  display:inline!important;color:#858986!important;font:600 11px/1.4 system-ui,sans-serif!important;
+}
+#app .page-create-v10-13 .igr-collection-choices{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;
+}
+#app .page-create-v10-13 .igr-collection-choice{
+  position:relative;min-width:0;min-height:59px;display:flex;align-items:flex-start;
+  justify-content:center;flex-direction:column;gap:4px;box-sizing:border-box;
+  text-align:left;padding:10px 12px;background:#0d0e0f;color:#e5e5e2;
+  border:1px solid rgba(174,178,177,.19);border-radius:10px;
+  cursor:pointer;touch-action:manipulation;transition:border-color .14s,background .14s;
+}
+#app .page-create-v10-13 .igr-collection-choice[data-family="base"]{grid-column:1/-1}
+#app .page-create-v10-13 .igr-collection-choice.is-active,
+#app .page-create-v10-13 .igr-collection-choice[aria-pressed="true"]{
+  background:linear-gradient(125deg,#222425,#141516)!important;
+  border-color:rgba(235,235,230,.65)!important;
+  box-shadow:inset 3px 0 0 #dfdfd8,0 0 0 1px rgba(235,235,230,.07)!important;
+}
+#app .page-create-v10-13 .igr-collection-choice:focus-visible{
+  outline:2px solid #eeefeb;outline-offset:2px
+}
+#app .page-create-v10-13 .igr-collection-choice:active{background:#252628}
+#app .page-create-v10-13 .igr-collection-choice .igr-family-name{
+  font:750 13px/1.18 'Inter',system-ui,sans-serif;letter-spacing:-.015em;
+  color:#f1f1ee;overflow-wrap:anywhere
+}
+#app .page-create-v10-13 .igr-collection-choice .igr-family-range{
+  font:600 10px/1.2 'IBM Plex Mono',ui-monospace,monospace;
+  color:#979c9b;white-space:normal
+}
+#app .page-create-v10-13 .igr-collection-choice.is-active .igr-family-range{color:#d0d1cb}
+#app .page-create-v10-13 > .scenario-panel-v10-13,
+#app .page-create-v10-13 > section.panel:is(.omerta-dlc-section,.terror-dlc-section,.cartel-dlc-section,.regime-dlc-section){
+  position:relative!important;margin-top:0!important;margin-bottom:0!important;
+  background:rgba(6,7,8,.90)!important;border:1px solid rgba(255,255,255,.105)!important;
+  box-shadow:none!important;border-radius:18px!important;overflow:hidden!important
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+  --igr-card-ground:linear-gradient(112deg,#101113 0%,#0c0d0f 56%,#090a0b 100%)!important;
+  --igr-card-stroke:rgba(165,169,170,.24)!important;
+  --igr-card-glow:rgba(160,167,169,.025)!important;
+  background:var(--igr-card-ground)!important;
+  border-color:var(--igr-card-stroke)!important;
+  box-shadow:0 8px 25px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.02)!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact:focus-visible{
+  outline:2px solid rgba(240,240,236,.78)!important;outline-offset:2px!important
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .scenario-id{color:#9fa6a7!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .igr-card-excerpt{color:#bec2c2!important}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .tag{
+  color:#c9cbcb!important;border-color:rgba(176,181,181,.23)!important;
+  background:rgba(12,14,16,.72)!important
+}
+#app .page-create-v10-13 :is(.omerta-head,.terror-head,.dlc-suite-head) :is(h2,p){color:#e5e5e2}
+@media(max-width:720px){
+  #app .page-create-v10-13::before{height:345px;top:62px;opacity:.52}
+  #app .page-create-v10-13 .igr-collection-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  #app .page-create-v10-13 .igr-collection-choice{min-height:55px;padding:9px 12px}
+  #app .page-create-v10-13 .igr-collection-choice[data-family="base"]{grid-column:1/-1}
+  #app .page-create-v10-13 .igr-family-picker-v731 .igr-collection-top{margin-bottom:9px}
+  #app .page-create-v10-13 nav.igr-scenario-filters.igr-family-picker-v731{padding:11px!important;margin-bottom:12px!important}
+  #app .page-create-v10-13 .page-head{margin-bottom:15px!important}
+}
+@media(max-width:360px){
+  #app .page-create-v10-13 .igr-collection-choice{padding:8px 9px}
+  #app .page-create-v10-13 .igr-collection-choice .igr-family-name{font-size:12px}
+  #app .page-create-v10-13 .igr-collection-choice .igr-family-range{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  #app .page-create-v10-13 .igr-collection-choice{transition:none}
+}
