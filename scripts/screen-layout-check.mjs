@@ -225,6 +225,8 @@ try{
           artHeight:el.querySelector('.scenario-thumb').getBoundingClientRect().height,
           artRatio:getComputedStyle(el.querySelector('.scenario-thumb')).aspectRatio,
           artAlignment:getComputedStyle(el.querySelector('.scenario-thumb')).alignSelf,
+          cardVisibility:getComputedStyle(el).contentVisibility,
+          cardIntrinsic:getComputedStyle(el).containIntrinsicSize,
           titleFont:parseFloat(heading.fontSize),copyFont:parseFloat(style.fontSize),
           bodyBottomPadding:parseFloat(getComputedStyle(body).paddingBottom),
           copyLineRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),
@@ -255,6 +257,8 @@ try{
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=samples[i].title;
         assert(m.height>=188,width+'px '+name+': card too short');
+        assert(m.cardVisibility==='visible',width+'px '+name+': legacy 240px placeholder still active');
+        assert(!m.cardIntrinsic.includes('240px'),width+'px '+name+': old fake intrinsic height still applies');
         assert(m.titleFont>=18&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
         if(width===390&&samples[i].klass){
           assert(m.bodyBottomPadding<=12.5,
