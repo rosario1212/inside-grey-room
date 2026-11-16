@@ -190,14 +190,23 @@ try{
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
       '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:30)+'</p><div class="tag-row">'+
-      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>').join('');
+      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>');
+    const families=[
+      ['scenario-panel-v10-13',''],
+      ['omerta-dlc-section','omerta-list'],
+      ['terror-dlc-section','terror-list'],
+      ['cartel-dlc-section','cartel-list'],
+      ['regime-dlc-section','regime-list']
+    ];
+    const groupedMarkup=families.map(([section,list],i)=>
+      '<section class="panel '+section+'"><div class="scenario-list scenario-list-v10-13 '+list+'">'+
+      cards.slice(i*2,i*2+2).join('')+'</div></section>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:820});
       await page.setContent('<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width,initial-scale=1">'+
         '<style>'+css+'</style></head><body class="igr-scenario-browser igr-global-dock-active igr-dock-scrolling">'+
         '<div id="app"><div class="app"><main class="page page-create-v10-13">'+
-        '<section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">'+cards+
-        '</div></section></main></div></div>'+
+        groupedMarkup+'</main></div></div>'+
         '<nav id="igrUniversalDock" class="igr-universal-dock"><button class="igr-dock-pill igr-dock-filters"><span>☷</span><b>Filtres</b></button>'+
         '<button class="igr-dock-pill igr-dock-home"><span>⌂</span><b>Accueil</b></button></nav></body></html>');
       const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
