@@ -14,6 +14,16 @@ const polish=read('omerta-polish-v12.js');
 const omerta=read('omerta-v12-39.js');
 const lobby=read('lobby-ui-fix-v13.js');
 const mobile=read('mobile-ui-v28.css');
+const roleCss=read('lobby-ui-fix-v13.css');
+const omertaRoleCopy=read('omerta-v12-39.js');
+const omertaRoleSetup=read('omerta-v12.js');
+const rolePreviewCss=roleCss.split('#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card small{')[1]?.split('}')[0]||'';
+assert(rolePreviewCss.includes('line-clamp:unset!important'), 'role preview must not clamp');
+assert(rolePreviewCss.includes('overflow:visible!important'), 'role preview text must never be clipped');
+assert(rolePreviewCss.includes('height:auto!important'), 'role preview may grow with the text');
+assert(omertaRoleCopy.includes("suspect:{label:'Mis en cause'"), 'Omerta unranked player label is missing');
+assert(omertaRoleSetup.includes("'021':['enqueteur','analyste','suspect'"), 'Omerta backend-compatible suspect seat must remain');
+
 function section(source,start,end){
  const a=source.indexOf(start),b=source.indexOf(end,a+start.length);
  assert(a>=0&&b>a,'Missing source boundary '+start);

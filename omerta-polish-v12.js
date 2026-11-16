@@ -14,14 +14,14 @@
   // the Santoro canonical SCENARIO_DATA in omerta-v12.js. Never override
   // them with historical Verri-era COPY from this optional UI polish layer.
   const ROLE_COPY = {
-    associato:{label:'Associato',win:'Reste utile. Reste vivant.',body:'Tu n’es pas initié. Tu peux parler, mentir ou rester loyal. Chaque mot peut te coûter.'},
-    uomo_onore:{label:'Uomo d’Onore',win:'Tiens l’omertà.',body:'Tu peux dire vrai. Une vérité de trop suffit.'},
-    contabile:{label:'Contabile',win:'Fais parler les comptes sans te désigner.',body:'Les chiffres sont des preuves. Celui qui les explique devient visible.'},
-    pentito:{label:'Pentito',win:'Réduis ta peine. Obtiens une protection. Survis.',body:'Parle pour gagner des années. Parle trop et tu deviens une cible.'},
-    caporegime:{label:'Caporegime',win:'Trouve celui qui parle. Ne tue pas un loyal.',body:'Interroge. Surveille. Puis décide. Une sanction aveugle te condamne.'},
-    consigliere:{label:'Consigliere',win:'Protège le sommet sans frapper à l’aveugle.',body:'Lis les silences. Distingue la peur, le mensonge et la trahison.'},
-    sottocapo:{label:'Sottocapo',win:'Garde la Famiglia debout.',body:'Le Don ne voit pas tout. Une mauvaise décision peut ouvrir une guerre.'},
-    don:{label:'Don',win:'Découvre qui reste loyal et ce qui a été fait en ton nom.',body:'Tu donnes peu d’ordres. Tes hommes comprennent le reste.'}
+    associato:{label:'Associato',win:'Reste utile. Reste vivant.',short:'Négocie ta place au sein de la Famiglia.',body:'Tu n’es pas initié. Tu peux parler, mentir ou rester loyal. Chaque mot peut te coûter.'},
+    uomo_onore:{label:'Uomo d’Onore',win:'Tiens l’omertà.',short:'Protège les secrets et la loyauté du clan.',body:'Tu peux dire vrai. Une vérité de trop suffit.'},
+    contabile:{label:'Contabile',win:'Fais parler les comptes sans te désigner.',short:'Analyse les comptes et garde tes secrets.',body:'Les chiffres sont des preuves. Celui qui les explique devient visible.'},
+    pentito:{label:'Pentito',win:'Réduis ta peine. Obtiens une protection. Survis.',short:'Négocie des révélations contre ta protection.',body:'Parle pour gagner des années. Parle trop et tu deviens une cible.'},
+    caporegime:{label:'Caporegime',win:'Trouve celui qui parle. Ne tue pas un loyal.',short:'Surveille ton équipe et décide des sanctions.',body:'Interroge. Surveille. Puis décide. Une sanction aveugle te condamne.'},
+    consigliere:{label:'Consigliere',win:'Protège le sommet sans frapper à l’aveugle.',short:'Conseille le Don et déjoue les trahisons.',body:'Lis les silences. Distingue la peur, le mensonge et la trahison.'},
+    sottocapo:{label:'Sottocapo',win:'Garde la Famiglia debout.',short:'Coordonne la Famiglia et protège sa succession.',body:'Le Don ne voit pas tout. Une mauvaise décision peut ouvrir une guerre.'},
+    don:{label:'Don',win:'Découvre qui reste loyal et ce qui a été fait en ton nom.',short:'Dirige la Famiglia et éprouve les loyautés.',body:'Tu donnes peu d’ordres. Tes hommes comprennent le reste.'}
   };
 
   function isOmerta(id){ return OMERTA_IDS.has(String(id||'')); }
