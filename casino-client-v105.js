@@ -97,7 +97,8 @@ function evidencePicker(){return `<fieldset><legend>Sources à joindre</legend>$
 const offencePicker=field=>`<label>Infraction fondée sur les preuves<select name="${esc(field)}" data-casino-offence data-casino-draft required>${[...new Set((state.evidence||[]).map(e=>e.offence))].map(id=>option(id,id)).join('')}</select></label>`;
 function bureauVerdictPanel(){
  const b=state?.bureauVerdict;if(!b)return '';
- const ballot=form('bureau-verdict',`<label>Ta position finale<select name="position" data-casino-draft>${option('insufficient','Les preuves restent insuffisantes')}${option('established','Le schéma établit des liens criminels')}</select></label>`,b.myVote?'Modifier ma position':'Signer ma position');
+ const choices=[['insufficient','Les preuves restent insuffisantes'],['established','Le schéma établit des liens criminels']].map(([id,label])=>`<option value="${esc(id)}" ${b.myVote===id?'selected':''}>${esc(label)}</option>`).join('');
+ const ballot=form('bureau-verdict',`<label>Ta position finale<select name="position" required data-casino-draft><option value="" disabled ${b.myVote?'':'selected'}>Choisis une position</option>${choices}</select></label>`,b.myVote?'Modifier ma position':'Signer ma position');
  return `<article class="casino-bureau-verdict"><span class="casino-victory-eyebrow">LE DERNIER RAPPORT · BUREAU</span><p>${b.cast}/${b.seats} positions enregistrées · majorité requise : ${b.majority}. Aucune voix ne peut être confiée à l’hôte ni au juge.</p><p>Les liens du schéma doivent correspondre aux faits et reposer sur deux sources indépendantes. Une accusation erronée affaiblit la conclusion collective.</p>${ballot}<small>${b.myVote?'Position enregistrée, modifiable jusqu’à la clôture.':'Ton vote reste confidentiel jusqu’au dénouement.'}</small></article>`;
 }
 function bureau(){return section('Bureau d’enquête',`<p>Les déclarations restent distinctes des pièces corroborées. Une arrestation n’équivaut pas à une condamnation.</p>
