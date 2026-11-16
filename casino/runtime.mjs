@@ -2,6 +2,7 @@
 // to a browser; viewRuntime is the sole client projection.
 import {createCasinoCampaign, applyCasinoCommand, casinoView} from './campaign-core.mjs';
 import {startPoker,pokerAction,pokerView,spinSlot,expirePokerTurn,SLOT_RULES} from './games.mjs';
+import {casinoVictory,casinoPersonalVictory,casinoVictoryBrief} from './victory.mjs';
 const check=(ok,code)=>{if(!ok)throw Error(code)};
 const text=(v,max=700)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
 const uniq=a=>Array.isArray(a)&&new Set(a).size===a.length;
@@ -70,7 +71,7 @@ export function startRuntime(lobby,release,{undercoverIds,now,deck}){
     releaseId:release.id,privateCanon:pack,openingPokerComplete:false,phaseStartedAt:now,campaignStartedAt:now,
     politicalBase:Object.fromEntries(Object.values(state.roster).map(c=>[c.id,{influence:c.influence,legitimacy:c.legitimacy}])),
     casinoBank:100000,slotResults:{},loyalty:{},successionWagers:{},territories:{},messages:[],hearings:[],
-    rulings:[],organigram:[],npcEvents:[],publicEvents:[],corruption:[],support:{},motions:[],privateNotes:{},usedMoves:[],usedNpcOffers:[],finale:null});
+    rulings:[],organigram:[],npcEvents:[],publicEvents:[],corruption:[],support:{},bureauBallots:{},motions:[],privateNotes:{},usedMoves:[],usedNpcOffers:[],finale:null});
   for(const t of pack.territories)state.territories[t.id]={id:t.id,name:t.name,controller:resolveId(state,t.controller),claims:[]};
   releasePhase(state);startPoker(state,{id:'opening',participants:state.players,deck,now});refreshPolitics(state);
   return state;
@@ -198,7 +199,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       privileged(['analyst','investigator']);
       check(s.roster[payload.subject]&&s.roster[payload.target]&&payload.subject!==payload.target&&text(payload.relation,100),'invalid_organigram_relation');
       corroborated(s,payload.subject,payload.evidenceIds,payload.offence);
-      s.organigram.push({id:command.id,subject:payload.subject,target:payload.target,relation:payload.relation,evidenceIds:payload.evidenceIds});break;
+      s.organigram.push({id:command.id,subject:payload.subject,target:payload.target,relation:payload.relation,offence:payload.offence,evidenceIds:payload.evidenceIds,filedBy:actor});break;
     case 'REQUEST_INTERPELLATION':
       check(s.chapter>=2,'no_visible_police_operation_yet');privileged(['investigator','prosecutor']);
       corroborated(s,payload.subjectId,payload.evidenceIds,payload.allegedOffence);
@@ -211,7 +212,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       privileged(s.bureau.prosecutor?['prosecutor']:['investigator']);check(s.chapter>=2&&s.roster[payload.subjectId]&&text(payload.accusation,1000),'hearing_not_available');
       corroborated(s,payload.subjectId,payload.evidenceIds,payload.offence);
       check(!s.hearings.some(h=>h.subjectId===payload.subjectId),'hearing_already_open');
-      s.hearings.push({id:command.id,subjectId:payload.subjectId,accusation:payload.accusation,offence:payload.offence,evidenceIds:payload.evidenceIds,
+      s.hearings.push({id:command.id,subjectId:payload.subjectId,accusation:payload.accusation,offence:payload.offence,evidenceIds:payload.evidenceIds,openedBy:actor,
         defence:s.roster[payload.subjectId].npc?render(s,s.privateCanon.npcDefences[payload.subjectId]):null});break;
     case 'DEFENCE':{
       pcheck();const h=s.hearings.find(h=>h.id===payload.hearingId&&h.subjectId===actor);check(h&&text(payload.text,2000),'hearing_not_available');h.defence=payload.text;break;
@@ -222,7 +223,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       check(['acquit','convict','release'].includes(payload.decision)&&text(payload.reasoning,1500),'invalid_ruling');
       check(!s.rulings.some(r=>r.hearingId===h.id),'ruling_already_recorded');
       if(payload.decision==='convict')check(!h.absentDefence&&corroboratedFacts(s,h).established,'judicial_elements_not_established');
-      s.rulings.push({id:command.id,hearingId:h.id,subjectId:h.subjectId,decision:payload.decision,reasoning:payload.reasoning});
+      s.rulings.push({id:command.id,hearingId:h.id,subjectId:h.subjectId,decision:payload.decision,reasoning:payload.reasoning,decidedBy:actor});
       s.roster[h.subjectId].status=payload.decision==='convict'?'detained':'free';break;
     }
     case 'OFFER_CORRUPTION':{
@@ -337,8 +338,20 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
     case 'LOCATE_ROOM':
       check(now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs,'minimum_social_time');
       return applyCasinoCommand(current,command);
+    case 'BUREAU_VERDICT':{
+      privileged(['agent','investigator','analyst','prosecutor','judge']);
+      check(s.chapter===3&&s.phase===2,'bureau_verdict_not_open');
+      check(['established','insufficient'].includes(payload.position),'invalid_bureau_verdict');
+      s.bureauBallots[actor]=payload.position;
+      break;
+    }
     case 'FINISH_CAMPAIGN':{
       check(actor===s.hostId&&s.chapter===3&&s.phase===2,'finale_not_open');
+      const bureauMembers=Object.values(s.bureau),ballots=Object.keys(s.bureauBallots||{}).filter(id=>bureauMembers.includes(id));
+      // Do not let the host finish while an active bureau is deliberating.
+      // After a documented timeout the missing seats abstain; their votes are
+      // NEVER manufactured by the host. Absolute majority always uses all seats.
+      check(ballots.length===bureauMembers.length||now-s.phaseStartedAt>=s.privateCanon.minimumSocialMs*3,'bureau_report_pending');
       check(!s.hearings.some(h=>h.defence===null),'pending_defence');
       if(s.bureau.judge)check(s.hearings.every(h=>s.rulings.some(r=>r.hearingId===h.id)),'pending_judicial_ruling');
       else for(const h of s.hearings){
@@ -361,6 +374,7 @@ function applyRuntimeRules(current,command,{now}={now:Date.now()}){
       s.finale={political:split?'split':winner?'recognised_claim':dragon.status==='free'&&s.dragonAuthority?'dragon_retained':'collapse',
         successor:winner,contested,split:split?s.splitClaim:null,judicial:s.rulings,organigram:s.organigram.map(e=>({...e,
           corroborated:s.privateCanon.organigram.some(c=>resolveId(s,c.subject)===e.subject&&resolveId(s,c.target)===e.target&&c.relation===e.relation)}))};
+      s.finale.victory=casinoVictory(s);
       s.status='finished';break;
     }
     default:{
@@ -409,7 +423,7 @@ export function viewRuntime(state,viewer){
       dossiers:(state.privateCanon.publicDossiers||[]).map(d=>({subjectId:resolveId(state,d.subjectId),title:d.title,context:render(state,d.context)}))}:{}),
     participants:state.members.map(({id,name,role})=>({id,name,role})),
     bureauRecipients:state.members.filter(m=>m.role!=='casino').map(({id,name,role})=>({id,name,role})),
-    ownCard:render(state,ownCard),characters:base.characters.map(c=>({...c,npc:state.roster[c.id].npc,
+    ownCard:render(state,ownCard),ownVictoryRule:casinoVictoryBrief(state,viewer),characters:base.characters.map(c=>({...c,npc:state.roster[c.id].npc,
       title:state.privateCanon.characters.find(r=>resolveId(state,r.id)===c.id)?.title||''})),
     phaseTitle:state.privateCanon.phases[p-1].title,poker:pokerView(state,viewer),
     slotRules:SLOT_RULES,ownSlotResult:player?state.slotResults[viewer]||null:undefined,
@@ -418,6 +432,10 @@ export function viewRuntime(state,viewer){
     publicEvents:state.publicEvents,npcEvents:state.npcEvents.filter(e=>!e.to||e.to===viewer),
     messages:state.messages.filter(m=>m.from===viewer||m.to===viewer||role&&m.to==='bureau'),
     hearings:state.hearings.filter(h=>role||h.subjectId===viewer),rulings:state.rulings,
+    bureauVerdict:role&&state.chapter===3&&state.phase===2?{
+      myVote:state.bureauBallots?.[viewer]||null,cast:Object.keys(state.bureauBallots||{}).length,
+      seats:Object.keys(state.bureau).length,majority:Math.floor(Object.keys(state.bureau).length/2)+1
+    }:undefined,
     organigram:role?state.organigram:undefined,ownNote:role?state.privateNotes[viewer]||'':undefined,
     corruption,agentPuzzles:render(state,puzzles),
     fallbackHint:role==='agent'&&state.fallbackReady?render(state,state.privateCanon.fallback.text):undefined,
@@ -432,7 +450,9 @@ export function viewRuntime(state,viewer){
     hostCanCloseCourt:viewer===state.hostId&&state.chapter===3&&state.phase===2&&!!state.bureau.judge&&
       elapsed>=state.privateCanon.minimumSocialMs*3&&state.hearings.every(h=>h.defence!==null)&&
       state.hearings.some(h=>!state.rulings.some(r=>r.hearingId===h.id)),
-    finale:state.finale?{...state.finale,organigram:role?state.finale.organigram:undefined,
+    finale:state.finale?{...state.finale,
+      personalVictory:casinoPersonalVictory(state,viewer,state.finale.victory||casinoVictory(state)),
+      organigram:role?state.finale.organigram:undefined,
       personalOutcome:player?{
         status:state.roster[viewer].status,
         reputation:state.roster[viewer].reputation,

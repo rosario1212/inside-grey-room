@@ -1,0 +1,45 @@
+name: CASINO v718 — Endgame & victory QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'casino/**'
+      - 'casino-client-v105.js'
+      - 'casino-client-v105.css'
+      - 'scripts/casino-v718-victory-check.mjs'
+      - 'scripts/casino-runtime-check.mjs'
+      - 'scripts/casino-release-check.mjs'
+      - '.github/workflows/casino-v718-victory-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'casino/**'
+      - 'casino-client-v105.js'
+      - 'casino-client-v105.css'
+      - 'scripts/casino-v718-victory-check.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  endgame:
+    name: Casino sealed victory, 7–12 seats, noir finale
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and complete endgame integration
+        run: |
+          set -euo pipefail
+          node --check casino/victory.mjs
+          node --check casino/runtime.mjs
+          node --check casino-client-v105.js
+          node scripts/casino-v718-victory-check.mjs
+      - name: Existing finance, poker, roles and journal regression
+        run: |
+          set -euo pipefail
+          node scripts/casino-foundation-check.mjs
+          node scripts/casino-runtime-check.mjs
+          node scripts/casino-poker-exhaustive-check.mjs
