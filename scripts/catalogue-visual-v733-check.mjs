@@ -88,7 +88,7 @@ try{
       assert(c.tags.top>=c.description.bottom-2,`${width}px ${c.id}: synopsis touches badges`);
       assert(c.tags.bottom<=c.card.bottom+2,`${width}px ${c.id}: badges outside card`);
       assert(!c.bodyOverflow,`${width}px ${c.id}: text overflowing horizontally`);
-      assert.equal(c.clamp,'none',`${width}px ${c.id}: synopsis unexpectedly clamped`);
+      assert.equal(c.clamp,'5',`${width}px ${c.id}: synopsis needs consistent five-line Omerta preview`);
     }
     const [base001,base014]=data.cards;
     assert(Math.abs(base001.image.width-base014.image.width)<2,`${width}px: 014 has an anomalous poster width`);
@@ -154,7 +154,12 @@ try{
               bodyFits:body.scrollHeight<=body.clientHeight+2,
               excerptFits:excerpt.scrollHeight<=excerpt.clientHeight+2,
               excerptClamp:getComputedStyle(excerpt).webkitLineClamp,
+              excerptHeight:excerpt.getBoundingClientRect().height,
               imageFit:getComputedStyle(img).objectFit,
+              posterRect:img.getBoundingClientRect().toJSON(),
+              thumbRect:article.querySelector('.scenario-thumb').getBoundingClientRect().toJSON(),
+              tagsTop:tags.getBoundingClientRect().top,
+              descriptionBottom:excerpt.getBoundingClientRect().bottom,
               badgesBottom:tags.getBoundingClientRect().bottom,
               cardBottom:rect.bottom,
               right:rect.right
@@ -168,17 +173,32 @@ try{
         assert.equal(items.length,family==='base'?20:familySize[family],`v735 ${width}px: wrong ${family} card count`);
         const heights=items.map(item=>item.height);
         assert(Math.max(...heights)-Math.min(...heights)<=1.1,
-          `v735 ${width}px: ${family} card heights diverge (${Math.min(...heights)}–${Math.max(...heights)}px): ${JSON.stringify(items.map(x=>[x.id,x.height]))}`);
+          `v737 ${width}px: ${family} card heights diverge: ${JSON.stringify(items.map(x=>[x.id,x.height]))}`);
         for(const item of items){
-          assert(item.bodyFits,`v735 ${width}px ${item.id}: text box clipped`);
-          assert(item.excerptFits,`v735 ${width}px ${item.id}: synopsis clipped`);
-          assert(item.excerptClamp==='none',`v735 ${width}px ${item.id}: synopsis limited to 3 lines`);
-          assert(item.imageFit==='contain',`v735 ${width}px ${item.id}: poster cropped`);
-          assert(item.badgesBottom<=item.cardBottom+1.5,`v735 ${width}px ${item.id}: player badge overflow`);
+          assert(item.bodyFits,`v737 ${width}px ${item.id}: content box unexpectedly overflowing`);
+          assert(item.excerptClamp==='5',`v737 ${width}px ${item.id}: five-line Omerta-style excerpt missing`);
+          assert(item.excerptHeight>10,`v737 ${width}px ${item.id}: synopsis collapsed`);
+          assert(item.imageFit==='contain',`v737 ${width}px ${item.id}: original poster cropped`);
+          assert(Math.abs(item.posterRect.height-item.thumbRect.height)<2,
+            `v737 ${width}px ${item.id}: poster not fitted to its full Omerta-size artwork frame`);
+          assert(Math.abs(item.posterRect.width-item.thumbRect.width)<2,
+            `v737 ${width}px ${item.id}: poster artwork frame not matched to Omerta`);
+          assert(item.tagsTop>=item.descriptionBottom-1,
+            `v737 ${width}px ${item.id}: synopsis overlaps its player badges`);
+          assert(item.badgesBottom<=item.cardBottom+1.5,`v737 ${width}px ${item.id}: player badge overflow`);
         }
       }
+      const allRows=Object.values(result.groups).flat();
+      const reference=allRows.find(x=>x.id==='021');
+      assert(reference,'Omerta 021 reference must be rendered');
+      for(const item of allRows){
+        assert(Math.abs(item.height-reference.height)<=1.1,
+          `v737 ${width}px ${item.id}: card (${item.height}) must match Omerta 021 (${reference.height})`);
+        assert(Math.abs(item.thumbRect.width-reference.thumbRect.width)<=1.1,
+          `v737 ${width}px ${item.id}: poster column (${item.thumbRect.width}) must match Omerta 021 (${reference.thumbRect.width})`);
+      }
       if(width===390)await page.screenshot({path:path.join(report,'catalogue-v735-34-equal-heights-iphone.png'),fullPage:true});
-      console.log(`PASS v735 ${width}px: 001–020 and 4 DLC families have equal card heights, full texts, intact posters`);
+      console.log(`PASS v737 ${width}px: All 34 cards match Omerta 021 height and poster width, complete unwarped artwork`);
       await context.close();
     }
   }
