@@ -26,23 +26,35 @@ function renderCampaign(){const chapters=CHAPTERS.map(c=>`<button type="button" 
     <span class="casino-dossier-content"><small>SCÉNARIO ${c.number}</small><strong>${safe(c.title)}</strong><span>${safe(c.summary)}</span><em>EXPLORER LE DOSSIER →</em></span></button>`).join('');
  return shellPut(`<main class="page hplay casino-page" data-casino-page="campaign">${top('hub')}
    <div class="casino-intro"><figure class="casino-hero">${artwork('campagne.webp','Affiche de la campagne Casino')}</figure>
-   <header class="casino-heading"><span>MACAO · SYNDICAT YONGHE</span><h1>CASINO</h1><p>Trois scénarios liés. Le casino, la guerre de succession et l’enquête évoluent au gré des alliances et des décisions.</p></header></div>
-   <section class="casino-public-note"><strong>UNE CAMPAGNE · TROIS SCÉNARIOS</strong><span>De la première mise au verdict final, les décisions et les alliances se poursuivent dans la même partie. 7 à 12 participants, chacun sur son écran.</span></section>
+   <header class="casino-heading"><span>HÉRITAGE · CAMPAGNE IV / IV</span><h1>CASINO</h1><p>Trois scénarios liés. Le casino, la guerre de succession et l’enquête évoluent au gré des alliances et des décisions.</p></header></div>
+   <section class="casino-public-note"><strong>QUATRIÈME CAMPAGNE HÉRITAGE · TROIS SCÉNARIOS</strong><span>Macao, 7 à 12 joueurs, trois scénarios liés et huit phases. Une intrigue autonome après MAÎTRE, sans progression préalable exigée.</span></section>
    <div class="casino-launch"><button class="casino-action casino-launch-button" type="button" data-casino-live>Jouer la campagne</button><p>Créer une table, rejoindre des amis ou reprendre une partie.</p></div>
    <section class="casino-chapters" aria-label="Scénarios de la campagne Casino">${chapters}</section>
    <section class="casino-pillars"><div><b>LA PAROLE</b><p>Alliances et accords oraux ou signés, consignés dans le Registre.</p></div><div><b>LE RISQUE</b><p>Poker au premier cycle ; ensuite, jeux et négociations au choix.</p></div><div><b>LES CONSÉQUENCES</b><p>Réputation, territoires, témoignages, arrestations et succession.</p></div></section>
  </main>`)}
 function renderChapter(n){const ch=CHAPTERS.find(x=>x.number===n);if(!ch)return renderCampaign();const phases=ch.phases.map((name,i)=>`<div class="casino-phase"><b>${i+1}</b><strong>${safe(name)}</strong></div>`).join('');
  return shellPut(`<main class="page hplay casino-page" data-casino-page="chapter">${top('campaign')}
- <header class="casino-heading"><span>CASINO · SCÉNARIO ${ch.number}</span><h1>${safe(ch.title)}</h1><p>${safe(ch.summary)}</p></header>
+ <header class="casino-heading"><span>HÉRITAGE · CAMPAGNE IV · SCÉNARIO ${ch.number}/3</span><h1>${safe(ch.title)}</h1><p>${safe(ch.summary)}</p></header>
  <div class="casino-chapter-stage"><figure class="casino-chapter-cover">${artwork(ch.image,'Affiche de '+ch.title)}</figure>
  <div class="casino-chapter-information"><section class="casino-public-note"><strong>PRÉPARATION CONFIDENTIELLE</strong><span>Les identités criminelles et les dossiers d’enquête seront attribués à partir des noms des joueurs. Aucun prénom imposé ne remplace celui d’un participant. Les informations du bureau et du casino resteront séparées côté serveur.</span></section>
  <section class="casino-phases"><h2>Progression · ${ch.phases.length} phases</h2>${phases}</section></div></div>
  <div class="casino-launch casino-chapter-launch"><button class="casino-action casino-launch-button" type="button" data-casino-live>JOUER LA CAMPAGNE</button><p>Les trois scénarios se suivent dans l’ordre. Une partie en cours reprend automatiquement au bon chapitre.</p></div>
  </main>`)}
-function patchHub(){const hub=$('.hplay-hub-grid')||$('.heritage-campaign-grid');if(!hub||hub.querySelector('[data-casino-nav="campaign"]'))return;
- const card=document.createElement('button');card.type='button';card.className='hplay-campaign-card casino-entry';card.dataset.casinoNav='campaign';card.innerHTML=`${artwork('campagne.webp')}<span class="hplay-campaign-body"><em>MACAO · TRIADES · PÈGRE INTERNATIONALE</em><strong>CASINO</strong><small>Guerre de succession, jeux, accords et enquête internationale.</small><span class="hplay-campaign-foot"><b>3 SCÉNARIOS</b><i>EXPLORER →</i></span></span>`;
- hub.appendChild(card);
+function patchHub(){
+ const hub=$('.hplay-hub-grid')||$('.heritage-campaign-grid');if(!hub)return;
+ let card=hub.querySelector('[data-casino-nav="campaign"]');
+ if(!card){
+   card=document.createElement('button');card.type='button';
+   card.className='hplay-campaign-card casino-entry';card.dataset.casinoNav='campaign';
+   card.dataset.heritageSequence='4';card.setAttribute('aria-label','CASINO — quatrième campagne HÉRITAGE, trois scénarios');
+   card.innerHTML=`${artwork('campagne.webp')}<span class="hplay-campaign-body"><em>CAMPAGNE IV · MACAO · YONGHE</em><strong>CASINO</strong><small>Poker, enquêtes, alliances et succession. Trois scénarios autonomes, 7 à 12 joueurs.</small><span class="hplay-campaign-foot"><b>3 SCÉNARIOS · 8 PHASES</b><i>EXPLORER →</i></span></span>`;
+ }
+ // Other runtimes insert MAÎTRE asynchronously. Reorder only when required:
+ // CENDRES → KUROI → MAÎTRE → CASINO, never duplicate a card or lose its click handler.
+ const maitre=hub.querySelector('[data-maitre-open="campaign"]');
+ if(maitre){
+   if(maitre.nextElementSibling!==card)maitre.insertAdjacentElement('afterend',card);
+ }else if(hub.lastElementChild!==card)hub.appendChild(card);
 }
 // The standard Join button already detects Casino invitation codes.
 function patchJoin(){const input=$('#joinCode');if(input)input.maxLength=10;}

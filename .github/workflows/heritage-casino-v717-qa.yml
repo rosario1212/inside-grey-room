@@ -1,0 +1,39 @@
+name: Heritage Casino v717 QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'heritage-casino-v91.js'
+      - 'casino-client-v105.js'
+      - 'casino/**'
+      - 'scripts/casino-heritage-v717-audit-check.mjs'
+      - 'docs/heritage/casino-audit-v717.md'
+      - '.github/workflows/heritage-casino-v717-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'heritage-casino-v91.js'
+      - 'casino-client-v105.js'
+      - 'casino/**'
+      - 'scripts/casino-heritage-v717-audit-check.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  casino-audit:
+    name: CASINO Heritage order and safety audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify browser scripts and server-only authority
+        run: |
+          set -euo pipefail
+          node --check heritage-casino-v91.js
+          node --check casino-client-v105.js
+          node scripts/casino-heritage-v717-audit-check.mjs
+          node scripts/casino-foundation-check.mjs
+          node scripts/casino-runtime-check.mjs
