@@ -327,7 +327,7 @@ try{
     const markup=[];
     for(const item of assets){
       const foreground=await toData(item.full);
-      markup.push('<article class="scenario scenario--art scenario--compact '+item.klass+'"><div class="scenario-thumb compact">'+
+      markup.push('<article id="scenario-'+item.name.slice(0,3)+'" class="scenario scenario--art scenario--compact '+item.klass+'"><div class="scenario-thumb compact">'+
         '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
         '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
         '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
@@ -364,15 +364,16 @@ try{
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
-          if(/^(001|006)/.test(name)){
-            assert(deviation<=.025,width+'px '+name+': the Base 9:16 family poster is the wrong ratio '+JSON.stringify(m));
+          if(/^(00[1-8]|0(?:09|1[0-9]|20))/.test(name)){
+            assert(deviation<=.025,width+'px '+name+
+              ': base source ratio differs from its allocated poster frame (letterbox/vignette) '+JSON.stringify(m));
           }
           if(/^(029|030|031)/.test(name)){
             assert(deviation<=.015,width+'px '+name+': Cartel artwork must fit 724:960 without distortion '+JSON.stringify(m));
           }
         }
       }
-      if(width===390)await page.screenshot({path:path.join(report,'catalog-v11-real-family-artwork.png'),fullPage:true});
+      if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-original-ratios.png'),fullPage:true});
     }
   });
 
