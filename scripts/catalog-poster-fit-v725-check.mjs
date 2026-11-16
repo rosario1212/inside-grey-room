@@ -89,5 +89,5 @@ for(const id of ['029','030','031']){
  assert(existsSync(file),file+' missing');
  assert(read(file).includes('width="724" height="960"'),file+' ratio');
 }
-assert(read('index.html').includes('catalog-descriptions-v1.css?v=v727-one-gabarit-30words-20261116'));
+assert(read('index.html').includes('catalog-descriptions-v1.css?v=v727-uniform-base-and-dlc-layout-30words-20261116'));
 console.log('PASS v727: 001–020 one poster frame, 021–034 separate families, no dead gaps, 30-word caps.');
