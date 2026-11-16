@@ -251,7 +251,7 @@ begin
  '029_branch_resolved',true,'029_witness4_resolved',true,
  '029_collective_v723',collective_v723,'029_votes_cast',votes_cast,
  '029_votes_required',electorate);
-end $function$
+end $function$;
 
 
 -- Keep the final public instruction accurate for both historical and newly
@@ -372,7 +372,7 @@ begin
       end
     end
   );
-end$function$
+end$function$;
 
 
 -- Protect other cases and historical 029 sessions by default (flag absent).
