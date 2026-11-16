@@ -51,7 +51,7 @@ ok(files.nav.includes('forgetHomePosition()'),'Legacy Accueil coordinates must b
 ok(files.navCss.includes('.igr-universal-dock .igr-dock-home{right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important'),'Accueil must be anchored bottom-right');
 ok(files.navCss.includes('body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging){width:46px!important'),'Dock controls must minimize on scroll');
 ok(files.navCss.includes('body.igr-dock-scrolling .igr-dock-pill:not(.is-dragging) b{display:none!important}'),'Dock text must hide on scroll');
-ok(files.nav.includes("setTimeout(()=>document.body.classList.remove('igr-dock-scrolling'),360)"),'Dock controls must expand again after scrolling stops');
+ok(files.nav.includes("document.body.classList.remove('igr-dock-scrolling','igr-catalogue-scrolled')")&&files.nav.includes("},430);"),'Dock controls must expand again after 430ms of scroll inactivity');
 
 // Notifications remain recorded by notifications-v12.js, but the bell itself
 // is only exposed when the server says the game is actually playing.
