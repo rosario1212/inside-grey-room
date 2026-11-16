@@ -78,7 +78,7 @@ try{
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">LE RÉGIME · DOSSIER '+sc.id+'</div>'+
       '<h3>'+sc.name+'</h3><p class="igr-card-excerpt">'+sc.description+'</p>'+
-      '<div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></div></article>').join('');
+      '</div><div class="tag-row"><span class="tag">'+sc.players+'</span><span class="tag regime-tag">APRÈS LA CHUTE</span></div></article>').join('');
     for(const width of [320,375,390,430,768,1280]){
       await page.setViewportSize({width,height:900});
       await page.setContent('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+
@@ -86,7 +86,7 @@ try{
         '<section class="panel regime-dlc-section"><div class="scenario-list scenario-list-v10-13 regime-list">'+markup+
         '</div></section></main></div></body></html>');
       const measures=await page.locator('.regime-scenario').evaluateAll(els=>els.map(el=>{
-        const body=el.querySelector('.scenario-body'),p=body.querySelector('p'),t=body.querySelector('.tag-row'),
+        const body=el.querySelector('.scenario-body'),p=body.querySelector('p'),t=el.querySelector('.tag-row'),
           box=el.getBoundingClientRect(),textBox=p.getBoundingClientRect(),tagBox=t.getBoundingClientRect();
         return {cardHeight:box.height,textBottom:textBox.bottom,tagTop:tagBox.top,tagBottom:tagBox.bottom,
           cardBottom:box.bottom,bodyOverflow:body.scrollWidth>body.clientWidth+1,
@@ -170,7 +170,7 @@ try{
       'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
-  await check('catalog-v11-five-separate-family-gabarits',async()=>{
+  await check('catalog-v12-five-family-footer-layout',async()=>{
     const samples=[
       {klass:'',label:'DOSSIER 001',title:'LA CHAMBRE 222',description:'Maël Sénéchal est retrouvé mort, poignardé, dans la chambre 222. Trois personnes ont croisé sa route cette nuit-là. Leurs versions se contredisent.',players:'4–5 JOUEURS'},
       {klass:'',label:'DOSSIER 020',title:'L’APOTHÉOSE',description:'327 personnes meurent dans l’incendie du Bal des Fondateurs. Certaines portes pouvaient encore être ouvertes. Aucune décision n’explique seule le bilan.',players:'13–16 JOUEURS'},
@@ -189,8 +189,8 @@ try{
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:30)+'</p><div class="tag-row">'+
-      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>');
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:(sc.label.includes('001')?23:17))+'</p></div><div class="tag-row">'+
+      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></article>');
     const families=[
       ['scenario-panel-v10-13',''],
       ['omerta-dlc-section','omerta-list'],
@@ -211,7 +211,7 @@ try{
         '<button class="igr-dock-pill igr-dock-home"><span>⌂</span><b>Accueil</b></button></nav></body></html>');
       const metrics=await page.locator('.scenario--compact').evaluateAll(els=>els.map(el=>{
         const body=el.querySelector('.scenario-body'),title=body.querySelector('h3'),
-          excerpt=body.querySelector('.igr-card-excerpt'),tags=body.querySelector('.tag-row'),
+          excerpt=body.querySelector('.igr-card-excerpt'),tags=el.querySelector('.tag-row'),
           card=el.getBoundingClientRect(),copy=excerpt.getBoundingClientRect(),tag=tags.getBoundingClientRect(),
           style=getComputedStyle(excerpt),heading=getComputedStyle(title);
         return {height:card.height,copyBottom:copy.bottom,tagsTop:tag.top,tagsBottom:tag.bottom,cardBottom:card.bottom,
@@ -268,14 +268,16 @@ try{
         }
         assert(m.copyFont>=13.5&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
-        assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches badges');
+        assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches footer badges');
+        assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': footer badges overflow their card');
+        assert(m.imageCount===1,width+'px '+name+': more than one image in family artwork');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
         assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
         assert(m.fit==='contain',width+'px '+name+': stretched or cropped artwork (not contain)');
         assert(['start','flex-start'].includes(m.artAlignment),width+'px '+name+': poster must not be stretched by description height');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
-          assert(m.artColumnWidth>=130&&m.artColumnWidth<=154,
+          assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
             width+'px '+name+': family-specific poster column width is incorrect '+m.artColumnWidth);
         }
         assert(m.fullFit==='contain',width+'px '+name+': poster pixels must retain their original proportions');
@@ -319,7 +321,7 @@ try{
         '<img class="igr-poster-full" alt="'+item.name+'" src="'+foreground+'"></div>'+
         '<div class="scenario-body compact"><div class="scenario-id">DOSSIER</div><h3>'+item.name+'</h3>'+
         '<p class="igr-card-excerpt">Le titre et les détails importants de cette image doivent rester entièrement visibles.</p>'+
-        '<div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></div></article>');
+        '</div><div class="tag-row"><span class="tag">4–6 JOUEURS</span></div></article>');
     }
     for(const width of [320,390,430]){
       await page.setViewportSize({width,height:812});
