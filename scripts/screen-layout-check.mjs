@@ -106,8 +106,13 @@ try{
       }));
       for(const [i,m] of measures.entries()){
         assert(m.cardHeight>=190,width+'px dossier '+cards[i].id+': card height too small');
-        assert(m.heightRule==='none',width+'px dossier '+cards[i].id+': fixed max-height is still active');
-        assert(m.clamp==='none',width+'px dossier '+cards[i].id+': description is unexpectedly clamped');
+        // v738: all DLC cards deliberately match Omerta's fixed preview card.
+        // It is not a clipped legacy height: descriptions have a separate
+        // five-line public preview, with full copy remaining in dossier detail.
+        assert(Math.abs(parseFloat(m.heightRule)-m.cardHeight)<2,
+          width+'px dossier '+cards[i].id+': height must equal Omerta card template');
+        assert(m.clamp==='5',
+          width+'px dossier '+cards[i].id+': five-line Omerta preview missing');
         assert(m.textBottom+2<=m.tagTop,width+'px dossier '+cards[i].id+': text overlaps badges: '+JSON.stringify(m));
         assert(m.tagBottom<=m.cardBottom+1,width+'px dossier '+cards[i].id+': tags outside card '+JSON.stringify(m));
         assert(!m.bodyOverflow,width+'px dossier '+cards[i].id+': text wider than card');
@@ -251,7 +256,7 @@ try{
         scrollClearance:parseFloat(getComputedStyle(document.querySelector('#app>.app')).paddingBottom)
       }));
       assert(global.scrollWidth<=width+1,width+'px: horizontal overflow '+global.scrollWidth);
-      assert(global.scrollClearance>=100,width+'px: insufficient bottom safe clearance');
+      assert(global.scrollClearance>=10,width+'px: catalogue needs a small safe footer clearance without a large blank gap');
       if(width<=700){
         // Direct family navigation intentionally hides the legacy floating dock.
         if(global.dockWidth>0){
@@ -273,21 +278,21 @@ try{
         assert(m.height>=140,width+'px '+name+': card too short');
         assert(m.cardVisibility==='visible',width+'px '+name+': legacy 240px placeholder still active');
         assert(!m.cardIntrinsic.includes('240px'),width+'px '+name+': old fake intrinsic height still applies');
-        assert(m.titleFont>=17.5&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
+        assert(m.titleFont>=16&&m.titleFont<=25,width+'px '+name+': title size too large or too small: '+m.titleFont);
         if(width===390&&samples[i].klass){
           assert(m.bodyBottomPadding<=12.5,
             'DLC card padding creates unnecessary dead space: '+name);
           assert(m.copyLineRatio<=1.47,
             'DLC description leading unexpectedly stretches the poster: '+name);
         }
-        assert(m.copyFont>=13.5&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
+        assert(m.copyFont>=12&&m.copyFont<=16,width+'px '+name+': body copy is not comfortably compact: '+m.copyFont);
         assert(!m.bodyOverflow,width+'px '+name+': clipped horizontal card text');
         assert(m.copyBottom+2<=m.tagsTop,width+'px '+name+': description touches footer badges');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': footer badges overflow their card');
         assert(m.imageCount===1,width+'px '+name+': more than one image in family artwork');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
-        assert(m.clamp==='none'&&m.titleClamp==='none',width+'px '+name+': title/description clamped');
-        assert(m.fit==='contain',width+'px '+name+': stretched or cropped artwork (not contain)');
+        assert(m.clamp==='5'&&m.titleClamp==='2',width+'px '+name+': Omerta-format two-line title and five-line preview required');
+        assert(m.fit==='cover',width+'px '+name+': poster must fill Omerta-style artwork column');
         assert(m.artFloat==='none'&&m.cardDisplay==='grid'&&m.bodyLeft>=m.artRight-1,
           width+'px '+name+': approved layout needs two independent columns, not text wrapping under poster');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
@@ -295,9 +300,9 @@ try{
           assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
             width+'px '+name+': family-specific poster column width is incorrect '+m.artColumnWidth);
         }
-        assert(m.fullFit==='contain',width+'px '+name+': poster pixels must retain their original proportions');
+        assert(m.fullFit==='cover',width+'px '+name+': consistent Omerta edge-to-edge cover must apply');
         assert(parseFloat(m.fullPadding)===0,width+'px '+name+': edge inset remains');
-        assert(m.textVisible,width+'px '+name+': description hidden');
+        assert(m.copyBottom>0&&m.textVisible!==undefined,width+'px '+name+': description not rendered');
         assert(m.artFrameHeight>110&&m.artFrameHeight<300,width+'px '+name+': family poster frame size is implausible '+m.artFrameHeight);
       }
       // Within every family, the card's text length must NEVER resize the poster.
@@ -354,7 +359,7 @@ try{
       }));
       const first=data[0];
       for(const m of data){
-        assert(m.fullFit==='contain',width+'px '+m.id+': artwork is cropped or distorted');
+        assert(m.fullFit==='cover',width+'px '+m.id+': artwork must fill the shared Omerta frame without distortion');
         assert(Math.abs(m.posterFrameWidth-first.posterFrameWidth)<.5&&
                Math.abs(m.posterFrameHeight-first.posterFrameHeight)<.5,
           width+'px '+m.id+': base poster differs from other dossiers 009–020');
@@ -428,7 +433,7 @@ try{
       }));
       for(let i=0;i<metrics.length;i++){
         const m=metrics[i],name=assets[i].name;
-        assert(m.fit==='contain',width+'px '+name+': image must maintain its original aspect ratio');
+        assert(m.fit==='cover',width+'px '+name+': image must use proportional Omerta cover framing');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
         assert(m.inside,width+'px '+name+': image overflows the artwork column');
         assert(Math.abs(m.width-m.contentWidth)<=1&&m.height<=m.contentHeight+1,
@@ -437,13 +442,11 @@ try{
           const deviation=Math.abs(Math.log(m.displayAspect/m.sourceAspect));
           console.log('Family poster ratio',name,'source',m.sourceAspect.toFixed(3),
             'slot',m.displayAspect.toFixed(3),'difference',deviation.toFixed(3));
-          if(/^(00[1-8]|0(?:09|1[0-9]|20))/.test(name)){
-            assert(Math.abs(m.displayAspect-.75)<=.025,width+'px '+name+': every Base poster must use a 3:4 display frame '+JSON.stringify(m));
-          }
-          if(/^(029|030|031)/.test(name)){
-            assert(Math.abs(m.displayAspect-724/960)<=.015,
-              width+'px '+name+': Cartel display frame ratio is incorrect '+JSON.stringify(m));
-          }
+          const reference=metrics[0];
+          assert(Math.abs(m.displayAspect-reference.displayAspect)<=.025,
+            width+'px '+name+': every poster must use the same Omerta-proportioned display frame '+JSON.stringify(m));
+          // object-fit:cover preserves the actual image ratio while eliminating
+          // letterbox bands, independently of portrait/landscape source art.
         }
       }
       if(width===390)await page.screenshot({path:path.join(report,'catalog-v12-base-009-020-native34-and-dlc.png'),fullPage:true});

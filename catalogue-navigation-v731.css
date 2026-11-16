@@ -302,7 +302,8 @@ body:has(#app .page-create-v10-13) #app::after{display:none!important}
   --igr-card-art-width:clamp(113px,34vw,145px);
 }
 #app .page-create-v10-13 .scenario-panel-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
-  max-height:228px!important;
+  /* The old 228px cap overrode v737 on 320px screens and left a black strip. */
+  max-height:100%!important;
 }
 #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact .scenario-body.compact{
   min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
@@ -450,4 +451,252 @@ body.igr-scenario-browser:has(#app .page-create-v10-13) :is(#igrDockFilters,#igr
     font-size:18px!important;
     line-height:1!important;
   }
+}
+
+/* v737 — OMERTÀ IS THE CARD-GEOMETRY MASTER FOR ALL 34 DOSSIERS.
+   Keep every collection's own ink, border, title face and case artwork.
+   Only the card composition is shared. The earlier "tallest of 20" grid
+   created huge dark poster gutters for classics and mismatched Cartel. */
+#app .page-create-v10-13{
+  --igr-omerta-card-height:228px;
+  --igr-omerta-art-width:clamp(120px,37vw,159px);
+}
+#app .page-create-v10-13 .scenario-list-v10-13:has(> article.scenario.scenario--art.scenario--compact){
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-auto-rows:var(--igr-omerta-card-height)!important;
+  align-items:stretch!important;
+  gap:12px!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+  --igr-card-art-width:var(--igr-omerta-art-width);
+  --igr-card-art-ratio:3/4;
+  --igr-card-body-padding:11px;
+  --igr-card-heading:clamp(1.08rem,4.6vw,1.37rem);
+  --igr-card-copy:clamp(.79rem,3.5vw,.91rem);
+  --igr-card-label:clamp(.56rem,2.35vw,.65rem);
+  --igr-card-line:1.34;
+  display:grid!important;
+  grid-template-columns:var(--igr-omerta-art-width) minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  align-items:stretch!important;
+  justify-items:stretch!important;
+  width:100%!important;
+  height:var(--igr-omerta-card-height)!important;
+  min-height:var(--igr-omerta-card-height)!important;
+  max-height:var(--igr-omerta-card-height)!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border-radius:17px!important;
+}
+/* One full-height, edge-to-edge Omerta-style poster column for all families.
+   A consistent proportional cover crop removes the ugly empty bands. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact{
+  grid-column:1!important;
+  grid-row:1!important;
+  position:relative!important;
+  align-self:stretch!important;
+  justify-self:stretch!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex-direction:column!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:0!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
+  position:absolute!important;
+  z-index:1!important;
+  display:block!important;
+  inset:0!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  flex:none!important;
+  align-self:auto!important;
+  margin:0!important;
+  padding:0!important;
+  aspect-ratio:auto!important;
+  /* Cover fills the artwork column exactly as on Omerta; no black bands.
+     Only a small outer crop is permitted, never stretch or letterbox. */
+  object-fit:cover!important;
+  object-position:center center!important;
+  border:0!important;
+  transform:none!important;
+}
+/* Same information structure as Omertà, not the old vertically-centered
+   stretched 001–020 cards. Longer summaries stay inside the preview. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact{
+  grid-column:2!important;
+  grid-row:1!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  padding:var(--igr-card-body-padding)!important;
+  gap:0!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact .scenario-id{
+  font-size:var(--igr-card-label)!important;
+  line-height:1.3!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact h3{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  line-clamp:2!important;
+  overflow:hidden!important;
+  max-height:2.35em!important;
+  height:auto!important;
+  min-height:0!important;
+  font-size:var(--igr-card-heading)!important;
+  line-height:1.14!important;
+  margin:5px 0 8px!important;
+  text-wrap:pretty!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > p.igr-card-excerpt{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:5!important;
+  line-clamp:5!important;
+  flex:0 1 auto!important;
+  overflow:hidden!important;
+  width:100%!important;
+  max-height:none!important;
+  min-height:0!important;
+  height:auto!important;
+  font-size:var(--igr-card-copy)!important;
+  line-height:var(--igr-card-line)!important;
+  margin:0!important;
+  padding:0!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > .tag-row{
+  display:flex!important;
+  flex:0 0 auto!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  gap:5px!important;
+  margin:auto 0 0!important;
+  padding:8px 0 0!important;
+  overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-body.compact > .tag-row > .tag{
+  display:inline-flex!important;
+  flex:0 1 auto!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  min-width:0!important;
+  min-height:22px!important;
+  max-width:100%!important;
+  padding:3px 6px!important;
+  font-size:clamp(.51rem,2.1vw,.59rem)!important;
+  line-height:1.2!important;
+  letter-spacing:0!important;
+}
+/* Small phones need a slightly taller Omertà-format card because 20-character
+   headings wrap at ~320 CSS pixels. Every card remains exactly that height. */
+@media(max-width:374px){
+  #app .page-create-v10-13{
+    --igr-omerta-card-height:242px;
+    --igr-omerta-art-width:clamp(108px,36vw,124px);
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+    --igr-card-body-padding:9px;
+    --igr-card-copy:.77rem;
+    --igr-card-heading:1.06rem;
+  }
+}
+@media(min-width:700px){
+  #app .page-create-v10-13{
+    --igr-omerta-card-height:244px;
+    --igr-omerta-art-width:clamp(148px,23vw,178px);
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13 > article.scenario.scenario--art.scenario--compact{
+    --igr-card-body-padding:15px;
+    --igr-card-copy:.90rem;
+    --igr-card-heading:1.32rem;
+  }
+}
+
+/* v738 — recover the established two-column desktop catalogue. */
+@media(min-width:1024px){
+  #app .page-create-v10-13 .scenario-list-v10-13:has(> article.scenario.scenario--art.scenario--compact){
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-rows:var(--igr-omerta-card-height)!important;
+  }
+  #app .page-create-v10-13{
+    --igr-omerta-art-width:clamp(150px,14vw,185px);
+  }
+}
+/* Preserve the full artwork column even when an older family supplies
+   an image max-height cap; every family now uses the same poster treatment. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact > .scenario-thumb.compact > img.igr-poster-full{
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  object-fit:cover!important;
+}
+
+/* Omerta-format panels need room for five synopsis lines plus two badges
+   at modern iPhone widths, without badges colliding with description. */
+@media(min-width:375px) and (max-width:699px){
+  #app .page-create-v10-13{--igr-omerta-card-height:252px}
+}
+/* v738b — override legacy dock sizes with a selector more specific than
+   the original #igrUniversalDock/#igrDockFilters layout declarations. */
+body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
+  #igrUniversalDock :is(#igrDockFilters,#igrDockHome){
+  box-sizing:border-box!important;
+  transition:none!important;
+  display:inline-flex!important;
+  width:44px!important;
+  min-width:44px!important;
+  max-width:44px!important;
+  flex-basis:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  padding:0!important;
+  gap:0!important;
+}
+body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
+  #igrUniversalDock :is(#igrDockFilters,#igrDockHome) b{
+  display:none!important;
 }

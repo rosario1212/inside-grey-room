@@ -73,11 +73,11 @@ function closeFilters(){
   const nav=document.querySelector('#app .igr-scenario-filters');nav?.classList.remove('is-dock-open');document.body.classList.remove('igr-filter-dock-open');document.getElementById('igrDockFilters')?.setAttribute('aria-expanded','false');
 }
 function updateCatalogueScrollState(){
-  // Compact while browsing lower cards; restore labels only near the top.
+  // Compact ONLY during active scrolling, not persistently while down the page.
   const catalogue=!!scenarioPage()&&!isHome()&&
     !!document.querySelector('#app .page-create-v10-13');
-  const y=Math.max(window.scrollY||0,document.documentElement?.scrollTop||0);
-  document.body.classList.toggle('igr-catalogue-scrolled',catalogue&&y>90);
+  document.body.classList.toggle('igr-catalogue-scrolled',
+    catalogue&&document.body.classList.contains('igr-dock-scrolling'));
 }
 function goToVisibleCollections(){
   const page=document.querySelector('#app .page-create-v10-13');
@@ -159,10 +159,16 @@ function schedule(){
   if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()});
 }
 function onScroll(){
-  updateCatalogueScrollState();
-  if(isHome()||(!scenarioPage()&&!isProfile()))return;
+  if(isHome()||(!scenarioPage()&&!isProfile())){
+    document.body.classList.remove('igr-dock-scrolling','igr-catalogue-scrolled');
+    return;
+  }
   document.body.classList.add('igr-dock-scrolling');
-  clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>document.body.classList.remove('igr-dock-scrolling'),360);
+  updateCatalogueScrollState();
+  clearTimeout(scrollTimer);
+  scrollTimer=setTimeout(()=>{
+    document.body.classList.remove('igr-dock-scrolling','igr-catalogue-scrolled');
+  },430);
 }
 function boot(){
   forgetHomePosition();
