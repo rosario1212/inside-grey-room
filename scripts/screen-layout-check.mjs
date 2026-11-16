@@ -196,7 +196,7 @@ try{
     const codeStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
-    const cards=samples.map(sc=>'<article id="scenario-'+(sc.label.match(/\\d{3}/)?.[0]||'000')+'" class="scenario scenario--art scenario--compact '+sc.klass+'">'+
+    const cards=samples.map(sc=>'<article id="scenario-'+(sc.label.match(/\d{3}/)?.[0]||'000')+'" class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
       '</h3><p class="igr-card-excerpt">'+preview(sc.description,30)+'</p><div class="tag-row">'+
