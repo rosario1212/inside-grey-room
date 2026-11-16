@@ -189,3 +189,109 @@
 @media(prefers-reduced-motion:reduce){
   .igr-v13-return-target{transition:none!important}
 }
+
+
+/* V721: selection cards and fixed ratings (included in existing production CSS) */
+/* Stable role-selection layout. Buttons choose; disclosure panels reveal full guidance. */
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-grid{gap:10px!important;align-items:start}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option{
+ min-width:0;display:flex;flex-direction:column;overflow:hidden;border-radius:16px;
+ background:var(--igr-lobby-card,#11171c);border:1px solid var(--igr-lobby-line,rgba(255,255,255,.16));
+ transition:border-color .14s ease,background-color .14s ease
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option:has(>.role-choice-card.selected){
+ border-color:var(--igr-lobby-selected-line,rgba(183,205,222,.7));
+ background:var(--igr-lobby-selected,#1b2935)
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option:has(>.role-choice-card.full){opacity:.72}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card:not(.random-role-card){
+ box-sizing:border-box!important;width:100%;min-height:104px!important;height:auto!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important;
+ align-content:start!important;align-items:start!important;justify-content:normal!important;
+ padding:13px 13px 7px!important;border:0!important;box-shadow:none!important;
+ background:transparent!important;border-radius:0!important;opacity:1!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card>span{
+ min-width:0!important;width:100%;display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;gap:6px!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card>span>b{
+ font-size:18px!important;line-height:1.22!important;letter-spacing:-.02em
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card small{
+ display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+ overflow:hidden!important;font-size:12.5px!important;line-height:1.4!important;
+ color:#bbc3ca!important;overflow-wrap:break-word
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card em{
+ min-width:67px!important;max-width:88px!important;min-height:34px!important;
+ padding:6px 8px!important;margin:0!important;justify-self:end!important;align-self:start!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ font-size:11px!important;line-height:1.2!important;letter-spacing:.02em!important;
+ text-align:center!important;white-space:normal!important;border-radius:10px!important;
+ font-variant-numeric:tabular-nums
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option .igr50-activity{
+ display:inline-flex!important;flex:none!important;width:max-content!important;max-width:100%!important;
+ margin:2px 0 0!important;padding:5px 8px!important;border-radius:8px!important;
+ border:1px solid rgba(192,158,110,.36)!important;background:rgba(146,107,58,.13)!important;
+ color:#ddc29e!important;font-size:10px!important;line-height:1.2!important;
+ font-weight:700!important;letter-spacing:.04em!important;white-space:nowrap!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-more{
+ margin-top:auto;min-width:0;padding:0 12px;
+ border-top:1px solid rgba(255,255,255,.065);color:#bcc4cb
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary{
+ display:flex;justify-content:space-between;align-items:center;min-height:36px;
+ list-style:none;cursor:pointer;padding:7px 2px;font-size:11.5px;font-weight:650;
+ touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+ color:var(--igr-lobby-accent,#aebecb)
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary::-webkit-details-marker{display:none}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary::after{content:"⌄";font-size:17px;line-height:1;transition:transform .12s}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-more[open]>summary::after{transform:rotate(180deg)}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-more p{
+ margin:0 0 13px!important;padding-top:2px;font-size:13px!important;line-height:1.48!important;
+ color:#c4cbd1!important;overflow-wrap:anywhere
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary:focus-visible,
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card:focus-visible{
+ outline:2px solid var(--igr-lobby-accent,#b4c5d2)!important;outline-offset:-3px!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-zone .random-role-card{
+ min-height:80px!important;padding:13px 14px!important;gap:12px!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-zone .random-role-card small{
+ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+ font-size:12.5px!important;line-height:1.4!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-zone .role-choice-help{
+ margin:10px 0 12px!important;font-size:12.5px!important;line-height:1.48!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-zone.igr-role-selecting .role-choice-card[data-role-id]{
+ pointer-events:none!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .role-choice-card.igr-role-pending em::after{content:" …"}
+@media(min-width:960px){
+ #app .lobby-v11[data-igr-lobby-theme] .role-choice-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .random-role-card{grid-column:1/-1}
+}
+@media(max-width:430px){
+ #app .lobby-v11[data-igr-lobby-theme] .role-choice-zone{padding:12px!important}
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card:not(.random-role-card){
+  grid-template-columns:minmax(0,1fr) auto!important;padding:13px 12px 6px!important
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card>span>b{
+  font-size:17px!important
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card em{
+  min-width:62px!important;max-width:79px!important
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option,
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary::after{transition:none!important}
+}
