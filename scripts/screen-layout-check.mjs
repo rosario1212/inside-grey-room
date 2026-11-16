@@ -160,7 +160,7 @@ try{
       'Opening a dossier must still display its complete context');
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
-      assert(source.includes('scenarioCardTeaser(sc.short,19)'),file+': public DLC cards must use 19 words');
+      assert(source.includes('scenarioCardTeaser(sc.short,28)'),file+': public DLC cards must support fuller 28-word summaries');
       assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
         file+': every DLC rendering pathway must show one image without a vignette');
     }
@@ -170,7 +170,7 @@ try{
       'Classic cards must load their original artwork, not a thumbnail crop');
   });
 
-  await check('catalog-v12-five-family-footer-layout',async()=>{
+  await check('catalog-v726-five-family-inline-player-count',async()=>{
     const samples=[
       {klass:'',label:'DOSSIER 001',title:'LA CHAMBRE 222',description:'Maël Sénéchal est retrouvé mort, poignardé, dans la chambre 222. Trois personnes ont croisé sa route cette nuit-là. Leurs versions se contredisent.',players:'4–5 JOUEURS'},
       {klass:'',label:'DOSSIER 006',title:'LES CENDRES DU CHALET',description:'Cinq ans après la mort de Noé lors d’une randonnée, une ancienne vidéo bouleverse les témoignages de ses trois amis.',players:'4–5 JOUEURS'},
@@ -189,7 +189,7 @@ try{
     const cards=samples.map(sc=>'<article class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?19:(sc.label.includes('001')?23:17))+'</p></div><div class="tag-row">'+
+      '</h3><p class="igr-card-excerpt">'+preview(sc.description,sc.klass?28:(sc.label.includes('001')?23:30))+'</p></div><div class="tag-row">'+
       '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></article>');
     const families=[
       ['scenario-panel-v10-13',''],
@@ -299,7 +299,7 @@ try{
   });
 
 
-  await check('catalog-v12-base-009-020-uniform-full-posters',async()=>{
+  await check('catalog-v726-base-009-020-inline-player-count',async()=>{
     const start=app.indexOf('const SCENARIOS = [');
     const end=app.indexOf('const SCENARIO_ROLES =',start);
     assert(start>=0&&end>start,'Cannot locate 001-020 canonical scenarios');
@@ -312,7 +312,7 @@ try{
     const cards=baseScenarios.map(sc=>'<article id="scenario-'+sc.id+'" class="scenario scenario--art scenario--compact" data-igr-scenario-id="'+sc.id+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" src="" alt=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">DOSSIER '+sc.id+'</div>'+
-      '<h3>'+sc.title+'</h3><p class="igr-card-excerpt">'+preview(sc.short,17)+'</p></div>'+
+      '<h3>'+sc.title+'</h3><p class="igr-card-excerpt">'+preview(sc.short,30)+'</p></div>'+
       '<div class="tag-row" aria-label="Informations du dossier">'+
       '<span class="tag">'+sc.min+'–'+sc.max+' JOUEURS</span><span class="tag">ENQUÊTE</span></div></article>').join('');
     for(const width of [320,375,390,430]){
@@ -330,6 +330,7 @@ try{
         return {id:el.dataset.igrScenarioId,posterWidth:poster.width,posterHeight:poster.height,
           posterBottom:poster.bottom,bodyBottom:body.bottom,footerTop:footer.top,footerBottom:footer.bottom,
           cardBottom:card.bottom,fullFit:style.objectFit,titleVisible:title.scrollWidth<=title.clientWidth+1,
+          posterRight:poster.right,footerLeft:footer.left,bodyWidth:body.width,
           footerWidth:footer.width,cardWidth:card.width,
           horizontalOverflow:el.scrollWidth>el.clientWidth+1};
       }));
@@ -339,11 +340,11 @@ try{
         assert(Math.abs(m.posterWidth-first.posterWidth)<.5&&
                Math.abs(m.posterHeight-first.posterHeight)<.5,
           width+'px '+m.id+': base poster differs from other dossiers 009–020');
-        assert(m.footerTop>=Math.max(m.bodyBottom,m.posterBottom)-1,
-          width+'px '+m.id+': badges overlap the poster or synopsis');
+        assert(m.footerTop>=m.bodyBottom-1,
+          width+'px '+m.id+': player count must follow synopsis, not overlap it');
         assert(m.footerBottom<=m.cardBottom+1,width+'px '+m.id+': badges escape the card');
-        assert(Math.abs(m.footerWidth-m.cardWidth)<=2,
-          width+'px '+m.id+': badge footer must span the whole card');
+        assert(Math.abs(m.footerWidth-m.bodyWidth)<=2&&m.footerLeft>=m.posterRight-1,
+          width+'px '+m.id+': player count must stay entirely inside the right text column');
         assert(m.titleVisible,width+'px '+m.id+': scenario title is clipped');
         assert(!m.horizontalOverflow,width+'px '+m.id+': card overflows horizontally');
       }
