@@ -257,11 +257,11 @@ const PACKS={
           bengoshi:['Une clause du dossier de sortie de l’Oyabun ordonne de conserver toute preuve impliquant la police dans un dépôt tiers.','Préserver une copie indépendante, même si le groupe choisit de rendre l’original.']
         },
         options:[
-          {id:'copy',title:'COPIE TIERS · ORIGINAL NÉGOCIÉ',detail:'Une copie indépendante est préservée avant toute négociation.',grade:2,consequence:'La vérité survit sans exposer immédiatement tout le clan.'},
-          {id:'police',title:'RENDRE À LA POLICE',detail:'Le registre retourne entièrement sous contrôle institutionnel.',grade:0,consequence:'Des pages disparaissent et la police reprend l’initiative.'},
-          {id:'clan',title:'GARDER AU CLAN',detail:'Kurokawa conserve le registre et refuse toute remise.',grade:1,consequence:'La preuve survit, mais la coopération avec la police devient hostile.'}
+          {id:'copy',title:'COPIE TIERS · ORIGINAL NÉGOCIÉ',detail:'Une copie est confiée à un dépositaire indépendant. Ce recours protège la preuve, mais expose les témoins et les activités non liées au meurtre à une enquête ultérieure.',grade:2,consequence:'Une preuve indépendante subsiste, mais le clan ne peut plus contrôler ce qu’une enquête ultérieure découvrira.'},
+          {id:'police',title:'RENDRE À LA POLICE',detail:'Une remise officielle peut protéger les témoins à court terme, mais concentre les pièces chez des agents potentiellement compromis.',grade:0,consequence:'Des pages disparaissent et la police reprend l’initiative.'},
+          {id:'clan',title:'GARDER AU CLAN',detail:'Le clan garde les preuves et protège ses sources, au prix de leur faible force probante devant une autorité extérieure.',grade:1,consequence:'La preuve survit, mais la coopération avec la police devient hostile.'}
         ],
-        reveal:'La police voulait utiliser Kurokawa pour récupérer une preuve qu’elle ne pouvait saisir sans s’exposer. Le registre relie les opérations officieuses au meurtre de l’Oyabun.',
+        reveal:'La police voulait utiliser Kurokawa pour récupérer une preuve qu’elle ne pouvait saisir sans s’exposer. Le registre établit des liens entre opérations officieuses, accès à la résidence et membres de la police. L’auteur du commandement doit encore être distingué des exécutants.',
         apply:{copy:{flag:'k3_correct',chron:'Une copie indépendante du registre est mise à l’abri.'},police:{flag:'k3_wrong',chron:'Le registre revient sous contrôle policier et plusieurs pages disparaissent.'},clan:{flag:'k3_partial',chron:'Kurokawa conserve le registre et rompt une partie de la coopération.'}}
       },
       4:{
@@ -276,12 +276,12 @@ const PACKS={
         ],
         secrets:{
           waka_k:['L’Oyabun avait décidé de rompre avec la police et de publier le dossier de sortie sous 72 heures.','Établir le mobile institutionnel.'],
-          kobun_k:['Tu es Daichi Ren. Tu as tué l’Oyabun après que Mori a invoqué ta dette et transmis “la demande du Commissaire”.','Décider si tu avoues avant que les autres reconstruisent la chaîne.'],
+          kobun_k:['Tu es Daichi Ren. Tu as tué l’Oyabun après que Mori a invoqué ta dette et transmis « la demande du Commissaire ». Tu sais ce que tu as fait, mais tu n’as jamais vu l’ordre écrit d’Ishida.','Décider si tu avoues avant que les autres reconstruisent la chaîne.'],
           waka_a:['Arakida possède une photo de Ren entrant par l’accès de service, mais aucune preuve de l’ordre.','Éviter qu’une preuve de l’exécutant efface les commanditaires.'],
           kobun_a:['Tu as vu Mori détruire une copie du journal d’accès après le meurtre.','Nommer la couverture séparément de l’ordre.'],
           commissaire:['Tu as ordonné que “le problème Kurokawa soit réglé avant vendredi”, sachant que Mori avait un levier sur Ren.','Maintenir une défense fondée sur l’ambiguïté des mots, si tu le peux.'],
           inspecteur:['Tu as transmis l’ordre, ouvert l’accès et effacé le journal. Tu n’as pas porté le coup.','Faire reconnaître les différents niveaux de responsabilité.'],
-          bengoshi:['L’enveloppe de l’Oyabun contient une note : “Ishida ordonne. Mori fait faire. Ren paie sa dette.”','Ne produire la note qu’après avoir entendu les versions de chacun.']
+          bengoshi:['L’enveloppe contient trois mentions non signées, consignées séparément : une instruction venant du cabinet, un accès attribué à Mori et un rendez-vous de Ren. La note ne prouve pas à elle seule qui a ordonné de tuer.','Ne produire la note qu’après avoir entendu les versions de chacun.']
         },
         options:[
           {id:'chain',title:'ISHIDA → MORI → REN',detail:'Ordre du Commissaire, facilitation de l’Inspecteur, exécution du Kobun.',grade:2,consequence:'La chaîne complète entre au Registre et prépare le Conseil final.'},
@@ -293,7 +293,7 @@ const PACKS={
       },
       5:{
         title:'LE CONSEIL',
-        briefing:'La vérité est connue. Le Conseil réunit Kurokawa, Arakida, la police et le Bengoshi. Il ne s’agit plus seulement de savoir qui a tué : il faut décider ce que devient une vérité capable de détruire plusieurs institutions.',
+        briefing:'Le Conseil réunit Kurokawa, Arakida, des représentants de la police et le Bengoshi. La cellule dispose d’un récit du meurtre, mais sa solidité dépend des preuves préservées et des décisions antérieures. Il faut choisir ce qui sera révélé, à qui et avec quelles garanties.',
         question:'Que fait le Conseil de la vérité ?',
         phases:[
           ['MÉMOIRE','Relisez les dettes et la Chronique. Ce qui s’est passé dans les dossiers précédents limite les options crédibles.'],
@@ -312,10 +312,10 @@ const PACKS={
         },
         options:[
           {id:'public',title:'VÉRITÉ PUBLIQUE',qualitative:true,detail:'Transmettre le dossier complet à une autorité indépendante et assumer les conséquences des deux côtés.',grade:2,consequence:'Fin — LA LUMIÈRE FROIDE : les institutions paient, la Famille se fracture mais la dette cesse d’être secrète.'},
-          {id:'internal',title:'JUSTICE INTERNE',qualitative:true,detail:'Ishida tombe, Ren assume, mais le dossier complet ne devient pas public.',grade:1,consequence:'Fin — LE SILENCE NÉGOCIÉ : la paix tient, mais une partie du système survit.'},
-          {id:'scapegoat',title:'BOUC ÉMISSAIRE',qualitative:true,detail:'Accuser Arakida et refermer le dossier.',grade:0,consequence:'Fin — LA DETTE CONTINUE : la guerre évitée aujourd’hui devient la prochaine dette.'}
+          {id:'internal',title:'JUSTICE INTERNE',qualitative:true,detail:'Ishida tombe, Ren assume, mais le dossier intégral reste confidentiel au terme d’une procédure interne contestable.',grade:1,consequence:'Fin — LE SILENCE NÉGOCIÉ : la paix tient, mais une partie du système survit.'},
+          {id:'scapegoat',title:'BOUC ÉMISSAIRE',qualitative:true,detail:'Attribuer officiellement le meurtre au clan rival pour préserver les dirigeants, malgré une chaîne de preuves contradictoire.',grade:0,consequence:'Fin — LA DETTE CONTINUE : le mensonge peut retarder une crise, mais le risque de représailles et de nouvelles obligations demeure.'}
         ],
-        reveal:'Il n’existe pas de fin sans coût. KUROI mesure ce que le groupe accepte de rendre public, de sacrifier et de transmettre à ceux qui restent.',
+        reveal:'Aucune décision du Conseil ne répare le meurtre. La valeur de chaque issue dépend des preuves conservées, des responsabilités établies et des personnes exposées.',
         apply:{public:{flag:'k5_public',chron:'Le dossier Kuroi est transmis à une autorité indépendante.'},internal:{flag:'k5_internal',chron:'Le Conseil impose une justice interne et maintient une partie du secret.'},scapegoat:{flag:'k5_scapegoat',chron:'Arakida devient le bouc émissaire officiel du meurtre.'}}
       }
     }
