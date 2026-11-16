@@ -30,6 +30,9 @@ if(process.argv[2]){
  const target=process.argv[2];
  assert(existsSync(target+'/terror-command-v694.js'),'live military panel missing from bundle');
  const entry=read(target+'/index.html');
- assert(/terror-v12-37(?:-[a-f0-9]{16})?\.js\?v=[^"']+/.test(entry),'current versioned TERREUR catalogue asset missing');
+ assert(entry.includes('terror-v12-37.js?v='),'current TERREUR catalogue asset version missing');
+ assert(intro.includes('terror-world-context')&&intro.includes('CONTEXTE DU CONFLIT')&&intro.includes('FRONT DE LA RESTAURATION'),'FDR context must be visible before Terror dossiers');
+ const terrorCss=read(target+'/terror-v12-40.css');
+ assert(terrorCss.includes('.terror-world-context')&&entry.includes('terror-v12-40.css?v='),'FDR context styling must ship with Terror catalogue');
 }
 console.log('PASS TERREUR v695: 9 sealed A/B/C variants, canonical source isolation, 20 authored (9 guaranteed, 11 optional), verdicts, officer and approved final copy.');
