@@ -19,7 +19,7 @@ for(const match of index.matchAll(/<link[^>]+rel="stylesheet"[^>]*>|<style[^>]*>
   else styles.push(await read(match[0].match(/href="([^"]+)"/)[1].split('?')[0]));
 }
 const css=styles.join('\n');
-const introMatch=index.match(/<div id="introGate"[\s\S]*?<\/button>\s*<\/div>/);
+const introMatch=index.match(/<div id="introGate"[\s\S]*?(?=\s*<div id="app")/);
 assert(introMatch,'Canonical entrance markup must exist');
 const introArt=await readFile(path.join(target,'assets/intro-v10-14.webp'));
 const introHtml=introMatch[0].replace(/src="[^"]+"/,`src="data:image/webp;base64,${introArt.toString('base64')}"`);
