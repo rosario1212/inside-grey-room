@@ -68,9 +68,9 @@
     '029':'assets/cartel-029-poster-v2.svg?v=v20261018-cartel-open-masthead-v7',
     '030':'assets/cartel-030-poster-v2.svg?v=v20261018-cartel-open-masthead-v7',
     '031':'assets/cartel-031-poster-v2.svg?v=v20261018-cartel-open-masthead-v7',
-    '032':'assets/regime-032-les-archives-du-palais.webp?v=12.37-final',
-    '033':'assets/regime-033-la-dynastie.webp?v=12.37-final',
-    '034':'assets/regime-034-les-noms-quils-portaient.webp?v=12.37-final'
+    '032':'assets/regime-032-les-archives-du-palais.webp?v=v753-regime-silver-fullbleed-20261117',
+    '033':'assets/regime-033-la-dynastie.webp?v=v753-regime-silver-fullbleed-20261117',
+    '034':'assets/regime-034-les-noms-quils-portaient.webp?v=v753-regime-silver-fullbleed-20261117'
   });
 
 

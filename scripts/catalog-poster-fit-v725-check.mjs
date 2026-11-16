@@ -85,10 +85,17 @@ for(let i=9;i<=20;i++)check('assets/scenario-'+String(i).padStart(3,'0')+'-v11-6
 for(const name of [
  'omerta-021-l-enveloppe','omerta-022-omerta','omerta-023-la-table',
  'omerta-024-il-pentito','omerta-025-il-don','terror-026-la-ville-tombe',
- 'terror-027-la-zone-rouge','terror-028-dernier-perimetre',
+ 'terror-027-la-zone-rouge','terror-028-dernier-perimetre'
+])check('assets/'+name+'.webp',1086,1448);
+// v753: new silver Le Régime posters have the native 16:25 ratio.
+for(const name of [
  'regime-032-les-archives-du-palais','regime-033-la-dynastie',
  'regime-034-les-noms-quils-portaient'
-])check('assets/'+name+'.webp',1086,1448);
+])check('assets/'+name+'.webp',480,750);
+const regimeLayout=read('catalogue-navigation-v731.css');
+assert(regimeLayout.includes('/* v753 — LE RÉGIME 032–034'),'Missing native-poster CSS');
+assert(regimeLayout.includes('grid-template-columns:calc(var(--igr-omerta-card-height) * .64)'),'Native image ratio missing');
+assert(regimeLayout.includes('object-fit:cover!important'),'No full-bleed poster style');
 for(const id of ['029','030','031']){
  const file='assets/cartel-'+id+'-poster-v2.svg';
  assert(existsSync(file),file+' missing');
