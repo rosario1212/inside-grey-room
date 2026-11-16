@@ -62,7 +62,13 @@
     if(!isOmerta(currentScenario()))return prevChooseRole(role);
     try{
       const out=await rpc('igr_omerta_choose_role',{p_code:STATE.room,p_player_token:STATE.token,p_role:role||''});
-      patchLocalRole(out?.role||null);if(STATE.sync)renderLobby(STATE.sync);await syncNow(true);if(STATE.sync)renderLobby(STATE.sync);
+      // The server is authoritative. One sync replaces the former optimistic
+      // redraw + sync + second redraw, which made the lobby jump.
+      const fresh=await syncNow(true);
+      if(!fresh&&STATE.sync&&out&&Object.prototype.hasOwnProperty.call(out,'role')){
+        patchLocalRole(out.role||null);
+        renderLobby(STATE.sync);
+      }
       toast(out?.role?`Rôle choisi : ${publicRoleLabel(out.role)}`:'Choix retiré.');
     }catch(e){console.error('OMERTA role choice',e);toast(/taken/i.test(e?.message||'')?'Ce rôle vient d’être pris.':'Ce rôle n’est pas disponible.');}
   };
@@ -111,15 +117,50 @@
     });
   }
   function decorateLobby(){
-    const d=STATE.sync,zone=document.querySelector('.role-choice-zone');if(!d||!zone)return;
+    const d=STATE.sync,zone=document.querySelector('.role-choice-zone');
+    if(!d||!zone)return;
     const omerta=isOmerta(d?.room?.scenario_id),grid=zone.querySelector('.role-choice-grid');
-    zone.querySelectorAll('.igr-random-role-cta,.omerta-role-status,.omerta-tree-open').forEach(x=>x.remove());
+    if(!grid)return;
+
+    // Preserve the same nodes during multiplayer updates. Only change content
+    // when a role is actually selected or the scenario family changes.
+    let tree=zone.querySelector('.omerta-tree-open');
+    if(omerta){
+      if(!tree){
+        tree=document.createElement('button');
+        tree.type='button';tree.className='btn ghost block omerta-tree-open';
+        tree.onclick=window.igrOmertaOpenFamilyTree;
+        tree.innerHTML='Arbre de la Famiglia <span>Liens et conséquences</span>';
+        zone.insertBefore(tree,grid);
+      }
+    }else if(tree)tree.remove();
+
+    let status=zone.querySelector('.omerta-role-status');
     if(omerta){
       const me={...(d.players||[]).find(p=>String(p.id)===String(d.player?.id)),...d.player};
-      const tree=document.createElement('button');tree.type='button';tree.className='btn ghost block omerta-tree-open';tree.onclick=window.igrOmertaOpenFamilyTree;tree.innerHTML='Arbre de la Famiglia <span>Liens et conséquences</span>';if(grid)zone.insertBefore(tree,grid);
-      const status=document.createElement('div');status.className='omerta-role-status '+(me.preferred_role?'has-role':'');status.innerHTML=me.preferred_role?`<span>TON CHOIX</span><strong>${h(publicRoleLabel(me.preferred_role))}</strong><button type="button" onclick="chooseLobbyRole('')">Retirer</button>`:'<span>TON CHOIX</span><strong>Aucun rôle choisi</strong><small>Un rôle sera attribué au lancement.</small>';if(grid)zone.insertBefore(status,grid);
+      const wantedClass='omerta-role-status'+(me.preferred_role?' has-role':'');
+      const wantedHtml=me.preferred_role
+       ?`<span>TON CHOIX</span><strong>${h(publicRoleLabel(me.preferred_role))}</strong><button type="button" onclick="chooseLobbyRole('')">Retirer</button>`
+       :'<span>TON CHOIX</span><strong>Aucun rôle choisi</strong><small>Un rôle sera attribué au lancement.</small>';
+      if(!status){
+        status=document.createElement('div');status.className=wantedClass;
+        status.innerHTML=wantedHtml;zone.insertBefore(status,grid);
+      }else{
+        if(status.className!==wantedClass)status.className=wantedClass;
+        if(status.innerHTML!==wantedHtml)status.innerHTML=wantedHtml;
+      }
+    }else if(status)status.remove();
+
+    let random=zone.querySelector('.igr-random-role-cta');
+    if(!random){
+      random=document.createElement('button');random.type='button';
+      random.className='igr-random-role-cta';
+      random.onclick=()=>chooseRandomLobbyRole();
+      random.innerHTML='<span><b>RÔLE AU HASARD</b><small>Tirage uniforme parmi les rôles encore disponibles.</small></span><em>TIRER</em>';
+      zone.insertBefore(random,grid);
     }
-    const random=document.createElement('button');random.type='button';random.className='igr-random-role-cta';random.onclick=()=>chooseRandomLobbyRole();random.innerHTML='<span><b>RÔLE AU HASARD</b><small>Tirage uniforme parmi les rôles encore disponibles.</small></span><em>TIRER</em>';if(grid)zone.insertBefore(random,grid);
+    // Old cached clients sometimes leave a duplicate random control.
+    zone.querySelectorAll('.igr-random-role-cta').forEach(el=>{if(el!==random)el.remove()});
     markLegacyRandom(zone,omerta);
   }
 
@@ -132,6 +173,6 @@
   };
 
   const prevRenderLobby=renderLobby;
-  renderLobby=function(prefetched){const out=prevRenderLobby(prefetched);queueMicrotask(decorateLobby);requestAnimationFrame(decorateLobby);setTimeout(decorateLobby,80);return out};
+  renderLobby=function(prefetched){const out=prevRenderLobby.apply(this,arguments);decorateLobby();return out};
   setTimeout(()=>{try{if(STATE.view==='lobby')decorateLobby()}catch(_){}},0);
 })();
