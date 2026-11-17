@@ -10,7 +10,7 @@
 #app .role-choice-zone .role-choice-card,
 #app .hnet-role-zone .hnet-role-card,
 #app .casino-role-choice-zone .casino-role-choice-card{
- contain:layout style;touch-action:manipulation;
+ touch-action:manipulation;
 }
 @media(prefers-reduced-motion:reduce){
  #app .role-choice-card,#app .hnet-role-card,#app .casino-role-choice-card{
