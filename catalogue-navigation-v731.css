@@ -1064,3 +1064,38 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
     --igr-card-line:1.25!important;
   }
 }
+
+/* v757 — OMERTÀ 021–025: one true full-bleed 3:4 poster layer.
+   No blurred duplicate, vignette, pseudo-overlay, stretch or dark matte.
+   Preserve the shared compact card sizes and all other DLC identities. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.omerta-scenario
+  > .scenario-thumb.compact{
+  background:transparent!important;
+  overflow:hidden!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.omerta-scenario
+  > .scenario-thumb.compact::before,
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.omerta-scenario
+  > .scenario-thumb.compact::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact.omerta-scenario
+  > .scenario-thumb.compact > img.igr-poster-full{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  transform:none!important;
+  filter:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}

@@ -203,5 +203,5 @@ test('installed PWA cache fingerprints the actual mobile layout',async()=>{
  assert.ok(finalizer.includes("createHash('sha256')"));
  assert.ok(finalizer.includes('igr-${VERSION}-${regimeUiFingerprint}'));
  assert.ok(check.includes('uiFingerprint'));
- assert.ok(check.includes('PWA cache must be content-addressed'));
+ assert.ok(check.includes('PWA cache must reflect Regime mobile and all Heritage campaign interfaces'));
 });
