@@ -1229,9 +1229,8 @@ function renderLobby(prefetched=null){
  const openedRoleDetails=typeof document==='undefined'||typeof document.querySelectorAll!=='function'?[]:[...document.querySelectorAll('.role-choice-zone .igr-role-more[open]')].map(el=>el.dataset.roleId);
  // Base dossiers 001–034 share one live lobby. A role update must keep the
  // touched choice fixed in the viewport, even when the roster above changes.
- const oldLobby=document.querySelector('#app .lobby-v11');
- const oldScroll=window.scrollY;
- const focusedRole=document.activeElement?.closest?.('.role-choice-card[data-role-id]');
+ const oldLobby=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .lobby-v11'):null;
+ const focusedRole=oldLobby?document.activeElement?.closest?.('.role-choice-card[data-role-id]'):null;
  const focusedRoleId=focusedRole?.dataset.roleId||null;
  const oldRoleAnchor=focusedRole||oldLobby?.querySelector('.role-choice-zone');
  const oldRoleTop=oldRoleAnchor?.getBoundingClientRect().top;
