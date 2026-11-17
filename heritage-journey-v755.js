@@ -215,7 +215,12 @@ function handleJoinBack(event){
 /* Real screen transitions start at top; lobby refreshes never reset scroll.
    Returning from a case detail to the list retains deliberate list position. */
 function routeKey(root){
- const main=$('main',root);if(!main)return '';
+ const main=$('main',root);
+ if(!main){
+  if($('.home',root))return 'base:home';
+  try{if(typeof STATE!=='undefined'&&STATE?.view)return 'base:'+STATE.view}catch(_){}
+  return '';
+ }
  if(main.classList.contains('hplay-hub'))return 'heritage:hub';
  if(main.classList.contains('hplay-campaign'))return 'heritage:'+journeyCampaign(main)+':campaign';
  if(main.classList.contains('hplay-dossier'))return 'heritage:'+journeyCampaign(main)+':dossier:'+($('.hplay-mode',main)?.textContent||'');
