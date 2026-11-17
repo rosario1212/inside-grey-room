@@ -7,7 +7,7 @@
     "ord": 1,
     "title": "CHRONOLOGIE DU PALIER",
     "original_text": "À 02 h 11, Maël appelle l’ami auquel il réclame sa dette. Une silhouette compatible avec cet ami quitte le palier à 02 h 32 ; un visiteur encapuchonné entre dans l’hôtel à 02 h 48. Aucune caméra ne filme l’intérieur de 222.",
-    "new_text": "À 02 h 11, Maël appelle l’ami qui lui doit de l’argent. Cet ami semble partir à 02 h 32. Un autre homme arrive à 02 h 48.",
+    "new_text": "À 02 h 11, Maël appelle un ami qui lui doit de l’argent. Cet ami semble partir à 02 h 32. Un autre homme arrive à 02 h 48.",
     "new_title": "CHRONOLOGIE DU PALIER"
   },
   {
@@ -18,7 +18,7 @@
     "ord": 2,
     "title": "DETTE ET ENREGISTREMENT",
     "original_text": "Des messages prouvent que l’ancien ami doit de l’argent à Maël. Une captation enregistrée après 02 h 55 contient l’ordre d’effacer quelque chose, puis des bruits de lutte. Les voix ne sont pas identifiables avec certitude.",
-    "new_text": "Des messages confirment la dette. Après 02 h 55, un enregistrement capte une lutte et un ordre d’effacer quelque chose.",
+    "new_text": "Des messages confirment la dette de l’ami. Après 02 h 55, un enregistrement capte un ordre d’effacement et une lutte. Les voix restent incertaines.",
     "new_title": "DETTE ET ENREGISTREMENT"
   },
   {
@@ -29,7 +29,7 @@
     "ord": 3,
     "title": "DEUX ALTERCATIONS, UNE LAME",
     "original_text": "Le désordre correspond à deux séquences distinctes : la première avant 02 h 32, la seconde après 02 h 55. Un Opinel ensanglanté et essuyé est retrouvé dans une benne de service. Ces constatations ne prouvent pas qui le portait au moment du coup.",
-    "new_text": "Une dispute a lieu avant 02 h 32, une autre après 02 h 55. Un couteau ensanglanté est retrouvé, sans identifier son porteur.",
+    "new_text": "Deux altercations ont eu lieu. Un couteau ensanglanté est retrouvé dans une benne, mais on ignore qui l’a utilisé.",
     "new_title": "DEUX ALTERCATIONS, UNE LAME"
   },
   {
