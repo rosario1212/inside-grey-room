@@ -55,7 +55,7 @@ assert(withoutChronology.judicial.some(x=>x.includes('Plusieurs témoignages')),
 const factual=classify({chronology:'Un homme est retrouvé mort.',anchors:'Le registre mentionne deux accès distincts.'});
 assert.equal(factual.judicial[0],'Le registre mentionne deux accès distincts.');
 const sparse=classify({chronology:'Une personne est portée disparue.',anchors:'Établis les faits.'});
-assert(sparse.judicial[0].includes('Aucun autre fait précis'),'Never fabricate a legal summary without source facts');
+assert(sparse.judicial[0].includes('Aucun autre fait distinct'),'Never fabricate a legal summary without source facts');
 state.sync.player.public_role='suspect';
 const unchanged=sandbox.window.privateCardHtml();
 assert.equal(unchanged,'<div class="private-card-v11">ORIGINAL</div>',
