@@ -5,11 +5,11 @@
 
   const OMERTA_IDS = new Set(['021','022','023','024','025']);
   const ART = Object.freeze({
-    '021':'assets/omerta-021-l-enveloppe.webp?v=12.35-hq',
-    '022':'assets/omerta-022-omerta.webp?v=12.35-hq',
-    '023':'assets/omerta-023-la-table.webp?v=12.35-hq',
-    '024':'assets/omerta-024-il-pentito.webp?v=12.35-hq',
-    '025':'assets/omerta-025-il-don.webp?v=12.35-hq'
+    '021':'assets/omerta-021-l-enveloppe.webp?v=omerta-posters-v757-20261117',
+    '022':'assets/omerta-022-omerta.webp?v=omerta-posters-v757-20261117',
+    '023':'assets/omerta-023-la-table.webp?v=omerta-posters-v757-20261117',
+    '024':'assets/omerta-024-il-pentito.webp?v=omerta-posters-v757-20261117',
+    '025':'assets/omerta-025-il-don.webp?v=omerta-posters-v757-20261117'
   });
   const DRAW_MIN_MS = 620;
   const DRAW_RESULT_MS = 760;
