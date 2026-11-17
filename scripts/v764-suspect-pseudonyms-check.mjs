@@ -7,9 +7,9 @@ const sql=readFileSync(path,'utf8');
 for(const piece of [
  'igr_v764_alias_text','igr_v764_alias_card',
  'igr_v764_visible_suspect_card',
- "raw->'room'->>'scenario_id' in ('005','006')",
- "raw->'player'->>'public_role'='suspect'",
- "raw->'room'->>'status' in ('playing','finished')",
+ "raw->''room''->>''scenario_id'' in (''005'',''006'')",
+ "raw->''player''->>''public_role''=''suspect''",
+ "raw->''room''->>''status'' in (''playing'',''finished'')",
  "'{player,private_state}'",
  'p.internal_slot=n.slot',
  "p.public_role='suspect'",
