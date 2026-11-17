@@ -7,7 +7,7 @@ const runtimeFiles=[
  'store-catalog-v69.js','app-v11.js','qa-fixes-v12.js','investigation-sheet-v12.js','investigation-accuracy-v284.js','investigation-deep-v286.js','investigation-007-v289.js','investigation-008-v310.js','investigation-009-v340.js','video-v12-3.js','turn-v12-4.js','profile-dossier-v12.js','playstore-ready-v12.js','social-v12.js','notifications-v12.js','native-lifecycle-v12.js','runtime-optimization-v12.js','gameplay-simple-v12.js','apple-ui-stability-v12.js','gameplay-clean-v12.js',
  'scenario-flow-v13.js','gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js','gameplay-clarity-v32.js','authoritative-runtime-v40.js','runtime-coordinator-v53.js','duration-modes-v35.js','startup-stability-v13-3.js','heritage-v13-5.js','heritage-premium-v13-6.js','heritage-play-v13-7.js','heritage-context-v71.js','play-modes-v13-8.js','heritage-journey-v755.js','global-navigation-v766.js','heritage-access-code-v14.js','premium-access-sync-v17.js','scenario-replay-contracts-v13.json',
  'i18n-en-v12.js','language-v12.js','rules-v12.js','locale-settings-v12.js','ui-polish-v12.js','locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','omerta-hotfix-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js','omerta-v12-39.js','omerta-money-intel-v1.js','omerta-santoro-verdict-v28.js','omerta-023-spy-v1.js','terror-v12-37.js','terror-live-v681.js','terror-front-v682.js','terror-command-v688.js','terror-command-v694.js','role-cadence-v694.js','analyst-profiling-v700.js','regime-live-v13.js','dlc-suite-v12-37.js','live-cell-v12-44.js','dlc-profile-ui-v12-44.js','dlc-invites-v12-45.js','dlc-copy-v12-46.js','service-worker.js',
- 'investigation-ux-v772.css','investigation-ux-v772.js',
+ 'investigation-ux-v772.css','investigation-ux-v772.js','private-card-readability-v773.css',
  'live-game-v772.css','cast-names-v772.js','idle-choice-v772.js',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
@@ -56,6 +56,9 @@ for(const page of ['index.html','en.html']){
   }
   html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
   html=html.replace('</body>',`${authoritativeScript}\n</body>`);
+  // This override must load after every injected CSS bundle on both language pages.
+  html=html.replace(/\\s*<link[^>]+href=["']private-card-readability-v773\\.css[^"']*["'][^>]*>/gi,'');
+  html=html.replace('</head>','  <link rel="stylesheet" href="private-card-readability-v773.css?v=private-readability-v773-20261117">\\n</head>');
   await writeFile(target,html,'utf8');
 }
 
