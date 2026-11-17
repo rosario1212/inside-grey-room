@@ -5,7 +5,7 @@
 
   const OMERTA_IDS = new Set(['021','022','023','024','025']);
   const ART = Object.freeze({
-    '021':'assets/omerta-021-l-enveloppe.webp?v=omerta-posters-v757-20261117',
+    '021':'assets/omerta-021-l-enveloppe.webp?v=omerta-021-rain-v758-20261117',
     '022':'assets/omerta-022-omerta.webp?v=omerta-posters-v757-20261117',
     '023':'assets/omerta-023-la-table.webp?v=omerta-posters-v757-20261117',
     '024':'assets/omerta-024-il-pentito.webp?v=omerta-posters-v757-20261117',
