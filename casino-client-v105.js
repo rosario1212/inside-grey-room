@@ -223,7 +223,11 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  for(const f of root.querySelectorAll('form[data-casino-form="interpellation"],form[data-casino-form="map"],form[data-casino-form="hearing"]'))setupEvidenceForm(f);
  connection();
 }
-async function open(entry){active=true;generation++;state=null;tab='card';busy=false;polling=null;advanceConfirm=false;joinDraft=entry?.fresh?entry:null;credentials=entry?.fresh?null:load();problem='';pending=null;syncedAt=0;render();clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)sync()},1200);if(credentials)await sync()}
+async function open(entry){active=true;generation++;state=null;tab='card';busy=false;polling=null;advanceConfirm=false;joinDraft=entry?.fresh?entry:null;credentials=entry?.fresh?null:load();problem='';pending=null;syncedAt=0;render();
+ // The public campaign CTA is below the fold. Do not carry its scroll offset
+ // into the playable room (otherwise the top of Casino seems displaced).
+ try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch{window.scrollTo(0,0)}
+ clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)sync()},1200);if(credentials)await sync()}
 function close(){active=false;generation++;clearInterval(timer);timer=null;state=null;pending=null;busy=false;polling=null;window.IGR_CASINO_HERITAGE?.open()}
 document.addEventListener('click',async event=>{
  const legacy=event.target.closest?.('button[onclick*="joinRoom("]');
