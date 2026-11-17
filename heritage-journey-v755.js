@@ -1,10 +1,10 @@
-/* Héritage v755 — visual-only navigation, without modifying game state. */
+/* Héritage v756 — public lobby clarity and mobile-first visual polish; no state/RPC changes. */
 (()=>{
 'use strict';
 const labels=['CAMPAGNES','DOSSIERS','MODE','PRÉPARATION','LOBBY'];
 const $=(q,p=document)=>p.querySelector(q);
 const $$=(q,p=document)=>Array.from(p.querySelectorAll(q));
-const markup=step=>'<nav class="hj-progress" aria-label="Parcours Héritage"><div class="hj-progress-label"><span>MODE HÉRITAGE</span><b>ÉTAPE '+(step+1)+' / 5</b></div><ol>'+labels.map((label,i)=>'<li class="'+(i<step?'is-done':i===step?'is-current':'')+'" '+(i===step?'aria-current="step"':'')+'><span aria-hidden="true">'+(i<step?'✓':i+1)+'</span><b>'+label+'</b></li>').join('')+'</ol></nav>';
+const markup=(step,local=false)=>'<nav class="hj-progress" aria-label="Parcours Héritage"><div class="hj-progress-label"><span>MODE HÉRITAGE</span><b>ÉTAPE '+(step+1)+'/5 · '+(local&&step===3?'JOUEURS':labels[step])+'</b></div><ol>'+labels.map((label,i)=>'<li class="'+(i<step?'is-done':i===step?'is-current':'')+'" '+(i===step?'aria-current="step"':'')+'><span aria-hidden="true">'+(i<step?'✓':i+1)+'</span><b>'+((local&&i===4)?'CARTES':label)+'</b></li>').join('')+'</ol></nav>';
 function stage(main){
  if(main.matches('.hplay-hub'))return 0;
  if(main.matches('.hplay-campaign'))return 1;
@@ -26,17 +26,63 @@ function styleModeButtons(main){
   btn.dataset.hjStyled='1';
  });
 }
+
+/* Presentation-only enhancements: values are read from the visible authoritative lobby. */
+function progressMeter(target,anchor,count,min,max){
+ if(!target||!anchor||!Number.isFinite(count)||count<0||count>max||$('.hj-table-meter',target))return;
+ const meter=document.createElement('div');meter.className='hj-table-meter';
+ const track=document.createElement('div');track.className='hj-table-track';track.setAttribute('aria-hidden','true');
+ const fill=document.createElement('i');fill.style.width=Math.round(100*count/max)+'%';track.appendChild(fill);
+ const caption=document.createElement('div');caption.className='hj-table-caption';
+ const status=document.createElement('b');status.textContent=count<min
+  ?'Encore '+(min-count)+' participant'+(min-count>1?'s':'')+' à inviter'
+  :'Effectif minimum atteint';
+ const seats=document.createElement('small');seats.textContent=count+'/'+max+' joueurs';
+ caption.append(status,seats);meter.append(track,caption);anchor.insertAdjacentElement('afterend',meter);
+}
+function enrichHeritageLobby(main){
+ const lobby=$('.hnet-lobby',main);if(!lobby)return;
+ const title=$('.hnet-title',lobby);
+ const match=title?.textContent?.match(/([0-9]+)\s*\/\s*7\s*joueurs/i);
+ if(match)progressMeter(lobby,title,Number(match[1]),5,7);
+ const grid=$('.hnet-role-grid',lobby),selected=$('.hnet-selected-role',lobby);
+ // Always place the current public selection before the complete role list.
+ if(grid&&selected&&selected.nextElementSibling!==grid)grid.insertAdjacentElement('beforebegin',selected);
+ $('.hnet-role-card',lobby).forEach(card=>{
+  if(card.classList.contains('hnet-role-random')||$('.hj-role-description',card))return;
+  const publicLabel=card.getAttribute('aria-label')||'';
+  const description=publicLabel.split(' — ').slice(1).join(' — ').trim();
+  if(description&&description.length<=140){
+   const helper=document.createElement('small');helper.className='hj-role-description';helper.textContent=description;
+   const stars=$('.hnet-stars',card);
+   if(stars)stars.insertAdjacentElement('beforebegin',helper);else card.appendChild(helper);
+  }
+  const stars=$('.hnet-stars',card);
+  if(stars&&!stars.title)stars.title='Activité estimée, pas puissance';
+ });
+ const picked=$('.hnet-role-card[aria-pressed="true"]',lobby);
+ if(picked)picked.setAttribute('data-hj-picked','true');
+}
+function enrichCasinoLobby(casino){
+ const panel=$('.casino-lobby-top',casino);if(!panel)return;
+ const match=panel.textContent.match(/([0-9]+)\s*\/\s*12\s*joueurs/i);
+ const anchor=$('.casino-lobby-access',panel);
+ if(match&&anchor)progressMeter(panel,anchor,Number(match[1]),7,12);
+}
+
 function decorate(){
  const root=$('#app');if(!root)return;
  const main=$('main.hplay,main.hnet',root);
  if(main){
   const index=stage(main),head=$(':scope > .hplay-top,:scope > .hnet-head',main);
-  if(index>=0&&head&&!$('.hj-progress',main))head.insertAdjacentHTML('afterend',markup(index));
+  if(index>=0&&head&&!$('.hj-progress',main))head.insertAdjacentHTML('afterend',markup(index,main.matches('.hplay-setup')));
   styleModeButtons(main);
+  enrichHeritageLobby(main);
   const copy=$('.hnet-code-copy',main);
   if(copy&&!copy.title)copy.title='Copier le code pour inviter les joueurs';
  }
  const casino=$('#casino-live-v105');
+ if(casino)enrichCasinoLobby(casino);
  if(casino&&!$('.hj-progress',casino)){
   const lobby=$('.casino-lobby-top',casino),entry=$('.casino-entry-options',casino);
   const anchor=lobby||entry;
