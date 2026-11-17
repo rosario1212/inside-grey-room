@@ -1,0 +1,278 @@
+[
+  {
+    "scenario_id": "001",
+    "title": "CHRONOLOGIE DU PALIER",
+    "text": "À 02 h 11, Maël appelle l’ami à qui il réclame une dette. Cet ami semble quitter l’étage à 02 h 32. À 02 h 48, un autre visiteur entre dans l’hôtel. La chambre 222 n’est pas filmée.",
+    "new_title": "CHRONOLOGIE DU PALIER"
+  },
+  {
+    "scenario_id": "001",
+    "title": "DETTE ET ENREGISTREMENT",
+    "text": "Des messages confirment la dette de l’ancien ami. Après 02 h 55, un enregistrement capte un ordre d’effacement et une lutte. Les voix restent difficiles à identifier.",
+    "new_title": "DETTE ET ENREGISTREMENT"
+  },
+  {
+    "scenario_id": "001",
+    "title": "DEUX ALTERCATIONS, UNE LAME",
+    "text": "Deux altercations ont eu lieu, avant 02 h 32 puis après 02 h 55. Un Opinel ensanglanté et essuyé est retrouvé dans une benne. Son porteur reste inconnu.",
+    "new_title": "DEUX ALTERCATIONS, UNE LAME"
+  },
+  {
+    "scenario_id": "002",
+    "title": "APPELS IGNORÉS",
+    "text": "Plusieurs appels de Léon sont restés sans réponse le soir de sa mort, notamment ceux adressés au proche avec lequel sa relation était devenue conflictuelle.",
+    "new_title": "APPELS IGNORÉS"
+  },
+  {
+    "scenario_id": "002",
+    "title": "DERNIER REFUGE",
+    "text": "Léon cherchait encore du soutien auprès de ce même proche, malgré leur relation devenue difficile.",
+    "new_title": "DERNIER REFUGE"
+  },
+  {
+    "scenario_id": "004",
+    "title": "PASSAGE DEVANT L'IMMEUBLE",
+    "text": "Une caméra montre une voiture ressemblant à celle du proche de Sofia qui habitait le quartier passer devant son immeuble.",
+    "new_title": "PASSAGE DEVANT L'IMMEUBLE"
+  },
+  {
+    "scenario_id": "019",
+    "title": "LE DOSSIER ATTENDU",
+    "text": "La victime devait remettre des documents financiers au gala. Les copies récupérées ne concordent pas toutes sur les opérations concernées.",
+    "new_title": "LE DOSSIER ATTENDU"
+  },
+  {
+    "scenario_id": "019",
+    "title": "LE DISPOSITIF MODIFIÉ",
+    "text": "Des trajets et des accès techniques ont été modifiés pendant le gala. Les relevés ne précisent pas encore qui a demandé ces changements.",
+    "new_title": "LE DISPOSITIF MODIFIÉ"
+  },
+  {
+    "scenario_id": "019",
+    "title": "LES COPIES CONTRADICTOIRES",
+    "text": "Plusieurs versions des mêmes registres financiers circulent. Elles ne présentent pas toutes les mêmes informations.",
+    "new_title": "LES COPIES CONTRADICTOIRES"
+  },
+  {
+    "scenario_id": "020",
+    "title": "UN BÂTIMENT OCCUPÉ",
+    "text": "Les plans du Bal des Fondateurs prévoient plusieurs issues secondaires. Les journaux montrent que certaines ont été ouvertes avec retard.",
+    "new_title": "UN BÂTIMENT OCCUPÉ"
+  },
+  {
+    "scenario_id": "020",
+    "title": "DES RÉSERVES À CONTRÔLER",
+    "text": "Des travaux de maintenance étaient encore en cours dans les locaux techniques avant l’incendie. Leur rôle exact dans sa propagation reste incertain.",
+    "new_title": "DES RÉSERVES À CONTRÔLER"
+  },
+  {
+    "scenario_id": "020",
+    "title": "UNE CHRONOLOGIE À VÉRIFIER",
+    "text": "Les journaux du poste de sécurité montrent un délai entre les premiers signaux et l’alarme générale.",
+    "new_title": "UNE CHRONOLOGIE À VÉRIFIER"
+  },
+  {
+    "scenario_id": "023",
+    "title": "L’APPEL",
+    "text": "Un appel confirme qu’Adriano Verri a été blessé. Il ne permet pas d’établir qui l’a attaqué ni la gravité exacte de ses blessures.",
+    "new_title": "L’APPEL"
+  },
+  {
+    "scenario_id": "024",
+    "title": "CE QUI EST DÉJÀ CONNU",
+    "text": "Plusieurs faits que le détenu propose de révéler figurent déjà dans les pièces saisies par les enquêteurs.",
+    "new_title": "CE QUI EST DÉJÀ CONNU"
+  },
+  {
+    "scenario_id": "024",
+    "title": "LA PROTECTION",
+    "text": "Le détenu réclame une protection en échange de ses informations. Sa demande ne prouve pas qu’un accord a été accepté.",
+    "new_title": "LA PROTECTION"
+  },
+  {
+    "scenario_id": "025",
+    "title": "LES ORDRES",
+    "text": "Certaines décisions de Vittorio portent sa validation. D’autres lui sont attribuées sans qu’un ordre écrit ait été retrouvé.",
+    "new_title": "LES ORDRES"
+  },
+  {
+    "scenario_id": "025",
+    "title": "LES AUDIENCES",
+    "text": "Les décisions de protection et de sanction prises au sommet ne sont pas toutes accompagnées d’une instruction écrite.",
+    "new_title": "LES DÉCISIONS DU DON"
+  },
+  {
+    "scenario_id": "025",
+    "title": "LE SOMMET",
+    "text": "Des hommes de Vittorio ont commis des violences sans ordre écrit. D’autres actes sont directement liés à ses validations.",
+    "new_title": "LE SOMMET"
+  },
+  {
+    "scenario_id": "027",
+    "title": "DÉTENTION CLANDESTINE",
+    "text": "Des témoins décrivent des mauvais traitements dans l’appareil de détention du FDR où travaillait l’un des suspects.",
+    "new_title": "DÉTENTION CLANDESTINE"
+  },
+  {
+    "scenario_id": "027",
+    "title": "SOURCE TROP PRÉCISE",
+    "text": "Le cadre supérieur du FDR donne des détails précis sur les dirigeants rivaux, mais presque rien sur ses propres alliés.",
+    "new_title": "SOURCE TROP PRÉCISE"
+  },
+  {
+    "scenario_id": "027",
+    "title": "INTÉRÊT PERSONNEL",
+    "text": "Un échange ancien montre que le cadre supérieur du FDR considérait déjà ces dirigeants comme ses rivaux.",
+    "new_title": "INTÉRÊT PERSONNEL"
+  },
+  {
+    "scenario_id": "027",
+    "title": "LA VÉRITÉ PEUT ÊTRE UNE ARME",
+    "text": "Les renseignements du cadre supérieur sont souvent exacts, mais concernent surtout ses rivaux. Ses propres alliés y apparaissent peu.",
+    "new_title": "LA VÉRITÉ PEUT ÊTRE UNE ARME"
+  },
+  {
+    "scenario_id": "028",
+    "title": "LE TROISIÈME ATTEND",
+    "text": "Le cadre resté fidèle au FDR ne demande aucune protection malgré la menace sur le périmètre. Il affirme pourtant n’être qu’un exécutant.",
+    "new_title": "AUCUNE DEMANDE DE PROTECTION"
+  },
+  {
+    "scenario_id": "029",
+    "title": "PAIEMENT APRÈS LES FAITS",
+    "text": "Un transfert financier effectué après l’exécution relie l’intermédiaire financier au réseau.",
+    "new_title": "PAIEMENT APRÈS LES FAITS"
+  },
+  {
+    "scenario_id": "029",
+    "title": "ORDRE AMBIGU",
+    "text": "Le responsable local a envoyé un message demandant de « faire peur », sans préciser jusqu’où aller.",
+    "new_title": "ORDRE AMBIGU"
+  },
+  {
+    "scenario_id": "029",
+    "title": "COOPÉRATION",
+    "text": "L’exécutant devenu coopérant a indiqué un lieu dont l’existence a été vérifiée.",
+    "new_title": "COOPÉRATION"
+  },
+  {
+    "scenario_id": "031",
+    "title": "LE DOSSIER",
+    "text": "Les pièces réunies sur la mort des six agents ne suffisent pas encore à répartir les responsabilités entre les trois chefs arrêtés.",
+    "new_title": "RESPONSABILITÉS À ÉTABLIR"
+  },
+  {
+    "scenario_id": "032",
+    "title": "LISTE SIGNÉE",
+    "text": "Une liste d’arrestations porte la signature du chef administratif.",
+    "new_title": "LISTE SIGNÉE"
+  },
+  {
+    "scenario_id": "032",
+    "title": "DÉTENTION PROLONGÉE",
+    "text": "Des registres montrent que le responsable de la sécurité a validé des prolongations de détention sans ordre écrit.",
+    "new_title": "DÉTENTION PROLONGÉE"
+  },
+  {
+    "scenario_id": "032",
+    "title": "NOTE DU PALAIS",
+    "text": "Une note du conseiller du palais désigne un opposant comme cible prioritaire.",
+    "new_title": "NOTE DU PALAIS"
+  },
+  {
+    "scenario_id": "032",
+    "title": "CORRECTION MANUSCRITE",
+    "text": "Le chef administratif a modifié une liste après avoir été averti d’une détention abusive.",
+    "new_title": "CORRECTION MANUSCRITE"
+  },
+  {
+    "scenario_id": "032",
+    "title": "CHAÎNE",
+    "text": "Les documents séparent trois étapes : la désignation d’un opposant, l’ordre administratif et son arrestation.",
+    "new_title": "TROIS ÉTAPES"
+  },
+  {
+    "scenario_id": "033",
+    "title": "NOMINATION",
+    "text": "Le membre de la famille occupant le poste ministériel a maintenu une nomination contestée.",
+    "new_title": "NOMINATION"
+  },
+  {
+    "scenario_id": "033",
+    "title": "AGENDA PRIVÉ",
+    "text": "Des rendez-vous montrent que le conseiller familial, sans fonction officielle majeure, était consulté avant plusieurs décisions.",
+    "new_title": "AGENDA PRIVÉ"
+  },
+  {
+    "scenario_id": "033",
+    "title": "POUVOIR RÉEL",
+    "text": "Plusieurs décisions sensibles ont suivi des réunions avec le conseiller familial, malgré son titre officiel limité.",
+    "new_title": "POUVOIR RÉEL"
+  },
+  {
+    "scenario_id": "035",
+    "title": "DERNIER DÉPLACEMENT",
+    "text": "Un véhicule lié au relais logistique de CERBÈRES transporte M-17 quelques heures avant sa mort.",
+    "new_title": "DERNIER DÉPLACEMENT"
+  },
+  {
+    "scenario_id": "036",
+    "title": "RELAIS CERBÈRES",
+    "text": "L’intermédiaire CERBÈRES présent sur le site est relié à une identité déjà utilisée dans le dossier M-17.",
+    "new_title": "RELAIS CERBÈRES"
+  },
+  {
+    "scenario_id": "038",
+    "title": "LISTE DÉTRUITE",
+    "text": "L’opérateur chargé des liaisons de CERBÈRES détruit une liste de contacts après la mort de M-17.",
+    "new_title": "LISTE DÉTRUITE"
+  },
+  {
+    "scenario_id": "039",
+    "title": "GARDE DU SITE",
+    "text": "Aucune pièce ne prouve que le responsable de la sécurité du site connaissait l’objectif complet d’ORPHÉE au moment du transfert.",
+    "new_title": "GARDE DU SITE"
+  },
+  {
+    "scenario_id": "039",
+    "title": "OPTION DE CRISE",
+    "text": "Le coordinateur d’ORPHÉE a préparé une solution politique de dernier recours, sans ordre légal confirmé.",
+    "new_title": "OPTION DE CRISE"
+  },
+  {
+    "scenario_id": "039",
+    "title": "TENTATIVE BLOQUÉE",
+    "text": "Une demande officielle de reprise d’ORPHÉE a été bloquée par le relais politique lié à CERBÈRES.",
+    "new_title": "TENTATIVE BLOQUÉE"
+  },
+  {
+    "scenario_id": "039",
+    "title": "POINT ZÉRO",
+    "text": "Les archives montrent que des responsables liés à ORPHÉE continuent de coordonner des actions après sa fermeture officielle.",
+    "new_title": "RÉSEAU TOUJOURS ACTIF"
+  },
+  {
+    "scenario_id": "041",
+    "title": "GIRI",
+    "text": "Un message rappelant une ancienne faveur a été reçu peu avant le meurtre de l’Oyabun. Un relais institutionnel est associé à cet échange.",
+    "new_title": "GIRI"
+  },
+  {
+    "scenario_id": "042",
+    "title": "MAINS SALES",
+    "text": "Des demandes adressées aux clans proviennent d’un contact policier, mais aucune procédure officielle ne les autorise.",
+    "new_title": "DEMANDES HORS PROCÉDURE"
+  },
+  {
+    "scenario_id": "043",
+    "title": "LA DETTE",
+    "text": "Les horaires relient un rappel de faveur, un contact policier et une version préparée de l’enquête. Les rôles exacts restent contestés.",
+    "new_title": "UNE CHRONOLOGIE TROUBLANTE"
+  },
+  {
+    "scenario_id": "044",
+    "title": "LE CONSEIL",
+    "text": "Avant le meurtre, un message rappelle une dette ancienne. Après, une version incriminant Arakida est préparée. Des contacts policiers précèdent l’annonce publique.",
+    "new_title": "TROIS TRACES À RECOUPER"
+  }
+]
