@@ -116,10 +116,11 @@ function lobby(){
  return `<section class="casino-lobby-top"><div class="casino-lobby-access"><div><span>CODE D’INVITATION</span><h1>${esc(state.inviteCode)}</h1></div><button type="button" class="casino-action" data-casino-action="invite">Copier le code</button></div><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
  <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>TON PERSONNAGE</span><h2>Choisis où jouer</h2></div>
  <p>Choisis un rôle libre.</p>
+ <div class="casino-selected-role"><span>TON CHOIX</span><b>${esc(roles[own.role]||'Aucun rôle sélectionné')}</b>${roles[own.role]?`<small>${esc(roleShort(own.role))}</small><em>ACTIVITÉ · ${roleStars(own.role)}</em>`:'<small>Choisis une fonction disponible.</small>'}</div>
  <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
  <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1,4).join('')}</div></div>
  <details class="casino-optional-roles"><summary>Autres fonctions · facultatives</summary><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(4).join('')}</div></details>
- <div class="casino-selected-role"><span>TON CHOIX</span><b>${esc(roles[own.role]||'Aucun rôle sélectionné')}</b>${roles[own.role]?`<small>${esc(roleShort(own.role))}</small><em>ACTIVITÉ · ${roleStars(own.role)}</em>`:'<small>Choisis une fonction disponible.</small>'}</div>
+
  </section>
  <section class="casino-launch-readiness" aria-label="Conditions de lancement"><div class="casino-launch-readiness-head"><span>PRÉPARER LA TABLE</span><strong>${readyCount}/${members.length} prêts</strong></div><p>${esc(launchHint)}</p><ul>${canStart?'<li class="is-done"><span aria-hidden="true">✓</span> Conditions réunies · début possible</li>':requirements.filter(x=>!x.ok).map(x=>`<li><span aria-hidden="true">○</span>${esc(x.text)}</li>`).join('')}</ul></section>
  <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role]||'À CHOISIR')}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
@@ -213,7 +214,12 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  const drafts=Array.from(root.querySelectorAll('[data-casino-draft]')).map(e=>({name:e.name,form:e.closest('form')?.dataset.casinoForm,value:e.value}));
  const toggles=Array.from(root.querySelectorAll('form input[type=checkbox]')).map(e=>({name:e.name,form:e.closest('form')?.dataset.casinoForm,value:e.value,checked:e.checked}));
  const rosterWasOpen=!!root.querySelector('.casino-roster-disclosure[open]');
- const lobbyScroll=state?.status==='lobby'&&root.querySelector('.casino-role-choice-zone')?window.scrollY:null;
+ const lobbyRoot=state?.status==='lobby'?root.querySelector('.casino-role-choice-zone'):null;
+ const lobbyScroll=lobbyRoot?window.scrollY:null;
+ const focusedRole=document.activeElement?.closest?.('.casino-role-choice-card[data-role-id]');
+ const previousRole=focusedRole?.dataset.roleId||null;
+ const oldAnchor=focusedRole||lobbyRoot;
+ const oldAnchorTop=oldAnchor?.getBoundingClientRect().top;
  const focus=document.activeElement,focused=focus?.name?{name:focus.name,form:focus.closest('form')?.dataset.casinoForm,start:focus.selectionStart,end:focus.selectionEnd}:null;
  const tabs=state&&state.status!=='lobby'?[['card','Ma fiche'],['table','Jeux'],['registry','Registre'],['network','Réseaux'],...(state.camp==='bureau'?[['bureau','Enquête']]:[]),['justice',state.camp==='casino'?'Prison / contacts':'Auditions']]:[];
  const body=!state?welcome():state.status==='lobby'?lobby():state.status==='finished'?finale():`<div class="casino-tabs" role="tablist">${tabs.map(([id,label])=>`<button type="button" role="tab" aria-selected="${tab===id}" data-casino-tab="${id}">${label}</button>`).join('')}</div>${({card,table,registry,network,bureau,justice}[tab]||card)()}`;
@@ -231,7 +237,14 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  // directly into #app made its header, content and safe-area jump on entry.
  root.innerHTML=typeof shell==='function'?shell(casinoMarkup,false):`<div class="app casino-shell-fallback">${casinoMarkup}</div>`;
  if(rosterWasOpen)root.querySelector('.casino-roster-disclosure')?.setAttribute('open','');
- if(lobbyScroll!==null)window.scrollTo(0,lobbyScroll);
+ if(lobbyScroll!==null){
+  const nextRole=previousRole&&Array.from(root.querySelectorAll('.casino-role-choice-card[data-role-id]')).find(b=>b.dataset.roleId===previousRole);
+  const nextAnchor=nextRole||root.querySelector('.casino-role-choice-zone');
+  const delta=nextAnchor&&Number.isFinite(oldAnchorTop)?nextAnchor.getBoundingClientRect().top-oldAnchorTop:0;
+  try{window.scrollTo({top:Math.max(0,lobbyScroll+delta),left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,Math.max(0,lobbyScroll+delta))}
+  if(nextRole&&!nextRole.disabled)nextRole.focus({preventScroll:true});
+ }
  for(const d of drafts){const el=Array.from(root.querySelectorAll('[data-casino-draft]')).find(e=>e.name===d.name&&e.closest('form')?.dataset.casinoForm===d.form);if(el)el.value=d.value}
  for(const item of toggles){const el=Array.from(root.querySelectorAll('form input[type=checkbox]')).find(e=>e.name===item.name&&e.value===item.value&&e.closest('form')?.dataset.casinoForm===item.form);if(el)el.checked=item.checked}
  if(focused){const el=$$('[data-casino-draft]',root).find(e=>e.name===focused.name&&e.closest('form')?.dataset.casinoForm===focused.form);if(el){el.focus({preventScroll:true});if(el.setSelectionRange&&typeof focused.start==='number')try{el.setSelectionRange(focused.start,focused.end)}catch{}}}
