@@ -85,9 +85,24 @@ function organize(raw){
  if(bucket.priority.length){
    const priority=makeEl('section','igr634-priority');
    const cycle=Number(S()?.sync?.room?.cycle)||1;
-   const label=makeEl('small','igr634-priority-label',tr('PISTE À EXAMINER · CYCLE '+cycle,'LEAD TO CHECK · CYCLE '+cycle));
-   const title=makeEl('h3','',tr('Choisis une piste','Choose a lead'));
-   const hint=makeEl('p','',tr('Lis ensuite le résultat dans « Pièces examinées ». Vérifie ce qu’il établit, sans conclure trop vite.','Read the result under “Examined evidence”. Check what it actually establishes.'));
+   const sid=String(S()?.sync?.room?.scenario_id||'');
+   const sc=S()?.sync?.scenario||{};
+   const adaptive=['001','002','003','004','005'].includes(sid)&&sc.investigation_deep_v286===true
+    ||sid==='006'&&sc.investigation_006_adaptive===true
+    ||sid==='007'&&sc.investigation_007_adaptive===true
+    ||sid==='008'&&sc.investigation_008_adaptive===true
+    ||sid==='009'&&sc.investigation_009_adaptive===true
+    ||sid==='010'&&sc.investigation_010_adaptive===true;
+   const reports=(S()?.sync?.events||[]).filter(e=>e.event_type==='investigation_'+sid && Number(e.cycle)===cycle);
+   const mainCount=reports.filter(e=>/_([1-9])$/.test(String(e.payload?.id||''))).length;
+   const optionalCount=reports.filter(e=>/_(1[0-9]|20)$/.test(String(e.payload?.id||''))).length;
+   const label=makeEl('small','igr634-priority-label',tr('PISTES DU CYCLE '+cycle,'CYCLE '+cycle+' LEADS'));
+   const title=makeEl('h3','',tr('Choisis une vérification','Choose what to check'));
+   const hint=makeEl('p','',adaptive
+    ?tr('Vérifications principales : '+Math.min(3,mainCount)+'/3 · Piste facultative : '+Math.min(1,optionalCount)+'/1. Chaque résultat rejoint « Pièces examinées ». Cherche les faits vérifiables et confronte-les aux déclarations.',
+        'Main checks: '+Math.min(3,mainCount)+'/3 · Optional lead: '+Math.min(1,optionalCount)+'/1. Results appear under Examined evidence; compare them with the statements.')
+    :tr('Ouvre une piste, lis le document obtenu, puis confronte-le aux déclarations. Les limites varient selon le dossier.',
+        'Open one lead, read its result and compare it with the statements. Limits depend on the case.'));
    priority.append(label,title,hint,...bucket.priority);outside.appendChild(priority);
  }
  if(lead){
