@@ -1491,7 +1491,8 @@ function valueBlock(title,value,cls=''){
  }
  else body=`<p>${h(value)}</p>`;
  const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
- return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${body}</div>`;
+ const explanation=title==='CE QUE TU CACHES'?'<p class="igr-private-definition">Ce sont des faits que les autres joueurs ne connaissent pas automatiquement.</p>':'';
+ return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${explanation}${body}</div>`;
 }
 async function sendSpyDecision(choice){
  try{
@@ -1544,7 +1545,13 @@ function privateCardHtml(){
  const authoredObjective=String((isOmertaLegacy?ps.omerta_objective:(ps.variant_card?.objective||ps.objective||ps.objective_main||ps.omerta_objective))||'').trim();
  const personaIdentity=String((santoroMyCard&&ps.identity)||ps.variant_card?.identity||ps.place||'').trim();
  const privateWin=santoroMyCard?ps.objective:(authoredObjective||roleInfo(secret==='espion'?'espion':pub).win);
- const concisePrivateCard=conciseDossier?[valueBlock('TON HISTOIRE',ps.story),valueBlock('TES RELATIONS',ps.relations),valueBlock('TA CHRONOLOGIE',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft'),valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)].join(''):'';
+ // The clarification is restricted to the player's authenticated private card.
+ // It does not infer or expose another character's knowledge or the answer key.
+ const clarifiedHide=String(d?.room?.scenario_id||'')==='004'&&
+   /Tu as compté sur une intervention de son ex-partenaire sans lui parler/i.test(String(ps.hide||''))
+   ?'Tu as laissé le message inquiet de Sofia sans réponse. Tu n’as pas vérifié si quelqu’un était auprès d’elle. Tu as supposé, sans preuve, que son ex-partenaire interviendrait. Tu ne l’as pas contacté parce que tu le considérais comme un rival.'
+   :ps.hide;
+ const concisePrivateCard=conciseDossier?[valueBlock('TON HISTOIRE',ps.story),valueBlock('TES RELATIONS',ps.relations),valueBlock('TA CHRONOLOGIE',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft'),valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)].join(''):'';
  // v769: optional extra context comes exclusively from the authenticated
  // player's exact room-pinned manuscript. Never look up another role's story
  // or derive these questions from the canonical truth/answer key.
@@ -1558,7 +1565,7 @@ function privateCardHtml(){
       +authoredQuestions.map(q=>'<div class="relation-line"><span>'+h(q)+'</span></div>').join('')+'</div>'
    :'';
  const cartel030Card=(currentScenario()?.id==='030'&&pub==='suspect'&&ps.variant_card)?[valueBlock('CE QUE TU SAIS — DOSSIER 030',ps.variant_card.what_you_know),valueBlock('TON SECRET — DOSSIER 030',ps.variant_card.variant_secret,'danger-soft'),valueBlock('CE QUE TU CACHES — DOSSIER 030',ps.variant_card.what_you_hide,'danger-soft'),valueBlock('TA CHRONOLOGIE DÉTAILLÉE',ps.variant_card.your_chronology)].join(''):'';
- return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><header class="igr-private-heading"><h2>${h(p?.pseudo||STATE.playerPseudo||'Joueur')}</h2><p class="igr-private-player">${h(roleInfo(pub).label||pub)} · Ton personnage</p><p class="igr-private-hint">Tu connais ton vécu et les faits indiqués ici, pas les pensées ni les secrets des autres. Réponds avec ce que ton personnage peut réellement savoir.</p></header>${personaIdentity?`<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>${h(personaIdentity)}</span></div>`:''}<div class="role-summary igr-private-priority"><b>${authoredObjective?'TON OBJECTIF':'COMMENT TU GAGNES'}</b><span>${h(privateWin)}</span></div>${santoroPrivateCard}${concisePrivateCard}${santoroMyCard||conciseDossier?'':readableDossier?(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('CETTE NUIT-LÀ',ps.chronology)+valueBlock('CE QUE TU SAIS',ps.anchors)+valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')):(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('TA CHRONOLOGIE',ps.chronology)+valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')+valueBlock('TES REPÈRES',ps.anchors)+valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position))}${santoroMyCard?'':valueBlock('TES CLIENTS',ps.clients)}${cartel030Card}${authoredStory}${authoredDialogue}${secretInfo}<div class="private-foot">Les faits de ta carte sont établis pour ton personnage. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne peux ni inventer des preuves ni connaître les secrets des autres.</div></div>`;
+ return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><header class="igr-private-heading"><h2>${h(p?.pseudo||STATE.playerPseudo||'Joueur')}</h2><p class="igr-private-player">${h(roleInfo(pub).label||pub)} · Ton personnage</p><p class="igr-private-hint">Tu connais ton vécu et les faits indiqués ici, pas les pensées ni les secrets des autres. Réponds avec ce que ton personnage peut réellement savoir.</p></header>${personaIdentity?`<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>${h(personaIdentity)}</span></div>`:''}<div class="role-summary igr-private-priority"><b>${authoredObjective?'TON OBJECTIF':'COMMENT TU GAGNES'}</b><span>${h(privateWin)}</span></div>${santoroPrivateCard}${concisePrivateCard}${santoroMyCard||conciseDossier?'':readableDossier?(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('CETTE NUIT-LÀ',ps.chronology)+valueBlock('CE QUE TU SAIS',ps.anchors)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')):(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('TA CHRONOLOGIE',ps.chronology)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')+valueBlock('TES REPÈRES',ps.anchors)+valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position))}${santoroMyCard?'':valueBlock('TES CLIENTS',ps.clients)}${cartel030Card}${authoredStory}${authoredDialogue}${secretInfo}<div class="private-foot">Ton personnage connaît uniquement les faits de sa carte. Tu peux en cacher certains à l’oral, mais jamais inventer de preuves.</div></div>`;
 }
 function renderRole(){
  const d=STATE.sync;if(!d)return;
@@ -1574,6 +1581,8 @@ function setTab(t){
  const previous=document.querySelector('#app .tabs-v11');
  const left=previous?.scrollLeft||0,top=previous?.scrollTop||0,focused=previous?.contains(document.activeElement);
  STATE.tab=t;saveSession();renderGame();
+ // A new tab always starts at its beginning, including on mobile Safari.
+ try{window.scrollTo({top:0,behavior:'instant'})}catch(_){window.scrollTo(0,0)}
  const tabs=document.querySelector('#app .tabs-v11');if(!tabs)return;
  tabs.scrollLeft=left;tabs.scrollTop=top;
  const active=tabs.querySelector('.tab.active');if(!active)return;
@@ -1724,7 +1733,7 @@ function gameTabs(){const role=STATE.sync?.player?.public_role||STATE.role;retur
 function renderGame(){
  const d=STATE.sync;if(!d)return;const sc=scenario(d.room.scenario_id),role=d.player.public_role||STATE.role;
  document.documentElement.classList.remove('home-locked');document.body.classList.remove('home-locked');
- byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}<button type="button" class="phase-exit-btn" onclick="confirmLeaveGame(event)" aria-label="Quitter la partie">✕ Quitter</button></div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
+ byId('app').innerHTML=shell(`<main class="page game-v11"><div class="page-head game-head-v11"><div><div class="kicker">Dossier ${h(sc.id)} · ${d.room.cycle?`cycle ${d.room.cycle}/3`:'préparation'}</div><h1>${h(sc.title)}</h1><div class="game-player-ident">${avatarHtml(d.player.id,d.player.pseudo,'avatar-game')}<div class="game-ident-text"><div class="role-chip">${h(displayRole(role,d.player.pseudo))}</div></div></div></div></div><div class="phase-strip"><div><small>PHASE</small><strong>${h(phaseLabel(d.room.phase))}</strong></div><div class="server-authority">MJ AUTOMATIQUE</div><div class="phase-timer-box"><div class="phase-clock" id="phaseClock">${fmtSeconds(phaseSeconds())}</div><div class="phase-host-actions">${phaseTimerControl()}<button type="button" class="phase-exit-btn" onclick="confirmLeaveGame(event)" aria-label="Quitter la partie">✕ Quitter</button></div></div></div><div class="tabs tabs-v11">${gameTabs().map(x=>`<button class="tab ${STATE.tab===x.id?'active':''}" data-view="${h(x.id)}" onclick="setTab('${x.id}')">${h(x.label)}</button>`).join('')}</div><section class="panel game-panel-v11">${renderGameTab()}</section>${liveSessionControls()}</main>`);
  mountLiveSessionControls();
  if(SOUND.enabled)ensureAmbient(sc.sound);updatePhaseClock();
 }
@@ -1806,7 +1815,7 @@ function renderInvestigationTab(){
  }
  if(['001','002','003','004','005','006','007','008','009','010','011','012','013','014','015','016'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
   const evidenceTag=r.scenario_id==='016'?'investigation_016':r.scenario_id==='015'?'investigation_015':r.scenario_id==='014'?'investigation_014':r.scenario_id==='013'?'investigation_013':r.scenario_id==='012'?'investigation_012':r.scenario_id==='011'?'investigation_011':r.scenario_id==='010'?'investigation_010':r.scenario_id==='009'?'investigation_009':r.scenario_id==='008'?'investigation_008':r.scenario_id==='007'?'investigation_007':r.scenario_id==='006'?'investigation_006':r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
-  if(reports.length)body+=`<section class="private-block igr001-reports"><h3>CONSTATATIONS CIBLÉES · ${reports.length}</h3><div class="timeline">${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Constatation')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</div></section>`;
+  if(reports.length)body+=`<section class="private-block igr001-reports"><h3>Pièces examinées · ${reports.length}</h3><p class="choice-helper">Compare les faits établis avec les déclarations des suspects. Une pièce ne prouve pas à elle seule qui est responsable.</p><div class="igr-evidence-list">${reports.map((e,i)=>`<article class="igr-evidence-record"><div class="igr-evidence-record-head"><small>CYCLE ${h(e.cycle||'?')} · PIÈCE ${i+1}</small><strong>${h(e.payload?.title||'Élément vérifié')}</strong></div><p>${h(e.payload?.text||'')}</p></article>`).join('')}</div></section>`;
   const eligible=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
   if(eligible){
    const choices=d.scenario?.[evidenceTag]||[];
@@ -1826,7 +1835,7 @@ function renderInvestigationTab(){
    const visibleChoices=adaptiveMulti?choices.filter(o=>!collectedIds.has(o.id)&&!(optionalUsed006&&isOptionalInvestigation(o.id))):choices;
    const used=adaptiveMulti?collectedIds.size>=limit:d.scenario?.[evidenceTag+'_used'];
    const instruction006=adaptive006?'Trois vérifications principales et une piste facultative au maximum par cycle. Les pistes proposées sont variables, sans changer la vérité.': 'Trois pièces complémentaires distinctes sont accessibles à chaque cycle.';
-   const instructionDeep='Trois vérifications principales et une piste facultative au maximum par cycle. Les nouvelles pièces et vérifications proposées dépendent discrètement des réponses précédentes, sans score ni indication de vérité.';
+   const instructionDeep='Vérifie d’abord les faits et les heures. Trois pistes principales et une facultative sont proposées pendant ce cycle. Tu peux confronter les résultats aux témoignages.';;
     const instructionSeven='Trois trames principales et une trame facultative au maximum par cycle. Deux pistes facultatives sont proposées sans indiquer si l’une répond à une erreur de raisonnement.';
     const instructionEight='Trois vérifications principales et une seule trame facultative au maximum par cycle. L’enquêteur et l’analyste répondent séparément pour orienter les choix futurs, sans recevoir de correction.';
     const instructionNine='Trois vérifications principales et une seule trame facultative au maximum par cycle. Vos hypothèses scellées orientent les pistes futures sans exposer les solutions ou les variantes.';
