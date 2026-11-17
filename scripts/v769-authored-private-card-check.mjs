@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const sql=fs.readFileSync(
- 'supabase/migrations/20261117190000_igr_v769_authored_private_card_enrichment.sql','utf8');
+ 'supabase/migrations/20261117172600_igr_v769_authored_private_card_enrichment.sql','utf8');
 const app=fs.readFileSync('app-v11.js','utf8');
 for(const guard of [
  'igr_v769_authored_supplement','p_player uuid','p.public_role=',
