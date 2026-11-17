@@ -16,7 +16,7 @@ const css=file('omerta-polish-v12.css');
 for(const [name,source] of Object.entries({canonical,polish,hotfix,art30,art39,sw})){
   new vm.Script(source,{filename:name+'.js'});
 }
-assert.match(canonical,/Vittorio Santoro dirige une famille dont l’autorité repose sur des règles/);
+assert.match(canonical,/Don Vittorio Santoro/);
 const synopsisStart=canonical.indexOf('  const SCENARIO_DATA = [');
 const synopsisEnd=canonical.indexOf('  const ART_FALLBACK = ',synopsisStart);
 assert(synopsisStart>=0&&synopsisEnd>synopsisStart,'Missing Omerta public catalog');
@@ -42,8 +42,8 @@ for(const entry of synopses){
   'Legacy or vague copy must not return for '+sid);
  assert(/[.?]$/.test(entry.short),'Synopsis must end in natural punctuation for '+sid);
 }
-assert(html.includes('omerta-v12.js?v=v768-private-roles-20261117'));
-assert(sw.includes('/omerta-v12.js?v=v768-private-roles-20261117'));
+assert(html.includes('omerta-v12.js?v=v781-dlc-clarity-20261118'));
+assert(sw.includes('/omerta-v12.js?v=v781-dlc-clarity-20261118'));
 assert.match(canonical,/Domenico Falco ne se présente pas/);
 assert.doesNotMatch(polish,/Vittorio Verri|Adriano Verri|Famiglia Verri/);
 assert.doesNotMatch(polish,/Object\.assign\(sc,COPY\[id\]\)/);

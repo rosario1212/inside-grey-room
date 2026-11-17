@@ -19,7 +19,7 @@ assert(app.includes('Un patient est mort pendant le programme hospitalier ÉLIGI
 const baseSummary=app.slice(app.indexOf('const PUBLIC_LOBBY_SUMMARIES'),app.indexOf('const CANONICAL_BRIEFINGS'));
 assert(!baseSummary.includes('Une médecin est retrouvée morte'),'015 public briefing contradicts the case');
 assert(app.includes('Une succession oppose plusieurs proches autour d’un testament'),'007 case context must be concrete');
-assert(omerta.includes('Domenico Falco manque la réunion'),'023 public brief must preserve the meeting');
+assert(omerta.includes('Domenico Falco ne se présente pas'),'023 public brief must preserve the meeting');
 assert(omerta.includes('Sandro Vitale a été violemment interrogé'),'024 public brief must preserve the injured driver');
 assert(suite.includes('Six agents américains ont été abattus près de la frontière du Sonora'),
   '031 must describe the ambush, not a mismatched abduction');
