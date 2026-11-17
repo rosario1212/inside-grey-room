@@ -123,13 +123,13 @@ function disclosureRows(){
  return rows.map(x=>{
   const id=Number(x.id);
   if(!Number.isSafeInteger(id)||id<1)return '';
-  const votes=Math.max(0,Math.min(2,Number(x.votes)||0)),voted=Boolean(x.mine);
-  const label=voted?tr('Accord enregistré','Approval recorded'):votes===0?tr('Proposer la publication','Propose publication'):tr('Approuver la publication','Approve publication');
-  return '<article class="igr771-option"><div class="igr771-option-head"><strong>'+esc(x.title||tr('Élément officiel','Official finding'))+'</strong><small>'+votes+'/2</small></div><p>'+esc(String(x.text||'').slice(0,200))+'</p><button type="button" class="btn ghost small" data-igr771-vote="'+id+'" onclick="igr771Vote('+id+')" '+(voted?'disabled':'')+'>'+esc(label)+'</button></article>';
+  const required=Number(x.required_votes)===1?1:2, votes=Math.max(0,Math.min(required,Number(x.votes)||0)),voted=Boolean(x.mine);
+  const label=voted?(votes>=required?tr('Finaliser la publication','Finish publication'):tr('Accord enregistré','Approval recorded')):required===1?tr('Publier pour tous','Publish for everyone'):votes===0?tr('Proposer la publication','Propose publication'):tr('Approuver la publication','Approve publication');
+  return '<article class="igr771-option"><div class="igr771-option-head"><strong>'+esc(x.title||tr('Élément officiel','Official finding'))+'</strong><small>'+votes+'/'+required+'</small></div><p>'+esc(String(x.text||'').slice(0,200))+'</p><button type="button" class="btn ghost small" data-igr771-vote="'+id+'" onclick="igr771Vote('+id+')" '+(voted&&votes<required?'disabled':'')+'>'+esc(label)+'</button></article>';
  }).join('');
 }
 function disclosurePanel(){
- return '<section class="igr771-disclosure"><details><summary>'+esc(tr('Verser un élément au Dossier commun','Share a finding with all players'))+'</summary><div class="igr771-inside"><p>'+esc(tr('Deux membres distincts du camp Enquête doivent approuver. Tous les joueurs, suspects compris, verront ensuite le document. Limite : deux pièces par cycle.','Two different investigation players must approve. All players, including suspects, will then see the document. Limit: two documents per cycle.'))+'</p><div class="igr771-options">'+disclosureRows()+'</div></div></details></section>';
+ return '<section class="igr771-disclosure"><details><summary>'+esc(tr('Verser un élément au Dossier commun','Share a finding with all players'))+'</summary><div class="igr771-inside"><p>'+esc(tr('Si un seul membre du camp Enquête peut consulter cette pièce, son accord suffit. Sinon, deux membres distincts doivent approuver. Tous les joueurs, suspects compris, verront ensuite le document. Limite : deux pièces par cycle.','If only one investigation player can access a document, their approval is enough. Otherwise, two distinct players must approve. All players, including suspects, will then see it. Limit: two documents per cycle.'))+'</p><div class="igr771-options">'+disclosureRows()+'</div></div></details></section>';
 }
 function renderDisclosure(){
  const el=document.querySelector('#app .igr771-options');
@@ -153,8 +153,11 @@ window.igr771Vote=async function(id){
  const d=game(),k=key(),eventId=Number(id);
  if(!isInquiry()||!d||d.room.status!=='playing'||!Number.isSafeInteger(eventId)||eventId<1)return;
  const c=(disclosure.data?.candidates||[]).find(x=>Number(x.id)===eventId);
- if(!c||c.mine||c.published)return;
- if(Number(c.votes)>=1&&typeof window.confirm==='function'&&!window.confirm(tr('Publier cette pièce pour TOUS les joueurs, suspects compris ?','Publish this document to ALL players, including suspects?')))return;
+ if(!c||c.published)return;
+ const required=Number(c.required_votes)===1?1:2;
+ if(c.mine&&Number(c.votes)<required)return;
+ const publishing=Number(c.votes)+(c.mine?0:1)>=required;
+ if(publishing&&typeof window.confirm==='function'&&!window.confirm(tr('Publier cette pièce pour TOUS les joueurs, suspects compris ?','Publish this document to ALL players, including suspects?')))return;
  const b=document.querySelector('[data-igr771-vote="'+eventId+'"]');if(b)b.disabled=true;
  try{
   const r=await rpc('igr_v771_dossier_vote',{p_code:d.room.code,p_player_token:S().token,p_event_id:eventId});
