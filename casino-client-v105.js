@@ -241,8 +241,8 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
   const nextRole=previousRole&&Array.from(root.querySelectorAll('.casino-role-choice-card[data-role-id]')).find(b=>b.dataset.roleId===previousRole);
   const nextAnchor=nextRole||root.querySelector('.casino-role-choice-zone');
   const delta=nextAnchor&&Number.isFinite(oldAnchorTop)?nextAnchor.getBoundingClientRect().top-oldAnchorTop:0;
-  try{window.scrollTo({top:Math.max(0,lobbyScroll+delta),left:0,behavior:'instant'})}
-  catch(_){window.scrollTo(0,Math.max(0,lobbyScroll+delta))}
+  try{window.scrollTo({top:Math.max(0,window.scrollY+delta),left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,Math.max(0,window.scrollY+delta))}
   if(nextRole&&!nextRole.disabled)nextRole.focus({preventScroll:true});
  }
  for(const d of drafts){const el=Array.from(root.querySelectorAll('[data-casino-draft]')).find(e=>e.name===d.name&&e.closest('form')?.dataset.casinoForm===d.form);if(el)el.value=d.value}

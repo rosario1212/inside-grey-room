@@ -626,10 +626,18 @@ async function refresh007PublishState(force=false){
  if(STATE.view==='create-list')renderCreateList();
 }
 function renderCreateList(){
+ // Preserve the user's position on a passive catalogue refresh. A new entry
+ // from Accueil has no prior catalogue and is opened at the top by navigation.
+ const previousList=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .page-create-v10-13'):null;
+ const previousListY=previousList?window.scrollY:null;
  const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
  // Keep artwork lookup local: secure 007 checks isolate this renderer.
  const art=id=>String(id)==='018'?'assets/scenario-018-catalog-v749.webp':scenarioArt(id);
  byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact" style="--igr-cover-url:url('${art(sc.id)}')"><img class="igr-poster-full" loading="lazy" decoding="async" src="${art(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,30):String(sc.short||'').trim().split(/\s+/).slice(0,30).join(' '))}</p><div class="tag-row" aria-label="Informations du dossier"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ if(previousListY!==null){
+  try{window.scrollTo({top:previousListY,left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,previousListY)}
+ }
  if(typeof refresh007PublishState==='function')void refresh007PublishState();
 }
 function selectScenario(id){
@@ -727,10 +735,16 @@ function equipProfileBadge(id){
  toast(`Badge équipé : ${item.label}`);
 }
 function renderProfile(){
+ const previousProfile=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .profile-page'):null;
+ const previousProfileY=previousProfile?window.scrollY:null;
  const p=loadProfile();p.avatar=safeAvatar(p.avatar);const titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
  const titleCards=titles.length?titles.map(x=>{const active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''}" onclick="equipProfileTitle('${x.id}')"><span class="reward-state">${active?'ÉQUIPÉ':'DÉBLOQUÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join(''):`<div class="empty-rewards">Aucun titre débloqué pour le moment.</div>`;
  const badgeCards=badges.length?badges.map(x=>{const active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''}" onclick="equipProfileBadge('${x.id}')"><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join(''):`<div class="empty-rewards">Aucun badge débloqué pour le moment.</div>`;
  byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line">${equippedBadge.id!=='none'?`<span class="equipped-badge">${h(equippedBadge.glyph)}</span>`:''}<span>${equippedTitle.id!=='none'?h(equippedTitle.label):'Aucun titre équipé'}</span></div><p>Tes titres et badges sont des trophées de victoire visibles dans ton profil. Ils restent hors de l’interface de partie.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.wins||0}</b><span>victoires</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div></div><div class="reward-section"><div class="section-title"><h2>Titres débloqués</h2><span>${titles.length} disponibles</span></div><div class="reward-grid">${titleCards}</div></div><div class="reward-section"><div class="section-title"><h2>Badges débloqués</h2><span>${badges.length} disponibles</span></div><div class="badge-grid">${badgeCards}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button><div class="profile-privacy-actions"><button class="btn ghost block" onclick="openPrivacy()">Confidentialité et données</button><button class="btn ghost block" onclick="openSupport()">Support</button>${STATE.room&&STATE.token?`<button class="btn ghost block" onclick="openSafety()">Signaler ou bloquer un joueur</button>`:''}</div></section></main>`)
+ if(previousProfileY!==null){
+  try{window.scrollTo({top:previousProfileY,left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,previousProfileY)}
+ }
 }
 
 async function compressAvatar(file){
@@ -1213,8 +1227,24 @@ function renderLobby(prefetched=null){
  const victoryRoleNotice=myReservation
    ?`<div class="victory-privilege compact ${myReservation.awarded?'awarded':'lost'}"><b>${myReservation.awarded?'RÔLE RÉSERVÉ PAR VICTOIRE':'CONFLIT DE RÔLE'}</b><span>${myReservation.awarded?`${h(publicRoleLabel(myReservation.claimed_role))} t’est réservé · force de victoire ${h(myReservation.score)}/100.`:`Ta demande ${h(publicRoleLabel(myReservation.claimed_role))} n’a pas obtenu la priorité. Une victoire plus forte a gagné le conflit ; choisis un autre rôle disponible.`}</span></div>`:'';
  const openedRoleDetails=typeof document==='undefined'||typeof document.querySelectorAll!=='function'?[]:[...document.querySelectorAll('.role-choice-zone .igr-role-more[open]')].map(el=>el.dataset.roleId);
+ // Base dossiers 001–034 share one live lobby. A role update must keep the
+ // touched choice fixed in the viewport, even when the roster above changes.
+ const oldLobby=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .lobby-v11'):null;
+ const focusedRole=oldLobby?document.activeElement?.closest?.('.role-choice-card[data-role-id]'):null;
+ const focusedRoleId=focusedRole?.dataset.roleId||null;
+ const oldRoleAnchor=focusedRole||oldLobby?.querySelector('.role-choice-zone');
+ const oldRoleTop=oldRoleAnchor?.getBoundingClientRect().top;
  byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(typeof document!=='undefined'&&typeof document.querySelectorAll==='function')for(const el of document.querySelectorAll('.role-choice-zone .igr-role-more'))if(openedRoleDetails.includes(el.dataset.roleId))el.open=true;
+ if(oldLobby){
+  const newLobby=document.querySelector('#app .lobby-v11');
+  const newFocused=focusedRoleId&&[...(newLobby?.querySelectorAll('.role-choice-card[data-role-id]')||[])].find(el=>el.dataset.roleId===focusedRoleId);
+  const newRoleAnchor=newFocused||newLobby?.querySelector('.role-choice-zone');
+  const shift=newRoleAnchor&&Number.isFinite(oldRoleTop)?newRoleAnchor.getBoundingClientRect().top-oldRoleTop:0;
+  try{window.scrollTo({top:Math.max(0,window.scrollY+shift),left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,Math.max(0,window.scrollY+shift))}
+  if(newFocused&&!newFocused.disabled)newFocused.focus({preventScroll:true});
+ }
  if(SOUND.enabled)ensureAmbient('menu');
 }
 let LOBBY_KICK_BUSY=false;

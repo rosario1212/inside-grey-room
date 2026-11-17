@@ -102,6 +102,7 @@ jobs:
       - name: Build canonical web bundle and verify live intro door
         run: |
           npm run build
+          node scripts/global-navigation-v766-check.mjs dist
           node scripts/intro-door-v20-check.mjs dist
       - name: Validate full production release preflight
         run: |

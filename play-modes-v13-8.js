@@ -80,8 +80,8 @@ function shellPut(html,preserveLobby=false){
  const newAnchor=chosen||newLobby?.querySelector('.hnet-role-zone')||newLobby?.querySelector('.hnet-title');
  // Keep the touched role at the same viewport position despite changing labels.
  const delta=lobby&&newAnchor&&Number.isFinite(oldTop)?newAnchor.getBoundingClientRect().top-oldTop:0;
- try{window.scrollTo({top:lobby&&newLobby?Math.max(0,oldScroll+delta):0,left:0,behavior:'instant'})}
- catch(_){window.scrollTo(0,lobby&&newLobby?Math.max(0,oldScroll+delta):0)}
+ try{window.scrollTo({top:lobby&&newLobby?Math.max(0,window.scrollY+delta):0,left:0,behavior:'instant'})}
+ catch(_){window.scrollTo(0,lobby&&newLobby?Math.max(0,window.scrollY+delta):0)}
  if(chosen&&!chosen.disabled)chosen.focus({preventScroll:true});
 }
 function secureIndex(n){if(n<=1)return 0;try{const a=new Uint32Array(1),lim=Math.floor(0x100000000/n)*n;let x;do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);return x%n}catch{return Math.floor(Math.random()*n)}}

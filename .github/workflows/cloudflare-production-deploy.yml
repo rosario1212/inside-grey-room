@@ -48,6 +48,7 @@ jobs:
           node scripts/v701-turn-relay-security-check.mjs
           node scripts/v697-lobby-sync-check.mjs
           npm run build
+          node scripts/global-navigation-v766-check.mjs dist
           node scripts/intro-door-v20-check.mjs dist
           node scripts/v701-global-audit-check.mjs dist
           node scripts/cartel031-check.mjs dist

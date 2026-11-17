@@ -226,10 +226,20 @@
     const previous=renderLobby;
     if(typeof previous==='function'){
       renderLobby=function(){
+        // Enhancement before the next paint: late insertion of the Back/Settings
+        // row used to push the roles downward after every server refresh.
+        const oldZone=document.querySelector('.role-choice-zone');
+        const oldTop=oldZone?.getBoundingClientRect().top;
         const out=previous.apply(this,arguments);
-        syncLobbyTheme();
-        reflectRoleAction();
-        queueEnhanceLobby();
+        enhanceLobby();
+        const newZone=document.querySelector('.role-choice-zone');
+        if(oldZone&&newZone&&Number.isFinite(oldTop)){
+          const delta=newZone.getBoundingClientRect().top-oldTop;
+          if(Math.abs(delta)>.5){
+            try{window.scrollTo({top:Math.max(0,window.scrollY+delta),left:0,behavior:'instant'})}
+            catch(_){window.scrollTo(0,Math.max(0,window.scrollY+delta))}
+          }
+        }
         return out;
       };
     }
