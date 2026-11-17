@@ -37,5 +37,17 @@ for(const p of ['index.html','en.html']){
   assert.equal(html.split('heritage-casino-v91.js?v=v91.4-casino-proportions').length-1,1,`duplicate Casino runtime in ${p}`);
   assert.equal(html.split('heritage-casino-v91.css?v=v91.4-casino-proportions').length-1,1,`duplicate Casino style in ${p}`);
   assert.ok(html.indexOf('heritage-play-v13-7.js')<html.indexOf('heritage-casino-v91.js'),`Casino script before Heritage in ${p}`);
+  assert(html.includes('casino-client-v105.js?v=105.11')&&html.includes('casino-client-v105.css?v=105.11'),'Updated Casino client version must load in '+p);
 }
+const clientSource=await readFile(path.join(dir,'casino-client-v105.js'),'utf8');
+const clientCss=await readFile(path.join(dir,'casino-client-v105.css'),'utf8');
+const worker=await readFile(path.join(dir,'service-worker.js'),'utf8');
+assert(clientSource.includes('shell(casinoMarkup,false)'),'Opening Casino must retain the shared app shell');
+assert(clientSource.includes("behavior:'instant'"),'Opening Casino must reset the previous campaign scroll offset');
+assert(clientCss.includes('CASINO v761'),'Casino live must have campaign-aligned layout styles');
+for(const url of ['/casino-client-v105.js?v=105.11','/casino-client-v105.css?v=105.11']){
+ assert(worker.includes(url),'Casino PWA must precache '+url);
+}
+assert(/-casino-[0-9a-f]{12}'/.test(worker),'Casino update must invalidate the existing PWA cache');
+
 console.log('CASINO v91 checks passed — artwork, isolated navigation, no secret stories, server-backed campaign launch');
