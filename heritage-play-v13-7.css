@@ -122,3 +122,9 @@
 .hplay-private .hplay-role-full{min-width:0;padding:0 0 3px;border-bottom:1px solid rgba(255,255,255,.09)}
 .hplay-private .hplay-role-full summary{cursor:pointer;color:var(--hp-muted);padding:9px 0;font-size:12px;font-weight:650}
 .hplay-private .hplay-role-full p{margin:0 0 13px;font-size:13px;line-height:1.55;color:var(--hp-muted);white-space:normal;overflow:visible;text-overflow:clip}
+
+/* v768 — Player name first, role next, private objective before confidential fact. */
+#app .hplay-private.is-open h1{max-width:100%;overflow-wrap:anywhere;letter-spacing:-.02em}
+#app .hplay-private.is-open .hplay-role-short b{font-weight:800;color:#f1f3f5}
+#app .hplay-private.is-open .hplay-objective{order:0}
+#app .hplay-private.is-open .hplay-secret{order:0}
