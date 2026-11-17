@@ -24,10 +24,10 @@ assert(start>=0&&end>start,'Disclosure UI renderer missing');
 const helperStart=source.indexOf('const case004Copy=');
 const helperEnd=source.indexOf('\nlet cache=',helperStart);
 assert(helperStart>=0&&helperEnd>helperStart,'Evidence helpers missing');
-const helpers=new Function('game','esc','tr',source.slice(helperStart,helperEnd)+'; return {conciseCaseText,readableTitle,expandableCopy,preciseCaseCopy};')(
+const helpers=new Function('game','esc','tr',source.slice(helperStart,helperEnd)+'; return {conciseCaseText,readableTitle,expandableCopy,preciseCaseCopy,editorialTitle};')(
  ()=>({room:{scenario_id:'004'}}),(v)=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),(fr)=>fr);
-const getRows=new Function('disclosure','esc','tr','conciseCaseText','readableTitle','expandableCopy','preciseCaseCopy',source.slice(start,end)+'; return disclosureRows;');
-const render=(candidate)=>getRows({error:false,data:{candidates:[{id:51,title:'Test',text:'Evidence to verify',published:false,...candidate}]}},String,(fr)=>fr,helpers.conciseCaseText,helpers.readableTitle,helpers.expandableCopy,helpers.preciseCaseCopy)();
+const getRows=new Function('disclosure','esc','tr','conciseCaseText','readableTitle','expandableCopy','preciseCaseCopy','editorialTitle',source.slice(start,end)+'; return disclosureRows;');
+const render=(candidate)=>getRows({error:false,data:{candidates:[{id:51,title:'Test',text:'Evidence to verify',published:false,...candidate}]}},String,(fr)=>fr,helpers.conciseCaseText,helpers.readableTitle,helpers.expandableCopy,helpers.preciseCaseCopy,helpers.editorialTitle)();
 const longEvidence='Deux messages adressés à des destinataires différents arrivent après la rupture du premier suspect. Le contenu exact de leur conversation n’est pas encore connu.';
 const shortened=render({title:'DEUX ALERTES DISTINCTES',text:longEvidence,required_votes:2,votes:0,mine:false});
 assert.match(shortened,/Deux alertes distinctes/,'Uppercase titles should be readable');
