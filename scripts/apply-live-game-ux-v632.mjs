@@ -3,7 +3,7 @@ import {copyFile,readFile,writeFile,stat} from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v632-iphone-live-ux';
+const VERSION='v767-private-card-20261117';
 const ASSETS=['live-game-ux-v632.css','live-game-ux-v632.js'];
 await stat(target);
 for(const asset of ASSETS){
