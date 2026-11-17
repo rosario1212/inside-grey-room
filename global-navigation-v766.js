@@ -1,7 +1,7 @@
 /* Inside Grey Room v766 — shared navigation contract for base, DLC and Héritage. */
 (()=>{
 'use strict';
-const VERSION='766.0-global-navigation';
+const VERSION='766.1-single-contextual-exit';
 const root=()=>document.getElementById('app');
 const $=(q,p=document)=>p?.querySelector?.(q)||null;
 let lastRoute='',returnRoute='',pageOrigin='',scheduled=false;
@@ -112,6 +112,40 @@ function addBackWhereMissing(){
  button.dataset.igrGlobalBack='1';button.textContent='← Retour';
  head.appendChild(button);
 }
+// One exit per non-modal page header: Retour for pages, Fermer for dialogs.
+// Never touch active-game controls, modal/drawer dismissals, or separate Accueil
+// navigation (which can lead somewhere other than contextual Retour).
+function reconcileHeaderExits(){
+ const app=root(),main=$('main',app);
+ if(!main)return;
+ const heads=main.querySelectorAll?.('.page-head,.hplay-top,.hnet-head,.hplay-header,.casino-page-head,.casino-head,.local-head')||[];
+ const label=control=>normalize(control?.textContent||'').replace(/^[←↩⟵‹❮◀×✕\\s]+/u,'').toLowerCase();
+ for(const head of heads){
+  if(head.closest?.('.modal,[role="dialog"],[aria-modal="true"],.overlay,.drawer'))continue;
+  const controls=[...(head.querySelectorAll?.('button,a,[role="button"]')||[])];
+  const backs=controls.filter(el=>/^(retour|back)$/.test(label(el)));
+  if(!backs.length)continue;
+  const preferred=backs.find(el=>el.hasAttribute?.('data-hj-return'))
+    ||backs.find(el=>el.classList?.contains('igr-utility-exit'))
+    ||backs.find(el=>!el.classList?.contains('igr-global-return'))
+    ||backs[0];
+  for(const el of controls){
+   if(el===preferred)continue;
+   const title=label(el);
+   if(title==='fermer'||title==='close'){
+    // Destructive exits and custom actions must keep their confirmation flow.
+    const action=String(el.getAttribute?.('onclick')||'');
+    if(action&&!/goHome|goBack|backTo|closeUtilityModal/i.test(action))continue;
+    el.remove();
+   }else if((title==='retour'||title==='back')&&(
+     el.classList?.contains('igr-global-return')
+     ||(el.hasAttribute?.('data-igr-global-back')&&preferred.hasAttribute?.('data-igr-global-back'))
+   )){
+    el.remove();
+   }
+  }
+ }
+}
 function handleBack(e){
  const button=e.target.closest?.('[data-igr-global-back]');
  if(!button)return;
@@ -125,6 +159,7 @@ function scan(){
  scheduled=false;
  routeChanged();
  addBackWhereMissing();
+ reconcileHeaderExits();
 }
 function queueScan(){
  if(scheduled)return;scheduled=true;
@@ -143,6 +178,6 @@ function boot(){
  queueScan();
  window.addEventListener('pageshow',queueScan,{passive:true});
 }
-window.IGR_GLOBAL_NAV_V766=Object.freeze({version:VERSION,currentRoute});
+window.IGR_GLOBAL_NAV_V766=Object.freeze({version:VERSION,currentRoute,reconcileHeaderExits});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
