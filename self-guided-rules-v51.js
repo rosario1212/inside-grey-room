@@ -170,8 +170,8 @@ function rulebookHtml(global=false){
   copy('N’invente jamais de preuve. Les défenses précèdent la décision finale.','Never invent evidence. Defences come before the final decision.')
  ];
  const starter=essentials.map((line,i)=>`<li><b>${i+1}</b><span>${esc(line)}</span></li>`).join('');
- const full=roomSetupHtml()+stepsHtml()+tribunalGuideHtml()+lawyerRule()+tabsHtml(global)+rolesHtml(global)+roleAgencyHtml(global)+terrorRulesHtml(global)+conductHtml();
- return `<div class="igr51-rulebook igr51-concise"><header class="igr51-hero"><small>INSIDE GREY ROOM</small><h1>${copy('Comprendre le jeu','How to play')}</h1><p>${copy('Quatre repères suffisent pour commencer. Les consignes précises apparaissent au fil de la partie.','Four essentials are enough to begin. Detailed instructions appear as you play.')}</p></header><ol class="igr51-starter">${starter}</ol><details class="igr51-complete"><summary>${copy('Consulter le règlement détaillé (facultatif)','View detailed rules (optional)')}</summary><div class="igr51-extended">${full}</div></details></div>`;
+ const full=roomSetupHtml()+stepsHtml()+tribunalGuideHtml()+lawyerRule()+tabsHtml(global)+roleAgencyHtml(global)+terrorRulesHtml(global)+conductHtml();
+ return `<div class="igr51-rulebook igr51-concise"><header class="igr51-hero"><small>INSIDE GREY ROOM</small><h1>${copy('Comprendre le jeu','How to play')}</h1><p>${copy('Quatre repères suffisent pour commencer. Les consignes précises apparaissent au fil de la partie.','Four essentials are enough to begin. Detailed instructions appear as you play.')}</p></header><ol class="igr51-starter">${starter}</ol><details class="igr51-complete igr51-roles-access"><summary>${copy('Présentation des rôles','Role introductions')}</summary><div class="igr51-extended">${rolesHtml(global)}</div></details><details class="igr51-complete"><summary>${copy('Consulter le règlement détaillé (facultatif)','View detailed rules (optional)')}</summary><div class="igr51-extended">${full}</div></details></div>`;
 }
 
 function nowText(){const ph=String(room()?.phase||''),r=role(),cycle=+room()?.cycle||0;
