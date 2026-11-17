@@ -19,8 +19,8 @@ function put(x,preserveLobby=false){
  const selected=roleId&&Array.from(nextLobby?.querySelectorAll('.hnet-role-card[data-role]')||[]).find(b=>b.dataset.role===roleId);
  const after=selected||nextLobby?.querySelector('.hnet-role-zone')||nextLobby?.querySelector('.hnet-title');
  const delta=lobby&&after&&Number.isFinite(beforeTop)?after.getBoundingClientRect().top-beforeTop:0;
- try{window.scrollTo({top:lobby&&nextLobby?Math.max(0,oldScroll+delta):0,left:0,behavior:'instant'})}
- catch(_){window.scrollTo(0,lobby&&nextLobby?Math.max(0,oldScroll+delta):0)}
+ try{window.scrollTo({top:lobby&&nextLobby?Math.max(0,window.scrollY+delta):0,left:0,behavior:'instant'})}
+ catch(_){window.scrollTo(0,lobby&&nextLobby?Math.max(0,window.scrollY+delta):0)}
  if(selected&&!selected.disabled)selected.focus({preventScroll:true});
 }
 function clear(){try{st().removeItem(H);st().removeItem(G)}catch{};last=''}
