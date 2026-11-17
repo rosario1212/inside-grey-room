@@ -29,7 +29,7 @@
    panel.innerHTML='<span>'+phases[phase]+'</span><strong>'+String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')+'</strong><small>'+ (seconds?'Sans choix, une action éligible sera lancée automatiquement.':'Choix automatique en cours…')+'</small>';
    if(seconds===0&&requestedSig!==sig){
      requestedSig=sig;
-     if(typeof window.syncNow==='function')window.syncNow(true).catch?.(()=>{});
+     if(typeof window.syncNow==='function')Promise.resolve(window.syncNow(true)).catch(()=>{});
    }
  };
  const boot=()=>{
