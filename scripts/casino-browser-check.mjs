@@ -211,11 +211,11 @@ try{
  await full.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
  await full.locator('[data-casino-form=create] input[name=name]').fill('Intégration');await full.locator('[data-casino-form=create] button').click();await full.locator('.casino-roster-disclosure').waitFor();
  await full.waitForTimeout(2600);assert.equal(await full.locator('.casino-members').count(),1,'Existing runtimes must not replace the Casino screen');
- await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();
+ await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]:not([data-casino-join])').waitFor();
  await full.evaluate(()=>window.IGR_HERITAGE_PLAY.open());await full.locator('.casino-entry').waitFor();
  await layout(full,'hub-full-desktop');await full.setViewportSize({width:390,height:844});await layout(full,'hub-full-iphone');
  await full.locator('.casino-entry').click();await layout(full,'campaign-full-iphone');
- await full.locator('[data-casino-live]').click();await full.locator('[data-casino-action=switch]').click();await layout(full,'entry-full-iphone');
+ await full.locator('[data-casino-live]:not([data-casino-join])').click();await full.locator('[data-casino-action=switch]').click();await layout(full,'entry-full-iphone');
  await full.locator('[data-casino-action=close]').click();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
  const integratedRoom=await api(full,{op:'sync'});
  await full.evaluate(()=>{localStorage.removeItem('igr_casino_identity_v1');localStorage.removeItem('igr_social_identity_v1');goJoin()});
