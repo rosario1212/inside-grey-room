@@ -628,7 +628,7 @@ async function refresh007PublishState(force=false){
 function renderCreateList(){
  // Preserve the user's position on a passive catalogue refresh. A new entry
  // from Accueil has no prior catalogue and is opened at the top by navigation.
- const previousList=document.querySelector('#app .page-create-v10-13');
+ const previousList=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .page-create-v10-13'):null;
  const previousListY=previousList?window.scrollY:null;
  const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
  // Keep artwork lookup local: secure 007 checks isolate this renderer.
@@ -735,7 +735,7 @@ function equipProfileBadge(id){
  toast(`Badge équipé : ${item.label}`);
 }
 function renderProfile(){
- const previousProfile=document.querySelector('#app .profile-page');
+ const previousProfile=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .profile-page'):null;
  const previousProfileY=previousProfile?window.scrollY:null;
  const p=loadProfile();p.avatar=safeAvatar(p.avatar);const titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
  const titleCards=titles.length?titles.map(x=>{const active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''}" onclick="equipProfileTitle('${x.id}')"><span class="reward-state">${active?'ÉQUIPÉ':'DÉBLOQUÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join(''):`<div class="empty-rewards">Aucun titre débloqué pour le moment.</div>`;
