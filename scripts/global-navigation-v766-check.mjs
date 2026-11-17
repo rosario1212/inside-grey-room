@@ -93,4 +93,19 @@ assert.equal(nav.currentRoute(),'casino:lobby');
 main=screen(['page','localplay','local-setup']);
 assert.equal(nav.currentRoute(),'local:local-setup');
 
+
+// v769: Join has one context-specific Retour and an independent Accueil.
+const joinFragment=standard.slice(standard.indexOf('function renderJoin(){'),standard.indexOf('const PROFILE_TITLES',standard.indexOf('function renderJoin(){')));
+assert.equal((joinFragment.match(/class="btn ghost small igr-join-pill/g)||[]).length,2,'Exactly two navigation pills are required');
+assert(joinFragment.includes('data-igr-global-back="1"'),'Retour must follow contextual navigation');
+assert(joinFragment.includes('onclick="goHome()"'),'Accueil must always return to home');
+assert(joinFragment.includes('igr-join-actions')&&joinFragment.includes('<svg viewBox="0 0 24 24"'),'Both buttons need vector icons');
+const journey=read('heritage-journey-v755.js');
+assert(journey.includes("back.removeAttribute('data-igr-global-back');back.dataset.hjReturn='1'"),'Héritage must only retarget Retour');
+assert(!journey.includes("home.textContent='← Retour'"),'Héritage cannot rewrite the Accueil action');
+const navStyle=read('global-navigation-v766.css');
+assert(navStyle.includes('.igr-join-actions>.igr-join-pill'),'Join buttons must share premium pill styling');
+assert(navStyle.includes('@media(max-width:650px)'),'Mobile join layout must be responsive');
+assert(web.includes('global-navigation-v766.css?v=v769-join-pill')&&mobile.includes('global-navigation-v766.css?v=v769-join-pill'),'Both builds must ship the revised CSS');
+
 console.log('PASS global navigation v766: base dossiers, all DLC lobby route, 4 Héritage campaigns, Casino, local screens, stable catalogue/profile and both bundles.');
