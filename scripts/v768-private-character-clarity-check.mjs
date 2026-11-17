@@ -53,12 +53,12 @@ for(let num=1;num<=34;num++){
  assert(html.includes('TON HISTOIRE'),id+' requires narrative context');
  assert(html.includes('TES RELATIONS'),id+' requires relations when authorized');
  assert(html.includes('Joueur B'),id+' must identify the other player by their public nickname');
- assert(html.indexOf('TES RELATIONS')<html.indexOf('TA CHRONOLOGIE'),id+' must introduce people before mentioning events');
+ assert(html.indexOf('CE QUE TU AS FAIT')<html.indexOf('TES RELATIONS'),id+' must give the player a legible personal timeline before the relationship cards');
  assert(html.includes('CE QUE TU CACHES'),id+' requires their own secret');
  assert(html.includes('SECRET-PRIVE-DU-JOUEUR-A'),id+' must show only their own disclosed state');
  assert(!html.includes('NE-PAS-AFFICHER-SECRET-AUTRUI'),id+' illegally leaks another role');
- assert(html.includes('15 h 47 — Tu agis.'),id+' must retain authored facts unchanged');
- assert((html.match(/<li>/g)||[]).length===3,id+' must separate numbered chronology items');
+ assert(html.includes('15 h 47')&&html.includes('Tu agis.'),id+' must retain the exact authored time and fact in separate timeline columns');
+ assert((html.match(/<li>/g)||[]).length===3,id+' must separate the three numbered chronology entries');
  assert(html.includes('TON OBJECTIF')||html.includes('COMMENT TU GAGNES'),id+' must surface the role objective');
 }
 const special=card('021',{standalone:true,custom:{identity:'Personnage privé',objective:'Gagner sans dévoiler la vérité',what_you_know:'Fait privé',what_you_hide:'Élément confidentiel',your_chronology:'AVANT — observation\nPENDANT — décision\nAPRÈS — retour',conversation_hooks:['Confronter un échange']}});
