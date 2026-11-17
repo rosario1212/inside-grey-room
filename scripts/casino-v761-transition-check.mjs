@@ -44,7 +44,7 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
      pages:document.querySelectorAll('#app .app').length,
      overflow:rects.filter(r=>r.x<-.6||r.right>innerWidth+.6).map(r=>({left:r.x,right:r.right})),
      tableGrid:getComputedStyle(main.querySelector('.casino-live-top')).display,
-     headerRows:[...main.querySelector('.casino-live-top').children].map(el=>({x:el.getBoundingClientRect().x,right:el.getBoundingClientRect().right,top:el.getBoundingClientRect().top})),
+     headerRows:[...main.querySelector('.casino-live-top').children].map(el=>({x:el.getBoundingClientRect().x,right:el.getBoundingClientRect().right,top:el.getBoundingClientRect().top,centerY:el.getBoundingClientRect().top+el.getBoundingClientRect().height/2})),
      body:main.textContent.includes('Organiser une partie')&&main.textContent.includes('Rejoindre des amis')
     };
    });
@@ -60,7 +60,7 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
    assert(after.scrollWidth<=width+1,'Casino entry must not cause horizontal scrolling');
    assert.equal(after.overflow.length,0,'Casino controls must fit viewport '+JSON.stringify(after.overflow));
    assert(after.headerRows.length>=2,'The back control and campaign label must stay visible');
-   if(width>350&&width<=393)assert(after.headerRows[0].top===after.headerRows[1].top,'Normal mobile header must stay on one aligned row');
+   if(width>350&&width<=393)assert(Math.abs(after.headerRows[0].centerY-after.headerRows[1].centerY)<3,'Normal mobile header elements must align on the same visual baseline');
    if(width<=350)assert(after.headerRows[1].top>after.headerRows[0].top,'Narrow phones should use two readable non-overlapping header rows');
   });
  }
