@@ -21,6 +21,7 @@ const sample={
  anchors:'Tu sais avoir commandé une intimidation après cette première confrontation.',
  position:defaultGoal,
  objective_main:defaultGoal,
+ omerta_objective:defaultGoal,
  relations:[{pseudo:'Joueur B',text:'Tu ne connais pas ce client ni sa présence réelle dans la chambre.'}]
 };
 function render(id,{state={},role='suspect',standalone=false}={}){
