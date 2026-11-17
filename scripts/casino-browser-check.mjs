@@ -76,7 +76,10 @@ try{
    // This browser lacks native inset emulation: evaluate the shipped padding
    // formula with a 59px status area and 34px home-indicator area.
    const css=await readFile(join(root,'casino-client-v105.css'),'utf8');
-   const safe=await page.addStyleTag({content:css.replaceAll('env(safe-area-inset-top,0px)','59px').replaceAll('env(safe-area-inset-bottom)','34px')});
+   // Casino now lives inside the shared .app shell. Simulate the native
+   // status-bar inset on that shell rather than double-insetting Casino.
+   const safe=await page.addStyleTag({content:css.replaceAll('env(safe-area-inset-top,0px)','59px').replaceAll('env(safe-area-inset-bottom)','34px')+
+    '\n#app>.app{padding-top:calc(59px + 14px)!important;}'});
    const back=await page.locator('[data-casino-action=close]').boundingBox();assert(back.y>=59,'Back button must clear the status area');
    await layout(page,'welcome-safe-iphone');await safe.evaluate(e=>e.remove());
   }
