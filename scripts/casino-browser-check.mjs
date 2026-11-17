@@ -254,7 +254,7 @@ try{
  await interrupted.page.unroute('**/api/casino');await interrupted.page.reload();await interrupted.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());
  await interrupted.page.locator('.casino-roster-disclosure').waitFor();const recoveredCreation=await storageIdentity(interrupted.page);
  assert.equal(recoveredCreation.roomId,candidate.roomId);assert.equal((await storage.read(recoveredCreation.roomId)).state.members.length,1);
- const interruptedJoin=await context({width:820,height:1180});await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());let droppedJoin=false;
+ const interruptedJoin=await context({width:820,height:1180});await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open({fresh:true,mode:'join'}));let droppedJoin=false;
  await interruptedJoin.page.route('**/api/casino',async route=>{
   if(route.request().postDataJSON()?.op==='join'&&!droppedJoin){droppedJoin=true;await route.fetch();await route.abort('failed')}
   else await route.continue();
