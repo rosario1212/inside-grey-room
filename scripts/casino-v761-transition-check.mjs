@@ -39,7 +39,7 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
      main:box('#app .app>#casino-live-v105'),bar:box('#app .app>.topbar'),
      shell:box('#app .app'),content:box('#app .casino-content'),
      status:main?.querySelector('.casino-live-top')?.textContent.trim(),
-     scrollWidth:document.documentElement.scrollWidth, viewport:innerWidth,
+     scrollWidth:document.documentElement.scrollWidth, viewport:innerWidth, scrollY:window.scrollY,
      inputs:[...main.querySelectorAll('.casino-entry-option input')].length,
      pages:document.querySelectorAll('#app .app').length,
      overflow:rects.filter(r=>r.x<-.6||r.right>innerWidth+.6).map(r=>({left:r.x,right:r.right})),
@@ -56,6 +56,7 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
    assert(Math.abs(before.main.width-after.main.width)<1.5,'Casino public/live screens must use equal content widths');
    assert(after.main.top>=after.bar.top+20,'Casino view must stay below the topbar');
    assert(after.content.width>0&&after.tableGrid==='grid','The form and action header must use reliable grid alignment');
+   assert(after.scrollY<=2,'The public campaign scroll position must be cleared on entry');
    assert(after.scrollWidth<=width+1,'Casino entry must not cause horizontal scrolling');
    assert.equal(after.overflow.length,0,'Casino controls must fit viewport '+JSON.stringify(after.overflow));
    assert(after.headerRows.length>=2,'The back control and campaign label must stay visible');
