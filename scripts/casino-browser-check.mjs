@@ -64,8 +64,14 @@ try{
    assert(Math.abs(crop.right-(crop.x+crop.width)/1536)<.002,'poster right boundary');
   }
   await page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await layout(page,'welcome-'+label);
-  assert.equal(await page.getByRole('region',{name:'Organiser une partie'}).count(),1);
-  assert.equal(await page.getByRole('region',{name:'Rejoindre des amis'}).count(),1);
+  assert.equal(await page.getByRole('tab',{name:'Créer'}).count(),1);
+  assert.equal(await page.getByRole('tab',{name:'Rejoindre'}).count(),1);
+  assert.equal(await page.locator('[data-casino-form=create]').count(),1,'Only the create form should be displayed by default');
+  assert.equal(await page.locator('[data-casino-form=join]').count(),0,'The join form stays behind its tab');
+  await page.getByRole('tab',{name:'Rejoindre'}).click();
+  assert.equal(await page.locator('[data-casino-form=join]').count(),1,'Join tab must be usable');
+  assert.equal(await page.locator('[data-casino-form=create]').count(),0,'Join tab hides the create form');
+  await page.getByRole('tab',{name:'Créer'}).click();
   if(label==='iphone'){
    // This browser lacks native inset emulation: evaluate the shipped padding
    // formula with a 59px status area and 34px home-indicator area.
@@ -86,7 +92,7 @@ try{
  const hostId=await storageIdentity(hostPage),room=await storage.read(hostId.roomId),people=[host];
  for(let i=1;i<7;i++){
   const person=await context(i%2?{width:820,height:1180}:{width:1440,height:900});people.push(person);
-  await person.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await person.page.locator('[data-casino-form=join] input[name=name]').fill('Joueur '+i);
+  await person.page.evaluate(()=>window.IGR_CASINO_CLIENT.open({fresh:true,mode:'join'}));await person.page.locator('[data-casino-form=join] input[name=name]').fill('Joueur '+i);
   await person.page.locator('[data-casino-form=join] input[name=inviteCode]').fill(room.inviteCode);
   await person.page.locator('[data-casino-form=join] button').click();await person.page.locator('.casino-roster-disclosure').waitFor();
  }
