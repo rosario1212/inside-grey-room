@@ -91,6 +91,14 @@
   function fill(card,label,values,kind,after){
     const {parent,title}=ensureSection(card,label,after);
     for(const element of Array.from(parent.children))if(element!==title)element.remove();
+    if(kind==='situation'){
+      // The opening is an incident summary, not another checklist.
+      const paragraph=document.createElement('p');
+      paragraph.className='igr773-situation-copy';
+      paragraph.textContent=values.join(' ');
+      parent.appendChild(paragraph);
+      return parent;
+    }
     const list=document.createElement('ul');
     list.className='igr773-lines igr773-'+kind;
     for(const statement of values){
