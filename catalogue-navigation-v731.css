@@ -1034,3 +1034,33 @@ body.igr-scenario-browser.igr-catalogue-scrolled:has(#app .page-create-v10-13)
     padding:3px 4px!important;
   }
 }
+
+/* v755 — All DLC pre-click descriptions use one typography contract.
+   This only targets the scenario selector, never the detail page.
+   Short content remains complete; no ellipsis, clipping or overlap. */
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
+  --igr-card-copy:clamp(.79rem,3.5vw,.91rem)!important;
+  --igr-card-line:1.33!important;
+}
+#app .page-create-v10-13 .scenario-list-v10-13
+  > article.scenario.scenario--art.scenario--compact:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario)
+  > .scenario-body.compact > p.igr-card-excerpt{
+  display:block!important;
+  font-size:var(--igr-card-copy)!important;
+  line-height:var(--igr-card-line)!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+  -webkit-line-clamp:unset!important;
+  line-clamp:unset!important;
+  text-overflow:clip!important;
+  margin:0!important;
+}
+@media(max-width:374px){
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
+    --igr-card-copy:.74rem!important;
+    --igr-card-line:1.25!important;
+  }
+}
