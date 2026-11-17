@@ -626,10 +626,18 @@ async function refresh007PublishState(force=false){
  if(STATE.view==='create-list')renderCreateList();
 }
 function renderCreateList(){
+ // Preserve the user's position on a passive catalogue refresh. A new entry
+ // from Accueil has no prior catalogue and is opened at the top by navigation.
+ const previousList=document.querySelector('#app .page-create-v10-13');
+ const previousListY=previousList?window.scrollY:null;
  const release007=typeof IGR007_PUBLISH!=='undefined'&&IGR007_PUBLISH.enabled;
  // Keep artwork lookup local: secure 007 checks isolate this renderer.
  const art=id=>String(id)==='018'?'assets/scenario-018-catalog-v749.webp':scenarioArt(id);
  byId('app').innerHTML=shell(`<main class="page page-create-v10-13"><div class="page-head"><div><div class="kicker">Créer une partie</div><h1>Choisissez un scénario</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel scenario-panel-v10-13"><div class="scenario-list scenario-list-v10-13">${SCENARIOS.filter(sc=>Number(sc.id)>=1&&Number(sc.id)<=20).map(sc=>`<article id="scenario-${sc.id}" class="scenario scenario--art scenario--compact" role="${(sc.id!=='007'||release007)?'button':'group'}" ${(sc.id!=='007'||release007)?`tabindex="0" onclick="selectScenario('${sc.id}')"`:'aria-disabled="true"'}><div class="scenario-thumb compact" style="--igr-cover-url:url('${art(sc.id)}')"><img class="igr-poster-full" loading="lazy" decoding="async" src="${art(sc.id)}" alt="${h(sc.title)}"></div><div class="scenario-body compact"><div class="scenario-id">Dossier ${h(sc.id)}</div><h3>${h(sc.title)}</h3><p class="igr-card-excerpt">${h(typeof scenarioCardTeaser==='function'?scenarioCardTeaser(typeof scenarioCatalogueSynopsis==='function'?scenarioCatalogueSynopsis(sc):sc.short,30):String(sc.short||'').trim().split(/\s+/).slice(0,30).join(' '))}</p><div class="tag-row" aria-label="Informations du dossier"><span class="tag">${h(playerCountLabel(sc))}</span>${scenarioDifficultyTag(sc)}${(sc.id!=='007'||release007)?'':'<span class="tag">EN PRÉPARATION</span>'}</div></div></article>`).join('')}</div></section></main>`)
+ if(previousListY!==null){
+  try{window.scrollTo({top:previousListY,left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,previousListY)}
+ }
  if(typeof refresh007PublishState==='function')void refresh007PublishState();
 }
 function selectScenario(id){
@@ -727,10 +735,16 @@ function equipProfileBadge(id){
  toast(`Badge équipé : ${item.label}`);
 }
 function renderProfile(){
+ const previousProfile=document.querySelector('#app .profile-page');
+ const previousProfileY=previousProfile?window.scrollY:null;
  const p=loadProfile();p.avatar=safeAvatar(p.avatar);const titles=unlockedTitles(p),badges=unlockedBadges(p),equippedTitle=profileTitle(p.equippedTitle,p),equippedBadge=profileBadge(p.equippedBadge,p);
  const titleCards=titles.length?titles.map(x=>{const active=equippedTitle.id===x.id;return `<button class="reward-card ${active?'active':''}" onclick="equipProfileTitle('${x.id}')"><span class="reward-state">${active?'ÉQUIPÉ':'DÉBLOQUÉ'}</span><b>${h(x.label)}</b><small>${h(x.desc)}</small></button>`}).join(''):`<div class="empty-rewards">Aucun titre débloqué pour le moment.</div>`;
  const badgeCards=badges.length?badges.map(x=>{const active=equippedBadge.id===x.id;return `<button class="badge-card ${active?'active':''}" onclick="equipProfileBadge('${x.id}')"><span class="badge-glyph">${h(x.glyph)}</span><span><b>${h(x.label)}</b><small>${h(x.desc)}</small></span></button>`}).join(''):`<div class="empty-rewards">Aucun badge débloqué pour le moment.</div>`;
  byId('app').innerHTML=shell(`<main class="page profile-page"><div class="page-head"><div><div class="kicker">Profil joueur</div><h1>Ton identité</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel profile-panel"><div class="profile-avatar-wrap"><div id="profilePreview">${p.avatar?`<span class="avatar avatar-profile"><img src="${p.avatar}" alt="Photo de profil"></span>`:`<span class="avatar avatar-fallback avatar-profile">${h(initials(p.pseudo||'?'))}</span>`}</div><div><h2>${h(p.pseudo||'Nouveau joueur')}</h2><div class="profile-equipped-line">${equippedBadge.id!=='none'?`<span class="equipped-badge">${h(equippedBadge.glyph)}</span>`:''}<span>${equippedTitle.id!=='none'?h(equippedTitle.label):'Aucun titre équipé'}</span></div><p>Tes titres et badges sont des trophées de victoire visibles dans ton profil. Ils restent hors de l’interface de partie.</p></div></div><div class="field"><label for="profilePseudo">Pseudo</label><input id="profilePseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(p.pseudo)}" placeholder="Votre pseudo"></div><div class="profile-photo-actions"><label class="btn" for="profilePhoto">Choisir une photo</label><input id="profilePhoto" type="file" accept="image/*" hidden onchange="profilePhotoChanged(this.files?.[0])"><button class="btn ghost" onclick="removeProfilePhoto()">Supprimer la photo</button></div><div class="profile-stats"><div><b>${p.games||0}</b><span>parties lancées</span></div><div><b>${p.wins||0}</b><span>victoires</span></div><div><b>${p.completed||0}</b><span>dossiers terminés</span></div></div><div class="reward-section"><div class="section-title"><h2>Titres débloqués</h2><span>${titles.length} disponibles</span></div><div class="reward-grid">${titleCards}</div></div><div class="reward-section"><div class="section-title"><h2>Badges débloqués</h2><span>${badges.length} disponibles</span></div><div class="badge-grid">${badgeCards}</div></div>${(p.history||[]).length?`<div class="profile-history"><div class="section-title"><h2>Historique récent</h2><span>${Math.min((p.history||[]).length,8)} dossiers</span></div>${(p.history||[]).slice(0,8).map(x=>`<div class="history-row"><span>Dossier ${h(x.scenario||'—')} · ${h(x.title||'')}${x.role?` · ${h(publicRoleLabel(x.role))}`:''}</span><small>${h(x.date||'')}</small></div>`).join('')}</div>`:''}<button class="btn primary block" onclick="saveProfileForm()">Enregistrer le profil</button><div class="profile-privacy-actions"><button class="btn ghost block" onclick="openPrivacy()">Confidentialité et données</button><button class="btn ghost block" onclick="openSupport()">Support</button>${STATE.room&&STATE.token?`<button class="btn ghost block" onclick="openSafety()">Signaler ou bloquer un joueur</button>`:''}</div></section></main>`)
+ if(previousProfileY!==null){
+  try{window.scrollTo({top:previousProfileY,left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,previousProfileY)}
+ }
 }
 
 async function compressAvatar(file){
