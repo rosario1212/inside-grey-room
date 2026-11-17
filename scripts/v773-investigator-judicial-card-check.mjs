@@ -8,7 +8,7 @@ const sw=readFileSync('service-worker.js','utf8');
 const css=readFileSync('judicial-card-v773.css','utf8');
 const web=readFileSync('scripts/build-web.mjs','utf8');
 const mobile=readFileSync('scripts/build-mobile.mjs','utf8');
-assert(page.includes('judicial-card-v773.js?v=v773-20261117'));
+assert(page.includes('judicial-card-v773.js?v=v774-20261117'));
 assert(page.includes('judicial-card-v773.css?v=v773-20261117'));
 assert(page.indexOf('judicial-card-v773.js')>page.indexOf('investigation-ux-v772.js'),
   'Judicial classification must run after all legacy role-card overrides');
