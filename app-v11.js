@@ -1754,6 +1754,17 @@ function save016EvidenceNote(section,value){if(!['visible','outside','cause'].in
 function currentTarget(){const id=STATE.sync?.room?.state?.current_target;return (STATE.sync?.players||[]).find(p=>p.id===id)}
 function latestEvent(type){return [...(STATE.sync?.events||[])].reverse().find(e=>!type||e.event_type===type)}
 // Clarify presentation only. Never reinterpret or supplement a canonical finding.
+function readableFindingTitle(value,scenarioId){
+ const title=String(value||'').trim();
+ if(String(scenarioId)!=='004')return title;
+ const names={
+  'Réponse conservée':'Message conservé · refus de déplacement',
+  'Journal d\'appels':'Historique des appels',
+  'Accusé de message':'Accusé de réception du message',
+  'Antériorité des échanges':'Chronologie des messages'
+ };
+ return names[title]||title;
+}
 function readableFindingText(value,scenarioId){
  let text=String(value||'').trim();
  if(String(scenarioId)!=='004')return text;
@@ -1824,7 +1835,7 @@ function renderInvestigationTab(){
  }
  if(['001','002','003','004','005','006','007','008','009','010','011','012','013','014','015','016'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
   const evidenceTag=r.scenario_id==='016'?'investigation_016':r.scenario_id==='015'?'investigation_015':r.scenario_id==='014'?'investigation_014':r.scenario_id==='013'?'investigation_013':r.scenario_id==='012'?'investigation_012':r.scenario_id==='011'?'investigation_011':r.scenario_id==='010'?'investigation_010':r.scenario_id==='009'?'investigation_009':r.scenario_id==='008'?'investigation_008':r.scenario_id==='007'?'investigation_007':r.scenario_id==='006'?'investigation_006':r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
-  if(reports.length)body+=`<section class="private-block igr001-reports"><h3>Pièces examinées · ${reports.length}</h3><p class="choice-helper">Compare les faits établis avec les déclarations des suspects. Une pièce ne prouve pas à elle seule qui est responsable.</p><div class="igr-evidence-list">${reports.map((e,i)=>`<article class="igr-evidence-record"><div class="igr-evidence-record-head"><small>CYCLE ${h(e.cycle||'?')} · PIÈCE ${i+1}</small><strong>${h(e.payload?.title||'Élément vérifié')}</strong></div><p>${h(readableFindingText(e.payload?.text,r.scenario_id))}</p></article>`).join('')}</div></section>`;
+  if(reports.length)body+=`<section class="private-block igr001-reports"><h3>Pièces examinées · ${reports.length}</h3><p class="choice-helper">Compare les faits établis avec les déclarations des suspects. Une pièce ne prouve pas à elle seule qui est responsable.</p><div class="igr-evidence-list">${reports.map((e,i)=>`<article class="igr-evidence-record"><div class="igr-evidence-record-head"><small>CYCLE ${h(e.cycle||'?')} · PIÈCE ${i+1}</small><strong>${h(readableFindingTitle(e.payload?.title||'Élément vérifié',r.scenario_id))}</strong></div><p>${h(readableFindingText(e.payload?.text,r.scenario_id))}</p></article>`).join('')}</div></section>`;
   const eligible=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
   if(eligible){
    const choices=d.scenario?.[evidenceTag]||[];
