@@ -515,3 +515,49 @@
 @media(prefers-reduced-motion:reduce){
   #app .maitre-page *{transition:none!important;animation:none!important}
 }
+
+
+/* MAÎTRE's hub tile is outside .maitre-page: give it its own palette and
+   the SAME card geometry as the other Heritage campaign covers. */
+#app .hplay-hub-grid>.maitre-hub-card{
+  --hp-accent:#ead0b6;
+  --hp-accent-soft:rgba(123,58,55,.14);
+  background:#1a1415!important;
+  border:1px solid rgba(230,202,177,.19);
+  border-radius:19px;
+  min-height:clamp(335px,41vw,460px)!important;
+  max-height:none!important;
+  height:auto!important;
+  padding:0!important;
+  color:#fff3e7;
+  overflow:hidden;
+}
+#app .hplay-hub-grid>.maitre-hub-card>img{
+  display:block;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center 35%!important;
+  filter:brightness(.62) saturate(.78)!important;
+}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-shade{
+  background:linear-gradient(180deg,rgba(10,5,5,.04),rgba(17,7,8,.24) 40%,rgba(18,8,10,.91) 82%,#120b0d 100%)!important;
+}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-body{
+  position:absolute!important;
+  top:auto!important;
+  bottom:0!important;
+  left:0!important;
+  right:0!important;
+  padding:clamp(17px,3vw,25px)!important;
+  gap:8px;
+}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-body>strong{font-size:clamp(35px,6vw,49px);color:#fff3e8;line-height:1}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-body>em{color:#e7bda5}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-body>small{color:#d8c5b6;line-height:1.54}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-foot{border-top-color:rgba(242,217,195,.17)}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-foot b{color:#d7b6a2}
+#app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-foot i{color:#f0d3bd}
+@media(min-width:1100px){
+  #app .hplay-hub-grid>.maitre-hub-card{min-height:540px!important;height:100%!important}
+}
