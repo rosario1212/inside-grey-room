@@ -27,7 +27,7 @@ for(const marker of [
  assert(englishRedirect.includes("location.replace('./')"),'English locale redirect changed');
  assert(read(join(out,marker)).length>100,'Published bundle missing '+marker);
 }
-assert(standard.includes("const oldLobby=document.querySelector('#app .lobby-v11')"),'All 001–034 rooms must preserve existing lobby position');
+assert(standard.includes("document.querySelector('#app .lobby-v11')")&&standard.includes('const oldRoleAnchor='),'All 001–034 rooms must preserve existing lobby position');
 assert(standard.includes('window.scrollY+shift'),'Base/DLC lobby role anchor compensation is missing');
 assert(standard.includes('previousListY!==null'),'Catalogue may not jump on passive refresh');
 assert(standard.includes('previousProfileY!==null'),'Profile may not jump after selecting a badge');
