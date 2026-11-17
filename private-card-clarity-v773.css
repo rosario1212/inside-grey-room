@@ -1,0 +1,106 @@
+/* v773 — shared private-card readability across base cases and DLCs.
+   Render already-authorized facts only; never infer or mix players' secrets. */
+#app .private-card-v11 .igr-v772-steps {
+  display:grid;
+  gap:0;
+  list-style:none;
+  margin:0;
+  padding:0;
+  counter-reset:none;
+  min-width:0;
+}
+#app .private-card-v11 .igr-v772-steps > li {
+  display:grid;
+  grid-template-columns:minmax(74px, max-content) minmax(0,1fr);
+  column-gap:14px;
+  row-gap:5px;
+  align-items:start;
+  min-width:0;
+  margin:0;
+  padding:14px 0;
+  border-top:1px solid rgba(150,170,185,.18);
+  line-height:1.55;
+  list-style:none;
+}
+#app .private-card-v11 .igr-v772-steps > li::before {
+  content:none!important;
+  display:none!important;
+}
+#app .private-card-v11 .igr-v772-steps > li:first-child {
+  border-top:0;
+  padding-top:0;
+}
+#app .private-card-v11 .igr-v772-steps > li:last-child { padding-bottom:0; }
+#app .private-card-v11 .igr-v772-time {
+  display:block;
+  min-width:0;
+  margin:0;
+  padding:4px 0;
+  color:#afc9d9;
+  font:700 12px/1.5 'IBM Plex Mono',monospace;
+  white-space:nowrap;
+  letter-spacing:.01em;
+}
+#app .private-card-v11 .igr-v772-event {
+  display:block;
+  min-width:0;
+  color:#e2e7ec;
+  font-size:clamp(15px,1.65vw,17px);
+  line-height:1.58;
+  overflow-wrap:break-word;
+  white-space:normal;
+}
+#app .private-card-v11 .igr-v772-steps > li:not(:has(.igr-v772-time)) {
+  grid-template-columns:minmax(0,1fr);
+}
+#app .private-card-v11 .private-block,
+#app .private-card-v11 .role-summary,
+#app .private-card-v11 .relation-line { min-width:0; }
+#app .private-card-v11 .private-block > p,
+#app .private-card-v11 .relation-line > span,
+#app .private-card-v11 .role-summary > span {
+  overflow-wrap:break-word;
+  word-break:normal;
+  white-space:pre-line;
+  line-height:1.58;
+}
+#app .private-card-v11 .igr-v772-defence-list {
+  display:grid;
+  gap:8px;
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+#app .private-card-v11 .igr-v772-defence-list > li {
+  position:relative;
+  padding:0 0 0 14px;
+  margin:0;
+  line-height:1.55;
+  overflow-wrap:break-word;
+}
+#app .private-card-v11 .igr-v772-defence-list > li::before {
+  content:'';
+  position:absolute;
+  left:0;
+  top:.7em;
+  height:4px;
+  width:4px;
+  border-radius:50%;
+  background:#9fb5c5;
+}
+@media(max-width:420px){
+  #app .private-card-v11 .igr-v772-steps > li {
+    grid-template-columns:70px minmax(0,1fr);
+    column-gap:10px;
+    padding:12px 0;
+  }
+  #app .private-card-v11 .igr-v772-time {
+    font-size:11px;
+  }
+  #app .private-card-v11 .igr-v772-event {
+    font-size:15px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #app .private-card-v11 .igr-v772-steps * { transition:none!important; }
+}
