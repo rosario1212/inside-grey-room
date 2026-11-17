@@ -1,0 +1,19 @@
+/* Global navigation v766: native-feeling return actions in every theme. */
+#app .igr-global-return,#app [data-igr-global-back]{
+ min-height:44px;min-width:44px;touch-action:manipulation;
+ display:inline-flex;align-items:center;justify-content:center;
+ white-space:nowrap;max-width:100%;
+}
+#app [data-igr-global-back]:focus-visible,#app .igr-global-return:focus-visible{
+ outline:2px solid var(--hp-accent,#e3eaf0);outline-offset:3px;
+}
+#app .role-choice-zone .role-choice-card,
+#app .hnet-role-zone .hnet-role-card,
+#app .casino-role-choice-zone .casino-role-choice-card{
+ contain:layout style;touch-action:manipulation;
+}
+@media(prefers-reduced-motion:reduce){
+ #app .role-choice-card,#app .hnet-role-card,#app .casino-role-choice-card{
+  transition:none!important;
+ }
+}
