@@ -1,0 +1,26 @@
+/* v773 — Mobile-first, editorial investigator briefing. No nested card borders. */
+#app .private-card-v11.igr773-card .igr773-lines{
+ list-style:none;margin:8px 0 0;padding:0;display:grid;gap:11px;
+}
+#app .private-card-v11.igr773-card .igr773-lines li{
+ position:relative;margin:0;padding:0 0 0 14px;
+ font-size:clamp(14px,3.8vw,16px);line-height:1.52;
+ letter-spacing:0;color:#d7dce1;overflow-wrap:anywhere;
+}
+#app .private-card-v11.igr773-card .igr773-lines li:before{
+ content:'';width:4px;height:4px;border-radius:50%;
+ position:absolute;left:1px;top:.72em;background:#80929f;
+}
+#app .private-card-v11.igr773-card .igr773-judicial li{color:#e3e8eb}
+#app .private-card-v11.igr773-card .igr773-line li{color:#b8c2cc}
+#app .private-card-v11.igr773-card .private-block{
+ padding-block:14px;overflow-wrap:anywhere;
+}
+#app .private-card-v11.igr773-card .private-block h4,
+#app .private-card-v11.igr773-card .private-block summary{
+ letter-spacing:.045em;line-height:1.3;
+}
+@media(max-width:520px){
+ #app .private-card-v11.igr773-card .igr773-lines{gap:10px}
+ #app .private-card-v11.igr773-card .igr773-lines li{font-size:14.5px;line-height:1.51}
+}
