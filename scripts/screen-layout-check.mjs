@@ -6,6 +6,7 @@ import {chromium} from 'playwright';
 import {runFluidityChecks} from './runtime-fluidity-check.mjs';
 import {runMaitrePosterChecks} from './maitre-poster-layout-check.mjs';
 import {runHeritageV760VisualChecks} from './heritage-v760-visual-check.mjs';
+import {runV772PrivateCardMobileChecks} from './v772-private-card-mobile-check.mjs';
 import {runCasinoV761TransitionChecks} from './casino-v761-transition-check.mjs';
 import {runAuditGameplayChecks} from './audit-gameplay-check.mjs';
 import {runNotificationChecks} from './notification-attention-check.mjs';
@@ -68,6 +69,7 @@ async function check(name,run){
 }
 try{
   await runHeritageV760VisualChecks({page,css,read,check});
+  await runV772PrivateCardMobileChecks({page,css,app,check});
   await runCasinoV761TransitionChecks({page,css,read,check});
   await runFluidityChecks({page,css,app,read,check,report});
   await runAuditGameplayChecks({page,read,check});
