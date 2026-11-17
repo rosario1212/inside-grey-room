@@ -108,4 +108,65 @@ assert(navStyle.includes('.igr-join-actions>.igr-join-pill'),'Join buttons must 
 assert(navStyle.includes('@media(max-width:650px)'),'Mobile join layout must be responsive');
 assert(web.includes('global-navigation-v766.css?v=v769-join-pill')&&mobile.includes('global-navigation-v766.css?v=v769-join-pill'),'Both builds must ship the revised CSS');
 
+// v776 — actual mobile utility button and shared page-header deduplication.
+const mobileUi=read('mobile-ui-v28.js');
+const utilityStart=mobileUi.indexOf('function enhanceUtilityExit(){');
+const utilityEnd=mobileUi.indexOf('\nfunction normalizeChoiceStatus()',utilityStart);
+assert(utilityStart>=0&&utilityEnd>utilityStart,'Mobile utility exit renderer missing');
+const utilityFn=mobileUi.slice(utilityStart,utilityEnd);
+const buttonMock=(label,options={})=>{
+ const classes=new Set(options.classes||[]);
+ const attrs={};
+ return {
+  textContent:label,innerHTML:'',dataset:{},
+  classList:{add(...names){for(const name of names)classes.add(name)},toggle(name,on){if(on)classes.add(name);else classes.delete(name)},contains:name=>classes.has(name)},
+  hasAttribute:name=>!!options.attrs?.includes(name)||Object.hasOwn(attrs,name),
+  getAttribute:name=>attrs[name]||null,
+  setAttribute(name,value){attrs[name]=value},
+  removeAttribute(name){delete attrs[name]},
+  addEventListener(name,fn){this.events=(this.events||[]).concat(name)},
+  remove(){this.removed=true}
+ };
+};
+for(const view of ['rules','profile']){
+ const exit=buttonMock('← Accueil');
+ const head={querySelectorAll:()=>[exit]};
+ const page={querySelector:()=>head};
+ const ctx={currentView:()=>view,isFr:()=>true,document:{querySelector:()=>page},goHomeSafe(){throw Error('Retour must not bind direct Accueil')}};
+ runInNewContext(utilityFn+'\nenhanceUtilityExit();',ctx);
+ assert.equal(exit.dataset.igrGlobalBack,'1',view+' must use shared contextual back');
+ assert(exit.innerHTML.includes('Retour')&&!exit.innerHTML.includes('Fermer'),view+' must not show a Close button');
+ assert(!exit.events?.length,view+' must not bind a competing home click');
+}
+{
+ const exit=buttonMock('Accueil');
+ const head={querySelectorAll:()=>[exit]};
+ const page={querySelector:()=>head};
+ runInNewContext(utilityFn+'\nenhanceUtilityExit();',{currentView:()=> 'join',isFr:()=>true,document:{querySelector:()=>page},goHomeSafe(){}});
+ assert(!exit.dataset.igrGlobalBack,'Join Accueil must remain independent of contextual Retour');
+ assert(exit.innerHTML.includes('Accueil'),'Join must keep its direct home action');
+}
+{
+ const retour=buttonMock('← Retour',{classes:['igr-utility-exit'],attrs:['data-igr-global-back']});
+ const fermer=buttonMock('× FERMER',{classes:['igr-rules-close']});
+ const staleBack=buttonMock('← Retour',{classes:['igr-global-return'],attrs:['data-igr-global-back']});
+ const home=buttonMock('⌂ Accueil');
+ const controls=[retour,fermer,staleBack,home];
+ const header={closest:()=>null,querySelectorAll:()=>controls.filter(x=>!x.removed)};
+ main={querySelectorAll:()=>[header]};
+ nav.reconcileHeaderExits();
+ assert(fermer.removed,'An ordinary page must not show Fermer alongside Retour');
+ assert(staleBack.removed,'A stale second Retour must be deduplicated');
+ assert(!retour.removed&&!home.removed,'Keep contextual Retour and distinct Accueil');
+ const modalClose=buttonMock('× Fermer');
+ const modalBack=buttonMock('← Retour');
+ const modal={closest:()=>({dialog:true}),querySelectorAll:()=>[modalClose,modalBack]};
+ main={querySelectorAll:()=>[modal]};
+ nav.reconcileHeaderExits();
+ assert(!modalClose.removed,'Dialog close must remain available');
+}
+const loader=read('scripts/apply-mobile-ui-v28.mjs');
+assert(loader.includes("v30-v776-single-contextual-exit"),'Mobile cache must refresh');
+assert(web.includes('global-navigation-v766.js?v=v776-single-contextual-exit')&&mobile.includes('global-navigation-v766.js?v=v776-single-contextual-exit'),'Both builds must refresh navigation JavaScript');
+
 console.log('PASS global navigation v766: base dossiers, all DLC lobby route, 4 Héritage campaigns, Casino, local screens, stable catalogue/profile and both bundles.');

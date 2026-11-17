@@ -7,7 +7,7 @@ if(!outArg)throw new Error('Usage: node scripts/apply-mobile-ui-v28.mjs <dist|ww
 const out=path.resolve(root,outArg);
 await stat(out);
 
-const VERSION='v30-home-bell-top-right-quit';
+const VERSION='v30-v776-single-contextual-exit';
 for(const name of ['mobile-ui-v28.css','mobile-ui-v28.js','prebeta-v30.css','notification-bell-visibility-v31.js']){
   await copyFile(path.join(root,name),path.join(out,name));
 }
