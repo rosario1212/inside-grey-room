@@ -1994,10 +1994,10 @@ function renderInvestigationTab(){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_018');
   const choices=Array.isArray(d.scenario?.investigation_018)?d.scenario.investigation_018:[];
   const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
-  const used=!!d.scenario?.investigation_018_used||thisCycle.length>=2;
+  const used=!!d.scenario?.investigation_018_used||thisCycle.length>=1;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>LES ASSIETTES VIDES · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux investigations au maximum par cycle pour tout le camp Enquête. Les pistes évoluent discrètement selon les hypothèses scellées, sans révéler la solution. Trois constatations essentielles restent garanties.</p>${used?'<div class="locked-state">Les deux investigations de ce cycle ont été réalisées.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule investigation au choix par cycle pour le camp Enquête. Les pistes évoluent discrètement selon les hypothèses scellées, sans révéler la solution. Trois constatations essentielles restent garanties.</p>${used?'<div class="locked-state">Les deux investigations de ce cycle ont été réalisées.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
 
   if(ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
    const answered=(d.my_actions||[]).some(a=>a.action_type==='hypothesis_018'&&+a.cycle===+r.cycle);
@@ -2012,10 +2012,10 @@ if(r.scenario_id==='019'&&['enqueteur','analyste'].includes(role)){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_019');
   const choices=Array.isArray(d.scenario?.investigation_019)?d.scenario.investigation_019:[];
   const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
-  const used=!!d.scenario?.investigation_019_used||thisCycle.length>=2;
+  const used=!!d.scenario?.investigation_019_used||thisCycle.length>=1;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>LE GRAND BAL · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux pistes facultatives par cycle pour le camp Enquête, sélectionnées à partir des hypothèses scellées. Les trois preuves fondamentales restent garanties; une réponse erronée ne bloque jamais la résolution.</p>${used?'<div class="locked-state">Deux investigations réalisées pendant ce cycle.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate019Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste choisie par cycle pour le camp Enquête, sélectionnées à partir des hypothèses scellées. Les trois preuves fondamentales restent garanties; une réponse erronée ne bloque jamais la résolution.</p>${used?'<div class="locked-state">Deux investigations réalisées pendant ce cycle.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate019Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
  }
 
 if(r.scenario_id==='019'&&['enqueteur','analyste'].includes(role)&&ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
@@ -2030,10 +2030,10 @@ if(r.scenario_id==='020'&&['enqueteur','analyste'].includes(role)){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_020');
   const choices=Array.isArray(d.scenario?.investigation_020)?d.scenario.investigation_020:[];
   const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
-  const used=!!d.scenario?.investigation_020_used||thisCycle.length>=2;
+  const used=!!d.scenario?.investigation_020_used||thisCycle.length>=1;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>L’APOTHÉOSE · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux pistes facultatives par cycle, adaptées aux hypothèses scellées. Les six preuves indispensables arrivent toujours automatiquement, même si les enquêteurs se trompent.</p>${used?'<div class="locked-state">Deux pistes ont été examinées pendant ce cycle.</div>':choices.map(o=>`<button type="button" class="choice-row" onclick="investigate020Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste choisie par cycle, adaptée aux hypothèses scellées. Les six preuves indispensables arrivent toujours automatiquement, même si les enquêteurs se trompent.</p>${used?'<div class="locked-state">Deux pistes ont été examinées pendant ce cycle.</div>':choices.map(o=>`<button type="button" class="choice-row" onclick="investigate020Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
  }
 
 if(r.scenario_id==='020'&&['enqueteur','analyste'].includes(role)&&ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
