@@ -289,12 +289,12 @@ function renderHLobby(d){
  const roster=(d.players||[]).map((p,i)=>`<div><span>${i+1}</span><b>${esc(p.pseudo)}</b><small>${p.preferred_role?esc(names.get(assigned[p.id])||p.preferred_role):'AU HASARD'}${p.is_host?' · HÔTE':''}</small></div>`).join('');
  const canStart=count>=5&&!roles.invalid;
  shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><header class="hnet-head"><button class="btn ghost small" data-hnet="leave">← Quitter</button><span>${esc(m?.title||'HÉRITAGE')} · DOSSIER 0${d.room.chapter}</span></header>
-  <section class="hnet-lobby"><div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(ch?.title||'')}</h1><p>${count}/7 joueurs · minimum 5</p></div>
-   <div class="hnet-code"><span>CODE D’INVITATION</span><strong>${esc(d.room.code)}</strong><small>Partage ce code pour rejoindre</small><button type="button" class="hnet-code-copy" data-hnet="copy-code" data-code="${esc(d.room.code)}" aria-label="Copier le code d’invitation">COPIER</button></div>
+  <section class="hnet-lobby"><div class="hnet-title"><span>SALON</span><h1>${esc(ch?.title||'')}</h1><p>${count}/7 joueurs · minimum 5</p></div>
+   <div class="hnet-code"><span>INVITATION</span><strong>${esc(d.room.code)}</strong><small>À partager</small><button type="button" class="hnet-code-copy" data-hnet="copy-code" data-code="${esc(d.room.code)}" aria-label="Copier le code d’invitation">COPIER</button></div>
    ${roles.markup}
-   <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Participants à la table <span>${count}/7</span></summary><div class="hnet-players">${roster}</div></details>
-   <p class="hnet-launch-hint">${count<5?`LANCEMENT · Encore ${5-count} joueur${5-count>1?'s':''} à inviter (5 à 7 nécessaires).`:roles.invalid?'Certains rôles ne sont plus disponibles. Corrige la sélection.':'LANCEMENT · Effectif suffisant : l’hôte peut lancer le dossier.'}</p>
-   ${host?`<button class="btn primary block hnet-start" data-hnet="start" ${canStart?'':'disabled'}>${count<5?`ATTENTE · ${5-count} À INVITER`:roles.invalid?'RÉVISER LES RÔLES':'COMMENCER LA PARTIE'}</button>`:'<div class="hnet-wait">L’hôte lance la partie dès que la table est prête.</div>'}
+   <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Joueurs <span>${count}/7</span></summary><div class="hnet-players">${roster}</div></details>
+   <p class="hnet-launch-hint">${count<5?`Encore ${5-count} joueur${5-count>1?'s':''}.`:roles.invalid?'Un choix est indisponible.':''}</p>
+   ${host?`<button class="btn primary block hnet-start" data-hnet="start" ${canStart?'':'disabled'}>${count<5?`EN ATTENTE (${5-count})`:roles.invalid?'CHOIX À REVOIR':'LANCER LA PARTIE'}</button>`:'<div class="hnet-wait">En attente de l’hôte.</div>'}
   </section></main>`,true);
 }
 /* The visible dice button now draws AND reserves one public role.
