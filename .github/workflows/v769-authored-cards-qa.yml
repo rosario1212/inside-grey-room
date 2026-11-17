@@ -1,0 +1,29 @@
+name: v769 — Cartes privées · contexte manuscrit
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/*igr_v769_authored_private_card_enrichment.sql'
+      - 'app-v11.js'
+      - 'scripts/v769-authored-private-card-check.mjs'
+      - '.github/workflows/v769-authored-cards-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/*igr_v769_authored_private_card_enrichment.sql'
+      - 'app-v11.js'
+      - 'scripts/v769-authored-private-card-check.mjs'
+      - '.github/workflows/v769-authored-cards-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  authorized-private-cards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/v769-authored-private-card-check.mjs
+      - run: node scripts/v768-private-character-clarity-check.mjs
