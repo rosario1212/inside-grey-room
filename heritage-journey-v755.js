@@ -100,8 +100,14 @@ function handleJoinClick(event){
  const button=event.target.closest?.('[data-hj-join]');
  if(!button)return;
  event.preventDefault();event.stopImmediatePropagation();
- if(typeof goJoin==='function')return goJoin();
- if(typeof renderJoin==='function')return renderJoin();
+ if(typeof goJoin==='function')goJoin();
+ else if(typeof renderJoin==='function')renderJoin();
+ const join=$('#joinCode');
+ if(join){join.maxLength=10;join.placeholder='Code d’invitation'}
+ const heading=$('.page-head h1');
+ if(heading)heading.textContent='Rejoindre une partie';
+ const kicker=$('.page-head .kicker');
+ if(kicker)kicker.textContent='HÉRITAGE';
 }
 function decorate(){
  const root=$('#app');if(!root)return;
