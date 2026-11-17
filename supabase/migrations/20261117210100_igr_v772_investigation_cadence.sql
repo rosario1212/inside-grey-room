@@ -161,8 +161,8 @@ begin
      set phase='cycle_debrief',phase_started_at=now(),
        phase_ends_at=now()+interval '2 minutes',updated_at=now()
      where code=r.code;
-     insert into public.igr_v4_events(room_code,event_type,visibility,payload)
-     values(r.code,'phase','roles',jsonb_build_object(
+     insert into public.igr_v4_events(room_code,event_type,visibility,audience_roles,payload)
+     values(r.code,'phase','roles',array['enqueteur','analyste']::text[],jsonb_build_object(
        'title','QUESTIONNAIRE · FIN DU CYCLE',
        'text','Enquêteur et Analyste répondent séparément avant la révélation.',
        'cycle',r.cycle));
