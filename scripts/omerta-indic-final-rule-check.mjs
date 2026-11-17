@@ -67,7 +67,7 @@ assert.ok(baseClient.includes('igr_omerta_standalone_safe_sync'));
 assert.ok(baseClient.includes('santoroStandalone'));
 assert.ok(baseClient.includes("d?.room?.state?.omerta_standalone===true"));
 assert.ok(baseClient.includes("santoroPrivateCard"));
-assert.ok(baseClient.includes("TON OBJECTIF PERSONNEL"));
+assert.ok(baseClient.includes("igr-private-priority") && baseClient.includes("TON OBJECTIF"));
 assert.ok(baseClient.includes("CE QUE TU PEUX DEMANDER"));
 assert.ok(baseClient.includes("const privateWin=santoroMyCard?ps.objective"));
 
