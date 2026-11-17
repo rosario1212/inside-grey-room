@@ -1,0 +1,32 @@
+name: v772 — Cartes privées 49 dossiers
+on:
+  pull_request:
+    paths:
+      - 'app-v11.js'
+      - 'screen-polish-v73.css'
+      - 'scripts/v772-private-card-uniformity-check.mjs'
+      - 'scripts/v768-private-character-clarity-check.mjs'
+      - '.github/workflows/v772-private-cards-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'app-v11.js'
+      - 'screen-polish-v73.css'
+      - 'scripts/v772-private-card-uniformity-check.mjs'
+      - 'scripts/v768-private-character-clarity-check.mjs'
+      - '.github/workflows/v772-private-cards-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  all-suspect-cards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/v772-private-card-uniformity-check.mjs
+      - run: node scripts/v768-private-character-clarity-check.mjs
+      - run: node scripts/v769-authored-private-card-check.mjs

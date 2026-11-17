@@ -1482,18 +1482,85 @@ function valueBlock(title,value,cls=''){
  if(Array.isArray(value))body=value.map(v=>typeof v==='string'?`<div class="relation-line"><span>${h(v)}</span></div>`:`<div class="relation-line"><b>${h(v.pseudo||v.label||'')}</b><span>${h(v.text||JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='object')body=Object.entries(value).map(([k,v])=>`<div class="relation-line"><b>${h(k)}</b><span>${h(typeof v==='string'?v:JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='string'&&/CHRONOLOGIE|JOURNÉE|NUIT-LÀ|CE QUE TU AS FAIT/i.test(title)){
-  const raw=value.trim();
-  const steps=raw.split(/\s+(?=\d{1,2}[.)]\s+\d{1,2}\s*h\s*\d{1,2}\b)/i).map(x=>x.trim()).filter(Boolean);
-  const lines=(steps.length>1?steps:raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean));
-  body=lines.length>1
-   ?`<ol class="igr-private-timeline">${lines.map(x=>`<li>${h(x.replace(/^\d{1,2}[.)]\s*/,''))}</li>`).join('')}</ol>`
-   :`<p>${h(value)}</p>`;
+  body=igrV772Timeline(value);
  }
  else body=`<p>${h(value)}</p>`;
  const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
- const explanation=title==='CE QUE TU CACHES'?'<p class="igr-private-definition">Ce sont des faits que les autres joueurs ne connaissent pas automatiquement.</p>':'';
+ // The label already identifies private information. No redundant boilerplate.
+ const explanation='';
  return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${explanation}${body}</div>`;
 }
+
+/* v772 — Formatting only. Never derive new facts, evidence or roles.
+   All inputs come from the authenticated player's own private_state. */
+function igrV772Timeline(value){
+ const raw=String(value||'').trim();
+ if(!raw)return '';
+ // Existing texts mix "1. 02:11", "2. ≈ 02:26", "3. 02h32",
+ // as well as one event per newline. Split only explicit stage markers.
+ const staged=raw.replace(/(^|\s+)(\d{1,2}[.)])\s*(?=(?:≈\s*|~\s*|vers\s+|env\.?\s*)?\d{1,2}\s*(?:[:hH])\s*\d{1,2}\b)/g,
+  (_,before,index)=>'\n'+index+' ');
+ const lines=staged.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ if(lines.length<2)return '<p>'+h(raw)+'</p>';
+ return '<ol class="igr-private-timeline igr-v772-steps">'+lines.map(rawLine=>{
+  const line=rawLine.replace(/^\d{1,2}[.)]\s*/,'').trim();
+  const event=line.match(/^((?:≈\s*|~\s*|vers\s+|env\.?\s*)?\d{1,2}\s*(?::|h|H)\s*\d{1,2})\s*(?:[—–-]\s*)?([\s\S]*)$/i);
+  if(event&&event[2].trim())return '<li><span class="igr-v772-time">'+h(event[1].trim())+'</span><span class="igr-v772-event">'+h(event[2].trim())+'</span></li>';
+  return '<li><span class="igr-v772-event">'+h(line)+'</span></li>';
+ }).join('')+'</ol>';
+}
+function igrV772Norm(value){
+ return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .toLocaleLowerCase('fr').replace(/[’]/g,"'")
+  .replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+}
+function igrV772Sentences(value){
+ return String(value||'').trim().split(/(?<=[.!?])\s+(?=[A-ZÀÂÇÉÈÊËÎÏÔÙÛÜ])/u).map(s=>s.trim()).filter(Boolean);
+}
+function igrV772Distinct(value,seen){
+ const text=String(value||'').trim(),current=igrV772Norm(text);
+ if(!current)return '';
+ for(const item of seen){
+  const prev=igrV772Norm(item);
+  if(prev&&((current===prev)||(current.length>28&&prev.includes(current))||(prev.length>28&&current.includes(prev)&&current.length-prev.length<22)))return '';
+ }
+ return text;
+}
+function igrV772Known(known,secret){
+ const text=igrV772Distinct(known,[secret]);
+ if(!text)return '';
+ const k=igrV772Norm(text),hiding=igrV772Norm(secret);
+ // Exact overlap in the shown case: "tu sais avoir commandé une
+ // intimidation" merely repeats "tu es à l'origine de la menace".
+ // Drop ONLY a single-fact paraphrase. Keep any distinct evidence or
+ // observations (including a second sentence) for gameplay.
+ const orderedThreat=/(?:command|ordon|organis).{0,40}(?:intimidation|menace)/i.test(k);
+ const hiddenThreat=/(?:origine|command|ordon|organis).{0,60}(?:menace|intimidation)/i.test(hiding);
+ if(orderedThreat&&hiddenThreat&&igrV772Sentences(text).length===1&&k.length<145)return '';
+ return text;
+}
+function igrV772GoalDefense(goal,position){
+ const objective=String(goal||'').trim(),defense=String(position||'').trim();
+ const normalize=igrV772Norm;
+ const sentences=igrV772Sentences(objective);
+ const tactic=/^(?:défends|explique|rappelle|maintiens|reconnais|souligne|conteste|précise|montre|présente|appuie-toi|évite de révéler|n'évoque)/i;
+ const tacticalTail=sentences.length>1&&sentences.slice(1).every(x=>tactic.test(x));
+ if(!defense)return {objective,defense:''};
+ if(normalize(objective)===normalize(defense)){
+  if(tacticalTail)return {objective:sentences[0],defense:sentences.slice(1).join(' ')};
+  return {objective,defense:''}; // Same statement twice is not a second clue.
+ }
+ const tail=sentences.slice(1).join(' ');
+ if(tacticalTail&&normalize(tail)===normalize(defense))return {objective:sentences[0],defense};
+ if(igrV772Distinct(defense,[objective])==='')return {objective,defense:''};
+ return {objective,defense};
+}
+function igrV772DefenceBody(raw){
+ const parts=igrV772Sentences(raw);
+ if(parts.length<=1)return '<p>'+h(raw)+'</p>';
+ return '<ul class="igr-v772-defence-list">'+parts.map(x=>'<li>'+h(x)+'</li>').join('')+'</ul>';
+}
+
 async function sendSpyDecision(choice){
  try{
   const d=STATE.sync,cycle=d?.room?.cycle,me=d?.player?.id||STATE.playerId;
@@ -1565,6 +1632,53 @@ function privateCardHtml(){
       +authoredQuestions.map(q=>'<div class="relation-line"><span>'+h(q)+'</span></div>').join('')+'</div>'
    :'';
  const cartel030Card=(currentScenario()?.id==='030'&&pub==='suspect'&&ps.variant_card)?[valueBlock('CE QUE TU SAIS — DOSSIER 030',ps.variant_card.what_you_know),valueBlock('TON SECRET — DOSSIER 030',ps.variant_card.variant_secret,'danger-soft'),valueBlock('CE QUE TU CACHES — DOSSIER 030',ps.variant_card.what_you_hide,'danger-soft'),valueBlock('TA CHRONOLOGIE DÉTAILLÉE',ps.variant_card.your_chronology)].join(''):'';
+
+ // Shared, content-faithful suspect sheet for 001–049, including the DLCs.
+ // Relations stay on the original igr82RelationsHtml path; only the surrounding
+ // ordering and duplication of the other private sections change.
+ if(pub==='suspect'){
+  const ownHistory=santoroMyCard?ps.story:ps.story;
+  const ownChronology=santoroMyCard?ps.your_chronology:ps.chronology;
+  const ownHidden=santoroMyCard?ps.what_you_hide:clarifiedHide;
+  const ownKnown=santoroMyCard?ps.what_you_know:ps.anchors;
+  const goalAndDefence=igrV772GoalDefense(privateWin,santoroMyCard?'':ps.position);
+  const parts=[
+   '<div class="private-card-v11 igr-v772-card"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div>',
+   '<header class="igr-private-heading"><h2>'+h(p?.pseudo||STATE.playerPseudo||'Joueur')+'</h2>'+
+   '<p class="igr-private-player">'+h(roleInfo(pub).label||pub)+' · Ton personnage</p>'+
+   '<p class="igr-private-hint">Tu connais les faits de ta carte, pas les secrets des autres. Tu peux choisir ce que tu racontes.</p></header>',
+   personaIdentity?'<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>'+h(personaIdentity)+'</span></div>':'',
+   valueBlock(santoroMyCard?'TON RANG ET TA PLACE':'TON HISTOIRE',ownHistory),
+   authoredStory,
+   valueBlock('CE QUE TU AS FAIT',ownChronology),
+   valueBlock('CE QUE TU CACHES',ownHidden,'danger-soft'),
+   valueBlock('CE QUE TU SAIS',igrV772Known(ownKnown,ownHidden)),
+   valueBlock('TES RELATIONS',ps.relations),
+   santoroMyCard?valueBlock('CE QUE TU PEUX DEMANDER',santoroQuestions):'',
+   authoredDialogue,
+   goalAndDefence.defense
+     ?'<div class="private-block igr82-defense"><h4>TA DÉFENSE</h4>'+igrV772DefenceBody(goalAndDefence.defense)+'</div>':'',
+   '<div class="role-summary igr-private-priority"><b>'+h(authoredObjective?'TON OBJECTIF':'COMMENT TU GAGNES')+'</b><span>'+h(goalAndDefence.objective)+'</span></div>',
+   valueBlock('TES CLIENTS',ps.clients)
+  ];
+  if(ps.variant_card){
+   // A DLC variant can add facts of its own, never replace the base suspect.
+   const v=ps.variant_card;
+   const otherChronology=igrV772Distinct(v.your_chronology,[ownChronology]);
+   const otherKnown=igrV772Known(v.what_you_know,[ownHidden,v.variant_secret].filter(Boolean).join(' '));
+   const otherHide=igrV772Distinct(v.variant_secret,[ownHidden]);
+   const otherSilence=igrV772Distinct(v.what_you_hide,[ownHidden,v.variant_secret]);
+   parts.push(
+    valueBlock('CHRONOLOGIE DE TA VARIANTE',otherChronology),
+    valueBlock('CE QUE TU SAIS — TA VARIANTE',otherKnown),
+    valueBlock('SECRET DE TA VARIANTE',otherHide,'danger-soft'),
+    valueBlock('CE QUE TU CACHES — TA VARIANTE',otherSilence,'danger-soft')
+   );
+  }
+  parts.push(secretInfo,'<div class="private-foot">Raconte uniquement ce que ton personnage peut savoir. Tu peux taire des faits, jamais inventer des preuves.</div></div>');
+  return parts.join('');
+ }
+
  return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><header class="igr-private-heading"><h2>${h(p?.pseudo||STATE.playerPseudo||'Joueur')}</h2><p class="igr-private-player">${h(roleInfo(pub).label||pub)} · Ton personnage</p><p class="igr-private-hint">Tu connais ton vécu et les faits indiqués ici, pas les pensées ni les secrets des autres. Réponds avec ce que ton personnage peut réellement savoir.</p></header>${personaIdentity?`<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>${h(personaIdentity)}</span></div>`:''}<div class="role-summary igr-private-priority"><b>${authoredObjective?'TON OBJECTIF':'COMMENT TU GAGNES'}</b><span>${h(privateWin)}</span></div>${santoroPrivateCard}${concisePrivateCard}${santoroMyCard||conciseDossier?'':readableDossier?(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('CETTE NUIT-LÀ',ps.chronology)+valueBlock('CE QUE TU SAIS',ps.anchors)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')):(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('TA CHRONOLOGIE',ps.chronology)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')+valueBlock('TES REPÈRES',ps.anchors)+valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position))}${santoroMyCard?'':valueBlock('TES CLIENTS',ps.clients)}${cartel030Card}${authoredStory}${authoredDialogue}${secretInfo}<div class="private-foot">Ton personnage connaît uniquement les faits de sa carte. Tu peux en cacher certains à l’oral, mais jamais inventer de preuves.</div></div>`;
 }
 function renderRole(){

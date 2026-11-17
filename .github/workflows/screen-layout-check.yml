@@ -29,6 +29,7 @@ on:
       - 'heritage-premium-v13-6.js'
       - 'assets/heritage-maitre-*'
       - 'scripts/screen-layout-check.mjs'
+      - 'scripts/v772-private-card-mobile-check.mjs'
       - 'scripts/maitre-poster-layout-check.mjs'
       - 'scripts/desktop-layout-check.mjs'
       - 'scripts/runtime-fluidity-check.mjs'
