@@ -28,14 +28,14 @@ for(const page of ['index.html','en.html']){
   if(!html.includes(`src="${JS}?v=${VERSION}"`)){
     html=html.replace('</body>',`  <script src="${JS}?v=${VERSION}"></script>\n</body>`);
   }
-  if(!html.includes('casino-client-v105.js?v=105.13'))html=html.replace('</body>','  <script src="casino-client-v105.js?v=105.13"></script>\n</body>');
+  if(!html.includes('casino-client-v105.js?v=105.13-v768-player-card'))html=html.replace('</body>','  <script src="casino-client-v105.js?v=105.13-v768-player-card"></script>\n</body>');
   if(!html.includes('casino-client-v105.css?v=105.13'))html=html.replace('</head>','  <link rel="stylesheet" href="casino-client-v105.css?v=105.13">\n</head>');
   await writeFile(name,html,'utf8');
 }
 // The Casino finalizer runs after the generic PWA assets were versioned.
 // Fold its four independent UI assets into the offline shell and revision key.
 const casinoAssets=[[JS,VERSION],[CSS,VERSION],
- ['casino-client-v105.js','105.13'],['casino-client-v105.css','105.13']];
+ ['casino-client-v105.js','105.13-v768-player-card'],['casino-client-v105.css','105.13']];
 const casinoFingerprint=createHash('sha256')
  .update(await readFile(path.join(dest,'casino-client-v105.js')))
  .update(await readFile(path.join(dest,'casino-client-v105.css')))
