@@ -1475,23 +1475,10 @@ function igr82RelationsHtml(value) {
   return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><p class="igr82-relation-hint">${tr('Une carte par personne. À toi de choisir les questions à poser.','One card per person. You decide which questions to ask.')}</p><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
 
-/* v773: clarifications limited to authenticated, player-visible private fields.
-   No canonical truth, other player's state, or variant selection is consulted. */
-function igrV773PolishPrivateText(value,context=''){
- let text=String(value??'');
- if(context==='hidden'){
-  text=text.replace(/Tu prétends qu[’']un relais était prévu, alors que vous aviez seulement décidé d[’']attendre\.?/gi,
-   'Tu affirmes qu’après votre appel, quelqu’un devait prendre le relais pour aider Sofia. En réalité, vous aviez seulement décidé d’attendre : aucun de vous n’avait promis de la contacter ni d’appeler les secours.');
- }
- if(context==='instruction'){
-  // Numeric culpability levels are internal metadata, not playable dialogue.
-  text=text.replace(/\s*\(\s*(?:niveau|level)\s*[0-9]+\s*\)/gi,'');
- }
- return text;
-}
 function valueBlock(title,value,cls=''){
  if(typeof value==='string'&&/CE QUE TU CACHES|CE QUE TU GARDES POUR TOI/i.test(title))
-  value=igrV773PolishPrivateText(value,'hidden');
+  value=value.replace(/Tu prétends qu[’']un relais était prévu, alors que vous aviez seulement décidé d[’']attendre\.?/gi,
+   'Tu affirmes qu’après votre appel, quelqu’un devait prendre le relais pour aider Sofia. En réalité, vous aviez seulement décidé d’attendre : aucun de vous n’avait promis de la contacter ni d’appeler les secours.');
  if(value==null||value===''||(Array.isArray(value)&&!value.length))return'';
  if(title==='TES RELATIONS'&&Array.isArray(value))return igr82RelationsHtml(value);
  let body='';
@@ -1556,7 +1543,8 @@ function igrV772Known(known,secret){
  return text;
 }
 function igrV772GoalDefense(goal,position){
- const objective=igrV773PolishPrivateText(goal,'instruction').trim(),defense=igrV773PolishPrivateText(position,'instruction').trim();
+ const playerText=value=>String(value||'').replace(/\s*\(\s*(?:niveau|level)\s*[0-9]+\s*\)/gi,'').trim();
+ const objective=playerText(goal),defense=playerText(position);
  const normalize=igrV772Norm;
  const sentences=igrV772Sentences(objective);
  const tactic=/^(?:défends|explique|rappelle|maintiens|reconnais|souligne|conteste|précise|montre|présente|appuie-toi|évite de révéler|n'évoque)/i;
