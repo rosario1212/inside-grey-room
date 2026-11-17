@@ -41,7 +41,12 @@ must('heritage-premium-v13-6.js',['igr_dlc_access_status','ACCÈS LIMITÉ','wind
 must('heritage-premium-v13-6.css',['.heritage-premium-home-action','.heritage-premium-modal','.heritage-premium-lock']);
 must('play-modes-v13-8.js',['v13.8-dual-play','igr_local_scenario_pack','igr_heritage_online_create','igr_heritage_online_join']);
 must('play-modes-v13-8.css',['.dual-mode-chooser','.dual-mode-card','.heritage-dual-row']);
-must('dlc-copy-v12-46.js',['La Famiglia protège ses secrets. L’enquête remonte la chaîne du silence jusqu’au Don.','Le FDR a renversé les autorités dans presque tout le pays. Exécutions, enlèvements, prisons clandestines, familles déplacées','Le cartel frappe l’enquête, achète la justice et remonte jusqu’à vos proches.','Dix-neuf ans de dictature, une guerre d’agression et des milliers de prisonniers.']);
+must('dlc-copy-v12-46.js',[
+  'Dans la Famiglia, une enveloppe, une dette ou un aveu peuvent faire remonter les ordres jusqu’au Don.',
+  'Le FDR impose des rafles et des exécutions. La capitale résiste pendant que la Grey Room établit les responsabilités.',
+  'Le cartel exécute ceux qui parlent et menace la Grey Room. L’enquête remonte les ordres malgré les représailles.',
+  'Le régime s’est effondré. Ses dirigeants fuient, mais les archives permettent de reconstituer les arrestations et les crimes.'
+]);
 must('dlc-copy-v12-46.css',['.terror-access-pill[hidden]']);
 
 must('heritage-maitre-data-v34.js',["id:'maitre'","title:'LE CLIENT'","title:'LE DEAL'","title:'DEUX CHOIX'","title:'LE PROCÈS'","title:'L’HONNEUR'",'L’ANGLE','LA DÉMONSTRATION']);
