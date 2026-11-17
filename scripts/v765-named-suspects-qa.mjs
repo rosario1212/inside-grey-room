@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-const sql=readFileSync('supabase/migrations/20261117190000_igr_v765_cast_pseudonyms_omerta_cartel.sql','utf8');
+const sql=readFileSync('supabase/migrations/20261117165817_igr_v765_cast_pseudonyms_omerta_cartel.sql','utf8');
 for(const fragment of [
  'igr_v765_cast_aliases',
  'igr_v765_alias_document',
