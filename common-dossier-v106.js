@@ -45,6 +45,14 @@ const case004Copy=[
   copy:'L’ex-partenaire de Sofia lui avait parlé durement. Rien ne prouve qu’il connaissait les deux messages ensuite envoyés à l’ami proche et au proche du quartier.'
  }
 ];
+const case004Summaries={
+ 'deux alertes distinctes':'Après sa dispute avec son ex-partenaire, Sofia envoie deux messages différents : l’un à son ami proche, l’autre au proche du quartier.',
+ 'appel entre les proches':'L’ami proche de Sofia et le proche du quartier s’appellent après ses messages. Les relevés ne révèlent pas leurs paroles.',
+ "l'appel entre proches":'L’ami proche de Sofia et le proche du quartier se sont appelés. Aucun contact avec Sofia ou les secours n’apparaît ensuite.',
+ 'journal des destinataires':'Aucun transfert des deux messages de Sofia à son ex-partenaire n’apparaît dans les relevés. Il a pu être informé autrement.',
+ 'messages de coordination':'L’ami proche de Sofia et le proche du quartier ont parlé d’attendre, sans décider lequel devait appeler les secours.',
+ 'un relais sans accord':'L’ami proche et le proche du quartier n’ont confié à personne la tâche d’appeler les secours.'
+};
 const ordinalRoles={
  '027':{third:'le cadre du FDR au courant des rivalités internes'},
  '028':{third:'le cadre resté fidèle au FDR'},
@@ -76,8 +84,9 @@ function readableTitle(value){
 function conciseCaseText(value,title){
  const full=String(value??'').replace(/\s+/g,' ').trim();
  if(!full)return '';
- // All case-specific references were resolved before shortening the displayed text.
- // Do not replace pronouns without a grounded role label.
+ // The key fact must be visible immediately, not buried in the long document.
+ const scenario=String(game()?.room?.scenario_id||''),key=String(title||'').trim().toLocaleLowerCase('fr');
+ if(scenario==='004'&&case004Summaries[key]&&case004Copy.some(x=>x.copy===full))return case004Summaries[key];
 
  if(full.length<=165)return full;
  const parts=full.match(/[^.!?]+(?:[.!?]+[»”']?|$)/g)||[full];
