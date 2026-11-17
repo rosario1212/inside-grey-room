@@ -1753,6 +1753,15 @@ function savePrivateNotes(){STORAGE.setItem(`igr_v11_note_${STATE.room}_${STATE.
 function save016EvidenceNote(section,value){if(!['visible','outside','cause'].includes(section)||STATE.sync?.room?.scenario_id!=='016'||!['enqueteur','analyste'].includes(STATE.sync?.player?.public_role))return;STORAGE.setItem('igr016_ledger_'+STATE.room+'_'+STATE.playerId+'_'+section,String(value||'').slice(0,650));}
 function currentTarget(){const id=STATE.sync?.room?.state?.current_target;return (STATE.sync?.players||[]).find(p=>p.id===id)}
 function latestEvent(type){return [...(STATE.sync?.events||[])].reverse().find(e=>!type||e.event_type===type)}
+// Clarify presentation only. Never reinterpret or supplement a canonical finding.
+function readableFindingText(value,scenarioId){
+ let text=String(value||'').trim();
+ if(String(scenarioId)!=='004')return text;
+ return text
+  .replace(/(Sauvegarde de messagerie\s*\/\s*capture vérifiée)\s+(?=Une capture)/i,'$1.\n\n')
+  .replace(/Le message ne mentionne aucun transfert à un autre proche\s*;\s*la capture ne dit rien d'un éventuel appel extérieur\./i,'Le message ne mentionne aucun transfert à un autre proche. La capture ne permet pas de savoir si un autre appel a eu lieu.')
+  .replace(/Il serait trompeur de traiter tous les destinataires comme s'ils avaient été informés simultanément\./i,'Ces messages ne prouvent donc pas que les trois proches ont été informés au même moment.');
+}
 function renderInvestigationTab(){
  const d=STATE.sync,r=d.room,me=d.player,role=me.public_role,ph=r.phase,target=currentTarget();
  let body=`<div class="phase-explain"><h2>${h(phaseLabel(ph))}</h2>${phaseInstruction(role,ph,target)}</div>`;
@@ -1815,7 +1824,7 @@ function renderInvestigationTab(){
  }
  if(['001','002','003','004','005','006','007','008','009','010','011','012','013','014','015','016'].includes(r.scenario_id)&&['enqueteur','analyste'].includes(role)){
   const evidenceTag=r.scenario_id==='016'?'investigation_016':r.scenario_id==='015'?'investigation_015':r.scenario_id==='014'?'investigation_014':r.scenario_id==='013'?'investigation_013':r.scenario_id==='012'?'investigation_012':r.scenario_id==='011'?'investigation_011':r.scenario_id==='010'?'investigation_010':r.scenario_id==='009'?'investigation_009':r.scenario_id==='008'?'investigation_008':r.scenario_id==='007'?'investigation_007':r.scenario_id==='006'?'investigation_006':r.scenario_id==='005'?'investigation_005':r.scenario_id==='004'?'investigation_004':r.scenario_id==='003'?'investigation_003':r.scenario_id==='002'?'investigation_002':'investigation_001';const reports=(d.events||[]).filter(e=>e.event_type===evidenceTag);
-  if(reports.length)body+=`<section class="private-block igr001-reports"><h3>Pièces examinées · ${reports.length}</h3><p class="choice-helper">Compare les faits établis avec les déclarations des suspects. Une pièce ne prouve pas à elle seule qui est responsable.</p><div class="igr-evidence-list">${reports.map((e,i)=>`<article class="igr-evidence-record"><div class="igr-evidence-record-head"><small>CYCLE ${h(e.cycle||'?')} · PIÈCE ${i+1}</small><strong>${h(e.payload?.title||'Élément vérifié')}</strong></div><p>${h(e.payload?.text||'')}</p></article>`).join('')}</div></section>`;
+  if(reports.length)body+=`<section class="private-block igr001-reports"><h3>Pièces examinées · ${reports.length}</h3><p class="choice-helper">Compare les faits établis avec les déclarations des suspects. Une pièce ne prouve pas à elle seule qui est responsable.</p><div class="igr-evidence-list">${reports.map((e,i)=>`<article class="igr-evidence-record"><div class="igr-evidence-record-head"><small>CYCLE ${h(e.cycle||'?')} · PIÈCE ${i+1}</small><strong>${h(e.payload?.title||'Élément vérifié')}</strong></div><p>${h(readableFindingText(e.payload?.text,r.scenario_id))}</p></article>`).join('')}</div></section>`;
   const eligible=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||ph?.startsWith('annex_');
   if(eligible){
    const choices=d.scenario?.[evidenceTag]||[];
@@ -1832,15 +1841,24 @@ function renderInvestigationTab(){
    const limit=(deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?4:limit006;
    const isOptionalInvestigation=id=>/^0(0[1-9]|10)_(1[0-9]|20)$/.test(String(id));
    const optionalUsed006=[...collectedIds].some(isOptionalInvestigation);
-   const visibleChoices=adaptiveMulti?choices.filter(o=>!collectedIds.has(o.id)&&!(optionalUsed006&&isOptionalInvestigation(o.id))):choices;
+   const allChoices=adaptiveMulti?choices.filter(o=>!collectedIds.has(o.id)&&!(optionalUsed006&&isOptionalInvestigation(o.id))):choices;
+   const remainingCore=adaptiveMulti&&[...collectedIds].filter(id=>!isOptionalInvestigation(id)).length<3;
+   // Do not expose an optional lead before the three main facts have been examined.
+   const visibleChoices=adaptiveMulti?allChoices.filter(o=>remainingCore?!isOptionalInvestigation(o.id):isOptionalInvestigation(o.id)):allChoices;
    const used=adaptiveMulti?collectedIds.size>=limit:d.scenario?.[evidenceTag+'_used'];
+   const phaseStartMs=Date.parse(r.phase_started_at||'');
+   const alreadyExaminedThisPhase=adaptiveMulti&&Number.isFinite(phaseStartMs)&&reports.some(e=>
+     Number(e.cycle)===Number(r.cycle)&&Number.isFinite(Date.parse(e.created_at||''))&&Date.parse(e.created_at)>=phaseStartMs-1000);
+   // Main source material remains in the canonical cycle; the UI does not dump all four at its opening.
+   const nextStageRequired=adaptiveMulti&&alreadyExaminedThisPhase&&ph!=='cycle_debrief'&&!used;
+   const progressLabel=adaptiveMulti?' · '+collectedIds.size+'/'+limit+' pièces consultées':'';
    const instruction006=adaptive006?'Trois vérifications principales et une piste facultative au maximum par cycle. Les pistes proposées sont variables, sans changer la vérité.': 'Trois pièces complémentaires distinctes sont accessibles à chaque cycle.';
-   const instructionDeep='Vérifie d’abord les faits et les heures. Trois pistes principales et une facultative sont proposées pendant ce cycle. Tu peux confronter les résultats aux témoignages.';;
+   const instructionDeep='Vérifie d’abord les faits et les heures. Trois pistes principales et une facultative sont proposées pendant ce cycle. Tu peux confronter les résultats aux témoignages.';
     const instructionSeven='Trois trames principales et une trame facultative au maximum par cycle. Deux pistes facultatives sont proposées sans indiquer si l’une répond à une erreur de raisonnement.';
     const instructionEight='Trois vérifications principales et une seule trame facultative au maximum par cycle. L’enquêteur et l’analyste répondent séparément pour orienter les choix futurs, sans recevoir de correction.';
     const instructionNine='Trois vérifications principales et une seule trame facultative au maximum par cycle. Vos hypothèses scellées orientent les pistes futures sans exposer les solutions ou les variantes.';
     const instructionTen='Trois preuves principales et une recherche facultative au maximum par cycle. Les réponses scellées orientent une piste complémentaire sans afficher la solution.';
-   body+=`<section class="action-section igr001-actions"><h3>${deepNineInvestigations||deepEightInvestigations||deepSevenInvestigations||deepTenInvestigations?'Trames d’enquête':'Investigations complémentaires'} · Cycle ${h(r.cycle)}</h3><p class="choice-helper">${deepTenInvestigations?instructionTen:deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Toutes les pièces de ce cycle ont été consultées.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
+   body+=`<section class="action-section igr001-actions"><h3>Vérifications · Cycle ${h(r.cycle)}${h(progressLabel)}</h3><p class="choice-helper">${deepTenInvestigations?instructionTen:deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Vérifications terminées pour ce cycle.</div>':nextStageRequired?'<div class="locked-state">Une pièce a déjà été examinée pendant cette étape. Compare-la aux déclarations ; les autres pistes seront accessibles à la prochaine étape.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
   }
  }
 
