@@ -101,7 +101,7 @@ const ROLE_TIPS_EN={
   'Cycle 3: prepare your personal final angle; a publication is not a verdict.'
  ],
  enqueteur:[
-  'Cycle 1: organize comparable interrogations and involve specialists.',
+  'Cycle 1: prepare your questions, question the suspects and compare their answers. If an Expert or Inspector is in the game, ask them to check a specific lead.',
   'Cycle 2: prioritize testable contradictions; stress is not proof.',
   'Cycle 3: delegate verification before locking your conclusion.'
  ],
