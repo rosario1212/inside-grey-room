@@ -44,7 +44,7 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('duration-modes-v35.css'))html=html.replace('</head>',`${durationHead}\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
   else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v755-uniform-dlc-hooks-20261117"></script>\n</body>`);
-  if(!html.includes('heritage-journey-v755.js'))html=html.replace('</body>','  <script src="heritage-journey-v755.js?v=v755-heritage-prelobby"></script>\\n</body>');
+  if(!html.includes('heritage-journey-v755.js'))html=html.replace('</body>','  <script src="heritage-journey-v755.js?v=v755-heritage-prelobby"></script>\n</body>');
   if(!html.includes('duration-modes-v35.js'))html=html.replace('</body>',`${durationScript}\n</body>`);
   if(!html.includes('store-catalog-v69.js')){
     if(html.includes('premium-access-sync-v17.js'))html=html.replace(/(<script[^>]+src=["']premium-access-sync-v17\.js[^>]*><\/script>)/i,`${storeCatalogScript}\n$1`);
