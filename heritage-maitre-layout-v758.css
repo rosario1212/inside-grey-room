@@ -562,3 +562,128 @@
 @media(min-width:1100px){
   #app .hplay-hub-grid>.maitre-hub-card{min-height:540px!important;height:100%!important}
 }
+
+
+/* v759 — Maître role selection: one decision, no wall of text.
+   The dice action is a compact button, not another oversized role tile. */
+#app .maitre-page.hnet .mnet-role-simplified{gap:10px;padding:13px!important}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-head{margin:0!important}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-head h2{
+ font-size:clamp(19px,4.8vw,23px)!important;line-height:1.2;margin:0;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-selected-role{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) auto!important;
+ gap:3px 12px!important;
+ min-height:0!important;
+ padding:10px 12px!important;
+ margin:0!important;
+ border:1px solid rgba(212,175,148,.26)!important;
+ background:rgba(255,244,228,.04)!important;
+ border-radius:9px!important;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-selected-role>span{
+ grid-column:1/-1;color:#bda390!important;
+ font-size:9px;letter-spacing:.06em;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-selected-role>b{
+ grid-column:1;grid-row:2;
+ color:#fff3e5!important;font-size:15px!important;
+ line-height:1.35!important;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-selected-role>small{
+ grid-column:1/-1;grid-row:3;max-width:100%;
+ color:#c3b1a4!important;font-size:11px!important;
+ line-height:1.45!important;overflow-wrap:anywhere;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-selected-role>em{
+ grid-column:2;grid-row:2;
+ color:#ddbc9c!important;text-align:right;white-space:nowrap;
+ max-width:none!important;font-size:10px!important;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:7px!important;margin:0!important;
+ align-items:stretch;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ min-width:0;min-height:61px!important;
+ padding:10px 11px!important;margin:0!important;
+ border-radius:9px!important;gap:0!important;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card .hnet-role-top{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-width:0;gap:8px!important;width:100%;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card .hnet-role-top b{
+ color:#f6ece0!important;
+ font-size:12px!important;line-height:1.3!important;
+ letter-spacing:0!important;overflow-wrap:break-word;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card .hnet-role-top em{
+ flex:none;color:#d5b398!important;
+ font-size:9px!important;line-height:1.2!important;
+ white-space:nowrap;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card:not(.is-picked):not(.is-taken) .hnet-role-top em{display:none!important}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card .hnet-stars,
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card .hj-role-description{display:none!important}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card.is-picked{
+ border-color:#d9b69c!important;
+ background:linear-gradient(145deg,#4b292e,#2a1d20)!important;
+ box-shadow:inset 3px 0 0 #c5967f!important;
+}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card.is-picked::after{display:none!important}
+#app .maitre-page.hnet .mnet-role-simplified .hnet-role-card.is-taken{opacity:.48!important}
+#app .maitre-page.hnet .mnet-role-actions{
+ display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;min-width:0;
+}
+#app .maitre-page.hnet .mnet-random-action{
+ appearance:none;display:inline-flex!important;align-items:center;justify-content:center;
+ flex:none;gap:8px;
+ width:auto!important;max-width:100%;
+ min-height:44px!important;height:46px!important;
+ padding:8px 13px!important;margin:0!important;
+ border:1px solid rgba(222,184,154,.28)!important;border-radius:9px!important;
+ background:#2c2224!important;color:#f2dccc!important;
+ font-family:inherit;font-size:12px!important;font-weight:750;line-height:1.2;
+ cursor:pointer;touch-action:manipulation;
+}
+#app .maitre-page.hnet .mnet-random-action span{font-size:18px;color:#d9b394;line-height:1}
+#app .maitre-page.hnet .mnet-random-action b{font-size:12px;font-weight:750}
+#app .maitre-page.hnet .mnet-random-action:hover{border-color:#d2a88b!important;background:#38292d!important}
+#app .maitre-page.hnet .mnet-random-action:active{transform:scale(.99)}
+#app .maitre-page.hnet .mnet-role-reset{
+ appearance:none;border:0!important;background:transparent!important;
+ color:#c6aa99!important;padding:9px 5px!important;
+ min-height:44px;min-width:44px;font-size:11px;font-weight:700;text-decoration:underline;
+ text-underline-offset:3px;cursor:pointer;
+}
+#app .maitre-page.hnet .hnet-code>small{display:none!important}
+#app .maitre-page.hnet .hnet-title{margin:0!important}
+#app .maitre-page.hnet .hnet-title>span{font-size:9px!important;letter-spacing:.085em}
+#app .maitre-page.hnet .hnet-title h1{margin:0!important}
+#app .maitre-page.hnet .hnet-role-zone .hnet-role-warning{
+ padding:10px 12px!important;margin:0!important;
+ border-radius:8px!important;font-size:11px!important;line-height:1.5!important;
+}
+#app .maitre-page.hnet .hnet-lobby>.hnet-launch-hint:empty{display:none!important}
+#app .maitre-page.hnet .hnet-lobby>.hnet-launch-hint{font-size:11px!important;margin:0!important}
+#app .maitre-page.hnet .hnet-roster-disclosure>summary{min-height:44px!important}
+#app .maitre-page.hnet .hnet-wait{
+ margin:0!important;min-height:46px;
+ padding:13px!important;text-align:center!important;
+}
+@media(max-width:520px){
+ #app .maitre-page.hnet .mnet-role-simplified{padding:11px!important}
+ #app .maitre-page.hnet .mnet-role-simplified .hnet-role-card{min-height:59px!important;padding:9px 10px!important}
+ #app .maitre-page.hnet .mnet-role-simplified .hnet-role-card .hnet-role-top{flex-wrap:wrap;gap:4px!important}
+ #app .maitre-page.hnet .mnet-role-simplified .hnet-role-card .hnet-role-top b{font-size:12px!important}
+ #app .maitre-page.hnet .mnet-role-simplified .hnet-selected-role{grid-template-columns:minmax(0,1fr)!important;gap:4px!important}
+ #app .maitre-page.hnet .mnet-role-simplified .hnet-selected-role>em{grid-column:1;grid-row:4;text-align:left}
+}
+@media(max-width:350px){
+ #app .maitre-page.hnet .mnet-role-simplified .hnet-role-grid{grid-template-columns:minmax(0,1fr)!important}
+ #app .maitre-page.hnet .mnet-role-simplified .hnet-role-card{min-height:48px!important}
+}

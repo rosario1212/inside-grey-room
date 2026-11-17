@@ -107,9 +107,12 @@ renderMaitre({room:{chapter:1,code:'H4321'},player:{preferred_role:'avocat'},
  players:['avocat','client','enqueteur','procureur','juge'].map((id,i)=>({id:'p'+i,pseudo:'J'+i,preferred_role:i?null:id,is_host:i===0}))});
 assert(renderedMaitre?.preserve,'MAÎTRE lobby must preserve scrolling');
 assert(renderedMaitre.html.indexOf('<section class="hnet-role-zone"')<renderedMaitre.html.indexOf('<details class="hnet-roster-disclosure"'),'MAÎTRE roles must precede roster');
-assert(renderedMaitre.html.includes('CODE D’INVITATION')&&renderedMaitre.html.includes('Participants à la table'),'MAÎTRE invitation or expandable roster missing');
+assert(renderedMaitre.html.includes('INVITATION')&&renderedMaitre.html.includes('<summary>Joueurs'),'MAÎTRE invitation or expandable roster missing');
 assert(renderedMaitre.html.includes('data-mnet="copy-code"'),'MAÎTRE invitation code should be directly copyable');
-assert(renderedMaitre.html.includes('COMMENCER LA PARTIE'),'MAÎTRE can launch at five participants');
+assert(renderedMaitre.html.includes('LANCER LA PARTIE'),'MAÎTRE can launch at five participants');
+assert(renderedMaitre.html.includes('data-random="1"'),'MAÎTRE must expose an actual random draw action');
+assert(renderedMaitre.html.indexOf('<div class="hnet-role-grid">')<renderedMaitre.html.indexOf('class="mnet-role-actions"'),'Random draw must be a small secondary action, outside the role grid');
+assert(!renderedMaitre.html.includes('Choisis ta fonction'),'MAÎTRE must remove redundant role-selector headings');
 assert(casinoHTML.indexOf('<section class="casino-role-choice-zone"')<casinoHTML.indexOf('<details class="casino-roster-disclosure"'),'Casino roles must precede roster');
 assert(casinoHTML.includes('casino-lobby-access'),'Casino invite code should use compact shared hierarchy');
 assert(casinoHTML.includes('casino-launch-readiness')&&casinoHTML.includes('casino-selected-role'),'Casino must show all play requirements and own selected role');
@@ -185,6 +188,43 @@ assert.equal(maitreCalls[0]?.name,'igr_heritage_online_start','MAÎTRE must call
 assert.equal(maitreCalls[0]?.args.p_host_token,'synthetic-host');
 assert.equal(maitreRefreshes,1,'MAÎTRE start should refresh its role-reading stage');
 assert(css.includes('.hnet-selected-role')&&css.includes('.hnet-code-copy'),'Shared role preview and copy button must have styling');
+// v759 — Actual immediate server-side random-role reservation, retry on race,
+// plus an explicit return to the server's at-launch random assignment.
+const maitreRandomSource=maitre.slice(maitre.indexOf('function availableMaitreRoleButtons(){'),maitre.indexOf('function boot(){'));
+assert(maitreRandomSource.startsWith('function availableMaitreRoleButtons'),'MAÎTRE needs a real random-role handler');
+const makeRoleButton=(id,picked=false,taken=false)=>({
+ dataset:{role:id},disabled:taken,classList:{contains:x=>taken&&x==='is-taken'},
+ getAttribute:k=>k==='aria-pressed'?(picked?'true':'false'):null,
+ querySelector:()=>({textContent:id.toUpperCase()})
+});
+for(const collision of [false,true]){
+ const calls=[],notices=[];let refreshed=0;
+ const available=[makeRoleButton('avocat'),makeRoleButton('client')];
+ const randomClick=runInNewContext(maitreRandomSource+';click',{
+  document:{querySelectorAll:()=>available},
+  sess:()=>({code:'H4321',token:'synthetic-token',chapter:1,hostToken:'synthetic-host'}),
+  Math:{random:()=>0,floor:Math.floor},
+  rpcx:async(name,args)=>{
+   calls.push({name,args});
+   if(collision&&args.p_role_id==='avocat')throw new Error('role_already_taken');
+   return {ok:true,preferred_role:args.p_role_id}
+  },
+  sync:async(force)=>{assert.equal(force,true);refreshed++},
+  toastx:m=>notices.push(m),rolePending:false,console
+ },{timeout:1000});
+ await randomClick({dataset:{mnet:'role',random:'1',role:''},getAttribute:()=> 'false'});
+ assert.equal(calls[0].name,'igr_heritage_online_choose_role','The random button must actually reserve a role on the server');
+ assert.equal(calls[0].args.p_player_token,'synthetic-token','A random role must use the requesting player token');
+ assert.equal(calls[0].args.p_role_id,'avocat','The first public available role must be considered');
+ assert.equal(calls.at(-1).args.p_role_id,collision?'client':'avocat','Conflicts must retry another free role');
+ assert.equal(refreshed,1,'A confirmed draw must synchronize the lobby');
+ assert(notices.some(x=>x.startsWith('Rôle tiré :')),'The result must be visibly acknowledged');
+ await randomClick({dataset:{mnet:'role',role:''},getAttribute:()=> 'false'});
+ assert.equal(calls.at(-1).args.p_role_id,null,'Annuler must restore server-side assignment at launch');
+ assert(notices.includes('Tirage au lancement.'),'Reset should tell the player what happens next');
+}
+console.log('PASS v759: compact random action reserves an actual role, handles collisions and restores launch lottery.');
+
 console.log('PASS v733: synthetic Cendres/Kuroi/Maître host launch and Casino preparation paths.');
 
 console.log('PASS v729: CENDRES/KUROI/MAÎTRE role reservations, Casino cards, 5-7 seats, private role boundaries, mobile UI and SQL contracts');

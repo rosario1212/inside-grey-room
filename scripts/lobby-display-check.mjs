@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 
 const target=path.resolve(process.argv[2]||'dist');
 const VERSION='v87-canonical-narrative';
-const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','language-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','screen-polish-v73.css','investigation-runtime-v42.js','narrative-dossier-v87.js'];
+const assets=['app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','language-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js','heritage-maitre-layout-v758.css','screen-polish-v73.css','investigation-runtime-v42.js','narrative-dossier-v87.js'];
 const read=name=>readFile(path.join(target,name),'utf8');
 const app=await read('app-v11.js');
 const output={innerHTML:''};
@@ -88,9 +88,10 @@ try{
   const uiFingerprint=createHash('sha256')
    .update(await read('dlc-suite-v12-37.js'))
    .update(await read('mobile-ui-v28.css'))
+   .update(await read('heritage-maitre-layout-v758.css'))
    .digest('hex').slice(0,12);
   assert.equal(scope.cache,'igr-'+VERSION+'-'+uiFingerprint,
-   'PWA cache must be content-addressed to the published Regime mobile rules');
+   'PWA cache must reflect Regime mobile rules and the Maître role interface');
   assert(app.includes('/service-worker.js?v='+VERSION),'App must register the same service worker version');
 }catch(error){if(error.code!=='ENOENT')throw error}
 for(const page of ['index.html','en.html']){
