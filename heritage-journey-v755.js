@@ -202,11 +202,11 @@ function enhanceJoinBack(root){
  if(!joinReturn)return;
  const code=$('#joinCode',root),page=code?.closest('main.page');
  if(!page)return;
- const head=$('.page-head',page),home=head&&$('button[onclick*="goHome"]',head);
- if(!home||home.dataset.hjReturn)return;
- home.removeAttribute('onclick');home.dataset.hjReturn='1';home.type='button';
- home.textContent='← Retour';
- home.setAttribute('aria-label',joinReturn?'Retour à la campagne précédente':'Retour à l’accueil');
+ const head=$('.page-head',page),back=head&&$('button[data-igr-global-back]',head);
+ if(!back||back.dataset.hjReturn)return;
+ // Preserve Accueil: only Retour takes the contextual campaign destination.
+ back.removeAttribute('data-igr-global-back');back.dataset.hjReturn='1';back.type='button';
+ back.setAttribute('aria-label',joinReturn?'Retour à la campagne précédente':'Retour à l’accueil');
 }
 function handleJoinBack(event){
  const btn=event.target.closest?.('[data-hj-return]');
