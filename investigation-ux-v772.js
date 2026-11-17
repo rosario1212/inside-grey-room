@@ -25,7 +25,8 @@ function compact(){
  }
  // Also repair the investigator's already-authorized evidence cards.
  // Never touch private role cards or make hidden data public.
- const roomId=String(window.STATE?.sync?.room?.scenario_id||'');
+ const state=typeof STATE!=='undefined'?STATE:window.STATE;
+ const roomId=String(state?.sync?.room?.scenario_id||'');
  const improve=window.IGR_COMMON_DOSSIER_V106?.preciseCaseCopy;
  if(roomId&&typeof improve==='function'){
   // Only already-rendered evidence panels are edited. No new audience or permissions.
@@ -37,7 +38,7 @@ function compact(){
    if(corrected!==text)p.textContent=corrected;
   }
   const rename=window.IGR_COMMON_DOSSIER_V106?.editorialTitle;
-  const events=window.STATE?.sync?.events||[];
+  const events=state?.sync?.events||[];
   if(typeof rename==='function'){
    for(const article of root.querySelectorAll('.v42-evidence[data-igr-event-id]')){
     const e=events.find(item=>String(item.id)===String(article.dataset.igrEventId));

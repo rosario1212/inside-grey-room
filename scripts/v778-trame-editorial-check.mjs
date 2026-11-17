@@ -7,6 +7,7 @@ const edits=JSON.parse(readFileSync('data/trame-editorial-v778.json','utf8'));
 const source=readFileSync('common-dossier-v106.js','utf8');
 const sql=readFileSync('sql/v778_trame_editorial_patch.sql','utf8');
 const ux=readFileSync('investigation-ux-v772.js','utf8');
+const investigatorRender=readFileSync('investigation-runtime-v42.js','utf8');
 assert.equal(edits.length,46,'All 46 reviewed edits must be retained');
 const unique=new Set;
 for(const item of edits){
@@ -23,6 +24,11 @@ for(const item of edits){
 assert.equal(new Set(edits.map(x=>x.scenario_id)).size,22);
 assert(source.includes('const trameEditsV778='+JSON.stringify(edits)+';'),
  'Browser event previews must use the same reviewed edits as database migration');
+assert(investigatorRender.includes("editorial?.preciseCaseCopy?.(original,p.title,scenarioId())") &&
+ investigatorRender.includes("editorial?.editorialTitle?.(p.title,original,scenarioId())"),
+ 'Investigator must see the corrected title and facts on first render');
+assert(ux.includes("typeof STATE!=='undefined'?STATE:window.STATE"),
+ 'Late DOM cleanup must read the actual game state safely');
 assert(ux.includes("e.event_type!=='trame'")&&ux.includes("const events=window.STATE?.sync?.events||[]"),
  'Evidence-panel headings can only be updated for actually authorized and displayed events');
 assert(sql.includes("ORDER BY t.ord") && sql.includes("AND x.old_text=t.item->>'text'"),
