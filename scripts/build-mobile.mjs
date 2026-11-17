@@ -51,8 +51,10 @@ for(const page of ['index.html','en.html']){
   const target=path.join(out,page);let html=await readFile(target,'utf8');
   for(const pattern of legacyTagPatterns)html=html.replace(pattern,'\n');
   if(!html.includes('play-modes-v13-8.css'))html=html.replace('</head>',`${premiumHead}\n</head>`);
+  if(!html.includes('heritage-journey-v755.css'))html=html.replace('</head>','  <link rel="stylesheet" href="heritage-journey-v755.css?v=v764-compact-chooser">\n</head>');
   else if(!html.includes('premium-access-sync-v17.css'))html=html.replace('</head>',`  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
+  if(!html.includes('heritage-journey-v755.js'))html=html.replace('</body>','  <script src="heritage-journey-v755.js?v=v764-compact-chooser"></script>\n</body>');
   else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v17-premium-sync-v6-20261116-v7-fit-v8-no-thumbnails-v12-footer"></script>\n</body>`);
   if(!html.includes('store-catalog-v69.js')){
     if(html.includes('premium-access-sync-v17.js'))html=html.replace(/(<script[^>]+src=["']premium-access-sync-v17\.js[^>]*><\/script>)/i,`${storeCatalogScript}\n$1`);
