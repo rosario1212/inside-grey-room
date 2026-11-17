@@ -10,6 +10,9 @@ const built=await readFile(path.join(bundle,'common-dossier-v106.js'),'utf8');
 const sql=await readFile(path.join(root,'supabase/migrations/20261117200729_igr_v771_common_dossier_public_progress_and_collective_release.sql'),'utf8');
 new Function(source);
 new Function(built);
+const html=await readFile(path.join(bundle,'index.html'),'utf8');
+assert(html.includes('common-dossier-v106.js?v=v771-common-dossier-public-progress-20261117'),'Old Dossier commun script may remain cached');
+
 for(const phrase of ['igr_v771_dossier_candidates','igr_v771_dossier_vote','disclosurePanel()','syncDisclosure()','PIÈCE COMMUNIQUÉE · À RECOUPER','BILAN PUBLIC DU CYCLE'])
   assert(source.includes(phrase)&&built.includes(phrase),'Missing v771 UI or bundle feature: '+phrase);
 assert(sql.includes('after update of cycle,status'),'Cycle transition hook not installed');
