@@ -1537,7 +1537,8 @@ function privateCardHtml(){
  const baseSuspect=['001','002','003','004','005','006'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect';
  const readableDossier=['001','002'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect';
  const conciseDossier=['001','002','003','004','005','006'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect'&&typeof ps.story==='string'&&!!ps.story.trim();
- const authoredObjective=String(ps.variant_card?.objective||ps.objective||ps.objective_main||ps.omerta_objective||'').trim();
+ const isOmertaLegacy=['021','022','023','024','025'].includes(String(d?.room?.scenario_id||''))&&!santoroMyCard;
+ const authoredObjective=String((isOmertaLegacy?ps.omerta_objective:(ps.variant_card?.objective||ps.objective||ps.objective_main||ps.omerta_objective))||'').trim();
  const personaIdentity=String((santoroMyCard&&ps.identity)||ps.variant_card?.identity||ps.place||'').trim();
  const privateWin=santoroMyCard?ps.objective:(authoredObjective||roleInfo(secret==='espion'?'espion':pub).win);
  const concisePrivateCard=conciseDossier?[valueBlock('TON HISTOIRE',ps.story),valueBlock('TES RELATIONS',ps.relations),valueBlock('TA CHRONOLOGIE',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft'),valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)].join(''):'';
