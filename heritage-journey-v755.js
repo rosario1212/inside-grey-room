@@ -1,10 +1,10 @@
-/* Héritage v756 — public lobby clarity and mobile-first visual polish; no state/RPC changes. */
+/* Héritage v757 — consistent pregame hierarchy, four local steps and safe DOM enhancement. */
 (()=>{
 'use strict';
 const labels=['CAMPAGNES','DOSSIERS','MODE','PRÉPARATION','LOBBY'];
 const $=(q,p=document)=>p.querySelector(q);
 const $$=(q,p=document)=>Array.from(p.querySelectorAll(q));
-const markup=(step,local=false)=>'<nav class="hj-progress" aria-label="Parcours Héritage"><div class="hj-progress-label"><span>MODE HÉRITAGE</span><b>ÉTAPE '+(step+1)+'/5 · '+(local&&step===3?'JOUEURS':labels[step])+'</b></div><ol>'+labels.map((label,i)=>'<li class="'+(i<step?'is-done':i===step?'is-current':'')+'" '+(i===step?'aria-current="step"':'')+'><span aria-hidden="true">'+(i<step?'✓':i+1)+'</span><b>'+((local&&i===4)?'CARTES':label)+'</b></li>').join('')+'</ol></nav>';
+const markup=(step,local=false)=>{const steps=local?['CAMPAGNES','DOSSIERS','MODE','JOUEURS']:labels;return '<nav class="hj-progress'+(local?' hj-progress-local':'')+'" aria-label="Parcours Héritage"><div class="hj-progress-label"><span>PARCOURS</span><b>ÉTAPE '+(step+1)+'/'+steps.length+' · '+steps[step]+'</b></div><ol>'+steps.map((label,i)=>'<li class="'+(i<step?'is-done':i===step?'is-current':'')+'" '+(i===step?'aria-current="step"':'')+'><span aria-hidden="true">'+(i<step?'✓':i+1)+'</span><b>'+label+'</b></li>').join('')+'</ol></nav>'}
 function stage(main){
  if(main.matches('.hplay-hub'))return 0;
  if(main.matches('.hplay-campaign'))return 1;
@@ -44,11 +44,11 @@ function enrichHeritageLobby(main){
  const lobby=$('.hnet-lobby',main);if(!lobby)return;
  const title=$('.hnet-title',lobby);
  const match=title?.textContent?.match(/([0-9]+)\s*\/\s*7\s*joueurs/i);
- if(match)progressMeter(lobby,title,Number(match[1]),5,7);
+ if(match){progressMeter(lobby,title,Number(match[1]),5,7);title?.querySelector('p')?.classList.add('hj-counter-moved')}
  const grid=$('.hnet-role-grid',lobby),selected=$('.hnet-selected-role',lobby);
  // Always place the current public selection before the complete role list.
  if(grid&&selected&&selected.nextElementSibling!==grid)grid.insertAdjacentElement('beforebegin',selected);
- $('.hnet-role-card',lobby).forEach(card=>{
+ Array.from(lobby.querySelectorAll('.hnet-role-card')).forEach(card=>{
   if(card.classList.contains('hnet-role-random')||$('.hj-role-description',card))return;
   const publicLabel=card.getAttribute('aria-label')||'';
   const description=publicLabel.split(' — ').slice(1).join(' — ').trim();
@@ -64,6 +64,9 @@ function enrichHeritageLobby(main){
  if(picked)picked.setAttribute('data-hj-picked','true');
 }
 function enrichCasinoLobby(casino){
+ const roleZone=$('.casino-role-choice-zone',casino);
+ const choice=roleZone&&$('.casino-selected-role',roleZone),groups=roleZone&&$('.casino-role-choice-group',roleZone);
+ if(choice&&groups&&choice.nextElementSibling!==groups)groups.insertAdjacentElement('beforebegin',choice);
  const panel=$('.casino-lobby-top',casino);if(!panel)return;
  const match=panel.textContent.match(/([0-9]+)\s*\/\s*12\s*joueurs/i);
  const anchor=$('.casino-lobby-access',panel);
