@@ -54,7 +54,7 @@ window.phaseInstruction=phaseInstruction=function(r,ph,target){
   if(r==='expert')return `<p>Si tu as été admis comme observateur, reste silencieux. Tu n’interviens que lorsqu’une expertise t’est formellement demandée.</p>`;
   return `<p>Un interrogatoire est en cours. Les échanges libres continuent hors de la Grey Room.</p>`;
  }
- if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(r)?`<p>Deux questions. Réponds séparément. Le chrono reste ouvert jusqu’à 00:00, même si les réponses sont déjà envoyées.</p>`:`<p>Le noyau d’enquête dispose de 02:00. Continue ton jeu humain si ton espace le permet.</p>`;
+ if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(r)?`<p>Réponds au questionnaire du cycle. Les réponses restent individuelles et sans correction immédiate.</p>`:`<p>Le noyau d’enquête dispose de 02:00. Continue ton jeu humain si ton espace le permet.</p>`;
  if(ph==='event_select')return r==='enqueteur'?`<p>Choisis le prochain événement. Le scénario et les rôles présents limitent les options. ${eventSlotsText()?`Progression : ${eventSlotsText()}.`:''}</p>`:`<p>L’Enquêteur compose la suite du cycle. Reste dans ton espace de jeu jusqu’à une convocation éventuelle.</p>`;
  if(ph==='event_confrontation')return isEventTarget()?`<p><b>CONFRONTATION.</b> Tu es convoqué dans la Grey Room. Trois minutes. Aucun écran ne remplace l’échange.</p>`:`<p>Une confrontation est en cours dans la Grey Room.</p>`;
  if(ph==='event_assembly')return isParticipant()?`<p><b>ASSEMBLÉE.</b> Tu es admis. Expose uniquement ce qui sert la décision collective.</p>`:`<p>Une Assemblée est en cours. Tu n’y es pas admis.</p>`;
