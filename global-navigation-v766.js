@@ -4,7 +4,7 @@
 const VERSION='766.0-global-navigation';
 const root=()=>document.getElementById('app');
 const $=(q,p=document)=>p?.querySelector?.(q)||null;
-let lastRoute='',returnRoute='',scheduled=false;
+let lastRoute='',returnRoute='',pageOrigin='',scheduled=false;
 const normalize=s=>String(s||'').trim().replace(/\s+/g,' ');
 function baseView(){try{return typeof STATE!=='undefined'?String(STATE?.view||''):''}catch{return''}}
 function scenarioId(){try{return String(STATE?.selectedScenario||'')}catch{return''}}
@@ -61,6 +61,10 @@ function routeChanged(){
  if(!restoringScenarios)noSmoothTop();
  if(old!=='join'&&next==='join')returnRoute=old;
  if(old==='join'&&next!=='join')returnRoute='';
+ if(next.startsWith('page:')&&(
+    old==='home'||old==='scenarios:list'||old.startsWith('scenarios:dossier:')||
+    old.startsWith('heritage:campaign:')||old==='heritage:hub'
+  ))pageOrigin=old;
  // A room refresh may repaint a different title without changing this route.
 }
 function navigateTo(route){
@@ -112,7 +116,8 @@ function handleBack(e){
  const button=e.target.closest?.('[data-igr-global-back]');
  if(!button)return;
  e.preventDefault();e.stopImmediatePropagation();
- const origin=returnRoute;returnRoute='';
+ const origin=lastRoute==='join'?returnRoute:pageOrigin;
+ returnRoute='';pageOrigin='';
  if(navigateTo(origin))return;
  if(typeof goHome==='function')goHome();
 }
