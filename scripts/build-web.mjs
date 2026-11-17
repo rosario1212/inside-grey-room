@@ -1,4 +1,5 @@
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import {buildCartelPosterAssets} from './build-cartel-posters.mjs';
 const root=process.cwd(),out=path.join(root,'dist');
@@ -87,4 +88,5 @@ const cloudflareHeaders=`
   Cache-Control: public, max-age=31536000, immutable
 `;
 await writeFile(path.join(out,'_headers'),cloudflareHeaders.trimStart(),'utf8');
+execFileSync(process.execPath,[path.join(root,'scripts/v773-private-card-readability-check.mjs'),out],{cwd:root,stdio:'inherit'});
 console.log(`Inside Grey Room web bundle ready: ${out}`);console.log(`Runtime files: ${runtimeFiles.length} · assets: ${assetRefs.size} · ${(assetBytes/1024/1024).toFixed(2)} MiB assets`);
