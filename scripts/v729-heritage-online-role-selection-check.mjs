@@ -37,7 +37,7 @@ let view=heritageRoleCards({room:{campaign_id:'cendres'},player:{preferred_role:
  {id:'p1',pseudo:'Ana',preferred_role:'chef'},{id:'p2',pseudo:'Bob',preferred_role:'sigint'}]});
 assert.equal(view.invalid,0);
 assert(view.markup.includes('CHEF DE CELLULE')&&view.markup.includes('COMPLET'));
-assert(view.markup.includes('Ton rôle')&&view.markup.includes('Attribution aléatoire'));
+assert(view.markup.includes('Ton rôle')&&view.markup.includes('Tirer un rôle'),'Compact chooser must expose the random action even when another role is selected');
 assert(view.markup.includes('data-random="1"')&&view.markup.includes('hnet-role-actions'),'Cendres/Kuroi must show a compact real role draw outside the grid');
 assert(!view.markup.includes('INFORMATION PRIVÉE'),'Lobby must never reveal a private role card');
 view=heritageRoleCards({room:{campaign_id:'cendres'},player:{preferred_role:'sigint'},players:[
