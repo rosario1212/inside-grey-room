@@ -295,3 +295,49 @@
  .casino-live .casino-role-choice-zone>.casino-selected-role{padding:12px}
  .casino-live .casino-selected-role>em{font-size:9px;max-width:100px}
 }
+
+/* Héritage v763: accessible back steps and dominant, immediate play action. */
+#app .hj-progress li>button.hj-step-link{
+ display:flex;align-items:center;justify-content:flex-start;gap:6px;
+ width:100%;min-width:0;min-height:44px;padding:4px 0;
+ font:inherit;line-height:1.25;color:inherit;text-align:left;
+ border:0;border-radius:8px;background:transparent;cursor:pointer;
+ touch-action:manipulation;
+}
+#app .hj-progress li>button.hj-step-link:focus-visible{
+ outline:2px solid var(--hp-accent,#e9eff3)!important;outline-offset:2px;
+}
+#app .hj-progress li>button.hj-step-link:hover{color:var(--hp-accent,#f3f6f8)}
+#app .hplay.hplay-campaign .hj-campaign-actions{
+ display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+ gap:10px;margin:0 0 15px;
+}
+#app .hplay.hplay-campaign .hj-campaign-actions>button{
+ display:flex;align-items:center;justify-content:center;min-width:0;
+ min-height:54px;margin:0!important;padding:11px 14px;
+ font-size:13px;font-weight:800;line-height:1.35;letter-spacing:.01em;
+ border-radius:11px;text-align:center;box-shadow:none;
+}
+#app .hplay.hplay-campaign .hj-campaign-play{
+ border:1px solid #a4c8db;background:#bed7e6;color:#101e28;
+}
+#app .hplay.hplay-theme-kuroi .hj-campaign-play{
+ border-color:#c5ad7b;background:#dfcda6;color:#261f14;
+}
+#app .hplay.hplay-theme-maitre .hj-campaign-play{
+ border-color:#9c6159;background:#743237;color:#fff7ef;
+}
+#app .hplay.hplay-dossier .hplay-launch-box.hj-dossier-entry{
+ width:100%;margin:0 0 16px;padding:15px;clear:both;
+ border:1px solid var(--hu-edge,rgba(220,229,235,.23));
+ border-radius:14px;background:var(--hu-tint,#172530);
+}
+#app .hplay.hplay-dossier .hj-dossier-entry>p{margin:4px 0 10px!important}
+#app .hplay.hplay-dossier .hj-dossier-entry>.heritage-dual-row{margin-top:8px}
+#app .hplay.hplay-dossier .hj-dossier-entry>.hplay-launch{min-height:52px}
+@media(max-width:520px){
+ #app .hj-progress li>button.hj-step-link{justify-content:center;min-height:44px;padding:4px 0}
+ #app .hplay.hplay-campaign .hj-campaign-actions{grid-template-columns:minmax(0,1fr)}
+ #app .hplay.hplay-campaign .hj-campaign-actions>button{min-height:49px}
+ #app .hplay.hplay-dossier .hj-dossier-entry{margin-bottom:13px}
+}
