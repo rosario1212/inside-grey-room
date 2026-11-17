@@ -80,13 +80,14 @@ function organize(raw){
  const header=makeEl('header','igr634-head');
  const kicker=makeEl('small','',tr('ESPACE DE TRAVAIL','WORKSPACE'));
  const title=makeEl('h2','',lead?tr('Enquête · actions et découvertes','Investigation · actions and discoveries'):tr('Mes actions et mes éléments','My actions and findings'));
- const description=makeEl('p','',lead?tr('Ce qui est possible maintenant est affiché en premier. Les éléments trouvés suivent.','Available actions first, followed by the findings.'):tr('Tes décisions disponibles et tes éléments accessibles, sans recherche inutile.','Available decisions and findings, without searching.'));
+ const description=makeEl('p','',lead?tr('Commence par la phase en cours. Interroge, vérifie une piste, puis compare les pièces aux déclarations.','Start with the current phase: interview, check a lead, then compare findings with statements.'):tr('Ce que tu peux faire maintenant, puis ce que tu as appris.','What you can do now, followed by what you know.'));
  header.append(kicker,title,description);outside.appendChild(header);
  if(bucket.priority.length){
    const priority=makeEl('section','igr634-priority');
-   const label=makeEl('small','igr634-priority-label',tr('ACTION DISPONIBLE · UNE SEULE INVESTIGATION PAR CYCLE','AVAILABLE ACTION · ONE INVESTIGATION PER CYCLE'));
-   const title=makeEl('h3','',tr('Investigation complémentaire','Additional investigation'));
-   const hint=makeEl('p','',tr('Choisis une piste ci-dessous. Le résultat apparaîtra dans les éléments d’enquête.','Choose a lead below. The finding will appear in your investigation evidence.'));
+   const cycle=Number(S()?.sync?.room?.cycle)||1;
+   const label=makeEl('small','igr634-priority-label',tr('PISTE À EXAMINER · CYCLE '+cycle,'LEAD TO CHECK · CYCLE '+cycle));
+   const title=makeEl('h3','',tr('Choisis une piste','Choose a lead'));
+   const hint=makeEl('p','',tr('Lis ensuite le résultat dans « Pièces examinées ». Vérifie ce qu’il établit, sans conclure trop vite.','Read the result under “Examined evidence”. Check what it actually establishes.'));
    priority.append(label,title,hint,...bucket.priority);outside.appendChild(priority);
  }
  if(lead){
@@ -110,8 +111,8 @@ function organize(raw){
  makeGroup('actions',lead?tr('Actions du cycle','Cycle actions'):tr('Mes commandes officielles','My official controls'),tr('À EFFECTUER','TO DO'),bucket.actions,true);
  const hasEvidence=bucket.evidence.length>0;
  if(!bucket.evidence.length)bucket.evidence.push(makeEl('p','igr634-empty',tr('Aucun nouvel élément disponible ici. Consulte aussi le Dossier commun.','No additional finding here. Also check the Shared case file.')));
- makeGroup('evidence',tr('Éléments reçus · preuves et découvertes','Received evidence and findings'),tr('CONSULTABLES MAINTENANT','AVAILABLE TO READ'),bucket.evidence,hasEvidence);
- const noteInfo=makeEl('p','igr634-notice',tr('Carnet partagé : seules les personnes du camp Enquête peuvent lire et ajouter ces notes. Contrairement au Canal (messages rapides), elles restent classées par personne ou par affaire. Une note n’est jamais une preuve.','Shared notebook: only the investigation team can read and add notes. Unlike the Channel (quick messages), they remain organized by person or case. A note is never evidence.'));
+ makeGroup('evidence',tr('Pièces examinées','Examined evidence'),tr('FAITS ET SOURCES À CONFRONTER','FACTS AND SOURCES TO COMPARE'),bucket.evidence,hasEvidence);
+ const noteInfo=makeEl('p','igr634-notice',tr('Notes du camp Enquête. Une note ne constitue pas une preuve.','Investigation team notes. A note is not evidence.'));
  bucket.notebook.unshift(noteInfo);
  makeGroup('notebook',tr('Carnet partagé · camp Enquête','Shared investigation notebook'),tr('NOTES DURABLES · CAMP ENQUÊTE','SAVED TEAM NOTES'),bucket.notebook,false);
  if(typeof window.renderNotesTabV32==='function'){
