@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - 'app-v11.js'
+      - 'judicial-card-v773.js'
+      - 'judicial-card-v773.css'
+      - 'index.html'
+      - 'scripts/v773-investigator-judicial-card-check.mjs'
       - 'screen-polish-v73.css'
       - 'scripts/v772-private-card-uniformity-check.mjs'
       - 'scripts/v768-private-character-clarity-check.mjs'
@@ -11,6 +15,10 @@ on:
     branches: [main]
     paths:
       - 'app-v11.js'
+      - 'judicial-card-v773.js'
+      - 'judicial-card-v773.css'
+      - 'index.html'
+      - 'scripts/v773-investigator-judicial-card-check.mjs'
       - 'screen-polish-v73.css'
       - 'scripts/v772-private-card-uniformity-check.mjs'
       - 'scripts/v768-private-character-clarity-check.mjs'
@@ -27,6 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: node scripts/v773-investigator-judicial-card-check.mjs
       - run: node scripts/v772-private-card-uniformity-check.mjs
       - run: node scripts/v768-private-character-clarity-check.mjs
       - run: node scripts/v769-authored-private-card-check.mjs
