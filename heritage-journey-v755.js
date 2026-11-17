@@ -1,4 +1,4 @@
-/* Héritage v763 — visible dossier launch and backwards journey navigation. */
+/* Héritage v764 — dossier-first mode selection and backwards journey navigation. */
 (()=>{
 'use strict';
 const labels=['CAMPAGNES','DOSSIERS','MODE','PRÉPARATION','LOBBY'];
@@ -126,10 +126,14 @@ function enhanceCampaignStart(root){
 }
 function moveDossierPlayChoices(root){
  const main=$('main.hplay-dossier',root),grid=main&&$('.hplay-dossier-grid',main),box=main&&$('.hplay-launch-box',main);
- if(!grid||!box||box.parentElement===main)return;
- // Reveal play modes before the full poster instead of hiding them below it.
- grid.insertAdjacentElement('beforebegin',box);
- box.classList.add('hj-dossier-entry');
+ const copy=grid&&$('.hplay-dossier-copy',grid);
+ if(!grid||!box||!copy)return;
+ // Poster → dossier title → mode selection → narrative.
+ // Keep the chooser in its natural reading order, not above the artwork.
+ const title=$('h1',copy);
+ if(title&&box.previousElementSibling!==title)title.insertAdjacentElement('afterend',box);
+ else if(!title&&box.parentElement!==copy)copy.prepend(box);
+ if(!box.classList.contains('hj-dossier-entry'))box.classList.add('hj-dossier-entry');
 }
 function journeyCampaign(main){
  if(main.classList.contains('maitre-page')||main.classList.contains('hplay-theme-maitre'))return 'maitre';
