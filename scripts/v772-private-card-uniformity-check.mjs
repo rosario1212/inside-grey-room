@@ -50,7 +50,7 @@ for(let n=1;n<=49;n++){
  assert(html.includes('Vous vous disputez et tu le bouscules.'),id+' fact 2 lost');
  assert(html.includes('Maël est vivant et sans blessure par lame.'),id+' fact 3 lost');
  assert((html.match(/class="igr-v772-time"/g)||[]).length===3,id+' must show 3 times');
- assert((html.match(/<li>/g)||[]).length===3,id+' must show 3 separate events');
+ assert((html.match(/<li><span class="igr-v772-time"/g)||[]).length===3,id+' must show 3 separate events; defence bullets are independent');
  assert(html.includes('≈ 02:26'),id+' must preserve approximate timing');
  assert(!html.includes('Tu sais avoir commandé une intimidation'),id+' must not restate the hidden threat as new knowledge');
  assert(html.includes('Tu es à l’origine de la menace organisée après ton départ.'),id+' must preserve a secret');
