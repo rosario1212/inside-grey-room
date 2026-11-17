@@ -1,4 +1,4 @@
-/* Héritage v762 — clear campaign join shortcuts and compact Casino entry. */
+/* Héritage v763 — visible dossier launch and backwards journey navigation. */
 (()=>{
 'use strict';
 const labels=['CAMPAGNES','DOSSIERS','MODE','PRÉPARATION','LOBBY'];
@@ -87,7 +87,7 @@ function enhanceCampaignJoin(root){
  ].filter(Boolean);
  for(const target of targets){
   const parent=target.parentElement;
-  if(parent?.querySelector(':scope > .hj-join-entry'))continue;
+  if(parent?.querySelector('.hj-join-entry'))continue;
   const button=document.createElement('button');
   button.type='button';button.className='hj-join-entry';
   button.dataset.hjJoin='1';
@@ -109,6 +109,86 @@ function handleJoinClick(event){
  const kicker=$('.page-head .kicker');
  if(kicker)kicker.textContent='HÉRITAGE';
 }
+/* A primary play action sits beside (rather than below) the existing Join action. */
+function enhanceCampaignStart(root){
+ const main=$('main.hplay-campaign',root),hero=main&&$('.hplay-campaign-hero',main);
+ if(!hero)return;
+ let row=$('.hj-campaign-actions',main);
+ if(!row){row=document.createElement('div');row.className='hj-campaign-actions';hero.insertAdjacentElement('afterend',row)}
+ let play=$('.hj-campaign-play',row);
+ if(!play){play=document.createElement('button');play.type='button';play.className='hj-campaign-play';play.dataset.hjPlay='1';row.appendChild(play)}
+ const active=$('.hplay-case.is-current:not(:disabled)',main);
+ const resumed=active&&/PARTIE EN COURS/i.test(active.textContent||'');
+ const label=active?(resumed?'Reprendre le dossier actif':'Jouer le dossier actif'):'Choisir un dossier';
+ if(play.textContent!==label)play.textContent=label;
+ const join=$('.hj-join-entry',main);
+ if(join&&join.parentElement!==row)row.appendChild(join);
+}
+function moveDossierPlayChoices(root){
+ const main=$('main.hplay-dossier',root),grid=main&&$('.hplay-dossier-grid',main),box=main&&$('.hplay-launch-box',main);
+ if(!grid||!box||box.parentElement===main)return;
+ // Reveal play modes before the full poster instead of hiding them below it.
+ grid.insertAdjacentElement('beforebegin',box);
+ box.classList.add('hj-dossier-entry');
+}
+function journeyCampaign(main){
+ if(main.classList.contains('maitre-page')||main.classList.contains('hplay-theme-maitre'))return 'maitre';
+ if(main.classList.contains('hplay-theme-cendres'))return 'cendres';
+ if(main.classList.contains('hplay-theme-kuroi'))return 'kuroi';
+ return '';
+}
+function journeyBack(main){
+ return $('.hplay-back[data-hp-action="chapter"],.hplay-back[data-maitre-action="chapter"],#hnetBack',main);
+}
+function canNavigateBack(main,from,to){
+ if(!main||to>=from||$('.hnet-lobby',main))return false;
+ if(to===0)return typeof window.IGR_HERITAGE_PLAY?.open==='function';
+ const id=journeyCampaign(main);
+ if(to===1)return id==='maitre'
+  ?typeof window.IGR_HERITAGE_MAITRE?.open==='function'
+  :!!id&&typeof window.IGR_HERITAGE_PLAY?.openCampaign==='function';
+ if(to===2)return !!journeyBack(main);
+ return false;
+}
+function makeProgressClickable(main){
+ const nav=$('.hj-progress',main),from=stage(main);
+ if(!nav||from<1)return;
+ $('ol > li.is-done',nav).forEach(li=>{
+  if(li.querySelector('button'))return;
+  const to=Array.from(li.parentElement.children).indexOf(li);
+  if(!canNavigateBack(main,from,to))return;
+  const label=$('b',li)?.textContent||'étape précédente';
+  const button=document.createElement('button');
+  button.type='button';button.className='hj-step-link';button.dataset.hjStep=String(to);
+  button.setAttribute('aria-label','Revenir à '+label.toLowerCase());
+  while(li.firstChild)button.appendChild(li.firstChild);
+  li.appendChild(button);
+ });
+}
+function handleStartClick(event){
+ const button=event.target.closest?.('[data-hj-play]');
+ if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const main=button.closest('main.hplay-campaign'),active=main&&$('.hplay-case.is-current:not(:disabled)',main);
+ if(active){active.click();return}
+ const first=main&&$('.hplay-case:not(:disabled)',main);
+ if(first){first.scrollIntoView({behavior:'smooth',block:'center'});first.focus({preventScroll:true})}
+}
+function handleProgressClick(event){
+ const button=event.target.closest?.('[data-hj-step]');
+ if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const main=button.closest('main.hplay,main.hnet'),from=main&&stage(main),to=Number(button.dataset.hjStep);
+ if(!canNavigateBack(main,from,to))return;
+ if(to===0){window.IGR_HERITAGE_PLAY.open();return}
+ if(to===1){
+  const id=journeyCampaign(main);
+  if(id==='maitre')window.IGR_HERITAGE_MAITRE.open();
+  else window.IGR_HERITAGE_PLAY.openCampaign(id);
+  return;
+ }
+ if(to===2)journeyBack(main)?.click();
+}
 function decorate(){
  const root=$('#app');if(!root)return;
  const main=$('main.hplay,main.hnet',root);
@@ -117,6 +197,9 @@ function decorate(){
   if(index>=0&&head&&!$('.hj-progress',main))head.insertAdjacentHTML('afterend',markup(index,main.matches('.hplay-setup')));
   styleModeButtons(main);
   enhanceCampaignJoin(root);
+  enhanceCampaignStart(root);
+  moveDossierPlayChoices(root);
+  makeProgressClickable(main);
   enrichHeritageLobby(main);
   const copy=$('.hnet-code-copy',main);
   if(copy&&!copy.title)copy.title='Copier le code pour inviter les joueurs';
@@ -130,6 +213,6 @@ function decorate(){
 }
 let frame=0;
 function schedule(){if(frame)return;frame=requestAnimationFrame(()=>{frame=0;decorate()})}
-function boot(){const root=$('#app');if(!root)return;document.addEventListener('click',handleJoinClick,true);new MutationObserver(schedule).observe(root,{subtree:true,childList:true});schedule();window.addEventListener('pageshow',schedule,{passive:true})}
+function boot(){const root=$('#app');if(!root)return;document.addEventListener('click',handleJoinClick,true);document.addEventListener('click',handleStartClick,true);document.addEventListener('click',handleProgressClick,true);new MutationObserver(schedule).observe(root,{subtree:true,childList:true});schedule();window.addEventListener('pageshow',schedule,{passive:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
