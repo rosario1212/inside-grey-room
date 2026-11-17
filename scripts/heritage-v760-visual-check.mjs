@@ -27,12 +27,14 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     const data=await page.evaluate(()=>{
      const pick=q=>document.querySelector(q),rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,w:r.width,h:r.height}};
      const online=pick('.hj-mode-online'),local=pick('.hj-mode-local'),poster=pick('.hplay-poster img');
-     const modeCopy=pick('.hj-mode-online .hj-mode-copy'),onlineIcon=pick('.hj-mode-online .hj-mode-icon svg');
+     const modeCopy=pick('.hj-mode-online .hj-mode-copy'),onlineIcon=pick('.hj-mode-online .hj-mode-icon svg'),localIcon=pick('.hj-mode-local .hj-mode-icon svg');
      return {
       scroll:document.documentElement.scrollWidth,viewport:innerWidth,
       online:rect(online),local:rect(local),poster:rect(poster),
       icon:rect(onlineIcon),iconColor:getComputedStyle(onlineIcon).color,
       iconStroke:getComputedStyle(onlineIcon).stroke,
+      localIconColor:getComputedStyle(localIcon).color,
+      localIconStroke:getComputedStyle(localIcon).stroke,
       onlineColor:getComputedStyle(online).color,
       localColor:getComputedStyle(local).color,
       copyOverflow:modeCopy.scrollWidth>modeCopy.clientWidth+2,
@@ -41,11 +43,13 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     });
     assert.equal(data.realIcons,2,'Use two real SVG icons, not unreliable text glyphs');
     assert(data.icon.w>=20&&data.icon.h>=20,'The multiplayer icon must actually be visible');
-    assert(data.iconStroke!=='none'&&data.iconColor===data.onlineColor,'The icon must inherit readable button text');
+    assert(data.iconStroke!=='none'&&data.iconColor===data.onlineColor,'Online icon must match the readable button label: '+campaign+' '+width+' '+JSON.stringify({svg:data.iconColor,button:data.onlineColor,stroke:data.iconStroke}));
+    assert(data.localIconStroke!=='none'&&data.localIconColor===data.localColor,'Local icon must match the readable button label: '+campaign+' '+width+' '+JSON.stringify({svg:data.localIconColor,button:data.localColor,stroke:data.localIconStroke}));
     if(campaign==='maitre'){
      assert(!data.iconColor.includes('116, 46, 50'),'Burgundy-on-burgundy multiplayer icon would be invisible');
      assert(data.iconColor==='rgb(255, 249, 239)','MAÎTRE online icon must be light on burgundy');
      assert(data.localColor==='rgb(84, 45, 44)','MAÎTRE local action must use dark ink on ivory');
+     assert(data.localIconColor==='rgb(84, 45, 44)','MAÎTRE local icon must use the same dark ink on ivory');
     }
     for(const el of [data.online,data.local,data.poster]){
      assert(el.x>=-.5&&el.right<=data.viewport+.5,'Content must fit viewport '+campaign+' '+width);
