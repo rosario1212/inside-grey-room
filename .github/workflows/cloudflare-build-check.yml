@@ -94,6 +94,7 @@ jobs:
           node --check app-v11.js
           node --check judicial-card-v773.js
           node scripts/v773-investigator-judicial-card-check.mjs
+          node scripts/v777-editorial-copy-check.mjs
           node --check runtime-optimization-v12.js
           node --check service-worker.js
           node scripts/ui-regression-check.mjs
