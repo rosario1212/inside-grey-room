@@ -12,7 +12,7 @@ function code(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',a=new Uint32Array(4);
 function variant(){try{let s=window.IGR_HERITAGE_MAITRE?.get?.()||window.IGR_HERITAGE?.get?.('maitre');if(!s){window.IGR_HERITAGE?.begin?.('maitre');s=window.IGR_HERITAGE?.get?.('maitre')}return s?.maitre?.canon?.variant||'blind'}catch{return'blind'}}
 function secret(ch,id,v,carry){const card=window.IGR_HERITAGE_MAITRE?.roleCard?.(ch,id,v,carry||null);return card?[card.secret,card.objective]:['Aucune information supplémentaire.','Distingue faits et interprétations.']}
 function inject(){const b=$('.maitre-page.hplay-dossier .hplay-launch-box');if(!b||b.dataset.maitreNet)return;const o=$('.hplay-launch',b);if(!o)return;const n=Number(o.dataset.chapter);if(!n)return;b.dataset.maitreNet='1';b.dataset.dualHeritage='1';const s=sess(),res=s&&Number(s.chapter)===n,act=o.dataset.maitreAction||'setup';b.querySelector('b').textContent='CHOISISSEZ LE MODE DE JEU';b.querySelector('p').textContent='Chaque joueur sur son téléphone, ou un téléphone partagé à table.';const r=document.createElement('div');r.className='heritage-dual-row';r.innerHTML=`<button class="btn primary" data-mnet="${res?'resume':'create'}" data-ch="${n}">${res?'REPRENDRE EN LIGNE':'MULTIJOUEUR EN LIGNE'}</button><button class="btn ghost" data-mnet="local" data-act="${esc(act)}" data-ch="${n}">LOCAL · 1 TÉLÉPHONE</button>`;o.replaceWith(r)}
-function createView(n){put(`<main class="page hnet hplay-theme-maitre maitre-page"><header class="hnet-head"><button class="btn ghost small" data-mnet="back" data-ch="${n}">← MAÎTRE</button><span>HÉRITAGE · EN LIGNE</span></header><section class="hnet-create"><span>MAÎTRE · DOSSIER 0${n}</span><h1>Créer une cellule</h1><p>Rôles, cycles, Angle, Démonstration et conclusion seront synchronisés sur tous les écrans.</p><label><span>TON PSEUDO</span><input id="mnetPseudo" maxlength="22" autocomplete="nickname" placeholder="Ton pseudo" value="${esc(st().getItem('igr_v9_last_pseudo')||'')}"></label><button class="btn primary block" data-mnet="createNow" data-ch="${n}">CRÉER LA CELLULE</button></section></main>`)}
+function createView(n){put(`<main class="page hnet hplay-theme-maitre maitre-page"><header class="hnet-head"><button class="btn ghost small" data-mnet="back" data-ch="${n}">← MAÎTRE</button><span>HÉRITAGE · EN LIGNE</span></header><section class="hnet-create"><span>MAÎTRE · DOSSIER 0${n}</span><h1>Créer une cellule</h1><p>Invite les joueurs, puis lance le dossier.</p><label><span>TON PSEUDO</span><input id="mnetPseudo" maxlength="22" autocomplete="nickname" placeholder="Ton pseudo" value="${esc(st().getItem('igr_v9_last_pseudo')||'')}"></label><button class="btn primary block" data-mnet="createNow" data-ch="${n}">CRÉER LA CELLULE</button></section></main>`)}
 async function createNow(n){const p=$('#mnetPseudo')?.value.trim(),id=read(I);if(!p)return toastx('Entre ton pseudo.');if(!id?.id||!id?.token)return toastx('Ton profil est requis.');let out,c;for(let i=0;i<5;i++){c=code();try{out=await rpcx('igr_heritage_online_create_maitre',{p_code:c,p_chapter:n,p_pseudo:p,p_profile_id:id.id,p_profile_token:id.token,p_variant:variant()});break}catch(e){if(i===4||!/duplicate|23505|collision/i.test(e.message||'')){console.error(e);return toastx('Création impossible.')}}}st().setItem('igr_v9_last_pseudo',p);write(H,{code:out.room_code||c,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,campaign:'maitre',chapter:n,practice:!!window.IGR_HERITAGE?.get?.('maitre')?.completed?.includes(n)});await window.IGR_HERITAGE_CONTEXT_V71?.publish?.();sync(true)}
 function maitreRoleIds(chapter,count){
  const n=Math.max(5,Math.min(7,Number(count)||5));
@@ -29,25 +29,28 @@ function lobby(d){
   const r=role(id),mine=picked===id,locked=!!taken.get(id)&&!mine;
   const rating=Math.max(1,Math.min(5,Number(r.activity)||2));
   return `<button type="button" class="hnet-role-card ${mine?'is-picked':''} ${locked?'is-taken':''}" data-mnet="role" data-role="${esc(id)}" aria-pressed="${mine}" aria-label="${esc(r.name+' — '+(r.short||r.public))}" ${locked?'disabled':''}>
-    <span class="hnet-role-top"><b>${esc(r.name)}</b><em>${mine?'TON RÔLE':locked?'COMPLET':'CHOISIR'}</em></span>
+    <span class="hnet-role-top"><b>${esc(r.name)}</b><em>${mine?'✓ CHOISI':locked?'PRIS':'CHOISIR'}</em></span>
     <span class="hnet-stars" aria-label="Activité estimée">${'★'.repeat(rating)+'☆'.repeat(5-rating)}</span>
   </button>`;
  }).join('');
  const rosterOpen=!!$('.hnet-lobby .hnet-roster-disclosure[open]');
  const roster=d.players.map((p,i)=>`<div><span>${i+1}</span><b>${esc(p.pseudo)}</b><small>${p.preferred_role?esc(names.get(p.preferred_role)||p.preferred_role):'AU HASARD'}${p.is_host?' · HÔTE':''}</small></div>`).join('');
  const canStart=c>=5&&!invalid.length,chosen=pool.includes(picked)?role(picked):null;
+ const selectedRating=Math.max(1,Math.min(5,Number(chosen?.activity)||2));
+ const selectedStars=chosen?'★'.repeat(selectedRating)+'☆'.repeat(5-selectedRating):'';
  put(`<main class="page hnet hplay-theme-maitre maitre-page"><header class="hnet-head"><button class="btn ghost small" data-mnet="leave">← Quitter</button><span>MAÎTRE · DOSSIER 0${n}</span></header>
-  <section class="hnet-lobby"><div class="hnet-title"><span>MULTIJOUEUR EN LIGNE</span><h1>${esc(pc(n).title)}</h1><p>${c}/7 joueurs · minimum 5</p></div>
-  <div class="hnet-code"><span>CODE D’INVITATION</span><strong>${esc(d.room.code)}</strong><small>Partage ce code pour rejoindre</small><button type="button" class="hnet-code-copy" data-mnet="copy-code" data-code="${esc(d.room.code)}">COPIER</button></div>
+  <section class="hnet-lobby"><div class="hnet-title"><span>SALON</span><h1>${esc(pc(n).title)}</h1><p>${c}/7 joueurs · minimum 5</p></div>
+  <div class="hnet-code"><span>INVITATION</span><strong>${esc(d.room.code)}</strong><small>À partager</small><button type="button" class="hnet-code-copy" data-mnet="copy-code" data-code="${esc(d.room.code)}">COPIER</button></div>
   <section class="hnet-role-zone" aria-label="Choix des rôles">
-   <div class="hnet-role-head"><div><span>TON RÔLE</span><h2>Choisis ta fonction</h2></div><small>${pool.length} rôles · 1 place par rôle</small></div>
-   <p>Sélectionne une fonction libre, ou conserve le hasard. Les informations du procès restent privées.</p>
-   <div class="hnet-role-grid"><button type="button" class="hnet-role-card hnet-role-random ${!picked?'is-picked':''}" data-mnet="role" data-role="" aria-pressed="${!picked}"><span class="hnet-role-top"><b>Attribution aléatoire</b><em>${!picked?'TON CHOIX':'LIBRE'}</em></span><small>Un rôle libre te sera attribué au lancement.</small></button>${cards}</div><div class="hnet-selected-role"><span>TON CHOIX</span><b>${esc(chosen?.name||'Attribution aléatoire')}</b><small>${esc(chosen?.short||chosen?.public||'Une fonction libre te sera attribuée au lancement.')}</small>${chosen?`<em>ACTIVITÉ · ${'★'.repeat(Number(chosen.activity)||2)}${'☆'.repeat(5-(Number(chosen.activity)||2))}</em>`:''}</div><p class="hnet-activity-note">★ = activité estimée, pas une note de puissance.</p>
-   ${invalid.length?`<p class="hnet-role-warning" role="alert">Le nombre de joueurs a changé : ${invalid.map(p=>esc(p.pseudo)).join(', ')} doit changer de rôle ou revenir au tirage aléatoire.</p>`:''}
+   <div class="hnet-role-head"><div><h2>Ton rôle</h2></div></div>
+   <div class="hnet-selected-role" role="status" aria-live="polite"><span>${chosen?'TON CHOIX':'SANS CHOIX'}</span><b>${esc(chosen?.name||'Au hasard au lancement')}</b><small>${esc(chosen?.short||chosen?.public||'Un rôle sera attribué au lancement.')}</small>${chosen?`<em title="Activité estimée">ACTIVITÉ · ${selectedStars}</em>`:''}</div>
+   <div class="hnet-role-grid">${cards}</div>
+   <div class="mnet-role-actions"><button type="button" class="hnet-role-random mnet-random-action" data-mnet="role" data-role="" data-random="1" aria-label="Tirer maintenant un rôle disponible au hasard"><span aria-hidden="true">⚄</span><b>Tirer un rôle</b></button>${picked?'<button type="button" class="mnet-role-reset" data-mnet="role" data-role="" aria-label="Annuler mon choix et recevoir un rôle au lancement">Annuler</button>':''}</div>
+   ${invalid.length?`<p class="hnet-role-warning" role="alert">Choix à revoir : ${invalid.map(p=>esc(p.pseudo)).join(', ')}.</p>`:''}
   </section>
-  <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Participants à la table <span>${c}/7</span></summary><div class="hnet-players">${roster}</div></details>
-  <p class="hnet-launch-hint">${c<5?`LANCEMENT · Encore ${5-c} joueur${5-c>1?'s':''} à inviter (5 à 7 nécessaires).`:invalid.length?'Certains rôles ne sont plus disponibles. Corrige la sélection.':'LANCEMENT · Effectif suffisant : l’hôte peut lancer le dossier.'}</p>
-  ${h?`<button class="btn primary block hnet-start" data-mnet="start" ${canStart?'':'disabled'}>${c<5?`ATTENTE · ${5-c} À INVITER`:invalid.length?'RÉVISER LES RÔLES':'COMMENCER LA PARTIE'}</button>`:'<div class="hnet-wait">L’hôte lance la partie dès que la table est prête.</div>'}
+  <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Joueurs <span>${c}/7</span></summary><div class="hnet-players">${roster}</div></details>
+  <p class="hnet-launch-hint">${c<5?`Encore ${5-c} joueur${5-c>1?'s':''}.`:invalid.length?'Un choix est indisponible.':''}</p>
+  ${h?`<button class="btn primary block hnet-start" data-mnet="start" ${canStart?'':'disabled'}>${c<5?`EN ATTENTE (${5-c})`:invalid.length?'CHOIX À REVOIR':'LANCER LA PARTIE'}</button>`:'<div class="hnet-wait">En attente de l’hôte.</div>'}
   </section></main>`,true);
 }
 function reveal(d){const r=role(d.player.role_id),s=secret(d.room.chapter,d.player.role_id,d.room.maitre_variant,d.room.campaign_carry),ready=d.player.ready,c=d.players.filter(x=>x.ready).length;put(`<main class="page hplay hplay-reveal hplay-theme-maitre maitre-page mnet"><header class="hplay-top"><button class="hplay-back" data-mnet="leave">× <span>Quitter</span></button><div class="hplay-mode">EN LIGNE · ${c}/${d.players.length} PRÊTS</div></header><section class="hplay-private is-open"><span class="hplay-eyebrow">${esc(d.player.pseudo)}</span><h1>${esc(r.name)}</h1><p class="hplay-role-short">${esc(r.short||r.public)}</p><span class="hplay-role-activity">${'ACTIVITÉ · '+'★'.repeat(Number(r.activity)||2)+'☆'.repeat(5-(Number(r.activity)||2))}</span><details class="hplay-role-full"><summary>Lire la fiche complète</summary><p>${esc(r.public)}</p></details><div class="hplay-secret"><span>INFORMATION PRIVÉE</span><b>${esc(s[0])}</b></div><div class="hplay-objective"><span>OBJECTIF</span><b>${esc(s[1])}</b></div><button class="btn primary" data-mnet="ready" ${ready?'disabled':''}>${ready?'PRÊT · EN ATTENTE':'J’AI LU · PRÊT'}</button></section></main>`)}
@@ -145,11 +148,47 @@ async function finishOnline(){
   }catch(err){console.warn('[MAÎTRE] finish',err);toastx('Conclusion non synchronisée. Relancez la sauvegarde depuis la session.')}
   finally{finishPending=false}
 }
+/* A random tap reserves an available public role immediately.
+   No preference remains the fallback server-side random assignment at launch. */
+function availableMaitreRoleButtons(){
+ return Array.from(document.querySelectorAll('.maitre-page.hnet .hnet-role-grid .hnet-role-card[data-role]'))
+  .filter(b=>b.dataset.role&&!b.disabled&&!b.classList.contains('is-taken'));
+}
+async function drawMaitreRole(s){
+ const all=availableMaitreRoleButtons();
+ const fresh=all.filter(b=>b.getAttribute('aria-pressed')!=='true');
+ const remaining=(fresh.length?fresh:all).slice();
+ if(!remaining.length){toastx('Aucun rôle libre.');await sync(true);return}
+ while(remaining.length){
+  const idx=Math.floor(Math.random()*remaining.length),btn=remaining.splice(idx,1)[0];
+  try{
+   const answer=await rpcx('igr_heritage_online_choose_role',{p_code:s.code,p_player_token:s.token,p_role_id:btn.dataset.role});
+   if(answer?.ok===false)throw Error('role_not_available');
+   await sync(true);
+   toastx('Rôle tiré : '+(btn.querySelector('.hnet-role-top b')?.textContent||btn.dataset.role));
+   return;
+  }catch(e){
+   if(!/role_already_taken|role_not_available|selected_role_not_available/i.test(String(e?.message||''))){
+    console.warn('[MAÎTRE] draw',e);toastx('Tirage impossible.');await sync(true).catch(()=>{});return;
+   }
+  }
+ }
+ toastx('Aucun rôle libre.');await sync(true).catch(()=>{});
+}
 async function click(n){const a=n.dataset.mnet,ch=Number(n.dataset.ch||sess()?.chapter||1);if(a==='create')return createView(ch);if(a==='resume'||a==='retry'){suspended=false;return sync(true)}if(a==='home')return window.IGR_HERITAGE_MAITRE?.open?.();if(a==='back')return window.IGR_HERITAGE_MAITRE?.openChapter?.(ch);if(a==='local'){if(sess()){if(lastStage&&lastStage!=='lobby'&&lastStage!=='finished')return toastx('Cette salle est en cours : reprenez la session avant de passer en local.');await rpcx('igr_heritage_online_leave',{p_code:sess().code,p_player_token:sess().token});clear()}const t=document.createElement('button');t.hidden=true;t.dataset.maitreAction=n.dataset.act||'setup';t.dataset.chapter=String(ch);document.body.appendChild(t);t.click();t.remove();return}if(a==='createNow')return createNow(ch);if(a==='copy-code'){const code=n.dataset.code||'';try{await navigator.clipboard.writeText(code);toastx('Code copié.')}catch{toastx('Code : '+code)}return}if(a==='leave')return leave();const s=sess();if(!s)return;if(a==='role'){
-  if(rolePending||n.getAttribute('aria-pressed')==='true')return;
+  if(rolePending)return;
+  if(n.dataset.random!=='1'&&n.getAttribute('aria-pressed')==='true')return;
   rolePending=true;
-  try{await rpcx('igr_heritage_online_choose_role',{p_code:s.code,p_player_token:s.token,p_role_id:n.dataset.role||null});await sync(true)}
-  catch(e){const msg=String(e?.message||'');toastx(/role_already_taken/i.test(msg)?'Ce rôle est déjà réservé.':/role_not_available/i.test(msg)?'Rôle indisponible pour cette table.':'Choix impossible. Réessaie.');await sync(true).catch(()=>{})}
+  try{
+   if(n.dataset.random==='1')await drawMaitreRole(s);
+   else{
+    const roleId=n.dataset.role||null;
+    const response=await rpcx('igr_heritage_online_choose_role',{p_code:s.code,p_player_token:s.token,p_role_id:roleId});
+    if(response?.ok===false)throw Error('role_not_available');
+    await sync(true);
+    if(!roleId)toastx('Tirage au lancement.');
+   }
+  }catch(e){const msg=String(e?.message||'');toastx(/role_already_taken/i.test(msg)?'Rôle déjà pris.':/role_not_available/i.test(msg)?'Rôle indisponible.':'Choix impossible.');await sync(true).catch(()=>{})}
   finally{rolePending=false}
   return;
  }if(a==='start'){try{await rpcx('igr_heritage_online_start',{p_code:s.code,p_host_token:s.hostToken})}
