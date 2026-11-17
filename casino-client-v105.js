@@ -202,7 +202,7 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  const focus=document.activeElement,focused=focus?.name?{name:focus.name,form:focus.closest('form')?.dataset.casinoForm,start:focus.selectionStart,end:focus.selectionEnd}:null;
  const tabs=state&&state.status!=='lobby'?[['card','Ma fiche'],['table','Jeux'],['registry','Registre'],['network','Réseaux'],...(state.camp==='bureau'?[['bureau','Enquête']]:[]),['justice',state.camp==='casino'?'Prison / contacts':'Auditions']]:[];
  const body=!state?welcome():state.status==='lobby'?lobby():state.status==='finished'?finale():`<div class="casino-tabs" role="tablist">${tabs.map(([id,label])=>`<button type="button" role="tab" aria-selected="${tab===id}" data-casino-tab="${id}">${label}</button>`).join('')}</div>${({card,table,registry,network,bureau,justice}[tab]||card)()}`;
- root.innerHTML=`<main class="casino-page casino-live" id="${ROOT}"><header class="casino-live-top"><button class="casino-action" data-casino-action="close">← CASINO</button><span>HÉRITAGE · CASINO${state?.chapter?' · DOSSIER '+state.chapter+'/3 · PHASE '+state.phase+'/'+(state.chapter===3?2:3):''}</span><span data-casino-connection role="status"></span></header>
+ const casinoMarkup=`<main class="casino-page casino-live" id="${ROOT}"><header class="casino-live-top"><button class="casino-action" data-casino-action="close">← CASINO</button><span>HÉRITAGE · CASINO${state?.chapter?' · DOSSIER '+state.chapter+'/3 · PHASE '+state.phase+'/'+(state.chapter===3?2:3):''}</span><span data-casino-connection role="status"></span></header>
  ${state?.phaseTitle?`<h1>${esc(state.phaseTitle)}</h1><p>${esc(state.name)} · ${state.camp==='bureau'?'Bureau d’enquête':'Casino'}</p>`:''}
  ${problem?`<p class="casino-error" role="alert">${esc(message(problem))}</p>`:''}${pending&&!busy?'<button class="casino-action" data-casino-action="retry">Réessayer la même action</button>':''}
  <fieldset class="casino-content" ${busy||pending?'disabled':''}>${body}</fieldset>
@@ -212,6 +212,9 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  </section>`:''}
  ${state?.isHost&&state.status==='playing'?`<section class="casino-phase-controls">${state.hostCanLocate?button('Poursuivre via une voie de secours','HOST_AUTHORIZE_CONTINUITY'):''}${state.hostCanCloseCourt?button('Clore les audiences en attente après délai','HOST_COURT_CONTINUITY'):''}${state.hostCanCloseDefence?(state.hostPendingHearings||[]).map(h=>button('Audience en attente : '+name(h.subjectId),'HOST_CLOSE_ABSENT_HEARING',{hearingId:h.id})).join(''):''}${advanceConfirm?'<p class="casino-phase-warning" role="status">Confirmer mettra fin aux échanges de cette phase pour tous les joueurs. Vérifie que les participants ont terminé leurs actions.</p>':''}${button(advanceConfirm?(state.chapter===3&&state.phase===2?'Confirmer la clôture':'Confirmer le passage'):(state.chapter===3&&state.phase===2?'Clore la campagne':'Passer à la phase suivante'),state.chapter===3&&state.phase===2?'FINISH_CAMPAIGN':'ADVANCE_PHASE')}${advanceConfirm?'<button type="button" class="casino-action" data-casino-action="cancel-advance">Annuler</button>':''}</section>`:''}
  ${state?'<details class="casino-recovery"><summary>Ma clé de reprise personnelle</summary><p>Cette clé ouvre ton personnage sur un autre appareil. Garde-la pour toi et conserve-la avant de changer de table.</p><button class="casino-action" data-casino-action="copy">Copier ma clé personnelle</button><output data-casino-key></output></details><button class="casino-action" data-casino-action="switch" '+(busy||pending?'disabled':'')+'>'+(state.status==='finished'?'Nouvelle partie':'Changer de table')+'</button>':''}</main>`;
+ // Retain the shared app/topbar shell used by the campaign page. Rendering Casino
+ // directly into #app made its header, content and safe-area jump on entry.
+ root.innerHTML=typeof shell==='function'?shell(casinoMarkup,false):`<div class="app casino-shell-fallback">${casinoMarkup}</div>`;
  if(rosterWasOpen)root.querySelector('.casino-roster-disclosure')?.setAttribute('open','');
  if(lobbyScroll!==null)window.scrollTo(0,lobbyScroll);
  for(const d of drafts){const el=Array.from(root.querySelectorAll('[data-casino-draft]')).find(e=>e.name===d.name&&e.closest('form')?.dataset.casinoForm===d.form);if(el)el.value=d.value}
@@ -220,7 +223,11 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  for(const f of root.querySelectorAll('form[data-casino-form="interpellation"],form[data-casino-form="map"],form[data-casino-form="hearing"]'))setupEvidenceForm(f);
  connection();
 }
-async function open(entry){active=true;generation++;state=null;tab='card';busy=false;polling=null;advanceConfirm=false;joinDraft=entry?.fresh?entry:null;credentials=entry?.fresh?null:load();problem='';pending=null;syncedAt=0;render();clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)sync()},1200);if(credentials)await sync()}
+async function open(entry){active=true;generation++;state=null;tab='card';busy=false;polling=null;advanceConfirm=false;joinDraft=entry?.fresh?entry:null;credentials=entry?.fresh?null:load();problem='';pending=null;syncedAt=0;render();
+ // The public campaign CTA is below the fold. Do not carry its scroll offset
+ // into the playable room (otherwise the top of Casino seems displaced).
+ try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch{window.scrollTo(0,0)}
+ clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)sync()},1200);if(credentials)await sync()}
 function close(){active=false;generation++;clearInterval(timer);timer=null;state=null;pending=null;busy=false;polling=null;window.IGR_CASINO_HERITAGE?.open()}
 document.addEventListener('click',async event=>{
  const legacy=event.target.closest?.('button[onclick*="joinRoom("]');
@@ -274,5 +281,5 @@ document.addEventListener('change',event=>{
  if(activity)activity.textContent='ACTIVITÉ · '+roleStars(select.value);
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.10',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.11',open,close,sync});
 })();
