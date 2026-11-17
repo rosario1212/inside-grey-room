@@ -43,7 +43,7 @@ const ROLE_TIPS={
   'Cycle 3 : prépare ton angle final; une publication n’est jamais un verdict.'
  ],
  enqueteur:[
-  'Cycle 1 : organise des interrogatoires comparables et fais intervenir les spécialistes.',
+  'Cycle 1 : prépare tes questions, interroge les suspects et compare leurs réponses. Si un Expert ou un Inspecteur participe, demande-lui de vérifier une piste précise.',
   'Cycle 2 : priorise les contradictions testables, sans confondre stress et preuve.',
   'Cycle 3 : confie des tâches de vérification aux autres rôles avant de verrouiller.'
  ],
