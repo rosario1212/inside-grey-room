@@ -1475,16 +1475,6 @@ function igr82RelationsHtml(value) {
   return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><p class="igr82-relation-hint">${tr('Une carte par personne. À toi de choisir les questions à poser.','One card per person. You decide which questions to ask.')}</p><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
 
-/* v773: a display-only clarification for an ambiguous private wording.
-   Never consult another player's private_state or the hidden solution. */
-function igrV773ReadablePrivateText(title,value){
- const raw=String(value||'');
- if(!/^CE QUE TU CACHES(?:\b|\s|\s*—)/i.test(String(title||'')))return raw;
- if(String(STATE?.sync?.room?.scenario_id||'')!=='004')return raw;
- return raw.replace(/^\s*Tu prétends qu[’']un relais était prévu, alors que vous aviez seulement décidé d[’']attendre\.\s*$/i,
-  'Tu affirmes que quelqu’un devait contacter Sofia ou les secours. C’est faux : pendant votre appel, vous avez seulement décidé d’attendre. Personne ne s’était engagé à appeler.');
-}
-
 function valueBlock(title,value,cls=''){
  if(value==null||value===''||(Array.isArray(value)&&!value.length))return'';
  if(title==='TES RELATIONS'&&Array.isArray(value))return igr82RelationsHtml(value);
@@ -1495,7 +1485,7 @@ function valueBlock(title,value,cls=''){
  else if(typeof value==='string'&&/CHRONOLOGIE|JOURNÉE|NUIT-LÀ|CE QUE TU AS FAIT/i.test(title)){
   body=igrV772Timeline(value);
  }
- else body=`<p>${h(igrV773ReadablePrivateText(title,value))}</p>`;
+ else body=`<p>${h(value)}</p>`;
  const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
  // The label already identifies private information. No redundant boilerplate.
  const explanation='';
@@ -1628,6 +1618,9 @@ function privateCardHtml(){
  const clarifiedHide=String(d?.room?.scenario_id||'')==='004'&&
    /Tu as compté sur une intervention de son ex-partenaire sans lui parler/i.test(String(ps.hide||''))
    ?'Tu as laissé le message inquiet de Sofia sans réponse. Tu n’as pas vérifié si quelqu’un était auprès d’elle. Tu as supposé, sans preuve, que son ex-partenaire interviendrait. Tu ne l’as pas contacté parce que tu le considérais comme un rival.'
+   :String(d?.room?.scenario_id||'')==='004'&&
+   /^\s*Tu prétends qu[’']un relais était prévu, alors que vous aviez seulement décidé d[’']attendre\.\s*$/i.test(String(ps.hide||''))
+   ?'Tu affirmes que quelqu’un devait contacter Sofia ou les secours. C’est faux : pendant votre appel, vous avez seulement décidé d’attendre. Personne ne s’était engagé à appeler.'
    :ps.hide;
  const concisePrivateCard=conciseDossier?[valueBlock('TON HISTOIRE',ps.story),valueBlock('TES RELATIONS',ps.relations),valueBlock('TA CHRONOLOGIE',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft'),valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)].join(''):'';
  // v769: optional extra context comes exclusively from the authenticated
