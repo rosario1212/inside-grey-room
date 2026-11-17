@@ -161,7 +161,18 @@ function terrorRulesHtml(global=false){
 
 function conductHtml(){return `<section class="igr51-section"><div class="igr51-section-head"><span>07</span><div><small>${copy('RÈGLES COMMUNES','COMMON RULES')}</small><h2>${copy('Ce que tout le monde doit respecter','What everyone must respect')}</h2></div></div><div class="igr51-common">${ruleCard(copy('L’application fait autorité','The app is authoritative'),copy('Les convocations officielles, les chronos, les résultats d’analyse, les preuves débloquées et les scores affichés par l’application font foi.','Official summons, timers, analysis results, unlocked evidence and scores shown by the app are authoritative.'),'AUTORITÉ')}${ruleCard(copy('Libre ne veut pas dire inventé','Free does not mean invented'),copy('Tu peux discuter, convaincre, bluffer ou mentir lorsque ton rôle le permet. Tu ne peux jamais inventer une preuve, un résultat technique ou une règle en prétendant qu’elle vient de l’application.','You may discuss, persuade, bluff or lie when your role allows it. You may never invent evidence, a technical result or a rule and claim it came from the app.'),'VÉRITÉ')}${ruleCard(copy('Une convocation passe en premier','Official summons come first'),copy('Si l’application te convoque dans la Grey Room, tu interromps ta conversation libre et tu y vas. Seules les personnes nommées ou explicitement autorisées entrent.','If the app summons you to the Grey Room, stop your free conversation and go there. Only named or explicitly authorized people enter.'),'PRIORITÉ')}${ruleCard(copy('Informations privées','Private information'),copy('Une information privée reste à toi tant que tu ne choisis pas de la partager. Une publication publique, une expertise rendue publique ou un élément débloqué pour ton camp est traité selon sa visibilité affichée.','Private information remains yours until you choose to share it. Public broadcasts, published expert findings and camp-unlocked elements follow the visibility shown by the app.'),'CONFIDENTIALITÉ')}</div></section>`}
 
-function rulebookHtml(global=false){return `<div class="igr51-rulebook"><header class="igr51-hero"><small>INSIDE GREY ROOM · ${RULE_EDITION}</small><h1>${copy('Règles de jeu','Game rules')}</h1><p>${copy('Le jeu est conçu pour fonctionner sans superviseur humain. Suis l’application pour les phases officielles ; en dehors de ces phases, joue naturellement avec les autres.','The game is designed to run without a human supervisor. Follow the app for official phases; outside them, play naturally with the others.')}</p><div class="igr51-quick"><span>1 · ${copy('L’app fait autorité','The app is authoritative')}</span><span>2 · ${copy('Hors Grey Room, échanges libres','Outside the Grey Room, interactions are free')}</span><span>3 · ${copy('Convocation officielle = priorité','Official summons = priority')}</span></div></header>${roomSetupHtml()}${stepsHtml()}${tribunalGuideHtml()}${lawyerRule()}${tabsHtml(global)}${rolesHtml(global)}${roleAgencyHtml(global)}${terrorRulesHtml(global)}${conductHtml()}</div>`}
+function rulebookHtml(global=false){
+ // Four essentials first; the full rules stay available without overwhelming players.
+ const essentials=[
+  copy('Lis ta carte et ton objectif. Ne montre pas tes informations privées.','Read your card and objective. Keep private information to yourself.'),
+  copy('Enquêteurs : recoupez les faits. Suspects : défendez votre version.','Investigators: cross-check the facts. Suspects: defend your account.'),
+  copy('Suis la phase affichée. Hors procédure officielle, parle librement selon ton rôle.','Follow the current phase. Outside official procedures, talk freely within your role.'),
+  copy('N’invente jamais de preuve. Les défenses précèdent la décision finale.','Never invent evidence. Defences come before the final decision.')
+ ];
+ const starter=essentials.map((line,i)=>`<li><b>${i+1}</b><span>${esc(line)}</span></li>`).join('');
+ const full=roomSetupHtml()+stepsHtml()+tribunalGuideHtml()+lawyerRule()+tabsHtml(global)+rolesHtml(global)+roleAgencyHtml(global)+terrorRulesHtml(global)+conductHtml();
+ return `<div class="igr51-rulebook igr51-concise"><header class="igr51-hero"><small>INSIDE GREY ROOM</small><h1>${copy('Comprendre le jeu','How to play')}</h1><p>${copy('Quatre repères suffisent pour commencer. Les consignes précises apparaissent au fil de la partie.','Four essentials are enough to begin. Detailed instructions appear as you play.')}</p></header><ol class="igr51-starter">${starter}</ol><details class="igr51-complete"><summary>${copy('Consulter le règlement détaillé (facultatif)','View detailed rules (optional)')}</summary><div class="igr51-extended">${full}</div></details></div>`;
+}
 
 function nowText(){const ph=String(room()?.phase||''),r=role(),cycle=+room()?.cycle||0;
  if(ph==='role_reading')return [copy('Lis ta carte','Read your card'),copy('Lis ton objectif, tes informations privées et les rappels de ton rôle. Ne montre pas ta carte.','Read your objective, private information and role reminders. Do not show your card.')];
@@ -254,6 +265,18 @@ const style=document.createElement('style');style.dataset.igrV51=VERSION;style.t
 .igr712-majority-strip h3{font-size:18px}
 .igr712-majority-strip p{color:#c1c9c8;font-size:13px;line-height:1.7;margin:9px 0 0;max-width:690px}
 .igr712-rules-exception{color:#aeb7b6;font-size:12px;line-height:1.6;margin:0}
+/* Compact rules first; detailed guidance remains available on demand. */
+.igr51-concise{max-width:720px;gap:12px}
+.igr51-concise .igr51-hero{padding:18px;gap:7px}
+.igr51-concise .igr51-hero h1{font-size:clamp(23px,4vw,29px)}
+.igr51-concise .igr51-hero p{line-height:1.5}
+.igr51-starter{display:grid;gap:8px;padding:0;margin:0;list-style:none}
+.igr51-starter li{display:grid;grid-template-columns:27px minmax(0,1fr);align-items:start;gap:10px;padding:11px 12px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:#111619;color:#e0e5e6;font-size:13px;line-height:1.5}
+.igr51-starter li b{display:grid;place-items:center;border:1px solid #4b5153;border-radius:7px;min-height:25px;font-size:12px}
+.igr51-complete{border:1px solid rgba(255,255,255,.14);border-radius:12px;background:#111619}
+.igr51-complete>summary{cursor:pointer;padding:15px 16px;color:#d7ddde;font-size:13px;font-weight:600}
+.igr51-complete>summary:focus-visible{outline:2px solid #d7ddde;outline-offset:2px}
+.igr51-extended{display:grid;gap:24px;padding:12px 16px 20px;border-top:1px solid rgba(255,255,255,.10)}
 @media(max-width:750px){.igr51-steps,.igr51-role-list,.igr712-rule-lanes{grid-template-columns:1fr}.igr51-lawyer-grid,.igr51-common,.igr51-tabs-guide{grid-template-columns:1fr}.igr51-hero{padding:22px}.igr51-role summary{min-height:67px}.igr712-rule-lane{padding:19px}}
 @media(max-width:490px){.igr712-majority-strip{grid-template-columns:1fr;gap:10px}.igr712-majority-mark{text-align:left;font-size:31px}.igr51-quick span{font-size:11px}.igr51-steps article{padding:15px}}
 `;document.head.appendChild(style);

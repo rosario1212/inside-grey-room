@@ -36,14 +36,15 @@ for(const name of ['index.html','en.html']){
   const file=path.join(target,name);if(!(await exists(file)))continue;
   const html=await readFile(file,'utf8');
   const v50=html.lastIndexOf('natural-role-gameplay-v50.js');
-  const v51=html.lastIndexOf('self-guided-rules-v51.js?v=v51-self-guided-rules');
+  const v51=html.lastIndexOf('self-guided-rules-v51.js?v=v773-concise-rules-20261117');
   if(v50<0||v51<0||v50>=v51)throw new Error(`${name}: bad v50/v51 runtime order`);
 }
 const sw=path.join(target,'service-worker.js');
 if(await exists(sw)){
  const s=await readFile(sw,'utf8');
- if(!s.includes("const CACHE='igr-v51-self-guided-rules';"))throw new Error('v51 cache namespace missing');
- if(!s.includes('/self-guided-rules-v51.js?v=v51-self-guided-rules'))throw new Error('v51 runtime not precached');
+ if(!s.includes("const CACHE='igr-v773-concise-rules-20261117';"))throw new Error('v51 cache namespace missing');
+ if(!s.includes('/self-guided-rules-v51.js?v=v773-concise-rules-20261117'))throw new Error('v51 runtime not precached');
 }
+if(!js.includes('<details class="igr51-complete"')||!js.includes('class="igr51-starter"'))throw new Error('Concise rules or optional full protocol missing');
 if(js.includes('2 min 30')||js.includes('2-minute 30-second'))throw new Error('Obsolete 2m30 confidential consultation still documented');
 console.log('Inside Grey Room v51 rules checks: OK');
