@@ -158,3 +158,21 @@ $function$
 
 revoke all on function igr_private.igr_v772_one_choice() from public,anon,authenticated;
 revoke all on function igr_private.igr_v772_phase_timer() from public,anon,authenticated;
+
+-- Player-facing names: S1/S2/S3 are internal slots, not display labels.
+create or replace function public.igr_v772_cast_names(p_code text,p_player_token uuid)
+returns jsonb language plpgsql security definer set search_path='' as $body$
+declare v_room text;v_status text;v_names jsonb;
+begin
+ select p.room_code into v_room from public.igr_v4_players p
+ where p.room_code=upper(btrim(p_code)) and p.player_token=p_player_token;
+ if v_room is null then raise exception 'forbidden'; end if;
+ select r.status into v_status from public.igr_v4_rooms r where r.code=v_room;
+ if v_status not in ('playing','finished') then return '{}'::jsonb; end if;
+ select coalesce(jsonb_object_agg('S'||p.internal_slot,p.pseudo),'{}'::jsonb) into v_names
+ from public.igr_v4_players p where p.room_code=v_room and p.public_role='suspect'
+  and p.internal_slot between 1 and 9;
+ return v_names;
+end $body$;
+revoke all on function public.igr_v772_cast_names(text,uuid) from public;
+grant execute on function public.igr_v772_cast_names(text,uuid) to anon,authenticated,service_role;
