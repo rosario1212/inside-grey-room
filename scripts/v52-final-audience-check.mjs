@@ -13,11 +13,13 @@ if(app.includes('final_lawyer_opinions'))throw new Error('removed lawyer final p
 for(const x of ['igr_v52_stage_action','ME DÉFENDRE · ${defenseLabel()}','PRENDRE LA PAROLE · ${speechLabel()}','Réévaluation finale','v52_queue','v52_status',"defenseMinutes=()=>short()?2:3"])req(rt,x);
 if(rt.includes('DONNER MON VERDICT'))throw new Error('premature Judge verdict at audience');
 if(rt.includes('igr52pre')||rt.includes('igr52Lawyer')||rt.includes('final_lawyer_opinions'))throw new Error('duplicate final-stage UI remains');
-req(html,'final-audience-v52.js?v=v52-final-audience');
+if(rt.includes("return String(out||'')+finalRules()")||rt.includes("panel.insertAdjacentHTML('beforeend',finalRules())"))throw new Error('Duplicate final hearing still appended to rules');
+req(rt,'finalRules');
+req(html,'final-audience-v52.js?v=v775-no-duplicate-final-rules-20261117');
 const swPath=path.join(target,'service-worker.js');
 if(await exists(swPath)){
   const sw=await readFile(swPath,'utf8');
-  req(sw,'igr-v52-final-audience');
-  req(sw,'/final-audience-v52.js?v=v52-final-audience');
+  req(sw,'igr-v775-no-duplicate-final-rules-20261117');
+  req(sw,'/final-audience-v52.js?v=v775-no-duplicate-final-rules-20261117');
 }
 console.log('v52 final audience checks OK');
