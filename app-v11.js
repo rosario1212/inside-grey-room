@@ -1242,8 +1242,8 @@ function renderLobby(prefetched=null){
   const newFocused=focusedRoleId&&[...(newLobby?.querySelectorAll('.role-choice-card[data-role-id]')||[])].find(el=>el.dataset.roleId===focusedRoleId);
   const newRoleAnchor=newFocused||newLobby?.querySelector('.role-choice-zone');
   const shift=newRoleAnchor&&Number.isFinite(oldRoleTop)?newRoleAnchor.getBoundingClientRect().top-oldRoleTop:0;
-  try{window.scrollTo({top:Math.max(0,oldScroll+shift),left:0,behavior:'instant'})}
-  catch(_){window.scrollTo(0,Math.max(0,oldScroll+shift))}
+  try{window.scrollTo({top:Math.max(0,window.scrollY+shift),left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,Math.max(0,window.scrollY+shift))}
   if(newFocused&&!newFocused.disabled)newFocused.focus({preventScroll:true});
  }
  if(SOUND.enabled)ensureAmbient('menu');
