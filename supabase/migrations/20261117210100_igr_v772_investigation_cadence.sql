@@ -1,5 +1,6 @@
 -- Inside Grey Room v772 — server-side investigation quota and neutral 60 s cadence.
 -- Apply together with the frontend and reviewed cycle transitions, not independently.
+-- IMPORTANT: cycle_debrief must remain visible for its two-minute questionnaire window.
 
 create or replace function igr_private.igr_v772_one_investigation()
 returns trigger language plpgsql security definer set search_path to ''
@@ -212,7 +213,7 @@ begin
  end if;
  perform public.igr_v50_tick_legacy(p_room);
  select * into r from public.igr_v4_rooms where code=p_room for update;
- if r.phase='cycle_debrief' then perform public.igr_v4_emit_trame(r.code);update public.igr_v4_rooms set phase='trame',phase_started_at=now(),phase_ends_at=now()+interval '22 seconds',updated_at=now() where code=r.code;
- elsif r.phase='final_debrief' then perform public.igr_v52_begin_stage(r.code,'locking');end if;
+ -- Do not reprocess cycle_debrief immediately after igr_v50_tick_legacy has just entered it.
+ if r.phase='final_debrief' then perform public.igr_v52_begin_stage(r.code,'locking');end if;
 end$function$
 ;
