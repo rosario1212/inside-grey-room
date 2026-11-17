@@ -13,7 +13,7 @@
    activeKey=k;loading=true;
    try{
      if(typeof window.rpc!=='function'&&typeof rpc!=='function')return;
-     const result=await (typeof rpc==='function'?rpc:window.rpc)('igr_v772_cast_names',{p_code:STATE.room,p_player_token:STATE.token});
+     const result=await (typeof rpc==='function'?rpc:window.rpc)('igr_v772_public_cast',{p_code:STATE.room,p_player_token:STATE.token});
      if(currentKey()!==k)return;
      const out={};
      for(let i=1;i<=9;i++){
