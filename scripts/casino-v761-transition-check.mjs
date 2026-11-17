@@ -93,7 +93,13 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
  // authoritative sync is still outstanding. Reproduce a slow response.
  await check('casino-v763-no-intermediate-form-on-resume',async()=>{
   await page.setViewportSize({width:393,height:852});
-  await page.setContent(pageHtml);
+  // Storage is unavailable on an about:blank setContent document. Serve the
+  // synthetic HTML from a routed HTTPS origin, exactly like the real PWA.
+  const fixtureUrl='https://casino-v763-fixture.test/entry';
+  await page.route(fixtureUrl,route=>route.fulfill({
+   status:200,contentType:'text/html; charset=utf-8',body:pageHtml
+  }));
+  await page.goto(fixtureUrl,{waitUntil:'domcontentloaded'});
   await page.addScriptTag({content:shellSource});
   await page.addScriptTag({content:catalog});
   await page.addScriptTag({content:client});
@@ -164,6 +170,7 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
    localStorage.removeItem('igr_casino_identity_v1_pending');
    window.IGR_CASINO_CLIENT.close();
   });
+  await page.unroute(fixtureUrl);
  });
 
  console.log('PASS CASINO v762: actual campaign Create/Join clicks, compact form, no connection noise and aligned frame');
