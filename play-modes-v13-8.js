@@ -274,7 +274,7 @@ function heritageRoleCards(d){
     </button>`;
  }).join('');
  const chosen=candidates.find(r=>r.id===selected)||null;
- return {markup:`<section class="hnet-role-zone" aria-label="Choix des rôles"><div class="hnet-role-head"><div><span>ÉTAPE 1 · TON RÔLE</span><h2>Choisis ta fonction</h2></div><small>${candidates.length} rôles · 1 place par rôle</small></div>
+ return {markup:`<section class="hnet-role-zone" aria-label="Choix des rôles"><div class="hnet-role-head"><div><span>TON RÔLE</span><h2>Choisis ta fonction</h2></div><small>${candidates.length} rôles · 1 place par rôle</small></div>
    <p>Sélectionne un rôle libre, ou conserve le hasard. Chacun découvrira sa fiche privée au lancement.</p>
    <div class="hnet-role-grid">${random}${cards}</div><div class="hnet-selected-role"><span>TON CHOIX</span><b>${esc(chosen?.name||'Attribution aléatoire')}</b><small>${esc(chosen?.short||chosen?.public||'Un rôle disponible te sera attribué au lancement.')}</small>${chosen?`<em>ACTIVITÉ · ${'★'.repeat(Number(chosen.activity)||2)}${'☆'.repeat(5-(Number(chosen.activity)||2))}</em>`:''}</div><p class="hnet-activity-note">★ = activité estimée, pas une note de puissance.</p>
    ${invalid.length?`<p class="hnet-role-warning" role="alert">Le nombre de joueurs a changé. ${invalid.map(p=>esc(p.pseudo)).join(', ')} doit choisir un rôle encore disponible ou revenir au tirage aléatoire avant de lancer.</p>`:''}
@@ -293,7 +293,7 @@ function renderHLobby(d){
    <div class="hnet-code"><span>CODE D’INVITATION</span><strong>${esc(d.room.code)}</strong><small>Partage ce code pour rejoindre</small><button type="button" class="hnet-code-copy" data-hnet="copy-code" data-code="${esc(d.room.code)}" aria-label="Copier le code d’invitation">COPIER</button></div>
    ${roles.markup}
    <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Participants à la table <span>${count}/7</span></summary><div class="hnet-players">${roster}</div></details>
-   <p class="hnet-launch-hint">${count<5?`ÉTAPE 2 · Encore ${5-count} joueur${5-count>1?'s':''} à inviter (5 à 7 nécessaires).`:roles.invalid?'Certains rôles ne sont plus disponibles. Corrige la sélection.':'ÉTAPE 2 · Table complète : l’hôte peut lancer le dossier.'}</p>
+   <p class="hnet-launch-hint">${count<5?`LANCEMENT · Encore ${5-count} joueur${5-count>1?'s':''} à inviter (5 à 7 nécessaires).`:roles.invalid?'Certains rôles ne sont plus disponibles. Corrige la sélection.':'LANCEMENT · Effectif suffisant : l’hôte peut lancer le dossier.'}</p>
    ${host?`<button class="btn primary block hnet-start" data-hnet="start" ${canStart?'':'disabled'}>${count<5?`ATTENTE · ${5-count} À INVITER`:roles.invalid?'RÉVISER LES RÔLES':'COMMENCER LA PARTIE'}</button>`:'<div class="hnet-wait">L’hôte lance la partie dès que la table est prête.</div>'}
   </section></main>`,true);
 }
