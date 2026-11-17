@@ -41,13 +41,17 @@ for(const p of ['index.html','en.html']){
 }
 const clientSource=await readFile(path.join(dir,'casino-client-v105.js'),'utf8');
 const clientCss=await readFile(path.join(dir,'casino-client-v105.css'),'utf8');
-const worker=await readFile(path.join(dir,'service-worker.js'),'utf8');
 assert(clientSource.includes('shell(casinoMarkup,false)'),'Opening Casino must retain the shared app shell');
 assert(clientSource.includes("behavior:'instant'"),'Opening Casino must reset the previous campaign scroll offset');
 assert(clientCss.includes('CASINO v761'),'Casino live must have campaign-aligned layout styles');
-for(const url of ['/casino-client-v105.js?v=105.11','/casino-client-v105.css?v=105.11']){
- assert(worker.includes(url),'Casino PWA must precache '+url);
+// Browser dist has an offline Service Worker; native www intentionally has none.
+let worker=null;
+try{worker=await readFile(path.join(dir,'service-worker.js'),'utf8')}
+catch(error){if(error.code!=='ENOENT')throw error;assert.equal(path.basename(dir),'www','Only the native build may omit the Service Worker')}
+if(worker){
+ for(const url of ['/casino-client-v105.js?v=105.11','/casino-client-v105.css?v=105.11'])
+  assert(worker.includes(url),'Casino PWA must precache '+url);
+ assert(/-casino-[0-9a-f]{12}'/.test(worker),'Casino update must invalidate the existing PWA cache');
 }
-assert(/-casino-[0-9a-f]{12}'/.test(worker),'Casino update must invalidate the existing PWA cache');
 
 console.log('CASINO v91 checks passed — artwork, isolated navigation, no secret stories, server-backed campaign launch');
