@@ -99,7 +99,7 @@ function lobby(){
   </button>`;
  });
  return `<section class="casino-lobby-top"><div class="casino-lobby-access"><div><span>CODE D’INVITATION</span><h1>${esc(state.inviteCode)}</h1></div><button type="button" class="casino-action" data-casino-action="invite">Copier le code</button></div><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
- <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>ÉTAPE 1 · TON PERSONNAGE</span><h2>Choisis où jouer</h2></div>
+ <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>TON PERSONNAGE</span><h2>Choisis où jouer</h2></div>
  <p>Appuie sur une fonction libre. Chez Yonghe, ton identité privée sera révélée au lancement.</p>
  <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
  <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1,4).join('')}</div></div>
