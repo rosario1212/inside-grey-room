@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {chromium} from 'playwright';
 import {runFluidityChecks} from './runtime-fluidity-check.mjs';
 import {runMaitrePosterChecks} from './maitre-poster-layout-check.mjs';
+import {runHeritageV760VisualChecks} from './heritage-v760-visual-check.mjs';
 import {runAuditGameplayChecks} from './audit-gameplay-check.mjs';
 import {runNotificationChecks} from './notification-attention-check.mjs';
 import {runDesktopChecks} from './desktop-layout-check.mjs';
@@ -65,6 +66,7 @@ async function check(name,run){
   catch(error){failures.push(name+': '+error.message);await page.screenshot({path:path.join(report,name.replace(/[^a-z0-9]+/gi,'-')+'.png')});}
 }
 try{
+  await runHeritageV760VisualChecks({page,css,read,check});
   await runFluidityChecks({page,css,app,read,check,report});
   await runAuditGameplayChecks({page,read,check});
   await runNotificationChecks({page,read,check,css});

@@ -1,4 +1,4 @@
-/* Héritage v757 — consistent pregame hierarchy, four local steps and safe DOM enhancement. */
+/* Héritage v760 — consistent layout and legible mode icons across campaigns. */
 (()=>{
 'use strict';
 const labels=['CAMPAGNES','DOSSIERS','MODE','PRÉPARATION','LOBBY'];
@@ -21,7 +21,11 @@ function styleModeButtons(main){
   const resume=/reprendre/i.test(text);
   const title=online?(resume?'REPRENDRE EN LIGNE':'EN LIGNE'):(resume?'REPRENDRE EN LOCAL':'EN LOCAL');
   const detail=online?'UN ÉCRAN PAR JOUEUR':'UN TÉLÉPHONE À TABLE';
-  btn.innerHTML='<span class="hj-mode-icon" aria-hidden="true">'+(online?'◎':'◇')+'</span><span class="hj-mode-copy"><strong>'+title+'</strong><small>'+detail+'</small></span><span class="hj-mode-chevron" aria-hidden="true">›</span>';
+  const icon=online
+   ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-2.5a5.5 5.5 0 0 1 11 0V19M16.5 5.8a3 3 0 0 1 0 5.8M18 13.7a4.4 4.4 0 0 1 2.5 4V19"/></svg>'
+   :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18.5h4"/></svg>';
+  btn.classList.add(online?'hj-mode-online':'hj-mode-local');
+  btn.innerHTML='<span class="hj-mode-icon" aria-hidden="true">'+icon+'</span><span class="hj-mode-copy"><strong>'+title+'</strong><small>'+detail+'</small></span><span class="hj-mode-chevron" aria-hidden="true">›</span>';
   btn.setAttribute('aria-label',title+' — '+detail.toLowerCase());
   btn.dataset.hjStyled='1';
  });
