@@ -11,6 +11,40 @@ const isInquiry=()=>AUTH.has(role());
 const tr=(fr,en)=>window.IGR_LOCALE==='en'?en:fr;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeCycle=v=>[1,2,3].includes(Number(v))?Number(v):null;
+
+// v774: concise, reversible card previews; original evidence remains accessible.
+const case004Briefs={
+ 'appel entre les proches':'Les deux proches se sont appelés après leurs messages. Les relevés ne disent pas ce qu’ils se sont dit.',
+ 'deux alertes distinctes':'Deux personnes ont reçu des alertes différentes après la rupture du premier suspect. Le contenu de leurs échanges reste inconnu.',
+ 'journal des destinataires':'Aucun transfert des deux alertes à l’ex-partenaire n’apparaît dans les relevés. Il a toutefois pu être informé autrement.'
+};
+function readableTitle(value){
+ const v=String(value||'').trim();
+ return v.length>5&&v===v.toLocaleUpperCase('fr')?v.slice(0,1)+v.slice(1).toLocaleLowerCase('fr'):v;
+}
+function conciseCaseText(value,title){
+ const full=String(value??'').replace(/\s+/g,' ').trim();
+ if(!full)return '';
+ const id=String(game()?.room?.scenario_id||'');
+ const key=String(title||'').trim().toLocaleLowerCase('fr');
+ if(id==='004'&&case004Briefs[key])return case004Briefs[key];
+ if(full.length<=165)return full;
+ const parts=full.match(/[^.!?]+(?:[.!?]+[»”']?|$)/g)||[full];
+ let brief=String(parts[0]||'').trim(),next=String(parts[1]||'').trim();
+ if(next&&brief.length<96&&(brief+' '+next).length<=170)brief+=' '+next;
+ if(brief.length>175){
+  const cut=brief.slice(0,172);
+  const punctuation=Math.max(cut.lastIndexOf('; '),cut.lastIndexOf(', '),cut.lastIndexOf(': '));
+  const boundary=punctuation>=92?punctuation:cut.lastIndexOf(' ');
+  brief=(boundary>=80?cut.slice(0,boundary):cut).replace(/[,;:\s]+$/,'')+'…';
+ }
+ return brief;
+}
+function expandableCopy(full,brief,kind='evidence'){
+ if(!full||full.replace(/\s+/g,' ').trim()===brief)return '';
+ return '<details class="igr774-detail" data-copy-kind="'+esc(kind)+'"><summary>'+esc(tr('Voir le texte complet','Read the full text'))+'</summary><p>'+esc(full)+'</p></details>';
+}
+
 let cache={key:'',data:null,last:0,busy:false,err:false};
 function key(){const d=game();return d?.room?.code&&S()?.token?d.room.code+':'+d.player.id+':'+String(d.room.state?.match_no||1):''}
 function visibleTab(id){if(id==='chronology')return false;if(id==='investigation')return isInquiry();return true}
@@ -68,9 +102,10 @@ function publicHtml(){
   // Documents voluntarily disclosed to all remain available without burying the
   // other public updates in long paragraphs on a narrow phone.
   const published=e.event_type==='public_evidence';
+  const full=String(e.text||'').trim(),brief=conciseCaseText(full,e.title);
   const body=published
-   ?'<details class="igr106-public-document"><summary>'+esc(tr('Lire la pièce communiquée','Read the shared document'))+'</summary><p>'+esc(e.text||'')+'</p></details>'
-   :'<p>'+esc(e.text||'')+'</p>';
+   ?'<p class="igr774-brief">'+esc(brief)+'</p>'+expandableCopy(full,brief,'public')
+   :'<p>'+esc(full)+'</p>';
   return '<article class="igr106-event" data-igr-event-id="'+esc(e.id)+'" data-cycle="'+(c||0)+'" data-public-document="'+(published?'true':'false')+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON PRÉCISÉE','DATE UNSPECIFIED'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4>'+body+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
  }).join('');
  return '<section class="igr106-common" aria-label="'+esc(tr('Dossier commun','Shared case file'))+'"><header><small>'+esc(tr('ACCESSIBLE À TOUS LES RÔLES','VISIBLE TO ALL ROLES'))+'</small><h2>'+esc(tr('Dossier commun','Shared case file'))+'</h2></header><article class="igr106-premise"><h3>'+esc(tr('Situation connue de tous','Shared starting situation'))+'</h3><p>'+esc(context||tr('Le dossier sera présenté au lancement de la partie.','The case will be introduced when play begins.'))+'</p></article><div class="igr106-events"><h3>'+esc(tr('Publications et faits partagés','Shared news and events'))+'</h3>'+(cache.err&&!a?'<p class="igr106-muted">'+esc(tr('Connexion au dossier commun indisponible. Réessai automatique.','Shared case file temporarily unavailable. Retrying.'))+'</p>':!a?'<p class="igr106-muted">'+esc(tr('Synchronisation des informations publiques…','Loading public updates…'))+'</p>':history||'<p class="igr106-muted">'+esc(tr('Aucune nouvelle information publique pour le moment.','No new shared update yet.'))+'</p>')+'</div></section>';
@@ -106,6 +141,19 @@ if(origCard){const wrapper=function(){
    details.open=/^(TON RÔLE|QUI TU ES|CE QUI S[’']EST PASSÉ|CE QUE TU AS FAIT|TON HISTOIRE|CE QUE TU CACHES)$/i.test(title);
    details.appendChild(summary);const body=document.createElement('div');body.className='igr106-fact-body';
    for(const child of [...block.childNodes])if(child.nodeType!==1||child.tagName!=='H4')body.appendChild(child.cloneNode(true));
+   // Long player-card paragraphs show their opening; the whole original stays one tap away.
+   for(const paragraph of [...body.querySelectorAll('p')]){
+    if(paragraph.children.length)continue;
+    const original=String(paragraph.textContent||'').trim();
+    if(original.length<=195)continue;
+    const short=conciseCaseText(original,title);
+    if(short===original)continue;
+    paragraph.textContent=short;
+    const more=document.createElement('details');more.className='igr774-detail';
+    const heading=document.createElement('summary');heading.textContent=tr('Voir le texte complet','Read the full text');
+    const rest=document.createElement('p');rest.textContent=original;
+    more.append(heading,rest);paragraph.after(more);
+   }
    details.appendChild(body);stack.appendChild(details);block.remove();
   }
   if(stack){const foot=card.querySelector('.private-foot');if(foot)card.insertBefore(stack,foot);else card.appendChild(stack)}
@@ -125,11 +173,12 @@ function disclosureRows(){
   if(!Number.isSafeInteger(id)||id<1)return '';
   const required=Number(x.required_votes)===1?1:2, votes=Math.max(0,Math.min(required,Number(x.votes)||0)),voted=Boolean(x.mine);
   const label=voted?(votes>=required?tr('Finaliser la publication','Finish publication'):tr('Accord enregistré','Approval recorded')):required===1?tr('Publier pour tous','Publish for everyone'):votes===0?tr('Proposer la publication','Propose publication'):tr('Approuver la publication','Approve publication');
-  return '<article class="igr771-option"><div class="igr771-option-head"><strong>'+esc(x.title||tr('Élément officiel','Official finding'))+'</strong><small>'+votes+'/'+required+'</small></div><p>'+esc(String(x.text||'').slice(0,200))+'</p><button type="button" class="btn ghost small" data-igr771-vote="'+id+'" onclick="igr771Vote('+id+')" '+(voted&&votes<required?'disabled':'')+'>'+esc(label)+'</button></article>';
+  const full=String(x.text||'').trim(),brief=conciseCaseText(full,x.title);
+  return '<article class="igr771-option"><div class="igr771-option-head"><strong>'+esc(readableTitle(x.title||tr('Élément officiel','Official finding')))+'</strong><small>'+votes+'/'+required+'</small></div><p class="igr774-brief">'+esc(brief)+'</p>'+expandableCopy(full,brief)+'<button type="button" class="btn ghost small" data-igr771-vote="'+id+'" onclick="igr771Vote('+id+')" '+(voted&&votes<required?'disabled':'')+'>'+esc(label)+'</button></article>';
  }).join('');
 }
 function disclosurePanel(){
- return '<section class="igr771-disclosure"><details><summary>'+esc(tr('Verser un élément au Dossier commun','Share a finding with all players'))+'</summary><div class="igr771-inside"><p>'+esc(tr('Si un seul membre du camp Enquête peut consulter cette pièce, son accord suffit. Sinon, deux membres distincts doivent approuver. Tous les joueurs, suspects compris, verront ensuite le document. Limite : deux pièces par cycle.','If only one investigation player can access a document, their approval is enough. Otherwise, two distinct players must approve. All players, including suspects, will then see it. Limit: two documents per cycle.'))+'</p><div class="igr771-options">'+disclosureRows()+'</div></div></details></section>';
+ return '<section class="igr771-disclosure"><details><summary>'+esc(tr('Partager une pièce au Dossier commun','Share a document with everyone'))+'</summary><div class="igr771-inside"><p>'+esc(tr('Deux accords pour publier (un seul si tu es l’unique enquêteur autorisé). Visible par tous, suspects compris. Maximum : 2 pièces par cycle.','Two approvals to publish (one if you are the only eligible investigator). Everyone, including suspects, can read it. Maximum: 2 documents per cycle.'))+'</p><div class="igr771-options">'+disclosureRows()+'</div></div></details></section>';
 }
 function renderDisclosure(){
  const el=document.querySelector('#app .igr771-options');
@@ -264,6 +313,13 @@ const style=document.createElement('style');style.id='igr106-css';style.textCont
 .igr771-option-head{display:flex;align-items:start;justify-content:space-between;gap:9px}.igr771-option-head strong{font-size:.84rem}.igr771-option-head small{color:#d6c2a0}
 .igr771-option p{font-size:.8rem;line-height:1.45;color:#b8bec2;margin:6px 0 10px}
 .igr771-option button{min-height:36px;max-width:100%;white-space:normal}
+.igr771-option .igr774-brief,.igr106-event .igr774-brief{font-size:.85rem;line-height:1.43;color:#e2e5e6;margin:7px 0 9px}
+.igr771-option-head strong{line-height:1.3;overflow-wrap:anywhere}
+.igr774-detail{margin:3px 0 12px;border-top:1px solid rgba(255,255,255,.07);padding-top:6px}
+.igr774-detail>summary{cursor:pointer;font-size:.78rem;color:#c9baa0;line-height:1.5}
+.igr774-detail>p{margin:8px 0!important;color:#b5bec5!important;overflow-wrap:anywhere;white-space:pre-wrap}
+.igr106-fact-body .igr774-detail{margin-bottom:8px}
+@media(max-width:600px){.igr771-option{padding:11px}.igr771-option-head strong{font-size:.82rem}.igr771-inside{padding:0 11px 12px}}
 @media(max-width:600px){.igr106-premise,.igr106-event{padding:12px}.igr106-action-panel{margin:8px 0}.igr106-common{gap:11px}}
 `;document.head.appendChild(style);
 window.IGR_COMMON_DOSSIER_V106=Object.freeze({version:V,isInquiry,publicHtml,syncPublic,visibleEventIds});
