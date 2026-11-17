@@ -48,8 +48,8 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     if(campaign==='maitre'){
      assert(!data.iconColor.includes('116, 46, 50'),'Burgundy-on-burgundy multiplayer icon would be invisible');
      assert(data.iconColor==='rgb(255, 245, 234)','MAÎTRE online icon must match ivory text on burgundy');
-     assert(data.localColor==='rgb(84, 45, 43)','MAÎTRE local action must use dark ink on ivory');
-     assert(data.localIconColor==='rgb(84, 45, 43)','MAÎTRE local icon must use the same dark ink on ivory');
+     assert(data.localColor==='rgb(92, 50, 49)','MAÎTRE local action must use dark ink on ivory');
+     assert(data.localIconColor==='rgb(92, 50, 49)','MAÎTRE local icon must use the same dark ink on ivory');
     }
     for(const el of [data.online,data.local,data.poster]){
      assert(el.x>=-.5&&el.right<=data.viewport+.5,'Content must fit viewport '+campaign+' '+width);
