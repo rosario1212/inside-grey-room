@@ -41,11 +41,11 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('play-modes-v13-8.css'))html=html.replace('</head>',`${premiumHead}\n</head>`);
   else if(!html.includes('premium-access-sync-v17.css'))html=html.replace('</head>',`  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">\n</head>`);
   if(!html.includes('heritage-journey-v755.css'))html=html.replace('</head>','  <link rel="stylesheet" href="heritage-journey-v755.css?v=v766-ui-balance">\n</head>');
-  if(!html.includes('global-navigation-v766.css'))html=html.replace('</head>','  <link rel="stylesheet" href="global-navigation-v766.css?v=v766-global-navigation">\n</head>');
+  if(!html.includes('global-navigation-v766.css'))html=html.replace('</head>','  <link rel="stylesheet" href="global-navigation-v766.css?v=v769-join-pill">\n</head>');
   if(!html.includes('duration-modes-v35.css'))html=html.replace('</head>',`${durationHead}\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
   else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v755-uniform-dlc-hooks-20261117"></script>\n</body>`);
-  if(!html.includes('heritage-journey-v755.js'))html=html.replace('</body>','  <script src="heritage-journey-v755.js?v=v764-compact-chooser"></script>\n</body>');
+  if(!html.includes('heritage-journey-v755.js'))html=html.replace('</body>','  <script src="heritage-journey-v755.js?v=v769-join-navigation"></script>\n</body>');
   if(!html.includes('global-navigation-v766.js'))html=html.replace('</body>','  <script src="global-navigation-v766.js?v=v766-global-navigation"></script>\n</body>');
   if(!html.includes('duration-modes-v35.js'))html=html.replace('</body>',`${durationScript}\n</body>`);
   if(!html.includes('store-catalog-v69.js')){
