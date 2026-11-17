@@ -21,19 +21,19 @@ const start=source.indexOf('function disclosureRows(){');
 const end=source.indexOf('\nfunction disclosurePanel(){',start);
 assert(start>=0&&end>start,'Disclosure UI renderer missing');
 // Run the actual evidence helpers in isolation: no fake shortener in the test.
-const helperStart=source.indexOf('const case004Briefs=');
+const helperStart=source.indexOf('const case004Copy=');
 const helperEnd=source.indexOf('\nlet cache=',helperStart);
 assert(helperStart>=0&&helperEnd>helperStart,'Evidence helpers missing');
-const helpers=new Function('game','esc','tr',source.slice(helperStart,helperEnd)+'; return {conciseCaseText,readableTitle,expandableCopy};')(
+const helpers=new Function('game','esc','tr',source.slice(helperStart,helperEnd)+'; return {conciseCaseText,readableTitle,expandableCopy,preciseCaseCopy};')(
  ()=>({room:{scenario_id:'004'}}),(v)=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),(fr)=>fr);
-const getRows=new Function('disclosure','esc','tr','conciseCaseText','readableTitle','expandableCopy',source.slice(start,end)+'; return disclosureRows;');
-const render=(candidate)=>getRows({error:false,data:{candidates:[{id:51,title:'Test',text:'Evidence to verify',published:false,...candidate}]}},String,(fr)=>fr,helpers.conciseCaseText,helpers.readableTitle,helpers.expandableCopy)();
+const getRows=new Function('disclosure','esc','tr','conciseCaseText','readableTitle','expandableCopy','preciseCaseCopy',source.slice(start,end)+'; return disclosureRows;');
+const render=(candidate)=>getRows({error:false,data:{candidates:[{id:51,title:'Test',text:'Evidence to verify',published:false,...candidate}]}},String,(fr)=>fr,helpers.conciseCaseText,helpers.readableTitle,helpers.expandableCopy,helpers.preciseCaseCopy)();
 const longEvidence='Deux messages adressés à des destinataires différents arrivent après la rupture du premier suspect. Le contenu exact de leur conversation n’est pas encore connu.';
 const shortened=render({title:'DEUX ALERTES DISTINCTES',text:longEvidence,required_votes:2,votes:0,mine:false});
 assert.match(shortened,/Deux alertes distinctes/,'Uppercase titles should be readable');
-assert.match(shortened,/Deux personnes ont reçu des alertes différentes/,'Scenario 004 has a factual short summary');
+assert.match(shortened,/Après la fin de la dispute entre Sofia et son ex-partenaire/,'Scenario 004 must name the real relationship');
 assert.match(shortened,/Voir le texte complet/,'Full text remains accessible');
-assert(shortened.includes(longEvidence),'Original evidence must not be lost');
+assert(!shortened.includes('rupture du premier suspect'),'No vague numerical identity in displayed copy');
 const solo=render({required_votes:1,votes:0,mine:false});
 assert.match(solo,/0\/1/); assert.match(solo,/Publier pour tous/); assert.doesNotMatch(solo,/disabled/);
 const duo=render({required_votes:2,votes:0,mine:false});
