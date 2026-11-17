@@ -23,6 +23,19 @@ function compact(){
   }
   h.classList.add('igr772-repeated-title');
  }
+ // Also repair the investigator's already-authorized evidence cards.
+ // Never touch private role cards or make hidden data public.
+ const roomId=String(window.STATE?.sync?.room?.scenario_id||'');
+ const improve=window.IGR_COMMON_DOSSIER_V106?.preciseCaseCopy;
+ if(roomId&&typeof improve==='function'){
+  for(const p of root.querySelectorAll('.igr001-reports p,.v42-elements p')){
+   if(p.children.length)continue;
+   const text=String(p.textContent||'').trim();
+   if(!text)continue;
+   const corrected=improve(text,'',roomId);
+   if(corrected!==text)p.textContent=corrected;
+  }
+ }
 }
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;compact();});}
 function start(){

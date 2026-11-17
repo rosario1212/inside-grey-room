@@ -13,11 +13,70 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const safeCycle=v=>[1,2,3].includes(Number(v))?Number(v):null;
 
 // v774: concise, reversible card previews; original evidence remains accessible.
-const case004Briefs={
- 'appel entre les proches':'Les deux proches se sont appelés après leurs messages. Les relevés ne disent pas ce qu’ils se sont dit.',
- 'deux alertes distinctes':'Deux personnes ont reçu des alertes différentes après la rupture du premier suspect. Le contenu de leurs échanges reste inconnu.',
- 'journal des destinataires':'Aucun transfert des deux alertes à l’ex-partenaire n’apparaît dans les relevés. Il a toutefois pu être informé autrement.'
+// v775 — precise references grounded in each dossier, never guessed character names.
+// Entries require an exact evidence-source phrase: variant A/C are not rewritten as B.
+const case004Copy=[
+ {
+  source:'Deux messages adressés à des destinataires différents arrivent après la rupture du premier suspect.',
+  copy:'Après la fin de la dispute entre Sofia et son ex-partenaire, Sofia envoie un message à son ami proche et un autre au proche du quartier. Les messages ne sont pas identiques.'
+ },{
+  source:'Les journaux des deux appareils attestent un échange téléphonique entre les destinataires',
+  copy:'Après avoir chacun reçu un message de Sofia, son ami proche et le proche du quartier se sont appelés. Les relevés montrent l’appel et sa durée, mais pas leurs paroles.'
+ },{
+  source:'Le journal prouve une conversation entre les deux destinataires des alertes.',
+  copy:'Après les deux messages de Sofia, son ami proche et le proche du quartier se sont appelés. Aucun appel vers Sofia ou les secours n’apparaît ensuite dans les relevés.'
+ },{
+  source:'Les métadonnées des messages et la liste des destinataires ne montrent aucun transfert des deux alertes',
+  copy:'Les relevés ne montrent pas que les deux messages envoyés par Sofia à son ami proche et au proche du quartier ont été transférés à son ex-partenaire. Il a pu être informé autrement.'
+ },{
+  source:"Les messages conservés entre les deux proches évoquent l'attente",
+  copy:'L’ami proche de Sofia et le proche du quartier parlent d’attendre. Aucun message ne précise lequel devait contacter les secours ou aller chez Sofia.'
+ },{
+  source:"La comparaison des messages et des témoignages ne permet d'identifier aucune attribution explicite",
+  copy:'Les échanges entre l’ami proche de Sofia et le proche du quartier ne désignent personne pour appeler les secours. Leurs déclarations doivent encore être comparées.'
+ },{
+  source:'Les journaux téléphoniques confirment que les destinataires se sont appelés',
+  copy:'Les téléphones de l’ami proche de Sofia et du proche du quartier confirment qu’ils se sont appelés après les messages de Sofia. Les relevés ne donnent pas leurs paroles.'
+ },{
+  source:'Les messages échangés entre les deux proches évoquent',
+  copy:'L’ami proche de Sofia et le proche du quartier ont parlé d’attendre, sans décider clairement lequel demanderait des secours ou rejoindrait Sofia.'
+ },{
+  source:"Le premier suspect avait eu des mots durs.",
+  copy:'L’ex-partenaire de Sofia lui avait parlé durement. Rien ne prouve qu’il connaissait les deux messages ensuite envoyés à l’ami proche et au proche du quartier.'
+ }
+];
+const case004Summaries={
+ 'deux alertes distinctes':'Après sa dispute avec son ex-partenaire, Sofia envoie deux messages différents : l’un à son ami proche, l’autre au proche du quartier.',
+ 'appel entre les proches':'L’ami proche de Sofia et le proche du quartier s’appellent après ses messages. Les relevés ne révèlent pas leurs paroles.',
+ "l'appel entre proches":'L’ami proche de Sofia et le proche du quartier se sont appelés. Aucun contact avec Sofia ou les secours n’apparaît ensuite.',
+ 'journal des destinataires':'Aucun transfert des deux messages de Sofia à son ex-partenaire n’apparaît dans les relevés. Il a pu être informé autrement.',
+ 'messages de coordination':'L’ami proche de Sofia et le proche du quartier ont parlé d’attendre, sans décider lequel devait appeler les secours.',
+ 'un relais sans accord':'L’ami proche et le proche du quartier n’ont confié à personne la tâche d’appeler les secours.'
 };
+const ordinalRoles={
+ '027':{third:'le cadre du FDR au courant des rivalités internes'},
+ '028':{third:'le cadre resté fidèle au FDR'},
+ '029':{first:'l’intermédiaire financier',third:'l’exécutant devenu coopérant'},
+ '032':{first:'le chef administratif'},
+ '033':{third:'le conseiller de la famille'},
+ '036':{third:'l’intermédiaire CERBÈRES'},
+ '038':{third:'l’opérateur chargé des liaisons'},
+ '039':{first:'le coordinateur d’ORPHÉE',third:'le relais politique lié à CERBÈRES'}
+};
+function preciseCaseCopy(value,unusedTitle,scenarioOverride){
+ const raw=String(value??'').trim(),scenario=String(scenarioOverride||game()?.room?.scenario_id||'');
+ if(!raw)return '';
+ if(scenario==='004'){
+  const found=case004Copy.find(entry=>raw.includes(entry.source));
+  if(found)return found.copy;
+ }
+ const names=ordinalRoles[scenario];
+ if(!names)return raw;
+ return raw.replace(/\ble (premier|troisième) suspect\b/gi,(match,ordinal)=>{
+  const name=names[ordinal.toLocaleLowerCase('fr')==='premier'?'first':'third'];
+  return name?(match[0]==='L'?name.charAt(0).toLocaleUpperCase('fr')+name.slice(1):name):match;
+ });
+}
 function readableTitle(value){
  const v=String(value||'').trim();
  return v.length>5&&v===v.toLocaleUpperCase('fr')?v.slice(0,1)+v.slice(1).toLocaleLowerCase('fr'):v;
@@ -25,9 +84,10 @@ function readableTitle(value){
 function conciseCaseText(value,title){
  const full=String(value??'').replace(/\s+/g,' ').trim();
  if(!full)return '';
- const id=String(game()?.room?.scenario_id||'');
- const key=String(title||'').trim().toLocaleLowerCase('fr');
- if(id==='004'&&case004Briefs[key])return case004Briefs[key];
+ // The key fact must be visible immediately, not buried in the long document.
+ const scenario=String(game()?.room?.scenario_id||''),key=String(title||'').trim().toLocaleLowerCase('fr');
+ if(scenario==='004'&&case004Summaries[key]&&case004Copy.some(x=>x.copy===full))return case004Summaries[key];
+
  if(full.length<=165)return full;
  const parts=full.match(/[^.!?]+(?:[.!?]+[»”']?|$)/g)||[full];
  let brief=String(parts[0]||'').trim(),next=String(parts[1]||'').trim();
@@ -102,7 +162,7 @@ function publicHtml(){
   // Documents voluntarily disclosed to all remain available without burying the
   // other public updates in long paragraphs on a narrow phone.
   const published=e.event_type==='public_evidence';
-  const full=String(e.text||'').trim(),brief=conciseCaseText(full,e.title);
+  const full=preciseCaseCopy(String(e.text||'').trim(),e.title),brief=conciseCaseText(full,e.title);
   const body=published
    ?'<p class="igr774-brief">'+esc(brief)+'</p>'+expandableCopy(full,brief,'public')
    :'<p>'+esc(full)+'</p>';
@@ -173,7 +233,7 @@ function disclosureRows(){
   if(!Number.isSafeInteger(id)||id<1)return '';
   const required=Number(x.required_votes)===1?1:2, votes=Math.max(0,Math.min(required,Number(x.votes)||0)),voted=Boolean(x.mine);
   const label=voted?(votes>=required?tr('Finaliser la publication','Finish publication'):tr('Accord enregistré','Approval recorded')):required===1?tr('Publier pour tous','Publish for everyone'):votes===0?tr('Proposer la publication','Propose publication'):tr('Approuver la publication','Approve publication');
-  const full=String(x.text||'').trim(),brief=conciseCaseText(full,x.title);
+  const full=preciseCaseCopy(String(x.text||'').trim(),x.title),brief=conciseCaseText(full,x.title);
   return '<article class="igr771-option"><div class="igr771-option-head"><strong>'+esc(readableTitle(x.title||tr('Élément officiel','Official finding')))+'</strong><small>'+votes+'/'+required+'</small></div><p class="igr774-brief">'+esc(brief)+'</p>'+expandableCopy(full,brief)+'<button type="button" class="btn ghost small" data-igr771-vote="'+id+'" onclick="igr771Vote('+id+')" '+(voted&&votes<required?'disabled':'')+'>'+esc(label)+'</button></article>';
  }).join('');
 }
@@ -322,6 +382,6 @@ const style=document.createElement('style');style.id='igr106-css';style.textCont
 @media(max-width:600px){.igr771-option{padding:11px}.igr771-option-head strong{font-size:.82rem}.igr771-inside{padding:0 11px 12px}}
 @media(max-width:600px){.igr106-premise,.igr106-event{padding:12px}.igr106-action-panel{margin:8px 0}.igr106-common{gap:11px}}
 `;document.head.appendChild(style);
-window.IGR_COMMON_DOSSIER_V106=Object.freeze({version:V,isInquiry,publicHtml,syncPublic,visibleEventIds});
+window.IGR_COMMON_DOSSIER_V106=Object.freeze({version:V,isInquiry,publicHtml,syncPublic,visibleEventIds,preciseCaseCopy});
 console.info('[IGR v106] public/private separation active');
 })();
