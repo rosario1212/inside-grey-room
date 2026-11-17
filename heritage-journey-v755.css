@@ -121,3 +121,74 @@
 }
 @media(max-width:350px){.hj-progress li b{font-size:6px}.hnet .hnet-role-grid{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){.hnet .hnet-role-card{transition:none}}
+
+
+/* v756: public role previews, compact progressive disclosure, clear lobby feedback. */
+.hj-progress-label b{font-size:10px;white-space:nowrap}
+.hj-table-meter{display:grid;gap:9px;margin:0;padding:13px 14px;border:1px solid rgba(239,243,246,.1);border-radius:12px;background:rgba(255,255,255,.015)}
+.hj-table-track{height:4px;border-radius:999px;overflow:hidden;background:rgba(239,244,246,.12)}
+.hj-table-track i{display:block;height:100%;max-width:100%;border-radius:inherit;background:var(--hp-accent,#dee6ea)}
+.hj-table-caption{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hj-table-caption b{color:#dce5e9;font:800 10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.02em}
+.hj-table-caption small{color:#8c9ba4;font:750 10px/1.4 'IBM Plex Mono',monospace;white-space:nowrap}
+.hnet .hnet-role-zone{display:flex;flex-direction:column}
+.hnet .hnet-role-head{margin:0 0 8px!important}
+.hnet .hnet-role-zone>p:not(.hnet-role-warning):not(.hnet-activity-note){margin:0 0 12px!important;color:#aeb9c0;font-size:12px}
+.hnet .hnet-selected-role{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 13px;align-items:center;margin:0 0 13px!important;padding:13px 14px!important;border-radius:12px!important;border:1px solid color-mix(in srgb,var(--hp-accent,#e2e9ec) 33%,transparent)!important;background:linear-gradient(130deg,var(--hp-accent-soft,rgba(235,242,245,.075)),rgba(255,255,255,.01))!important}
+.hnet .hnet-selected-role>span{grid-column:1;color:#aebcc3;font:800 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.1em}
+.hnet .hnet-selected-role>b{grid-column:1;color:#eff2f4;font-size:16px;line-height:1.3;overflow-wrap:anywhere}
+.hnet .hnet-selected-role>small{grid-column:1;color:#b6c0c6;font-size:11px;line-height:1.5;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+.hnet .hnet-selected-role>em{grid-column:2;grid-row:1/4;color:var(--hp-accent,#e5ecef);font-size:10px;font-style:normal;line-height:1.4;max-width:110px;text-align:right;white-space:normal}
+.hnet .hnet-role-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.hnet .hnet-role-card{display:flex;flex-direction:column;justify-content:flex-start;gap:9px;min-height:140px;padding:13px;border:1px solid rgba(239,244,246,.14);border-radius:12px;background:linear-gradient(160deg,#151b1f,#0b1013);box-shadow:inset 0 1px rgba(255,255,255,.023);touch-action:manipulation}
+.hnet .hnet-role-card .hnet-role-top{display:grid;gap:5px;align-items:start;width:100%}
+.hnet .hnet-role-card .hnet-role-top b{font-size:13px;line-height:1.33;overflow-wrap:break-word}
+.hnet .hnet-role-card .hnet-role-top em{font-size:9px;line-height:1.3;color:var(--hp-accent,#dce5eb)}
+.hnet .hnet-role-card .hj-role-description{display:block!important;flex:1;min-height:0;margin:0;color:#a8b6be!important;font-size:11px!important;line-height:1.46!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:break-word}
+.hnet .hnet-role-card .hnet-stars{margin-top:auto;align-self:flex-start;color:var(--hp-accent,#e0e9ed);font-size:12px;letter-spacing:.07em}
+.hnet .hnet-role-card.hnet-role-random small{color:#b1bdc4!important;font-size:11px!important;line-height:1.45!important;white-space:normal!important;overflow:visible!important}
+.hnet .hnet-role-card.is-picked{border-color:color-mix(in srgb,var(--hp-accent,#e1e9ed) 72%,transparent);background:linear-gradient(142deg,var(--hp-accent-soft,rgba(242,246,248,.07)),#0c1114);box-shadow:inset 0 1px rgba(255,255,255,.04)}
+.hnet .hnet-role-card.is-taken{opacity:.55;background:#0d1114}
+.hnet .hnet-role-card:focus-visible{outline:2px solid var(--hp-accent,#e7edef)!important;outline-offset:3px}
+.hnet .hnet-role-card:active:not(:disabled){transform:scale(.992)}
+.hnet .hnet-roster-disclosure{margin:0;border:1px solid rgba(236,243,246,.1);border-radius:12px;background:#0b1013}
+.hnet .hnet-roster-disclosure[open]>summary{border-bottom:1px solid rgba(239,243,246,.08)}
+.hnet .hnet-launch-hint{margin:2px 0 0;line-height:1.57;font-size:12px}
+.hnet .hnet-start{min-height:56px;border-radius:11px;font-weight:800}
+.hnet .hnet-start:disabled{opacity:.56;cursor:not-allowed}
+.hplay .hplay-campaign-card:focus-visible,.hplay .hplay-case:focus-visible{outline:2px solid var(--hp-accent,#e5ebee);outline-offset:3px}
+.hplay .hplay-case.is-current{box-shadow:inset 2px 0 var(--hp-accent,#e4ecef)}
+.hplay .hplay-campaign-hero::after{pointer-events:none}
+.casino-live .hj-table-meter{border-color:rgba(238,211,189,.15);background:rgba(38,16,18,.25)}
+.casino-live .hj-table-track i{background:#dbc0a9}
+.casino-live .hj-table-caption b{color:#efe2d5}
+.casino-live .hj-progress li.is-current span{background:#dec4ad}
+.casino-live .hj-progress-label b{color:#dfc8b4}
+.casino-live .casino-role-choice-card{transition:border-color .16s ease}
+.casino-live .casino-role-choice-card:focus-visible{outline:2px solid #e4c5aa;outline-offset:3px}
+@media(max-width:760px){
+ .hplay .hplay-hub-grid{gap:11px}
+ .hplay .hplay-campaign-card{min-height:310px}
+ .hplay .hplay-dossier-copy .hplay-lead{font-size:13px}
+}
+@media(max-width:520px){
+ .hj-progress-label b{font-size:10px;letter-spacing:.01em}
+ .hj-progress li{display:flex;justify-content:center}
+ .hj-progress li b{display:none}
+ .hj-progress li span{width:27px;height:27px;font-size:10px}
+ .hnet .hnet-role-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .hnet .hnet-role-card{min-height:149px;padding:11px;gap:8px}
+ .hnet .hnet-role-card .hnet-role-top b{font-size:12px}
+ .hnet .hnet-role-card .hj-role-description{font-size:10.5px!important}
+ .hnet .hnet-selected-role{grid-template-columns:minmax(0,1fr);padding:12px!important}
+ .hnet .hnet-selected-role>em{grid-column:1;grid-row:auto;max-width:none;text-align:left}
+ .hnet .hnet-code>strong{font-size:clamp(24px,7vw,34px)}
+}
+@media(max-width:360px){
+ .hnet .hnet-role-grid{grid-template-columns:minmax(0,1fr)}
+ .hnet .hnet-role-card{min-height:0;padding:13px}
+}
+@media(prefers-reduced-motion:reduce){
+ .hnet .hnet-role-card,.casino-live .casino-role-choice-card{transition:none!important}
+ .hnet .hnet-role-card:active:not(:disabled){transform:none}
+}
