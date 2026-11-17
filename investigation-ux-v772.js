@@ -45,7 +45,7 @@ function v773Norm(value){
 }
 function v773Directive(value){
  const s=v773Norm(value);
- return /^(?:(?:la|le) (?:grey room|enquete|mission|procedure|dossier|rapport) (?:doit|devra|vise|consiste)|il faut\b|a toi de\b|tu dois\b|tu devras\b|tu peux\b|pour chaque\b|attention\b|ne (?:confonds|transforme|suppose|deduis|sacrifie|cherche|fais|prends)\b|(?:reconstitue|reconstruis|separe|distingue|compare|croise|recoupe|fais|verifie|etablis|cherche|identifie|demande|mets|maintien|tiens|traite|note|observe|questionne|evite|controle|priorise|classe|remonte|examine|garde)\b|(?:qui|comment|pourquoi|quand|quels?|quelles?)\b)/.test(s);
+ return /^(?:(?:la|le) (?:grey room|enquete|mission|procedure|dossier|rapport) (?:doit|devra|vise|consiste)|il faut\b|a toi de\b|tu dois\b|tu devras\b|tu peux\b|pour chaque\b|attention\b|ne (?:confonds|transforme|suppose|deduis|sacrifie|cherche|fais|prends)\b|(?:reconstitue|reconstruis|separe|distingue|compare|croise|recoupe|fais|verifie|etablis|cherche|identifie|demande|mets|maintien|tiens|traite|note|observe|questionne|evite|controle|priorise|classe|remonte|examine|garde|reste|maintiens|rappelle)\b|(?:qui|comment|pourquoi|quand|quels?|quelles?)\b)/.test(s);
 }
 function v773Distinct(items){
  const seen=[];
