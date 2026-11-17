@@ -10,13 +10,13 @@ const script=await get('live-game-ux-v632.js');
 let sw='';
 try{sw=await get('service-worker.js')}catch(e){if(e?.code!=='ENOENT')throw e}
 
-assert(html.includes('live-game-ux-v632.css?v=v632-iphone-live-ux'));
-assert(html.includes('live-game-ux-v632.js?v=v632-iphone-live-ux'));
+assert(html.includes('live-game-ux-v632.css?v=v768-private-roles-20261117'));
+assert(html.includes('live-game-ux-v632.js?v=v768-private-roles-20261117'));
 assert(html.lastIndexOf('live-game-ux-v632.css')>html.lastIndexOf('screen-polish-v73.css'),'new CSS must override legacy game presentation');
 assert(html.lastIndexOf('live-game-ux-v632.js')>html.lastIndexOf('authoritative-runtime-v40.js'),'new UX script must run after gameplay wrappers');
 if(sw){
-  assert(sw.includes('/live-game-ux-v632.css?v=v632-iphone-live-ux'));
-  assert(sw.includes('/live-game-ux-v632.js?v=v632-iphone-live-ux'));
+  assert(sw.includes('/live-game-ux-v632.css?v=v768-private-roles-20261117'));
+  assert(sw.includes('/live-game-ux-v632.js?v=v768-private-roles-20261117'));
 }
 assert(css.includes('body:has(.igr-settings-modal) > .live-session-controls'),'modal must hide floating controls');
 assert(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'),'tabs must all be available');
