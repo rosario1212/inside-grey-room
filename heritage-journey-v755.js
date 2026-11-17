@@ -261,7 +261,7 @@ function scrollWithoutAnimation(y){
 function recordViewChange(root){
  const next=routeKey(root);if(!next||next===lastRoute)return;
  const previous=lastRoute;lastRoute=next;
- if(previous&&!(previous==='scenarios:detail'&&next==='scenarios:list'))scrollWithoutAnimation(0);
+ if(previous&&!(next==='scenarios:list'&&(previous==='scenarios:detail'||previous==='base:lobby'||previous.startsWith('page:localplay'))))scrollWithoutAnimation(0);
  if(previous==='join'&&next!=='join')joinReturn=null;
 }
 function decorate(){
