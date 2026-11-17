@@ -14,7 +14,7 @@ assert(sql.includes('igr_v650_018_offered'),'018 adaptive private offer missing'
 assert(sql.includes("a.action_type='hypothesis_018'"),'018 factual answers are not scored server-side');
 assert(sql.includes("jsonb_array_length(coalesce(choices,'[]'::jsonb))<>20"),'018 twenty-choice validation absent');
 assert(sql.includes('count(distinct e->>\'id\') from jsonb_array_elements(choices) e)<>20'),'018 distinct evidence validator absent');
-const v772=read('supabase/migrations/20261117210100_igr_v772_investigation_cadence.sql');
+const v772=await read('supabase/migrations/20261117210100_igr_v772_investigation_cadence.sql');
 assert(v772.includes('create trigger igr_v772_one_investigation'),'v772 one-investigation server-side enforcement missing');
 assert(sql.includes('count(*)>=2'),'018 legacy release cap expected in migration history');
 assert(sql.includes('v650_staging'),'018 private staged manuscripts not activated');
