@@ -4,8 +4,8 @@ import path from 'node:path';
 
 const root=process.cwd();
 const target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v773-concise-rules-20261117';
-const CACHE='igr-v773-concise-rules-20261117';
+const VERSION='v774-role-guides-20261117';
+const CACHE='igr-v774-role-guides-20261117';
 const runtimeName='self-guided-rules-v51.js';
 const source=path.join(root,runtimeName);
 const dest=path.join(target,runtimeName);
