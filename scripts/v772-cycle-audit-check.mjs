@@ -10,17 +10,17 @@ for(const file of scripts){
 }
 const app=read('app-v11.js'), shared=read('common-dossier-v106.js');
 const html=read('index.html'), sw=read('service-worker.js');
-const sql=read('supabase/migrations/20261117224500_igr_v772_cycle_choice_quiz_timer.sql');
+const sql=read('supabase/migrations/20261117210100_igr_v772_investigation_cadence.sql');
 assert.match(app,/const limit=1;/,'Investigation chooser must limit selections');
 assert.match(app,/thisCycle\.length>=1/,'Late dossier selectors must close after one');
 assert.doesNotMatch(app,/Trois trames principales et une trame facultative/,'Old four-piece UI text must be gone');
 assert.match(shared,/const sameOpening=e\?\.event_type==='context'/,'Duplicate context is filtered');
 assert.match(shared,/redundantCycleSummary/,'Repetitive cycle notices are filtered');
-assert.match(sql,/create trigger igr_v772_one_choice/,'Server-side enforcement is required');
-assert.match(sql,/create trigger igr_v772_phase_timer/,'Server must own 60-second timer');
-assert.match(sql,/QUESTIONNAIRE DE FIN DE CYCLE/,'Cycle 2/3 event sequence must include quiz');
+assert.match(sql,/create trigger igr_v772_one_investigation/,'Server-side enforcement is required');
+assert.match(sql,/create trigger igr_v772_set_choice_timeout/,'Server must own 60-second timer');
+assert.match(sql,/QUESTIONNAIRE · FIN DU CYCLE/,'Cycle 2/3 event sequence must include quiz');
 assert.doesNotMatch(sql,/if r\.phase='cycle_debrief' then perform public\.igr_v4_emit_trame/,'Do not skip quiz on the same tick');
-assert.match(sql,/igr_v772_cast_names/,'Authenticated slot-to-pseudo mapping required');
+assert.match(sql,/igr_v772_public_cast/,'Authenticated slot-to-pseudo mapping required');
 for(const file of ['cast-names-v772.js','idle-choice-v772.js','live-game-v772.css']){
   assert.ok(html.includes(file),'Missing asset in HTML: '+file);
   assert.ok(sw.includes(file),'Missing asset in PWA precache: '+file);
