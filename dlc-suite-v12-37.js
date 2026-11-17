@@ -13,38 +13,39 @@
   const DLC_ACCESS={loaded:false,items:{},loading:null};
 
   // v752: catalogue-only public hooks, never replacing full dossier contexts.
+  // v755: all 14 DLC previews share two severe, spoiler-safe sentences (60–67 FR characters).
   const DLC_CARD_TEASERS=Object.freeze({
   "fr": {
-    "021": "Une enveloppe disparaît. Dans la Famiglia, personne ne veut répondre.",
-    "022": "Nino Caruso est mort. Deux témoins se contredisent.",
-    "023": "Trois familles négocient une trêve. Une embuscade change tout.",
-    "024": "Massimo De Luca envisage de parler. Le clan le soupçonne.",
-    "025": "Un racket tourne mal. L’autorité du Don vacille.",
-    "026": "Almizia tombe. Trois captifs parlent.",
-    "027": "Le FDR dit la zone vide. Où sont les otages ?",
-    "028": "La capitale tombe. La Grey Room serait infiltrée.",
-    "029": "Trois rescapés demandent protection. Vingt personnes restent captives.",
-    "030": "Un gouverneur est massacré avec sa famille. Un registre disparaît.",
-    "031": "Six agents abattus près de la frontière. Trois chefs de commando arrêtés.",
-    "032": "Le régime est tombé. Deux chefs ont disparu. Les prisons parlent encore.",
-    "033": "La dynastie est morte. Le fils et son cousin sauvent leur peau.",
-    "034": "Le président et son gendre sont traqués. Les faux noms ne suffiront pas."
+    "021": "Un racket déraille. Un coursier est tabassé pour une enveloppe.",
+    "022": "Nino Caruso est retrouvé mort. Deux horaires ne collent pas.",
+    "023": "Trois familles négocient. Un chauffeur meurt dans une embuscade.",
+    "024": "Massimo veut parler. Dans le clan, la chasse au traître commence.",
+    "025": "Un entrepreneur est tabassé. Le Don doit répondre de ses hommes.",
+    "026": "Le FDR rafle et exécute. Trois captifs décrivent les massacres.",
+    "027": "Le FDR dit la zone vide. Des otages pourraient encore s’y trouver.",
+    "028": "La capitale s’écroule. Un infiltré serait déjà dans la Grey Room.",
+    "029": "Un homme est exécuté. Sa langue est envoyée aux trois survivants.",
+    "030": "Le cartel massacre une famille. Un registre de crimes disparaît.",
+    "031": "Six agents sont abattus. Trois chefs du commando sont arrêtés.",
+    "032": "Le régime s’écroule. Deux chefs disparaissent, les prisons parlent.",
+    "033": "La dynastie s’écroule. Le fils du président et son cousin fuient.",
+    "034": "Le président est traqué. Son gendre se cache derrière un faux nom."
   },
   "en": {
-    "021": "An envelope disappears. No one in the Family will answer for it.",
-    "022": "Nino Caruso is dead. Two witnesses contradict each other.",
-    "023": "Three families negotiate a truce. An ambush changes everything.",
-    "024": "Massimo De Luca may talk. His clan grows suspicious.",
-    "025": "A protection racket goes wrong. The Don's authority is shaken.",
-    "026": "Almizia falls. Three captives speak.",
-    "027": "The FDR says the zone is empty. Are there hostages?",
-    "028": "The capital falls. The Grey Room may be infiltrated.",
-    "029": "Three survivors seek protection. Twenty people remain captive.",
-    "030": "A governor and his family are murdered. A ledger vanishes.",
-    "031": "Six agents killed near the border. Three unit chiefs arrested.",
-    "032": "The regime has fallen. Two chiefs have vanished. The prisons still speak.",
-    "033": "The dynasty is dead. The son and his cousin run for their lives.",
-    "034": "The president and his son-in-law are hunted. False names won't save them."
+    "021": "A racket goes wrong. A courier gets beaten over an envelope.",
+    "022": "Nino Caruso is found dead. Two timelines don't add up.",
+    "023": "Three families negotiate. A driver dies in an ambush.",
+    "024": "Massimo may talk. The family starts hunting for a traitor.",
+    "025": "A businessman is beaten. The Don must answer for his men.",
+    "026": "The FDR raids and executes. Three captives recount the killings.",
+    "027": "The FDR claims the zone is empty. Hostages may still be inside.",
+    "028": "The capital collapses. An infiltrator may be inside the Grey Room.",
+    "029": "A man is executed. His severed tongue is sent to three survivors.",
+    "030": "The cartel slaughters a family. A ledger of crimes disappears.",
+    "031": "Six agents are shot dead. Three commando leaders are arrested.",
+    "032": "The regime collapses. Two chiefs vanish; the prisons still speak.",
+    "033": "The dynasty collapses. The president's son and his cousin flee.",
+    "034": "The president is hunted. His son-in-law hides behind a false name."
   }
 });
   function dlcCardTeaser(sc){
