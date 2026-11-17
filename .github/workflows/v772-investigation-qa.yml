@@ -1,0 +1,31 @@
+name: v772 investigation cycle and dossier audit
+on:
+  pull_request:
+    paths:
+      - 'app-v11.js'
+      - 'gameplay-flow-v13.js'
+      - 'common-dossier-v106.js'
+      - 'investigation-workspace-v634.js'
+      - 'investigation-ux-v772.*'
+      - 'index.html'
+      - 'supabase/migrations/20261117210100_igr_v772_investigation_cadence.sql'
+      - 'scripts/v772-investigation-check.mjs'
+      - '.github/workflows/v772-investigation-qa.yml'
+  workflow_dispatch:
+jobs:
+  static-guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify syntax of changed browser scripts
+        run: |
+          node --check app-v11.js
+          node --check gameplay-flow-v13.js
+          node --check common-dossier-v106.js
+          node --check investigation-workspace-v634.js
+          node --check investigation-ux-v772.js
+      - name: Validate v772 server/frontend contracts
+        run: node scripts/v772-investigation-check.mjs
