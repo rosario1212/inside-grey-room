@@ -125,9 +125,14 @@ assert.equal(posterId(heroImage),'025','Confirmation artwork must still be repai
 assert.match(art30,/img\.closest\?\.\('\.avatar,\.player-ident,\.lobby-player-live,\.game-player-ident'\)/);
 
 for(const asset of ['omerta-polish-v12.js','omerta-hotfix-v12.js','omerta-v12-30.js','omerta-v12-39.js','omerta-polish-v12.css']){
-  const version=asset+'?v='+(asset==='omerta-v12-39.js'?'v725-poster-native-fit-20261116':'santoro-visual-fix-20261108');
-  assert.ok(html.includes(version),'HTML does not refresh '+asset);
-  assert.ok(sw.includes('/'+version),'PWA offline shell does not refresh '+asset);
+  // Verify that the document and offline shell load the SAME actual resource.
+  // Asset fingerprints evolve whenever posters or client code are revised.
+  const prefix=asset+'?v=';
+  const offset=html.indexOf(prefix);
+  assert.ok(offset>=0,'HTML does not refresh '+asset);
+  const actualVersion=html.slice(offset+prefix.length).match(/^[\w.-]+/)?.[0];
+  assert.ok(actualVersion,'HTML has no version for '+asset);
+  assert.ok(sw.includes('/'+prefix+actualVersion),'PWA offline shell does not refresh '+asset);
 }
 assert.match(css,/omerta-tree-public-note/);
 assert.match(css,/omerta-dossier-progress span\.current/);
