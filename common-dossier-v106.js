@@ -60,7 +60,7 @@ function publicHtml(){
  const events=publicEntries(a).slice().reverse();
  const history=events.map(e=>{
   const c=safeCycle(e.cycle),press=e.event_type==='breaking_news'||e.press_claim;
-  const type=press?tr('PUBLICATION DU JOURNALISTE','PRESS PUBLICATION'):e.verified?tr('FAIT CONFIRMÉ','VERIFIED FACT'):tr('INFORMATION PUBLIQUE','PUBLIC INFORMATION');
+  const type=press?tr('PUBLICATION DU JOURNALISTE','PRESS PUBLICATION'):e.event_type==='public_notice'?tr('BILAN PUBLIC DU CYCLE','PUBLIC CYCLE SUMMARY'):e.event_type==='public_evidence'?tr('PIÈCE COMMUNIQUÉE · À RECOUPER','SHARED DOCUMENT · CHECK THE SOURCE'):e.verified?tr('FAIT CONFIRMÉ','VERIFIED FACT'):tr('INFORMATION PUBLIQUE','PUBLIC INFORMATION');
   return '<article class="igr106-event" data-igr-event-id="'+esc(e.id)+'" data-cycle="'+(c||0)+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON CLASSÉE','CYCLE UNKNOWN'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4><p>'+esc(e.text||'')+'</p>'+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
  }).join('');
  return '<section class="igr106-common" aria-label="'+esc(tr('Dossier commun','Shared case file'))+'"><header><small>'+esc(tr('ACCESSIBLE À TOUS LES RÔLES','VISIBLE TO ALL ROLES'))+'</small><h2>'+esc(tr('Dossier commun','Shared case file'))+'</h2></header><article class="igr106-premise"><h3>'+esc(tr('Situation connue de tous','Shared starting situation'))+'</h3><p>'+esc(context||tr('Le dossier sera présenté au lancement de la partie.','The case will be introduced when play begins.'))+'</p></article><div class="igr106-events"><h3>'+esc(tr('Publications et faits partagés','Shared news and events'))+'</h3>'+(cache.err&&!a?'<p class="igr106-muted">'+esc(tr('Connexion au dossier commun indisponible. Réessai automatique.','Shared case file temporarily unavailable. Retrying.'))+'</p>':!a?'<p class="igr106-muted">'+esc(tr('Synchronisation des informations publiques…','Loading public updates…'))+'</p>':history||'<p class="igr106-muted">'+esc(tr('Aucune nouvelle information publique pour le moment.','No new shared update yet.'))+'</p>')+'</div></section>';
@@ -102,11 +102,65 @@ if(origCard){const wrapper=function(){
   return t.innerHTML;
  }catch(err){console.warn('[IGR v106] card fallback',err);return html}
 };try{privateCardHtml=wrapper}catch{}window.privateCardHtml=wrapper;}
+
+/* v771: two distinct investigators must authorize a public release. */
+let disclosure={key:'',data:null,last:0,busy:false,error:false};
+function disclosureRows(){
+ if(disclosure.error)return '<p class="igr771-status">'+esc(tr('Propositions indisponibles. Réessai automatique.','Proposals unavailable. Retrying.'))+'</p>';
+ if(!disclosure.data)return '<p class="igr771-status">'+esc(tr('Recherche des éléments autorisés…','Loading eligible findings…'))+'</p>';
+ const rows=(disclosure.data.candidates||[]).filter(x=>!x.published).slice(0,6);
+ if(!rows.length)return '<p class="igr771-status">'+esc(tr('Aucun élément éligible pour le moment. Poursuis les vérifications.','No eligible finding yet. Continue checking leads.'))+'</p>';
+ return rows.map(x=>{
+  const id=Number(x.id);
+  if(!Number.isSafeInteger(id)||id<1)return '';
+  const votes=Math.max(0,Math.min(2,Number(x.votes)||0)),voted=Boolean(x.mine);
+  const label=voted?tr('Accord enregistré','Approval recorded'):votes===0?tr('Proposer la publication','Propose publication'):tr('Approuver la publication','Approve publication');
+  return '<article class="igr771-option"><div class="igr771-option-head"><strong>'+esc(x.title||tr('Élément officiel','Official finding'))+'</strong><small>'+votes+'/2</small></div><p>'+esc(String(x.text||'').slice(0,200))+'</p><button type="button" class="btn ghost small" data-igr771-vote="'+id+'" onclick="igr771Vote('+id+')" '+(voted?'disabled':'')+'>'+esc(label)+'</button></article>';
+ }).join('');
+}
+function disclosurePanel(){
+ return '<section class="igr771-disclosure"><details><summary>'+esc(tr('Verser un élément au Dossier commun','Share a finding with all players'))+'</summary><div class="igr771-inside"><p>'+esc(tr('Deux membres distincts du camp Enquête doivent approuver. Tous les joueurs, suspects compris, verront ensuite le document. Limite : deux pièces par cycle.','Two different investigation players must approve. All players, including suspects, will then see the document. Limit: two documents per cycle.'))+'</p><div class="igr771-options">'+disclosureRows()+'</div></div></details></section>';
+}
+function renderDisclosure(){
+ const el=document.querySelector('#app .igr771-options');
+ if(el){const h=disclosureRows();if(el.innerHTML!==h)el.innerHTML=h}
+}
+async function syncDisclosure(force=false){
+ const d=game(),k=key();
+ if(!isInquiry()||!d||d.room.status!=='playing'||!k)return;
+ if(disclosure.key!==k)disclosure={key:k,data:null,last:0,busy:false,error:false};
+ if(disclosure.busy||(!force&&Date.now()-disclosure.last<8500))return;
+ disclosure.busy=true;disclosure.last=Date.now();
+ try{
+  const r=await rpc('igr_v771_dossier_candidates',{p_code:d.room.code,p_player_token:S().token});
+  if(k!==key())return;
+  if(!r||!Array.isArray(r.candidates))throw Error('Invalid disclosure response');
+  disclosure.data=r;disclosure.error=false;renderDisclosure();
+ }catch(err){if(k===key()){disclosure.error=true;renderDisclosure();console.warn('[IGR v771] candidates',err?.message||err)}}
+ finally{disclosure.busy=false}
+}
+window.igr771Vote=async function(id){
+ const d=game(),k=key(),eventId=Number(id);
+ if(!isInquiry()||!d||d.room.status!=='playing'||!Number.isSafeInteger(eventId)||eventId<1)return;
+ const c=(disclosure.data?.candidates||[]).find(x=>Number(x.id)===eventId);
+ if(!c||c.mine||c.published)return;
+ if(Number(c.votes)>=1&&typeof window.confirm==='function'&&!window.confirm(tr('Publier cette pièce pour TOUS les joueurs, suspects compris ?','Publish this document to ALL players, including suspects?')))return;
+ const b=document.querySelector('[data-igr771-vote="'+eventId+'"]');if(b)b.disabled=true;
+ try{
+  const r=await rpc('igr_v771_dossier_vote',{p_code:d.room.code,p_player_token:S().token,p_event_id:eventId});
+  if(k!==key())return;
+  if(typeof toast==='function')toast(r?.status==='published'?tr('Pièce publiée dans le Dossier commun.','Document published in the shared case file.'):tr('Accord enregistré. Une deuxième validation est nécessaire.','Approval saved. A second approval is needed.'));
+  await syncDisclosure(true);
+  if(r?.status==='published')await syncPublic(true);
+ }catch(err){if(typeof toast==='function')toast(tr('Publication impossible : droits, quota ou connexion à vérifier.','Could not publish: check permissions, quota or connection.'));console.warn('[IGR v771] vote',err?.message||err);await syncDisclosure(true)}
+};
+
 const origTab=typeof renderGameTab==='function'?renderGameTab:null;
 if(origTab){const wrapper=function(){
  sanitizeTab();
  if(S()?.tab==='timeline')return publicHtml();
- const result=origTab.apply(this,arguments);
+ let result=origTab.apply(this,arguments);
+ if(S()?.tab==='investigation'&&isInquiry())result=disclosurePanel()+result;
  if(S()?.tab==='investigation'&&isInquiry()&&role()!=='enqueteur'){
   const extra=window.IGR_INVESTIGATION_V42?.renderElementsTab?.()||'';
   return extra?'<section class="igr106-inquiry-evidence"><h3>'+esc(tr('Preuves et éléments reçus','Evidence and findings'))+'</h3>'+extra+'</section>'+result:result;
@@ -162,10 +216,11 @@ if(origRender){const wrapper=function(){
    if(isInquiry())aside.remove();
   }
   if(S()?.tab==='timeline')void syncPublic();
+  if(S()?.tab==='investigation'&&isInquiry())void syncDisclosure();
  }catch(err){console.warn('[IGR v106] action fallback',err)}
  return result;
 };try{renderGame=wrapper}catch{}window.renderGame=wrapper;}
-window.setInterval(()=>{const d=game();if(d&&S()?.view==='game'&&d.room.status==='playing')void syncPublic();},4300);
+window.setInterval(()=>{const d=game();if(d&&S()?.view==='game'&&d.room.status==='playing'){void syncPublic();if(S()?.tab==='investigation'&&isInquiry())void syncDisclosure();}},4300);
 const style=document.createElement('style');style.id='igr106-css';style.textContent=`
 .igr106-common{max-width:940px;margin:auto;display:grid;gap:16px}
 .igr106-common header small{font-size:.66rem;letter-spacing:.13em;color:#9ca2a6}
@@ -182,6 +237,13 @@ const style=document.createElement('style');style.id='igr106-css';style.textCont
 .igr106-actions-inner{padding:9px 13px 14px}.igr106-actions-inner .phase-explain{margin-top:0}
 .igr106-facts{display:grid;gap:7px;margin:12px 0}.igr106-fact{border:1px solid rgba(255,255,255,.11);border-radius:10px;background:rgba(255,255,255,.02)}.igr106-fact>summary{cursor:pointer;padding:12px 13px;font-weight:700;letter-spacing:.04em;font-size:.81rem}.igr106-fact-body{padding:0 13px 13px;line-height:1.5}.igr106-fact-body p{margin:0}
 .igr106-inquiry-evidence{margin-bottom:14px}
+.igr771-disclosure{margin:0 0 14px;border:1px solid rgba(192,180,154,.28);border-radius:13px;background:rgba(192,180,154,.045)}
+.igr771-disclosure>details>summary{padding:13px 14px;cursor:pointer;font-weight:700}
+.igr771-inside{padding:0 13px 14px}.igr771-inside>p{font-size:.8rem;line-height:1.5;color:#b5b9bc;margin:0 0 11px}
+.igr771-options{display:grid;gap:9px}.igr771-option{padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(0,0,0,.16)}
+.igr771-option-head{display:flex;align-items:start;justify-content:space-between;gap:9px}.igr771-option-head strong{font-size:.84rem}.igr771-option-head small{color:#d6c2a0}
+.igr771-option p{font-size:.8rem;line-height:1.45;color:#b8bec2;margin:6px 0 10px}
+.igr771-option button{min-height:36px;max-width:100%;white-space:normal}
 @media(max-width:600px){.igr106-premise,.igr106-event{padding:12px}.igr106-action-panel{margin:8px 0}.igr106-common{gap:11px}}
 `;document.head.appendChild(style);
 window.IGR_COMMON_DOSSIER_V106=Object.freeze({version:V,isInquiry,publicHtml,syncPublic,visibleEventIds});
