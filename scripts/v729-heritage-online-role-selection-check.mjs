@@ -107,7 +107,7 @@ renderMaitre({room:{chapter:1,code:'H4321'},player:{preferred_role:'avocat'},
  players:['avocat','client','enqueteur','procureur','juge'].map((id,i)=>({id:'p'+i,pseudo:'J'+i,preferred_role:i?null:id,is_host:i===0}))});
 assert(renderedMaitre?.preserve,'MAÎTRE lobby must preserve scrolling');
 assert(renderedMaitre.html.indexOf('<section class="hnet-role-zone"')<renderedMaitre.html.indexOf('<details class="hnet-roster-disclosure"'),'MAÎTRE roles must precede roster');
-assert(renderedMaitre.html.includes('CODE D’INVITATION')&&renderedMaitre.html.includes('Participants à la table'),'MAÎTRE invitation or expandable roster missing');
+assert(renderedMaitre.html.includes('INVITATION')&&renderedMaitre.html.includes('<summary>Joueurs'),'MAÎTRE invitation or expandable roster missing');
 assert(renderedMaitre.html.includes('data-mnet="copy-code"'),'MAÎTRE invitation code should be directly copyable');
 assert(renderedMaitre.html.includes('LANCER LA PARTIE'),'MAÎTRE can launch at five participants');
 assert(renderedMaitre.html.includes('data-random="1"'),'MAÎTRE must expose an actual random draw action');
