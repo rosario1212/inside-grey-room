@@ -132,3 +132,87 @@ grant execute on function public.igr_v772_public_cast(text,uuid) to anon,authent
 -- Stop automatically publishing nearly identical numerical cycle summaries.
 -- Keep prior events in history; the client filters only redundant notices.
 drop trigger if exists igr_v771_cycle_public_notice on public.igr_v4_rooms;
+
+-- Integrate the questionnaire after the final event of cycles 2 and 3.
+CREATE OR REPLACE FUNCTION public.igr_v13_complete_event(p_room text, p_event text)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare r public.igr_v4_rooms%rowtype; st jsonb; used_count int; total_count int; used_types jsonb; history jsonb; inter_count int; confront_count int;
+begin
+ select * into r from public.igr_v4_rooms where code=p_room for update; if not found then return; end if;
+ st:=coalesce(r.state,'{}'::jsonb); used_count:=coalesce((st->>'event_slots_used')::int,0)+1; total_count:=coalesce((st->>'event_slots_total')::int,0); used_types:=coalesce(st->'event_types_used','[]'::jsonb); history:=coalesce(st->'v13_event_history','[]'::jsonb); inter_count:=coalesce((st->>'event_interrogations')::int,0); confront_count:=coalesce((st->>'confrontations_used')::int,0);
+ if p_event='interrogation' then inter_count:=inter_count+1; end if; if p_event='confrontation' then confront_count:=confront_count+1; end if; if p_event not in ('interrogation','confrontation') and not (used_types ? p_event) then used_types:=used_types||to_jsonb(p_event); end if;
+ history:=history||jsonb_build_array(jsonb_build_object('cycle',r.cycle,'event',p_event,'ended_at',now())); st:=jsonb_set(st,'{event_slots_used}',to_jsonb(used_count),true); st:=jsonb_set(st,'{event_types_used}',used_types,true); st:=jsonb_set(st,'{event_interrogations}',to_jsonb(inter_count),true); st:=jsonb_set(st,'{confrontations_used}',to_jsonb(confront_count),true); st:=jsonb_set(st,'{v13_event_history}',history,true); st:=st-'event_active'-'event_targets'-'event_participants'-'v13_event_mode'-'current_target'-'interrogation_mode';
+ update public.igr_v4_rooms set state=st,updated_at=now() where code=r.code;
+ if used_count<total_count then
+   perform public.igr_v13_enter_event_select(r.code,total_count,false);
+ else
+   -- Terror retains its dedicated factual quiz pipeline.
+   if r.scenario_id in ('026','027','028') then
+     perform public.igr_v4_emit_trame(r.code);
+     update public.igr_v4_rooms set phase='trame',phase_started_at=now(),
+       phase_ends_at=now()+interval '22 seconds',updated_at=now() where code=r.code;
+   else
+     update public.igr_v4_rooms
+     set phase='cycle_debrief',phase_started_at=now(),
+       phase_ends_at=now()+interval '2 minutes',updated_at=now()
+     where code=r.code;
+     insert into public.igr_v4_events(room_code,event_type,visibility,payload)
+     values(r.code,'phase','roles',jsonb_build_object(
+       'title','QUESTIONNAIRE · FIN DU CYCLE',
+       'text','Enquêteur et Analyste répondent séparément avant la révélation.',
+       'cycle',r.cycle));
+   end if;
+ end if;
+end $function$
+;
+
+-- Resolve idle decision phases before the legacy timer engine.
+CREATE OR REPLACE FUNCTION public.igr_v4_tick(p_room text)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare r public.igr_v4_rooms%rowtype;status text;
+begin
+ select * into r from public.igr_v4_rooms where code=p_room for update;if not found or r.status<>'playing' then return;end if;
+ perform public.igr_v44_maintain(r.code);
+ select * into r from public.igr_v4_rooms where code=p_room for update;
+ if coalesce((r.state->>'timer_paused')::boolean,false) and r.state->>'timer_paused_phase'=r.phase and (r.state->>'timer_paused_started_at')::timestamptz=r.phase_started_at then return;end if;
+ if r.phase='role_reading' and r.phase_ends_at is not null and now()>=r.phase_ends_at then perform public.igr_v4_start_cycle(r.code,1);return;end if;
+ if r.phase='initial_debrief' and (r.phase_ends_at is null or now()>=r.phase_ends_at) then perform public.igr_v4_start_cycle(r.code,greatest(1,r.cycle));return;end if;
+ if r.phase='investigation_assembly' then
+   if r.phase_ends_at is null or now()<r.phase_ends_at then return;end if;
+   if r.cycle=1 then update public.igr_v4_rooms set phase='interrogation_select',phase_started_at=now(),phase_ends_at=null,updated_at=now() where code=r.code;else perform public.igr_v13_enter_event_select(r.code,3,true);end if;
+   insert into public.igr_v4_events(room_code,event_type,visibility,payload) values(r.code,'free_investigation','public',jsonb_build_object('title','ENQUÊTE OUVERTE','text','Les interactions redeviennent libres. Seules les convocations officielles de la Grey Room sont prioritaires.','cycle',r.cycle));return;
+ end if;
+ if r.scenario_id IN ('032','033','034')
+   AND coalesce((r.state->>'regime_v13_active')::boolean,false) THEN
+   if r.phase='closed' and (r.phase_ends_at is null or now()>=r.phase_ends_at) then
+     perform igr_private.igr_regime_v13_begin_court(r.code);return;
+   end if;
+   if r.phase='regime_court' then
+     perform igr_private.igr_regime_v13_finish_court(r.code);return;
+   end if;
+ end if;
+ if r.phase='closed' then if r.phase_ends_at is not null and now()>=r.phase_ends_at then perform public.igr_v52_begin_stage(r.code,case when public.igr_v44_judge_present(r.code) then 'courtroom' else 'audience' end);end if;return;end if;
+ if r.phase in ('final_audience','final_suspect_defenses','final_lawyer_opinions') then status:=coalesce(r.state->>'v52_status','waiting');if r.phase_ends_at is not null and now()>=r.phase_ends_at then if status='active' then perform public.igr_v52_advance(r.code,'timeout'); elsif status='waiting' and public.igr_v44_judge_present(r.code) then
+     if r.phase='final_audience' then perform public.igr_v52_advance(r.code,'waiting_timeout');
+     else update public.igr_v4_rooms set phase_started_at=now(),phase_ends_at=now()+make_interval(secs=>coalesce((r.state->'v52_queue'->coalesce((r.state->>'v52_index')::int,0)->>'seconds')::int,180)),state=jsonb_set(jsonb_set(r.state,'{v52_status}',to_jsonb('active'::text),true),'{v705_defense_done}','false'::jsonb,true),updated_at=now() where code=r.code;
+     end if;end if;end if;return;end if;
+ if r.phase='locking' and coalesce((r.state->>'v52_final_reassessment')::boolean,false) then return;end if;
+ if r.phase in ('interrogation_select','event_select')
+   and r.phase_ends_at is not null and now()>=r.phase_ends_at then
+   perform igr_private.igr_v772_auto_choice(r.code);
+   return;
+ end if;
+ perform public.igr_v50_tick_legacy(p_room);
+ select * into r from public.igr_v4_rooms where code=p_room for update;
+ if r.phase='cycle_debrief' then perform public.igr_v4_emit_trame(r.code);update public.igr_v4_rooms set phase='trame',phase_started_at=now(),phase_ends_at=now()+interval '22 seconds',updated_at=now() where code=r.code;
+ elsif r.phase='final_debrief' then perform public.igr_v52_begin_stage(r.code,'locking');end if;
+end$function$
+;
