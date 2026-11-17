@@ -1213,8 +1213,25 @@ function renderLobby(prefetched=null){
  const victoryRoleNotice=myReservation
    ?`<div class="victory-privilege compact ${myReservation.awarded?'awarded':'lost'}"><b>${myReservation.awarded?'RÔLE RÉSERVÉ PAR VICTOIRE':'CONFLIT DE RÔLE'}</b><span>${myReservation.awarded?`${h(publicRoleLabel(myReservation.claimed_role))} t’est réservé · force de victoire ${h(myReservation.score)}/100.`:`Ta demande ${h(publicRoleLabel(myReservation.claimed_role))} n’a pas obtenu la priorité. Une victoire plus forte a gagné le conflit ; choisis un autre rôle disponible.`}</span></div>`:'';
  const openedRoleDetails=typeof document==='undefined'||typeof document.querySelectorAll!=='function'?[]:[...document.querySelectorAll('.role-choice-zone .igr-role-more[open]')].map(el=>el.dataset.roleId);
+ // Base dossiers 001–034 share one live lobby. A role update must keep the
+ // touched choice fixed in the viewport, even when the roster above changes.
+ const oldLobby=document.querySelector('#app .lobby-v11');
+ const oldScroll=window.scrollY;
+ const focusedRole=document.activeElement?.closest?.('.role-choice-card[data-role-id]');
+ const focusedRoleId=focusedRole?.dataset.roleId||null;
+ const oldRoleAnchor=focusedRole||oldLobby?.querySelector('.role-choice-zone');
+ const oldRoleTop=oldRoleAnchor?.getBoundingClientRect().top;
  byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(typeof document!=='undefined'&&typeof document.querySelectorAll==='function')for(const el of document.querySelectorAll('.role-choice-zone .igr-role-more'))if(openedRoleDetails.includes(el.dataset.roleId))el.open=true;
+ if(oldLobby){
+  const newLobby=document.querySelector('#app .lobby-v11');
+  const newFocused=focusedRoleId&&[...(newLobby?.querySelectorAll('.role-choice-card[data-role-id]')||[])].find(el=>el.dataset.roleId===focusedRoleId);
+  const newRoleAnchor=newFocused||newLobby?.querySelector('.role-choice-zone');
+  const shift=newRoleAnchor&&Number.isFinite(oldRoleTop)?newRoleAnchor.getBoundingClientRect().top-oldRoleTop:0;
+  try{window.scrollTo({top:Math.max(0,oldScroll+shift),left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,Math.max(0,oldScroll+shift))}
+  if(newFocused&&!newFocused.disabled)newFocused.focus({preventScroll:true});
+ }
  if(SOUND.enabled)ensureAmbient('menu');
 }
 let LOBBY_KICK_BUSY=false;
