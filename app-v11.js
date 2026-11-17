@@ -1476,6 +1476,9 @@ function igr82RelationsHtml(value) {
 }
 
 function valueBlock(title,value,cls=''){
+ if(typeof value==='string'&&/CE QUE TU CACHES|CE QUE TU GARDES POUR TOI/i.test(title))
+  value=value.replace(/Tu prétends qu[’']un relais était prévu, alors que vous aviez seulement décidé d[’']attendre\.?/gi,
+   'Tu affirmes qu’après votre appel, quelqu’un devait prendre le relais pour aider Sofia. En réalité, vous aviez seulement décidé d’attendre : aucun de vous n’avait promis de la contacter ni d’appeler les secours.');
  if(value==null||value===''||(Array.isArray(value)&&!value.length))return'';
  if(title==='TES RELATIONS'&&Array.isArray(value))return igr82RelationsHtml(value);
  let body='';
@@ -1540,7 +1543,8 @@ function igrV772Known(known,secret){
  return text;
 }
 function igrV772GoalDefense(goal,position){
- const objective=String(goal||'').trim(),defense=String(position||'').trim();
+ const playerText=value=>String(value||'').replace(/\s*\(\s*(?:niveau|level)\s*[0-9]+\s*\)/gi,'').trim();
+ const objective=playerText(goal),defense=playerText(position);
  const normalize=igrV772Norm;
  const sentences=igrV772Sentences(objective);
  const tactic=/^(?:défends|explique|rappelle|maintiens|reconnais|souligne|conteste|précise|montre|présente|appuie-toi|évite de révéler|n'évoque)/i;
@@ -1611,6 +1615,8 @@ function privateCardHtml(){
  const isOmertaLegacy=['021','022','023','024','025'].includes(String(d?.room?.scenario_id||''))&&!santoroMyCard;
  const authoredObjective=String((isOmertaLegacy?ps.omerta_objective:(ps.variant_card?.objective||ps.objective||ps.objective_main||ps.omerta_objective))||'').trim();
  const personaIdentity=String((santoroMyCard&&ps.identity)||ps.variant_card?.identity||ps.place||'').trim();
+ const displayIdentity=String(d?.room?.scenario_id||'')==='004'&&personaIdentity==='Ami proche'
+  ?'Ami proche de Sofia':personaIdentity;
  const privateWin=santoroMyCard?ps.objective:(authoredObjective||roleInfo(secret==='espion'?'espion':pub).win);
  // The clarification is restricted to the player's authenticated private card.
  // It does not infer or expose another character's knowledge or the answer key.
@@ -1647,7 +1653,7 @@ function privateCardHtml(){
    '<header class="igr-private-heading"><h2>'+h(p?.pseudo||STATE.playerPseudo||'Joueur')+'</h2>'+
    '<p class="igr-private-player">'+h(roleInfo(pub).label||pub)+' · Ton personnage</p>'+
    '<p class="igr-private-hint">Tu connais les faits de ta carte, pas les secrets des autres. Tu peux choisir ce que tu racontes.</p></header>',
-   personaIdentity?'<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>'+h(personaIdentity)+'</span></div>':'',
+   personaIdentity?'<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>'+h(displayIdentity)+'</span></div>':'',
    valueBlock(santoroMyCard?'TON RANG ET TA PLACE':'TON HISTOIRE',ownHistory),
    authoredStory,
    valueBlock('CE QUE TU AS FAIT',ownChronology),
@@ -1679,7 +1685,7 @@ function privateCardHtml(){
   return parts.join('');
  }
 
- return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><header class="igr-private-heading"><h2>${h(p?.pseudo||STATE.playerPseudo||'Joueur')}</h2><p class="igr-private-player">${h(roleInfo(pub).label||pub)} · Ton personnage</p><p class="igr-private-hint">Tu connais ton vécu et les faits indiqués ici, pas les pensées ni les secrets des autres. Réponds avec ce que ton personnage peut réellement savoir.</p></header>${personaIdentity?`<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>${h(personaIdentity)}</span></div>`:''}<div class="role-summary igr-private-priority"><b>${authoredObjective?'TON OBJECTIF':'COMMENT TU GAGNES'}</b><span>${h(privateWin)}</span></div>${santoroPrivateCard}${concisePrivateCard}${santoroMyCard||conciseDossier?'':readableDossier?(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('CETTE NUIT-LÀ',ps.chronology)+valueBlock('CE QUE TU SAIS',ps.anchors)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')):(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('TA CHRONOLOGIE',ps.chronology)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')+valueBlock('TES REPÈRES',ps.anchors)+valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position))}${santoroMyCard?'':valueBlock('TES CLIENTS',ps.clients)}${cartel030Card}${authoredStory}${authoredDialogue}${secretInfo}<div class="private-foot">Ton personnage connaît uniquement les faits de sa carte. Tu peux en cacher certains à l’oral, mais jamais inventer de preuves.</div></div>`;
+ return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><header class="igr-private-heading"><h2>${h(p?.pseudo||STATE.playerPseudo||'Joueur')}</h2><p class="igr-private-player">${h(roleInfo(pub).label||pub)} · Ton personnage</p><p class="igr-private-hint">Tu connais ton vécu et les faits indiqués ici, pas les pensées ni les secrets des autres. Réponds avec ce que ton personnage peut réellement savoir.</p></header>${personaIdentity?`<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>${h(displayIdentity)}</span></div>`:''}<div class="role-summary igr-private-priority"><b>${authoredObjective?'TON OBJECTIF':'COMMENT TU GAGNES'}</b><span>${h(privateWin)}</span></div>${santoroPrivateCard}${concisePrivateCard}${santoroMyCard||conciseDossier?'':readableDossier?(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('CETTE NUIT-LÀ',ps.chronology)+valueBlock('CE QUE TU SAIS',ps.anchors)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')):(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('TA CHRONOLOGIE',ps.chronology)+valueBlock('CE QUE TU CACHES',clarifiedHide,'danger-soft')+valueBlock('TES REPÈRES',ps.anchors)+valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position))}${santoroMyCard?'':valueBlock('TES CLIENTS',ps.clients)}${cartel030Card}${authoredStory}${authoredDialogue}${secretInfo}<div class="private-foot">Ton personnage connaît uniquement les faits de sa carte. Tu peux en cacher certains à l’oral, mais jamais inventer de preuves.</div></div>`;
 }
 function renderRole(){
  const d=STATE.sync;if(!d)return;
