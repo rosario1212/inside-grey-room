@@ -1870,6 +1870,7 @@ function latestEvent(type){return [...(STATE.sync?.events||[])].reverse().find(e
 // Clarify presentation only. Never reinterpret or supplement a canonical finding.
 function readableFindingTitle(value,scenarioId){
  const title=String(value||'').trim();
+ if(String(scenarioId)==='003'&&/^Faux accord inscrit par S2$/i.test(title))return 'Accord mentionné au dossier';
  if(String(scenarioId)!=='004')return title;
  const names={
   'Réponse conservée':'Message conservé · refus de déplacement',
@@ -1881,6 +1882,7 @@ function readableFindingTitle(value,scenarioId){
 }
 function readableFindingText(value,scenarioId){
  let text=String(value||'').trim();
+ if(String(scenarioId)==='001')return text.replace(/\s*;\s*interrogez-le plutôt que d'inventer une image de son entrée\.?/ig,'.');
  if(String(scenarioId)!=='004')return text;
  return text
   .replace(/(Sauvegarde de messagerie\s*\/\s*capture vérifiée)\s+(?=Une capture)/i,'$1.\n\n')
