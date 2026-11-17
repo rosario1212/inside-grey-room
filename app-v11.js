@@ -665,7 +665,10 @@ function renderCreateConfirm(){
 }
 function renderJoin(){
  const remembered=loadProfile().pseudo||STORAGE.getItem('igr_v9_last_pseudo')||'';
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">Rejoindre</div><h1>La cellule vous attend</h1></div><button class="btn ghost small" onclick="goHome()">← Accueil</button></div><section class="panel"><div class="confirm"><div class="field"><label for="joinPseudo">Ton pseudo</label><input id="joinPseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(remembered)}" placeholder="Votre pseudo"></div><div class="field"><label for="joinCode">Code</label><input id="joinCode" maxlength="5" placeholder="ABCDE" autocapitalize="characters"></div><button class="btn primary block" onclick="joinRoom()">Rejoindre</button></div></section></main>`)
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">Rejoindre</div><h1>La cellule vous attend</h1></div><div class="igr-join-actions" role="group" aria-label="Navigation">
+<button type="button" class="btn ghost small igr-join-pill igr-join-return" data-igr-global-back="1" aria-label="Revenir à la page précédente"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span>Retour</span></button>
+<button type="button" class="btn ghost small igr-join-pill igr-join-home" onclick="goHome()" aria-label="Revenir à l’accueil"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></svg><span>Accueil</span></button>
+</div></div><section class="panel"><div class="confirm"><div class="field"><label for="joinPseudo">Ton pseudo</label><input id="joinPseudo" maxlength="22" autocomplete="nickname" autocorrect="off" spellcheck="false" value="${h(remembered)}" placeholder="Votre pseudo"></div><div class="field"><label for="joinCode">Code</label><input id="joinCode" maxlength="5" placeholder="ABCDE" autocapitalize="characters"></div><button class="btn primary block" onclick="joinRoom()">Rejoindre</button></div></section></main>`)
 }
 
 const PROFILE_TITLES=[
