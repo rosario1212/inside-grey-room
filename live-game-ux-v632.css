@@ -207,3 +207,10 @@ body:has(.action-confirm-modal) > .igr-universal-dock{display:none!important}
  #app .role-card-v11{margin-bottom:10px!important;padding-bottom:18px!important}
  #app .private-card-v11{gap:12px}
 }
+
+/* v768 — The actual player's chosen name is the primary private identity. */
+#app .private-card-v11 .igr-private-heading h2{letter-spacing:-.025em;overflow-wrap:anywhere}
+#app .private-card-v11 .igr-private-player{font-size:12px;color:#e5ebef;text-transform:none;letter-spacing:.025em}
+#app .private-card-v11 .igr-private-hint{border-left:2px solid rgba(189,204,218,.4);padding:7px 0 7px 12px}
+#app .private-card-v11 .igr82-relations .igr82-relation-list{display:grid;gap:10px}
+#app .private-card-v11 .igr82-relations .igr82-relation{min-width:0;overflow-wrap:anywhere}
