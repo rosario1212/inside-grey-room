@@ -8,9 +8,9 @@ const dest=path.resolve(process.argv[2]||'dist');
 const tag='omerta-editorial-20261109';
 const newScript='omerta-v12-'+tag+'.js';
 const source=await readFile(path.join(dest,'omerta-v12.js'),'utf8');
-assert(source.includes('Chaque vendredi, des commerçants du quartier remettent leur contribution'),
+assert(source.includes('Chaque vendredi, des commerçants paient les hommes du clan'),
   'The released Omertà script must contain the approved 021 opening');
-assert(source.includes('Vittorio Santoro dirige une famille dont l’autorité repose sur des règles'),
+assert(source.includes('Les hommes du Don Vittorio Santoro donnent des versions différentes'),
   'The released Omertà script must contain the approved 025 opening');
 await writeFile(path.join(dest,newScript),source,'utf8');
 
@@ -26,7 +26,7 @@ for(const page of ['index.html','en.html']){
 }
 const swPath=path.join(dest,'service-worker.js');
 let sw=await readFile(swPath,'utf8');
-const omertaCachePath='/'+newScript+'?v=omerta-full-intros-20261109';
+const omertaCachePath='/'+newScript+'?v=v781-dlc-clarity-20261118';
 sw=sw.replace(/\/omerta-v12\.js\?v=[^'"]+/g,omertaCachePath);
 if(!sw.includes(omertaCachePath)){
   assert(sw.includes('const SHELL=['),'Missing service worker asset manifest');
