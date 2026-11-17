@@ -1,0 +1,542 @@
+[
+  {
+    "scenario_id": "035",
+    "ord": 1,
+    "cycle": 1,
+    "title": "REGISTRE IMPOSSIBLE",
+    "original_text": "Deux entrées administratives attribuées à M-17 ont été créées après les événements qu’elles sont censées enregistrer.",
+    "new_text": "Deux lignes du dossier M-17 ont été écrites après les événements qu’elles sont censées décrire.",
+    "new_title": "REGISTRE IMPOSSIBLE"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 2,
+    "cycle": 1,
+    "title": "RENOUVELLEMENT EXCEPTIONNEL",
+    "original_text": "L’identité a été renouvelée plusieurs fois sans contrôle biométrique complet, sur dérogation interne.",
+    "new_text": "L’identité M-17 a été renouvelée plusieurs fois sans contrôle biométrique complet.",
+    "new_title": "RENOUVELLEMENT EXCEPTIONNEL"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 3,
+    "cycle": 2,
+    "title": "ALERTE RETIRÉE",
+    "original_text": "Un brouillon d’alerte interne existe, puis disparaît du circuit officiel le lendemain.",
+    "new_text": "Une alerte interne a été rédigée, puis retirée du dossier officiel le lendemain.",
+    "new_title": "ALERTE RETIRÉE"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DERNIER DÉPLACEMENT",
+    "original_text": "Un véhicule lié au relais logistique de CERBÈRES transporte M-17 quelques heures avant sa mort.",
+    "new_text": "Un véhicule lié au relais logistique de CERBÈRES transporte M-17 quelques heures avant sa mort.",
+    "new_title": "DERNIER DÉPLACEMENT"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 5,
+    "cycle": 2,
+    "title": "CELLULE NACRE",
+    "original_text": "Le nom de code NACRE apparaît dans trois dossiers liés à la même identité fantôme.",
+    "new_text": "Le nom NACRE figure dans trois dossiers liés à M-17.",
+    "new_title": "CELLULE NACRE"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 6,
+    "cycle": 3,
+    "title": "COUPURE DE LIEN",
+    "original_text": "Un message interne ordonne de couper tout contact avec M-17 avant que sa mort ne soit connue publiquement.",
+    "new_text": "Un ordre interne demande de ne plus contacter M-17 avant même l’annonce de sa mort.",
+    "new_title": "COUPURE DE LIEN"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 1,
+    "cycle": 1,
+    "title": "SOURCE NON AUTHENTIFIÉE",
+    "original_text": "La première attribution étrangère repose sur un canal qui n’a jamais été authentifié.",
+    "new_text": "La première accusation visant l’étranger repose sur une source qui n’a pas été vérifiée.",
+    "new_title": "SOURCE NON AUTHENTIFIÉE"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 2,
+    "cycle": 1,
+    "title": "COULOIR VIDE",
+    "original_text": "Un couloir logistique secondaire reste sans surveillance pendant onze minutes après 04:17.",
+    "new_text": "Un couloir de service est resté sans surveillance pendant onze minutes après 04 h 17.",
+    "new_title": "COULOIR VIDE"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 3,
+    "cycle": 2,
+    "title": "VÉHICULE EXTÉRIEUR",
+    "original_text": "Une caméra éloignée montre un véhicule quitter le périmètre pendant la diversion.",
+    "new_text": "Une caméra montre un véhicule quitter le site pendant la diversion.",
+    "new_title": "VÉHICULE EXTÉRIEUR"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 4,
+    "cycle": 2,
+    "title": "CONTENEUR SCELLÉ",
+    "original_text": "Le manifeste officiel ne mentionne aucun conteneur correspondant à celui vu sur la caméra.",
+    "new_text": "Aucun document de transport officiel ne mentionne le conteneur vu sur la caméra.",
+    "new_title": "CONTENEUR SCELLÉ"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 5,
+    "cycle": 2,
+    "title": "FAUX DRAPEAU",
+    "original_text": "Plusieurs éléments de communication ont été préparés avant que l’identité des auteurs puisse être établie.",
+    "new_text": "Des messages étaient prêts avant même que les auteurs de l’attaque soient identifiés.",
+    "new_title": "MESSAGES PRÉPARÉS TROP TÔT"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RELAIS CERBÈRES",
+    "original_text": "L’intermédiaire CERBÈRES présent sur le site est relié à une identité déjà utilisée dans le dossier M-17.",
+    "new_text": "Un intermédiaire de CERBÈRES est lié à une identité déjà apparue dans le dossier M-17.",
+    "new_title": "RELAIS CERBÈRES"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 1,
+    "cycle": 1,
+    "title": "PRÉ-ENTRETIEN",
+    "original_text": "La source a vu plusieurs photographies avant le début de l’enregistrement officiel.",
+    "new_text": "La source avait déjà vu plusieurs photos avant son entretien officiel.",
+    "new_title": "PRÉ-ENTRETIEN"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 2,
+    "cycle": 1,
+    "title": "TRANSCRIPTION NETTOYÉE",
+    "original_text": "Une comparaison de fichiers montre qu’une contradiction a disparu de la version finale.",
+    "new_text": "Une contradiction présente dans la première transcription a disparu de la version finale.",
+    "new_title": "TRANSCRIPTION NETTOYÉE"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 3,
+    "cycle": 2,
+    "title": "ORPHÉE ANTÉRIEUR",
+    "original_text": "Une note datée d’avant l’arrestation contient déjà le mot ORPHÉE.",
+    "new_text": "Une note mentionne ORPHÉE avant même l’arrestation de la source.",
+    "new_title": "ORPHÉE ANTÉRIEUR"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 4,
+    "cycle": 2,
+    "title": "NOM IMPOSSIBLE",
+    "original_text": "L’un des noms fournis par la source ne correspond à aucune personne vérifiable.",
+    "new_text": "Un des noms cités par la source ne correspond à personne de vérifiable.",
+    "new_title": "NOM IMPOSSIBLE"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 5,
+    "cycle": 2,
+    "title": "DÉTAIL INDÉPENDANT",
+    "original_text": "Un détail livré pendant l’entretien est confirmé par une source que l’équipe d’interrogation ne possédait pas.",
+    "new_text": "Une autre source confirme un détail que les enquêteurs ignoraient.",
+    "new_title": "DÉTAIL INDÉPENDANT"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RELAIS SUPÉRIEUR",
+    "original_text": "Le recoupement final confirme que la source connaissait bien un relais supérieur de CERBÈRES, sans valider tout son récit.",
+    "new_text": "La source connaissait bien un responsable de CERBÈRES, mais cela ne valide pas tout son récit.",
+    "new_title": "RELAIS SUPÉRIEUR"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ORDRE DE DISSOLUTION",
+    "original_text": "Un ordre officiel exigeait la fermeture d’ORPHÉE plusieurs années plus tôt.",
+    "new_text": "Un ordre officiel exigeait la fermeture d’ORPHÉE depuis plusieurs années.",
+    "new_title": "ORDRE DE DISSOLUTION"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DÉROGATION HORS INVENTAIRE",
+    "original_text": "Une dérogation signée maintient certains moyens sans les faire apparaître dans l’inventaire central.",
+    "new_text": "Une autorisation a permis de garder des ressources hors du registre officiel.",
+    "new_title": "DÉROGATION HORS INVENTAIRE"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 3,
+    "cycle": 2,
+    "title": "NŒUDS RÉACTIVÉS",
+    "original_text": "Plusieurs relais déjà identifiés recommencent à communiquer au même moment pendant la crise de 04:17.",
+    "new_text": "Pendant la crise de 04 h 17, plusieurs contacts du réseau se remettent à communiquer.",
+    "new_title": "NŒUDS RÉACTIVÉS"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 4,
+    "cycle": 2,
+    "title": "LISTE DÉTRUITE",
+    "original_text": "L’opérateur chargé des liaisons de CERBÈRES détruit une liste de contacts après la mort de M-17.",
+    "new_text": "L’opérateur de CERBÈRES a détruit une liste de contacts après la mort de M-17.",
+    "new_title": "LISTE DÉTRUITE"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 5,
+    "cycle": 2,
+    "title": "OBJECTIF ORPHÉE",
+    "original_text": "ORPHÉE est décrit dans une note ancienne comme la protection d’un actif stratégique déplacé hors inventaire.",
+    "new_text": "Une vieille note affirme qu’ORPHÉE protégeait une ressource stratégique absente des inventaires.",
+    "new_title": "OBJECTIF ORPHÉE"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 6,
+    "cycle": 3,
+    "title": "CONTINUITÉ VOLONTAIRE",
+    "original_text": "La coordination a choisi de maintenir le réseau après sa fermeture officielle, avec couverture institutionnelle partielle.",
+    "new_text": "Des responsables ont maintenu ORPHÉE après sa fermeture, avec l’aide de certains services officiels.",
+    "new_title": "CONTINUITÉ VOLONTAIRE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 1,
+    "cycle": 1,
+    "title": "CHAÎNE DE VALIDATION",
+    "original_text": "Plusieurs décisions sur ORPHÉE exigeaient la validation conjointe de personnes appartenant à CERBÈRES et à l’appareil d’État.",
+    "new_text": "Des décisions sur ORPHÉE devaient être approuvées à la fois par CERBÈRES et des responsables de l’État.",
+    "new_title": "CHAÎNE DE VALIDATION"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 2,
+    "cycle": 1,
+    "title": "TRANSFERT IRRÉGULIER",
+    "original_text": "Le contrôle du site change sans document officiel pendant la crise.",
+    "new_text": "Pendant la crise, le contrôle du site a été transféré sans document officiel.",
+    "new_title": "TRANSFERT IRRÉGULIER"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 3,
+    "cycle": 2,
+    "title": "TENTATIVE BLOQUÉE",
+    "original_text": "Une demande officielle de reprise d’ORPHÉE a été bloquée par le relais politique lié à CERBÈRES.",
+    "new_text": "Le relais politique de CERBÈRES a bloqué une demande officielle de reprise d’ORPHÉE.",
+    "new_title": "TENTATIVE BLOQUÉE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 4,
+    "cycle": 2,
+    "title": "OPTION DE CRISE",
+    "original_text": "Le coordinateur d’ORPHÉE a préparé une solution politique de dernier recours, sans ordre légal confirmé.",
+    "new_text": "Le coordinateur d’ORPHÉE a préparé une solution politique d’urgence sans autorisation légale connue.",
+    "new_title": "OPTION DE CRISE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 5,
+    "cycle": 2,
+    "title": "GARDE DU SITE",
+    "original_text": "Aucune pièce ne prouve que le responsable de la sécurité du site connaissait l’objectif complet d’ORPHÉE au moment du transfert.",
+    "new_text": "Rien ne prouve que le chef de la sécurité connaissait tout l’objectif d’ORPHÉE lors du transfert.",
+    "new_title": "GARDE DU SITE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RÉSEAU TOUJOURS ACTIF",
+    "original_text": "Les archives montrent que des responsables liés à ORPHÉE continuent de coordonner des actions après sa fermeture officielle.",
+    "new_text": "Des responsables ont continué à coordonner des actions autour d’ORPHÉE après sa fermeture.",
+    "new_title": "RÉSEAU TOUJOURS ACTIF"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 1,
+    "cycle": 1,
+    "title": "RENDEZ-VOUS SECRET",
+    "original_text": "L’Oyabun a rencontré le Wakagashira Arakida une semaine avant sa mort sans en informer son propre clan.",
+    "new_text": "L’Oyabun a rencontré le Wakagashira Arakida en secret, une semaine avant sa mort.",
+    "new_title": "RENDEZ-VOUS SECRET"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DOSSIER PARTIEL",
+    "original_text": "Le Wakagashira Kurokawa possède une copie incomplète d’un dossier préparé par l’Oyabun.",
+    "new_text": "Le Wakagashira Kurokawa détient une copie incomplète d’un dossier préparé par l’Oyabun.",
+    "new_title": "DOSSIER PARTIEL"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 3,
+    "cycle": 2,
+    "title": "VÉHICULE OFFICIEUX",
+    "original_text": "Une photographie montre un véhicule utilisé par un service de police près d’un rendez-vous Kurokawa antérieur.",
+    "new_text": "Une photo montre une voiture utilisée par la police près d’un ancien rendez-vous Kurokawa.",
+    "new_title": "VÉHICULE OFFICIEUX"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DETTE ANCIENNE",
+    "original_text": "Le Kobun Kurokawa a bénéficié plusieurs années plus tôt d’une intervention extérieure jamais expliquée au clan.",
+    "new_text": "Le Kobun Kurokawa avait reçu une aide extérieure dans une ancienne affaire. Le clan ne savait pas de qui.",
+    "new_title": "DETTE ANCIENNE"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 5,
+    "cycle": 2,
+    "title": "PRÉSENCE PROCHE",
+    "original_text": "Des données de déplacement placent le Kobun Kurokawa près du lieu du meurtre avant l’alerte officielle.",
+    "new_text": "Le Kobun Kurokawa se trouvait près du lieu du meurtre avant l’alerte officielle.",
+    "new_title": "PRÉSENCE PROCHE"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RUPTURE PRÉPARÉE",
+    "original_text": "Le dossier de l’Oyabun montre qu’il préparait la fin d’une relation ancienne avec un relais institutionnel.",
+    "new_text": "L’Oyabun voulait rompre une ancienne relation secrète avec un contact officiel.",
+    "new_title": "RUPTURE PRÉPARÉE"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 1,
+    "cycle": 1,
+    "title": "AFFAIRE CLASSÉE",
+    "original_text": "Une ancienne procédure visant le Kobun Kurokawa s’est terminée brutalement après une intervention inexpliquée.",
+    "new_text": "Une enquête visant le Kobun Kurokawa s’est arrêtée après une intervention inexpliquée.",
+    "new_title": "AFFAIRE CLASSÉE"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 2,
+    "cycle": 1,
+    "title": "RAPPEL DE FAVEUR",
+    "original_text": "Un message reçu avant le meurtre utilise une formule connue entre le Kobun et son ancien protecteur.",
+    "new_text": "Avant le meurtre, le Kobun Kurokawa reçoit un message avec une formule connue de son ancien protecteur.",
+    "new_title": "RAPPEL DE FAVEUR"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 3,
+    "cycle": 2,
+    "title": "RELAIS IDENTIFIÉ",
+    "original_text": "Le véhicule officieux est relié à un relais précis de la police, sans prouver à lui seul un ordre de meurtre.",
+    "new_text": "Une voiture utilisée par la police est reliée à un contact précis. Aucun ordre de meurtre n’est prouvé.",
+    "new_title": "RELAIS IDENTIFIÉ"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DETTE COMMERCIALE",
+    "original_text": "Les deux Wakagashira ont eux-mêmes maintenu une obligation financière discrète entre clans rivaux.",
+    "new_text": "Les deux Wakagashira avaient gardé une dette d’argent secrète entre leurs clans.",
+    "new_title": "DETTE COMMERCIALE"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 5,
+    "cycle": 2,
+    "title": "NOTE DE L’OYABUN",
+    "original_text": "L’Oyabun considérait la dette du Kobun comme un risque pour l’indépendance du clan.",
+    "new_text": "L’Oyabun pensait que la dette du Kobun mettait l’indépendance de son clan en danger.",
+    "new_title": "NOTE DE L’OYABUN"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 6,
+    "cycle": 3,
+    "title": "GIRI",
+    "original_text": "Un message rappelant une ancienne faveur a été reçu peu avant le meurtre de l’Oyabun. Un relais institutionnel est associé à cet échange.",
+    "new_text": "Le Kobun Kurokawa reçoit un rappel d’une ancienne faveur peu avant le meurtre. Un contact policier y est lié.",
+    "new_title": "GIRI"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 1,
+    "cycle": 1,
+    "title": "INFORMATION RÉSERVÉE",
+    "original_text": "L’horaire donné aux clans provient d’un dossier de police non public.",
+    "new_text": "Les clans ont reçu un horaire provenant d’un dossier de police non public.",
+    "new_title": "INFORMATION RÉSERVÉE"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 2,
+    "cycle": 1,
+    "title": "ÉCHANGE OFFICIEUX",
+    "original_text": "Le Wakagashira Kurokawa a accepté une action en échange d’une information sur le meurtre.",
+    "new_text": "Le Wakagashira Kurokawa a promis d’agir en échange d’une information sur le meurtre.",
+    "new_title": "ÉCHANGE OFFICIEUX"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 3,
+    "cycle": 2,
+    "title": "COPIE PARTIELLE",
+    "original_text": "Le Wakagashira Arakida a fait circuler une partie des documents vers un contact politique.",
+    "new_text": "Le Wakagashira Arakida a envoyé une partie des documents à un contact politique.",
+    "new_title": "COPIE PARTIELLE"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 4,
+    "cycle": 2,
+    "title": "AVERTISSEMENT",
+    "original_text": "Le Kobun Kurokawa a prévenu un relais policier que son clan commençait à comprendre la chaîne.",
+    "new_text": "Le Kobun Kurokawa a prévenu un policier que son clan commençait à comprendre l’affaire.",
+    "new_title": "AVERTISSEMENT"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 5,
+    "cycle": 2,
+    "title": "ENREGISTREMENT",
+    "original_text": "Une conversation montre que le relais demande des résultats sans apparaître dans la procédure.",
+    "new_text": "Un enregistrement montre qu’un policier demande des résultats sans passer par la procédure officielle.",
+    "new_title": "ENREGISTREMENT"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 6,
+    "cycle": 3,
+    "title": "DEMANDES HORS PROCÉDURE",
+    "original_text": "Des demandes adressées aux clans proviennent d’un contact policier, mais aucune procédure officielle ne les autorise.",
+    "new_text": "Un policier a demandé des actions aux clans sans passer par la procédure officielle.",
+    "new_title": "DEMANDES HORS PROCÉDURE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ASSURANCE DE COUVERTURE",
+    "original_text": "Le Kobun a reçu l’assurance qu’une première piste orienterait l’enquête vers Arakida.",
+    "new_text": "Le Kobun Kurokawa a reçu la promesse que l’enquête viserait d’abord Arakida.",
+    "new_title": "ASSURANCE DE COUVERTURE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 2,
+    "cycle": 1,
+    "title": "RIPOSTE SUSPENDUE",
+    "original_text": "Le Wakagashira Arakida avait préparé une riposte après le meurtre, puis l’a stoppée avant exécution.",
+    "new_text": "Le Wakagashira Arakida avait préparé une riposte après le meurtre, puis l’a arrêtée.",
+    "new_title": "RIPOSTE SUSPENDUE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 3,
+    "cycle": 2,
+    "title": "COPIE EXTERNE",
+    "original_text": "Le Kobun Arakida a placé une copie de son enregistrement hors du contrôle des clans et de la police.",
+    "new_text": "Le Kobun Arakida a mis une copie de son enregistrement hors de portée des clans et de la police.",
+    "new_title": "COPIE EXTERNE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 4,
+    "cycle": 2,
+    "title": "CHRONOLOGIE DU RELAIS",
+    "original_text": "Le relais policier contacte le Kobun avant le meurtre et reçoit une confirmation après.",
+    "new_text": "Un policier a contacté le Kobun Kurokawa avant le meurtre et a reçu une confirmation après.",
+    "new_title": "CHRONOLOGIE DU RELAIS"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 5,
+    "cycle": 2,
+    "title": "COOPÉRATION PRÉPARÉE",
+    "original_text": "Des éléments montrent que la cellule de coopération police-clans était prête avant l’annonce publique du meurtre.",
+    "new_text": "La police avait préparé sa coopération avec les clans avant l’annonce officielle de la mort.",
+    "new_title": "COOPÉRATION PRÉPARÉE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 6,
+    "cycle": 3,
+    "title": "UNE CHRONOLOGIE TROUBLANTE",
+    "original_text": "Les horaires relient un rappel de faveur, un contact policier et une version préparée de l’enquête. Les rôles exacts restent contestés.",
+    "new_text": "Des contacts policiers ont eu lieu avant le meurtre. Une version des faits était prête très vite après.",
+    "new_title": "CONTACTS AVANT LE MEURTRE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 1,
+    "cycle": 1,
+    "title": "VOLONTÉ DE RUPTURE",
+    "original_text": "Le dossier complet confirme que l’Oyabun préparait la fin de la relation clandestine avec le relais policier.",
+    "new_text": "L’Oyabun voulait mettre fin à ses contacts secrets avec un policier.",
+    "new_title": "VOLONTÉ DE RUPTURE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DERNIER MESSAGE",
+    "original_text": "Le Kobun Kurokawa a conservé un message du relais reçu avant le meurtre qui rappelle explicitement l’ancienne faveur.",
+    "new_text": "Avant le meurtre, le Kobun Kurokawa reçoit un message lui rappelant une ancienne faveur d’un policier.",
+    "new_title": "DERNIER MESSAGE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 3,
+    "cycle": 2,
+    "title": "VERSION PUBLIQUE",
+    "original_text": "Le Wakagashira Kurokawa a préparé une version qui isole le Kobun et minimise le rôle policier.",
+    "new_text": "Le Wakagashira Kurokawa a préparé un récit qui accuse le Kobun et minimise le rôle de la police.",
+    "new_title": "VERSION PUBLIQUE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 4,
+    "cycle": 2,
+    "title": "COPIE HORS CONTRÔLE",
+    "original_text": "La copie extérieure de l’enregistrement ne peut plus être garantie comme récupérable ou supprimable.",
+    "new_text": "Une copie de l’enregistrement a échappé aux clans et à la police. On ignore si elle peut être récupérée.",
+    "new_title": "COPIE HORS CONTRÔLE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 5,
+    "cycle": 2,
+    "title": "PRÉPARATION POLICIÈRE",
+    "original_text": "La cellule de coopération était opérationnelle avant que la mort ne soit annoncée au public.",
+    "new_text": "La police avait préparé sa coopération avec les clans avant l’annonce de la mort de l’Oyabun.",
+    "new_title": "PRÉPARATION POLICIÈRE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 6,
+    "cycle": 3,
+    "title": "TROIS TRACES À RECOUPER",
+    "original_text": "Avant le meurtre, un message rappelle une dette ancienne. Après, une version incriminant Arakida est préparée. Des contacts policiers précèdent l’annonce publique.",
+    "new_text": "Avant le meurtre, un policier contacte le Kobun Kurokawa. Après, une version accusant Arakida est préparée.",
+    "new_title": "APPEL AVANT LE MEURTRE"
+  }
+]
