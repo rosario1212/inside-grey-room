@@ -146,7 +146,8 @@ assert(casinoUnassignedLobby.includes('CHOISIS D’ABORD UN RÔLE'),'Unassigned 
 assert(casinoUnassignedLobby.includes('data-role-id="casino"')&&casinoUnassignedLobby.includes('is-taken'),'Full Yonghe camp must not accept an eighth player');
 
 
-assert(js.includes('savedScroll=preserveLobby')&&maitre.includes('savedScroll=preserveLobby'),'Live lobby updates must not jump to top');
+const preservesLobbyAnchor=source=>source.includes('lobby=preserveLobby?')&&source.includes('oldScroll+delta')&&source.includes('getBoundingClientRect().top');
+assert(preservesLobbyAnchor(js)&&preservesLobbyAnchor(maitre),'Live lobby updates must preserve the selected role viewport anchor');
 assert(js.includes("getAttribute('aria-pressed')!=='true'")&&maitre.includes("getAttribute('aria-pressed')==='true'"),'An already selected role must not trigger a redundant network request');
 for(const marker of ['hnet-activity-note','hnet-roster-disclosure','hnet-code strong','hnet-role-random'])assert(css.includes(marker),'Unifying Heritage CSS missing '+marker);
 for(const marker of ['casino-lobby-access','casino-roster-disclosure'])assert(casinoCss.includes(marker),'Casino CSS missing '+marker);
