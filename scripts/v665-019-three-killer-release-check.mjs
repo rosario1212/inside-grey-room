@@ -7,12 +7,15 @@ const runtime=read('supabase/migrations/20261114214500_igr_v665_019_adaptive_run
 const release=read('supabase/migrations/20261114221000_igr_v665_019_guarded_release.sql');
 const anon=read('supabase/migrations/20261114224000_igr_v665_019_sealed_variant_identity.sql');
 const shell=read('scripts/publish-006-adaptive-shell.mjs');
+const v772=read('supabase/migrations/20261117210100_igr_v772_investigation_cadence.sql');
+assert(v772.includes('create trigger igr_v772_one_investigation'),'v772 one-investigation server-side enforcement missing');
+
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(app.includes('payload.reconstruction_019={killer,security_role,cover}'),'019 wrong final payload');
 assert(app.includes("currentCase==='019'?['killer','security_role','cover']"),'019 scored axes must match verdict');
 assert(app.includes('igr019Killer')&&app.includes('igr019SecurityRole'),'019 3 suspect final UI absent');
 assert(app.includes('igr_v665_019_hypothesis_submit') && app.includes('igr_v665_019_investigate_choice'),'019 sealed and adaptive requests missing');
-assert(app.includes('thisCycle.length>=2'),'019 two investigation cap missing');
+assert(app.includes('thisCycle.length>=1'),'019 one investigation cap missing');
 assert(!app.includes('payload.reconstruction_019={mandate,knowledge,cover}'),'019 obsolete command-only verdict');
 assert(runtime.includes('igr_private.igr_v665_019_offered'),'019 private hypothesis-sensitive selector absent');
 assert(runtime.includes("a.action_type='hypothesis_019'"),'019 hypotheses must be private to the server');
