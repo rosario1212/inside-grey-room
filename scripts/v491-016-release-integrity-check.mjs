@@ -30,5 +30,5 @@ const omertaScript=html.match(/omerta-money-intel-v1\.js\?v=[^"']+/)?.[0];
 assert(omertaScript&&sw.includes('/'+omertaScript),'Omerta standalone script and offline asset must share the same version');
 assert(omertaScript.includes('santoro-display-audit-20261108'),'Omerta standalone must use a fresh versioned asset URL');
 assert(sw.includes("new Request(url,{cache:'reload'})"),'PWA installer must refresh all versioned assets even when reusing the cache key');
-assert(finalizer.includes("const clientVersion='"+cache+"'"),'production builder would reinstate stale 016 cache');
+assert(finalizer.includes("const clientVersion='"+cache),'production builder would reinstate stale 016 cache');
 console.log('016 release gate: 5–9 roles, 3-axis final, private A/B/C pinned runtime, secured optional Expert, and PWA coherence PASS');
