@@ -1,7 +1,7 @@
 /* Inside Grey Room v30 — utility navigation + universal role-choice presentation + theme isolation. */
 (()=>{
 'use strict';
-const VERSION='30.0-prebeta-theme-isolation';
+const VERSION='30.1-single-exit-navigation';
 let queued=false;
 const isFr=()=>window.IGR_LOCALE!=='en';
 const currentView=()=>{try{return String(STATE?.view||'')}catch{return''}};
@@ -40,7 +40,13 @@ function enhanceUtilityExit(){
   const head=page?.querySelector('.page-head');
   if(!head)return;
 
-  let button=[...head.querySelectorAll('button,.btn,a')].find(el=>/accueil|\bhome\b|fermer|\bclose\b/i.test(el.textContent||''));
+  // Règles and Profil are real pages: one contextual Retour, not Fermer + Retour.
+  // Join deliberately keeps Retour (previous campaign) and Accueil (direct home),
+  // because these can lead to different destinations.
+  const pageReturn=view==='rules'||view==='profile';
+  const buttons=[...head.querySelectorAll('button,.btn,a')];
+  let button=buttons.find(el=>/accueil|\\bhome\\b|fermer|\\bclose\\b/i.test(el.textContent||''));
+  if(!button&&pageReturn)button=buttons.find(el=>el.hasAttribute('data-igr-global-back'));
   if(!button){
     button=document.createElement('button');
     button.type='button';
@@ -49,24 +55,27 @@ function enhanceUtilityExit(){
 
   button.classList.add('igr-local-home','igr-utility-exit');
   button.classList.toggle('igr-profile-home',view==='profile');
-  button.classList.toggle('igr-rules-close',view==='rules');
+  button.classList.toggle('igr-rules-close',false);
+  button.classList.toggle('igr-utility-return',pageReturn);
   button.classList.toggle('igr-join-home',view==='join');
   button.type='button';
   button.removeAttribute('onclick');
 
-  const close=view==='rules';
-  if(close){
-    const html=isFr()?'<span aria-hidden="true">×</span><b>Fermer</b>':'<span aria-hidden="true">×</span><b>Close</b>';
+  if(pageReturn){
+    // Let the shared router restore the actual previous route (or home).
+    // Do not also bind goHomeSafe: that would override contextual navigation.
+    button.dataset.igrGlobalBack='1';
+    const html=isFr()?'<span aria-hidden="true">←</span><b>Retour</b>':'<span aria-hidden="true">←</span><b>Back</b>';
     if(button.innerHTML!==html)button.innerHTML=html;
-    button.setAttribute('aria-label',isFr()?'Fermer les règles et revenir à l’accueil':'Close rules and return home');
-    button.setAttribute('title',isFr()?'Fermer':'Close');
-  }else{
-    const html=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
-    if(button.innerHTML!==html)button.innerHTML=html;
-    button.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');
-    button.setAttribute('title',isFr()?'Accueil':'Home');
+    button.setAttribute('aria-label',isFr()?'Revenir à la page précédente':'Return to the previous page');
+    button.setAttribute('title',isFr()?'Retour':'Back');
+    return;
   }
 
+  const html=isFr()?'<span aria-hidden="true">⌂</span><b>Accueil</b>':'<span aria-hidden="true">⌂</span><b>Home</b>';
+  if(button.innerHTML!==html)button.innerHTML=html;
+  button.setAttribute('aria-label',isFr()?'Revenir à l’accueil':'Return home');
+  button.setAttribute('title',isFr()?'Accueil':'Home');
   if(button.dataset.igrV29Home!=='1'){
     button.dataset.igrV29Home='1';
     button.addEventListener('click',goHomeSafe);
