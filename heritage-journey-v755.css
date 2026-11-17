@@ -192,3 +192,92 @@
  .hnet .hnet-role-card,.casino-live .casino-role-choice-card{transition:none!important}
  .hnet .hnet-role-card:active:not(:disabled){transform:none}
 }
+
+
+/* v757 — layout audit: distinguish local/online, reduce repetition and align every pregame section. */
+.hplay,.hnet{--hj-section-gap:14px}
+.hj-progress-local ol{grid-template-columns:repeat(4,minmax(0,1fr))}
+.hnet .hnet-title>p.hj-counter-moved{display:none}
+.hnet .hnet-title{margin:0}
+.hnet .hnet-title h1{margin-bottom:0;overflow-wrap:anywhere}
+.hnet .hnet-lobby{gap:var(--hj-section-gap);align-content:start}
+.hnet .hnet-lobby>.hnet-code,.hnet .hnet-lobby>.hj-table-meter,.hnet .hnet-lobby>.hnet-role-zone,.hnet .hnet-lobby>.hnet-roster-disclosure,.hnet .hnet-lobby>.hnet-launch-hint,.hnet .hnet-lobby>.hnet-start{min-width:0;margin-block:0}
+.hnet .hnet-role-zone{padding:15px!important;border:1px solid rgba(234,240,243,.1)!important;border-radius:13px!important;background:rgba(5,8,10,.32)!important}
+.maitre-page.hnet .hnet-role-zone{border:1px solid rgba(238,220,205,.15)!important;background:rgba(25,17,17,.16)!important}
+.hnet .hnet-role-head{display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;margin-bottom:9px!important}
+.hnet .hnet-role-head>div{display:grid;gap:4px}
+.hnet .hnet-role-head>div>span{color:var(--hp-accent,#cbd8de);letter-spacing:.11em;font-size:9px}
+.hnet .hnet-role-head h2{margin:0;font-size:clamp(22px,5vw,29px)}
+.hnet .hnet-role-head>small{margin-left:auto;color:#9eacb3;line-height:1.4;white-space:normal;text-align:right}
+.hnet .hnet-role-zone>.hnet-selected-role{margin-bottom:12px!important}
+.hnet .hnet-role-zone>.hnet-role-grid{align-items:stretch;margin:0 0 9px!important}
+.hnet .hnet-role-card .hnet-role-top{gap:5px}
+.hnet .hnet-role-card .hnet-role-top em{justify-self:start}
+.hnet .hnet-role-card .hj-role-description{hyphens:auto;overflow-wrap:break-word}
+.hnet .hnet-role-card.is-picked::after{right:9px;bottom:9px}
+.hnet .hnet-role-card .hnet-stars{padding-right:22px}
+.hnet .hnet-role-zone>.hnet-activity-note{margin:0 0 0!important;color:#92a1aa;font-size:10px!important;line-height:1.45}
+.hnet .hnet-role-zone>.hnet-role-warning{margin:10px 0 0!important;overflow-wrap:anywhere}
+.hnet .hnet-roster-disclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;line-height:1.45}
+.hnet .hnet-roster-disclosure>summary span{white-space:nowrap}
+.hnet .hnet-lobby>.hnet-launch-hint{padding:0 2px;color:#b6c4cb;line-height:1.55;font-size:12px}
+.hnet .hnet-lobby>.hnet-start{width:100%}
+.hnet .hnet-create{display:grid;align-content:start;gap:10px}
+.hnet .hnet-create>span{margin-bottom:0}
+.hnet .hnet-create h1{margin:0;overflow-wrap:anywhere}
+.hnet .hnet-create>p{margin:0;max-width:58ch}
+.hnet .hnet-create label{margin:12px 0 0}
+.hnet .hnet-create>.btn{margin-top:6px}
+.hplay .hplay-campaign-layout{align-items:start}
+.hplay .hplay-cases-panel,.hplay .hplay-side>.hplay-panel{min-width:0}
+.hplay .hplay-section-head{align-items:center;flex-wrap:wrap}
+.hplay .hplay-section-head>b{max-width:100%;overflow-wrap:anywhere}
+.hplay .hplay-case-copy{min-width:0}
+.hplay .hplay-case-copy>strong,.hplay .hplay-case-copy>small{overflow-wrap:anywhere}
+.hplay .hplay-dossier-copy{min-width:0}
+.hplay .hplay-carry-strip{display:flex;flex-wrap:wrap;gap:7px}
+.hplay .hplay-launch-box{min-width:0}
+.hplay .hplay-setup-form{max-width:720px;margin-inline:auto}
+.hplay .hplay-setup-head{max-width:720px;margin-inline:auto}
+.hplay .hplay-setup-form .hplay-start{width:100%}
+.heritage-dual-row .btn{min-width:0}
+.heritage-dual-row .hj-mode-copy strong,.heritage-dual-row .hj-mode-copy small{overflow-wrap:anywhere;white-space:normal}
+.casino-live .casino-lobby-top,.casino-live .casino-role-choice-zone,.casino-live .casino-launch-readiness,.casino-live .casino-roster-disclosure{min-width:0}
+.casino-live .casino-lobby-top>.hj-table-meter{margin-top:10px}
+.casino-live .casino-role-choice-card{min-width:0;align-content:start}
+.casino-live .casino-role-choice-card small{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.5}
+.casino-live .casino-launch-readiness li{overflow-wrap:anywhere}
+@media(max-width:760px){
+ .hplay .hplay-campaign-layout{gap:10px}
+ .hplay .hplay-panel{padding:15px}
+ .hplay .hplay-poster{margin-bottom:10px}
+ .hplay .hplay-section-head{gap:7px}
+ .hplay .hplay-campaign-hero{height:155px}
+ .hnet .hnet-lobby{padding:15px;gap:12px}
+ .hnet .hnet-role-zone{padding:13px!important}
+}
+@media(max-width:520px){
+ .hj-progress{padding-top:7px;padding-bottom:13px;margin-bottom:18px}
+ .hj-progress-label{margin-bottom:10px;letter-spacing:.045em}
+ .hj-progress li span{width:30px;height:30px;border-radius:9px}
+ .hnet .hnet-role-head>small{text-align:left;margin-left:0}
+ .hnet .hnet-role-card .hnet-stars{padding-right:15px}
+ .hnet .hnet-role-card{padding:11px}
+ .hplay .hplay-top,.hnet .hnet-head{min-height:44px;gap:8px}
+ .hplay .hplay-back{max-width:57%;padding-inline:10px}
+ .hplay .hplay-mode,.hnet .hnet-head>span{max-width:43%;font-size:8px;letter-spacing:.035em;overflow-wrap:anywhere}
+ .hplay .hplay-setup-form{padding:14px}
+ .hplay .hplay-dossier-copy h1{overflow-wrap:anywhere}
+ .hplay .hplay-case{grid-template-columns:50px minmax(0,1fr) 14px;gap:9px;padding:10px}
+ .hplay .hplay-case-poster{width:50px;height:75px}
+ .hplay .hplay-case-copy{column-gap:6px;row-gap:4px}
+ .hplay .hplay-case-copy>strong{font-size:13px}
+ .hplay .hplay-case-copy>small{font-size:10px}
+ .hplay .hplay-case-copy>em{font-size:11px}
+ .hplay .hplay-campaign-hero{height:140px}
+}
+@media(max-width:370px){
+ .hnet .hnet-code{padding:11px}
+ .hnet .hnet-code-copy{min-width:70px}
+ .hplay .hplay-back{max-width:55%}
+}
