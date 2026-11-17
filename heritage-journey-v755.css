@@ -281,3 +281,17 @@
  .hnet .hnet-code-copy{min-width:70px}
  .hplay .hplay-back{max-width:55%}
 }
+
+
+/* Casino shares the same selection-first rhythm, with its original brass/burgundy palette. */
+.casino-live .casino-role-choice-zone>.casino-selected-role{
+ margin:4px 0 14px!important;padding:13px 14px;
+ border:1px solid rgba(210,171,135,.3);border-radius:11px;
+ background:linear-gradient(130deg,rgba(65,36,36,.63),rgba(24,17,19,.82))
+}
+.casino-live .casino-role-choice-zone>.casino-role-choice-group{margin-top:0}
+.casino-live .casino-selected-role>em{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:520px){
+ .casino-live .casino-role-choice-zone>.casino-selected-role{padding:12px}
+ .casino-live .casino-selected-role>em{font-size:9px;max-width:100px}
+}
