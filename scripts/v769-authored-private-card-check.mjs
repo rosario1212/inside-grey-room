@@ -81,4 +81,11 @@ assert(!original.includes('TON CONTEXTE PERSONNEL')&&!original.includes('POUR É
 const full=draw({story:'Le texte originel de cette fiche est déjà assez détaillé.',
  v769_story:'À NE PAS DUPLIQUER',v769_questions:[]});
 assert(!full.includes('À NE PAS DUPLIQUER'),'Never duplicate an already visible story');
+for(const file of ['heritage-play-v13-7.js','heritage-maitre-v34.js']){
+ const source=fs.readFileSync(file,'utf8');
+ assert(source.includes('<details class="hplay-role-full" open>'),
+  file+' must initially show the entire already-authored role purpose');
+ assert(source.includes('CE QUE TU SAIS SEUL')&&source.includes('TON OBJECTIF'),
+  file+' must keep objectives separate from role secrets');
+}
 console.log('PASS v769: authenticated authored supplements are useful, escaped, optional, and private; no other secret, variant mismatch or duplicate content.');
