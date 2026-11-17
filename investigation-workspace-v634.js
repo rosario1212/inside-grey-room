@@ -98,12 +98,8 @@ function organize(raw){
    const optionalCount=reports.filter(e=>/_(1[0-9]|20)$/.test(String(e.payload?.id||''))).length;
    const label=makeEl('small','igr634-priority-label',tr('PISTES DU CYCLE '+cycle,'CYCLE '+cycle+' LEADS'));
    const title=makeEl('h3','',tr('Choisis une vérification','Choose what to check'));
-   const hint=makeEl('p','',adaptive
-    ?tr('Vérifications principales : '+Math.min(3,mainCount)+'/3 · Piste facultative : '+Math.min(1,optionalCount)+'/1. Chaque résultat rejoint « Pièces examinées ». Cherche les faits vérifiables et confronte-les aux déclarations.',
-        'Main checks: '+Math.min(3,mainCount)+'/3 · Optional lead: '+Math.min(1,optionalCount)+'/1. Results appear under Examined evidence; compare them with the statements.')
-    :tr('Ouvre une piste, lis le document obtenu, puis confronte-le aux déclarations. Les limites varient selon le dossier.',
-        'Open one lead, read its result and compare it with the statements. Limits depend on the case.'));
-   priority.append(label,title,hint,...bucket.priority);outside.appendChild(priority);
+   const hint=makeEl('p','',tr('Une seule piste au choix par cycle. Confronte cette pièce aux déclarations ; les autres restent cachées.','Choose one lead per cycle. Compare it with statements; other leads stay hidden.'));
+    priority.append(label,title,hint,...bucket.priority);outside.appendChild(priority);
  }
  if(lead){
    const area=makeEl('section','igr634-interviews');
