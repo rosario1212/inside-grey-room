@@ -19,10 +19,12 @@ for(const marker of [
 ]){
  assert(web.includes(marker),'Web build missing '+marker);
  assert(mobile.includes(marker),'Native build missing '+marker);
- for(const entry of ['index.html','en.html']){
-  const html=read(join(out,entry));
-  assert(html.includes(marker),entry+' missing '+marker);
- }
+ const canonicalHtml=read(join(out,'index.html'));
+ assert(canonicalHtml.includes(marker),'Canonical game entry missing '+marker);
+ // English is a deliberate locale-setting redirect to the canonical game,
+ // not a second independent runtime.
+ const englishRedirect=read(join(out,'en.html'));
+ assert(englishRedirect.includes("location.replace('./')"),'English locale redirect changed');
  assert(read(join(out,marker)).length>100,'Published bundle missing '+marker);
 }
 assert(standard.includes("const oldLobby=document.querySelector('#app .lobby-v11')"),'All 001–034 rooms must preserve existing lobby position');
