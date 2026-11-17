@@ -48,17 +48,17 @@ try{sw=await fetch('service-worker.js',target)}
 catch(e){if(e?.code!=='ENOENT'||!target.endsWith('/www'))throw e}
 
 for(const [name,doc] of [['index',html],['en',en]]){
- assert.match(doc,/common-dossier-v106\.js\?v=v106-common-dossier/);
+ assert.match(doc,/common-dossier-v106\.js\?v=v771-common-dossier/);
  const pos=doc.lastIndexOf('common-dossier-v106.js');
  assert(!/<script\s[^>]*src=/i.test(doc.slice(pos)),'v106 must be last external runtime in '+name);
- if(name==='index')assert.match(doc,/notifications-v12\.js\?v=v106-common-dossier/);
+ if(name==='index')assert.match(doc,/notifications-v12\.js\?v=v771-common-dossier/);
 }
 assert.equal(builtRuntime,runtime);
 assert.equal(builtNotify,notify);
 if(sw!==null){
- assert.match(sw,/igr-v106-common-dossier/);
- assert.match(sw,/common-dossier-v106\.js\?v=v106-common-dossier/);
- assert.match(sw,/notifications-v12\.js\?v=v106-common-dossier/);
+ assert.match(sw,/igr-v771-common-dossier/);
+ assert.match(sw,/common-dossier-v106\.js\?v=v771-common-dossier/);
+ assert.match(sw,/notifications-v12\.js\?v=v771-common-dossier/);
 }
 assert.match(build,/copyFile\(source/);
 console.log('v106: public dossier, role gating, notification privacy, cycle provenance and web/mobile bundle PASS');
