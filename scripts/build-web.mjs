@@ -9,6 +9,7 @@ const runtimeFiles=[
  'i18n-en-v12.js','language-v12.js','rules-v12.js','locale-settings-v12.js','ui-polish-v12.js','locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','omerta-hotfix-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js','omerta-v12-39.js','omerta-money-intel-v1.js','omerta-santoro-verdict-v28.js','omerta-023-spy-v1.js','terror-v12-37.js','terror-live-v681.js','terror-front-v682.js','terror-command-v688.js','terror-command-v694.js','role-cadence-v694.js','analyst-profiling-v700.js','regime-live-v13.js','dlc-suite-v12-37.js','live-cell-v12-44.js','dlc-profile-ui-v12-44.js','dlc-invites-v12-45.js','dlc-copy-v12-46.js','service-worker.js',
  'investigation-ux-v772.css','investigation-ux-v772.js',
  'live-game-v772.css','cast-names-v772.js','idle-choice-v772.js',
+ 'judicial-card-v773.js','judicial-card-v773.css',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
 async function exists(file){try{await stat(file);return true}catch{return false}}
