@@ -64,6 +64,9 @@ function enrichHeritageLobby(main){
  if(picked)picked.setAttribute('data-hj-picked','true');
 }
 function enrichCasinoLobby(casino){
+ const roleZone=$('.casino-role-choice-zone',casino);
+ const choice=roleZone&&$('.casino-selected-role',roleZone),groups=roleZone&&$('.casino-role-choice-group',roleZone);
+ if(choice&&groups&&choice.nextElementSibling!==groups)groups.insertAdjacentElement('beforebegin',choice);
  const panel=$('.casino-lobby-top',casino);if(!panel)return;
  const match=panel.textContent.match(/([0-9]+)\s*\/\s*12\s*joueurs/i);
  const anchor=$('.casino-lobby-access',panel);
