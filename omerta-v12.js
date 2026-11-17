@@ -316,7 +316,7 @@
     }
     const ps=STATE.sync?.player?.private_state||{},role=omertaRole(),info=roleInfo(role);
     if(ps.omerta_objective){
-      try{const t=document.createElement('template');t.innerHTML=html;const summary=t.content.querySelector('.role-summary span');if(summary)summary.textContent=ps.omerta_objective;html=t.innerHTML}catch(_){}
+      try{const t=document.createElement('template');t.innerHTML=html;const summary=t.content.querySelector('.igr-private-priority span');if(summary)summary.textContent=ps.omerta_objective;html=t.innerHTML}catch(_){}
     }
     const note=`<div class="omerta-private-role"><span>RÔLE OMERTÀ</span><h3>${h(ps.omerta_role||info.label||role)}</h3>${ps.omerta_power?`<p><b>POUVOIR</b>${h(ps.omerta_power)}</p>`:''}</div>`;
     const dock=`<div class="omerta-decision-dock"><span><b>TÉLÉPHONES POSÉS</b>Discute d’abord. Valide seulement une décision irréversible.</span><button class="btn primary small" onclick="igrOmertaOpenDecision()">Valider une décision</button></div>`;
