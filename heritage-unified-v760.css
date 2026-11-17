@@ -333,3 +333,31 @@
 }
 /* Casino progress shows during the actual room lobby, not before joining. */
 #app .casino-live:not(:has(.casino-lobby-top))>.hj-progress{display:none!important}
+
+
+/* HÉRITAGE v771 — use the exact Maître ink from the *actual buttons*
+   (#fff5ea from the Maître primary; #5c3231 from the local ivory control).
+   The app's own foreground and the nested SVG must never diverge by theme
+   or by viewport width. Other campaign palettes remain untouched. */
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online{
+ color:#fff5ea!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local{
+ color:#5c3231!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon,
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon svg {
+ color:#fff5ea!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon svg{
+ stroke:currentColor!important;
+ fill:none!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon,
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon svg{
+ color:#5c3231!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon svg{
+ stroke:currentColor!important;
+ fill:none!important;
+}
