@@ -166,7 +166,7 @@ for(const view of ['rules','profile']){
  assert(!modalClose.removed,'Dialog close must remain available');
 }
 const loader=read('scripts/apply-mobile-ui-v28.mjs');
-assert(loader.includes("v776-single-contextual-exit"),'Mobile cache must refresh');
-assert(web.includes('global-navigation-v766.js?v=v776-single-contextual-exit')&&mobile.includes('global-navigation-v766.js?v=v776-single-contextual-exit'),'Both builds must refresh navigation JavaScript');
+assert(loader.includes("v30-v776-single-contextual-exit"),'Mobile cache must refresh');
+assert(web.includes('global-navigation-v766.js?v=v30-v776-single-contextual-exit')&&mobile.includes('global-navigation-v766.js?v=v30-v776-single-contextual-exit'),'Both builds must refresh navigation JavaScript');
 
 console.log('PASS global navigation v766: base dossiers, all DLC lobby route, 4 Héritage campaigns, Casino, local screens, stable catalogue/profile and both bundles.');
