@@ -29,7 +29,7 @@ assert(investigatorRender.includes("editorial?.preciseCaseCopy?.(original,p.titl
  'Investigator must see the corrected title and facts on first render');
 assert(ux.includes("typeof STATE!=='undefined'?STATE:window.STATE"),
  'Late DOM cleanup must read the actual game state safely');
-assert(ux.includes("e.event_type!=='trame'")&&ux.includes("const events=window.STATE?.sync?.events||[]"),
+assert(ux.includes("e.event_type!=='trame'")&&ux.includes("const events=state?.sync?.events||[]"),
  'Evidence-panel headings can only be updated for actually authorized and displayed events');
 assert(sql.includes("ORDER BY t.ord") && sql.includes("AND x.old_text=t.item->>'text'"),
  'Do not reorder candidate trames or rewrite a different variant');
