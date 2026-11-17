@@ -4,7 +4,7 @@
 const VERSION='766.0-global-navigation';
 const root=()=>document.getElementById('app');
 const $=(q,p=document)=>p?.querySelector?.(q)||null;
-let lastRoute='',returnRoute='',scheduled=false,pendingNav=false,previousGameTab='';
+let lastRoute='',returnRoute='',scheduled=false;
 const normalize=s=>String(s||'').trim().replace(/\s+/g,' ');
 function baseView(){try{return typeof STATE!=='undefined'?String(STATE?.view||''):''}catch{return''}}
 function scenarioId(){try{return String(STATE?.selectedScenario||'')}catch{return''}}
@@ -57,12 +57,11 @@ function routeChanged(){
  const old=lastRoute;lastRoute=next;
  if(!old)return;
  // A deliberate return to the selected scenario retains that list position.
- const restoringScenarios=old.startsWith('scenarios:dossier:')&&next==='scenarios:list';
+ const restoringScenarios=next==='scenarios:list'&&(old.startsWith('scenarios:dossier:')||old==='base:lobby'||old.startsWith('local:'));
  if(!restoringScenarios)noSmoothTop();
  if(old!=='join'&&next==='join')returnRoute=old;
  if(old==='join'&&next!=='join')returnRoute='';
  // A room refresh may repaint a different title without changing this route.
- pendingNav=false;
 }
 function navigateTo(route){
  if(!route)return false;
@@ -117,14 +116,6 @@ function handleBack(e){
  if(navigateTo(origin))return;
  if(typeof goHome==='function')goHome();
 }
-function onClick(e){
- const target=e.target.closest?.('button,[role="button"],a,.scenario');
- if(!target)return;
- // Store an origin only for a real user-initiated navigation, never a poll.
- const rootEl=root();if(!rootEl?.contains(target))return;
- if(target.matches('[data-igr-global-back],[data-hj-return]'))return;
- pendingNav=true;
-}
 function scan(){
  scheduled=false;
  routeChanged();
@@ -139,7 +130,6 @@ function queueScan(){
 function boot(){
  const app=root();if(!app)return;
  lastRoute=currentRoute();
- document.addEventListener('click',onClick,true);
  document.addEventListener('click',handleBack,true);
  new MutationObserver(mutations=>{
   if(!mutations.some(m=>m.type==='childList'&&(m.addedNodes.length||m.removedNodes.length)))return;
