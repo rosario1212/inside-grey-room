@@ -117,6 +117,7 @@ jobs:
           node scripts/v644-relation-facts-check.mjs
           node scripts/v645-005-shortcards-check.mjs
           node scripts/omerta-standalone-goal-scorer-check.mjs
+          node scripts/v768-private-character-clarity-check.mjs
           node scripts/omerta-santoro-private-ui-check.mjs
           node scripts/omerta-santoro-display-check.mjs
           node scripts/omerta-santoro-private-preflight-check.mjs
