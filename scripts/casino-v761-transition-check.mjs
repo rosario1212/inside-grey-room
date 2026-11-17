@@ -89,5 +89,90 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
 
   });
  }
+ // A saved room must NEVER show the creation form while the first
+ // authoritative sync is still outstanding. Reproduce a slow response.
+ await check('casino-v763-no-intermediate-form-on-resume',async()=>{
+  await page.setViewportSize({width:393,height:852});
+  // Storage is unavailable on an about:blank setContent document. Serve the
+  // synthetic HTML from a routed HTTPS origin, exactly like the real PWA.
+  const fixtureUrl='https://casino-v763-fixture.test/entry';
+  await page.route(fixtureUrl,route=>route.fulfill({
+   status:200,contentType:'text/html; charset=utf-8',body:pageHtml
+  }));
+  await page.goto(fixtureUrl,{waitUntil:'domcontentloaded'});
+  await page.addScriptTag({content:shellSource});
+  await page.addScriptTag({content:catalog});
+  await page.addScriptTag({content:client});
+  await page.addScriptTag({content:journey});
+  await page.evaluate(()=>{
+   localStorage.setItem('igr_casino_identity_v1',JSON.stringify({
+    roomId:'b741b335-7040-4dbc-934f-b19d49595753',
+    sessionToken:'b'.repeat(64)
+   }));
+   window.__casinoOriginalFetch=window.fetch;
+   window.__casinoFetchCalls=0;
+   window.fetch=()=>{window.__casinoFetchCalls++;return new Promise(resolve=>{window.__casinoDeliver=resolve})};
+   window.IGR_CASINO_HERITAGE.open();
+  });
+  await page.locator('.casino-launch-button[data-casino-live]').click();
+  await page.waitForFunction(()=>typeof window.__casinoDeliver==='function');
+  await page.waitForTimeout(750);
+  const before=await page.evaluate(()=>({
+   campaign:document.querySelectorAll('.casino-page[data-casino-page="campaign"]').length,
+   live:document.querySelectorAll('#casino-live-v105').length,
+   unwanted:document.querySelectorAll('.casino-entry-options,.casino-entry-tabs').length,
+   busy:document.querySelector('.casino-launch-button')?.getAttribute('aria-busy'),
+   disabled:document.querySelector('.casino-launch-button')?.disabled
+  }));
+  assert.equal(before.campaign,1,'Keep the original campaign while resuming the saved room');
+  assert.equal(before.live,0,'No Casino lobby or temporary room form before server confirmation');
+  assert.equal(before.unwanted,0,'Never flash the Create/Join screen during resume');
+  assert.equal(before.busy,'true','A discreet busy signal remains on the clicked button');
+  assert(before.disabled,'Repeated clicks cannot create duplicate opens');
+  await page.evaluate(()=>{
+   window.__casinoDeliver({
+    ok:true,
+    json:async()=>({
+     roomId:'b741b335-7040-4dbc-934f-b19d49595753',
+     revision:1,status:'lobby',inviteCode:'C876543210',
+     chapter:1,phase:1,isHost:true,viewer:'p1',
+     members:[{id:'p1',name:'Hôte fictif',role:null,ready:false}]
+    })
+   });
+  });
+  await page.waitForSelector('#casino-live-v105 .casino-lobby-top');
+  const after=await page.evaluate(()=>({
+   lobby:document.querySelectorAll('#casino-live-v105 .casino-lobby-top').length,
+   temp:document.querySelectorAll('#casino-live-v105 .casino-entry-tabs').length,
+   campaign:document.querySelectorAll('.casino-page[data-casino-page="campaign"]').length,
+   scroll:window.scrollY,
+   rootCount:document.querySelectorAll('#app>.app').length
+  }));
+  assert.equal(after.lobby,1,'The first rendered Casino view must be the actual restored lobby');
+  assert.equal(after.temp,0,'There must be no transient Create/Join view after the reply');
+  assert.equal(after.campaign,0,'The public page is replaced exactly once');
+  assert(after.scroll<=2,'The final room opens at the top');
+  assert.equal(after.rootCount,1,'Keep the same app shell');
+
+  // A failed sync still gives the guest a usable form, rather than freezing
+  // the old campaign forever or faking a successful resume.
+  await page.evaluate(()=>{
+   window.IGR_CASINO_CLIENT.close();
+   window.fetch=()=>Promise.reject(new Error('network_uncertain'));
+  });
+  await page.locator('.casino-launch-button[data-casino-live]').click();
+  await page.waitForSelector('#casino-live-v105 .casino-entry-tabs');
+  assert.equal(await page.locator('#casino-live-v105 .casino-error').count(),1,
+   'Failed room verification should visibly offer recovery, not trap the user');
+  await page.evaluate(()=>{
+   window.fetch=window.__casinoOriginalFetch;
+   localStorage.removeItem('igr_casino_identity_v1');
+   localStorage.removeItem('igr_casino_identity_v1_pending');
+   window.IGR_CASINO_CLIENT.close();
+  });
+  await page.unroute(fixtureUrl);
+ });
+
  console.log('PASS CASINO v762: actual campaign Create/Join clicks, compact form, no connection noise and aligned frame');
+ console.log('PASS CASINO v763: saved room opens atomically without a temporary form, including slow sync and failure fallback');
 }

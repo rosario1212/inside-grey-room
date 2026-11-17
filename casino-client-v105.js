@@ -238,11 +238,48 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  for(const f of root.querySelectorAll('form[data-casino-form="interpellation"],form[data-casino-form="map"],form[data-casino-form="hearing"]'))setupEvidenceForm(f);
  connection();
 }
-async function open(entry){active=true;generation++;state=null;tab='card';busy=false;polling=null;advanceConfirm=false;entryMode=(entry?.mode==='join'||entry?.inviteCode)?'join':'create';entryDrafts={create:{},join:{}};joinDraft=entry?.fresh?entry:null;credentials=entry?.fresh?null:load();problem='';pending=null;syncedAt=0;render();
- // The public campaign CTA is below the fold. Do not carry its scroll offset
- // into the playable room (otherwise the top of Casino seems displaced).
+function scrollToCasinoTop(){
+ // Set the final screen's scroll position before the browser paints it.
  try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch{window.scrollTo(0,0)}
- clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)sync()},1200);if(credentials)await sync()}
+}
+async function open(entry,trigger=null){
+ active=true;
+ const epoch=++generation;
+ state=null;tab='card';busy=false;polling=null;advanceConfirm=false;
+ entryMode=(entry?.mode==='join'||entry?.inviteCode)?'join':'create';
+ entryDrafts={create:{},join:{}};joinDraft=entry?.fresh?entry:null;
+ credentials=entry?.fresh?null:load();
+ problem='';pending=null;syncedAt=0;
+ clearInterval(timer);
+ timer=setInterval(()=>{if(!document.hidden)sync()},1200);
+ if(!credentials){
+  // No previous room: Create/Join is already the final destination.
+  render();
+  scrollToCasinoTop();
+  return;
+ }
+ // Resume an existing room without ever painting the Create/Join form first.
+ // Keep the campaign where it is while server authority determines its stage.
+ if(trigger?.isConnected){
+  trigger.disabled=true;
+  trigger.dataset.casinoOpening='1';
+  trigger.setAttribute('aria-busy','true');
+ }
+ try{
+  await sync();
+  if(epoch!==generation)return;
+  // If a saved session is invalid/offline, show a usable recovery screen
+  // instead of leaving the user indefinitely on a non-interactive campaign.
+  if(!state)render();
+  scrollToCasinoTop();
+ }finally{
+  if(trigger?.isConnected){
+   trigger.disabled=false;
+   delete trigger.dataset.casinoOpening;
+   trigger.removeAttribute('aria-busy');
+  }
+ }
+}
 function close(){active=false;generation++;clearInterval(timer);timer=null;state=null;pending=null;busy=false;polling=null;window.IGR_CASINO_HERITAGE?.open()}
 function rootEntryDrafts(){
  for(const item of document.querySelectorAll('#'+ROOT+' .casino-entry-option [data-casino-draft]')){
@@ -258,7 +295,7 @@ document.addEventListener('click',async event=>{
  }
  const el=event.target.closest?.('[data-casino-action],[data-casino-command],[data-casino-tab],[data-casino-live]');if(!el)return;
  event.preventDefault();event.stopImmediatePropagation();
- if(el.hasAttribute('data-casino-live'))return open(el.hasAttribute('data-casino-join')?{fresh:true,mode:'join',inviteCode:$('#joinCode')?.value.trim().toUpperCase()||'',name:$('#joinPseudo')?.value.trim()||''}:undefined);if(!active)return;
+ if(el.hasAttribute('data-casino-live'))return open(el.hasAttribute('data-casino-join')?{fresh:true,mode:'join',inviteCode:$('#joinCode')?.value.trim().toUpperCase()||'',name:$('#joinPseudo')?.value.trim()||''}:undefined,el);if(!active)return;
  if(el.dataset.casinoTab){tab=el.dataset.casinoTab;render();return}
  if(el.dataset.casinoCommand){if(!busy&&!pending){
    if(['ADVANCE_PHASE','FINISH_CAMPAIGN'].includes(el.dataset.casinoCommand)&&!advanceConfirm){advanceConfirm=true;render();return}
@@ -311,5 +348,5 @@ document.addEventListener('change',event=>{
  if(activity)activity.textContent='ACTIVITÉ · '+roleStars(select.value);
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.12',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.13',open,close,sync});
 })();

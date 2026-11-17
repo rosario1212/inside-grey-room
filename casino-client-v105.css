@@ -622,3 +622,27 @@
  #app .casino-live .casino-entry-option{padding:16px!important}
  #app .casino-live .casino-entry-option h2{font-size:22px}
 }
+
+
+/* CASINO v763 — existing sessions resume in place, never via a throwaway form.
+   The action stays on the campaign with a discreet spinner until the server
+   returns the real lobby/game; no overlay or extra page is created. */
+#app .casino-page .casino-launch-button[data-casino-opening="1"]{
+ cursor:progress;
+ opacity:.88;
+}
+#app .casino-page .casino-launch-button[data-casino-opening="1"]::after{
+ content:"";
+ display:inline-block;
+ flex:none;
+ box-sizing:border-box;
+ width:15px;height:15px;margin-inline-start:9px;
+ border:2px solid currentColor;border-right-color:transparent;
+ border-radius:50%;
+ vertical-align:middle;
+ animation:casino-opening-v763 .7s linear infinite;
+}
+@keyframes casino-opening-v763{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+ #app .casino-page .casino-launch-button[data-casino-opening="1"]::after{animation:none}
+}
