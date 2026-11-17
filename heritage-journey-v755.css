@@ -454,3 +454,207 @@
 @media(prefers-reduced-motion:reduce){
  #app .hnet .hnet-role-card,#app .casino-live .casino-role-choice-card{transition:none!important}
 }
+
+
+/* Héritage v766 — calibrated campaign typography, geometry and contrast.
+   Keeps gameplay, posters and each campaign's original art direction intact. */
+#app :is(.hplay,.hnet){
+ --hv-tint:#b7cad6;--hv-quiet:#9cabb4;
+ --hv-line:rgba(191,211,224,.22);--hv-focus:#b7d6e6;
+}
+#app :is(.hplay,.hnet).hplay-theme-cendres{
+ --hv-tint:#a9cde0;--hv-quiet:#9fb9c8;
+ --hv-line:rgba(153,192,213,.3);--hv-focus:#b2ddf2;
+}
+#app :is(.hplay,.hnet).hplay-theme-kuroi{
+ --hv-tint:#d5bd92;--hv-quiet:#b9ad97;
+ --hv-line:rgba(202,176,127,.3);--hv-focus:#ebd1a1;
+}
+#app :is(.hplay,.hnet).maitre-page{
+ --hv-tint:#783b37;--hv-quiet:#69534c;
+ --hv-line:rgba(126,69,65,.27);--hv-focus:#8f463b;
+}
+#app .casino-live{
+ --hv-tint:#e7bf8c;--hv-quiet:#c8a999;
+ --hv-line:rgba(205,155,105,.31);--hv-focus:#efcb97;
+}
+
+/* A single predictable editorial hierarchy, not repeated tiny all-caps text. */
+#app .hplay :is(.hplay-eyebrow,.hplay-mode,.hplay-section-head span),
+#app .hnet :is(.hnet-head>span,.hnet-title>span){
+ font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+ font-size:10px;line-height:1.5;letter-spacing:.075em;
+}
+#app .hplay :is(.hplay-campaign-title h1,.hplay-dossier-copy h1,.hplay-setup-head h1),
+#app .hnet .hnet-create h1{
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+ font-weight:780;letter-spacing:-.045em;line-height:1.06;
+ text-wrap:balance;overflow-wrap:break-word;hyphens:none;
+}
+#app .hplay.hplay-theme-cendres :is(.hplay-campaign-title h1,.hplay-dossier-copy h1,.hplay-campaign-body>strong){
+ font-family:'Arial Narrow',system-ui,-apple-system,sans-serif;
+ font-weight:850;letter-spacing:-.055em;
+}
+#app .hplay.hplay-theme-kuroi :is(.hplay-campaign-title h1,.hplay-dossier-copy h1,.hplay-campaign-body>strong){
+ font-family:'Iowan Old Style',Baskerville,Georgia,serif;
+ font-weight:700;letter-spacing:-.028em;
+}
+#app .hplay.maitre-page :is(.hplay-campaign-title h1,.hplay-dossier-copy h1,.hplay-setup-head h1),
+#app .hnet.maitre-page .hnet-create h1{
+ font-family:Baskerville,'Iowan Old Style',Georgia,serif!important;
+ font-weight:700;letter-spacing:-.026em!important;
+}
+#app .hplay.hplay-dossier .hplay-dossier-copy h1{
+ font-size:clamp(31px,7vw,53px)!important;line-height:1.06!important;
+ margin-block:8px 12px!important;
+}
+#app .hplay .hplay-lead{max-width:66ch;font-size:14px;line-height:1.65}
+#app .hplay .hplay-top,#app .hnet .hnet-head{gap:12px;align-items:center;margin-bottom:9px}
+#app .hplay .hplay-back{min-height:46px;max-width:min(68%,400px);padding-inline:12px;border-radius:11px}
+#app .hplay .hplay-mode{max-width:35%;font-size:10px;letter-spacing:.065em}
+#app .hplay.maitre-page .hplay-back{color:#452d27!important;border-color:rgba(116,74,62,.33)!important;background:#f8f1e7!important}
+#app .hplay.maitre-page :is(.hplay-mode,.hplay-eyebrow){color:#765048!important}
+#app .hplay.maitre-page .hplay-lead{color:#54443b!important}
+
+/* The route is navigation, not a large banner. All five tabs have equal footprints. */
+#app :is(.hplay,.hnet,.casino-live) .hj-progress{
+ margin:0 0 17px!important;padding:5px 0 13px!important;
+ border-bottom:1px solid var(--hv-line,rgba(220,226,231,.15));
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress-label{
+ margin-bottom:7px;gap:10px;font-size:10px;letter-spacing:.055em;
+ color:var(--hv-quiet,#9ba9b3);
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress-label b{
+ color:var(--hv-tint,#cbd9e1);font-size:10px;line-height:1.35;
+ letter-spacing:.035em;text-align:right;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress ol{
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:5px;align-items:stretch;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress-local ol{
+ grid-template-columns:repeat(4,minmax(0,1fr));
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li{
+ min-width:0;min-height:44px;display:flex;align-items:center;
+ justify-content:center;gap:7px;text-align:center;
+ color:var(--hv-quiet,#a1aeb7);
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li>span,
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li>button>span{
+ width:31px;height:31px;border:1px solid var(--hv-line,rgba(220,226,231,.15));
+ border-radius:9px;flex:none;background:rgba(128,145,155,.06);
+ color:var(--hv-quiet,#a1aeb7);font-size:11px;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li.is-current span{
+ border-color:var(--hv-tint,#d6e3ea)!important;
+ background:var(--hv-tint,#d6e3ea)!important;color:#111517!important;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li>button.hj-step-link{
+ width:100%;min-height:44px;justify-content:center;gap:7px;
+ padding:4px 2px;white-space:normal;
+}
+#app .hplay.maitre-page .hj-progress li{color:#735f58}
+#app .hplay.maitre-page .hj-progress li.is-current span,
+#app .hnet.maitre-page .hj-progress li.is-current span{
+ background:#773730!important;border-color:#773730!important;color:#fff5eb!important;
+}
+#app .hplay.maitre-page .hj-progress-label span,
+#app .hnet.maitre-page .hj-progress-label span{color:#796961}
+#app .casino-live .hj-progress li.is-current span{color:#241713!important}
+
+/* Equal, predictable action tabs in all campaigns. */
+#app .hplay.hplay-campaign .hj-campaign-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;margin:0 0 16px;
+}
+#app .hplay.hplay-campaign .hj-campaign-actions>button{
+ width:100%;min-width:0;min-height:54px;
+ padding:10px 12px;font:750 12px/1.35 system-ui,-apple-system,sans-serif;
+ border-radius:10px;overflow-wrap:break-word;
+}
+#app .hplay.hplay-campaign .hj-campaign-play{
+ background:var(--hv-tint,#bdced8)!important;
+ color:#14191c!important;border-color:var(--hv-tint,#bdced8)!important;
+}
+#app .hplay.hplay-theme-kuroi .hj-campaign-play{
+ background:#d7c29b!important;color:#2c271d!important;border-color:#d7c29b!important;
+}
+#app .hplay.maitre-page .hj-campaign-play,
+#app .hplay.hplay-theme-maitre .hj-campaign-play{
+ background:#71332f!important;color:#fff4e8!important;border-color:#71332f!important;
+}
+#app .hplay.hplay-campaign .hj-join-entry{
+ min-width:0;max-width:100%;width:100%;margin:0!important;
+ min-height:54px;padding:10px 12px;
+ font:750 12px/1.35 system-ui,-apple-system,sans-serif;
+ border-radius:10px;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-copy strong{
+ font:750 13px/1.3 system-ui,-apple-system,sans-serif!important;
+ letter-spacing:.015em!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-copy small{
+ font:650 10.5px/1.35 system-ui,-apple-system,sans-serif!important;
+ letter-spacing:0!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row>.btn{
+ min-height:64px!important;border-radius:10px!important;
+}
+#app .hplay .hplay-case{border-radius:12px;min-height:96px}
+#app .hplay .hplay-case-copy>strong{font-size:14px;line-height:1.3}
+#app .hplay .hplay-case-copy>small{font-size:11px;line-height:1.5}
+#app .hnet .hnet-create,
+#app .hnet .hnet-lobby{width:100%;box-sizing:border-box}
+#app .hnet .hnet-role-zone .hnet-role-card{min-width:0;border-radius:11px}
+#app .hnet .hnet-role-zone .hnet-role-top b{font-size:13px;line-height:1.35}
+
+/* CASINO: two equally sized entry tabs and six stable in-game tabs. */
+#app .casino-live .casino-entry-tabs{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;width:100%;margin:12px 0 15px;
+}
+#app .casino-live .casino-entry-tab{
+ width:100%;min-width:0;min-height:48px;
+ margin:0!important;padding:10px 12px!important;
+ border-radius:9px!important;font:750 13px/1.3 system-ui,-apple-system,sans-serif!important;
+}
+#app .casino-live .casino-tabs{
+ display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));
+ align-items:stretch;gap:7px;margin:0 0 14px;
+ position:static;z-index:auto;padding:0;background:transparent;
+}
+#app .casino-live .casino-tabs>button{
+ width:100%;min-width:0;min-height:46px;height:100%;
+ margin:0!important;padding:9px 6px!important;
+ border-radius:9px!important;text-align:center;
+ font:750 11px/1.25 system-ui,-apple-system,sans-serif!important;
+ overflow-wrap:break-word;white-space:normal!important;
+}
+#app .casino-live .casino-tabs>button[aria-selected="true"],
+#app .casino-live .casino-entry-tab[aria-selected="true"]{
+ background:#73353a!important;color:#fff0dc!important;border-color:#cea47a!important;
+}
+#app .casino-live .casino-tabs>button:focus-visible,
+#app .casino-live .casino-entry-tab:focus-visible{
+ outline:2px solid var(--hv-focus,#efcb97)!important;outline-offset:2px;
+}
+@media(max-width:760px){
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li b{display:none!important}
+ #app .hplay.hplay-campaign .hj-campaign-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #app .hplay .hplay-campaign-title h1{font-size:clamp(39px,10vw,59px)!important;line-height:1.03!important}
+ #app .casino-live .casino-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #app .casino-live .casino-tabs>button{min-height:48px}
+}
+@media(max-width:380px){
+ #app .hplay.hplay-campaign .hj-campaign-actions{grid-template-columns:minmax(0,1fr)!important}
+ #app .hplay.hplay-campaign .hj-campaign-actions>button{min-height:48px}
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li>span,
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li>button>span{width:29px;height:29px}
+ #app .casino-live .casino-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #app .hplay.hplay-dossier .hplay-dossier-copy h1{font-size:clamp(29px,9vw,38px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress *,#app .casino-live .casino-tabs>button{transition:none!important}
+}
