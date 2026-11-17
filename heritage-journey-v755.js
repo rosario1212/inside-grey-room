@@ -48,7 +48,7 @@ function enrichHeritageLobby(main){
  const grid=$('.hnet-role-grid',lobby),selected=$('.hnet-selected-role',lobby);
  // Always place the current public selection before the complete role list.
  if(grid&&selected&&selected.nextElementSibling!==grid)grid.insertAdjacentElement('beforebegin',selected);
- $('.hnet-role-card',lobby).forEach(card=>{
+ Array.from(lobby.querySelectorAll('.hnet-role-card')).forEach(card=>{
   if(card.classList.contains('hnet-role-random')||$('.hj-role-description',card))return;
   const publicLabel=card.getAttribute('aria-label')||'';
   const description=publicLabel.split(' — ').slice(1).join(' — ').trim();
