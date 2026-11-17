@@ -3,7 +3,7 @@
  'use strict';
  let expirySig='',requestedSig='',deadline=0;
  const phases={interrogation_select:'Prochain interrogatoire',event_select:'Prochain événement'};
- const state=()=>window.STATE?.sync||null;
+ const state=()=>typeof STATE==='object'?STATE.sync:window.STATE?.sync||null;
  const print=()=>{
    const d=state(),r=d?.room,phase=r?.phase||'';
    const old=document.getElementById('igr772-idle-clock');
