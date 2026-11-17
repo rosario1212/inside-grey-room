@@ -537,7 +537,7 @@
   width:100%!important;
   height:100%!important;
   object-fit:cover!important;
-  object-position:center 35%!important;
+  object-position:center top!important;
   filter:brightness(.62) saturate(.78)!important;
 }
 #app .hplay-hub-grid>.maitre-hub-card .hplay-campaign-shade{
