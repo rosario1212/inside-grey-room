@@ -57,8 +57,8 @@ for(const page of ['index.html','en.html']){
   html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
   html=html.replace('</body>',`${authoritativeScript}\n</body>`);
   // This override must load after every injected CSS bundle on both language pages.
-  html=html.replace(/\\s*<link[^>]+href=["']private-card-readability-v773\\.css[^"']*["'][^>]*>/gi,'');
-  html=html.replace('</head>','  <link rel="stylesheet" href="private-card-readability-v773.css?v=private-readability-v773-20261117">\\n</head>');
+  html=html.replace(/\s*<link[^>]+href=["']private-card-readability-v773\.css[^"']*["'][^>]*>/gi,'');
+  html=html.replace('</head>','  <link rel="stylesheet" href="private-card-readability-v773.css?v=private-readability-v773-20261117">\n</head>');
   await writeFile(target,html,'utf8');
 }
 
