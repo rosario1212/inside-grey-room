@@ -19,7 +19,7 @@ check('Server sets 60s deadline on official decision phases',sql.includes("new.p
 check('Server auto-selects a neutral event or interrogation',sql.includes('igr_v772_auto_choice')&&sql.includes("'confrontation'"));
 check('Debrief after cycle 2 and 3 event slots',sql.includes('QUESTIONNAIRE · FIN DU CYCLE')&&sql.includes("phase='cycle_debrief'"));
 check('Terror-specific quiz protected',sql.includes("r.scenario_id in ('026','027','028')"));
-check('Source-safe player alias RPC',sql.includes('igr_v772_public_cast')&&cast.includes('igr_v772_cast_names'));
+check('Source-safe player alias RPC',sql.includes('igr_v772_public_cast')&&cast.includes('igr_v772_public_cast'));
 check('Entry point loads the mobile patch',html.includes('investigation-ux-v772.js')&&html.includes('investigation-ux-v772.css'));
 check('iOS safe area protection',css.includes('safe-area-inset-top')&&mobile.includes('safe-area-inset-top'));
 check('Visible server countdown',idle.includes('igr772-idle-clock'));
