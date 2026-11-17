@@ -24,3 +24,22 @@
  #app .private-card-v11.igr773-card .igr773-lines{gap:10px}
  #app .private-card-v11.igr773-card .igr773-lines li{font-size:14.5px;line-height:1.51}
 }
+
+/* v776 — One calm opening statement, no list marker or clutter. */
+#app .private-card-v11.igr773-card .igr773-situation-copy{
+ margin:9px 0 0;
+ max-width:58ch;
+ font-size:clamp(15px,4vw,17px);
+ line-height:1.56;
+ font-weight:400;
+ letter-spacing:0;
+ color:#e4e9ee;
+ overflow-wrap:break-word;
+ word-break:normal;
+}
+@media(max-width:390px){
+ #app .private-card-v11.igr773-card .igr773-situation-copy{
+   font-size:15px;
+   line-height:1.55;
+ }
+}
