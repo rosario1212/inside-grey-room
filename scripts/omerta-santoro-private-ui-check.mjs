@@ -38,14 +38,14 @@ assert(active.includes('Responsable du trajet'));
 assert(active.includes('Évite une désignation formelle pour cet acte'));
 assert(!active.includes('Objectif Verri historique'),
   'Standalone must never show a contradictory historic win objective');
-assert(active.includes('TON OBJECTIF PERSONNEL'));
+assert(active.includes('TON OBJECTIF'));
 assert(active.includes('CE QUE TU PEUX DEMANDER'));
 assert(active.includes('PENDANT — fait'));
 assert(active.includes('AVANT — poste'));
 assert(active.includes('APRÈS — recoupement'));
 assert(active.includes('&lt;secret&gt;')&&!active.includes('<secret>'));
-assert(!render(false).includes('TON OBJECTIF PERSONNEL'),'Historically played Omerta unaffected');
+assert(!render(false).includes('TON OBJECTIF'),'Historically played Omerta unaffected');
 assert(render(false).includes('Objectif Verri historique'));
-assert(!render(true,'analyste').includes('TON OBJECTIF PERSONNEL'),
+assert(!render(true,'analyste').includes('TON OBJECTIF'),
  'The investigators must never render the suspect private dossier');
 console.log('OMERTA SANTORO: private card, chronology, objective, legacy isolation & HTML escaping OK');

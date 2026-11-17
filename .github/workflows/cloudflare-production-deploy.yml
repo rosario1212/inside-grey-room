@@ -88,6 +88,7 @@ jobs:
           node scripts/omerta-money-intel-021-check.mjs
           node scripts/omerta-indic-final-rule-check.mjs
           node scripts/omerta-standalone-goal-scorer-check.mjs
+          node scripts/v768-private-character-clarity-check.mjs
           node scripts/omerta-santoro-private-ui-check.mjs
           node scripts/omerta-santoro-display-check.mjs
           node scripts/omerta-santoro-lobby-visual-check.mjs

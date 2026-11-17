@@ -18,7 +18,7 @@ const premiumHead=[
  '  <link rel="stylesheet" href="startup-stability-v13-3.css?v=20261116-entry-safearea-v728">',
  '  <link rel="stylesheet" href="heritage-v13-5.css?v=v13.8-dual-play">',
  '  <link rel="stylesheet" href="heritage-premium-v13-6.css?v=v13.8-dual-play">',
- '  <link rel="stylesheet" href="heritage-play-v13-7.css?v=v13.8-dual-play">',
+ '  <link rel="stylesheet" href="heritage-play-v13-7.css?v=v768-private-roles-20261117">',
  '  <link rel="stylesheet" href="play-modes-v13-8.css?v=v733-role-lobby">',
  '  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">'
 ].join('\n');
@@ -26,7 +26,7 @@ const premiumScripts=[
  '  <script src="startup-stability-v13-3.js?v=v13.8-dual-play"></script>',
  '  <script src="heritage-v13-5.js?v=v13.8-dual-play"></script>',
  '  <script src="heritage-premium-v13-6.js?v=v13.8-dual-play"></script>',
- '  <script src="heritage-play-v13-7.js?v=v13.8-dual-play"></script>',
+ '  <script src="heritage-play-v13-7.js?v=v768-private-roles-20261117"></script>',
  '  <script src="heritage-context-v71.js?v=v71-heritage-release"></script>',
  '  <script src="play-modes-v13-8.js?v=v13.8-dual-play"></script>',
  '  <script src="heritage-access-code-v14.js?v=v14-heritage-code"></script>',

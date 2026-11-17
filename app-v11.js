@@ -1478,6 +1478,14 @@ function valueBlock(title,value,cls=''){
  let body='';
  if(Array.isArray(value))body=value.map(v=>typeof v==='string'?`<div class="relation-line"><span>${h(v)}</span></div>`:`<div class="relation-line"><b>${h(v.pseudo||v.label||'')}</b><span>${h(v.text||JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='object')body=Object.entries(value).map(([k,v])=>`<div class="relation-line"><b>${h(k)}</b><span>${h(typeof v==='string'?v:JSON.stringify(v))}</span></div>`).join('');
+ else if(typeof value==='string'&&/CHRONOLOGIE|JOURNÉE|NUIT-LÀ|CE QUE TU AS FAIT/i.test(title)){
+  const raw=value.trim();
+  const steps=raw.split(/\s+(?=\d{1,2}[.)]\s+\d{1,2}\s*h\s*\d{1,2}\b)/i).map(x=>x.trim()).filter(Boolean);
+  const lines=(steps.length>1?steps:raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean));
+  body=lines.length>1
+   ?`<ol class="igr-private-timeline">${lines.map(x=>`<li>${h(x.replace(/^\d{1,2}[.)]\s*/,''))}</li>`).join('')}</ol>`
+   :`<p>${h(value)}</p>`;
+ }
  else body=`<p>${h(value)}</p>`;
  const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
  return `<div class="private-block ${cls} ${tone}"><h4>${h(title)}</h4>${body}</div>`;
@@ -1519,22 +1527,23 @@ function privateCardHtml(){
  const santoroQuestions=santoroMyCard&&Array.isArray(ps.conversation_hooks)
    ?ps.conversation_hooks.filter(x=>typeof x==='string'&&x.trim()).slice(0,4):[];
  const santoroPrivateCard=santoroMyCard?[
-   valueBlock('TA FONCTION',ps.identity),
    valueBlock('TON RANG ET TA PLACE',ps.story),
    valueBlock('CE QUE TU SAIS',ps.what_you_know),
    valueBlock('CE QUE TU GARDES POUR TOI',ps.what_you_hide,'danger-soft'),
    valueBlock('TA CHRONOLOGIE PERSONNELLE',santoroChronology),
    valueBlock('CE QUE TU PEUX DEMANDER',santoroQuestions),
-   valueBlock('TES RELATIONS',ps.relations),
-   valueBlock('TON OBJECTIF PERSONNEL',ps.objective)
+   valueBlock('TES RELATIONS',ps.relations)
  ].join(''):'';
+ const baseSuspect=['001','002','003','004','005','006'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect';
  const readableDossier=['001','002'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect';
  const conciseDossier=['001','002','003','004','005','006'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect'&&typeof ps.story==='string'&&!!ps.story.trim();
- const authoredObjective=String(ps.position||ps.objective||'').trim();
- const privateWin=santoroMyCard?ps.objective:((readableDossier||conciseDossier)&&authoredObjective?authoredObjective:roleInfo(secret==='espion'?'espion':pub).win);
- const concisePrivateCard=conciseDossier?[valueBlock('FONCTION',ps.place),valueBlock('TON HISTOIRE',ps.story),valueBlock('CETTE JOURNÉE-LÀ',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft'),valueBlock('TON OBJECTIF',authoredObjective),valueBlock('TES RELATIONS',ps.relations)].join(''):'';
- const cartel030Card=(currentScenario()?.id==='030'&&pub==='suspect'&&ps.variant_card)?[valueBlock('TON IDENTITÉ DANS LE DOSSIER',ps.variant_card.identity),valueBlock('CE QUE TU SAIS — DOSSIER 030',ps.variant_card.what_you_know),valueBlock('TON SECRET — DOSSIER 030',ps.variant_card.variant_secret,'danger-soft'),valueBlock('CE QUE TU CACHES — DOSSIER 030',ps.variant_card.what_you_hide,'danger-soft'),valueBlock('TA CHRONOLOGIE DÉTAILLÉE',ps.variant_card.your_chronology),valueBlock('TON OBJECTIF — DOSSIER 030',ps.variant_card.objective)].join(''):'';
- return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><h2>${h(displayRole(pub,p?.pseudo||STATE.playerPseudo))}</h2>${conciseDossier?'':`<div class="role-summary"><b>COMMENT TU GAGNES</b><span>${h(privateWin)}</span></div>`}${santoroPrivateCard}${concisePrivateCard}${conciseDossier?'':readableDossier?(valueBlock('QUI TU ES',ps.place)+valueBlock('CETTE NUIT-LÀ',ps.chronology)+valueBlock('CE QUE TU SAIS',ps.anchors)+valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')+valueBlock('TES RELATIONS',ps.relations)):(valueBlock('TA PLACE',ps.place)+valueBlock('TA CHRONOLOGIE',ps.chronology)+valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')+valueBlock('TES REPÈRES',ps.anchors)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('TA POSITION',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position))}${valueBlock('TES CLIENTS',ps.clients)}${cartel030Card}${secretInfo}<div class="private-foot">Les faits de cette carte sont canoniques. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne modifies jamais la chronologie, les preuves ou les lieux.</div></div>`;
+ const isOmertaLegacy=['021','022','023','024','025'].includes(String(d?.room?.scenario_id||''))&&!santoroMyCard;
+ const authoredObjective=String((isOmertaLegacy?ps.omerta_objective:(ps.variant_card?.objective||ps.objective||ps.objective_main||ps.omerta_objective))||'').trim();
+ const personaIdentity=String((santoroMyCard&&ps.identity)||ps.variant_card?.identity||ps.place||'').trim();
+ const privateWin=santoroMyCard?ps.objective:(authoredObjective||roleInfo(secret==='espion'?'espion':pub).win);
+ const concisePrivateCard=conciseDossier?[valueBlock('TON HISTOIRE',ps.story),valueBlock('TES RELATIONS',ps.relations),valueBlock('TA CHRONOLOGIE',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft'),valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)].join(''):'';
+ const cartel030Card=(currentScenario()?.id==='030'&&pub==='suspect'&&ps.variant_card)?[valueBlock('CE QUE TU SAIS — DOSSIER 030',ps.variant_card.what_you_know),valueBlock('TON SECRET — DOSSIER 030',ps.variant_card.variant_secret,'danger-soft'),valueBlock('CE QUE TU CACHES — DOSSIER 030',ps.variant_card.what_you_hide,'danger-soft'),valueBlock('TA CHRONOLOGIE DÉTAILLÉE',ps.variant_card.your_chronology)].join(''):'';
+ return `<div class="private-card-v11"><div class="kicker">CARTE PRIVÉE · NE PAS MONTRER</div><header class="igr-private-heading"><h2>${h(p?.pseudo||STATE.playerPseudo||'Joueur')}</h2><p class="igr-private-player">${h(roleInfo(pub).label||pub)} · Ton personnage</p><p class="igr-private-hint">Tu connais ton vécu et les faits indiqués ici, pas les pensées ni les secrets des autres. Réponds avec ce que ton personnage peut réellement savoir.</p></header>${personaIdentity?`<div class="role-summary igr-private-identity"><b>QUI TU ES</b><span>${h(personaIdentity)}</span></div>`:''}<div class="role-summary igr-private-priority"><b>${authoredObjective?'TON OBJECTIF':'COMMENT TU GAGNES'}</b><span>${h(privateWin)}</span></div>${santoroPrivateCard}${concisePrivateCard}${santoroMyCard||conciseDossier?'':readableDossier?(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('CETTE NUIT-LÀ',ps.chronology)+valueBlock('CE QUE TU SAIS',ps.anchors)+valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')):(valueBlock('TON HISTOIRE',ps.story)+valueBlock('TES RELATIONS',ps.relations)+valueBlock('TA CHRONOLOGIE',ps.chronology)+valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft')+valueBlock('TES REPÈRES',ps.anchors)+valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position))}${santoroMyCard?'':valueBlock('TES CLIENTS',ps.clients)}${cartel030Card}${secretInfo}<div class="private-foot">Les faits de ta carte sont établis pour ton personnage. Tu peux mentir à l’oral si ton rôle le permet, mais tu ne peux ni inventer des preuves ni connaître les secrets des autres.</div></div>`;
 }
 function renderRole(){
  const d=STATE.sync;if(!d)return;

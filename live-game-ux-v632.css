@@ -187,3 +187,30 @@ body:has(.action-confirm-modal) > .igr-universal-dock{display:none!important}
   #app .game-v11 > .phase-strip,
   #app .game-v11 > .tabs-v11 .tab{scroll-behavior:auto!important;transition:none!important}
 }
+
+/* v767 — private dossier: role first, objective second, readable evidence chronology. */
+#app .private-card-v11 .igr-private-heading{min-width:0;padding:2px 1px 7px;display:grid;gap:7px}
+#app .private-card-v11 .igr-private-heading h2{font-size:clamp(29px,7.3vw,38px)!important;line-height:1.16;margin:0!important;overflow-wrap:anywhere}
+#app .private-card-v11 .igr-private-player{font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.02em;color:#aab4bd;margin:0;overflow-wrap:anywhere}
+#app .private-card-v11 .igr-private-hint{font-size:13px;line-height:1.55;color:#a8b3be;margin:3px 0 0;max-width:65ch}
+#app .private-card-v11 .igr-private-identity{border-color:rgba(198,208,216,.2);background:rgba(172,188,202,.07)}
+#app .private-card-v11 .igr-private-priority{border-color:rgba(203,213,222,.3);background:linear-gradient(135deg,rgba(164,181,196,.12),rgba(19,25,32,.76))}
+#app .private-card-v11 .igr-private-identity b,#app .private-card-v11 .igr-private-priority b{font-size:11px;color:#dfe6ec;letter-spacing:.08em}
+#app .private-card-v11 .igr-private-identity span,#app .private-card-v11 .igr-private-priority span{font-size:15px;line-height:1.58;color:#f2f4f6;overflow-wrap:anywhere}
+#app .private-card-v11 .igr-private-timeline{counter-reset:igr-timeline;list-style:none;display:grid;gap:12px;padding:4px 0 0;margin:0}
+#app .private-card-v11 .igr-private-timeline li{counter-increment:igr-timeline;position:relative;padding:0 0 0 34px;font-size:14px;line-height:1.55;color:#e2e6eb;overflow-wrap:anywhere}
+#app .private-card-v11 .igr-private-timeline li:before{content:counter(igr-timeline,decimal-leading-zero);position:absolute;left:0;top:2px;font:700 10px 'IBM Plex Mono',monospace;color:#b2bfcc}
+#app .private-card-v11 .igr-private-timeline li+li{padding-top:11px;border-top:1px solid rgba(255,255,255,.08)}
+#app .private-card-v11 .igr-private-timeline li+li:before{top:13px}
+@media(max-width:700px){
+ body:has(#app .role-card-v11) > .live-session-controls{position:static!important;z-index:auto!important;width:min(760px,100%)!important;box-sizing:border-box!important;padding:10px max(16px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px))!important;margin:0 auto!important;background:transparent!important}
+ #app .role-card-v11{margin-bottom:10px!important;padding-bottom:18px!important}
+ #app .private-card-v11{gap:12px}
+}
+
+/* v768 — The actual player's chosen name is the primary private identity. */
+#app .private-card-v11 .igr-private-heading h2{letter-spacing:-.025em;overflow-wrap:anywhere}
+#app .private-card-v11 .igr-private-player{font-size:12px;color:#e5ebef;text-transform:none;letter-spacing:.025em}
+#app .private-card-v11 .igr-private-hint{border-left:2px solid rgba(189,204,218,.4);padding:7px 0 7px 12px}
+#app .private-card-v11 .igr82-relations .igr82-relation-list{display:grid;gap:10px}
+#app .private-card-v11 .igr82-relations .igr82-relation{min-width:0;overflow-wrap:anywhere}

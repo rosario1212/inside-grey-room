@@ -74,6 +74,7 @@ const field=(label,name,type='text',extra='')=>`<label>${esc(label)}<input name=
 const area=(label,name,max=1000)=>`<label>${esc(label)}<textarea name="${esc(name)}" maxlength="${max}" required data-casino-draft></textarea></label>`;
 const form=(kind,body,label)=>`<form data-casino-form="${kind}">${body}<button class="casino-action" type="submit">${esc(label)}</button></form>`;
 const name=id=>state?.characters?.find(c=>c.id===id)?.name||state?.participants?.find(m=>m.id===id)?.name||state?.members?.find(m=>m.id===id)?.name||id;
+const playerName=id=>state?.members?.find(m=>m.id===id)?.name||state?.participants?.find(m=>m.id===id)?.name||name(id);
 const option=(id,label)=>`<option value="${esc(id)}">${esc(label)}</option>`;
 const people=(key,filter=()=>true)=>`<label>Personne<select name="${esc(key)}" data-casino-draft>${(state.characters||[]).filter(filter).map(c=>option(c.id,c.name)).join('')}</select></label>`;
 const section=(title,body)=>`<section class="casino-box"><h2>${esc(title)}</h2>${body}</section>`;
@@ -128,9 +129,9 @@ function lobby(){
  ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${canStart?'COMMENCER LA PARTIE':members.length<7?`EN ATTENTE · ${7-members.length} À INVITER`:'EN ATTENTE DES JOUEURS'}</button>`:''}
  `;
 }
-function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
+function card(){const c=state.ownCard;return section(playerName(state.viewer),`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}<h3>Ton histoire</h3><p>${esc(c.brief)}</p>
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
- ${(c.relations||[]).map(r=>`<article><h3>${esc(name(r.target))}</h3><p>${esc(r.text)}</p></article>`).join('')}
+ ${(c.relations||[]).length?'<h3>Tes relations</h3>':''}${(c.relations||[]).map(r=>`<article><h3>${esc(playerName(r.target))}</h3><p>${esc(r.text)}</p></article>`).join('')}
  ${state.ownUndercoverBrief?`<div class="casino-secret"><strong>Mission confidentielle</strong><p>Seul ton personnage voit cette mission. Les observations reçues par le bureau restent non confirmées tant qu'elles ne sont pas recoupées.</p>${state.chapter===1?form('intel',people('subjectId',c=>c.id!==state.viewer)+area('Renseignement à transmettre discrètement','text',1000),'Transmettre au bureau'):''}</div>`:''}
  ${state.continuityRole?'<p>Tu poursuis comme témoin de continuité : rapporte des observations publiques au bureau.</p>':''}`)+
  section('Ce qui se passe',state.publicEvents.map(e=>`<p>${esc(e.text)}</p>`).join(''))+
