@@ -335,13 +335,19 @@
 #app .casino-live:not(:has(.casino-lobby-top))>.hj-progress{display:none!important}
 
 
-/* HÉRITAGE v771 — Maître mode icons at 320px.
-   The SVG node can inherit a global SVG ink instead of the burgundy button
-   label. Set the SVG foreground explicitly and keep the original palette.
-   This is scoped to Maître's dossier mode choice, not other DLC campaigns. */
+/* HÉRITAGE v771 — use the exact Maître ink from the *actual buttons*
+   (#fff5ea from the Maître primary; #542d2b from the local ivory control).
+   The app's own foreground and the nested SVG must never diverge by theme
+   or by viewport width. Other campaign palettes remain untouched. */
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online{
+ color:#fff5ea!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local{
+ color:#542d2b!important;
+}
 #app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon,
 #app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon svg {
- color:#fff9ef!important;
+ color:#fff5ea!important;
 }
 #app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon svg{
  stroke:currentColor!important;
@@ -349,7 +355,7 @@
 }
 #app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon,
 #app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon svg{
- color:#542d2c!important;
+ color:#542d2b!important;
 }
 #app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon svg{
  stroke:currentColor!important;
