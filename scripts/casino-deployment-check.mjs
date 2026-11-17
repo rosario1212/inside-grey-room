@@ -172,7 +172,8 @@ assert.equal(terminationResponse.status,200);
 const terminationSource=await terminationResponse.text();
 assert(terminationSource.includes('igr_v170_end_representation'),'Mutual termination runtime missing');
 assert(terminationSource.includes('p_acknowledge_cartel'),'Cartel consequence confirmation missing');
-for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology','objective'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
+for(const field of ['what_you_know','variant_secret','what_you_hide','your_chronology'])assert(cartelSource.includes('ps.variant_card.'+field),'Missing private field '+field);
+assert(cartelSource.includes('ps.variant_card?.objective')&&cartelSource.includes('igr-private-priority'),'CARTEL 030 private objective must remain visible in its own top-level block');
 assert(cartelSource.includes('e.payload?.evidence_id'),'CARTEL cycle evidence UI missing');
 // Cloudflare's Worker is atomically published, but individual edge assets may
 // briefly resolve through the previous release. Require matching files, not a
