@@ -34,5 +34,5 @@ assert(db.includes("'{protected}'"),'008 Judge has no protected procedural items
 assert(prosecutorVariant.includes('igr_private.igr_v371_011_pinned_pack(p_room)'), '011 prosecutor must use pinned A/B/C variant');
 assert(index.includes('santoro-display-audit-20261108'));
 assertPwaRevision(index,sw);
-assert(finalizer.includes("const clientVersion='santoro-display-audit-20261108-v768-private-roles-20261117'"),'Production finalizer would restore stale role cache');
+assert(finalizer.includes("const clientVersion='santoro-display-audit-20261108-v777-editorial-consistency-20261117'"),'Production finalizer would restore stale role cache');
 console.log('Optional-role 003/008/009/011 contract: PASS (4/5-player rosters preserved; 6-player roles, private release guards, action content and PWA checked).');
