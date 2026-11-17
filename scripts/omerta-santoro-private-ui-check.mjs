@@ -8,7 +8,10 @@ const source=fs.readFileSync('app-v11.js','utf8');
 const start=source.indexOf('function privateCardHtml(){');
 const end=source.indexOf('function renderRole(){',start);
 assert(start>=0&&end>start,'Canonical private-card renderer not found');
-const renderer=source.slice(start,end);
+const helperStart=source.indexOf('function igrV772Timeline(');
+const helperEnd=source.indexOf('\nasync function sendSpyDecision(',helperStart);
+assert(helperStart>=0&&helperEnd>helperStart,'Unified private-card helpers not found');
+const renderer=source.slice(helperStart,helperEnd)+'\n'+source.slice(start,end);
 const h=value=>String(value??'').replace(/&/g,'&amp;')
   .replace(/</g,'&lt;').replace(/>/g,'&gt;')
   .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
