@@ -1609,7 +1609,7 @@ function privateCardHtml(){
  const readableDossier=['001','002'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect';
  const conciseDossier=['001','002','003','004','005','006'].includes(String(d?.room?.scenario_id||''))&&pub==='suspect'&&typeof ps.story==='string'&&!!ps.story.trim();
  const isOmertaLegacy=['021','022','023','024','025'].includes(String(d?.room?.scenario_id||''))&&!santoroMyCard;
- const authoredObjective=String((isOmertaLegacy?(ps.omerta_objective||ps.objective||ps.objective_main):(ps.variant_card?.objective||ps.objective||ps.objective_main||ps.omerta_objective))||'').trim();
+ const authoredObjective=String((isOmertaLegacy?ps.omerta_objective:(ps.variant_card?.objective||ps.objective||ps.objective_main||ps.omerta_objective))||'').trim();
  const personaIdentity=String((santoroMyCard&&ps.identity)||ps.variant_card?.identity||ps.place||'').trim();
  const privateWin=santoroMyCard?ps.objective:(authoredObjective||roleInfo(secret==='espion'?'espion':pub).win);
  // The clarification is restricted to the player's authenticated private card.
