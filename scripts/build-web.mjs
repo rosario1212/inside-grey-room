@@ -40,7 +40,7 @@ for(const page of ['index.html','en.html']){
   const target=path.join(out,page);let html=await readFile(target,'utf8');
   if(!html.includes('play-modes-v13-8.css'))html=html.replace('</head>',`${premiumHead}\n</head>`);
   else if(!html.includes('premium-access-sync-v17.css'))html=html.replace('</head>',`  <link rel="stylesheet" href="premium-access-sync-v17.css?v=v17-premium-sync">\n</head>`);
-  if(!html.includes('heritage-journey-v755.css'))html=html.replace('</head>','  <link rel="stylesheet" href="heritage-journey-v755.css?v=v764-compact-chooser">\n</head>');
+  if(!html.includes('heritage-journey-v755.css'))html=html.replace('</head>','  <link rel="stylesheet" href="heritage-journey-v755.css?v=v766-ui-balance">\n</head>');
   if(!html.includes('global-navigation-v766.css'))html=html.replace('</head>','  <link rel="stylesheet" href="global-navigation-v766.css?v=v766-global-navigation">\n</head>');
   if(!html.includes('duration-modes-v35.css'))html=html.replace('</head>',`${durationHead}\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
