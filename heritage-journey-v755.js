@@ -156,7 +156,7 @@ function canNavigateBack(main,from,to){
 function makeProgressClickable(main){
  const nav=$('.hj-progress',main),from=stage(main);
  if(!nav||from<1)return;
- $('ol > li.is-done',nav).forEach(li=>{
+ $$('ol > li.is-done',nav).forEach(li=>{
   if(li.querySelector('button'))return;
   const to=Array.from(li.parentElement.children).indexOf(li);
   if(!canNavigateBack(main,from,to))return;
