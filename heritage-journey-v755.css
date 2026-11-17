@@ -427,3 +427,30 @@
 @media(prefers-reduced-motion:reduce){
  #app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn{transition:none!important}
 }
+
+/* Héritage v764 — keep the role/lobby geometry stable on iPhone. */
+#app .hnet .hnet-role-zone,
+#app .casino-live .casino-role-choice-zone{overflow-anchor:none}
+#app .hnet .hnet-role-zone .hnet-selected-role{
+ min-height:104px!important;box-sizing:border-box;
+}
+#app .maitre-page.hnet .hnet-role-zone .hnet-selected-role{
+ min-height:104px!important;
+}
+#app .hnet .hnet-lobby>.hnet-launch-hint{
+ min-height:18px;box-sizing:border-box;
+}
+#app .casino-live .casino-selected-role{
+ min-height:95px;box-sizing:border-box;
+}
+#app main.page .page-head button[data-hj-return]{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;padding:10px 13px;white-space:nowrap;
+}
+@media(max-width:520px){
+ #app .hnet .hnet-role-zone .hnet-selected-role{min-height:114px!important}
+ #app .casino-live .casino-selected-role{min-height:104px}
+}
+@media(prefers-reduced-motion:reduce){
+ #app .hnet .hnet-role-card,#app .casino-live .casino-role-choice-card{transition:none!important}
+}
