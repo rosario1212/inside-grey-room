@@ -119,7 +119,7 @@ function reconcileHeaderExits(){
  const app=root(),main=$('main',app);
  if(!main)return;
  const heads=main.querySelectorAll?.('.page-head,.hplay-top,.hnet-head,.hplay-header,.casino-page-head,.casino-head,.local-head')||[];
- const label=control=>normalize(control?.textContent||'').replace(/^[←↩⟵‹❮◀×✕\\s]+/u,'').toLowerCase();
+ const label=control=>normalize(control?.textContent||'').replace(/^[←↩⟵‹❮◀×✕\s]+/u,'').toLowerCase();
  for(const head of heads){
   if(head.closest?.('.modal,[role="dialog"],[aria-modal="true"],.overlay,.drawer'))continue;
   const controls=[...(head.querySelectorAll?.('button,a,[role="button"]')||[])];
