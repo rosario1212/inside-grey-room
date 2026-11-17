@@ -1,4 +1,4 @@
-/* Héritage v760 — consistent layout and legible mode icons across campaigns. */
+/* Héritage v762 — clear campaign join shortcuts and compact Casino entry. */
 (()=>{
 'use strict';
 const labels=['CAMPAGNES','DOSSIERS','MODE','PRÉPARATION','LOBBY'];
@@ -77,6 +77,32 @@ function enrichCasinoLobby(casino){
  if(match&&anchor)progressMeter(panel,anchor,Number(match[1]),7,12);
 }
 
+/* One direct joining action on the Heritage hub and every non-Casino campaign.
+   The existing verified Join screen owns code validation and room restoration. */
+function enhanceCampaignJoin(root){
+ const hub=$('main.hplay-hub',root),campaign=$('main.hplay-campaign',root);
+ const targets=[
+  hub&&$('.hplay-hub-intro',hub),
+  campaign&&$('.hplay-campaign-hero',campaign)
+ ].filter(Boolean);
+ for(const target of targets){
+  const parent=target.parentElement;
+  if(parent?.querySelector(':scope > .hj-join-entry'))continue;
+  const button=document.createElement('button');
+  button.type='button';button.className='hj-join-entry';
+  button.dataset.hjJoin='1';
+  button.textContent='Rejoindre une partie';
+  button.setAttribute('aria-label','Rejoindre une partie Héritage avec un code');
+  target.insertAdjacentElement('afterend',button);
+ }
+}
+function handleJoinClick(event){
+ const button=event.target.closest?.('[data-hj-join]');
+ if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(typeof goJoin==='function')return goJoin();
+ if(typeof renderJoin==='function')return renderJoin();
+}
 function decorate(){
  const root=$('#app');if(!root)return;
  const main=$('main.hplay,main.hnet',root);
@@ -84,20 +110,20 @@ function decorate(){
   const index=stage(main),head=$(':scope > .hplay-top,:scope > .hnet-head',main);
   if(index>=0&&head&&!$('.hj-progress',main))head.insertAdjacentHTML('afterend',markup(index,main.matches('.hplay-setup')));
   styleModeButtons(main);
+  enhanceCampaignJoin(root);
   enrichHeritageLobby(main);
   const copy=$('.hnet-code-copy',main);
   if(copy&&!copy.title)copy.title='Copier le code pour inviter les joueurs';
  }
  const casino=$('#casino-live-v105');
  if(casino)enrichCasinoLobby(casino);
- if(casino&&!$('.hj-progress',casino)){
-  const lobby=$('.casino-lobby-top',casino),entry=$('.casino-entry-options',casino);
-  const anchor=lobby||entry;
-  if(anchor)anchor.insertAdjacentHTML('beforebegin',markup(lobby?4:3));
- }
+ // The public Casino create/join selector is a single decision, not a
+ // five-stage route: keep the progress navigator only for an active lobby.
+ if(casino&&$('.casino-lobby-top',casino)&&!$('.hj-progress',casino))
+  $('.casino-lobby-top',casino).insertAdjacentHTML('beforebegin',markup(4));
 }
 let frame=0;
 function schedule(){if(frame)return;frame=requestAnimationFrame(()=>{frame=0;decorate()})}
-function boot(){const root=$('#app');if(!root)return;new MutationObserver(schedule).observe(root,{subtree:true,childList:true});schedule();window.addEventListener('pageshow',schedule,{passive:true})}
+function boot(){const root=$('#app');if(!root)return;document.addEventListener('click',handleJoinClick,true);new MutationObserver(schedule).observe(root,{subtree:true,childList:true});schedule();window.addEventListener('pageshow',schedule,{passive:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
