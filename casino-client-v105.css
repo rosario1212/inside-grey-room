@@ -566,3 +566,59 @@
   text-align:left;
  }
 }
+
+
+/* CASINO v762 — one compact mode at a time, not two stacked forms. */
+#app .casino-live .casino-entry-tabs{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:6px;width:100%;max-width:600px;
+ margin:17px auto 0;padding:5px;
+ border:1px solid #59403b;border-radius:12px;
+ background:#150f11;
+}
+#app .casino-live .casino-entry-tab{
+ display:grid;place-items:center;
+ min-width:0;min-height:47px;padding:10px 12px;
+ border:1px solid transparent;border-radius:9px;
+ background:transparent;color:#cdb7a6;
+ font:750 13px/1.35 system-ui,sans-serif;
+ cursor:pointer;touch-action:manipulation;
+}
+#app .casino-live .casino-entry-tab[aria-selected="true"]{
+ background:linear-gradient(145deg,#673038,#411d24);
+ color:#fff0db;border-color:#c09973;
+}
+#app .casino-live .casino-entry-tab:focus-visible{
+ outline:3px solid #e9c599!important;outline-offset:2px;
+}
+#app .casino-live .casino-entry-options{
+ display:grid;grid-template-columns:minmax(0,1fr)!important;
+ width:100%;max-width:600px;
+ gap:0;margin:12px auto 12px;
+}
+#app .casino-live .casino-entry-option{
+ width:100%;max-width:100%;
+ padding:clamp(16px,3vw,22px)!important;
+ border:1px solid #694940;
+ background:#170f12;
+}
+#app .casino-live .casino-entry-option h2{
+ margin:0 0 15px;font:700 clamp(21px,4.9vw,26px)/1.23 Georgia,serif;
+ color:#f2d5b4;
+}
+#app .casino-live .casino-entry-option form{
+ display:grid;gap:12px;
+ margin:0!important;padding:0!important;
+ border-top:0!important;
+}
+#app .casino-live .casino-entry-option label{gap:6px}
+#app .casino-live .casino-entry-option .casino-action{min-height:48px}
+#app .casino-live .casino-recovery-entry,
+#app .casino-live .casino-resume{display:block;width:100%;max-width:600px;margin:15px auto 0}
+#app .casino-live .casino-recovery-entry summary{color:#bba999;font-size:12px}
+#app .casino-live .casino-live-top>[data-casino-connection][hidden]{display:none!important}
+@media(max-width:520px){
+ #app .casino-live .casino-entry-tabs{margin-top:13px}
+ #app .casino-live .casino-entry-option{padding:16px!important}
+ #app .casino-live .casino-entry-option h2{font-size:22px}
+}
