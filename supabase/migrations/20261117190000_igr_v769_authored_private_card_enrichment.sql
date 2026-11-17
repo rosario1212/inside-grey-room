@@ -80,7 +80,7 @@ BEGIN
   IF p_private->>'anchors'=v_card->>'what_you_know' THEN v_matches:=v_matches+1;END IF;
   IF p_private->>'hide'=v_card->>'what_you_hide' THEN v_matches:=v_matches+1;END IF;
   IF p_private->>'chronology'=v_card->>'your_chronology' THEN v_matches:=v_matches+1;END IF;
-  IF v_matches<2 THEN RETURN p_private;END IF;
+  IF v_matches<3 THEN RETURN p_private;END IF;
 
   v_story:=pg_catalog.btrim(coalesce(v_card->>'story',''));
   IF pg_catalog.length(v_story)>65
