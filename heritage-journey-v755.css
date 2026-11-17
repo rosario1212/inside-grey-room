@@ -341,3 +341,89 @@
  #app .hplay.hplay-campaign .hj-campaign-actions>button{min-height:49px}
  #app .hplay.hplay-dossier .hj-dossier-entry{margin-bottom:13px}
 }
+
+
+/* Héritage v764 — dossier mode selector: editorial placement, no oversized blue panel.
+   The original buttons and listeners remain unchanged for online/local play. */
+#app .hplay.hplay-dossier .hplay-launch-box.hj-dossier-entry{
+ width:100%;max-width:100%;clear:none!important;
+ margin:16px 0 17px!important;padding:15px 0 0!important;
+ border:0!important;border-top:1px solid rgba(183,203,214,.22)!important;
+ border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry > b{
+ display:block;margin:0;color:#b5c5ce;
+ font:800 10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry > p{display:none!important}
+#app .hplay.hplay-dossier .hj-dossier-entry > .heritage-dual-row{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:9px!important;margin:10px 0 0!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn{
+ min-height:64px!important;padding:11px 12px!important;gap:10px!important;
+ border-radius:10px!important;box-shadow:none!important;
+ background:#10171c!important;color:#e9eef1!important;
+ border:1px solid rgba(190,210,220,.19)!important;
+ transition:border-color .16s ease,background-color .16s ease!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-online{
+ background:#14212a!important;color:#eff5f8!important;
+ border-color:rgba(132,177,201,.48)!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-local{
+ background:#0a1116!important;color:#cbd9df!important;
+ border-color:rgba(169,194,205,.23)!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-icon{
+ width:36px!important;height:36px!important;padding:7px!important;
+ border:1px solid rgba(196,216,226,.35)!important;border-radius:9px!important;
+ background:rgba(255,255,255,.025)!important;color:inherit!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-icon svg{width:20px!important;height:20px!important}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-copy{gap:3px!important}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-copy strong{
+ font-size:12px!important;line-height:1.3!important;letter-spacing:.035em!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-copy small{
+ font-size:10px!important;line-height:1.35!important;opacity:.78!important;
+}
+#app .hplay.hplay-dossier .hj-dossier-entry .hj-mode-chevron{font-size:18px!important;opacity:.65!important}
+#app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn:focus-visible{
+ outline:2px solid var(--hu-focus,#a2cadd)!important;outline-offset:3px;
+}
+@media(hover:hover){
+ #app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn:hover{
+  border-color:rgba(227,238,243,.72)!important;background:#1c2b34!important;
+ }
+}
+/* The campaigns share geometry but keep their visual identities. */
+#app .hplay.hplay-dossier.hplay-theme-kuroi .hj-dossier-entry{border-top-color:rgba(208,188,153,.24)!important}
+#app .hplay.hplay-dossier.hplay-theme-kuroi .hj-dossier-entry > b{color:#c0b49d}
+#app .hplay.hplay-dossier.hplay-theme-kuroi .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-online{
+ background:#27241e!important;color:#f0e4d0!important;border-color:rgba(186,160,117,.5)!important;
+}
+#app .hplay.hplay-dossier.hplay-theme-kuroi .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-local{
+ background:#171713!important;color:#d8cdb9!important;border-color:rgba(181,161,128,.25)!important;
+}
+#app .hplay.hplay-dossier.maitre-page .hj-dossier-entry,
+#app .hplay.hplay-dossier.hplay-theme-maitre .hj-dossier-entry{border-top-color:rgba(130,68,71,.24)!important}
+#app .hplay.hplay-dossier.maitre-page .hj-dossier-entry > b,
+#app .hplay.hplay-dossier.hplay-theme-maitre .hj-dossier-entry > b{color:#6e4140}
+#app .hplay.hplay-dossier.maitre-page .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-online,
+#app .hplay.hplay-dossier.hplay-theme-maitre .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-online{
+ background:#5a3033!important;color:#fff5ea!important;border-color:#96645e!important;
+}
+#app .hplay.hplay-dossier.maitre-page .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-local,
+#app .hplay.hplay-dossier.hplay-theme-maitre .hj-dossier-entry .heritage-dual-row > .btn.hj-mode-local{
+ background:#f0e8de!important;color:#5c3231!important;border-color:#b49b90!important;
+}
+@media(max-width:800px){
+ #app .hplay.hplay-dossier .hj-dossier-entry > .heritage-dual-row{
+  grid-template-columns:minmax(0,1fr)!important;gap:8px!important;
+ }
+ #app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn{min-height:61px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #app .hplay.hplay-dossier .hj-dossier-entry .heritage-dual-row > .btn{transition:none!important}
+}
