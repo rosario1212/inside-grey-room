@@ -26,7 +26,6 @@ for(const asset of assets)await stat(path.join(target,asset));
 const regimeUiFingerprint=createHash('sha256')
  .update(await readFile(path.join(target,'dlc-suite-v12-37.js')))
  .update(await readFile(path.join(target,'mobile-ui-v28.css')))
- .update(await readFile(path.join(target,maitreLayout)))
  .digest('hex').slice(0,12);
 for(const url of posterUrls)await stat(path.join(target,url.split('?')[0].slice(1)));
 for(const page of ['index.html','en.html']){
