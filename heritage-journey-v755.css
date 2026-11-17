@@ -1,0 +1,123 @@
+/* HÉRITAGE V755 — consistent, mobile-first preparation journey.
+   CSS is scoped to Heritage / Casino, leaving the rest of the game untouched. */
+.heritage-premium-home-action{min-height:78px!important;border-radius:16px!important;box-shadow:0 14px 40px rgba(0,0,0,.24)!important}
+.heritage-premium-copy p{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.4!important;max-width:48ch!important}
+.heritage-premium-modal-box{border-radius:19px!important}
+.heritage-premium-modal-actions .btn{min-height:50px}
+.hplay,.hnet{--hj-border:color-mix(in srgb,var(--hp-accent,#dae1e5) 21%,transparent);--hj-text:#edf0f2;--hj-muted:#a1acb3;max-width:1160px;margin-inline:auto}
+.hplay .hplay-top,.hnet .hnet-head{margin-bottom:8px;min-height:45px}
+.hplay .hplay-back,.hnet .hnet-head .btn{min-height:44px;border-radius:11px;background:#0c1013;border:1px solid rgba(236,241,244,.14)}
+.hplay button:focus-visible,.hnet button:focus-visible,.casino-live button:focus-visible{outline:2px solid #e5eaed!important;outline-offset:3px}
+.hj-progress{padding:11px 0 15px;margin:0 0 24px;border-bottom:1px solid rgba(240,244,245,.11)}
+.hj-progress-label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;font:800 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#7f8d95}
+.hj-progress-label b{color:var(--hp-accent,#d5dde2)}
+.hj-progress ol{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));list-style:none;margin:0;padding:0;gap:5px}
+.hj-progress li{display:flex;align-items:center;gap:6px;color:#6c7a83;font:800 8px/1.2 'IBM Plex Mono',monospace;min-width:0}
+.hj-progress li span{display:grid;place-items:center;width:23px;height:23px;flex:none;border-radius:7px;border:1px solid rgba(235,242,245,.12);color:#7b8992;background:#0a0e12;font-size:10px}
+.hj-progress li b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:inherit}
+.hj-progress li.is-done{color:#b1bdc3}
+.hj-progress li.is-done span{color:#d5e0e6;background:rgba(236,241,244,.08);border-color:rgba(236,241,244,.2)}
+.hj-progress li.is-current{color:#eff3f5}
+.hj-progress li.is-current span{background:var(--hp-accent,#e4e9ec);border-color:transparent;color:#080b0d}
+.hplay .hplay-hub-intro{margin-bottom:21px;max-width:740px}
+.hplay .hplay-hub-intro h1{font-size:clamp(40px,8vw,67px);line-height:1;letter-spacing:-.06em}
+.hplay .hplay-hub-intro p{max-width:57ch;color:#abb4bc;font-size:13px;line-height:1.65}
+.hplay .hplay-hub-grid{gap:14px}
+.hplay .hplay-campaign-card{min-height:clamp(335px,41vw,460px);border-radius:19px;box-shadow:0 18px 55px rgba(0,0,0,.3);border:1px solid rgba(240,244,246,.13)}
+.hplay .hplay-campaign-card>img{object-fit:cover;object-position:center 35%}
+.hplay .hplay-campaign-shade{background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.23) 42%,rgba(1,3,5,.89) 83%,#030506)}
+.hplay .hplay-campaign-body{padding:clamp(17px,3vw,25px);gap:8px}
+.hplay .hplay-campaign-body>strong{font-size:clamp(35px,6vw,49px);line-height:.98}
+.hplay .hplay-campaign-body>small{font-size:12px;line-height:1.57;color:#c7ced3}
+.hplay .hplay-campaign-foot{align-items:center}
+.hplay .hplay-campaign-title h1{font-size:clamp(43px,9vw,68px);line-height:1}
+.hplay .hplay-campaign-title p{font-size:13px;color:#aeb9c0}
+.hplay .hplay-campaign-hero{height:176px;margin-bottom:15px;border-radius:18px}
+.hplay .hplay-panel{border-radius:17px;padding:clamp(15px,2.8vw,22px);box-shadow:none}
+.hplay .hplay-case{min-height:101px;border-radius:13px;padding:10px 12px;grid-template-columns:58px minmax(0,1fr) 18px;gap:12px}
+.hplay .hplay-case-poster{width:58px;height:83px;border-radius:8px}
+.hplay .hplay-case-poster img{object-fit:cover;object-position:center}
+.hplay .hplay-case-copy>strong{font-size:15px;line-height:1.2}
+.hplay .hplay-case-copy>small{font-size:11px;line-height:1.46}
+.hplay .hplay-dossier-grid{grid-template-columns:minmax(190px,270px) minmax(0,1fr);gap:clamp(18px,3vw,30px)}
+.hplay .hplay-poster{border-radius:15px;box-shadow:0 15px 45px rgba(0,0,0,.3)}
+.hplay .hplay-poster img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover}
+.hplay .hplay-dossier-copy h1{font-size:clamp(36px,7vw,58px);line-height:1.03;margin:9px 0 12px}
+.hplay .hplay-lead{font-size:14px;line-height:1.7;color:#b3bfc6}
+.hplay .hplay-carry-strip{margin:13px 0}
+.hplay .hplay-launch-box{margin-top:16px;padding:17px;border-radius:15px;background:linear-gradient(135deg,var(--hp-accent-soft),rgba(255,255,255,.016))}
+.hplay .hplay-launch-box p{font-size:12px;line-height:1.55;margin:8px 0 13px}
+.heritage-dual-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:11px}
+.heritage-dual-row .btn{display:flex!important;align-items:center!important;justify-content:flex-start!important;min-height:77px;gap:10px;white-space:normal!important;padding:13px!important;border-radius:12px!important;text-align:left!important}
+.heritage-dual-row .heritage-online-btn,.heritage-dual-row [data-mnet="create"],.heritage-dual-row [data-mnet="resume"]{border:1px solid color-mix(in srgb,var(--hp-accent,#e6ecf0) 38%,transparent)!important;background:linear-gradient(135deg,var(--hp-accent-soft,rgba(230,237,242,.09)),rgba(255,255,255,.018))!important;color:#eef1f3!important}
+.heritage-dual-row .heritage-local-btn,.heritage-dual-row [data-mnet="local"]{border:1px solid rgba(235,241,244,.17)!important;background:#080c0f!important;color:#eef1f3!important}
+.hj-mode-icon{flex:none;display:grid;place-items:center;width:39px;height:39px;border:1px solid var(--hj-border,rgba(235,240,242,.16));border-radius:10px;background:rgba(255,255,255,.03);color:var(--hp-accent,#e2e8eb);font:800 21px 'IBM Plex Mono',monospace}
+.hj-mode-copy{flex:1;min-width:0;display:grid;gap:5px}
+.hj-mode-copy strong{font:800 12px/1.3 'IBM Plex Mono',monospace;letter-spacing:.035em}
+.hj-mode-copy small{font:700 9px/1.35 'IBM Plex Mono',monospace;letter-spacing:.02em;color:#98a5ac}
+.hj-mode-chevron{color:#a2adb3;font-size:22px}
+.hplay .hplay-setup-head h1{font-size:clamp(35px,8vw,54px);line-height:1.06}
+.hplay .hplay-setup-head p{font-size:13px;line-height:1.63}
+.hplay .hplay-names input,.hnet .hnet-create input{font-size:16px;min-height:51px}
+.hplay .hplay-stepper button{height:48px;min-width:46px}
+.hplay .hplay-start{min-height:55px}
+.hnet .hnet-create,.hnet .hnet-lobby{margin:0 auto;max-width:810px;padding:clamp(17px,3vw,25px);border-radius:18px;border-color:rgba(236,241,245,.13);background:linear-gradient(170deg,#11171b,#080b0e)}
+.hnet .hnet-create h1{font-size:clamp(34px,8vw,49px);line-height:1.04}
+.hnet .hnet-create p{font-size:13px;line-height:1.65;color:#b5bfc5}
+.hnet .hnet-create .btn{min-height:54px}
+.hnet .hnet-lobby{display:grid;gap:13px}
+.hnet .hnet-title h1{font-size:clamp(30px,7vw,43px);line-height:1.08}
+.hnet .hnet-title>p{color:#aeb9c0;font-size:12px}
+.hnet .hnet-code{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;gap:4px 12px;padding:14px 15px;margin:0;text-align:left;border:1px solid var(--hj-border);border-radius:13px;background:#090d10}
+.hnet .hnet-code>span{grid-column:1;grid-row:1}
+.hnet .hnet-code>strong{grid-column:1;grid-row:2;text-align:left;font-size:clamp(28px,7vw,38px);letter-spacing:.11em;line-height:1.1}
+.hnet .hnet-code>small{grid-column:1;grid-row:3;color:#99a7ae;font-size:10px}
+.hnet .hnet-code .hnet-code-copy{grid-column:2;grid-row:1/4;align-self:center;min-width:76px;min-height:46px;padding:8px;border:1px solid var(--hj-border);border-radius:9px;background:rgba(255,255,255,.045);color:#e8eef0;font:800 10px 'IBM Plex Mono',monospace}
+.hnet .hnet-role-zone{margin:0;padding:clamp(12px,2.5vw,18px);border-radius:14px;border-color:rgba(236,243,246,.12);background:#0a0e11}
+.hnet .hnet-role-head h2{font-size:clamp(21px,5vw,29px);line-height:1.17}
+.hnet .hnet-role-zone>p{font-size:12px;line-height:1.6}
+.hnet .hnet-role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.hnet .hnet-role-card{display:flex;position:relative;flex-direction:column;justify-content:space-between;gap:10px;min-height:103px;padding:12px;border-radius:11px;background:linear-gradient(145deg,#151a1e,#0a0f12);transition:border-color .18s ease}
+.hnet .hnet-role-card .hnet-role-top{display:grid;gap:4px;align-items:start}
+.hnet .hnet-role-top b{font-size:13px;line-height:1.29}
+.hnet .hnet-role-top em{font-size:9px;color:var(--hp-accent,#c4d1d8)}
+.hnet .hnet-stars{align-self:flex-start;color:var(--hp-accent,#d2dbe0);font-size:12px}
+.hnet .hnet-role-card.is-picked{border-color:color-mix(in srgb,var(--hp-accent,#d9e0e4) 75%,transparent);background:linear-gradient(140deg,var(--hp-accent-soft,rgba(255,255,255,.06)),#0b1013)}
+.hnet .hnet-role-card.is-picked::after{position:absolute;right:10px;bottom:9px;content:"✓";color:var(--hp-accent,#e4ecf0)}
+.hnet .hnet-role-card.is-taken{opacity:.5}
+.hnet .hnet-selected-role{border-radius:12px;background:rgba(255,255,255,.024);border-color:var(--hj-border)}
+.hnet .hnet-roster-disclosure{border-radius:12px}
+.hnet .hnet-roster-disclosure summary{min-height:50px}
+.hnet .hnet-start{min-height:55px;border-radius:11px}
+.hnet .hnet-wait{border:1px solid rgba(235,242,246,.1);border-radius:11px;background:#0a0e11;padding:14px}
+.casino-live .casino-entry-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.casino-live .casino-entry-option,.casino-live .casino-lobby-top,.casino-live .casino-role-choice-zone,.casino-live .casino-launch-readiness{border-radius:17px}
+.casino-live .casino-entry-option input{font-size:16px;min-height:48px}
+.casino-live .casino-role-choice-card{border-radius:12px;min-height:100px}
+.casino-live .casino-ready,.casino-live .casino-start{min-height:54px;border-radius:11px}
+@media(max-width:760px){
+ .hplay .hplay-hub-grid,.hplay .hplay-campaign-layout{grid-template-columns:minmax(0,1fr)}
+ .hplay .hplay-campaign-card{min-height:325px}
+ .hplay .hplay-dossier-grid{display:block}
+ .hplay .hplay-poster{float:left;width:min(32vw,132px);margin:3px 15px 12px 0;border-radius:11px}
+ .hplay .hplay-dossier-copy{padding:0}
+ .hplay .hplay-dossier-copy h1{font-size:clamp(31px,8vw,44px)}
+ .hplay .hplay-launch-box{clear:both}
+ .hplay .hplay-structure{clear:both}
+ .hplay .hplay-side{position:static}
+ .heritage-dual-row,.casino-live .casino-entry-options{grid-template-columns:minmax(0,1fr)}
+ .heritage-dual-row .btn{min-height:68px}
+}
+@media(max-width:520px){
+ .hj-progress{margin-bottom:19px}
+ .hj-progress li{display:grid;justify-items:center;text-align:center;gap:4px}
+ .hj-progress li b{font-size:7px;letter-spacing:-.01em}
+ .hplay .hplay-hub-intro h1{font-size:40px}
+ .hplay .hplay-names{grid-template-columns:minmax(0,1fr)}
+ .hnet .hnet-role-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hnet .hnet-role-card{padding:11px;min-height:101px}
+ .hnet .hnet-role-top b{font-size:12px}
+ .hnet .hnet-role-top em{font-size:8px}
+}
+@media(max-width:350px){.hj-progress li b{font-size:6px}.hnet .hnet-role-grid{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.hnet .hnet-role-card{transition:none}}
