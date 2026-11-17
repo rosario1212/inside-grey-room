@@ -94,4 +94,8 @@ for(const file of ['heritage-play-v13-7.js','heritage-maitre-v34.js']){
  assert(source.includes('CE QUE TU SAIS SEUL')&&source.includes('TON OBJECTIF'),
   file+' must keep objectives separate from role secrets');
 }
+const onlineMaitre=fs.readFileSync('heritage-maitre-online-v34-4.js','utf8');
+assert(onlineMaitre.includes('<h1>${esc(d.player.pseudo)}</h1>'),'Maître online must identify the player');
+assert(onlineMaitre.includes('<details class="hplay-role-full" open>'),'Maître online full public role must be visible');
+assert(onlineMaitre.includes('TON OBJECTIF')&&onlineMaitre.includes('CE QUE TU SAIS SEUL'),'Maître online must distinguish goal and sealed knowledge');
 console.log('PASS v769: authenticated authored supplements are useful, escaped, optional, and private; no other secret, variant mismatch or duplicate content.');
