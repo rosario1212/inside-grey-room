@@ -1,5 +1,7 @@
-const CACHE='igr-v772-investigation-cycle-audit-20261117';
+const CACHE='igr-v773-judicial-card-20261117';
 const SHELL=[
+  '/investigation-ux-v772.css?v=20261117-v773-judicial-card',
+  '/investigation-ux-v772.js?v=20261117-v773-judicial-card',
   '/cast-names-v772.js?v=cycle-audit-v772',
   '/idle-choice-v772.js?v=cycle-audit-v772',
   '/live-game-v772.css?v=cycle-audit-v772',
