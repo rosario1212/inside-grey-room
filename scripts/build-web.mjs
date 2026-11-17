@@ -11,6 +11,7 @@ const runtimeFiles=[
  'investigation-ux-v772.css','investigation-ux-v772.js','private-card-readability-v773.css',
  'live-game-v772.css','cast-names-v772.js','idle-choice-v772.js',
  'judicial-card-v773.js','judicial-card-v773.css',
+ 'suspect-natural-cards-v777.js',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
 async function exists(file){try{await stat(file);return true}catch{return false}}
@@ -90,4 +91,5 @@ const cloudflareHeaders=`
 `;
 await writeFile(path.join(out,'_headers'),cloudflareHeaders.trimStart(),'utf8');
 execFileSync(process.execPath,[path.join(root,'scripts/v773-private-card-readability-check.mjs'),out],{cwd:root,stdio:'inherit'});
+execFileSync(process.execPath,[path.join(root,'scripts/v777-natural-suspect-cards-check.mjs'),out],{cwd:root,stdio:'inherit'});
 console.log(`Inside Grey Room web bundle ready: ${out}`);console.log(`Runtime files: ${runtimeFiles.length} · assets: ${assetRefs.size} · ${(assetBytes/1024/1024).toFixed(2)} MiB assets`);
