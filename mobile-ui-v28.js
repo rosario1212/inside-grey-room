@@ -45,7 +45,7 @@ function enhanceUtilityExit(){
   // because these can lead to different destinations.
   const pageReturn=view==='rules'||view==='profile';
   const buttons=[...head.querySelectorAll('button,.btn,a')];
-  let button=buttons.find(el=>/accueil|\\bhome\\b|fermer|\\bclose\\b/i.test(el.textContent||''));
+  let button=buttons.find(el=>/accueil|\bhome\b|fermer|\bclose\b/i.test(el.textContent||''));
   if(!button&&pageReturn)button=buttons.find(el=>el.hasAttribute('data-igr-global-back'));
   if(!button){
     button=document.createElement('button');
