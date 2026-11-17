@@ -42,8 +42,8 @@ for(const entry of synopses){
   'Legacy or vague copy must not return for '+sid);
  assert(/[.?]$/.test(entry.short),'Synopsis must end in natural punctuation for '+sid);
 }
-assert(html.includes('omerta-v12.js?v=v728-approved-five-mockups-20261116'));
-assert(sw.includes('/omerta-v12.js?v=v728-approved-five-mockups-20261116'));
+assert(html.includes('omerta-v12.js?v=v755-uniform-dlc-hooks-20261117'));
+assert(sw.includes('/omerta-v12.js?v=v755-uniform-dlc-hooks-20261117'));
 assert.match(canonical,/Domenico Falco ne se présente pas/);
 assert.doesNotMatch(polish,/Vittorio Verri|Adriano Verri|Famiglia Verri/);
 assert.doesNotMatch(polish,/Object\.assign\(sc,COPY\[id\]\)/);
