@@ -1,4 +1,6 @@
 -- v772: 1 chosen investigation action per cycle, server timers, phase quizzes.
+-- CRITICAL: remove double-processing in igr_v4_tick that immediately skipped cycle_debrief
+-- after igr_v50_tick_legacy entered the phase (before players could answer).
 create or replace function igr_private.igr_v772_one_choice() returns trigger language plpgsql security invoker set search_path='' as $body$
 begin
  if exists(select 1 from public.igr_v4_actions a where a.room_code=new.room_code and a.cycle=new.cycle and a.action_type~'^investigation_[0-9]{3}$') then
@@ -107,8 +109,7 @@ begin
  end if;
  perform public.igr_v50_tick_legacy(p_room);
  select * into r from public.igr_v4_rooms where code=p_room for update;
- if r.phase='cycle_debrief' then perform public.igr_v4_emit_trame(r.code);update public.igr_v4_rooms set phase='trame',phase_started_at=now(),phase_ends_at=now()+interval '22 seconds',updated_at=now() where code=r.code;
- elsif r.phase='final_debrief' then perform public.igr_v52_begin_stage(r.code,'locking');end if;
+ if r.phase='final_debrief' then perform public.igr_v52_begin_stage(r.code,'locking');end if;
 end$function$
 
 
