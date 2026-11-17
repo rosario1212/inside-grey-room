@@ -20,8 +20,16 @@ assert.match(source,/voted&&votes<required\?'disabled'/,'Pending votes must not 
 const start=source.indexOf('function disclosureRows(){');
 const end=source.indexOf('\nfunction disclosurePanel(){',start);
 assert(start>=0&&end>start,'Disclosure UI renderer missing');
-const getRows=new Function('disclosure','esc','tr',source.slice(start,end)+'; return disclosureRows;');
-const render=(candidate)=>getRows({error:false,data:{candidates:[{id:51,title:'Test',text:'Evidence to verify',published:false,...candidate}]}},String,(fr)=>fr)();
+// Test the real concise helper together with the extracted renderer. v774 moved
+// the preview logic into a shared lexical helper rather than a global function.
+const helpersStart=source.indexOf('const case004Briefs=');
+const helpersEnd=source.indexOf('\nlet cache=',helpersStart);
+assert(helpersStart>=0&&helpersEnd>helpersStart,'v774 judicial preview helpers missing');
+const getRows=new Function('disclosure','esc','tr','game',
+  source.slice(helpersStart,helpersEnd)+'\n'+source.slice(start,end)+'; return disclosureRows;');
+const render=(candidate)=>getRows(
+ {error:false,data:{candidates:[{id:51,title:'Test',text:'Evidence to verify',published:false,...candidate}]}},
+ String,(fr)=>fr,()=>({room:{scenario_id:'001'}}))();
 const solo=render({required_votes:1,votes:0,mine:false});
 assert.match(solo,/0\/1/); assert.match(solo,/Publier pour tous/); assert.doesNotMatch(solo,/disabled/);
 const duo=render({required_votes:2,votes:0,mine:false});
