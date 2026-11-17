@@ -92,6 +92,8 @@ jobs:
           node --check omerta-v12-30.js
           node --check live-cell-v12-44.js
           node --check app-v11.js
+          node --check judicial-card-v773.js
+          node scripts/v773-investigator-judicial-card-check.mjs
           node --check runtime-optimization-v12.js
           node --check service-worker.js
           node scripts/ui-regression-check.mjs
