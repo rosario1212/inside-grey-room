@@ -209,13 +209,23 @@ for(const language of ['fr','en']){
   const value=hookMap[language][id];
   assert(value.length<=82&&/[.!?]$/.test(value)&&!value.includes('…')&&!value.includes('...'),
     'DLC pre-click copy must be short and complete: '+language+' '+id);
+  const [min,max]=language==='fr'?[60,67]:[53,70];
+  assert(value.length>=min&&value.length<=max,'Uneven DLC teaser length: '+language+' '+id);
+  assert.equal(value.split(/[.!?]+/).filter(Boolean).length,2,
+    'Every DLC teaser must contain two sentences: '+language+' '+id);
  }
 }
+assert(source.includes('window.IGR_DLC_CARD_TEASER=dlcCardTeaser'),'Missing common DLC teaser contract');
+for(const path of ['omerta-v12.js','terror-v12-37.js','premium-access-sync-v17.js']){
+ assert(read(path).includes('window.IGR_DLC_CARD_TEASER(sc)'),
+   'Alternate DLC renderer still uses long pre-click copy: '+path);
+}
+assert(css.includes('/* v755 — All DLC pre-click descriptions'),'Uniform DLC preview typography missing');
 assert(css.includes('/* v752 — short DLC catalogue copy'),'DLC excerpt clamping not disabled');
 const catalogueCssHref=html.match(/catalogue-navigation-v731\.css\?v=[^"']+/)?.[0];
 assert(catalogueCssHref,'New stylesheet not linked');
 const dlcJsHref=html.match(/dlc-suite-v12-37\.js\?v=[^"']+/)?.[0];
-assert(dlcJsHref&&dlcJsHref.includes('v754-regime-teasers-20261117'),'Updated picker JS version missing');
+assert(dlcJsHref&&dlcJsHref.includes('v755-uniform-dlc-hooks-20261117'),'Updated picker JS version missing');
 assert(sw.includes('/'+catalogueCssHref),'PWA stylesheet version must match HTML');
 assert(sw.includes('/'+dlcJsHref),'PWA script version must match HTML');
 assert(build.includes("'catalogue-navigation-v731.css'"),'Production build fails to copy stylesheet');
