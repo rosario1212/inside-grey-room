@@ -40,7 +40,32 @@
   text-transform:uppercase!important;
 }
 #app .page .page-head>.igr-utility-exit:active{transform:translateY(1px)}
-#app .page .page-head>.igr-rules-close{min-width:94px!important}
+/* v776 — one consistent page-level return; join retains distinct Accueil. */
+#app main.page:not(:has(#joinCode)) .page-head > button[data-igr-global-back]:not(.igr-join-pill){
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:44px!important;
+  padding:0 15px!important;
+  gap:9px!important;
+  border:1px solid rgba(220,228,234,.19)!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,rgba(18,23,28,.94),rgba(7,10,13,.97))!important;
+  color:#eef2f4!important;
+  white-space:nowrap!important;
+  touch-action:manipulation;
+}
+#app .page .page-head>.igr-utility-return b{
+  font-size:13px!important;
+  font-weight:730!important;
+  letter-spacing:.01em!important;
+  text-transform:none!important;
+}
+#app .page .page-head>.igr-utility-return span{font-size:18px!important}
+#app main.page .page-head > button[data-igr-global-back]:focus-visible{
+  outline:2px solid #dce6ed;
+  outline-offset:3px;
+}
 
 /* Profile still uses the title-row Home, not a duplicate floating Home. */
 body.igr-profile-view #igrUniversalDock{display:none!important}
