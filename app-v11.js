@@ -1542,14 +1542,14 @@ function privateCardHtml(){
  const personaIdentity=String((santoroMyCard&&ps.identity)||ps.variant_card?.identity||ps.place||'').trim();
  const privateWin=santoroMyCard?ps.objective:(authoredObjective||roleInfo(secret==='espion'?'espion':pub).win);
  const concisePrivateCard=conciseDossier?[valueBlock('TON HISTOIRE',ps.story),valueBlock('TES RELATIONS',ps.relations),valueBlock('TA CHRONOLOGIE',ps.chronology),valueBlock('CE QUE TU SAIS',ps.anchors),valueBlock('CE QUE TU CACHES',ps.hide,'danger-soft'),valueBlock('TA DÉFENSE',String(ps.position||'').trim()===String(ps.anchors||'').trim()?'':ps.position)].join(''):'';
- // v766: optional extra context comes exclusively from the authenticated
+ // v769: optional extra context comes exclusively from the authenticated
  // player's exact room-pinned manuscript. Never look up another role's story
  // or derive these questions from the canonical truth/answer key.
- const authoredStory=pub==='suspect'&&typeof ps.v766_story==='string'
-   &&ps.v766_story.trim()&&!ps.story?.trim()
-   ?valueBlock('TON CONTEXTE PERSONNEL',ps.v766_story):'';
- const authoredQuestions=pub==='suspect'&&Array.isArray(ps.v766_questions)
-   ?ps.v766_questions.filter(x=>typeof x==='string'&&x.trim()).slice(0,2):[];
+ const authoredStory=pub==='suspect'&&typeof ps.v769_story==='string'
+   &&ps.v769_story.trim()&&!ps.story?.trim()
+   ?valueBlock('TON CONTEXTE PERSONNEL',ps.v769_story):'';
+ const authoredQuestions=pub==='suspect'&&Array.isArray(ps.v769_questions)
+   ?ps.v769_questions.filter(x=>typeof x==='string'&&x.trim()).slice(0,2):[];
  const authoredDialogue=authoredQuestions.length
    ?'<div class="private-block igr-v766-dialogue"><h4>POUR ÉCHANGER</h4><p class="igr-v766-caution">Des questions possibles, pas des faits établis.</p>'
       +authoredQuestions.map(q=>'<div class="relation-line"><span>'+h(q)+'</span></div>').join('')+'</div>'
