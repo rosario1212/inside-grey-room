@@ -2,7 +2,7 @@ import {copyFile,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 const target=path.resolve(process.argv[2]||'dist');
-const root=process.cwd(),script='common-dossier-v106.js',version='v771-common-dossier-public-progress-20261117-soloquorum-v773-concise-v775';
+const root=process.cwd(),script='common-dossier-v106.js',version='v771-common-dossier-public-progress-20261117-soloquorum-v773-concise-v778';
 const refreshedAssets=['navigation-heritage-v19.css','screen-polish-v73.css','heritage-casino-v91.js','notification-bell-visibility-v31.js','play-modes-v13-8.js','narrative-dossier-v87.js','investigation-runtime-v42.js','investigation-ux-v772.js'];
 const refreshAssets=text=>refreshedAssets.reduce((s,asset)=>s.replaceAll(new RegExp(asset.replaceAll('.', '\\.')+'\\?v=[^\"\']+', 'g'),`${asset}?v=${version}`),text);
 const exists=async x=>{try{await stat(x);return true}catch{return false}};
@@ -14,6 +14,9 @@ await copyFile(source,path.join(target,script));
 const semanticCheck=spawnSync(process.execPath,['scripts/v775-contextual-evidence-check.mjs'],{encoding:'utf8'});
 if(semanticCheck.status)throw Error(semanticCheck.stderr||semanticCheck.stdout||'v775 contextual QA failed');
 console.log(semanticCheck.stdout.trim());
+const trameCheck=spawnSync(process.execPath,['scripts/v778-trame-editorial-check.mjs'],{encoding:'utf8'});
+if(trameCheck.status)throw Error(trameCheck.stderr||trameCheck.stdout||'v778 trame QA failed');
+console.log(trameCheck.stdout.trim());
 for(const name of ['index.html','en.html']){
  const file=path.join(target,name);let html=await readFile(file,'utf8');
  html=html.replace(/\s*<script\b[^>]+src=["']common-dossier-v106\.js[^"']*["'][^>]*><\/script>/gi,'');

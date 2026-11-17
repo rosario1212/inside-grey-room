@@ -28,12 +28,25 @@ function compact(){
  const roomId=String(window.STATE?.sync?.room?.scenario_id||'');
  const improve=window.IGR_COMMON_DOSSIER_V106?.preciseCaseCopy;
  if(roomId&&typeof improve==='function'){
-  for(const p of root.querySelectorAll('.igr001-reports p,.v42-elements p')){
+  // Only already-rendered evidence panels are edited. No new audience or permissions.
+  for(const p of root.querySelectorAll('.igr001-reports p,.v42-evidence p,.igr106-inquiry-evidence p')){
    if(p.children.length)continue;
    const text=String(p.textContent||'').trim();
    if(!text)continue;
    const corrected=improve(text,'',roomId);
    if(corrected!==text)p.textContent=corrected;
+  }
+  const rename=window.IGR_COMMON_DOSSIER_V106?.editorialTitle;
+  const events=window.STATE?.sync?.events||[];
+  if(typeof rename==='function'){
+   for(const article of root.querySelectorAll('.v42-evidence[data-igr-event-id]')){
+    const e=events.find(item=>String(item.id)===String(article.dataset.igrEventId));
+    if(!e||e.event_type!=='trame')continue;
+    const caption=article.querySelector('.v42-evidence-meta span');
+    if(!caption)continue;
+    const title=rename(e.payload?.title,e.payload?.text,roomId);
+    if(title&&caption.textContent!==title)caption.textContent=title;
+   }
   }
  }
 }
