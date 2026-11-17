@@ -4,8 +4,6 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
 const edits=JSON.parse(readFileSync('data/trame-editorial-v778.json','utf8'));
-const reviewedV780=JSON.parse(readFileSync('data/v780-all-316-reviewed.json','utf8'));
-
 const source=readFileSync('common-dossier-v106.js','utf8');
 const sql=readFileSync('sql/v778_trame_editorial_patch.sql','utf8');
 const ux=readFileSync('investigation-ux-v772.js','utf8');
@@ -45,16 +43,13 @@ const api=new Function('game','esc','tr',source.slice(start,end)+
 );
 for(const edit of edits){
  scenario=edit.scenario_id;
- const next=reviewedV780.find(x=>x.scenario_id===edit.scenario_id &&
-  x.title===edit.new_title && x.original_text===edit.text);
- const expectedCopy=next?.new_text||edit.text,expectedTitle=next?.new_title||edit.new_title;
- assert.equal(api.preciseCaseCopy(edit.original_text,edit.title),expectedCopy,
-  'Legacy event must display the latest reviewed text: '+scenario+'/'+edit.title);
- assert.equal(api.preciseCaseCopy(edit.text,edit.new_title),expectedCopy,
-  'Updated canonical evidence must get latest v780 text: '+scenario+'/'+edit.title);
- assert.equal(api.editorialTitle(edit.title,edit.original_text),expectedTitle,
-  'Old event must display latest corrected heading: '+scenario+'/'+edit.title);
- assert(api.conciseCaseText(expectedCopy,expectedTitle).length<=185);
+ assert.equal(api.preciseCaseCopy(edit.original_text,edit.title),edit.text,
+  'Exact old evidence must show reviewed text: '+scenario+'/'+edit.title);
+ assert.equal(api.preciseCaseCopy(edit.text,edit.new_title),edit.text,
+  'Updated canonical evidence must not be changed again: '+scenario+'/'+edit.title);
+ assert.equal(api.editorialTitle(edit.title,edit.original_text),edit.new_title,
+  'Old event must display its corrected heading: '+scenario+'/'+edit.title);
+ assert(api.conciseCaseText(edit.text,edit.new_title).length<=185);
  scenario='999';
  assert.equal(api.preciseCaseCopy(edit.original_text,edit.title),edit.original_text,
   'Unrelated scenarios must never inherit this trame: '+edit.scenario_id);
