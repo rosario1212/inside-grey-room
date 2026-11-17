@@ -1,0 +1,100 @@
+/* Inside Grey Room · v773
+   Chronologies lisibles sur iPhone : l'heure et l'action ne se touchent jamais.
+   S'applique aux cartes privées de tous les dossiers et de tous les rôles.
+   Les relations conservent leur présentation existante. */
+#app .private-card-v11 .igr-v772-steps{
+  display:grid!important;
+  gap:0!important;
+  padding:0!important;
+  margin:0!important;
+  list-style:none!important;
+  counter-reset:none!important;
+  min-width:0;
+}
+#app .private-card-v11 .igr-v772-steps>li{
+  display:grid!important;
+  grid-template-columns:minmax(76px,96px) minmax(0,1fr)!important;
+  align-items:start!important;
+  column-gap:clamp(12px,3vw,18px)!important;
+  row-gap:6px!important;
+  list-style:none!important;
+  margin:0!important;
+  padding:14px 0!important;
+  min-width:0!important;
+  border-top:1px solid rgba(154,175,190,.2);
+  line-height:1.55!important;
+}
+#app .private-card-v11 .igr-v772-steps>li:first-child{
+  padding-top:0!important;
+  border-top:0!important;
+}
+#app .private-card-v11 .igr-v772-steps>li:last-child{padding-bottom:0!important}
+#app .private-card-v11 .igr-v772-steps>li::before{content:none!important;display:none!important}
+#app .private-card-v11 .igr-v772-steps>li::marker{content:""!important}
+#app .private-card-v11 .igr-v772-steps .igr-v772-time{
+  box-sizing:border-box!important;
+  display:block!important;
+  grid-column:1!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:7px 6px!important;
+  border-radius:9px!important;
+  border:1px solid rgba(133,166,189,.35)!important;
+  background:rgba(75,106,131,.12)!important;
+  color:#c9dae6!important;
+  font:700 clamp(11px,3vw,13px)/1.4 'IBM Plex Mono',monospace!important;
+  font-variant-numeric:tabular-nums;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow-wrap:normal!important;
+  letter-spacing:0!important;
+}
+#app .private-card-v11 .igr-v772-steps .igr-v772-event{
+  display:block!important;
+  grid-column:2!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:1px 0 0!important;
+  color:#e6eaee!important;
+  font-size:clamp(15px,3.9vw,17px)!important;
+  font-weight:400!important;
+  line-height:1.58!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+}
+#app .private-card-v11 .igr-v772-steps>li:not(:has(.igr-v772-time)){
+  grid-template-columns:minmax(0,1fr)!important;
+  border-left:2px solid rgba(133,166,189,.3);
+  padding-left:13px!important;
+}
+#app .private-card-v11 .igr-v772-steps>li:not(:has(.igr-v772-time)) .igr-v772-event{
+  grid-column:1!important;
+}
+#app .private-card-v11 .private-block>p{
+  white-space:pre-line;
+  line-height:1.6!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+}
+#app .private-card-v11 .private-block h4,
+#app .private-card-v11 .role-summary b{
+  overflow-wrap:break-word;
+  word-break:normal;
+}
+#app .private-card-v11 .igr-v772-defence-list>li{
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+}
+@media(max-width:360px){
+  #app .private-card-v11 .igr-v772-steps>li{
+    grid-template-columns:72px minmax(0,1fr)!important;
+    column-gap:10px!important;
+    padding:12px 0!important;
+  }
+  #app .private-card-v11 .igr-v772-steps .igr-v772-time{
+    font-size:11px!important;
+    padding:7px 4px!important;
+  }
+}
