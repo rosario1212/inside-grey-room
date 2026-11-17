@@ -10,6 +10,7 @@ const files=[
  'scenario-flow-v13.js','gameplay-flow-v13.js','dlc-experience-v13.js','lobby-ui-fix-v13.js','gameplay-clarity-v32.js','authoritative-runtime-v40.js','runtime-coordinator-v53.js','startup-stability-v13-3.js','heritage-v13-5.js','heritage-premium-v13-6.js','heritage-play-v13-7.js','heritage-context-v71.js','play-modes-v13-8.js','heritage-journey-v755.js','global-navigation-v766.js','premium-access-sync-v17.js','scenario-replay-contracts-v13.json',
  'i18n-en-v12.js','language-v12.js','rules-v12.js','locale-settings-v12.js','ui-polish-v12.js','locale-runtime-v12-23.js','omerta-v12.js','omerta-polish-v12.js','omerta-hotfix-v12.js','role-tree-polish-v12-29.js','omerta-v12-30.js','omerta-v12-39.js','omerta-money-intel-v1.js','omerta-santoro-verdict-v28.js','omerta-023-spy-v1.js','terror-v12-37.js','terror-live-v681.js','terror-front-v682.js','terror-command-v688.js','terror-command-v694.js','role-cadence-v694.js','analyst-profiling-v700.js','regime-live-v13.js','dlc-suite-v12-37.js','live-cell-v12-44.js','dlc-profile-ui-v12-44.js','dlc-copy-v12-46.js','native-store-boundary-v14.js',
  'live-game-v772.css','cast-names-v772.js','idle-choice-v772.js','investigation-ux-v772.css','investigation-ux-v772.js',
+ 'judicial-card-v773.js','judicial-card-v773.css',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
 async function exists(p){try{await stat(p);return true}catch{return false}}
