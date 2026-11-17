@@ -5,8 +5,9 @@ import path from 'node:path';
 const target=path.resolve(process.argv[2]||'dist');
 const VERSION='v87-canonical-narrative';
 const polish='screen-polish-v73.css';
+const maitreLayout='heritage-maitre-layout-v758.css';
 const narrativeRuntime='narrative-dossier-v87.js';
-const assets=['terror-crisis-v696.css','app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','language-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js',polish];
+const assets=['terror-crisis-v696.css','app-v11.js','startup-stability-v13-3.css','lobby-ui-fix-v13.js','lobby-ui-fix-v13.css','omerta-v12-30.js','omerta-v12-39.js','dlc-suite-v12-37.js','mobile-ui-v28.js','interface-polish-v14.js','navigation-theme-v18.js','authoritative-runtime-v41.js','rules-v12.js','language-v12.js','self-guided-rules-v51.js','gameplay-flow-v13.js','play-modes-v13-8.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-mobile-v34-5.js',polish,maitreLayout];
 const posterUrls=['/assets/intro-v10-16.webp','/assets/heritage-maitre-01-le-client-hd-v77.webp?v=v77-heritage-clarity','/assets/heritage-maitre-02-le-deal-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-03-deux-choix-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-04-le-proces-hd-v79.webp?v=v79-audit-fixes','/assets/heritage-maitre-05-l-honneur-hd-v79.webp?v=v79-audit-fixes'];
 const escapeRe=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
@@ -17,6 +18,7 @@ assets.push('live-cell-v12-44.js','gameplay-clean-v12.js','runtime-optimization-
 // Run after the existing gameplay/HÉRITAGE layers. Keep their generated code;
 // only finalize the URLs and cache for the changed presentation and rules assets.
 await copyFile(path.resolve(polish),path.join(target,polish));
+await copyFile(path.resolve(maitreLayout),path.join(target,maitreLayout));
 await copyFile(path.resolve(narrativeRuntime),path.join(target,narrativeRuntime));
 for(const asset of assets)await stat(path.join(target,asset));
 // The final client uses stable v87 URLs; fingerprint real mobile source bytes
@@ -31,7 +33,7 @@ for(const page of ['index.html','en.html']){
   let html=await readFile(file,'utf8');
   const redirect=page==='en.html'&&html.includes("location.replace('./')")&&!html.includes('app-v11.js');
   html=html.replace(/\s*<link[^>]+href=["']screen-polish-v73\.css[^"']*["'][^>]*>\s*/gi,'\n');
-  if(!redirect)html=html.replace('</head>',`  <link rel="stylesheet" href="${polish}?v=${VERSION}">\n</head>`);
+  if(!redirect)html=html.replace('</head>',`  <link rel="stylesheet" href="${polish}?v=${VERSION}">\n  <link rel="stylesheet" href="${maitreLayout}?v=${VERSION}">\n</head>`);
   if(!redirect&&!html.includes(narrativeRuntime))html=html.replace('</body>',`  <script src="${narrativeRuntime}?v=${VERSION}"></script>\n</body>`);
   for(const asset of assets){
     const re=new RegExp(escapeRe(asset)+'\\?v=[^"\'<> ]+','g');
