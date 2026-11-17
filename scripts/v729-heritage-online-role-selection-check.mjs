@@ -37,7 +37,8 @@ let view=heritageRoleCards({room:{campaign_id:'cendres'},player:{preferred_role:
  {id:'p1',pseudo:'Ana',preferred_role:'chef'},{id:'p2',pseudo:'Bob',preferred_role:'sigint'}]});
 assert.equal(view.invalid,0);
 assert(view.markup.includes('CHEF DE CELLULE')&&view.markup.includes('COMPLET'));
-assert(view.markup.includes('TON RÔLE')&&view.markup.includes('Attribution aléatoire'));
+assert(view.markup.includes('Ton rôle')&&view.markup.includes('Attribution aléatoire'));
+assert(view.markup.includes('data-random="1"')&&view.markup.includes('hnet-role-actions'),'Cendres/Kuroi must show a compact real role draw outside the grid');
 assert(!view.markup.includes('INFORMATION PRIVÉE'),'Lobby must never reveal a private role card');
 view=heritageRoleCards({room:{campaign_id:'cendres'},player:{preferred_role:'sigint'},players:[
  {id:'p1',pseudo:'Ana',preferred_role:'archive'},{id:'p2',pseudo:'Bob',preferred_role:'sigint'}]});
@@ -90,9 +91,9 @@ for(const campaign of ['cendres','kuroi']){
   {id:'p2',pseudo:'Bob',preferred_role:null,is_host:false}]});
  assert(rendered?.preserve,'Heritage '+campaign+' lobby updates must preserve scrolling');
  assert(rendered.html.indexOf('<section class="hnet-role-zone"')<rendered.html.indexOf('<details class="hnet-roster-disclosure"'),'Role choice must precede roster in '+campaign);
- assert(rendered.html.includes('CODE D’INVITATION')&&rendered.html.includes('Participants à la table'),'Invitation and expandable roster missing in '+campaign);
+ assert(rendered.html.includes('INVITATION')&&rendered.html.includes('<summary>Joueurs'),'Invitation and expandable roster missing in '+campaign);
  assert(rendered.html.includes('data-hnet="copy-code"'),'Invitation code should be directly copyable in '+campaign);
- assert(rendered.html.includes('ATTENTE · 3 À INVITER'),'A two-player room must show exactly three missing participants in '+campaign);
+ assert(rendered.html.includes('EN ATTENTE (3)'),'A two-player room must show exactly three missing participants in '+campaign);
 }
 const maitreLobbySource=maitre.slice(maitre.indexOf('function lobby(d){'),maitre.indexOf('function reveal(d){'));
 assert(maitreLobbySource.startsWith('function lobby'),'MAÎTRE online lobby renderer missing');
@@ -224,6 +225,35 @@ for(const collision of [false,true]){
  assert(notices.includes('Tirage au lancement.'),'Reset should tell the player what happens next');
 }
 console.log('PASS v759: compact random action reserves an actual role, handles collisions and restores launch lottery.');
+
+// v760 — CENDRES/KUROI follow Maître's immediate, authoritative random draw.
+const heritageDrawSource=js.slice(js.indexOf('async function drawHeritageOnlineRole(){'),js.indexOf('async function chooseHeritageRole(roleId){'));
+assert(heritageDrawSource.startsWith('async function drawHeritageOnlineRole'),'Shared role draw handler missing');
+for(const campaign of ['cendres','kuroi']){
+ for(const collision of [false,true]){
+  const calls=[],notices=[];let refreshes=0;
+  const buttons=['chef','sigint'].map(id=>({
+   dataset:{role:id},disabled:false,classList:{contains:()=>false},
+   getAttribute:()=> 'false',querySelector:()=>({textContent:id.toUpperCase()})
+  }));
+  const draw=runInNewContext(heritageDrawSource+';drawHeritageOnlineRole',{
+   document:{querySelectorAll:()=>buttons},
+   hSession:()=>({code:'H1234',token:'synthetic-'+campaign,campaign}),
+   hRolePending:false,Math:{random:()=>0,floor:Math.floor},
+   rpc:async(name,args)=>{calls.push({name,args});if(collision&&args.p_role_id==='chef')throw Error('role_already_taken');return {ok:true}},
+   syncHeritageOnline:async(force)=>{assert.equal(force,true);refreshes++},
+   toastX:m=>notices.push(m),console
+  },{timeout:1000});
+  await draw();
+  assert.equal(calls[0].name,'igr_heritage_online_choose_role','Random button must reserve via authenticated RPC');
+  assert.equal(calls[0].args.p_player_token,'synthetic-'+campaign,'Random choice must use personal token');
+  assert.equal(calls.at(-1).args.p_role_id,collision?'sigint':'chef','Concurrent role claim must retry a remaining free role');
+  assert.equal(refreshes,1,'Confirmed random choice synchronizes lobby');
+  assert(notices.some(x=>x.startsWith('Rôle tiré :')),'Successful draw must show result');
+ }
+}
+assert(js.includes("data-random=\"1\"")&&js.includes("drawHeritageOnlineRole()"),'The visible button must call the random handler');
+console.log('PASS v760: Cendres and Kuroi reserve immediately, retry collisions, and keep server role authorization.');
 
 console.log('PASS v733: synthetic Cendres/Kuroi/Maître host launch and Casino preparation paths.');
 
