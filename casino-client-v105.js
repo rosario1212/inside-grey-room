@@ -70,9 +70,9 @@ const name=id=>state?.characters?.find(c=>c.id===id)?.name||state?.participants?
 const option=(id,label)=>`<option value="${esc(id)}">${esc(label)}</option>`;
 const people=(key,filter=()=>true)=>`<label>Personne<select name="${esc(key)}" data-casino-draft>${(state.characters||[]).filter(filter).map(c=>option(c.id,c.name)).join('')}</select></label>`;
 const section=(title,body)=>`<section class="casino-box"><h2>${esc(title)}</h2>${body}</section>`;
-function welcome(){return `<h1>Une table à Macao</h1><p>Un écran par participant. Le casino et le bureau d’enquête jouent dans deux espaces séparés.</p>
- <div class="casino-entry-options"><section class="casino-entry-option" aria-labelledby="casino-create-title"><h2 id="casino-create-title">Organiser une partie</h2><p>Tu es l’hôte : crée la table, puis partage son code avec les autres participants.</p>${form('create',field('Ton prénom d’hôte','name','text','maxlength="22" required autocomplete="given-name"'),'Créer une table privée')}</section>
- <section class="casino-entry-option" aria-labelledby="casino-join-title"><h2 id="casino-join-title">Rejoindre des amis</h2><p>Un hôte a déjà créé la table ? Entre son code et ton prénom.</p>${form('join',field('Code de la table','inviteCode','text','maxlength="10" required autocapitalize="characters" value="'+esc(joinDraft?.inviteCode||'')+'"')+field('Ton prénom','name','text','maxlength="22" required value="'+esc(joinDraft?.name||'')+'"'),'Rejoindre la table')}</section></div>
+function welcome(){return `<h1>Une table à Macao</h1><p>Un écran par joueur. Deux camps.</p>
+ <div class="casino-entry-options"><section class="casino-entry-option" aria-labelledby="casino-create-title"><h2 id="casino-create-title">Organiser une partie</h2><p>Crée la table et partage le code.</p>${form('create',field('Ton prénom d’hôte','name','text','maxlength="22" required autocomplete="given-name"'),'Créer une table privée')}</section>
+ <section class="casino-entry-option" aria-labelledby="casino-join-title"><h2 id="casino-join-title">Rejoindre des amis</h2><p>Entre le code et ton prénom.</p>${form('join',field('Code de la table','inviteCode','text','maxlength="10" required autocapitalize="characters" value="'+esc(joinDraft?.inviteCode||'')+'"')+field('Ton prénom','name','text','maxlength="22" required value="'+esc(joinDraft?.name||'')+'"'),'Rejoindre la table')}</section></div>
  ${load()?'<button class="casino-action" data-casino-action="resume">Reprendre mon personnage</button>':''}
  <details><summary>Reprendre sur un autre appareil</summary>${form('recover',area('Ta clé personnelle','recovery',110),'Reprendre ma partie')}</details>`}
 function lobby(){
@@ -100,17 +100,17 @@ function lobby(){
  });
  return `<section class="casino-lobby-top"><div class="casino-lobby-access"><div><span>CODE D’INVITATION</span><h1>${esc(state.inviteCode)}</h1></div><button type="button" class="casino-action" data-casino-action="invite">Copier le code</button></div><output data-casino-invite></output><p>${members.length}/12 joueurs · ${casinoCount} chez Yonghe · ${members.length-casinoCount} au bureau.</p></section>
  <section class="casino-role-choice-zone"><div class="casino-role-choice-heading"><span>TON PERSONNAGE</span><h2>Choisis où jouer</h2></div>
- <p>Appuie sur une fonction libre. Chez Yonghe, ton identité privée sera révélée au lancement.</p>
+ <p>Choisis un rôle libre.</p>
  <div class="casino-role-choice-group casino-role-choice-group--yonghe"><div class="casino-role-group-heading"><strong>YONGHE</strong><span>4 À 7 PERSONNAGES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--yonghe">${buttons[0]}</div></div>
  <div class="casino-role-choice-group casino-role-choice-group--bureau"><div class="casino-role-group-heading"><strong>BUREAU D’ENQUÊTE</strong><span>3 FONCTIONS REQUISES</span></div><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(1,4).join('')}</div></div>
  <details class="casino-optional-roles"><summary>Autres fonctions · facultatives</summary><div class="casino-role-choice-grid casino-role-choice-grid--bureau">${buttons.slice(4).join('')}</div></details>
- <div class="casino-selected-role"><span>TON CHOIX</span><b>${esc(roles[own.role]||'Aucun rôle sélectionné')}</b>${roles[own.role]?`<em>ACTIVITÉ · ${roleStars(own.role)}</em>`:'<small>Choisis une fonction disponible.</small>'}</div>
+ <div class="casino-selected-role"><span>TON CHOIX</span><b>${esc(roles[own.role]||'Aucun rôle sélectionné')}</b>${roles[own.role]?`<small>${esc(roleShort(own.role))}</small><em>ACTIVITÉ · ${roleStars(own.role)}</em>`:'<small>Choisis une fonction disponible.</small>'}</div>
  </section>
  <section class="casino-launch-readiness" aria-label="Conditions de lancement"><div class="casino-launch-readiness-head"><span>PRÉPARER LA TABLE</span><strong>${readyCount}/${members.length} prêts</strong></div><p>${esc(launchHint)}</p><ul>${canStart?'<li class="is-done"><span aria-hidden="true">✓</span> Conditions réunies · début possible</li>':requirements.filter(x=>!x.ok).map(x=>`<li><span aria-hidden="true">○</span>${esc(x.text)}</li>`).join('')}</ul></section>
  <details class="casino-roster-disclosure"><summary>Participants · ${members.length}/12 <span>${members.filter(m=>m.ready).length} prêts</span></summary><ul class="casino-members">${members.map(m=>`<li><b>${esc(m.name)}</b><span>${esc(roles[m.role]||'À CHOISIR')}</span><span>${m.ready?'PRÊT':'EN PRÉPARATION'}</span></li>`).join('')}</ul></details>
  <button class="casino-action casino-ready" data-casino-action="ready" ${Object.hasOwn(roles,own.role)?'':'disabled'}>${!Object.hasOwn(roles,own.role)?'CHOISIS D’ABORD UN RÔLE':own.ready?'✓ CONFIRMÉ · MODIFIER':'CONFIRMER MA PARTICIPATION'}</button>
  ${state.isHost?`<button class="casino-action casino-start" data-casino-action="start" ${canStart?'':'disabled'}>${canStart?'COMMENCER LA PARTIE':members.length<7?`EN ATTENTE · ${7-members.length} À INVITER`:'EN ATTENTE DES JOUEURS'}</button>`:''}
- <p class="casino-lobby-note">Une partie se joue avec 7 à 12 personnes, chacune sur son écran.</p>`;
+ `;
 }
 function card(){const c=state.ownCard;return section(c.name,`<strong class="casino-role">${esc(roles[c.title]||c.title)}</strong><p class="casino-role-preview">${esc(roleShort(state.role))}</p><small class="casino-role-activity">ACTIVITÉ · ${roleStars(state.role)}</small><p>${esc(c.brief)}</p>${c.objective?`<h3>Ton objectif</h3><p>${esc(c.objective)}</p>`:''}
  ${state.ownVictoryRule?`<div class="casino-victory-rule"><strong>CONDITION DE VICTOIRE</strong><p>${esc(state.ownVictoryRule)}</p></div>`:''}
