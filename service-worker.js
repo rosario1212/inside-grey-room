@@ -1,7 +1,7 @@
-const CACHE='igr-v775-private-readability-20261117';
+const CACHE='igr-v776-investigator-prose-20261117';
 const SHELL=[
-  '/judicial-card-v773.js?v=v774-20261117',
-  '/judicial-card-v773.css?v=v773-20261117',
+  '/judicial-card-v773.js?v=v776-20261117',
+  '/judicial-card-v773.css?v=v776-20261117',
   '/private-card-readability-v773.css?v=private-readability-v773-20261117',
   '/cast-names-v772.js?v=cycle-audit-v772',
   '/idle-choice-v772.js?v=cycle-audit-v772',
