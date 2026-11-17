@@ -22,6 +22,6 @@ SET pack=pg_catalog.jsonb_set(p.pack,'{relations}',
     )
   ),true)
 WHERE p.scenario_id='031'
-  AND pg_catalog.jsonb_array_length(pg_catalog.coalesce(p.pack#>'{relations,1}','[]'::jsonb))=0
-  AND pg_catalog.jsonb_array_length(pg_catalog.coalesce(p.pack#>'{relations,2}','[]'::jsonb))=0
-  AND pg_catalog.jsonb_array_length(pg_catalog.coalesce(p.pack#>'{relations,3}','[]'::jsonb))=0;
+  AND pg_catalog.jsonb_array_length(coalesce(p.pack#>'{relations,1}','[]'::jsonb))=0
+  AND pg_catalog.jsonb_array_length(coalesce(p.pack#>'{relations,2}','[]'::jsonb))=0
+  AND pg_catalog.jsonb_array_length(coalesce(p.pack#>'{relations,3}','[]'::jsonb))=0;
