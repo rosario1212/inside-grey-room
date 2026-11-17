@@ -61,7 +61,14 @@ function publicHtml(){
  const history=events.map(e=>{
   const c=safeCycle(e.cycle),press=e.event_type==='breaking_news'||e.press_claim;
   const type=press?tr('PUBLICATION DU JOURNALISTE','PRESS PUBLICATION'):e.event_type==='public_notice'?tr('BILAN PUBLIC DU CYCLE','PUBLIC CYCLE SUMMARY'):e.event_type==='public_evidence'?tr('PIÈCE COMMUNIQUÉE · À RECOUPER','SHARED DOCUMENT · CHECK THE SOURCE'):e.verified?tr('FAIT CONFIRMÉ','VERIFIED FACT'):tr('INFORMATION PUBLIQUE','PUBLIC INFORMATION');
-  return '<article class="igr106-event" data-igr-event-id="'+esc(e.id)+'" data-cycle="'+(c||0)+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON CLASSÉE','CYCLE UNKNOWN'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4><p>'+esc(e.text||'')+'</p>'+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
+  // Only the authenticated public dossier RPC can populate this screen.
+  // Documents voluntarily disclosed to all remain available without burying the
+  // other public updates in long paragraphs on a narrow phone.
+  const published=e.event_type==='public_evidence';
+  const body=published
+   ?'<details class="igr106-public-document"><summary>'+esc(tr('Lire la pièce communiquée','Read the shared document'))+'</summary><p>'+esc(e.text||'')+'</p></details>'
+   :'<p>'+esc(e.text||'')+'</p>';
+  return '<article class="igr106-event" data-igr-event-id="'+esc(e.id)+'" data-cycle="'+(c||0)+'" data-public-document="'+(published?'true':'false')+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON CLASSÉE','CYCLE UNKNOWN'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4>'+body+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
  }).join('');
  return '<section class="igr106-common" aria-label="'+esc(tr('Dossier commun','Shared case file'))+'"><header><small>'+esc(tr('ACCESSIBLE À TOUS LES RÔLES','VISIBLE TO ALL ROLES'))+'</small><h2>'+esc(tr('Dossier commun','Shared case file'))+'</h2></header><article class="igr106-premise"><h3>'+esc(tr('Situation connue de tous','Shared starting situation'))+'</h3><p>'+esc(context||tr('Le dossier sera présenté au lancement de la partie.','The case will be introduced when play begins.'))+'</p></article><div class="igr106-events"><h3>'+esc(tr('Publications et faits partagés','Shared news and events'))+'</h3>'+(cache.err&&!a?'<p class="igr106-muted">'+esc(tr('Connexion au dossier commun indisponible. Réessai automatique.','Shared case file temporarily unavailable. Retrying.'))+'</p>':!a?'<p class="igr106-muted">'+esc(tr('Synchronisation des informations publiques…','Loading public updates…'))+'</p>':history||'<p class="igr106-muted">'+esc(tr('Aucune nouvelle information publique pour le moment.','No new shared update yet.'))+'</p>')+'</div></section>';
 }
@@ -232,6 +239,13 @@ const style=document.createElement('style');style.id='igr106-css';style.textCont
 .igr106-event{border-left:3px solid #777e85}.igr106-event[data-cycle="1"]{border-left-color:#a8a49c}.igr106-event[data-cycle="2"]{border-left-color:#c89f64}.igr106-event[data-cycle="3"]{border-left-color:#b96565}
 .igr106-meta{display:flex;justify-content:space-between;gap:9px;flex-wrap:wrap;font-size:.64rem;letter-spacing:.08em;color:#a9b0b6}
 .igr106-event h4{font-size:.96rem;margin:9px 0 5px}.igr106-event small,.igr106-muted{color:#a8afb4;line-height:1.4}
+.igr106-common,.igr106-events,.igr106-premise,.igr106-event{min-width:0;max-width:100%;box-sizing:border-box}
+.igr106-premise p,.igr106-event h4,.igr106-event p,.igr106-meta span{overflow-wrap:anywhere}
+.igr106-public-document{margin:10px 0 0;border-top:1px solid rgba(255,255,255,.10);padding-top:9px}
+.igr106-public-document summary{cursor:pointer;list-style-position:inside;font-size:.82rem;font-weight:700;line-height:1.5;color:#b7cbcf;touch-action:manipulation}
+.igr106-public-document[open] summary{margin-bottom:8px}
+.igr106-public-document p{margin:0;white-space:pre-wrap;line-height:1.55;color:#d5dadd}
+.igr106-event[data-public-document="true"]{border-left-color:#82aeb2}
 .igr106-action-panel{margin:8px 0 14px;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:rgba(255,255,255,.025)}
 .igr106-action-panel>summary{padding:11px 13px;cursor:pointer;font-weight:700;font-size:.86rem}
 .igr106-actions-inner{padding:9px 13px 14px}.igr106-actions-inner .phase-explain{margin-top:0}
