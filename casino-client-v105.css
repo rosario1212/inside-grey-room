@@ -450,3 +450,119 @@
 .casino-live .casino-role-choice-card.is-taken .casino-role-choice-top em{color:#c6a285}
 .casino-live .casino-launch-readiness li{font-size:12px;line-height:1.5}
 .casino-live .casino-launch-readiness li>span{font-size:13px}
+
+
+/* CASINO v761 — no jump when selecting "Jouer la campagne".
+   The live session now shares the standard app/topbar shell and the same
+   centred page geometry as the public campaign and other Heritage screens. */
+#app .app:has(>.casino-live){
+ box-sizing:border-box;
+ min-width:0;
+ width:100%;
+}
+#app .app>.casino-live{
+ box-sizing:border-box!important;
+ display:block;
+ position:relative;
+ width:min(100%,840px)!important;
+ max-width:840px!important;
+ min-width:0!important;
+ margin:0 auto!important;
+ padding:clamp(12px,2.1vw,22px)!important;
+ padding-bottom:max(32px,env(safe-area-inset-bottom,0px))!important;
+ border:1px solid rgba(181,133,86,.18);
+ border-radius:16px;
+ overflow-x:clip;
+}
+#app .casino-live>.casino-content{
+ box-sizing:border-box;
+ display:block;
+ width:100%;
+ min-width:0;
+ max-width:100%;
+ padding:0;
+ margin:0;
+ border:0;
+}
+#app .casino-live .casino-live-top{
+ display:grid;
+ grid-template-columns:max-content minmax(0,1fr);
+ align-items:center;
+ gap:8px 12px;
+ min-width:0;
+ margin:0 0 16px;
+ padding:0 0 14px;
+ border-bottom:1px solid rgba(201,159,113,.32);
+}
+#app .casino-live .casino-live-top>.casino-action{
+ width:auto;
+ min-width:0;
+ max-width:100%;
+ min-height:44px;
+ margin:0;
+ white-space:normal;
+ justify-self:start;
+}
+#app .casino-live .casino-live-top>span:not([data-casino-connection]){
+ min-width:0;
+ max-width:100%;
+ justify-self:end;
+ text-align:right;
+ overflow-wrap:break-word;
+ color:#e0c4aa;
+ font-size:10px;
+ line-height:1.45;
+ letter-spacing:.025em;
+}
+#app .casino-live .casino-live-top>[data-casino-connection]{
+ grid-column:1/-1;
+ min-width:0;
+ flex-basis:auto;
+ text-align:left;
+ line-height:1.4;
+}
+#app .casino-live .casino-entry-options,
+#app .casino-live .casino-entry-option,
+#app .casino-live .casino-entry-option form{
+ min-width:0;
+ max-width:100%;
+}
+#app .casino-live .casino-entry-options{
+ margin:15px 0 20px;
+ gap:12px;
+}
+#app .casino-live .casino-entry-option{
+ padding:clamp(13px,2.8vw,18px);
+ border-radius:11px;
+}
+#app .casino-live .casino-entry-option form{margin-top:13px}
+#app .casino-live .casino-entry-option h2{
+ line-height:1.2;
+ overflow-wrap:break-word;
+}
+@media(max-width:650px){
+ #app .app>.casino-live{
+  width:100%!important;
+  max-width:100%!important;
+  padding:12px!important;
+  padding-bottom:max(30px,env(safe-area-inset-bottom,0px))!important;
+  border-radius:12px;
+ }
+ #app .casino-live .casino-live-top{
+  grid-template-columns:minmax(0,max-content) minmax(0,1fr);
+  gap:7px;
+ }
+ #app .casino-live .casino-live-top>span:not([data-casino-connection]){font-size:9px}
+ #app .casino-live .casino-entry-options{grid-template-columns:minmax(0,1fr)!important}
+ #app .casino-live .casino-entry-option{padding:13px}
+}
+@media(max-width:350px){
+ #app .casino-live .casino-live-top{
+  grid-template-columns:minmax(0,1fr);
+  justify-items:start;
+ }
+ #app .casino-live .casino-live-top>span:not([data-casino-connection]){
+  justify-self:start;
+  text-align:left;
+ }
+}
