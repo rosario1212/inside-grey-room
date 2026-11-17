@@ -1475,16 +1475,27 @@ function igr82RelationsHtml(value) {
   return `<section class="private-block igr82-relations"><h4>${tr('TES RELATIONS','YOUR CONNECTIONS')}</h4><p class="igr82-relation-hint">${tr('Une carte par personne. À toi de choisir les questions à poser.','One card per person. You decide which questions to ask.')}</p><div class="igr82-relation-list">${entries.join('')}</div></section>`;
 }
 
+/* v773: a display-only clarification for an ambiguous private wording.
+   Never consult another player's private_state or the hidden solution. */
+function igrV773ReadablePrivateText(title,value){
+ const raw=String(value||'');
+ if(!/^CE QUE TU CACHES(?:\b|\s|\s*—)/i.test(String(title||'')))return raw;
+ if(String(STATE?.sync?.room?.scenario_id||'')!=='004')return raw;
+ return raw.replace(/^\s*Tu prétends qu[’']un relais était prévu, alors que vous aviez seulement décidé d[’']attendre\.\s*$/i,
+  'Tu affirmes que quelqu’un devait contacter Sofia ou les secours. C’est faux : pendant votre appel, vous avez seulement décidé d’attendre. Personne ne s’était engagé à appeler.');
+}
+
 function valueBlock(title,value,cls=''){
  if(value==null||value===''||(Array.isArray(value)&&!value.length))return'';
  if(title==='TES RELATIONS'&&Array.isArray(value))return igr82RelationsHtml(value);
  let body='';
- if(Array.isArray(value))body=value.map(v=>typeof v==='string'?`<div class="relation-line"><span>${h(v)}</span></div>`:`<div class="relation-line"><b>${h(v.pseudo||v.label||'')}</b><span>${h(v.text||JSON.stringify(v))}</span></div>`).join('');
+ if(Array.isArray(value)&&/CHRONOLOGIE|JOURNÉE|NUIT-LÀ|CE QUE TU AS FAIT/i.test(title))body=igrV772Timeline(value.map(v=>typeof v==='string'?v:String(v?.text||'')).join('\n'));
+ else if(Array.isArray(value))body=value.map(v=>typeof v==='string'?`<div class="relation-line"><span>${h(v)}</span></div>`:`<div class="relation-line"><b>${h(v.pseudo||v.label||'')}</b><span>${h(v.text||JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='object')body=Object.entries(value).map(([k,v])=>`<div class="relation-line"><b>${h(k)}</b><span>${h(typeof v==='string'?v:JSON.stringify(v))}</span></div>`).join('');
  else if(typeof value==='string'&&/CHRONOLOGIE|JOURNÉE|NUIT-LÀ|CE QUE TU AS FAIT/i.test(title)){
   body=igrV772Timeline(value);
  }
- else body=`<p>${h(value)}</p>`;
+ else body=`<p>${h(igrV773ReadablePrivateText(title,value))}</p>`;
  const tone=title==='CE QUE TU CACHES'?'igr82-hidden':(title==='TES REPÈRES'||title==='CE QUE TU SAIS')?'igr82-known':(title==='TA POSITION'||title==='TA DÉFENSE')?'igr82-defense':title==='TA CHRONOLOGIE'?'igr82-timeline':'';
  // The label already identifies private information. No redundant boilerplate.
  const explanation='';
@@ -1501,7 +1512,7 @@ function igrV772Timeline(value){
  const staged=raw.replace(/(^|\s+)(\d{1,2}[.)])\s*(?=(?:≈\s*|~\s*|vers\s+|env\.?\s*)?\d{1,2}\s*(?:[:hH])\s*\d{1,2}\b)/g,
   (_,before,index)=>'\n'+index+' ');
  const lines=staged.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
- if(lines.length<2)return '<p>'+h(raw)+'</p>';
+ if(lines.length<2&&!/^(?:\d{1,2}[.)]\s*)?(?:≈\s*|~\s*|vers\s+|env\.?\s*)?\d{1,2}\s*(?:[:hH])\s*\d{1,2}\b/i.test(lines[0]||''))return '<p>'+h(raw)+'</p>';
  return '<ol class="igr-private-timeline igr-v772-steps">'+lines.map(rawLine=>{
   const line=rawLine.replace(/^\d{1,2}[.)]\s*/,'').trim();
   const event=line.match(/^((?:≈\s*|~\s*|vers\s+|env\.?\s*)?\d{1,2}\s*(?::|h|H)\s*\d{1,2})\s*(?:[—–-]\s*)?([\s\S]*)$/i);
