@@ -1,9 +1,10 @@
-/* Héritage v763 — visible dossier launch and backwards journey navigation. */
+/* Héritage v764 — stable navigation, reversible joins, zero-jump lobby. */
 (()=>{
 'use strict';
 const labels=['CAMPAGNES','DOSSIERS','MODE','PRÉPARATION','LOBBY'];
 const $=(q,p=document)=>p.querySelector(q);
-const $$=(q,p=document)=>Array.from(p.querySelectorAll(q));
+const $=(q,p=document)=>Array.from(p.querySelectorAll(q));
+let joinReturn=null, lastRoute='';
 const markup=(step,local=false)=>{const steps=local?['CAMPAGNES','DOSSIERS','MODE','JOUEURS']:labels;return '<nav class="hj-progress'+(local?' hj-progress-local':'')+'" aria-label="Parcours Héritage"><div class="hj-progress-label"><span>PARCOURS</span><b>ÉTAPE '+(step+1)+'/'+steps.length+' · '+steps[step]+'</b></div><ol>'+steps.map((label,i)=>'<li class="'+(i<step?'is-done':i===step?'is-current':'')+'" '+(i===step?'aria-current="step"':'')+'><span aria-hidden="true">'+(i<step?'✓':i+1)+'</span><b>'+label+'</b></li>').join('')+'</ol></nav>'}
 function stage(main){
  if(main.matches('.hplay-hub'))return 0;
@@ -48,10 +49,10 @@ function enrichHeritageLobby(main){
  const lobby=$('.hnet-lobby',main);if(!lobby)return;
  const title=$('.hnet-title',lobby);
  const match=title?.textContent?.match(/([0-9]+)\s*\/\s*7\s*joueurs/i);
- if(match){progressMeter(lobby,title,Number(match[1]),5,7);title?.querySelector('p')?.classList.add('hj-counter-moved')}
+ // Keep the native player counter: deferred meters change layout during repaint.
  const grid=$('.hnet-role-grid',lobby),selected=$('.hnet-selected-role',lobby);
  // Always place the current public selection before the complete role list.
- if(grid&&selected&&selected.nextElementSibling!==grid)grid.insertAdjacentElement('beforebegin',selected);
+ // The renderer already places selection before the cards; don't reorder after paint.
  Array.from(lobby.querySelectorAll('.hnet-role-card')).forEach(card=>{
   if(card.classList.contains('hnet-role-random')||$('.hj-role-description',card))return;
   const publicLabel=card.getAttribute('aria-label')||'';
@@ -70,11 +71,11 @@ function enrichHeritageLobby(main){
 function enrichCasinoLobby(casino){
  const roleZone=$('.casino-role-choice-zone',casino);
  const choice=roleZone&&$('.casino-selected-role',roleZone),groups=roleZone&&$('.casino-role-choice-group',roleZone);
- if(choice&&groups&&choice.nextElementSibling!==groups)groups.insertAdjacentElement('beforebegin',choice);
+ // Casino's selection order is now handled by the renderer.
  const panel=$('.casino-lobby-top',casino);if(!panel)return;
  const match=panel.textContent.match(/([0-9]+)\s*\/\s*12\s*joueurs/i);
  const anchor=$('.casino-lobby-access',panel);
- if(match&&anchor)progressMeter(panel,anchor,Number(match[1]),7,12);
+ // Avoid a second, deferred progress bar that makes the lobby jump.
 }
 
 /* One direct joining action on the Heritage hub and every non-Casino campaign.
@@ -100,6 +101,8 @@ function handleJoinClick(event){
  const button=event.target.closest?.('[data-hj-join]');
  if(!button)return;
  event.preventDefault();event.stopImmediatePropagation();
+ const origin=button.closest('main.hplay');
+ joinReturn=origin?{campaign:journeyCampaign(origin),isHub:origin.classList.contains('hplay-hub')}:null;
  if(typeof goJoin==='function')goJoin();
  else if(typeof renderJoin==='function')renderJoin();
  const join=$('#joinCode');
@@ -189,8 +192,72 @@ function handleProgressClick(event){
  }
  if(to===2)journeyBack(main)?.click();
 }
+/* Join is a sub-screen of the campaign: Back returns to that context. */
+function enhanceJoinBack(root){
+ const code=$('#joinCode',root),page=code?.closest('main.page');
+ if(!page)return;
+ const head=$('.page-head',page),home=head&&$('button[onclick*="goHome"]',head);
+ if(!home||home.dataset.hjReturn)return;
+ home.removeAttribute('onclick');home.dataset.hjReturn='1';home.type='button';
+ home.textContent='← Retour';
+ home.setAttribute('aria-label',joinReturn?'Retour à la campagne précédente':'Retour à l’accueil');
+}
+function handleJoinBack(event){
+ const btn=event.target.closest?.('[data-hj-return]');
+ if(!btn)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const origin=joinReturn;joinReturn=null;
+ if(origin?.isHub&&window.IGR_HERITAGE_PLAY?.open){window.IGR_HERITAGE_PLAY.open();return}
+ if(origin?.campaign==='maitre'&&window.IGR_HERITAGE_MAITRE?.open){window.IGR_HERITAGE_MAITRE.open();return}
+ if(origin?.campaign&&window.IGR_HERITAGE_PLAY?.openCampaign){window.IGR_HERITAGE_PLAY.openCampaign(origin.campaign);return}
+ if(typeof goHome==='function')goHome();
+}
+/* Real screen transitions start at top; lobby refreshes never reset scroll.
+   Returning from a case detail to the list retains deliberate list position. */
+function routeKey(root){
+ const main=$('main',root);if(!main)return '';
+ if(main.classList.contains('hplay-hub'))return 'heritage:hub';
+ if(main.classList.contains('hplay-campaign'))return 'heritage:'+journeyCampaign(main)+':campaign';
+ if(main.classList.contains('hplay-dossier'))return 'heritage:'+journeyCampaign(main)+':dossier:'+($('.hplay-mode',main)?.textContent||'');
+ if(main.classList.contains('hplay-setup'))return 'heritage:'+journeyCampaign(main)+':setup';
+ if(main.classList.contains('hplay-reveal'))return 'heritage:reveal';
+ if(main.classList.contains('hplay-session'))return 'heritage:session';
+ if(main.classList.contains('hplay-decision'))return 'heritage:decision';
+ if(main.classList.contains('hplay-result'))return 'heritage:result';
+ if(main.classList.contains('hnet')){
+  if($('.hnet-lobby',main))return 'heritage:online:lobby';
+  if($('.hnet-create',main))return 'heritage:online:create';
+  return 'heritage:online:other';
+ }
+ if(main.classList.contains('casino-live')){
+  if($('.casino-lobby-top',main))return 'casino:lobby';
+  if($('.casino-entry-options',main))return 'casino:entry';
+  return 'casino:play:'+(main.querySelector('.casino-tabs [aria-selected="true"]')?.textContent||'');
+ }
+ if(main.classList.contains('casino-page'))return 'casino:'+String(main.dataset.casinoPage||'campaign');
+ if(main.classList.contains('page-create-v10-13'))return 'scenarios:list';
+ if(main.classList.contains('page-confirm-v10-13'))return 'scenarios:detail';
+ if($('#joinCode',main))return 'join';
+ try{if(typeof STATE!=='undefined'&&STATE?.view)return 'base:'+STATE.view}
+ catch(_){}
+ return 'page:'+main.className;
+}
+function scrollWithoutAnimation(y){
+ const doc=document.documentElement,old=doc.style.scrollBehavior;
+ doc.style.scrollBehavior='auto';
+ try{window.scrollTo({top:Math.max(0,y),left:0,behavior:'instant'})}
+ catch(_){window.scrollTo(0,Math.max(0,y))}
+ doc.style.scrollBehavior=old;
+}
+function recordViewChange(root){
+ const next=routeKey(root);if(!next||next===lastRoute)return;
+ const previous=lastRoute;lastRoute=next;
+ if(previous&&!(previous==='scenarios:detail'&&next==='scenarios:list'))scrollWithoutAnimation(0);
+ if(previous==='join'&&next!=='join')joinReturn=null;
+}
 function decorate(){
  const root=$('#app');if(!root)return;
+ enhanceJoinBack(root);
  const main=$('main.hplay,main.hnet',root);
  if(main){
   const index=stage(main),head=$(':scope > .hplay-top,:scope > .hnet-head',main);
@@ -213,6 +280,6 @@ function decorate(){
 }
 let frame=0;
 function schedule(){if(frame)return;frame=requestAnimationFrame(()=>{frame=0;decorate()})}
-function boot(){const root=$('#app');if(!root)return;document.addEventListener('click',handleJoinClick,true);document.addEventListener('click',handleStartClick,true);document.addEventListener('click',handleProgressClick,true);new MutationObserver(schedule).observe(root,{subtree:true,childList:true});schedule();window.addEventListener('pageshow',schedule,{passive:true})}
+function boot(){const root=$('#app');if(!root)return;document.addEventListener('click',handleJoinClick,true);document.addEventListener('click',handleStartClick,true);document.addEventListener('click',handleProgressClick,true);document.addEventListener('click',handleJoinBack,true);new MutationObserver(()=>{recordViewChange(root);schedule()}).observe(root,{subtree:true,childList:true});recordViewChange(root);schedule();window.addEventListener('pageshow',schedule,{passive:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
