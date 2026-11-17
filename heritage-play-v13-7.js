@@ -45,7 +45,7 @@ const PACKS={
     chapters:{
       1:{
         title:'PERSONNE N’EXISTE',
-        briefing:'Une équipe de surveillance est retrouvée morte dans un appartement sécurisé. La copie hors réseau des relevés qu’elle devait remettre a disparu. Dans les dossiers restants apparaît l’identité V-17 : passeport valide, comptes actifs et dossier médical cohérent, mais aucune trace vérifiable avant les six derniers mois.',
+        briefing:"Dans un appartement sécurisé, une équipe de surveillance est retrouvée morte. Les relevés hors réseau qu’elle devait remettre ont disparu. Une identité, V-17, apparaît dans les dossiers : documents valides, mais aucune trace vérifiable avant six mois.",
         question:'Que représente réellement l’identité V-17 ?',
         phases:[
           ['SCÈNE','Recoupez la scène et les horaires. Ne cherchez pas encore un coupable : cherchez quelles données supposent une personne réelle et lesquelles peuvent être créées administrativement.'],
@@ -126,7 +126,7 @@ const PACKS={
       },
       4:{
         title:'CENDRES',
-        briefing:'Les anomalies des trois premiers dossiers semblent dépendre de droits administratifs distincts. Une délégation technique, une instruction politique et les accès d’une opératrice détenue constituent trois pistes concurrentes. La cellule doit identifier qui pouvait réellement modifier les données.',
+        briefing:"Les anomalies des trois premiers dossiers renvoient à des autorisations différentes : délégation technique, instruction politique et accès de l’opératrice détenue. La cellule doit établir qui pouvait modifier les données.",
         question:'Quel poste interne constitue le relais opérationnel du réseau hostile ?',
         phases:[
           ['CARTE','Posez uniquement les liens recoupés. Un accès possible n’est pas une participation prouvée.'],
@@ -293,7 +293,7 @@ const PACKS={
       },
       5:{
         title:'LE CONSEIL',
-        briefing:'Le Conseil réunit Kurokawa, Arakida, des représentants de la police et le Bengoshi. La cellule dispose d’un récit du meurtre, mais sa solidité dépend des preuves préservées et des décisions antérieures. Il faut choisir ce qui sera révélé, à qui et avec quelles garanties.',
+        briefing:"Le Conseil réunit Kurokawa, Arakida, la police et le Bengoshi. Les preuves sur la mort de l’Oyabun ont été conservées de façon inégale. Il faut établir ce qui peut être communiqué sans déformer les responsabilités.",
         question:'Que fait le Conseil de la vérité ?',
         phases:[
           ['MÉMOIRE','Relisez les dettes et la Chronique. Ce qui s’est passé dans les dossiers précédents limite les options crédibles.'],
