@@ -1962,28 +1962,22 @@ function renderInvestigationTab(){
    const adaptiveMulti=mountain006Investigations||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations;
    const collectedIds=new Set(reports.filter(e=>Number(e.cycle)===Number(r.cycle)).map(e=>e.payload?.id).filter(Boolean));
    const adaptive006=mountain006Investigations&&d.scenario?.investigation_006_adaptive===true;
-   const limit006=adaptive006?4:3;
-   const limit=(deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?4:limit006;
+   const limit006=1;
+   const limit=1; // One investigation finding per cycle.
    const isOptionalInvestigation=id=>/^0(0[1-9]|10)_(1[0-9]|20)$/.test(String(id));
    const optionalUsed006=[...collectedIds].some(isOptionalInvestigation);
    const allChoices=adaptiveMulti?choices.filter(o=>!collectedIds.has(o.id)&&!(optionalUsed006&&isOptionalInvestigation(o.id))):choices;
-   const remainingCore=adaptiveMulti&&[...collectedIds].filter(id=>!isOptionalInvestigation(id)).length<3;
-   // Do not expose an optional lead before the three main facts have been examined.
-   const visibleChoices=adaptiveMulti?allChoices.filter(o=>remainingCore?!isOptionalInvestigation(o.id):isOptionalInvestigation(o.id)):allChoices;
+   const visibleChoices=allChoices; // One selectable choice per cycle.
    const used=adaptiveMulti?collectedIds.size>=limit:d.scenario?.[evidenceTag+'_used'];
    const phaseStartMs=Date.parse(r.phase_started_at||'');
    const alreadyExaminedThisPhase=adaptiveMulti&&Number.isFinite(phaseStartMs)&&reports.some(e=>
      Number(e.cycle)===Number(r.cycle)&&Number.isFinite(Date.parse(e.created_at||''))&&Date.parse(e.created_at)>=phaseStartMs-1000);
    // Main source material remains in the canonical cycle; the UI does not dump all four at its opening.
-   const nextStageRequired=adaptiveMulti&&alreadyExaminedThisPhase&&ph!=='cycle_debrief'&&!used;
+   const nextStageRequired=false;
    const progressLabel=adaptiveMulti?' · '+collectedIds.size+'/'+limit+' pièces consultées':'';
-   const instruction006=adaptive006?'Trois vérifications principales et une piste facultative au maximum par cycle. Les pistes proposées sont variables, sans changer la vérité.': 'Trois pièces complémentaires distinctes sont accessibles à chaque cycle.';
-   const instructionDeep='Vérifie d’abord les faits et les heures. Trois pistes principales et une facultative sont proposées pendant ce cycle. Tu peux confronter les résultats aux témoignages.';
-    const instructionSeven='Trois trames principales et une trame facultative au maximum par cycle. Deux pistes facultatives sont proposées sans indiquer si l’une répond à une erreur de raisonnement.';
-    const instructionEight='Trois vérifications principales et une seule trame facultative au maximum par cycle. L’enquêteur et l’analyste répondent séparément pour orienter les choix futurs, sans recevoir de correction.';
-    const instructionNine='Trois vérifications principales et une seule trame facultative au maximum par cycle. Vos hypothèses scellées orientent les pistes futures sans exposer les solutions ou les variantes.';
-    const instructionTen='Trois preuves principales et une recherche facultative au maximum par cycle. Les réponses scellées orientent une piste complémentaire sans afficher la solution.';
-   body+=`<section class="action-section igr001-actions"><h3>Vérifications · Cycle ${h(r.cycle)}${h(progressLabel)}</h3><p class="choice-helper">${deepTenInvestigations?instructionTen:deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Vérifications terminées pour ce cycle.</div>':nextStageRequired?'<div class="locked-state">Une pièce a déjà été examinée pendant cette étape. Compare-la aux déclarations ; les autres pistes seront accessibles à la prochaine étape.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
+   const instruction006='Une seule pièce au choix pendant ce cycle. Compare-la aux déclarations avant de conclure.';
+   const instructionDeep=instruction006, instructionSeven=instruction006, instructionEight=instruction006, instructionNine=instruction006, instructionTen=instruction006;
+   body+=`<section class="action-section igr001-actions"><h3>Vérifications · Cycle ${h(r.cycle)}${h(progressLabel)}</h3><p class="choice-helper">${deepTenInvestigations?instructionTen:deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule vérification au choix par cycle pour tout le camp Enquête.'}</p>${used?'<div class="locked-state">Vérifications terminées pour ce cycle.</div>':nextStageRequired?'<div class="locked-state">Une pièce a déjà été examinée pendant cette étape. Compare-la aux déclarations ; les autres pistes seront accessibles à la prochaine étape.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
   }
  }
 
