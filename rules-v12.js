@@ -36,7 +36,30 @@
   {title:'7. The Grey Room mindset',items:['Question what looks obvious. A contradiction may hide a crime, fear, loyalty or simply a different wrongdoing.','Build a coherent reconstruction rather than the most dramatic story. Facts always outrank intuition.','Play to understand the whole room — even when your own role benefits from others seeing only part of it.']}
  ];
  const active=()=>window.IGR_LOCALE==='en'?EN:FR;
- const list=()=>`<div class="rule-list">${active().map(r=>`<div class="rule"><h3>${h(r.title)}</h3><p>${r.items.map(i=>`• ${h(i)}`).join('<br>')}</p></div>`).join('')}</div>`;
+
+ // In-game quick rules; the exhaustive protocol remains optional for the host.
+ const QUICK_FR=[
+  {title:'Le principe',items:['Retrouve qui a fait quoi, à quel moment et avec quelles informations. Une accusation doit s’appuyer sur des faits.','Le dossier est fixe, mais chacun ne connaît qu’une partie de l’histoire.']},
+  {title:'Ta carte',items:['Elle est privée : ne la montre pas. Ses faits sont vrais pour ton personnage.','Tu peux cacher un fait ou bluffer à l’oral si ton rôle le permet. N’invente jamais de preuves.']},
+  {title:'Pendant la partie',items:['Suis la phase affichée, parle aux autres et utilise seulement les actions disponibles sur ton écran.','La Grey Room gère les temps, les convocations et les résultats des vérifications.']},
+  {title:'Les informations',items:['Le Dossier commun contient ce que tous les joueurs peuvent consulter.','Les pièces d’enquête doivent être comparées aux déclarations : un indice seul ne désigne pas un responsable.']},
+  {title:'La fin',items:['Une fois l’enquête close, aucun nouvel indice ne peut être demandé.','Les défenses précèdent la décision finale. Le jeu évalue la précision des responsabilités, pas une simple intuition.']}
+ ];
+ const QUICK_EN=[
+  {title:'The idea',items:['Find who did what, when, and what they knew. Accusations need evidence.','The truth is fixed, but each player has only part of it.']},
+  {title:'Your card',items:['Keep it private. Its facts are true for your character.','You may hide facts or bluff if your role allows it. Never invent evidence.']},
+  {title:'During play',items:['Follow the current phase, speak with others and use the actions on your screen.','The app handles timers, summons and investigation outcomes.']},
+  {title:'Information',items:['The Shared case file contains what every player may see.','Compare findings with statements. A single clue does not establish responsibility.']},
+  {title:'The ending',items:['After investigation closes, no new evidence can be requested.','Defences precede the final decision. Accuracy matters more than a guess.']}
+ ];
+ const list=()=>{
+  const en=window.IGR_LOCALE==='en';
+  const quick=en?QUICK_EN:QUICK_FR;
+  const cards=quick.map(r=>'<article class="rule"><h3>'+h(r.title)+'</h3><p>'+r.items.map(i=>'• '+h(i)).join('<br>')+'</p></article>').join('');
+  const complete=active().map(r=>'<div class="rule"><h3>'+h(r.title)+'</h3><p>'+r.items.map(i=>'• '+h(i)).join('<br>')+'</p></div>').join('');
+  return '<section class="igr-quick-rules"><p class="igr-quick-intro">'+(en?'Everything else is explained at the relevant stage.':'Le reste t’est expliqué au moment où tu en as besoin.')+'</p><div class="rule-list">'+cards+'</div><details class="igr-full-rules"><summary>'+(en?'Full protocol and room setup':'Protocole complet et préparation de la salle')+'</summary><div class="rule-list">'+complete+'</div></details></section>';
+ };
+
  try{renderRules=function(){const en=window.IGR_LOCALE==='en';byId('app').innerHTML=shell(`<main class="page"><div class="page-head"><div><div class="kicker">${en?'Rules':'Règles'}</div><h1>${en?'How to enter the Grey Room':'Entrer dans la Grey Room'}</h1></div><button class="btn ghost small" onclick="goHome()">← ${en?'Home':'Accueil'}</button></div><section class="panel">${list()}</section></main>`)}}catch(_){}
  try{const base=renderGameTab;renderGameTab=function(){if(STATE.tab==='rules')return list();return base.apply(this,arguments)}}catch(_){}
 })();
