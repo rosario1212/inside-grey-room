@@ -3,8 +3,9 @@
  'use strict';
  const VERSION='772.1-cast';
  let activeKey='',names=null,loading=false,failedKey='',queued=false;
- const isLive=()=>window.STATE?.view==='game'&&!!window.STATE?.room&&!!window.STATE?.token;
- const currentKey=()=>String(window.STATE?.room||'')+'|'+String(window.STATE?.token||'')+'|'+String(window.STATE?.sync?.room?.state?.match_no||1);
+ const current=()=>typeof STATE==='object'?STATE:window.STATE||null;
+ const isLive=()=>current()?.view==='game'&&!!current()?.room&&!!current()?.token;
+ const currentKey=()=>String(current()?.room||'')+'|'+String(current()?.token||'')+'|'+String(current()?.sync?.room?.state?.match_no||1);
  async function readNames(){
    if(!isLive()||loading)return;
    const k=currentKey();
