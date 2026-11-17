@@ -60,7 +60,8 @@ export async function runCasinoV761TransitionChecks({page,css,read,check}){
    assert(after.scrollWidth<=width+1,'Casino entry must not cause horizontal scrolling');
    assert.equal(after.overflow.length,0,'Casino controls must fit viewport '+JSON.stringify(after.overflow));
    assert(after.headerRows.length>=2,'The back control and campaign label must stay visible');
-   if(width<=393)assert(after.headerRows[0].top===after.headerRows[1].top,'Mobile header must stay on one aligned row');
+   if(width>350&&width<=393)assert(after.headerRows[0].top===after.headerRows[1].top,'Normal mobile header must stay on one aligned row');
+   if(width<=350)assert(after.headerRows[1].top>after.headerRows[0].top,'Narrow phones should use two readable non-overlapping header rows');
   });
  }
  console.log('PASS CASINO v761: actual public campaign -> playable entry click keeps topbar and centered responsive layout');
