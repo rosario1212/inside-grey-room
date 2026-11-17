@@ -41,7 +41,9 @@ async function syncPublic(force=false){
 function publicEntries(data){
  const context=String(data?.context||'').trim().replace(/\s+/g,' ').normalize('NFKC').toLocaleLowerCase();
  return (Array.isArray(data?.events)?data.events:[]).filter(e=>{
-   const sameOpening=e?.event_type==='context';
+   const normalized=String(e?.text||'').trim().replace(/\s+/g,' ').normalize('NFKC').toLocaleLowerCase();
+   const title=String(e?.title||'').trim().toLocaleLowerCase();
+   const sameOpening=e?.event_type==='context'&&((context&&normalized===context)||title==='contexte');
    const redundantCycleSummary=e?.event_type==='public_notice' && /^Bilan public\s*[·-]\s*cycle\s*\d+/i.test(String(e?.title||''));
    return !sameOpening && !redundantCycleSummary;
  });
