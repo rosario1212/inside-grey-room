@@ -38,7 +38,7 @@ for(const p of ['index.html','en.html']){
   assert.equal(html.split('heritage-casino-v91.js?v=v91.5-join-nav').length-1,1,`duplicate Casino runtime in ${p}`);
   assert.equal(html.split('heritage-casino-v91.css?v=v91.5-join-nav').length-1,1,`duplicate Casino style in ${p}`);
   assert.ok(html.indexOf('heritage-play-v13-7.js')<html.indexOf('heritage-casino-v91.js'),`Casino script before Heritage in ${p}`);
-  assert(html.includes('casino-client-v105.js?v=105.12')&&html.includes('casino-client-v105.css?v=105.12'),'Updated Casino client version must load in '+p);
+  assert(html.includes('casino-client-v105.js?v=105.13')&&html.includes('casino-client-v105.css?v=105.13'),'Updated Casino client version must load in '+p);
 }
 const clientSource=await readFile(path.join(dir,'casino-client-v105.js'),'utf8');
 const clientCss=await readFile(path.join(dir,'casino-client-v105.css'),'utf8');
@@ -50,7 +50,7 @@ let worker=null;
 try{worker=await readFile(path.join(dir,'service-worker.js'),'utf8')}
 catch(error){if(error.code!=='ENOENT')throw error;assert.equal(path.basename(dir),'www','Only the native build may omit the Service Worker')}
 if(worker){
- for(const url of ['/casino-client-v105.js?v=105.12','/casino-client-v105.css?v=105.12'])
+ for(const url of ['/casino-client-v105.js?v=105.13','/casino-client-v105.css?v=105.13'])
   assert(worker.includes(url),'Casino PWA must precache '+url);
  assert(/-casino-[0-9a-f]{12}'/.test(worker),'Casino update must invalidate the existing PWA cache');
 }
