@@ -6,7 +6,8 @@ const root=process.cwd(),dir=path.resolve(process.argv[2]||'dist');
 const j=await readFile(path.join(dir,'heritage-casino-v91.js'),'utf8');
 const c=await readFile(path.join(dir,'heritage-casino-v91.css'),'utf8');
 assert.match(j,/LES PORTES DE L’IMPÉRIAL/);assert.match(j,/LA CHUTE DE L’IMPÉRIAL/);assert.match(j,/LE DERNIER DRAGON/);
-assert.match(j,/launchReady:true/);assert.match(j,/data-casino-live>JOUER LA CAMPAGNE/);assert.doesNotMatch(j,/LANCEMENT INDISPONIBLE|INTRIGUES EN VALIDATION/);
+assert.match(j,/launchReady:true/);assert.match(j,/data-casino-live>JOUER LA CAMPAGNE/);
+assert.match(j,/data-casino-live data-casino-join="1"/,'Every Casino campaign button must expose the join route');assert.doesNotMatch(j,/LANCEMENT INDISPONIBLE|INTRIGUES EN VALIDATION/);
 assert.match(j,/data-casino-nav/);assert.match(j,/hplay-hub-grid/);
 assert.doesNotMatch(j,/18[,.]4|Sang du Dragon|Double Livre|Pacte Brisé|answerKey|CREATE\s+POLICY/);
 assert.match(c,/\.casino-page/);
@@ -34,10 +35,10 @@ for(const name of ['campagne','scenario-1','scenario-2','scenario-3']){
 }
 for(const p of ['index.html','en.html']){
   const html=await readFile(path.join(dir,p),'utf8');
-  assert.equal(html.split('heritage-casino-v91.js?v=v91.4-casino-proportions').length-1,1,`duplicate Casino runtime in ${p}`);
-  assert.equal(html.split('heritage-casino-v91.css?v=v91.4-casino-proportions').length-1,1,`duplicate Casino style in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.js?v=v91.5-join-nav').length-1,1,`duplicate Casino runtime in ${p}`);
+  assert.equal(html.split('heritage-casino-v91.css?v=v91.5-join-nav').length-1,1,`duplicate Casino style in ${p}`);
   assert.ok(html.indexOf('heritage-play-v13-7.js')<html.indexOf('heritage-casino-v91.js'),`Casino script before Heritage in ${p}`);
-  assert(html.includes('casino-client-v105.js?v=105.11')&&html.includes('casino-client-v105.css?v=105.11'),'Updated Casino client version must load in '+p);
+  assert(html.includes('casino-client-v105.js?v=105.12')&&html.includes('casino-client-v105.css?v=105.12'),'Updated Casino client version must load in '+p);
 }
 const clientSource=await readFile(path.join(dir,'casino-client-v105.js'),'utf8');
 const clientCss=await readFile(path.join(dir,'casino-client-v105.css'),'utf8');
@@ -49,7 +50,7 @@ let worker=null;
 try{worker=await readFile(path.join(dir,'service-worker.js'),'utf8')}
 catch(error){if(error.code!=='ENOENT')throw error;assert.equal(path.basename(dir),'www','Only the native build may omit the Service Worker')}
 if(worker){
- for(const url of ['/casino-client-v105.js?v=105.11','/casino-client-v105.css?v=105.11'])
+ for(const url of ['/casino-client-v105.js?v=105.12','/casino-client-v105.css?v=105.12'])
   assert(worker.includes(url),'Casino PWA must precache '+url);
  assert(/-casino-[0-9a-f]{12}'/.test(worker),'Casino update must invalidate the existing PWA cache');
 }

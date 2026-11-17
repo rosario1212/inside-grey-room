@@ -3,7 +3,7 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 const root=process.cwd(),dest=path.resolve(root,process.argv[2]||'dist');
-const JS='heritage-casino-v91.js',CSS='heritage-casino-v91.css',VERSION='v91.4-casino-proportions';
+const JS='heritage-casino-v91.js',CSS='heritage-casino-v91.css',VERSION='v91.5-join-nav';
 const images=['campagne.webp','scenario-1.webp','scenario-2.webp','scenario-3.webp'];
 for(const file of [JS,CSS,'casino-client-v105.js','casino-client-v105.css']){
   await stat(path.join(root,file));
@@ -28,18 +28,19 @@ for(const page of ['index.html','en.html']){
   if(!html.includes(`src="${JS}?v=${VERSION}"`)){
     html=html.replace('</body>',`  <script src="${JS}?v=${VERSION}"></script>\n</body>`);
   }
-  if(!html.includes('casino-client-v105.js?v=105.11'))html=html.replace('</body>','  <script src="casino-client-v105.js?v=105.11"></script>\n</body>');
-  if(!html.includes('casino-client-v105.css?v=105.11'))html=html.replace('</head>','  <link rel="stylesheet" href="casino-client-v105.css?v=105.11">\n</head>');
+  if(!html.includes('casino-client-v105.js?v=105.12'))html=html.replace('</body>','  <script src="casino-client-v105.js?v=105.12"></script>\n</body>');
+  if(!html.includes('casino-client-v105.css?v=105.12'))html=html.replace('</head>','  <link rel="stylesheet" href="casino-client-v105.css?v=105.12">\n</head>');
   await writeFile(name,html,'utf8');
 }
 // The Casino finalizer runs after the generic PWA assets were versioned.
 // Fold its four independent UI assets into the offline shell and revision key.
 const casinoAssets=[[JS,VERSION],[CSS,VERSION],
- ['casino-client-v105.js','105.11'],['casino-client-v105.css','105.11']];
+ ['casino-client-v105.js','105.12'],['casino-client-v105.css','105.12']];
 const casinoFingerprint=createHash('sha256')
  .update(await readFile(path.join(dest,'casino-client-v105.js')))
  .update(await readFile(path.join(dest,'casino-client-v105.css')))
  .update(await readFile(path.join(dest,CSS)))
+ .update(await readFile(path.join(dest,JS)))
  .digest('hex').slice(0,12);
 const workerFile=path.join(dest,'service-worker.js');
 try{
@@ -55,7 +56,7 @@ try{
 }catch(e){if(e.code!=='ENOENT')throw e}
 
 const commit=process.env.GITHUB_SHA||execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
-const releasePayload=JSON.stringify({version:'105.11',commit,campaign:'casino',chapters:3,phases:8});
+const releasePayload=JSON.stringify({version:'105.12',commit,campaign:'casino',chapters:3,phases:8});
 await writeFile(path.join(dest,'casino-release.json'),releasePayload);
 // An immutable, commit-addressed metadata URL bypasses stale edge cache entries.
 await writeFile(path.join(dest,`casino-release-${commit.slice(0,12)}.json`),releasePayload);

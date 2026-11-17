@@ -28,7 +28,7 @@ function renderCampaign(){const chapters=CHAPTERS.map(c=>`<button type="button" 
    <div class="casino-intro"><figure class="casino-hero">${artwork('campagne.webp','Affiche de la campagne Casino')}</figure>
    <header class="casino-heading"><span>HÉRITAGE · CAMPAGNE IV / IV</span><h1>CASINO</h1><p>Trois scénarios liés. Le casino, la guerre de succession et l’enquête évoluent au gré des alliances et des décisions.</p></header></div>
    <section class="casino-public-note"><strong>QUATRIÈME CAMPAGNE HÉRITAGE · TROIS SCÉNARIOS</strong><span>Macao, 7 à 12 joueurs, trois scénarios liés et huit phases. Une intrigue autonome après MAÎTRE, sans progression préalable exigée.</span></section>
-   <div class="casino-launch"><button class="casino-action casino-launch-button" type="button" data-casino-live>Jouer la campagne</button><p>Créer une table, rejoindre des amis ou reprendre une partie.</p></div>
+   <div class="casino-launch"><div class="casino-launch-actions"><button class="casino-action casino-launch-button" type="button" data-casino-live>Jouer la campagne</button><button class="casino-action casino-join-button" type="button" data-casino-live data-casino-join="1">Rejoindre une partie</button></div></div>
    <section class="casino-chapters" aria-label="Scénarios de la campagne Casino">${chapters}</section>
    <section class="casino-pillars"><div><b>LA PAROLE</b><p>Alliances et accords oraux ou signés, consignés dans le Registre.</p></div><div><b>LE RISQUE</b><p>Poker au premier cycle ; ensuite, jeux et négociations au choix.</p></div><div><b>LES CONSÉQUENCES</b><p>Réputation, territoires, témoignages, arrestations et succession.</p></div></section>
  </main>`)}
@@ -38,7 +38,7 @@ function renderChapter(n){const ch=CHAPTERS.find(x=>x.number===n);if(!ch)return 
  <div class="casino-chapter-stage"><figure class="casino-chapter-cover">${artwork(ch.image,'Affiche de '+ch.title)}</figure>
  <div class="casino-chapter-information"><section class="casino-public-note"><strong>PRÉPARATION CONFIDENTIELLE</strong><span>Les identités criminelles et les dossiers d’enquête seront attribués à partir des noms des joueurs. Aucun prénom imposé ne remplace celui d’un participant. Les informations du bureau et du casino resteront séparées côté serveur.</span></section>
  <section class="casino-phases"><h2>Progression · ${ch.phases.length} phases</h2>${phases}</section></div></div>
- <div class="casino-launch casino-chapter-launch"><button class="casino-action casino-launch-button" type="button" data-casino-live>JOUER LA CAMPAGNE</button><p>Les trois scénarios se suivent dans l’ordre. Une partie en cours reprend automatiquement au bon chapitre.</p></div>
+ <div class="casino-launch casino-chapter-launch"><div class="casino-launch-actions"><button class="casino-action casino-launch-button" type="button" data-casino-live>JOUER LA CAMPAGNE</button><button class="casino-action casino-join-button" type="button" data-casino-live data-casino-join="1">REJOINDRE UNE PARTIE</button></div></div>
  </main>`)}
 function patchHub(){
  const hub=$('.hplay-hub-grid')||$('.heritage-campaign-grid');if(!hub)return;

@@ -17,7 +17,7 @@ const ROLE_ACTIVITY=Object.freeze({casino:5,agent:4,investigator:5,analyst:4,pro
 const roleShort=id=>ROLE_SHORT[id]||'Participe aux décisions de la table.';
 const roleStars=id=>'★'.repeat(ROLE_ACTIVITY[id]||2)+'☆'.repeat(5-(ROLE_ACTIVITY[id]||2));
 const statuses={guest:'Invité',free:'Libre',interpellated:'Interpellé',detained:'Détenu',dead:'Décédé',deposed:'Déchu'};
-let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,generation=0,active=false,pending=null,problem='',syncedAt=0,joinDraft=null,advanceConfirm=false;
+let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,generation=0,active=false,pending=null,problem='',syncedAt=0,joinDraft=null,advanceConfirm=false,entryMode='create',entryDrafts={create:{},join:{}};
 const freshToken=()=>[...crypto.getRandomValues(new Uint8Array(32))].map(n=>n.toString(16).padStart(2,'0')).join('');
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY+'_pending')||localStorage.getItem(KEY)||'null');return (v?.roomId||v?.inviteCode)&&v?.sessionToken?v:null}catch{return null}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(credentials));localStorage.removeItem(KEY+'_pending')}catch{}}
@@ -37,7 +37,14 @@ function accept(data,epoch){if(!active||epoch!==generation)return;if(state&&data
    timedControls.some(key=>Boolean(state[key])!==Boolean(data[key]));
  state=data;syncedAt=Date.now();if(changed){advanceConfirm=false;render()}else connection();
 }
-function connection(){const el=$('#'+ROOT+' [data-casino-connection]');if(el){el.dataset.revision=state?String(state.revision):'';el.textContent=problem?message(problem):state&&syncedAt?'Table à jour':credentials?'Connexion…':''}}
+function connection(){
+ const el=$('#'+ROOT+' [data-casino-connection]');
+ if(!el)return;
+ el.dataset.revision=state?String(state.revision):'';
+ // The room-entry screen has no live connection: no misleading “Connexion…”.
+ // During play, actionable errors already appear in the dedicated alert.
+ el.textContent='';el.hidden=true;
+}
 async function sync(){
  if(!credentials||!active||busy)return;if(polling)return polling;
  const epoch=generation;
@@ -70,11 +77,19 @@ const name=id=>state?.characters?.find(c=>c.id===id)?.name||state?.participants?
 const option=(id,label)=>`<option value="${esc(id)}">${esc(label)}</option>`;
 const people=(key,filter=()=>true)=>`<label>Personne<select name="${esc(key)}" data-casino-draft>${(state.characters||[]).filter(filter).map(c=>option(c.id,c.name)).join('')}</select></label>`;
 const section=(title,body)=>`<section class="casino-box"><h2>${esc(title)}</h2>${body}</section>`;
-function welcome(){return `<h1>Une table à Macao</h1><p>Un écran par joueur. Deux camps.</p>
- <div class="casino-entry-options"><section class="casino-entry-option" aria-labelledby="casino-create-title"><h2 id="casino-create-title">Organiser une partie</h2><p>Crée la table et partage le code.</p>${form('create',field('Ton prénom d’hôte','name','text','maxlength="22" required autocomplete="given-name"'),'Créer une table privée')}</section>
- <section class="casino-entry-option" aria-labelledby="casino-join-title"><h2 id="casino-join-title">Rejoindre des amis</h2><p>Entre le code et ton prénom.</p>${form('join',field('Code de la table','inviteCode','text','maxlength="10" required autocapitalize="characters" value="'+esc(joinDraft?.inviteCode||'')+'"')+field('Ton prénom','name','text','maxlength="22" required value="'+esc(joinDraft?.name||'')+'"'),'Rejoindre la table')}</section></div>
- ${load()?'<button class="casino-action" data-casino-action="resume">Reprendre mon personnage</button>':''}
- <details><summary>Reprendre sur un autre appareil</summary>${form('recover',area('Ta clé personnelle','recovery',110),'Reprendre ma partie')}</details>`}
+function welcome(){
+ const joining=entryMode==='join';
+ const creation=`<section class="casino-entry-option" id="casino-create-panel" role="tabpanel" aria-labelledby="casino-create-tab"><h2>Créer une partie</h2>${form('create',field('Ton prénom','name','text','maxlength="22" required autocomplete="given-name" value="'+esc(entryDrafts.create.name||'')+'"'),'Créer la table')}</section>`;
+ const joiningForm=`<section class="casino-entry-option" id="casino-join-panel" role="tabpanel" aria-labelledby="casino-join-tab"><h2>Rejoindre une partie</h2>${form('join',field('Code d’invitation','inviteCode','text','maxlength="10" required autocapitalize="characters" autocomplete="off" value="'+esc(entryDrafts.join.inviteCode||joinDraft?.inviteCode||'')+'"')+field('Ton prénom','name','text','maxlength="22" required autocomplete="given-name" value="'+esc(entryDrafts.join.name||joinDraft?.name||'')+'"'),'Rejoindre')}</section>`;
+ return `<h1>Une table à Macao</h1>
+ <div class="casino-entry-tabs" role="tablist" aria-label="Accès à Casino">
+  <button type="button" class="casino-entry-tab" id="casino-create-tab" role="tab" aria-controls="casino-create-panel" aria-selected="${!joining}" data-casino-action="entry-mode" data-mode="create">Créer</button>
+  <button type="button" class="casino-entry-tab" id="casino-join-tab" role="tab" aria-controls="casino-join-panel" aria-selected="${joining}" data-casino-action="entry-mode" data-mode="join">Rejoindre</button>
+ </div>
+ <div class="casino-entry-options">${joining?joiningForm:creation}</div>
+ ${load()?'<button class="casino-action casino-resume" data-casino-action="resume">Reprendre mon personnage</button>':''}
+ <details class="casino-recovery-entry"><summary>Reprendre sur un autre appareil</summary>${form('recover',area('Clé personnelle','recovery',110),'Reprendre')}</details>`;
+}
 function lobby(){
  const members=state.members,own=members.find(m=>m.id===state.viewer)||{role:null,ready:false};
  const taken=new Map(members.filter(m=>m.role&&m.role!=='casino').map(m=>[m.role,m]));
@@ -223,28 +238,43 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  for(const f of root.querySelectorAll('form[data-casino-form="interpellation"],form[data-casino-form="map"],form[data-casino-form="hearing"]'))setupEvidenceForm(f);
  connection();
 }
-async function open(entry){active=true;generation++;state=null;tab='card';busy=false;polling=null;advanceConfirm=false;joinDraft=entry?.fresh?entry:null;credentials=entry?.fresh?null:load();problem='';pending=null;syncedAt=0;render();
+async function open(entry){active=true;generation++;state=null;tab='card';busy=false;polling=null;advanceConfirm=false;entryMode=(entry?.mode==='join'||entry?.inviteCode)?'join':'create';entryDrafts={create:{},join:{}};joinDraft=entry?.fresh?entry:null;credentials=entry?.fresh?null:load();problem='';pending=null;syncedAt=0;render();
  // The public campaign CTA is below the fold. Do not carry its scroll offset
  // into the playable room (otherwise the top of Casino seems displaced).
  try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch{window.scrollTo(0,0)}
  clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)sync()},1200);if(credentials)await sync()}
 function close(){active=false;generation++;clearInterval(timer);timer=null;state=null;pending=null;busy=false;polling=null;window.IGR_CASINO_HERITAGE?.open()}
+function rootEntryDrafts(){
+ for(const item of document.querySelectorAll('#'+ROOT+' .casino-entry-option [data-casino-draft]')){
+  const kind=item.closest('form')?.dataset.casinoForm;
+  if((kind==='create'||kind==='join')&&item.name)
+   entryDrafts[kind][item.name]=item.value;
+ }
+}
 document.addEventListener('click',async event=>{
  const legacy=event.target.closest?.('button[onclick*="joinRoom("]');
  if(legacy&&/^C[A-Z2-9]{9}$/.test($('#joinCode')?.value.trim().toUpperCase()||'')){
-  event.preventDefault();event.stopImmediatePropagation();return open({fresh:true,inviteCode:$('#joinCode').value.trim().toUpperCase(),name:$('#joinPseudo')?.value.trim()||''});
+  event.preventDefault();event.stopImmediatePropagation();return open({fresh:true,mode:'join',inviteCode:$('#joinCode').value.trim().toUpperCase(),name:$('#joinPseudo')?.value.trim()||''});
  }
  const el=event.target.closest?.('[data-casino-action],[data-casino-command],[data-casino-tab],[data-casino-live]');if(!el)return;
  event.preventDefault();event.stopImmediatePropagation();
- if(el.hasAttribute('data-casino-live'))return open(el.hasAttribute('data-casino-join')?{fresh:true,inviteCode:$('#joinCode')?.value.trim().toUpperCase()||'',name:$('#joinPseudo')?.value.trim()||''}:undefined);if(!active)return;
+ if(el.hasAttribute('data-casino-live'))return open(el.hasAttribute('data-casino-join')?{fresh:true,mode:'join',inviteCode:$('#joinCode')?.value.trim().toUpperCase()||'',name:$('#joinPseudo')?.value.trim()||''}:undefined);if(!active)return;
  if(el.dataset.casinoTab){tab=el.dataset.casinoTab;render();return}
  if(el.dataset.casinoCommand){if(!busy&&!pending){
    if(['ADVANCE_PHASE','FINISH_CAMPAIGN'].includes(el.dataset.casinoCommand)&&!advanceConfirm){advanceConfirm=true;render();return}
    advanceConfirm=false;await mutate({op:'command',type:el.dataset.casinoCommand,payload:JSON.parse(el.dataset.payload||'{}')})
   }return}
+ if(el.dataset.casinoAction==='entry-mode'){
+  if(!state&&!busy&&!pending&&['create','join'].includes(el.dataset.mode)){
+   rootEntryDrafts();
+   entryMode=el.dataset.mode;
+   render();
+  }
+  return;
+ }
  switch(el.dataset.casinoAction){
   case 'close':close();break;case 'cancel-advance':advanceConfirm=false;render();break;case 'resume':credentials=load();await sync();break;case 'retry':await mutate({},true);break;
-  case 'switch':if(busy||pending)break;generation++;state=null;credentials=null;joinDraft=null;problem='';tab='card';render();break;
+  case 'switch':if(busy||pending)break;generation++;state=null;credentials=null;joinDraft=null;entryMode='create';entryDrafts={create:{},join:{}};problem='';tab='card';render();break;
   case 'select-role':if(!busy&&!pending){const selected=el.dataset.roleId;if(Object.hasOwn(roles,selected)&&state?.status==='lobby'&&state.members.find(m=>m.id===state.viewer)?.role!==selected)await mutate({op:'role',role:selected})}break;
    case 'ready':await mutate({op:'ready',ready:!state.members.find(m=>m.id===state.viewer).ready});break;
   case 'start':await mutate({op:'start'});break;
@@ -281,5 +311,5 @@ document.addEventListener('change',event=>{
  if(activity)activity.textContent='ACTIVITÉ · '+roleStars(select.value);
 },true);
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
-window.IGR_CASINO_CLIENT=Object.freeze({version:'105.11',open,close,sync});
+window.IGR_CASINO_CLIENT=Object.freeze({version:'105.12',open,close,sync});
 })();

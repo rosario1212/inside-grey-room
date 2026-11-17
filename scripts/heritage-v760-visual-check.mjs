@@ -96,5 +96,37 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
    assert(sizes.cards.every(c=>c.x>=-.5&&c.right<=sizes.w+.5&&c.h>=44),'Casino role cards must stay usable');
   });
  }
+ // v762: A direct, accessible guest action exists on the Heritage hub,
+ // Cendres, Kuroi and Maître campaign pages. Existing server join path is reused.
+ for(const [campaign,klass] of [
+  ['hub','hplay-hub'],['cendres','hplay-campaign hplay-theme-cendres'],
+  ['kuroi','hplay-campaign hplay-theme-kuroi'],
+  ['maitre','hplay-campaign hplay-theme-maitre maitre-page']
+ ]){
+  await check('heritage-v762-guest-entry-'+campaign,async()=>{
+   await page.setViewportSize({width:393,height:852});
+   const isHub=campaign==='hub';
+   await page.setContent(screen('<main class="page hplay '+klass+'">'+
+    '<header class="hplay-top"><button class="hplay-back">Retour</button><div class="hplay-mode">HÉRITAGE</div></header>'+
+    (isHub?'<section class="hplay-hub-intro"><h1>Héritage</h1></section>'
+     :'<section class="hplay-campaign-hero"><div><strong>'+campaign+'</strong></div></section>')+
+    '</main>'));
+   await page.addScriptTag({content:'window.__heritageJoinHits=0;function goJoin(){window.__heritageJoinHits++}'});
+   await page.addScriptTag({content:journey});
+   await page.waitForSelector('.hj-join-entry');
+   const rect=await page.locator('.hj-join-entry').evaluate(el=>{
+    const r=el.getBoundingClientRect();
+    return {height:r.height,left:r.left,right:r.right,
+     scroll:document.documentElement.scrollWidth,width:innerWidth,text:el.textContent.trim()};
+   });
+   assert.equal(rect.text,'Rejoindre une partie','Each campaign should expose the same clear Join CTA');
+   assert(rect.height>=44&&rect.left>=0&&rect.right<=393&&rect.scroll<=393+1,'Join CTA must fit a mobile viewport');
+   await page.locator('.hj-join-entry').click();
+   assert.equal(await page.evaluate(()=>window.__heritageJoinHits),1,
+    'Joining must delegate exactly once to the established invitation-code flow');
+  });
+ }
+
  console.log('PASS HÉRITAGE v760: 3 camp identity contrast, 3 responsive mode choosers, 3 compact role lobbies, Casino role choices');
+ console.log('PASS HÉRITAGE v762: join action exists and works for hub, Cendres, Kuroi and Maître');
 }

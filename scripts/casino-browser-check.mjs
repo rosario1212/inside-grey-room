@@ -64,13 +64,22 @@ try{
    assert(Math.abs(crop.right-(crop.x+crop.width)/1536)<.002,'poster right boundary');
   }
   await page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await layout(page,'welcome-'+label);
-  assert.equal(await page.getByRole('region',{name:'Organiser une partie'}).count(),1);
-  assert.equal(await page.getByRole('region',{name:'Rejoindre des amis'}).count(),1);
+  assert.equal(await page.getByRole('tab',{name:'Créer'}).count(),1);
+  assert.equal(await page.getByRole('tab',{name:'Rejoindre'}).count(),1);
+  assert.equal(await page.locator('[data-casino-form=create]').count(),1,'Only the create form should be displayed by default');
+  assert.equal(await page.locator('[data-casino-form=join]').count(),0,'The join form stays behind its tab');
+  await page.getByRole('tab',{name:'Rejoindre'}).click();
+  assert.equal(await page.locator('[data-casino-form=join]').count(),1,'Join tab must be usable');
+  assert.equal(await page.locator('[data-casino-form=create]').count(),0,'Join tab hides the create form');
+  await page.getByRole('tab',{name:'Créer'}).click();
   if(label==='iphone'){
    // This browser lacks native inset emulation: evaluate the shipped padding
    // formula with a 59px status area and 34px home-indicator area.
    const css=await readFile(join(root,'casino-client-v105.css'),'utf8');
-   const safe=await page.addStyleTag({content:css.replaceAll('env(safe-area-inset-top,0px)','59px').replaceAll('env(safe-area-inset-bottom)','34px')});
+   // Casino now lives inside the shared .app shell. Simulate the native
+   // status-bar inset on that shell rather than double-insetting Casino.
+   const safe=await page.addStyleTag({content:css.replaceAll('env(safe-area-inset-top,0px)','59px').replaceAll('env(safe-area-inset-bottom)','34px')+
+    '\n#app>.app{padding-top:calc(59px + 14px)!important;}'});
    const back=await page.locator('[data-casino-action=close]').boundingBox();assert(back.y>=59,'Back button must clear the status area');
    await layout(page,'welcome-safe-iphone');await safe.evaluate(e=>e.remove());
   }
@@ -86,7 +95,7 @@ try{
  const hostId=await storageIdentity(hostPage),room=await storage.read(hostId.roomId),people=[host];
  for(let i=1;i<7;i++){
   const person=await context(i%2?{width:820,height:1180}:{width:1440,height:900});people.push(person);
-  await person.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());await person.page.locator('[data-casino-form=join] input[name=name]').fill('Joueur '+i);
+  await person.page.evaluate(()=>window.IGR_CASINO_CLIENT.open({fresh:true,mode:'join'}));await person.page.locator('[data-casino-form=join] input[name=name]').fill('Joueur '+i);
   await person.page.locator('[data-casino-form=join] input[name=inviteCode]').fill(room.inviteCode);
   await person.page.locator('[data-casino-form=join] button').click();await person.page.locator('.casino-roster-disclosure').waitFor();
  }
@@ -202,11 +211,11 @@ try{
  await full.evaluate(id=>{localStorage.setItem('igr_social_identity_v1',JSON.stringify({id,token:'synthetic-profile'}));window.IGR_CASINO_CLIENT.open()},randomUUID());
  await full.locator('[data-casino-form=create] input[name=name]').fill('Intégration');await full.locator('[data-casino-form=create] button').click();await full.locator('.casino-roster-disclosure').waitFor();
  await full.waitForTimeout(2600);assert.equal(await full.locator('.casino-members').count(),1,'Existing runtimes must not replace the Casino screen');
- await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]').waitFor();
+ await full.locator('[data-casino-action=close]').click();await full.locator('[data-casino-live]:not([data-casino-join])').waitFor();
  await full.evaluate(()=>window.IGR_HERITAGE_PLAY.open());await full.locator('.casino-entry').waitFor();
  await layout(full,'hub-full-desktop');await full.setViewportSize({width:390,height:844});await layout(full,'hub-full-iphone');
  await full.locator('.casino-entry').click();await layout(full,'campaign-full-iphone');
- await full.locator('[data-casino-live]').click();await full.locator('[data-casino-action=switch]').click();await layout(full,'entry-full-iphone');
+ await full.locator('[data-casino-live]:not([data-casino-join])').click();await full.locator('[data-casino-action=switch]').click();await layout(full,'entry-full-iphone');
  await full.locator('[data-casino-action=close]').click();checks.push('Client Casino intégré au bundle complet sans remplacement par les anciens runtimes');
  const integratedRoom=await api(full,{op:'sync'});
  await full.evaluate(()=>{localStorage.removeItem('igr_casino_identity_v1');localStorage.removeItem('igr_social_identity_v1');goJoin()});
@@ -245,7 +254,7 @@ try{
  await interrupted.page.unroute('**/api/casino');await interrupted.page.reload();await interrupted.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());
  await interrupted.page.locator('.casino-roster-disclosure').waitFor();const recoveredCreation=await storageIdentity(interrupted.page);
  assert.equal(recoveredCreation.roomId,candidate.roomId);assert.equal((await storage.read(recoveredCreation.roomId)).state.members.length,1);
- const interruptedJoin=await context({width:820,height:1180});await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open());let droppedJoin=false;
+ const interruptedJoin=await context({width:820,height:1180});await interruptedJoin.page.evaluate(()=>window.IGR_CASINO_CLIENT.open({fresh:true,mode:'join'}));let droppedJoin=false;
  await interruptedJoin.page.route('**/api/casino',async route=>{
   if(route.request().postDataJSON()?.op==='join'&&!droppedJoin){droppedJoin=true;await route.fetch();await route.abort('failed')}
   else await route.continue();
