@@ -17,7 +17,7 @@ for(const [id,text] of [
   ['021','Chaque vendredi, des commerçants paient les hommes du clan'],
   ['022','Nino Caruso est retrouvé mort après une réunion sur une dette'],
   ['023','Les Santoro, Bellomo et Russo négocient les revenus des transports'],
-  ['024','Sandro Vitale a été violemment interrogé'],
+  ['024','Sandro Vitale, un chauffeur, a été violemment interrogé'],
   ['025','Vittorio Santoro']
 ]){
   const line=omerta.split('\n').find(l=>l.includes("{id:'"+id+"',title:"));
