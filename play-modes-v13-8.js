@@ -66,7 +66,24 @@ const del=(k)=>{try{storage().removeItem(k)}catch{}};
 const profileIdentity=()=>readJSON(IDENTITY_KEY);
 const pseudoDefault=()=>{try{return loadProfile?.().pseudo||storage().getItem('igr_v9_last_pseudo')||''}catch{return storage().getItem('igr_v9_last_pseudo')||''}};
 const toastX=m=>{try{toast?.(m)}catch{console.log(m)}};
-function shellPut(html,preserveLobby=false){const root=$('#app');if(!root)return;const savedScroll=preserveLobby&&root.querySelector('.hnet-lobby')?window.scrollY:null;root.innerHTML=typeof shell==='function'?shell(html,false):`<div class="app">${html}</div>`;requestAnimationFrame(()=>window.scrollTo({top:savedScroll??0,behavior:'auto'}))}
+function shellPut(html,preserveLobby=false){
+ const root=$('#app');if(!root)return;
+ const lobby=preserveLobby?root.querySelector('.hnet-lobby'):null;
+ const oldScroll=window.scrollY;
+ const oldFocused=document.activeElement?.closest?.('.hnet-role-card[data-role]');
+ const roleId=oldFocused?.dataset.role||null;
+ const oldAnchor=oldFocused||lobby?.querySelector('.hnet-role-zone')||lobby?.querySelector('.hnet-title');
+ const oldTop=oldAnchor?.getBoundingClientRect().top;
+ root.innerHTML=typeof shell==='function'?shell(html,false):`<div class="app">${html}</div>`;
+ const newLobby=root.querySelector('.hnet-lobby');
+ const chosen=roleId&&Array.from(newLobby?.querySelectorAll('.hnet-role-card[data-role]')||[]).find(b=>b.dataset.role===roleId);
+ const newAnchor=chosen||newLobby?.querySelector('.hnet-role-zone')||newLobby?.querySelector('.hnet-title');
+ // Keep the touched role at the same viewport position despite changing labels.
+ const delta=lobby&&newAnchor&&Number.isFinite(oldTop)?newAnchor.getBoundingClientRect().top-oldTop:0;
+ try{window.scrollTo({top:lobby&&newLobby?Math.max(0,oldScroll+delta):0,left:0,behavior:'instant'})}
+ catch(_){window.scrollTo(0,lobby&&newLobby?Math.max(0,oldScroll+delta):0)}
+ if(chosen&&!chosen.disabled)chosen.focus({preventScroll:true});
+}
 function secureIndex(n){if(n<=1)return 0;try{const a=new Uint32Array(1),lim=Math.floor(0x100000000/n)*n;let x;do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);return x%n}catch{return Math.floor(Math.random()*n)}}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=secureIndex(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
 function newHCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='H';for(let i=0;i<4;i++)s+=chars[secureIndex(chars.length)];return s}
