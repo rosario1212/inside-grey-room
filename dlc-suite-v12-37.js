@@ -26,9 +26,9 @@
     "029": "Trois rescapés demandent protection. Vingt personnes restent captives.",
     "030": "Un gouverneur est massacré avec sa famille. Un registre disparaît.",
     "031": "Six agents abattus près de la frontière. Trois chefs de commando arrêtés.",
-    "032": "Deux dirigeants sont en fuite. Les archives pourraient les trahir.",
-    "033": "Le fils du président et son cousin sont en fuite. Le clan se fissure.",
-    "034": "Le président déchu se cache. Ses fidèles brouillent les pistes."
+    "032": "Le régime est tombé. Deux chefs ont disparu. Les prisons parlent encore.",
+    "033": "La dynastie est morte. Le fils et son cousin sauvent leur peau.",
+    "034": "Le président et son gendre sont traqués. Les faux noms ne suffiront pas."
   },
   "en": {
     "021": "An envelope disappears. No one in the Family will answer for it.",
@@ -42,14 +42,17 @@
     "029": "Three survivors seek protection. Twenty people remain captive.",
     "030": "A governor and his family are murdered. A ledger vanishes.",
     "031": "Six agents killed near the border. Three unit chiefs arrested.",
-    "032": "Two officials are on the run. The archives may expose them.",
-    "033": "The president's son and cousin are fugitives. The clan fractures.",
-    "034": "The fallen president is hiding. His loyalists cover his tracks."
+    "032": "The regime has fallen. Two chiefs have vanished. The prisons still speak.",
+    "033": "The dynasty is dead. The son and his cousin run for their lives.",
+    "034": "The president and his son-in-law are hunted. False names won't save them."
   }
 });
   function dlcCardTeaser(sc){
     return DLC_CARD_TEASERS[window.IGR_LOCALE==='en'?'en':'fr'][String(sc.id)] || String(sc.short||'').trim();
   }
+
+  // Catalogue teaser shared with the premium renderer. Canonical detail text stays intact.
+  window.IGR_DLC_CARD_TEASER=dlcCardTeaser;
 
   // Shared public canon only: all places and characters are fictional.
   // Never encode A/B/C culprit, secret loyalties or evidence outcomes here.
