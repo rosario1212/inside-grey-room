@@ -212,3 +212,21 @@ body:has(.igr-settings-modal)>.igr-alert-stack{display:none!important}
  font-size:10px!important;letter-spacing:.03em!important;color:#bfcbd3!important;
  font-weight:600!important;background:rgba(154,175,190,.08)!important;
 }
+
+/* v768 — Keep the feedback link directly below the content during a live game.
+   The old viewport-height #app plus nested bottom padding created a long black
+   scroll region on iPhone. Preserve the device safe area and gameplay actions. */
+body:has(#app .game-v11) #app{
+  min-height:0!important;
+  height:auto!important;
+}
+#app .app:has(> .game-v11){
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+}
+#app .game-v11{
+  padding-bottom:0!important;
+}
+body:has(#app .game-v11) > .igr-beta-footer{
+  padding-top:4px!important;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+}

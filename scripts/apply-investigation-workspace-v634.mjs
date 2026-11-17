@@ -69,7 +69,7 @@ console.log('v635 ergonomic reading/notifications/settings layer applied: '+path
 
 // Final release seal: invalidate installed home-screen PWA scripts consistently.
 // Prevent an older iPad asset graph from pairing with the freshly-started host phase.
-const release='santoro-display-audit-20261108';
+const release='v768-live-game-footer-spacing-20261117';
 const changedAssets=['investigation-workspace-v634.js','investigation-workspace-v634.css',
  'reading-stability-v635.css','gameplay-flow-v13.js','live-cell-v12-44.js',
  'narrative-dossier-v87.js','app-v11.js'];
