@@ -10,6 +10,7 @@ on:
       - 'index.html'
       - 'supabase/migrations/20261117210100_igr_v772_investigation_cadence.sql'
       - 'scripts/v772-investigation-check.mjs'
+      - 'scripts/v773-investigator-card-check.mjs'
       - '.github/workflows/v772-investigation-qa.yml'
   workflow_dispatch:
 jobs:
@@ -28,4 +29,6 @@ jobs:
           node --check investigation-workspace-v634.js
           node --check investigation-ux-v772.js
       - name: Validate v772 server/frontend contracts
-        run: node scripts/v772-investigation-check.mjs
+        run: |
+          node scripts/v772-investigation-check.mjs
+          node scripts/v773-investigator-card-check.mjs
