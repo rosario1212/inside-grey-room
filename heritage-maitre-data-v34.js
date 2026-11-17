@@ -36,7 +36,7 @@ const PACK=Object.freeze({
   chapters:Object.freeze({
     1:Object.freeze({
       title:'LE CLIENT',
-      briefing:'Une enquête fiscale sur l’activité du Client révèle des espèces non déclarées, plusieurs téléphones, des rendez-vous difficiles à expliquer et des liens avec des personnes soupçonnées de trafic. En remontant l’entourage, les enquêteurs découvrent aussi des personnes associées à des faits bien plus graves — financement de gangs, séquestration, exploitation ou violences — sans que ces crimes puissent être automatiquement imputés au Client. Le problème n’est pas de décider si le Client est « propre » : il faut déterminer exactement ce qu’il savait, ce dont il a profité et ce qu’il a réellement permis.',
+      briefing:"Une enquête fiscale révèle des espèces non déclarées et des rendez-vous avec des personnes soupçonnées de trafic. D’autres membres de l’entourage sont liés à des faits plus graves. Rien n’établit encore que le Client connaissait ces violences. Il faut distinguer ses actes, ses bénéfices et ses connaissances.",
       question:'Quelle place le dossier permet-il réellement d’attribuer au Client ?',
       cycles:[
         ['CYCLE I · AUDITION','Avocat, Client et Enquêteur ouvrent le dossier. Séparez chaque fait brut de l’interprétation qu’on lui donne. Le Client peut demander un entretien confidentiel avec son Avocat avant de répondre.'],
@@ -51,7 +51,7 @@ const PACK=Object.freeze({
     }),
     2:Object.freeze({
       title:'LE DEAL',
-      briefing:'Un lien de l’entourage devient beaucoup plus solide. Le parquet possède désormais une pièce exploitable contre une personne plus dangereuse que le Client et propose une coopération. La question n’est plus seulement ce que le Client a fait : que savait-il, depuis quand, et qui est-il prêt à exposer pour réduire son propre risque ?',
+      briefing:"Le parquet détient une nouvelle pièce reliant l’entourage du Client à une personne soupçonnée de crimes plus graves. Il propose une coopération en échange d’informations vérifiables. Le Client doit distinguer ce qu’il sait réellement de ce qu’il suppose.",
       question:'Quelle stratégie le Client et son Avocat inscrivent-ils dans l’Héritage ?',
       cycles:[
         ['CYCLE I · POSITION','L’Enquêteur présente ce qui a survécu au dossier I. Le Client doit décider ce qu’il reconnaît, ce qu’il conteste et ce qu’il refuse encore d’expliquer.'],
@@ -66,7 +66,7 @@ const PACK=Object.freeze({
     }),
     3:Object.freeze({
       title:'DEUX CHOIX',
-      briefing:'L’Associé déjà présent dans la carte du réseau devient le second mis en cause. Il partage avec le Client des flux, des accès et plusieurs décisions passées. Les deux sont défendus par le même Avocat tant que leurs intérêts paraissent encore compatibles et qu’ils ont accepté une représentation commune éclairée. Une nouvelle pièce montre pourtant qu’ils ne savaient peut-être pas les mêmes choses. L’Avocat devra renoncer à représenter les deux si le conflit ne peut être résolu.',
+      briefing:"L’Associé devient le second mis en cause. Les deux hommes partagent des opérations financières, mais pas nécessairement les mêmes informations. Ils avaient accepté une défense commune. Une nouvelle pièce fait apparaître un possible conflit d’intérêts, que l’Avocat doit examiner.",
       question:'Quelle ligne de défense commune peut encore survivre sans confondre les responsabilités ?',
       cycles:[
         ['CYCLE I · DÉFENSE COMMUNE','Avocat, Client, Associé et Enquêteur reconstituent les faits partagés. L’état de confiance hérité du DEAL est public dès le départ.'],
@@ -81,7 +81,7 @@ const PACK=Object.freeze({
     }),
     4:Object.freeze({
       title:'LE PROCÈS',
-      briefing:'Le parquet assemble les flux, les fréquentations, les déclarations et les choix précédents pour présenter une seule théorie du réseau. L’Avocat ne peut plus seulement contester des pièces isolées : il doit attaquer les enchaînements logiques qui prétendent transformer proximité et bénéfice en responsabilité pour les crimes des autres.',
+      briefing:"Le procès réunit les flux, les déclarations et les décisions des trois dossiers précédents. Le parquet présente une théorie générale du réseau. La défense doit examiner chaque lien entre les faits établis et les crimes imputés au Client.",
       question:'Jusqu’où le procès permet-il juridiquement de relier le Client au réseau ?',
       cycles:[
         ['CYCLE I · THÉORIE DU PARQUET','Le Procureur présente une chaîne complète. L’Enquêteur doit expliquer les pistes abandonnées et les décisions prises depuis LE CLIENT.'],
@@ -96,7 +96,7 @@ const PACK=Object.freeze({
     }),
     5:Object.freeze({
       title:'L’HONNEUR',
-      briefing:'Le nom de l’Avocat est désormais attaché à cette affaire. Une dernière pièce rattache l’entourage du Client à des faits graves que les premiers dossiers ne permettaient pas d’attribuer proprement. Le Client revient avec une demande : le défendre encore, mais cette fois en sachant beaucoup mieux quel homme il est devenu aux yeux du dossier.',
+      briefing:"Une dernière pièce relie l’entourage du Client à des faits graves. Les conclusions précédentes restent au dossier. L’Avocat doit déterminer ce qu’il peut encore défendre sans présenter la proximité avec le réseau comme une preuve d’innocence générale.",
       question:'Quel héritage l’Avocat choisit-il de laisser ?',
       cycles:[
         ['CYCLE I · CE QUI RESTE','Relisez les Traces : ce qui est établi, ce qui reste contesté, qui a été protégé, qui a été exposé. Aucune ancienne conclusion ne peut être effacée.'],

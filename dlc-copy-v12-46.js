@@ -6,19 +6,19 @@
   const COPY = Object.freeze({
     omerta: {
       eyebrow: 'DLC CONFIDENTIEL',
-      text: 'La Famiglia protège ses secrets. L’enquête remonte la chaîne du silence jusqu’au Don.'
+      text: 'Dans la Famiglia, une enveloppe, une dette ou un aveu peuvent faire remonter les ordres jusqu’au Don.'
     },
     terror: {
       eyebrow: 'DLC DE CRISE',
-      text: 'Le FDR a renversé les autorités dans presque tout le pays. Exécutions, enlèvements, prisons clandestines, familles déplacées : la capitale résiste, et la Grey Room cherche qui a ordonné, exécuté ou couvert ces crimes.'
+      text: 'Le FDR impose des rafles et des exécutions. La capitale résiste pendant que la Grey Room établit les responsabilités.'
     },
     cartel: {
       eyebrow: 'DLC SOUS PRESSION',
-      text: 'Le cartel frappe l’enquête, achète la justice et remonte jusqu’à vos proches.'
+      text: 'Le cartel exécute ceux qui parlent et menace la Grey Room. L’enquête remonte les ordres malgré les représailles.'
     },
     regime: {
       eyebrow: 'DLC APRÈS LA CHUTE',
-      text: 'Dix-neuf ans de dictature, une guerre d’agression et des milliers de prisonniers. Deux dirigeants en fuite, des alliances fragiles et un pays qui suit les arrestations. Les capturer ne suffit pas : il faut établir qui a ordonné les crimes, et la majorité collective du camp d’enquête détermine le verdict de responsabilité. Un fugitif capturé perd son objectif de survie.'
+      text: 'Le régime s’est effondré. Ses dirigeants fuient, mais les archives permettent de reconstituer les arrestations et les crimes.'
     }
   });
 
