@@ -1870,6 +1870,7 @@ function latestEvent(type){return [...(STATE.sync?.events||[])].reverse().find(e
 // Clarify presentation only. Never reinterpret or supplement a canonical finding.
 function readableFindingTitle(value,scenarioId){
  const title=String(value||'').trim();
+ if(String(scenarioId)==='003'&&/^Faux accord inscrit par S2$/i.test(title))return 'Accord mentionné au dossier';
  if(String(scenarioId)!=='004')return title;
  const names={
   'Réponse conservée':'Message conservé · refus de déplacement',
@@ -1881,6 +1882,7 @@ function readableFindingTitle(value,scenarioId){
 }
 function readableFindingText(value,scenarioId){
  let text=String(value||'').trim();
+ if(String(scenarioId)==='001')return text.replace(/\s*;\s*interrogez-le plutôt que d'inventer une image de son entrée\.?/ig,'.');
  if(String(scenarioId)!=='004')return text;
  return text
   .replace(/(Sauvegarde de messagerie\s*\/\s*capture vérifiée)\s+(?=Une capture)/i,'$1.\n\n')
@@ -1962,28 +1964,22 @@ function renderInvestigationTab(){
    const adaptiveMulti=mountain006Investigations||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations;
    const collectedIds=new Set(reports.filter(e=>Number(e.cycle)===Number(r.cycle)).map(e=>e.payload?.id).filter(Boolean));
    const adaptive006=mountain006Investigations&&d.scenario?.investigation_006_adaptive===true;
-   const limit006=adaptive006?4:3;
-   const limit=(deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?4:limit006;
+   const limit006=1;
+   const limit=1; // One investigation finding per cycle.
    const isOptionalInvestigation=id=>/^0(0[1-9]|10)_(1[0-9]|20)$/.test(String(id));
    const optionalUsed006=[...collectedIds].some(isOptionalInvestigation);
    const allChoices=adaptiveMulti?choices.filter(o=>!collectedIds.has(o.id)&&!(optionalUsed006&&isOptionalInvestigation(o.id))):choices;
-   const remainingCore=adaptiveMulti&&[...collectedIds].filter(id=>!isOptionalInvestigation(id)).length<3;
-   // Do not expose an optional lead before the three main facts have been examined.
-   const visibleChoices=adaptiveMulti?allChoices.filter(o=>remainingCore?!isOptionalInvestigation(o.id):isOptionalInvestigation(o.id)):allChoices;
+   const visibleChoices=allChoices; // One selectable choice per cycle.
    const used=adaptiveMulti?collectedIds.size>=limit:d.scenario?.[evidenceTag+'_used'];
    const phaseStartMs=Date.parse(r.phase_started_at||'');
    const alreadyExaminedThisPhase=adaptiveMulti&&Number.isFinite(phaseStartMs)&&reports.some(e=>
      Number(e.cycle)===Number(r.cycle)&&Number.isFinite(Date.parse(e.created_at||''))&&Date.parse(e.created_at)>=phaseStartMs-1000);
    // Main source material remains in the canonical cycle; the UI does not dump all four at its opening.
-   const nextStageRequired=adaptiveMulti&&alreadyExaminedThisPhase&&ph!=='cycle_debrief'&&!used;
+   const nextStageRequired=false;
    const progressLabel=adaptiveMulti?' · '+collectedIds.size+'/'+limit+' pièces consultées':'';
-   const instruction006=adaptive006?'Trois vérifications principales et une piste facultative au maximum par cycle. Les pistes proposées sont variables, sans changer la vérité.': 'Trois pièces complémentaires distinctes sont accessibles à chaque cycle.';
-   const instructionDeep='Vérifie d’abord les faits et les heures. Trois pistes principales et une facultative sont proposées pendant ce cycle. Tu peux confronter les résultats aux témoignages.';
-    const instructionSeven='Trois trames principales et une trame facultative au maximum par cycle. Deux pistes facultatives sont proposées sans indiquer si l’une répond à une erreur de raisonnement.';
-    const instructionEight='Trois vérifications principales et une seule trame facultative au maximum par cycle. L’enquêteur et l’analyste répondent séparément pour orienter les choix futurs, sans recevoir de correction.';
-    const instructionNine='Trois vérifications principales et une seule trame facultative au maximum par cycle. Vos hypothèses scellées orientent les pistes futures sans exposer les solutions ou les variantes.';
-    const instructionTen='Trois preuves principales et une recherche facultative au maximum par cycle. Les réponses scellées orientent une piste complémentaire sans afficher la solution.';
-   body+=`<section class="action-section igr001-actions"><h3>Vérifications · Cycle ${h(r.cycle)}${h(progressLabel)}</h3><p class="choice-helper">${deepTenInvestigations?instructionTen:deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule investigation complémentaire par cycle pour tout le camp Enquête. Cette pièce est facultative et ne remplace jamais l’indice canonique.'}</p>${used?'<div class="locked-state">Vérifications terminées pour ce cycle.</div>':nextStageRequired?'<div class="locked-state">Une pièce a déjà été examinée pendant cette étape. Compare-la aux déclarations ; les autres pistes seront accessibles à la prochaine étape.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
+   const instruction006='Une seule pièce au choix pendant ce cycle. Compare-la aux déclarations avant de conclure.';
+   const instructionDeep=instruction006, instructionSeven=instruction006, instructionEight=instruction006, instructionNine=instruction006, instructionTen=instruction006;
+   body+=`<section class="action-section igr001-actions"><h3>Vérifications · Cycle ${h(r.cycle)}${h(progressLabel)}</h3><p class="choice-helper">${deepTenInvestigations?instructionTen:deepNineInvestigations?instructionNine:deepEightInvestigations?instructionEight:deepSevenInvestigations?instructionSeven:deepFiveInvestigations?instructionDeep:mountain006Investigations?instruction006:'Une seule vérification au choix par cycle pour tout le camp Enquête.'}</p>${used?'<div class="locked-state">Vérifications terminées pour ce cycle.</div>':nextStageRequired?'<div class="locked-state">Une pièce a déjà été examinée pendant cette étape. Compare-la aux déclarations ; les autres pistes seront accessibles à la prochaine étape.</div>':visibleChoices.map(o=>`<button type="button" class="choice-row" onclick="investigateByScenario('${h(o.id)}')"><span>${h(o.title)}</span><b>${(adaptive006||deepFiveInvestigations||deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)&&isOptionalInvestigation(o.id)?((deepSevenInvestigations||deepEightInvestigations||deepNineInvestigations||deepTenInvestigations)?'Trame facultative':'Piste facultative'):'Examiner'}</b></button>`).join('')}</section>`;
   }
  }
 
@@ -2000,10 +1996,10 @@ function renderInvestigationTab(){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_018');
   const choices=Array.isArray(d.scenario?.investigation_018)?d.scenario.investigation_018:[];
   const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
-  const used=!!d.scenario?.investigation_018_used||thisCycle.length>=2;
+  const used=!!d.scenario?.investigation_018_used||thisCycle.length>=1;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>LES ASSIETTES VIDES · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux investigations au maximum par cycle pour tout le camp Enquête. Les pistes évoluent discrètement selon les hypothèses scellées, sans révéler la solution. Trois constatations essentielles restent garanties.</p>${used?'<div class="locked-state">Les deux investigations de ce cycle ont été réalisées.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule investigation au choix par cycle pour le camp Enquête. Les pistes évoluent discrètement selon les hypothèses scellées, sans révéler la solution. Trois constatations essentielles restent garanties.</p>${used?'<div class="locked-state">Les deux investigations de ce cycle ont été réalisées.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate018Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
 
   if(ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
    const answered=(d.my_actions||[]).some(a=>a.action_type==='hypothesis_018'&&+a.cycle===+r.cycle);
@@ -2018,10 +2014,10 @@ if(r.scenario_id==='019'&&['enqueteur','analyste'].includes(role)){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_019');
   const choices=Array.isArray(d.scenario?.investigation_019)?d.scenario.investigation_019:[];
   const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
-  const used=!!d.scenario?.investigation_019_used||thisCycle.length>=2;
+  const used=!!d.scenario?.investigation_019_used||thisCycle.length>=1;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>LE GRAND BAL · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux pistes facultatives par cycle pour le camp Enquête, sélectionnées à partir des hypothèses scellées. Les trois preuves fondamentales restent garanties; une réponse erronée ne bloque jamais la résolution.</p>${used?'<div class="locked-state">Deux investigations réalisées pendant ce cycle.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate019Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste choisie par cycle pour le camp Enquête, sélectionnées à partir des hypothèses scellées. Les trois preuves fondamentales restent garanties; une réponse erronée ne bloque jamais la résolution.</p>${used?'<div class="locked-state">Deux investigations réalisées pendant ce cycle.</div>':choices.map((o,i)=>`<button type="button" class="choice-row" onclick="investigate019Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
  }
 
 if(r.scenario_id==='019'&&['enqueteur','analyste'].includes(role)&&ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){
@@ -2036,10 +2032,10 @@ if(r.scenario_id==='020'&&['enqueteur','analyste'].includes(role)){
   const reports=(d.events||[]).filter(e=>e.event_type==='investigation_020');
   const choices=Array.isArray(d.scenario?.investigation_020)?d.scenario.investigation_020:[];
   const thisCycle=reports.filter(e=>+e.cycle===+r.cycle);
-  const used=!!d.scenario?.investigation_020_used||thisCycle.length>=2;
+  const used=!!d.scenario?.investigation_020_used||thisCycle.length>=1;
   const enabled=['investigation_assembly','interrogation_select','interrogation','cycle_debrief'].includes(ph)||String(ph).startsWith('annex_');
   if(reports.length)body+=`<section class="private-block"><h3>L’APOTHÉOSE · INVESTIGATIONS</h3>${reports.map(e=>`<details class="event"><summary>${h(e.payload?.title||'Pièce examinée')}</summary><p>${h(e.payload?.text||'')}</p></details>`).join('')}</section>`;
-  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Deux pistes facultatives par cycle, adaptées aux hypothèses scellées. Les six preuves indispensables arrivent toujours automatiquement, même si les enquêteurs se trompent.</p>${used?'<div class="locked-state">Deux pistes ont été examinées pendant ce cycle.</div>':choices.map(o=>`<button type="button" class="choice-row" onclick="investigate020Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
+  if(enabled&&r.cycle>=1&&r.cycle<=3)body+=`<section class="action-section"><h3>PISTES ADAPTATIVES · CYCLE ${h(r.cycle)}</h3><p class="choice-helper">Une seule piste choisie par cycle, adaptée aux hypothèses scellées. Les six preuves indispensables arrivent toujours automatiquement, même si les enquêteurs se trompent.</p>${used?'<div class="locked-state">Deux pistes ont été examinées pendant ce cycle.</div>':choices.map(o=>`<button type="button" class="choice-row" onclick="investigate020Choice('${h(o.id)}')"><span>${h(o.title||'Piste matérielle')}</span><b>Examiner</b></button>`).join('')}</section>`;
  }
 
 if(r.scenario_id==='020'&&['enqueteur','analyste'].includes(role)&&ph==='cycle_debrief'&&r.cycle>=1&&r.cycle<=2){

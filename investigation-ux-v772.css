@@ -1,0 +1,28 @@
+/* IGR v772: information density without concealing evidence. */
+.igr772-choice-timer{margin:8px 0 12px;padding:12px 15px;border:1px solid rgba(151,180,185,.37);
+ border-radius:12px;background:#111b21;color:#cadce0;font-size:13px;font-weight:650;
+ letter-spacing:.025em;line-height:1.4;font-variant-numeric:tabular-nums}
+.igr772-choice-timer.igr772-urgent{border-color:rgba(206,146,100,.75);color:#efc5a0}
+.igr772-guide{margin:12px 0;border:1px solid rgba(255,255,255,.14);border-radius:12px}
+.igr772-guide>summary{cursor:pointer;padding:13px 16px;color:#b7c2c8;font-size:13px;font-weight:700}
+.igr772-guide .igr50-role-guide{margin:0;border:0;background:transparent}
+.igr001-reports>.igr772-repeated-title{display:none}
+.igr772-piece-count{display:inline-flex;margin-inline-start:10px;font-size:11px;color:#9caeb8}
+.igr001-reports .choice-helper{margin:3px 0 12px;max-width:62ch}
+.igr001-reports{padding:8px 0 0!important;box-shadow:none!important;background:transparent!important;border:0!important}
+.igr001-reports .igr-evidence-list{display:grid;gap:10px}
+.igr-evidence-record{margin:0!important}
+.igr106-common .igr106-event{border-left-color:#788993!important}
+.igr106-common .igr106-premise{margin-bottom:12px}
+.game-v11 .private-card-v11{overflow-wrap:anywhere}
+.game-v11 .private-card-v11 .private-block{margin-block:9px}
+@media(max-width:520px){
+ .igr001-reports .igr-evidence-record{padding:14px!important}
+ .igr106-common .igr106-premise{padding:16px}
+ .igr106-common .igr106-event{padding:15px}
+ .igr772-choice-timer{margin:5px 0 9px}
+}
+@media(display-mode:standalone){
+ body::after{content:"";pointer-events:none;position:fixed;top:0;left:0;right:0;
+  height:env(safe-area-inset-top,0px);background:#000;z-index:2147483646}
+}

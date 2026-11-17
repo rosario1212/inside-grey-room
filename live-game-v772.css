@@ -1,0 +1,39 @@
+/* v772 — iPhone status bar, readable evidence, no nested dark panel. */
+@supports selector(body:has(.game-v11)){
+  body:has(#app .game-v11)::before{
+    content:'';position:fixed;inset:0 0 auto;display:block;
+    height:env(safe-area-inset-top,0px);background:#000;
+    pointer-events:none;z-index:2147483600;
+  }
+}
+#app .igr634-workspace .igr634-group[data-igr634-group="evidence"] .igr001-reports{
+  border:0!important;box-shadow:none!important;background:transparent!important;
+  padding:0!important;margin:0!important;
+}
+#app .igr634-workspace .igr634-group[data-igr634-group="evidence"] .igr001-reports>h3,
+#app .igr634-workspace .igr634-group[data-igr634-group="evidence"] .igr001-reports>.choice-helper{
+  display:none!important;
+}
+#app .igr634-workspace .igr634-group[data-igr634-group="evidence"] .igr-evidence-list{
+  margin-top:0!important;
+}
+@media(max-width:600px){
+  #app .igr634-workspace .igr634-group[data-igr634-group="evidence"] .igr-evidence-record{
+    padding:13px 14px!important;margin:0!important;
+  }
+  #app .igr634-workspace .igr634-group[data-igr634-group="evidence"] .igr-evidence-record p{
+    font-size:14px!important;line-height:1.55!important;
+  }
+  #app .igr106-common .igr106-premise,
+  #app .igr106-common .igr106-event{padding:14px!important;}
+  #app .igr106-public-teaser{padding:14px 16px!important;}
+}
+
+#app .igr772-idle-clock{
+ display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+ padding:10px 12px;margin:10px 0 2px;border:1px solid rgba(156,188,193,.28);
+ border-radius:13px;background:rgba(19,35,39,.65);color:#d7e0e3;
+}
+#app .igr772-idle-clock>span{font-size:12px;font-weight:650}
+#app .igr772-idle-clock>strong{font:750 18px 'IBM Plex Mono',monospace;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+#app .igr772-idle-clock>small{flex-basis:100%;font-size:11px;color:#aebdc2;line-height:1.35}

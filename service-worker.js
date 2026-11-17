@@ -1,5 +1,8 @@
-const CACHE='igr-omerta-021-rain-v758-20261117';
+const CACHE='igr-v772-investigation-cycle-audit-20261117';
 const SHELL=[
+  '/cast-names-v772.js?v=cycle-audit-v772',
+  '/idle-choice-v772.js?v=cycle-audit-v772',
+  '/live-game-v772.css?v=cycle-audit-v772',
   '/regime-live-v13.css?v=regime-v16-rosters-20261115',
   '/catalog-descriptions-v1.css?v=v730-direct-dlc-selector-poster-fit-20261116',
   '/catalogue-navigation-v731.css?v=omerta-posters-v757-20261117',

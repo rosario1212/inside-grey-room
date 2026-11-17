@@ -18,7 +18,7 @@ assert.match(app,/investigation_deep_v286===true/,'Gate case 001–005 behind ro
 assert.match(app,/igr_v286_investigate/,'Use authoritative investigation RPC');
 assert.match(app,/optionalUsed006/,'Preserve Scenario 006 optional cap logic');
 assert.match(app,/deepSevenInvestigations/,'007 adaptive route expected');
-assert.match(app,/const limit=\(deepFiveInvestigations\|\|deepSevenInvestigations\|\|deepEightInvestigations\|\|deepNineInvestigations\|\|deepTenInvestigations\)\?4:limit006/,'One shared 4-investigation budget through 010 must remain active');
+assert.match(app,/const limit=1; \/\/ One investigation finding per cycle/,'Audited one-investigation budget through 010 must remain active');
 assert.match(quiz,/igr_v286_submit_detail/,'Required sealed detail reporting');
 assert.match(quiz,/oldSubmit\.apply/,'Legacy debrief must remain');
 for(const n of ['001','002','003','004','005'])assert(quiz.includes("'"+n+"'"),'Case '+n+' questions missing');

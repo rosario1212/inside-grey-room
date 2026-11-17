@@ -41,8 +41,11 @@ async function syncPublic(force=false){
 function publicEntries(data){
  const context=String(data?.context||'').trim().replace(/\s+/g,' ').normalize('NFKC').toLocaleLowerCase();
  return (Array.isArray(data?.events)?data.events:[]).filter(e=>{
-   const sameOpening=e?.event_type==='context'&&context&&String(e?.text||'').trim().replace(/\s+/g,' ').normalize('NFKC').toLocaleLowerCase()===context;
-   return !sameOpening;
+   const normalized=String(e?.text||'').trim().replace(/\s+/g,' ').normalize('NFKC').toLocaleLowerCase();
+   const title=String(e?.title||'').trim().toLocaleLowerCase();
+   const sameOpening=e?.event_type==='context'&&((context&&normalized===context)||title==='contexte');
+   const redundantCycleSummary=e?.event_type==='public_notice' && /^Bilan public\s*[·-]\s*cycle\s*\d+/i.test(String(e?.title||''));
+   return !sameOpening && !redundantCycleSummary;
  });
 }
 function visibleEventIds(){
@@ -60,7 +63,7 @@ function publicHtml(){
  const events=publicEntries(a).slice().reverse();
  const history=events.map(e=>{
   const c=safeCycle(e.cycle),press=e.event_type==='breaking_news'||e.press_claim;
-  const type=press?tr('PUBLICATION DU JOURNALISTE','PRESS PUBLICATION'):e.event_type==='public_notice'?tr('BILAN PUBLIC DU CYCLE','PUBLIC CYCLE SUMMARY'):e.event_type==='public_evidence'?tr('PIÈCE COMMUNIQUÉE · À RECOUPER','SHARED DOCUMENT · CHECK THE SOURCE'):e.verified?tr('FAIT CONFIRMÉ','VERIFIED FACT'):tr('INFORMATION PUBLIQUE','PUBLIC INFORMATION');
+  const type=press?tr('PUBLICATION DU JOURNALISTE','PRESS PUBLICATION'):e.event_type==='public_notice'?tr('BILAN PUBLIC DU CYCLE','PUBLIC CYCLE SUMMARY'):e.event_type==='public_evidence'?tr('PIÈCE COMMUNIQUÉE · À RECOUPER','SHARED DOCUMENT · CHECK THE SOURCE'):e.verified?tr('ÉLÉMENT VÉRIFIÉ','VERIFIED FINDING'):tr('INFORMATION PUBLIQUE','PUBLIC INFORMATION');
   // Only the authenticated public dossier RPC can populate this screen.
   // Documents voluntarily disclosed to all remain available without burying the
   // other public updates in long paragraphs on a narrow phone.
@@ -68,7 +71,7 @@ function publicHtml(){
   const body=published
    ?'<details class="igr106-public-document"><summary>'+esc(tr('Lire la pièce communiquée','Read the shared document'))+'</summary><p>'+esc(e.text||'')+'</p></details>'
    :'<p>'+esc(e.text||'')+'</p>';
-  return '<article class="igr106-event" data-igr-event-id="'+esc(e.id)+'" data-cycle="'+(c||0)+'" data-public-document="'+(published?'true':'false')+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON CLASSÉE','CYCLE UNKNOWN'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4>'+body+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
+  return '<article class="igr106-event" data-igr-event-id="'+esc(e.id)+'" data-cycle="'+(c||0)+'" data-public-document="'+(published?'true':'false')+'"><div class="igr106-meta"><span>'+esc(type)+'</span><span>'+esc(c?tr('CYCLE ','CYCLE ')+c:tr('DATE NON PRÉCISÉE','DATE UNSPECIFIED'))+'</span></div><h4>'+esc(e.title||tr('Nouvelle information','Case update'))+'</h4>'+body+(press?'<small>'+esc(e.verified?tr('Publication scénarisée · à recouper','Scripted publication · verify independently'):tr('Déclaration journalistique · non vérifiée','Press claim · unverified'))+'</small>':'')+'</article>';
  }).join('');
  return '<section class="igr106-common" aria-label="'+esc(tr('Dossier commun','Shared case file'))+'"><header><small>'+esc(tr('ACCESSIBLE À TOUS LES RÔLES','VISIBLE TO ALL ROLES'))+'</small><h2>'+esc(tr('Dossier commun','Shared case file'))+'</h2></header><article class="igr106-premise"><h3>'+esc(tr('Situation connue de tous','Shared starting situation'))+'</h3><p>'+esc(context||tr('Le dossier sera présenté au lancement de la partie.','The case will be introduced when play begins.'))+'</p></article><div class="igr106-events"><h3>'+esc(tr('Publications et faits partagés','Shared news and events'))+'</h3>'+(cache.err&&!a?'<p class="igr106-muted">'+esc(tr('Connexion au dossier commun indisponible. Réessai automatique.','Shared case file temporarily unavailable. Retrying.'))+'</p>':!a?'<p class="igr106-muted">'+esc(tr('Synchronisation des informations publiques…','Loading public updates…'))+'</p>':history||'<p class="igr106-muted">'+esc(tr('Aucune nouvelle information publique pour le moment.','No new shared update yet.'))+'</p>')+'</div></section>';
 }

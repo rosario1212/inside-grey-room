@@ -20,7 +20,7 @@ assert(appSource.includes("investigate017Choice('${h(choice.id)}')"),
 assert(appSource.includes("['010','012','013','014','015','016','017'].includes(sid)"),
   'v650 debrief must not duplicate the existing 007–009 specialist forms');
 assert(appSource.includes('optionalUsed006'),'Scenario 006 optional limit missing');
-assert(appSource.includes('igr_v650_018_hypothesis_submit') && appSource.includes('thisCycle.length>=2'), '018 adaptive client missing');
+assert(appSource.includes('igr_v650_018_hypothesis_submit') && appSource.includes('thisCycle.length>=1'), '018 adaptive one-piece client missing');
 assert(appSource.includes('igr_v665_019_hypothesis_submit') && appSource.includes('igr_v665_019_investigate_choice'), '019 three-killer adaptive UI missing');
 assert(appSource.includes('igr_v675_020_hypothesis_submit') && appSource.includes('igr_v675_020_investigate_choice'), '020 three-origin adaptive UI missing');
 assert(appSource.includes('authorized_stage_effect'), '020 stage accident verdict option missing');

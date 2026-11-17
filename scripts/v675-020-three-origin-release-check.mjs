@@ -6,6 +6,9 @@ const app=read('app-v11.js');
 const runtime=read('supabase/migrations/20261114230000_igr_v675_020_adaptive_runtime.sql');
 const release=read('supabase/migrations/20261114233000_igr_v675_020_three_origins_release.sql');
 const publisher=read('scripts/publish-006-adaptive-shell.mjs');
+const v772=read('supabase/migrations/20261117210100_igr_v772_investigation_cadence.sql');
+assert(v772.includes('create trigger igr_v772_one_investigation'),'v772 one-investigation server-side enforcement missing');
+
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(app.includes("id:'020',title:'L’APOTHÉOSE'"),'020 catalog missing');
 assert(app.includes('min:13,max:16'),'020 requires 13-16 players');
@@ -13,7 +16,7 @@ assert(app.includes('authorized_stage_effect'),'020 distinct approved-stage igni
 assert(app.includes('payload.reconstruction_020={ignition,exits,maintenance,evacuation}'),'020 4-axis verdict missing');
 assert(app.includes("currentCase==='020'?['ignition','exits','maintenance','evacuation']"),'020 final scoring mismatch');
 assert(app.includes('igr_v675_020_investigate_choice') && app.includes('igr_v675_020_hypothesis_submit'),'020 adaptive client missing');
-assert(app.includes('thisCycle.length>=2'),'020 optional investigation cap missing');
+assert(app.includes('thisCycle.length>=1'),'020 one investigation cap missing');
 assert(!app.includes('v600_verdict'),'020 sealed truth leaked into public app');
 assert(runtime.includes('igr_private.igr_v675_020_offered'),'020 secret adaptive selector missing');
 assert(runtime.includes("a.action_type='hypothesis_020'"),'020 hypothesis scoring missing');
