@@ -132,7 +132,16 @@ if(origRender){const wrapper=function(){
    const phase=d.room.phase||'';
    const important=['interrogation','interrogation_select','provisional_lock','defense','locking','cycle_debrief','event_select'].includes(phase);
    if(important&&!isInquiry())aside.open=true;
-   const summary=document.createElement('summary');summary.textContent=tr('Action en cours','Current action');aside.appendChild(summary);
+   const summary=document.createElement('summary');
+   const notice=typeof rolePhaseNotice==='function'?rolePhaseNotice(d):null;
+   const heading=document.createElement('b');heading.textContent=tr('Action en cours','Current action');
+   summary.appendChild(heading);
+   if(notice?.text){
+    const hint=document.createElement('small');hint.className='igr106-current-action';
+    hint.textContent=String(notice.text).replace(/<[^>]*>/g,'').slice(0,145);
+    summary.appendChild(hint);
+   }
+   aside.appendChild(summary);
    const content=document.createElement('div');content.className='igr106-actions-inner';content.innerHTML=actionHtml();aside.appendChild(content);
    tabs.before(aside);
    // Public information only: the private state is never used in this banner.
