@@ -333,3 +333,25 @@
 }
 /* Casino progress shows during the actual room lobby, not before joining. */
 #app .casino-live:not(:has(.casino-lobby-top))>.hj-progress{display:none!important}
+
+
+/* HÉRITAGE v771 — Maître mode icons at 320px.
+   The SVG node can inherit a global SVG ink instead of the burgundy button
+   label. Set the SVG foreground explicitly and keep the original palette.
+   This is scoped to Maître's dossier mode choice, not other DLC campaigns. */
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon,
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon svg {
+ color:#fff9ef!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-online .hj-mode-icon svg{
+ stroke:currentColor!important;
+ fill:none!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon,
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon svg{
+ color:#542d2c!important;
+}
+#app .hplay.maitre-page .heritage-dual-row>.btn.hj-mode-local .hj-mode-icon svg{
+ stroke:currentColor!important;
+ fill:none!important;
+}
