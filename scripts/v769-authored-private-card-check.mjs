@@ -7,6 +7,12 @@ import vm from 'node:vm';
 const sql=fs.readFileSync(
  'supabase/migrations/20261117172600_igr_v769_authored_private_card_enrichment.sql','utf8');
 const app=fs.readFileSync('app-v11.js','utf8');
+const followup=fs.readFileSync(
+ 'supabase/migrations/20261117173159_igr_v770_allow_authored_dialogue_prompts.sql','utf8');
+assert(followup.includes('igr_v769_authored_supplement') &&
+ followup.includes('Demande|Questionne|Confronte|Interroge') &&
+ followup.includes('exact_old') && followup.includes('exact_new'),
+ 'Imperative dialogue prompts from the already-authored personal cards must remain available');
 for(const guard of [
  'igr_v769_authored_supplement','p_player uuid','p.public_role=',
  "p.room_code=v_room","v_slot","v_variant",
