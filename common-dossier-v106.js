@@ -53,7 +53,10 @@ function visibleEventIds(){
 function publicHtml(){
  const d=game();if(!d)return '';
  const a=cache.key===key()?cache.data:null;
- const context=String(a?.context??d.scenario?.context??'').trim();
+ const rawContext=String(a?.context??d.scenario?.context??'').trim();
+ const context=String(d.room.scenario_id)==='004'
+  ?tr('Sofia est morte après une nuit de détresse. Trois proches apparaissent dans le dossier. Ils ont reçu des informations différentes, à des moments différents. La Grey Room doit reconstruire les appels, les silences et les décisions.','Sofia died after a night of distress. Three people close to her appear in the case. They learned different things at different times. The Grey Room must reconstruct the calls, silences and decisions.')
+  :rawContext;
  const events=publicEntries(a).slice().reverse();
  const history=events.map(e=>{
   const c=safeCycle(e.cycle),press=e.event_type==='breaking_news'||e.press_claim;
@@ -89,6 +92,8 @@ if(origCard){const wrapper=function(){
    if(!stack){stack=document.createElement('div');stack.className='igr106-facts';}
    const details=document.createElement('details');details.className='igr106-fact';
    const summary=document.createElement('summary');summary.textContent=title;
+   // The essentials should be readable without repeatedly opening accordions.
+   details.open=/^(TON RÔLE|QUI TU ES|CE QUI S[’']EST PASSÉ|CE QUE TU AS FAIT|TON HISTOIRE|CE QUE TU CACHES)$/i.test(title);
    details.appendChild(summary);const body=document.createElement('div');body.className='igr106-fact-body';
    for(const child of [...block.childNodes])if(child.nodeType!==1||child.tagName!=='H4')body.appendChild(child.cloneNode(true));
    details.appendChild(body);stack.appendChild(details);block.remove();
@@ -127,9 +132,34 @@ if(origRender){const wrapper=function(){
    const phase=d.room.phase||'';
    const important=['interrogation','interrogation_select','provisional_lock','defense','locking','cycle_debrief','event_select'].includes(phase);
    if(important&&!isInquiry())aside.open=true;
-   const summary=document.createElement('summary');summary.textContent=tr('Action en cours','Current action');aside.appendChild(summary);
+   const summary=document.createElement('summary');
+   const notice=typeof rolePhaseNotice==='function'?rolePhaseNotice(d):null;
+   const heading=document.createElement('b');heading.textContent=tr('Action en cours','Current action');
+   summary.appendChild(heading);
+   if(notice?.text){
+    const hint=document.createElement('small');hint.className='igr106-current-action';
+    hint.textContent=String(notice.text).replace(/<[^>]*>/g,'').slice(0,145);
+    summary.appendChild(hint);
+   }
+   aside.appendChild(summary);
    const content=document.createElement('div');content.className='igr106-actions-inner';content.innerHTML=actionHtml();aside.appendChild(content);
    tabs.before(aside);
+   // Public information only: the private state is never used in this banner.
+   if(S()?.tab!=='timeline'){
+    const teaser=document.createElement('aside');
+    teaser.className='igr106-public-teaser';
+    const concise=String(d.room.scenario_id)==='004'
+     ?tr('Sofia est morte après une nuit de détresse. Trois proches ont reçu des informations différentes, à des moments différents.','Sofia died after a night of distress. Three people close to her learned different things at different times.')
+     :(typeof publicScenarioSummary==='function'?String(publicScenarioSummary(d.room.scenario_id)||''):String(d.scenario?.context||''));
+    const title=document.createElement('strong');title.textContent=tr('SITUATION CONNUE DE TOUS','SHARED STARTING SITUATION');
+    const paragraph=document.createElement('p');paragraph.textContent=concise;
+    const go=document.createElement('button');go.type='button';go.className='igr106-public-open';
+    go.textContent=tr('Voir les faits partagés','See shared facts');
+    go.addEventListener('click',()=>setTab('timeline'));
+    teaser.append(title,paragraph,go);aside.before(teaser);
+   }
+   // The investigation workspace already provides the active actions. Do not duplicate them.
+   if(isInquiry())aside.remove();
   }
   if(S()?.tab==='timeline')void syncPublic();
  }catch(err){console.warn('[IGR v106] action fallback',err)}

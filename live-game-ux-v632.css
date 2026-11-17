@@ -214,3 +214,70 @@ body:has(.action-confirm-modal) > .igr-universal-dock{display:none!important}
 #app .private-card-v11 .igr-private-hint{border-left:2px solid rgba(189,204,218,.4);padding:7px 0 7px 12px}
 #app .private-card-v11 .igr82-relations .igr82-relation-list{display:grid;gap:10px}
 #app .private-card-v11 .igr82-relations .igr82-relation{min-width:0;overflow-wrap:anywhere}
+
+
+/* v770 — legibility, no sticky obstruction, distinct navigation, public brief. */
+#app .igr106-public-teaser{
+  margin:10px 0 14px;padding:14px 16px;border-radius:16px;
+  border:1px solid rgba(124,176,180,.30);
+  background:linear-gradient(125deg,rgba(33,57,63,.48),rgba(13,20,27,.94));
+}
+#app .igr106-public-teaser strong{
+  display:block;color:#a4cdd0;font:700 10px 'IBM Plex Mono',monospace;
+  letter-spacing:.11em;line-height:1.4;
+}
+#app .igr106-public-teaser p{color:#e4ebee;margin:7px 0 9px;font-size:14px;line-height:1.55}
+#app .igr106-public-open{
+  appearance:none;background:none;color:#b8d9db;border:0;border-bottom:1px solid rgba(184,217,219,.6);
+  border-radius:0;padding:3px 0;min-height:36px;text-align:left;cursor:pointer;font-size:13px;font-weight:700
+}
+#app .igr-private-definition{font-size:12px!important;color:#b5bec7!important;line-height:1.5!important;margin:7px 0 0!important}
+#app .igr001-reports .igr-evidence-list{display:grid;gap:10px;margin-top:14px}
+#app .igr001-reports .igr-evidence-record{
+  background:#101b21;border:1px solid rgba(112,165,167,.28);border-left:3px solid #78adb1;
+  border-radius:13px;padding:14px 15px;
+}
+#app .igr-evidence-record-head{display:grid;gap:5px}
+#app .igr-evidence-record-head small{font:700 9px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8ebbc0}
+#app .igr-evidence-record-head strong{font-size:15px;line-height:1.35;color:#f2f7f7}
+#app .igr-evidence-record p{white-space:pre-line;overflow-wrap:anywhere;font-size:14px;line-height:1.58;color:#d4e0e4;margin:11px 0 0}
+#app .igr001-reports>h3{font-size:18px!important;text-transform:none!important}
+#app .game-v11 .igr634-workspace .igr634-priority{border-color:rgba(203,172,116,.48)!important;background:rgba(72,55,33,.13)!important}
+#app .game-v11 .igr634-workspace .igr634-interviews{border-color:rgba(162,177,195,.35)!important}
+#app .game-v11 .igr634-workspace .igr634-group[data-igr634-group="evidence"]{border-color:rgba(112,165,167,.40)!important}
+@media(max-width:700px){
+  #app .role-card-v11{width:100%!important;min-width:0!important;box-sizing:border-box!important;}
+  #app .role-card-v11 .private-card-v11{padding:10px 2px 5px!important;min-width:0!important;gap:12px!important}
+  #app .private-card-v11>.kicker{
+    display:block!important;margin:0 0 9px!important;padding:9px 13px 4px!important;
+    font-size:10px!important;line-height:1.6!important;letter-spacing:.12em!important;color:#a6b5c1!important
+  }
+  #app .role-card-v11 .igr-private-heading{padding:0 12px 10px!important}
+  #app .role-card-v11 .igr-private-heading h2{font-size:clamp(28px,7.4vw,38px)!important}
+  #app .game-v11>.phase-strip{
+    position:relative!important;top:auto!important;z-index:2!important;
+    margin:0 0 12px!important;padding:10px 12px!important;
+    box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+  #app .game-v11>.phase-strip .phase-host-actions{gap:7px!important}
+  #app .game-v11>.phase-strip .phase-host-actions button{min-height:38px!important}
+  #app .game-v11>.tabs-v11 .tab{
+    position:relative!important;background:#141b23!important;border:1px solid rgba(161,171,182,.28)!important;
+    color:#c5cdd3!important;box-shadow:none!important;transition:background .12s ease,border-color .12s ease!important
+  }
+  #app .game-v11>.tabs-v11 .tab[data-view="card"]{--igr-tab-accent:#9eb6cd}
+  #app .game-v11>.tabs-v11 .tab[data-view="investigation"]{--igr-tab-accent:#d4b480}
+  #app .game-v11>.tabs-v11 .tab[data-view="timeline"]{--igr-tab-accent:#82c2bc}
+  #app .game-v11>.tabs-v11 .tab[data-view="channel"]{--igr-tab-accent:#ac9cc7}
+  #app .game-v11>.tabs-v11 .tab[data-view="video"]{--igr-tab-accent:#9ab0b7}
+  #app .game-v11>.tabs-v11 .tab[data-view="rules"]{--igr-tab-accent:#b0b9bf}
+  #app .game-v11>.tabs-v11 .tab[data-view="partie"]{--igr-tab-accent:#b0b9bf}
+  #app .game-v11>.tabs-v11 .tab.active{
+    background:#202b35!important;border-color:var(--igr-tab-accent,#dbe2e6)!important;
+    color:#ffffff!important;box-shadow:inset 0 3px 0 var(--igr-tab-accent,#dbe2e6)!important;
+    font-weight:800!important
+  }
+  #app .igr106-public-teaser{margin:8px 0 12px;padding:12px 13px}
+  #app .igr106-public-teaser p{font-size:13px;margin-bottom:7px}
+  #app .igr001-reports .igr-evidence-record{padding:12px}
+}
