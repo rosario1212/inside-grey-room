@@ -1,0 +1,27 @@
+name: Dossiers 005 et 006 — pseudonymes des suspects
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/*igr_v764_dynamic_suspect_names_only_in_private_projections.sql'
+      - 'scripts/v764-suspect-pseudonyms-check.mjs'
+      - '.github/workflows/v764-suspect-pseudonyms-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/*igr_v764_dynamic_suspect_names_only_in_private_projections.sql'
+      - 'scripts/v764-suspect-pseudonyms-check.mjs'
+      - '.github/workflows/v764-suspect-pseudonyms-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-aliases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm named role assignments are private and case-specific
+        run: node scripts/v764-suspect-pseudonyms-check.mjs
