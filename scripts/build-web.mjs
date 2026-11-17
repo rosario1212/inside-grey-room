@@ -91,4 +91,5 @@ const cloudflareHeaders=`
 `;
 await writeFile(path.join(out,'_headers'),cloudflareHeaders.trimStart(),'utf8');
 execFileSync(process.execPath,[path.join(root,'scripts/v773-private-card-readability-check.mjs'),out],{cwd:root,stdio:'inherit'});
+execFileSync(process.execPath,[path.join(root,'scripts/v777-natural-suspect-cards-check.mjs'),out],{cwd:root,stdio:'inherit'});
 console.log(`Inside Grey Room web bundle ready: ${out}`);console.log(`Runtime files: ${runtimeFiles.length} · assets: ${assetRefs.size} · ${(assetBytes/1024/1024).toFixed(2)} MiB assets`);
