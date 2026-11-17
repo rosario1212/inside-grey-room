@@ -149,6 +149,8 @@ if(origRender){const wrapper=function(){
     go.addEventListener('click',()=>setTab('timeline'));
     teaser.append(title,paragraph,go);aside.before(teaser);
    }
+   // The investigation workspace already provides the active actions. Do not duplicate them.
+   if(isInquiry())aside.remove();
   }
   if(S()?.tab==='timeline')void syncPublic();
  }catch(err){console.warn('[IGR v106] action fallback',err)}
