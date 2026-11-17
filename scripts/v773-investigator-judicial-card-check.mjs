@@ -8,13 +8,15 @@ const sw=readFileSync('service-worker.js','utf8');
 const css=readFileSync('judicial-card-v773.css','utf8');
 const web=readFileSync('scripts/build-web.mjs','utf8');
 const mobile=readFileSync('scripts/build-mobile.mjs','utf8');
-assert(page.includes('judicial-card-v773.js?v=v774-20261117'));
-assert(page.includes('judicial-card-v773.css?v=v773-20261117'));
+assert(page.includes('judicial-card-v773.js?v=v776-20261117'));
+assert(page.includes('judicial-card-v773.css?v=v776-20261117'));
 assert(page.indexOf('judicial-card-v773.js')>page.indexOf('investigation-ux-v772.js'),
   'Judicial classification must run after all legacy role-card overrides');
 for(const source of [web,mobile,sw])for(const file of ['judicial-card-v773.js','judicial-card-v773.css'])
   assert(source.includes(file),'Release runtime or PWA misses '+file);
 assert(css.includes('.igr773-lines'),'Readable mobile list styling missing');
+assert(css.includes('.igr773-situation-copy'),'Opening prose mobile style missing');
+assert(src.includes("if(kind==='situation')")&&src.includes("paragraph.textContent=values.join(' ');"),'Opening must render as one paragraph, not a list');
 assert(!/answer_key|canonical_truth|private_variant|culprit|secret_mission/i.test(src),
   'Shared judicial layer must not read secret solutions or other roles');
 let rendererCalls=0;
