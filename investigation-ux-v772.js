@@ -52,7 +52,7 @@ function v773Distinct(items){
  return items.map(x=>String(x||'').trim()).filter(x=>{
   if(!x)return false;
   const key=v773Norm(x).replace(/[.?!;,:\s]+$/,'');
-  if(seen.some(k=>k===key||k.length>34&&key.length>34&&(k.includes(key)||key.includes(k))))return false;
+  if(seen.includes(key))return false;
   seen.push(key);return true;
  });
 }
@@ -94,7 +94,6 @@ function v773InstallInvestigatorCard(){
   const card=fragment.content.querySelector('.private-card-v11');
   if(!card)return html;
   const blocks=[...card.querySelectorAll('.private-block')];
-  const lookup=(labels)=>blocks.find(el=>labels.includes(v773Norm(el.querySelector('h4')?.textContent).toUpperCase()));
   // Only the Investigator's shared sections are rewritten. Suspects, spy cards,
   // authored relationships and privileged information keep their renderers.
   function findSection(...labels){
