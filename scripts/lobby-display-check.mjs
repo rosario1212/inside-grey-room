@@ -88,9 +88,10 @@ try{
   const uiFingerprint=createHash('sha256')
    .update(await read('dlc-suite-v12-37.js'))
    .update(await read('mobile-ui-v28.css'))
+   .update(await read('heritage-maitre-layout-v758.css'))
    .digest('hex').slice(0,12);
   assert.equal(scope.cache,'igr-'+VERSION+'-'+uiFingerprint,
-   'PWA cache must be content-addressed to the published Regime mobile rules');
+   'PWA cache must reflect Regime mobile rules and the Maître role interface');
   assert(app.includes('/service-worker.js?v='+VERSION),'App must register the same service worker version');
 }catch(error){if(error.code!=='ENOENT')throw error}
 for(const page of ['index.html','en.html']){
