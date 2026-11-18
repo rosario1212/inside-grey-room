@@ -12,10 +12,11 @@ assert(entry.includes('Vidéo ≠ preuve du décès'),'016 forensic distinction 
 const publicStart=app.indexOf('const PUBLIC_LOBBY_SUMMARIES = {');
 const publicEnd=app.indexOf('\n};',publicStart);
 assert(publicStart>=0&&publicEnd>publicStart,'Canonical public briefing block missing');
-const brief=app.slice(publicStart,publicEnd).match(/'016':'([^']*)',\s*'017':/);
-assert(brief,'016 shared briefing missing');
-assert(brief[1].includes('Le film ne montre pas les circonstances de son décès'));
-assert(!/avant le meurtre|geste fatal/i.test(brief[1]),'016 briefing prejudges the cause of death');
+const briefStart=app.indexOf("'016':",publicStart),briefEnd=app.indexOf("'017':",briefStart);
+assert(briefStart>publicStart&&briefEnd>briefStart&&briefEnd<publicEnd,'016 shared briefing missing');
+const brief=app.slice(briefStart,briefEnd);
+assert(/L’enregistrement s’arrête avant le décès|Le film ne montre pas les circonstances de son décès/.test(brief),'016 neutral briefing wording missing');
+assert(!/avant le meurtre|geste fatal/i.test(brief),'016 briefing prejudges the cause of death');
 const lawyer=await readFile('supabase/migrations/20261022144154_lawyer_mutual_termination.sql','utf8');
 assert(lawyer.includes("penalty:=me.public_role='maitre' and r.scenario_id in ('030','031');"));
 assert(lawyer.includes("'cartel_penalty_on_withdraw',me.public_role='maitre' and r.scenario_id in ('030','031')"));
