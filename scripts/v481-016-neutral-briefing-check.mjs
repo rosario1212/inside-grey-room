@@ -12,6 +12,6 @@ const publicStart=app.indexOf('const PUBLIC_LOBBY_SUMMARIES = {');
 const publicEnd=app.indexOf('\n};',publicStart);
 assert(publicStart>=0&&publicEnd>publicStart,'Public canonical briefing block missing');
 const intro=app.slice(publicStart,publicEnd).match(/'016':'([^']*)',\s*'017':/);
-assert(intro&&intro[1].includes('Le film ne montre pas les circonstances de son décès'),'016 cinematic briefing unsupported');
+assert(intro&&/L’enregistrement s’arrête avant le décès|Le film ne montre pas les circonstances de son décès/.test(intro[1]),'016 cinematic briefing unsupported');
 assert(!/avant le meurtre|geste fatal/i.test(intro[1]),'016 briefing leaks a homicide theory');
 console.log('016 canonical introduction remains neutral across three endings.');
