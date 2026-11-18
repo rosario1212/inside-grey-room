@@ -200,8 +200,13 @@ await assertDeployedAsset('investigation-accuracy-v284.js','igr_v284_006_submit_
 await assertDeployedAsset('investigation-deep-v286.js','igr_v286_submit_detail');
 await assertDeployedAsset('investigation-007-v289.js','Que permet d’identifier le document utilisé lors du dernier rendez-vous');
 await assertDeployedAsset('investigation-008-v310.js','Distinguer les actes matériellement établis');
-await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Chaque vendredi, des commerçants du quartier remettent leur contribution');
-await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Vittorio Santoro dirige une famille dont l’autorité repose sur des règles');
+// Optimized v702 bundles this script as a SHA-256 verified immutable chunk,
+// already checked against the local source and Cloudflare above. Only check the
+// standalone source path when the live HTML actually loads that path.
+if(omertaScriptTag){
+  await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Brooklyn, 2006. Chaque vendredi, des commerçants paient les hommes du clan');
+  await assertDeployedAsset('omerta-v12-omerta-editorial-20261109.js','Jersey City, 2006. Un entrepreneur qui refusait de payer a été grièvement blessé');
+}
 await assertDeployedAsset('investigation-workspace-v634.css','igr634-interviews');
 await assertDeployedAsset('investigation-workspace-v634.js','igr634-priority');
 await assertDeployedAsset('reading-stability-v635.css','igr82-relation:nth-child(odd)');
