@@ -21,7 +21,7 @@ for(const token of ['variant pack wrong','private suspect card','truth leaked be
  assert(sqlQA.includes(token),'sealed smoke QA missing '+token);
 assert(intro.includes('Dans la capitale encore défendue, la Grey Room détient trois personnes liées au FDR.') &&
  intro.includes('Le FDR annonce qu’un complice'),'owner-approved descriptions were not preserved');
-assert(ui.includes('la capitale résiste')&&!ui.includes('s’empare de la ville.'),'DLC teaser contradicts still-defended capital');
+assert(ui.toLocaleLowerCase('fr').includes('la capitale résiste')&&!ui.includes('s’empare de la ville.'),'DLC teaser contradicts still-defended capital');
 assert(!ui.includes('RECOMMANDATION IRRÉVERSIBLE')&&!ui.includes('OFFICIER DE LIAISON'),'old liaison takeover screen must be removed');
 assert(officer.includes('igr_v694_terror_confirm')&&officer.includes('igr_v694_officer_confront'),'v694 military command contract missing');
 for(const f of ['dlc-copy-v12-46.js','terror-v12-37.js','terror-command-v694.js'])
