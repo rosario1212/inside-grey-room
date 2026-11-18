@@ -7,7 +7,9 @@ const canon=await readFile('docs/cartel-los-salcedo-canon-v1.md','utf8');
 const start=src.indexOf('  const CARTEL=['),end=src.indexOf('  const REGIME=[',start);
 assert(start>0&&end>start,'CARTEL dossier definitions missing');
 const cartel=src.slice(start,end);
-const entries=[...cartel.matchAll(/\{id:'(\d{3})',title:'([^']+)',short:'([^']+)',context:'([^']+)'/g)];
+// Public contexts may use double quotes to keep apostrophes readable.
+const entries=[...cartel.matchAll(/\{id:'(\d{3})',title:'([^']+)',short:(['"])(.*?)\3,context:(['"])(.*?)\5,mood:/gs)]
+ .map(match=>[match[0],match[1],match[2],match[4],match[6]]);
 assert.deepEqual(entries.map(x=>x[1]),['029','030','031'],'Only the three CARTEL dossiers should change');
 for(const [,id,title,short,context] of entries){
   assert(/Puerto Ceniza/.test(lore),'Fictional Mexican location missing for '+id);
