@@ -1,0 +1,92 @@
+[
+  {
+    "scenario_id": "004",
+    "variant_id": "A",
+    "id": "004-A-1",
+    "cycle": 1,
+    "title": "APPEL REÇU",
+    "original_text": "Le journal confirme un appel de Sofia à l'ex-partenaire avant tous les autres échanges. Son contenu n'est pas publié à ce stade.",
+    "new_text": "Le téléphone de Sofia confirme qu’elle a appelé son ex-partenaire avant les autres échanges. On ignore ce qu’ils se sont dit.",
+    "new_title": "APPEL À L’EX-PARTENAIRE"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "A",
+    "id": "004-A-2",
+    "cycle": 2,
+    "title": "TROIS NIVEAUX D'INFORMATION",
+    "original_text": "Le message reçu par l'ami est moins explicite que le témoignage sur le premier appel. Aucun échange ne confirme qu'un relais était organisé.",
+    "new_text": "Sofia envoie à son ami un message moins alarmant que son premier appel. Rien ne montre qu’un proche devait prévenir l’autre.",
+    "new_title": "MESSAGES DIFFÉRENTS"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "A",
+    "id": "004-A-3",
+    "cycle": 3,
+    "title": "LA QUESTION NON ENVOYÉE",
+    "original_text": "Une question non expédiée apparaît dans le téléphone de l'ami. La trace du passage dans la rue ne comporte aucun avis transmis au proche. L'enquête doit établir ce que chacun pouvait savoir, sans inférer une issue médicale certaine.",
+    "new_text": "L’ami de Sofia a rédigé une question sans l’envoyer. Aucun message ne montre que le proche passé dans la rue avait été prévenu.",
+    "new_title": "QUESTION NON ENVOYÉE"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "B",
+    "id": "004-B-1",
+    "cycle": 1,
+    "title": "DEUX ALERTES DISTINCTES",
+    "original_text": "Deux messages adressés à des destinataires différents arrivent après la rupture du premier suspect. Le contenu exact de leur conversation n'est pas encore connu.",
+    "new_text": "Après une dispute avec son ex-partenaire, Sofia envoie deux messages différents : un à son ami proche, l’autre au proche du quartier.",
+    "new_title": "DEUX MESSAGES DIFFÉRENTS"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "B",
+    "id": "004-B-2",
+    "cycle": 2,
+    "title": "L'APPEL ENTRE PROCHES",
+    "original_text": "Le journal prouve une conversation entre les deux destinataires des alertes. Aucune trace de contact avec Sofia ou un service d'aide ne suit cet échange.",
+    "new_text": "L’ami proche de Sofia et le proche du quartier se sont appelés après ses messages. Aucun appel aux secours n’apparaît ensuite.",
+    "new_title": "APPEL ENTRE LES PROCHES"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "B",
+    "id": "004-B-3",
+    "cycle": 3,
+    "title": "UN RELAIS SANS ACCORD",
+    "original_text": "La comparaison des messages et des témoignages ne permet d'identifier aucune attribution explicite de la prise en charge. Les deux proches connaissaient l'inquiétude de l'autre. L'enquête doit déterminer la part de chacun.",
+    "new_text": "Les messages ne disent pas si l’ami proche de Sofia ou le proche du quartier devait venir l’aider ou appeler les secours.",
+    "new_title": "PERSONNE NE SE CHARGE DES SECOURS"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "C",
+    "id": "004-C-1",
+    "cycle": 1,
+    "title": "LE PREMIER TÉMOIN",
+    "original_text": "Un proche est aperçu dans la rue et nie d'abord sa présence. La seule présence ne permet pas encore d'établir ce qu'il savait.",
+    "new_text": "Le proche de Sofia qui habite le quartier est vu dans la rue. Il avait d’abord nié être passé. On ignore ce qu’il savait.",
+    "new_title": "PRÉSENCE DANS LA RUE"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "C",
+    "id": "004-C-2",
+    "cycle": 2,
+    "title": "UN DÉCALAGE ENTRE LES HEURES",
+    "original_text": "Les journaux montrent que l'appel à l'ex-partenaire et le message à l'ami précèdent le passage rapporté. Aucun relais au troisième proche n'est documenté.",
+    "new_text": "Sofia a appelé son ex-partenaire et écrit à son ami avant le passage du proche du quartier. Rien ne montre qu’il avait été prévenu.",
+    "new_title": "MESSAGES AVANT LE PASSAGE"
+  },
+  {
+    "scenario_id": "004",
+    "variant_id": "C",
+    "id": "004-C-3",
+    "cycle": 3,
+    "title": "LA RUMEUR N'ÉTAIT PAS UNE ALERTE",
+    "original_text": "L'horodatage du passage est authentifié mais postérieur aux messages. La rumeur inverse cet ordre. Le silence du troisième proche sur sa présence n'efface pas les choix antérieurs des deux premiers.",
+    "new_text": "La caméra situe le passage du proche du quartier après les messages. Une rumeur disait l’inverse. Les deux autres proches avaient reçu leurs alertes avant.",
+    "new_title": "LA CAMÉRA CONTREDIT LA RUMEUR"
+  }
+]

@@ -1,0 +1,2740 @@
+[
+  {
+    "scenario_id": "001",
+    "ord": 1,
+    "cycle": 1,
+    "title": "CHRONOLOGIE DU PALIER",
+    "original_text": "À 02 h 11, Maël appelle l’ami à qui il réclame une dette. Cet ami semble quitter l’étage à 02 h 32. À 02 h 48, un autre visiteur entre dans l’hôtel. La chambre 222 n’est pas filmée.",
+    "new_text": "À 02 h 11, Maël appelle un ami qui lui doit de l’argent. Cet ami semble partir à 02 h 32. Un autre homme arrive à 02 h 48."
+  },
+  {
+    "scenario_id": "001",
+    "ord": 2,
+    "cycle": 2,
+    "title": "DETTE ET ENREGISTREMENT",
+    "original_text": "Des messages confirment la dette de l’ancien ami. Après 02 h 55, un enregistrement capte un ordre d’effacement et une lutte. Les voix restent difficiles à identifier.",
+    "new_text": "Des messages confirment la dette de l’ami. Après 02 h 55, un enregistrement capte un ordre d’effacement et une lutte. Les voix restent incertaines."
+  },
+  {
+    "scenario_id": "001",
+    "ord": 3,
+    "cycle": 3,
+    "title": "DEUX ALTERCATIONS, UNE LAME",
+    "original_text": "Deux altercations ont eu lieu, avant 02 h 32 puis après 02 h 55. Un Opinel ensanglanté et essuyé est retrouvé dans une benne. Son porteur reste inconnu.",
+    "new_text": "Deux altercations ont eu lieu. Un couteau ensanglanté est retrouvé dans une benne, mais on ignore qui l’a utilisé."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 1,
+    "cycle": 1,
+    "title": "MESSAGE NON ENVOYÉ",
+    "original_text": "Un brouillon de Léon contient : « J'en peux plus de lui. » Impossible de savoir de qui il parle.",
+    "new_text": "Un brouillon de Léon contient : « J'en peux plus de lui. » Impossible de savoir de qui il parle."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 2,
+    "cycle": 1,
+    "title": "MESSAGE VIOLENT",
+    "original_text": "Un message récupéré dit : « Tu détruis tout autour de toi. » Le reste de l’échange manque.",
+    "new_text": "Un message récupéré dit : « Tu détruis tout autour de toi. » Le reste de l’échange manque."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 3,
+    "cycle": 1,
+    "title": "APPELS IGNORÉS",
+    "original_text": "Plusieurs appels de Léon sont restés sans réponse le soir de sa mort, notamment ceux adressés au proche avec lequel sa relation était devenue conflictuelle.",
+    "new_text": "Léon a appelé plusieurs fois un proche avec qui il se disputait. Ces appels sont restés sans réponse."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DÉTRESSE ANCIENNE",
+    "original_text": "Le dossier médical confirme que Léon allait mal avant les derniers événements. Son état s’est aggravé récemment.",
+    "new_text": "Léon souffrait déjà avant les derniers conflits. Son état s’était récemment aggravé."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 5,
+    "cycle": 1,
+    "title": "LETTRE DÉCHIRÉE",
+    "original_text": "Un fragment indique : « Je ne sais plus qui est sincère avec moi. »",
+    "new_text": "Un fragment indique : « Je ne sais plus qui est sincère avec moi. »"
+  },
+  {
+    "scenario_id": "002",
+    "ord": 6,
+    "cycle": 2,
+    "title": "DERNIER REFUGE",
+    "original_text": "Léon cherchait encore du soutien auprès de ce même proche, malgré leur relation devenue difficile.",
+    "new_text": "Malgré leurs disputes, Léon comptait encore sur ce proche pour le comprendre."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 7,
+    "cycle": 2,
+    "title": "« JUSQU’À CE QUE JE CRAQUE »",
+    "original_text": "Une résidente entend Léon pleurer et répéter : « Ils vont continuer jusqu’à ce que je craque. »",
+    "new_text": "Une résidente entend Léon pleurer et répéter : « Ils vont continuer jusqu’à ce que je craque. »"
+  },
+  {
+    "scenario_id": "002",
+    "ord": 8,
+    "cycle": 3,
+    "title": "CRISES AVANT LES FAITS",
+    "original_text": "Les prescriptions et recherches montrent des épisodes de détresse antérieurs aux conflits récents.",
+    "new_text": "Les dossiers montrent que Léon traversait déjà des crises avant les derniers conflits."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 9,
+    "cycle": 3,
+    "title": "DERNIER MESSAGE CALME",
+    "original_text": "Quelques heures avant sa mort, Léon envoie un message très calme. Ce message ne permet pas de savoir ce qu’il va faire.",
+    "new_text": "Léon a envoyé un message calme peu avant sa mort. Il ne révèle pas ce qu’il allait faire."
+  },
+  {
+    "scenario_id": "002",
+    "ord": 10,
+    "cycle": 3,
+    "title": "DERNIÈRE NUIT",
+    "original_text": "Les journaux montrent plusieurs épisodes distincts avant la mort : humiliations, messages violents, appels sans réponse et départs.",
+    "new_text": "Avant sa mort, Léon a subi des humiliations, reçu des messages violents et passé des appels sans réponse."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 1,
+    "cycle": 1,
+    "title": "MESSAGE EFFACÉ",
+    "original_text": "Un message supprimé évoque la nécessité de provoquer « un électrochoc » autour du programme.",
+    "new_text": "Un message effacé parle de provoquer « un électrochoc » pour changer le programme Helios."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 2,
+    "cycle": 1,
+    "title": "TRANSPORT ANORMAL",
+    "original_text": "Un véhicule quitte Helios hors créneau de transfert autorisé.",
+    "new_text": "Un véhicule quitte Helios hors créneau de transfert autorisé."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 3,
+    "cycle": 1,
+    "title": "ALERTE IGNORÉE",
+    "original_text": "Une alerte de chaîne du froid est fermée sans contre-expertise.",
+    "new_text": "Une alerte sur la chaîne du froid a été classée sans nouvelle vérification."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 4,
+    "cycle": 1,
+    "title": "DISCUSSION PRIVÉE",
+    "original_text": "Deux cadres se rencontrent hors agenda la veille de l'attaque.",
+    "new_text": "Deux cadres se rencontrent hors agenda la veille de l'attaque."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 5,
+    "cycle": 2,
+    "title": "DOSSIER DISSIMULÉ",
+    "original_text": "Une série d'incidents antérieurs a été retirée du dossier remis à l'autorité sanitaire.",
+    "new_text": "Des incidents anciens ont été retirés du dossier remis aux autorités sanitaires."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 6,
+    "cycle": 2,
+    "title": "TENTATIVE D'ANNULATION",
+    "original_text": "Un appel et un message montrent qu'une personne tente d'arrêter quelque chose quelques heures avant l'attaque.",
+    "new_text": "Un appel et un message montrent que quelqu’un a tenté d’arrêter une action juste avant l’attaque."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 7,
+    "cycle": 2,
+    "title": "APPEL NON ABOUTI",
+    "original_text": "Un appel urgent reste sans réponse pendant la fenêtre critique.",
+    "new_text": "Un appel urgent n’a reçu aucune réponse au moment critique."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 8,
+    "cycle": 3,
+    "title": "INSPECTION NEUTRALISÉE",
+    "original_text": "Un contrôle externe est repoussé sur intervention administrative.",
+    "new_text": "Une inspection du Centre Helios a été repoussée après une intervention administrative."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 9,
+    "cycle": 3,
+    "title": "PANIQUE INTERNE",
+    "original_text": "Après l’attaque, plusieurs employés cherchent d’abord qui a parlé avant de sécuriser les dossiers techniques.",
+    "new_text": "Après l’attaque, des employés cherchent d’abord l’auteur de la fuite plutôt que de protéger les dossiers."
+  },
+  {
+    "scenario_id": "003",
+    "ord": 10,
+    "cycle": 3,
+    "title": "TROIS FAILLES AVANT L’ATTAQUE",
+    "original_text": "Avant l’attaque, trois faits sont déjà établis : un accès irrégulier, un transport hors procédure et des incidents cachés.",
+    "new_text": "Avant l’attaque, des documents signalent un accès irrégulier, un transport non autorisé et des incidents cachés."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 1,
+    "cycle": 1,
+    "title": "MESSAGE IDENTIQUE",
+    "original_text": "Sofia envoie quasiment le même appel à l'aide aux trois personnes.",
+    "new_text": "Sofia envoie quasiment le même appel à l'aide aux trois personnes."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 2,
+    "cycle": 1,
+    "title": "APPELS MANQUÉS",
+    "original_text": "Les relevés montrent plusieurs appels successifs et des délais différents avant réponse.",
+    "new_text": "Les proches de Sofia ont reçu plusieurs appels. Certains ont répondu plus tard que d’autres."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 3,
+    "cycle": 1,
+    "title": "PASSAGE DEVANT L'IMMEUBLE",
+    "original_text": "Une caméra montre une voiture ressemblant à celle du proche de Sofia qui habitait le quartier passer devant son immeuble.",
+    "new_text": "Une caméra montre une voiture ressemblant à celle du proche de Sofia qui habitait le quartier passer devant son immeuble."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 4,
+    "cycle": 1,
+    "title": "MESSAGE SUPPRIMÉ",
+    "original_text": "Un message effacé évoque : « Cette fois je ne vais pas courir. »",
+    "new_text": "Un message effacé évoque : « Cette fois je ne vais pas courir. »"
+  },
+  {
+    "scenario_id": "004",
+    "ord": 5,
+    "cycle": 2,
+    "title": "APPEL COUPÉ",
+    "original_text": "Un appel de moins de vingt secondes a lieu pendant une fenêtre où Sofia est encore consciente.",
+    "new_text": "Un appel de moins de vingt secondes a eu lieu alors que Sofia était encore consciente."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 6,
+    "cycle": 2,
+    "title": "MESSAGE CALME, ÉTAT GRAVE",
+    "original_text": "Sofia envoie un dernier message calme alors que l’intoxication est déjà avancée.",
+    "new_text": "Sofia envoie un dernier message calme alors que l’intoxication est déjà avancée."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 7,
+    "cycle": 2,
+    "title": "SECOURS ENCORE POSSIBLES",
+    "original_text": "L’intoxication est progressive. Plus tôt dans la nuit, une intervention médicale aurait encore pu changer l’issue.",
+    "new_text": "L’intoxication de Sofia a été progressive. Appeler les secours plus tôt aurait pu lui sauver la vie."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 8,
+    "cycle": 3,
+    "title": "AUCUN TIERS DANS L'APPARTEMENT",
+    "original_text": "Aucune trace ne montre qu'un tiers ait administré les substances.",
+    "new_text": "Aucune trace ne montre qu’une autre personne a donné les substances à Sofia."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 9,
+    "cycle": 3,
+    "title": "TROIS OCCASIONS D’APPELER",
+    "original_text": "Les appels et les horaires montrent plusieurs moments où les secours pouvaient encore être contactés.",
+    "new_text": "Plusieurs appels aux secours restaient possibles avant que l’état de Sofia ne devienne irréversible."
+  },
+  {
+    "scenario_id": "004",
+    "ord": 10,
+    "cycle": 3,
+    "title": "PERSONNE N’APPELLE",
+    "original_text": "Les trois personnes reçoivent un signal d’alerte à des moments différents. Aucune n’appelle immédiatement les secours.",
+    "new_text": "Les trois proches ont reçu des alertes à des moments différents. Aucun n’a appelé immédiatement les secours."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 1,
+    "cycle": 1,
+    "title": "RITUEL IMPARFAIT",
+    "original_text": "Le masque est le bon. La mise en scène, non. Plusieurs détails ne correspondent pas aux anciens meurtres.",
+    "new_text": "Le masque correspond aux anciens crimes, mais plusieurs détails de la scène sont différents."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 2,
+    "cycle": 1,
+    "title": "CONFRONTATION AU STUDIO",
+    "original_text": "Keller meurt dans son studio après une confrontation longue et violente.",
+    "new_text": "Keller meurt dans son studio après une confrontation longue et violente."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 3,
+    "cycle": 1,
+    "title": "DÉTAILS NON PUBLICS",
+    "original_text": "Deux suspects connaissent des détails du Masque Blanc qui n’ont jamais été rendus publics.",
+    "new_text": "Deux suspects connaissent des détails des anciens crimes du Masque Blanc restés secrets."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 4,
+    "cycle": 2,
+    "title": "VIOLENCE DIFFÉRENTE",
+    "original_text": "Les blessures de Keller ne reproduisent pas la méthode des anciens meurtres. La violence est plus brutale et moins contrôlée.",
+    "new_text": "Les blessures de Keller sont plus brutales que lors des anciens meurtres."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 5,
+    "cycle": 2,
+    "title": "MOTIF PERSONNEL",
+    "original_text": "Des documents confirment qu’une femme proche d’un suspect a été gravement marquée par l’univers professionnel de Keller.",
+    "new_text": "Des documents montrent qu’une femme proche d’un suspect a beaucoup souffert à cause du travail de Keller."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 6,
+    "cycle": 2,
+    "title": "LIEN AVEC UNE ANCIENNE VICTIME",
+    "original_text": "Un suspect a un lien direct avec une ancienne victime et connaît des éléments restés confidentiels.",
+    "new_text": "Un suspect est lié à une ancienne victime et connaît des détails jamais rendus publics."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 7,
+    "cycle": 3,
+    "title": "MASQUE POSÉ APRÈS LA MORT",
+    "original_text": "Le masque est placé sur Keller après sa mort. Il ne fait pas partie de l’agression initiale.",
+    "new_text": "Le masque a été placé sur Keller après sa mort."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 8,
+    "cycle": 3,
+    "title": "CRIME PERSONNEL",
+    "original_text": "La confrontation avec Keller part d’un grief personnel. Le rituel apparaît seulement après le meurtre.",
+    "new_text": "Le conflit avec Keller était personnel. Le masque n’a été ajouté qu’après sa mort."
+  },
+  {
+    "scenario_id": "005",
+    "ord": 9,
+    "cycle": 3,
+    "title": "COPIE DU MASQUE BLANC",
+    "original_text": "Les écarts avec les anciens crimes sont trop nombreux pour une reproduction exacte. La scène ressemble à une imitation.",
+    "new_text": "La scène de Keller présente trop de différences avec les anciens crimes pour être une copie exacte."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 1,
+    "cycle": 1,
+    "title": "COUP AVANT LA CHUTE",
+    "original_text": "Noé reçoit un coup avant sa chute. Le coup et la chute sont deux faits distincts.",
+    "new_text": "Noé a reçu un coup avant de tomber. Ce sont deux événements distincts."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 2,
+    "cycle": 1,
+    "title": "CINQ ANS DE SILENCE",
+    "original_text": "Pendant cinq ans, les trois amis gardent la même version malgré la rupture progressive de leur groupe.",
+    "new_text": "Les trois amis ont répété la même version pendant cinq ans, même après leur brouille."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 3,
+    "cycle": 1,
+    "title": "MORT NON CERTAINE",
+    "original_text": "Les constatations ne prouvent pas que les trois savaient avec certitude que Noé était mort juste après la chute.",
+    "new_text": "Rien ne prouve que les trois amis savaient avec certitude que Noé était mort juste après sa chute."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 4,
+    "cycle": 2,
+    "title": "CORPS DÉPLACÉ",
+    "original_text": "Après la chute, le corps de Noé est déplacé. Cette dissimulation a lieu après le coup initial.",
+    "new_text": "Le corps de Noé a été déplacé après sa chute pour cacher ce qui s’était passé."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 5,
+    "cycle": 2,
+    "title": "OBJET GARDÉ",
+    "original_text": "Un objet provenant du chalet est resté caché pendant cinq ans au lieu d’être détruit.",
+    "new_text": "Un objet provenant du chalet est resté caché pendant cinq ans au lieu d’être détruit."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 6,
+    "cycle": 2,
+    "title": "DEUX ACTES DISTINCTS",
+    "original_text": "Les traces séparent clairement le coup porté avant la chute des actes commis ensuite pour cacher les faits.",
+    "new_text": "Un coup a été porté avant la chute. D’autres actes ont ensuite servi à cacher les faits."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 7,
+    "cycle": 3,
+    "title": "UN SEUL COUP INITIAL",
+    "original_text": "Le coup initial est rattaché à une seule personne. Les autres actes viennent après.",
+    "new_text": "Une seule personne est liée au premier coup. Les autres actes sont survenus après."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 8,
+    "cycle": 3,
+    "title": "PACTE DE SILENCE",
+    "original_text": "Les trois participent au silence. Tous ne participent pas de la même manière à la mort de Noé.",
+    "new_text": "Tous les trois ont gardé le silence, mais leurs rôles dans la mort de Noé ne sont pas les mêmes."
+  },
+  {
+    "scenario_id": "006",
+    "ord": 9,
+    "cycle": 3,
+    "title": "EXPERTISE TARDIVE",
+    "original_text": "Cinq ans plus tard, l’expertise ne permet toujours pas d’affirmer qu’ils savaient que Noé était déjà mort au moment de cacher le corps.",
+    "new_text": "Cinq ans après, on ignore encore si les trois amis savaient que Noé était mort quand ils ont caché son corps."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 1,
+    "cycle": 1,
+    "title": "BROUILLON ANTÉRIEUR",
+    "original_text": "Le brouillon du testament existe avant la dispute familiale. La modification n’a pas été inventée après la mort.",
+    "new_text": "Un brouillon du testament existait déjà avant la dispute et le décès."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 2,
+    "cycle": 1,
+    "title": "ARGENT AVANT LA MORT",
+    "original_text": "Un mouvement d’argent important a lieu avant le décès. Plusieurs membres de la famille avaient un intérêt financier réel.",
+    "new_text": "Un gros mouvement d’argent a eu lieu avant la mort. Plusieurs proches avaient un intérêt financier."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 3,
+    "cycle": 1,
+    "title": "DETTE CACHÉE",
+    "original_text": "Une dette privée existait avant le décès et concernait directement l’un des suspects.",
+    "new_text": "Une dette privée existait avant le décès et concernait directement l’un des suspects."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DISPUTE PLUS TÔT",
+    "original_text": "Un témoin place la dispute familiale plus tôt que l’heure donnée dans les premières déclarations.",
+    "new_text": "Un témoin situe la dispute familiale plus tôt que les premières déclarations."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 5,
+    "cycle": 2,
+    "title": "SIGNATURE AUTHENTIQUE",
+    "original_text": "La signature du testament est authentique. Le problème est la pression exercée au moment de la signature.",
+    "new_text": "La signature du testament est vraie, mais le signataire a subi des pressions."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 6,
+    "cycle": 2,
+    "title": "DOCUMENT CACHÉ",
+    "original_text": "Un membre de la famille a récupéré un document important avant la mort puis a menti sur l’heure où il l’avait eu.",
+    "new_text": "Un proche a caché un document avant la mort, puis menti sur l’heure à laquelle il l’avait pris."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 7,
+    "cycle": 3,
+    "title": "FILIATION CACHÉE",
+    "original_text": "Un ancien document familial révèle un lien de filiation capable de modifier l’héritage.",
+    "new_text": "Un document révèle un lien de parenté caché qui pourrait changer l’héritage."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 8,
+    "cycle": 3,
+    "title": "HÉRITAGE BOULEVERSÉ",
+    "original_text": "Après la mort, le testament ne suffit plus à expliquer qui gagne quoi. La dette et la filiation changent le partage.",
+    "new_text": "Une dette et un lien de parenté caché peuvent changer le partage de l’héritage."
+  },
+  {
+    "scenario_id": "007",
+    "ord": 9,
+    "cycle": 3,
+    "title": "PAS DE FAUX TESTAMENT",
+    "original_text": "L’expertise écarte une fausse signature. La signature est vraie, même si le contexte ne l’était pas.",
+    "new_text": "La signature est vraie. Elle ne prouve pas que son auteur a signé librement."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 1,
+    "cycle": 1,
+    "title": "HORAIRES IMPOSSIBLES",
+    "original_text": "Deux témoins donnent des horaires qui ne peuvent pas être vrais en même temps.",
+    "new_text": "Deux témoins donnent des horaires qui ne peuvent pas être vrais en même temps."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 2,
+    "cycle": 1,
+    "title": "PIÈCE CONNUE TROP TÔT",
+    "original_text": "Une personne connaissait une pièce du dossier avant sa déposition officielle.",
+    "new_text": "Quelqu’un connaissait une pièce du dossier avant de témoigner."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 3,
+    "cycle": 1,
+    "title": "CONTACT AVANT AUDITION",
+    "original_text": "Un témoin a été contacté avant son audition. La conversation précède sa version officielle.",
+    "new_text": "Un témoin a reçu un appel avant de donner sa version officielle."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 4,
+    "cycle": 2,
+    "title": "HEURE RÉELLE",
+    "original_text": "Une donnée indépendante place un témoin sur les lieux plus tôt qu’il ne l’a déclaré.",
+    "new_text": "Une preuve place un témoin sur les lieux plus tôt qu’il ne l’a dit."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 5,
+    "cycle": 2,
+    "title": "TÉMOIN SOUS PRESSION",
+    "original_text": "Des messages prouvent qu’un témoin a subi une pression avant de parler sous serment.",
+    "new_text": "Des messages prouvent qu’un témoin a subi une pression avant de parler sous serment."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 6,
+    "cycle": 2,
+    "title": "FAUTE CACHÉE",
+    "original_text": "Un faux horaire sert à cacher une autre faute. Il ne décrit pas le fait principal du dossier.",
+    "new_text": "Un faux horaire cache une autre faute, sans lien direct avec le fait principal."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 7,
+    "cycle": 3,
+    "title": "RELATION CACHÉE",
+    "original_text": "Des échanges privés confirment une relation secrète qui explique l’un des faux horaires.",
+    "new_text": "Une relation secrète explique pourquoi un témoin a menti sur son horaire."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 8,
+    "cycle": 3,
+    "title": "UNE PARTIE ÉTAIT VRAIE",
+    "original_text": "Une preuve indépendante confirme un élément central d’une déposition pourtant fausse sur un autre point.",
+    "new_text": "Un témoin a menti sur un point, mais une preuve confirme une autre partie de son récit."
+  },
+  {
+    "scenario_id": "008",
+    "ord": 9,
+    "cycle": 3,
+    "title": "TROIS MENSONGES DIFFÉRENTS",
+    "original_text": "Les mensonges ne portent pas sur le même fait : horaire, pression et vie privée apparaissent séparément dans les preuves.",
+    "new_text": "Les mensonges portent sur trois sujets différents : un horaire, une pression et une relation cachée."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 1,
+    "cycle": 1,
+    "title": "REFUS HORODATÉ",
+    "original_text": "Le Sujet 17 retire son consentement avant la poursuite du protocole. L’horodatage est incontestable.",
+    "new_text": "Le Sujet 17 a retiré son accord avant la poursuite de l’expérience. L’heure est enregistrée."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 2,
+    "cycle": 1,
+    "title": "« JE VEUX ARRÊTER »",
+    "original_text": "Un enregistrement capte le Sujet 17 disant clairement qu’il veut arrêter avant l’incident.",
+    "new_text": "Un enregistrement capte le Sujet 17 disant clairement qu’il veut arrêter avant l’incident."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 3,
+    "cycle": 1,
+    "title": "AMNÉSIE RÉELLE",
+    "original_text": "L’amnésie du médecin est réelle et compatible avec sa chute. Elle commence après les décisions contestées.",
+    "new_text": "Le médecin a réellement perdu la mémoire après sa chute. Les décisions contestées étaient antérieures."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 4,
+    "cycle": 2,
+    "title": "PROTOCOLE DÉPASSÉ",
+    "original_text": "Le protocole officiel n’autorisait pas ce qui a été fait après le retrait du consentement.",
+    "new_text": "Après le refus du Sujet 17, l’équipe a poursuivi des actes interdits par le protocole."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 5,
+    "cycle": 2,
+    "title": "ALERTES REÇUES",
+    "original_text": "Plusieurs alertes avaient été transmises au responsable institutionnel avant l’incident.",
+    "new_text": "Le responsable du programme avait reçu plusieurs alertes avant l’incident."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 6,
+    "cycle": 2,
+    "title": "AIDE À LA SORTIE",
+    "original_text": "Un membre de l’équipe a aidé le Sujet 17 à chercher une sortie puis a caché ce geste pour protéger son poste.",
+    "new_text": "Un membre de l’équipe a aidé le Sujet 17 à chercher une sortie, puis l’a caché pour protéger son emploi."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 7,
+    "cycle": 3,
+    "title": "NOTE RÉÉCRITE",
+    "original_text": "Une note clinique est modifiée après l’incident. La première version est toujours récupérable.",
+    "new_text": "Une note médicale a été modifiée après l’incident. L’ancienne version existe encore."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 8,
+    "cycle": 3,
+    "title": "DÉCISION AVANT LA CHUTE",
+    "original_text": "Les traces écrites montrent que la décision de continuer a été prise avant la chute et avant l’amnésie.",
+    "new_text": "La décision de poursuivre l’expérience a été prise avant la chute et l’amnésie du médecin."
+  },
+  {
+    "scenario_id": "009",
+    "ord": 9,
+    "cycle": 3,
+    "title": "PROTÉGER LE PROGRAMME",
+    "original_text": "Après l’incident, des échanges internes cherchent d’abord à protéger ORPHÉE avant d’expliquer ce qui s’est passé.",
+    "new_text": "Après l’incident, des messages montrent que l’équipe cherche d’abord à protéger le programme ORPHÉE."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ENFERMÉE VIVANTE",
+    "original_text": "Nora est enfermée vivante derrière le mur. Elle ne peut pas ouvrir seule depuis l’intérieur.",
+    "new_text": "Nora est enfermée vivante derrière le mur. Elle ne peut pas ouvrir seule depuis l’intérieur."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 2,
+    "cycle": 1,
+    "title": "OUVERTURE 13 H 54",
+    "original_text": "Le capteur enregistre une ouverture à 13 h 54. Quelqu’un accède à Nora à cet instant.",
+    "new_text": "La porte de Nora s’ouvre à 13 h 54. Quelqu’un a alors accès à elle."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 3,
+    "cycle": 1,
+    "title": "BRUITS DERRIÈRE LE MUR",
+    "original_text": "Des bruits sont signalés derrière le mur bien avant 13 h 54. Personne ne sait alors avec certitude qu’il s’agit de Nora.",
+    "new_text": "Des bruits sont entendus derrière le mur avant 13 h 54. On ignore alors s’ils viennent de Nora."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 4,
+    "cycle": 2,
+    "title": "NORA RESPIRE ENCORE",
+    "original_text": "À 13 h 54, Nora respire encore. Elle est vivante quand la porte s’ouvre.",
+    "new_text": "À 13 h 54, Nora respire encore. Elle est vivante quand la porte s’ouvre."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 5,
+    "cycle": 2,
+    "title": "PORTE REFERMÉE",
+    "original_text": "La porte est refermée volontairement après l’ouverture. Le mécanisme fonctionne normalement.",
+    "new_text": "La porte est refermée volontairement après l’ouverture. Le mécanisme fonctionne normalement."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 6,
+    "cycle": 2,
+    "title": "AUTRE ACCÈS INUTILISÉ",
+    "original_text": "Un autre accès existe, mais il n’est pas utilisé pendant la fenêtre critique.",
+    "new_text": "Une autre entrée existait, mais elle n’a pas été utilisée au moment critique."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 7,
+    "cycle": 3,
+    "title": "MORTE APRÈS 13 H 54",
+    "original_text": "L’estimation médico-légale place la mort de Nora après l’ouverture de 13 h 54.",
+    "new_text": "L’estimation médico-légale place la mort de Nora après l’ouverture de 13 h 54."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 8,
+    "cycle": 3,
+    "title": "DEUX MOMENTS",
+    "original_text": "Les éléments séparent deux moments : l’enfermement initial, puis l’ouverture et la fermeture de 13 h 54.",
+    "new_text": "Nora a d’abord été enfermée. Sa porte a ensuite été ouverte puis refermée à 13 h 54."
+  },
+  {
+    "scenario_id": "010",
+    "ord": 9,
+    "cycle": 3,
+    "title": "DEUX PRÉSENCES",
+    "original_text": "Les preuves n’imposent pas que la personne qui enferme Nora soit celle qui la voit vivante plus tard.",
+    "new_text": "Rien ne prouve que la personne qui a enfermé Nora est celle qui l’a revue vivante."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 1,
+    "cycle": 1,
+    "title": "RISQUE CIVIL CONNU",
+    "original_text": "Avant l’opération, une alerte interne signale un risque élevé pour les civils. L’ordre est maintenu.",
+    "new_text": "Avant l’opération, une alerte interne signale un risque élevé pour les civils. L’ordre est maintenu."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 2,
+    "cycle": 1,
+    "title": "ORDRE INCOMPLET",
+    "original_text": "L’ordre écrit autorise l’opération, mais plusieurs contraintes connues sur place n’y figurent pas.",
+    "new_text": "L’ordre officiel ne mentionne pas plusieurs risques déjà connus des soldats sur place."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 3,
+    "cycle": 1,
+    "title": "RAPPORT RÉÉCRIT",
+    "original_text": "Un rapport de terrain est réécrit après l’opération. La première version est encore récupérable.",
+    "new_text": "Un rapport de terrain est réécrit après l’opération. La première version est encore récupérable."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 4,
+    "cycle": 2,
+    "title": "ORDRE DÉPASSÉ",
+    "original_text": "Sur le terrain, une unité va au-delà de ce que l’ordre autorisait.",
+    "new_text": "Une unité militaire a fait plus que ce que l’ordre autorisait."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 5,
+    "cycle": 2,
+    "title": "ALERTES FRAGMENTÉES",
+    "original_text": "Les premiers signalements arrivent fragmentés. Le commandement et le terrain ne disposent pas des mêmes informations.",
+    "new_text": "Les chefs et les soldats n’ont pas reçu les mêmes alertes au même moment."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 6,
+    "cycle": 2,
+    "title": "36 HEURES DE RETARD",
+    "original_text": "Trente-six heures séparent le premier signalement sérieux et l’arrêt effectif de l’opération.",
+    "new_text": "Il s’est écoulé 36 heures entre la première alerte grave et l’arrêt de l’opération."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 7,
+    "cycle": 3,
+    "title": "POUVOIR D’ARRÊT",
+    "original_text": "Un responsable avait le pouvoir d’interrompre une partie de l’opération avant l’arrêt final.",
+    "new_text": "Un responsable pouvait interrompre une partie de l’opération avant son arrêt final."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 8,
+    "cycle": 3,
+    "title": "ARRÊT TROP TARD",
+    "original_text": "Au moment où l’ordre d’arrêt tombe, plusieurs morts et destructions ont déjà été signalées.",
+    "new_text": "Quand l’opération a été arrêtée, des morts et des destructions avaient déjà été signalés."
+  },
+  {
+    "scenario_id": "011",
+    "ord": 9,
+    "cycle": 3,
+    "title": "FAITS MINIMISÉS",
+    "original_text": "La version finale du rapport réduit le dépassement commis sur le terrain par rapport à la première version.",
+    "new_text": "Le rapport final minimise les actes commis au-delà des ordres initiaux."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 1,
+    "cycle": 1,
+    "title": "TÉLÉPHONE CONFISQUÉ",
+    "original_text": "Le téléphone de Sacha est éteint manuellement à 21h18 puis rangé dans un casier réservé aux responsables.",
+    "new_text": "À 21 h 18, quelqu’un éteint le téléphone de Sacha et le range dans un casier réservé aux responsables."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 2,
+    "cycle": 1,
+    "title": "PLUSIEURS COUPS",
+    "original_text": "L’examen médical confirme plusieurs coups portés pendant la lutte.",
+    "new_text": "L’examen médical confirme plusieurs coups portés pendant la lutte."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 3,
+    "cycle": 1,
+    "title": "REGISTRE DE PRÉSENCE",
+    "original_text": "Trois personnes se relaient dans le couloir pendant la nuit.",
+    "new_text": "Trois personnes se relaient dans le couloir pendant la nuit."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 4,
+    "cycle": 1,
+    "title": "VERROU IMPARFAIT",
+    "original_text": "Le second verrou a été engagé puis laissé imparfaitement fermé.",
+    "new_text": "Le deuxième verrou a été fermé, mais mal enclenché."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 5,
+    "cycle": 2,
+    "title": "MESSAGE À SA SŒUR",
+    "original_text": "Avant la réunion, Sacha écrit : « S’ils m’empêchent de sortir, appelle quelqu’un. »",
+    "new_text": "Avant la réunion, Sacha écrit : « S’ils m’empêchent de sortir, appelle quelqu’un. »"
+  },
+  {
+    "scenario_id": "012",
+    "ord": 6,
+    "cycle": 2,
+    "title": "AUCUN DROIT DE LE RETENIR",
+    "original_text": "Le règlement prévoit une sanction symbolique. Il n’autorise ni coups ni enfermement.",
+    "new_text": "Le règlement n’autorisait personne à frapper ou à enfermer Sacha."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 7,
+    "cycle": 2,
+    "title": "CAMÉRA DU COULOIR",
+    "original_text": "Une silhouette quitte le couloir sans vérifier le verrou.",
+    "new_text": "Une silhouette quitte le couloir sans vérifier le verrou."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 8,
+    "cycle": 2,
+    "title": "ANCIENNES RÉTENTIONS",
+    "original_text": "Un ancien membre décrit d’autres personnes retenues contre leur volonté sous couvert de « recentrage ».",
+    "new_text": "Un ancien membre dit que d’autres personnes ont déjà été enfermées au nom du « recentrage »."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 9,
+    "cycle": 3,
+    "title": "CLÉ DE SERVICE",
+    "original_text": "La clé principale a circulé entre deux personnes sans trace du dernier usage.",
+    "new_text": "Deux personnes se sont passé la clé principale. On ignore qui l’a utilisée en dernier."
+  },
+  {
+    "scenario_id": "012",
+    "ord": 10,
+    "cycle": 3,
+    "title": "IL SORT SANS CASSER LA PORTE",
+    "original_text": "Sacha s’échappe sans forcer la porte. Au moins un verrou n’était plus correctement engagé.",
+    "new_text": "Sacha s’est échappé sans forcer la porte : au moins un verrou était mal fermé."
+  },
+  {
+    "scenario_id": "013",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ANGLE BALISTIQUE",
+    "original_text": "La trajectoire impose une fenêtre de moins de 90 secondes depuis un toit technique.",
+    "new_text": "Le tir depuis le toit n’a pu durer que moins de 90 secondes.",
+    "new_title": "ANGLE BALISTIQUE"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 2,
+    "cycle": 1,
+    "title": "MAINTENANCE FICTIVE",
+    "original_text": "Une maintenance enregistrée n’a jamais eu lieu.",
+    "new_text": "Une maintenance est inscrite au registre, mais personne ne l’a effectuée.",
+    "new_title": "MAINTENANCE FICTIVE"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 3,
+    "cycle": 1,
+    "title": "VÉHICULE RELAIS",
+    "original_text": "Un utilitaire loué sous identité intermédiaire stationne près du bâtiment.",
+    "new_text": "Une camionnette louée par un intermédiaire est garée près du bâtiment.",
+    "new_title": "VÉHICULE RELAIS"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 4,
+    "cycle": 1,
+    "title": "PAIEMENT FRACTIONNÉ",
+    "original_text": "Trois virements convergent vers une même société écran.",
+    "new_text": "Trois virements arrivent sur le compte de la même société écran.",
+    "new_title": "PAIEMENT FRACTIONNÉ"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 5,
+    "cycle": 2,
+    "title": "BADGE NEUTRALISÉ",
+    "original_text": "Un badge est neutralisé onze minutes puis réactivé.",
+    "new_text": "Un badge a été désactivé pendant onze minutes, puis réactivé.",
+    "new_title": "BADGE NEUTRALISÉ"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 6,
+    "cycle": 2,
+    "title": "ARME DÉMONTÉE",
+    "original_text": "Une pièce de l’arme est retrouvée loin du point de tir.",
+    "new_text": "Une pièce de l’arme a été retrouvée loin du lieu du tir.",
+    "new_title": "ARME DÉMONTÉE"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 7,
+    "cycle": 2,
+    "title": "MESSAGE PERSEUS",
+    "original_text": "Un message chiffré ne contient qu’une heure et le mot « fenêtre ».",
+    "new_text": "Un message chiffré de PERSEUS contient une heure et le mot « fenêtre ».",
+    "new_title": "MESSAGE PERSEUS"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 8,
+    "cycle": 2,
+    "title": "FAUSSE PLAQUE",
+    "original_text": "La plaque du véhicule relais est un duplicata.",
+    "new_text": "La plaque de la camionnette est une copie d’une autre plaque.",
+    "new_title": "FAUSSE PLAQUE"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 9,
+    "cycle": 3,
+    "title": "RAPPORT RETOUCHÉ",
+    "original_text": "Le journal de sécurité est réexporté dix-sept minutes après le tir.",
+    "new_text": "Le journal de sécurité a été exporté de nouveau 17 minutes après le tir.",
+    "new_title": "RAPPORT RETOUCHÉ"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 10,
+    "cycle": 3,
+    "title": "APPEL DE 14 SECONDES",
+    "original_text": "Un téléphone jetable contacte un numéro professionnel de sécurité avant le déplacement.",
+    "new_text": "Un téléphone jetable a appelé un numéro professionnel de sécurité pendant 14 secondes.",
+    "new_title": "APPEL DE 14 SECONDES"
+  },
+  {
+    "scenario_id": "013",
+    "ord": 11,
+    "cycle": 3,
+    "title": "CHAÎNE CLOISONNÉE",
+    "original_text": "Les trois maillons communiquaient par intermédiaires et ne se connaissaient pas tous.",
+    "new_text": "Les trois acteurs de l’opération passaient par des intermédiaires. Ils ne se connaissaient pas tous.",
+    "new_title": "CHAÎNE CLOISONNÉE"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 1,
+    "cycle": 1,
+    "title": "EXPORT FRAGMENTÉ",
+    "original_text": "Les pages ont été exportées à plusieurs dates.",
+    "new_text": "Les pages du dossier ont été exportées à plusieurs dates.",
+    "new_title": "EXPORT FRAGMENTÉ"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 2,
+    "cycle": 1,
+    "title": "JOURNAUX RETOUCHÉS",
+    "original_text": "Des lignes d’audit sont réécrites après la découverte.",
+    "new_text": "Des lignes du journal informatique ont été modifiées après la découverte de la fuite.",
+    "new_title": "JOURNAUX RETOUCHÉS"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 3,
+    "cycle": 1,
+    "title": "ONZE IDENTITÉS",
+    "original_text": "La fuite contient exactement onze informateurs et des données familiales.",
+    "new_text": "La fuite contient les identités de onze informateurs et des données sur leurs familles.",
+    "new_title": "ONZE IDENTITÉS"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 4,
+    "cycle": 1,
+    "title": "COPIE HORS RÉSEAU",
+    "original_text": "Une clé chiffrée est montée puis retirée sans preuve de destruction.",
+    "new_text": "Une clé chiffrée a été utilisée puis retirée. Rien ne prouve que son contenu a été détruit.",
+    "new_title": "COPIE HORS RÉSEAU"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 5,
+    "cycle": 2,
+    "title": "RENDEZ-VOUS DIPLOMATIQUE",
+    "original_text": "Un téléphone secondaire borne près d’un hôtel fréquenté par une délégation étrangère.",
+    "new_text": "Un téléphone secondaire a été repéré près d’un hôtel fréquenté par une délégation étrangère.",
+    "new_title": "RENDEZ-VOUS DIPLOMATIQUE"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 6,
+    "cycle": 2,
+    "title": "PAGE MANQUANTE",
+    "original_text": "Une page absente du premier export existe dans la fuite finale.",
+    "new_text": "Une page absente du premier export figure dans la fuite finale.",
+    "new_title": "PAGE MANQUANTE"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 7,
+    "cycle": 2,
+    "title": "AUDIT INTERNE",
+    "original_text": "Une autre faille de sécurité était connue mais non déclarée.",
+    "new_text": "Une autre faille de sécurité était connue, mais n’avait pas été signalée.",
+    "new_title": "AUDIT INTERNE"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 8,
+    "cycle": 2,
+    "title": "PAIEMENT INDIRECT",
+    "original_text": "Un transfert coïncide avec la reconstitution de la liste.",
+    "new_text": "Un transfert d’argent coïncide avec la reconstitution de la liste d’informateurs.",
+    "new_title": "PAIEMENT INDIRECT"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 9,
+    "cycle": 3,
+    "title": "FUSION DE SOURCES",
+    "original_text": "Le fichier final provient d’au moins deux sources numériques.",
+    "new_text": "Le fichier diffusé rassemble des données provenant d’au moins deux sources.",
+    "new_title": "FUSION DE SOURCES"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 10,
+    "cycle": 3,
+    "title": "CONTACT ÉTRANGER",
+    "original_text": "Un identifiant lié à un officier étranger apparaît dans une sauvegarde.",
+    "new_text": "Un identifiant lié à un officier étranger apparaît dans une sauvegarde.",
+    "new_title": "CONTACT ÉTRANGER"
+  },
+  {
+    "scenario_id": "014",
+    "ord": 11,
+    "cycle": 3,
+    "title": "DEUX OPÉRATIONS DISTINCTES",
+    "original_text": "Les expertises séparent clairement la falsification des logs de la transmission finale des données.",
+    "new_text": "La modification des journaux et la fuite finale des données sont deux actions distinctes.",
+    "new_title": "DEUX OPÉRATIONS DISTINCTES"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ARRÊTEZ LE PROGRAMME",
+    "original_text": "Une note médicale recommande de suspendre immédiatement le programme.",
+    "new_text": "Une note médicale recommande de suspendre immédiatement le programme.",
+    "new_title": "ARRÊTEZ LE PROGRAMME"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 2,
+    "cycle": 1,
+    "title": "IL SIGNE QUAND MÊME",
+    "original_text": "Le même clinicien écrit que la poursuite est dangereuse, puis signe pour continuer.",
+    "new_text": "Le clinicien a écrit qu’il était dangereux de continuer, puis a signé pour poursuivre.",
+    "new_title": "IL SIGNE QUAND MÊME"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 3,
+    "cycle": 1,
+    "title": "RÉUNION BUDGÉTAIRE",
+    "original_text": "Une réunion sur le financement a lieu le jour du refus.",
+    "new_text": "Une réunion sur le financement a eu lieu le jour où l’arrêt du programme a été refusé.",
+    "new_title": "RÉUNION BUDGÉTAIRE"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 4,
+    "cycle": 1,
+    "title": "DOSSIER MODIFIÉ APRÈS LA MORT",
+    "original_text": "Après la mort, une note clinique n’a plus le même contenu que sa première version.",
+    "new_text": "Une note médicale a été modifiée après la mort du patient.",
+    "new_title": "DOSSIER MODIFIÉ APRÈS LA MORT"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 5,
+    "cycle": 2,
+    "title": "« ILS VEULENT QUE JE TIENNE »",
+    "original_text": "Avant sa mort, le patient dit à un proche : « Ils veulent que je tienne jusqu’à la fin du protocole. »",
+    "new_text": "Avant sa mort, le patient dit à un proche : « Ils veulent que je tienne jusqu’à la fin du protocole. »",
+    "new_title": "« ILS VEULENT QUE JE TIENNE »"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 6,
+    "cycle": 2,
+    "title": "AUCUN COMITÉ D’ÉTHIQUE",
+    "original_text": "Malgré les alertes, le comité d’éthique n’est jamais saisi.",
+    "new_text": "Malgré plusieurs alertes, personne n’a saisi le comité d’éthique.",
+    "new_title": "AUCUN COMITÉ D’ÉTHIQUE"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 7,
+    "cycle": 2,
+    "title": "« TOUT DEVIENT INDÉFENDABLE »",
+    "original_text": "Un cadre écrit : « Si on suspend maintenant, tout le programme devient indéfendable. »",
+    "new_text": "Un cadre écrit : « Si on suspend maintenant, tout le programme devient indéfendable. »",
+    "new_title": "« TOUT DEVIENT INDÉFENDABLE »"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 8,
+    "cycle": 2,
+    "title": "DOSSIER RETARDÉ",
+    "original_text": "Un document externe est transmis avec vingt-six heures de retard.",
+    "new_text": "Un document destiné à l’extérieur a été envoyé avec 26 heures de retard.",
+    "new_title": "DOSSIER RETARDÉ"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 9,
+    "cycle": 3,
+    "title": "RÉÉVALUATION APRÈS LA CRISE",
+    "original_text": "Une demande de réévaluation existe. Elle n’arrive qu’après une crise majeure.",
+    "new_text": "Le patient subit une crise grave avant qu’une réévaluation ne soit demandée.",
+    "new_title": "RÉÉVALUATION APRÈS LA CRISE"
+  },
+  {
+    "scenario_id": "015",
+    "ord": 10,
+    "cycle": 3,
+    "title": "ALERTES EFFACÉES APRÈS LA MORT",
+    "original_text": "Après la mort, plusieurs alertes sont atténuées ou rendues moins visibles dans la version finale du dossier.",
+    "new_text": "Après la mort du patient, des alertes ont été atténuées dans son dossier.",
+    "new_title": "ALERTES EFFACÉES APRÈS LA MORT"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 1,
+    "cycle": 1,
+    "title": "VIDÉO INCOMPLÈTE",
+    "original_text": "La vidéo s’arrête dix-sept minutes avant la mort estimée.",
+    "new_text": "La vidéo s’arrête dix-sept minutes avant la mort estimée.",
+    "new_title": "VIDÉO INCOMPLÈTE"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 2,
+    "cycle": 1,
+    "title": "SÉDATIF",
+    "original_text": "Le produit provient d’un lot détourné.",
+    "new_text": "Le sédatif vient d’un lot détourné.",
+    "new_title": "SÉDATIF"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 3,
+    "cycle": 1,
+    "title": "DEUX BADGES",
+    "original_text": "Deux badges accèdent au dernier étage.",
+    "new_text": "Deux badges différents ont ouvert l’accès au dernier étage.",
+    "new_title": "DEUX BADGES"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 4,
+    "cycle": 1,
+    "title": "MESSAGE « STOP »",
+    "original_text": "Un message demandant d’arrêter est envoyé avant le décès.",
+    "new_text": "Un message demandant d’arrêter a été envoyé avant la mort.",
+    "new_title": "MESSAGE « STOP »"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 5,
+    "cycle": 2,
+    "title": "AUDIO HORS IMAGE",
+    "original_text": "Quelques secondes captent deux voix après la coupure.",
+    "new_text": "Un court enregistrement sonore capte deux voix après la coupure de la vidéo.",
+    "new_title": "AUDIO HORS IMAGE"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 6,
+    "cycle": 2,
+    "title": "CORPS DÉPLACÉ",
+    "original_text": "Le meurtre n’a pas eu lieu exactement à l’endroit filmé.",
+    "new_text": "La victime n’a pas été tuée exactement à l’endroit montré dans la vidéo.",
+    "new_title": "CORPS DÉPLACÉ"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 7,
+    "cycle": 2,
+    "title": "PAIEMENT DU PRODUIT",
+    "original_text": "Le sédatif est relié à un intermédiaire, pas directement au tueur.",
+    "new_text": "Le sédatif est relié à un intermédiaire, pas directement au meurtrier.",
+    "new_title": "PAIEMENT DU PRODUIT"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 8,
+    "cycle": 2,
+    "title": "ARME NON FILMÉE",
+    "original_text": "Aucune arme n’apparaît dans la séquence diffusée.",
+    "new_text": "Aucune arme n’apparaît dans la séquence diffusée.",
+    "new_title": "ARME NON FILMÉE"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 9,
+    "cycle": 3,
+    "title": "CAMÉRA DU PALIER",
+    "original_text": "Une silhouette reste seule au dernier étage après le départ d’un autre participant.",
+    "new_text": "Après le départ d’un participant, une silhouette reste seule au dernier étage.",
+    "new_title": "CAMÉRA DU PALIER"
+  },
+  {
+    "scenario_id": "016",
+    "ord": 10,
+    "cycle": 3,
+    "title": "EFFACEMENT CLOUD",
+    "original_text": "La vidéo est effacée après la découverte du corps par un compte distinct du filmeur.",
+    "new_text": "La vidéo a été supprimée après la découverte du corps, par un autre compte que celui du filmeur.",
+    "new_title": "EFFACEMENT CLOUD"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 1,
+    "cycle": 1,
+    "title": "DEUX OTAGES VIVANTS",
+    "original_text": "Une image de péage montre les deux personnes enlevées encore vivantes peu après leur disparition.",
+    "new_text": "Une caméra de péage montre les deux otages encore vivants après leur enlèvement.",
+    "new_title": "DEUX OTAGES VIVANTS"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 2,
+    "cycle": 1,
+    "title": "ENTREPÔT 4B",
+    "original_text": "Le téléphone du survivant s’éteint près d’un entrepôt lié à une société écran du réseau.",
+    "new_text": "Le téléphone du survivant s’éteint près d’un entrepôt lié au réseau.",
+    "new_title": "ENTREPÔT 4B"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 3,
+    "cycle": 1,
+    "title": "MORT SOUS CONTRAINTE",
+    "original_text": "L’examen médico-légal relie la mort à une contrainte physique prolongée. Ce n’est pas un malaise spontané.",
+    "new_text": "L’autopsie relie la mort à une contrainte physique prolongée, pas à un malaise.",
+    "new_title": "MORT SOUS CONTRAINTE"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 4,
+    "cycle": 1,
+    "title": "LE SURVIVANT RESSORT SEUL",
+    "original_text": "Quelques heures plus tard, une caméra montre le survivant dans un autre véhicule. La victime n’y est pas.",
+    "new_text": "Une caméra montre le survivant repartir seul dans un autre véhicule.",
+    "new_title": "LE SURVIVANT RESSORT SEUL"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 5,
+    "cycle": 2,
+    "title": "APPEL DE 19 SECONDES",
+    "original_text": "Un appel de 19 secondes part pendant la dégradation de l’état de la victime. Le destinataire reste inconnu.",
+    "new_text": "Pendant que la victime va de plus en plus mal, un appel de 19 secondes est passé. On ignore à qui.",
+    "new_title": "APPEL DE 19 SECONDES"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 6,
+    "cycle": 2,
+    "title": "« IL RESPIRE MAL »",
+    "original_text": "Un audio capte : « Il respire mal. » Une voix répond d’attendre avant de bouger.",
+    "new_text": "Un enregistrement capte « Il respire mal ». Une autre voix répond d’attendre.",
+    "new_title": "« IL RESPIRE MAL »"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 7,
+    "cycle": 2,
+    "title": "PAIEMENT APRÈS LA MORT",
+    "original_text": "Un paiement vers un intermédiaire part après l’heure probable du décès, avant la libération du survivant.",
+    "new_text": "Un intermédiaire reçoit un paiement après la mort, mais avant la libération du survivant.",
+    "new_title": "PAIEMENT APRÈS LA MORT"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 8,
+    "cycle": 2,
+    "title": "MESSAGES EFFACÉS APRÈS LA MORT",
+    "original_text": "Deux messages sont supprimés à distance après la mort. Leur contenu complet n’est pas récupéré.",
+    "new_text": "Deux messages ont été effacés à distance après la mort. Leur contenu reste inconnu.",
+    "new_title": "MESSAGES EFFACÉS APRÈS LA MORT"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 9,
+    "cycle": 3,
+    "title": "MENACE SUR UN PROCHE",
+    "original_text": "Le survivant dit qu’on lui a ordonné de se taire sous menace contre un proche. Un contact de la même nuit confirme la pression.",
+    "new_text": "Le survivant dit qu’un proche a été menacé pour le faire taire. Un contact de la nuit confirme la pression.",
+    "new_title": "MENACE SUR UN PROCHE"
+  },
+  {
+    "scenario_id": "017",
+    "ord": 10,
+    "cycle": 3,
+    "title": "D’ABORD LA MORT, ENSUITE LE SILENCE",
+    "original_text": "La détresse mortelle commence avant l’effacement des preuves et avant les menaces imposées au survivant.",
+    "new_text": "La victime était déjà en danger de mort avant l’effacement des preuves et les menaces contre le survivant.",
+    "new_title": "D’ABORD LA MORT, ENSUITE LE SILENCE"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ASSIETTES APRÈS LA MORT",
+    "original_text": "La vaisselle est disposée après l’heure probable du décès.",
+    "new_text": "Les assiettes ont été placées sur la table après la mort.",
+    "new_title": "ASSIETTES APRÈS LA MORT"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 2,
+    "cycle": 1,
+    "title": "TRACE SOUS LA TABLE",
+    "original_text": "Une trace de lutte est masquée par une nappe repositionnée.",
+    "new_text": "Une nappe déplacée cache une trace de lutte sous la table.",
+    "new_title": "TRACE SOUS LA TABLE"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 3,
+    "cycle": 1,
+    "title": "ARGENT MANQUANT",
+    "original_text": "Une petite somme disparaît sans lien direct avec le corps.",
+    "new_text": "De l’argent a disparu, sans lien direct établi avec la mort.",
+    "new_title": "ARGENT MANQUANT"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 4,
+    "cycle": 1,
+    "title": "OBJET ESSUYÉ",
+    "original_text": "Un objet décoratif est nettoyé sans avoir servi d’arme.",
+    "new_text": "Un objet décoratif a été essuyé, mais il n’a pas servi d’arme.",
+    "new_title": "OBJET ESSUYÉ"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 5,
+    "cycle": 2,
+    "title": "DEUX SEMELLES",
+    "original_text": "Deux passages distincts correspondent à des semelles différentes.",
+    "new_text": "Deux traces de chaussures différentes montrent deux passages.",
+    "new_title": "DEUX SEMELLES"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 6,
+    "cycle": 2,
+    "title": "MEUBLE DÉPLACÉ",
+    "original_text": "Un capteur signale un meuble déplacé après le décès.",
+    "new_text": "Un capteur montre qu’un meuble a été déplacé après le décès.",
+    "new_title": "MEUBLE DÉPLACÉ"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 7,
+    "cycle": 2,
+    "title": "PHOTO ANCIENNE",
+    "original_text": "Une photo explique la symbolique d’une assiette sans expliquer la mort.",
+    "new_text": "Une vieille photo explique pourquoi une assiette a été posée, mais pas la mort.",
+    "new_title": "PHOTO ANCIENNE"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 8,
+    "cycle": 2,
+    "title": "TRACE DE VOL",
+    "original_text": "Une empreinte se trouve sur le tiroir d’argent mais pas autour du corps.",
+    "new_text": "Une empreinte est trouvée sur le tiroir d’argent, mais pas près du corps.",
+    "new_title": "TRACE DE VOL"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 9,
+    "cycle": 3,
+    "title": "SANG MASQUÉ",
+    "original_text": "Une microprojection est cachée par un élément posé plus tard.",
+    "new_text": "Une petite trace de sang a été cachée par un objet posé plus tard.",
+    "new_title": "SANG MASQUÉ"
+  },
+  {
+    "scenario_id": "018",
+    "ord": 10,
+    "cycle": 3,
+    "title": "SCÈNE MODIFIÉE APRÈS LA MORT",
+    "original_text": "La mort précède le déplacement du mobilier et la mise en place des assiettes.",
+    "new_text": "Le mobilier et les assiettes ont été disposés après le décès.",
+    "new_title": "SCÈNE MODIFIÉE APRÈS LA MORT"
+  },
+  {
+    "scenario_id": "019",
+    "ord": 1,
+    "cycle": 1,
+    "title": "LE DOSSIER ATTENDU",
+    "original_text": "La victime devait remettre des documents financiers au gala. Les copies récupérées ne concordent pas toutes sur les opérations concernées.",
+    "new_text": "La victime devait remettre des documents financiers au gala. Les copies trouvées ne correspondent pas toutes.",
+    "new_title": "LE DOSSIER ATTENDU"
+  },
+  {
+    "scenario_id": "019",
+    "ord": 2,
+    "cycle": 2,
+    "title": "LE DISPOSITIF MODIFIÉ",
+    "original_text": "Des trajets et des accès techniques ont été modifiés pendant le gala. Les relevés ne précisent pas encore qui a demandé ces changements.",
+    "new_text": "Pendant le gala, des trajets et des accès ont changé. On ignore qui l’a demandé.",
+    "new_title": "LE DISPOSITIF MODIFIÉ"
+  },
+  {
+    "scenario_id": "019",
+    "ord": 3,
+    "cycle": 3,
+    "title": "LES COPIES CONTRADICTOIRES",
+    "original_text": "Plusieurs versions des mêmes registres financiers circulent. Elles ne présentent pas toutes les mêmes informations.",
+    "new_text": "Plusieurs copies des mêmes comptes ne contiennent pas les mêmes informations.",
+    "new_title": "LES COPIES CONTRADICTOIRES"
+  },
+  {
+    "scenario_id": "020",
+    "ord": 1,
+    "cycle": 1,
+    "title": "UN BÂTIMENT OCCUPÉ",
+    "original_text": "Les plans du Bal des Fondateurs prévoient plusieurs issues secondaires. Les journaux montrent que certaines ont été ouvertes avec retard.",
+    "new_text": "Plusieurs sorties de secours du Bal des Fondateurs ont été ouvertes avec retard.",
+    "new_title": "SORTIES OUVERTES TROP TARD"
+  },
+  {
+    "scenario_id": "020",
+    "ord": 2,
+    "cycle": 2,
+    "title": "DES RÉSERVES À CONTRÔLER",
+    "original_text": "Des travaux de maintenance étaient encore en cours dans les locaux techniques avant l’incendie. Leur rôle exact dans sa propagation reste incertain.",
+    "new_text": "Des travaux étaient encore en cours avant l’incendie. Leur rôle dans la propagation reste incertain.",
+    "new_title": "TRAVAUX NON TERMINÉS"
+  },
+  {
+    "scenario_id": "020",
+    "ord": 3,
+    "cycle": 3,
+    "title": "UNE CHRONOLOGIE À VÉRIFIER",
+    "original_text": "Les journaux du poste de sécurité montrent un délai entre les premiers signaux et l’alarme générale.",
+    "new_text": "L’alarme générale a été déclenchée après les premiers signaux de danger.",
+    "new_title": "ALARME RETARDÉE"
+  },
+  {
+    "scenario_id": "021",
+    "ord": 1,
+    "cycle": 1,
+    "title": "LE TRAJET",
+    "original_text": "Le parcours de l’enveloppe comporte une rupture de quarante-deux minutes. Deux personnes pouvaient expliquer cette fenêtre.",
+    "new_text": "Le trajet de l’enveloppe comporte 42 minutes sans trace. Deux personnes peuvent expliquer ce délai.",
+    "new_title": "LE TRAJET"
+  },
+  {
+    "scenario_id": "021",
+    "ord": 2,
+    "cycle": 2,
+    "title": "LA COMPTABILITÉ",
+    "original_text": "Le montant disparu ne correspond pas exactement aux sommes collectées. Une seconde destination financière existait.",
+    "new_text": "Les comptes ne correspondent pas à tout l’argent récolté. Une partie est allée ailleurs.",
+    "new_title": "LA COMPTABILITÉ"
+  },
+  {
+    "scenario_id": "021",
+    "ord": 3,
+    "cycle": 3,
+    "title": "LE CERCLE",
+    "original_text": "L’information sur la destination finale n’était connue que d’un groupe très réduit. Toute révélation permet donc à la Famiglia de resserrer ses soupçons.",
+    "new_text": "Très peu de personnes connaissaient la destination finale de l’enveloppe.",
+    "new_title": "DESTINATION SECRÈTE"
+  },
+  {
+    "scenario_id": "022",
+    "ord": 1,
+    "cycle": 1,
+    "title": "LE MOT MANQUANT",
+    "original_text": "Aucun témoin n’a entendu un ordre explicite de tuer. Plusieurs ont toutefois entendu des formulations qui pouvaient être comprises comme une autorisation.",
+    "new_text": "Personne n’a entendu d’ordre de tuer. Certaines paroles pouvaient pourtant être comprises comme une permission.",
+    "new_title": "LE MOT MANQUANT"
+  },
+  {
+    "scenario_id": "022",
+    "ord": 2,
+    "cycle": 2,
+    "title": "LE VÉHICULE",
+    "original_text": "Le véhicule utilisé après le meurtre appartenait au groupe. Trois personnes savaient qui l’avait emprunté.",
+    "new_text": "Le groupe possédait le véhicule utilisé après le meurtre. Trois personnes savaient qui l’avait emprunté.",
+    "new_title": "LE VÉHICULE"
+  },
+  {
+    "scenario_id": "022",
+    "ord": 3,
+    "cycle": 3,
+    "title": "LE SILENCE ORGANISÉ",
+    "original_text": "Après les faits, plusieurs versions ont été harmonisées. Cette coordination ne prouve pas l’ordre initial, mais elle prouve une volonté de dissimulation.",
+    "new_text": "Après le meurtre, des membres du groupe ont accordé leurs récits. On ignore encore qui a donné l’ordre.",
+    "new_title": "LE SILENCE ORGANISÉ"
+  },
+  {
+    "scenario_id": "023",
+    "ord": 1,
+    "cycle": 1,
+    "title": "LA CHAISE VIDE",
+    "original_text": "Le représentant absent avait rencontré séparément deux camps avant la réunion. Son absence n’est probablement pas un simple retard.",
+    "new_text": "Avant la réunion, le représentant absent avait rencontré les deux camps séparément.",
+    "new_title": "LA CHAISE VIDE"
+  },
+  {
+    "scenario_id": "023",
+    "ord": 2,
+    "cycle": 2,
+    "title": "L’ITINÉRAIRE D’ADRIANO",
+    "original_text": "Très peu de personnes connaissaient le déplacement d’Adriano. La fuite est donc interne ou issue d’un proche des négociations.",
+    "new_text": "Très peu de personnes connaissaient le trajet d’Adriano. L’information a pu circuler parmi leurs proches.",
+    "new_title": "L’ITINÉRAIRE D’ADRIANO"
+  },
+  {
+    "scenario_id": "023",
+    "ord": 3,
+    "cycle": 3,
+    "title": "L’APPEL",
+    "original_text": "Un appel confirme qu’Adriano Verri a été blessé. Il ne permet pas d’établir qui l’a attaqué ni la gravité exacte de ses blessures.",
+    "new_text": "Un appel confirme qu’Adriano Verri est blessé. On ignore qui l’a attaqué et la gravité de ses blessures.",
+    "new_title": "ADRIANO BLESSÉ"
+  },
+  {
+    "scenario_id": "024",
+    "ord": 1,
+    "cycle": 1,
+    "title": "CE QUI EST DÉJÀ CONNU",
+    "original_text": "Plusieurs faits que le détenu propose de révéler figurent déjà dans les pièces saisies par les enquêteurs.",
+    "new_text": "Paolo Serra propose des informations que les enquêteurs possèdent déjà en partie.",
+    "new_title": "CE QUI EST DÉJÀ CONNU"
+  },
+  {
+    "scenario_id": "024",
+    "ord": 2,
+    "cycle": 2,
+    "title": "LA PREUVE NOUVELLE",
+    "original_text": "Une information inconnue des enquêteurs relie directement une opération au cercle supérieur. Sa valeur judiciaire est forte et son danger mafieux l’est tout autant.",
+    "new_text": "Paolo Serra connaît un fait nouveau qui relie une opération à la direction de la Famiglia.",
+    "new_title": "LA PREUVE NOUVELLE"
+  },
+  {
+    "scenario_id": "024",
+    "ord": 3,
+    "cycle": 3,
+    "title": "LA PROTECTION",
+    "original_text": "Le détenu réclame une protection en échange de ses informations. Sa demande ne prouve pas qu’un accord a été accepté.",
+    "new_text": "Paolo Serra demande une protection. Les documents ne disent pas si elle lui a été accordée.",
+    "new_title": "PROTECTION DEMANDÉE"
+  },
+  {
+    "scenario_id": "025",
+    "ord": 1,
+    "cycle": 1,
+    "title": "LES ORDRES",
+    "original_text": "Certaines décisions de Vittorio portent sa validation. D’autres lui sont attribuées sans qu’un ordre écrit ait été retrouvé.",
+    "new_text": "Vittorio a approuvé certaines décisions. D’autres lui sont attribuées sans preuve qu’il les ait ordonnées.",
+    "new_title": "ORDRES ATTRIBUÉS AU DON"
+  },
+  {
+    "scenario_id": "025",
+    "ord": 2,
+    "cycle": 2,
+    "title": "LES DÉCISIONS DU DON",
+    "original_text": "Les décisions de protection et de sanction prises au sommet ne sont pas toutes accompagnées d’une instruction écrite.",
+    "new_text": "Des membres ont été protégés ou punis au nom de Vittorio. Pour certains cas, aucun ordre de lui n’a été retrouvé.",
+    "new_title": "SANCTIONS SANS ORDRE"
+  },
+  {
+    "scenario_id": "025",
+    "ord": 3,
+    "cycle": 3,
+    "title": "LE SOMMET",
+    "original_text": "Des hommes de Vittorio ont commis des violences sans ordre écrit. D’autres actes sont directement liés à ses validations.",
+    "new_text": "Des comptes relient des paiements à Vittorio. Ils ne disent pas toujours qui a demandé les violences.",
+    "new_title": "PAIEMENTS ET VIOLENCES"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 1,
+    "cycle": 1,
+    "title": "SECTEUR PERDU",
+    "original_text": "Un nouveau secteur de la ville n’est plus sous contrôle des autorités. Plusieurs communications institutionnelles sont interrompues.",
+    "new_text": "Un secteur de la ville échappe aux autorités. Des communications avec cette zone sont coupées.",
+    "new_title": "SECTEUR PERDU"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DÉCÈS CONFIRMÉS",
+    "original_text": "Une source qui devait être entendue ne répondra plus. Son décès vient d’être confirmé.",
+    "new_text": "La mort d’une source attendue par la Grey Room vient d’être confirmée.",
+    "new_title": "DÉCÈS CONFIRMÉS"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 3,
+    "cycle": 1,
+    "title": "CHAÎNE ENCORE ACTIVE",
+    "original_text": "Des éléments indépendants confirment qu’une structure extérieure continue de fonctionner malgré les arrestations.",
+    "new_text": "Le réseau continue de fonctionner malgré les arrestations.",
+    "new_title": "CHAÎNE ENCORE ACTIVE"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 4,
+    "cycle": 1,
+    "title": "MESSAGE ANTÉRIEUR",
+    "original_text": "Un message transmis avant les arrestations indique que la continuité du groupe avait été anticipée.",
+    "new_text": "Un message envoyé avant les arrestations montre que le groupe avait prévu de poursuivre ses activités.",
+    "new_title": "MESSAGE ANTÉRIEUR"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 5,
+    "cycle": 2,
+    "title": "LE PRISONNIER PANIQUE",
+    "original_text": "L’un des détenus demande soudain si le bâtiment sera évacué. Rien dans l’interrogatoire public ne lui a encore annoncé la dégradation du périmètre.",
+    "new_text": "Un détenu demande si le bâtiment va être évacué, alors que personne ne lui a annoncé le danger.",
+    "new_title": "LE PRISONNIER PANIQUE"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 6,
+    "cycle": 2,
+    "title": "AUTORITÉ SYMBOLIQUE",
+    "original_text": "Plusieurs sources distinguent le commandement matériel d’une figure idéologique dont les consignes continuent d’être suivies.",
+    "new_text": "Des sources disent que le chef militaire et la figure idéologique du groupe ne sont pas les mêmes.",
+    "new_title": "AUTORITÉ SYMBOLIQUE"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 7,
+    "cycle": 2,
+    "title": "PÉRIMÈTRE RÉDUIT",
+    "original_text": "Les autorités réduisent la zone qu’elles garantissent autour de la Grey Room. L’enquête continue.",
+    "new_text": "Les autorités ne garantissent plus la sécurité de toute la zone autour de la Grey Room.",
+    "new_title": "PÉRIMÈTRE RÉDUIT"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 8,
+    "cycle": 3,
+    "title": "TÉMOIN INACCESSIBLE",
+    "original_text": "Un témoin qui devait confirmer une partie de la chaîne de responsabilités devient inaccessible après la perte d’un secteur.",
+    "new_text": "Après la perte d’un secteur, un témoin attendu ne peut plus être joint.",
+    "new_title": "TÉMOIN INACCESSIBLE"
+  },
+  {
+    "scenario_id": "026",
+    "ord": 9,
+    "cycle": 3,
+    "title": "LA GREY ROOM EST CONCERNÉE",
+    "original_text": "Le recoupement final confirme que le dispositif extérieur ne cherche pas seulement à tenir la ville : la chute du périmètre judiciaire fait partie de ses objectifs.",
+    "new_text": "Le groupe cherche aussi à faire tomber la protection judiciaire autour de la Grey Room.",
+    "new_title": "LA GREY ROOM EST CONCERNÉE"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ÉVACUATION INCOMPLÈTE",
+    "original_text": "Les autorités confirment que des civils n’ont pas tous quitté la zone contestée.",
+    "new_text": "Des civils sont encore présents dans la zone contestée.",
+    "new_title": "ÉVACUATION INCOMPLÈTE"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 2,
+    "cycle": 1,
+    "title": "PRÉSENCE RÉCENTE",
+    "original_text": "Deux sources placent plusieurs cadres de l’organisation dans la même zone au cours des dernières heures, sans prouver qu’ils y sont encore.",
+    "new_text": "Deux sources ont vu récemment des cadres du FDR dans la zone. Ils peuvent déjà être partis.",
+    "new_title": "PRÉSENCE RÉCENTE"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 3,
+    "cycle": 1,
+    "title": "DÉTENTION CLANDESTINE",
+    "original_text": "Des témoins décrivent des mauvais traitements dans l’appareil de détention du FDR où travaillait l’un des suspects.",
+    "new_text": "Des prisonniers ont été maltraités dans le service où travaillait l’agent chargé des détentions du FDR.",
+    "new_title": "DÉTENTION CLANDESTINE"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 4,
+    "cycle": 1,
+    "title": "RUPTURE INTERNE",
+    "original_text": "Des documents saisis montrent une lutte récente entre deux factions du même mouvement.",
+    "new_text": "Des documents montrent que deux factions du FDR se disputent le pouvoir.",
+    "new_title": "RUPTURE INTERNE"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 5,
+    "cycle": 2,
+    "title": "SOURCE TROP PRÉCISE",
+    "original_text": "Le cadre supérieur du FDR donne des détails précis sur les dirigeants rivaux, mais presque rien sur ses propres alliés.",
+    "new_text": "Le cadre supérieur du FDR décrit en détail ses rivaux, mais parle peu de ses alliés.",
+    "new_title": "SOURCE TROP PRÉCISE"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 6,
+    "cycle": 2,
+    "title": "OTAGES POSSIBLES",
+    "original_text": "Une source indépendante estime que des personnes détenues peuvent encore se trouver dans la zone. Leur nombre est inconnu.",
+    "new_text": "Une source dit que des otages sont peut-être encore retenus dans la zone. Leur nombre reste inconnu.",
+    "new_title": "OTAGES POSSIBLES"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 7,
+    "cycle": 2,
+    "title": "DEUX CENTRES DE POUVOIR",
+    "original_text": "Le renseignement conclut que l’organisation ne possède plus un commandement parfaitement unifié : deux pôles se disputent l’autorité.",
+    "new_text": "Deux groupes du FDR se disputent maintenant le commandement.",
+    "new_title": "DEUX CENTRES DE POUVOIR"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 8,
+    "cycle": 3,
+    "title": "INTÉRÊT PERSONNEL",
+    "original_text": "Un échange ancien montre que le cadre supérieur du FDR considérait déjà ces dirigeants comme ses rivaux.",
+    "new_text": "Un ancien échange montre que le cadre supérieur du FDR voyait déjà ces chefs comme ses rivaux.",
+    "new_title": "INTÉRÊT PERSONNEL"
+  },
+  {
+    "scenario_id": "027",
+    "ord": 9,
+    "cycle": 3,
+    "title": "LA VÉRITÉ PEUT ÊTRE UNE ARME",
+    "original_text": "Les renseignements du cadre supérieur sont souvent exacts, mais concernent surtout ses rivaux. Ses propres alliés y apparaissent peu.",
+    "new_text": "Les informations du cadre supérieur sont souvent justes, mais concernent surtout ses rivaux.",
+    "new_title": "LA VÉRITÉ PEUT ÊTRE UNE ARME"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 1,
+    "cycle": 1,
+    "title": "CAPITAINE — DÉCÉDÉ",
+    "original_text": "L’officier qui assurait une liaison extérieure est déclaré mort. La Grey Room perd un interlocuteur, pas sa mission.",
+    "new_text": "Le capitaine chargé du lien avec l’extérieur est mort.",
+    "new_title": "CAPITAINE — DÉCÉDÉ"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 2,
+    "cycle": 1,
+    "title": "SOURCE INJOIGNABLE",
+    "original_text": "Une source située dans un secteur récemment perdu cesse de répondre. Son statut reste inconnu.",
+    "new_text": "Une source ne répond plus depuis la perte d’un secteur. On ignore ce qui lui est arrivé.",
+    "new_title": "SOURCE INJOIGNABLE"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 3,
+    "cycle": 1,
+    "title": "ACCÈS ANTÉRIEUR",
+    "original_text": "Une personne liée au réseau avait un accès administratif au périmètre avant sa fermeture complète.",
+    "new_text": "Une personne liée au réseau disposait d’un accès administratif avant la fermeture du périmètre.",
+    "new_title": "ACCÈS ANTÉRIEUR"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 4,
+    "cycle": 1,
+    "title": "PRISONNIERS SACRIFIABLES",
+    "original_text": "Un document interne indique que les membres capturés ne doivent plus être considérés comme récupérables.",
+    "new_text": "Un document du groupe indique que ses membres capturés ne seront pas récupérés.",
+    "new_title": "PRISONNIERS SACRIFIABLES"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 5,
+    "cycle": 2,
+    "title": "COMMUNICATIONS INTERMITTENTES",
+    "original_text": "La Grey Room perd puis retrouve sa liaison extérieure. Plusieurs informations arrivent avec retard.",
+    "new_text": "Les communications de la Grey Room coupent par moments. Des informations arrivent en retard.",
+    "new_title": "COMMUNICATIONS INTERMITTENTES"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 6,
+    "cycle": 2,
+    "title": "COOPÉRATION CONCORDANTE",
+    "original_text": "Deux suspects donnent séparément des éléments compatibles sur la manière dont le groupe abandonne ses membres capturés.",
+    "new_text": "Deux détenus décrivent séparément comment le groupe abandonne ses membres capturés.",
+    "new_title": "COOPÉRATION CONCORDANTE"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 7,
+    "cycle": 2,
+    "title": "AUCUNE DEMANDE DE PROTECTION",
+    "original_text": "Le cadre resté fidèle au FDR ne demande aucune protection malgré la menace sur le périmètre. Il affirme pourtant n’être qu’un exécutant.",
+    "new_text": "Le cadre fidèle au FDR ne demande ni protection ni évacuation malgré la menace.",
+    "new_title": "AUCUNE DEMANDE DE PROTECTION"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 8,
+    "cycle": 3,
+    "title": "PRÉSENCE INTÉRIEURE PLAUSIBLE",
+    "original_text": "Plusieurs signaux indépendants rendent crédible l’existence d’une cellule clandestine déjà présente dans le périmètre avant sa fermeture.",
+    "new_text": "Des indices suggèrent qu’une cellule du groupe était déjà à l’intérieur du périmètre.",
+    "new_title": "PRÉSENCE INTÉRIEURE PLAUSIBLE"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 9,
+    "cycle": 3,
+    "title": "DÉCÈS CONFIRMÉ",
+    "original_text": "La source précédemment injoignable est désormais déclarée morte. L’information qu’elle devait confirmer devra être établie autrement.",
+    "new_text": "La source qui ne répondait plus est maintenant déclarée morte.",
+    "new_title": "DÉCÈS CONFIRMÉ"
+  },
+  {
+    "scenario_id": "028",
+    "ord": 10,
+    "cycle": 3,
+    "title": "DERNIER PÉRIMÈTRE",
+    "original_text": "La protection extérieure atteint son niveau critique. L’enquête continue, mais aucune sortie ne peut plus être considérée comme garantie.",
+    "new_text": "La protection extérieure est presque épuisée. Aucune sortie ne peut être garantie.",
+    "new_title": "DERNIER PÉRIMÈTRE"
+  },
+  {
+    "scenario_id": "029",
+    "ord": 1,
+    "cycle": 1,
+    "title": "PAIEMENT APRÈS LES FAITS",
+    "original_text": "Un transfert financier effectué après l’exécution relie l’intermédiaire financier au réseau.",
+    "new_text": "Un virement après une exécution relie l’intermédiaire financier au cartel.",
+    "new_title": "PAIEMENT APRÈS LES FAITS"
+  },
+  {
+    "scenario_id": "029",
+    "ord": 2,
+    "cycle": 1,
+    "title": "ORDRE AMBIGU",
+    "original_text": "Le responsable local a envoyé un message demandant de « faire peur », sans préciser jusqu’où aller.",
+    "new_text": "Le responsable local a écrit « faire peur ». Il n’a pas précisé jusqu’où aller.",
+    "new_title": "ORDRE AMBIGU"
+  },
+  {
+    "scenario_id": "029",
+    "ord": 3,
+    "cycle": 1,
+    "title": "COOPÉRATION",
+    "original_text": "L’exécutant devenu coopérant a indiqué un lieu dont l’existence a été vérifiée.",
+    "new_text": "L’exécutant donne un lieu. Les enquêteurs confirment qu’il existe.",
+    "new_title": "COOPÉRATION"
+  },
+  {
+    "scenario_id": "029",
+    "ord": 4,
+    "cycle": 2,
+    "title": "REPRÉSAILLES",
+    "original_text": "Une menace vise l’équipe d’enquête sans révéler qui l’a ordonnée.",
+    "new_text": "L’équipe d’enquête reçoit des menaces, mais on ignore qui les a ordonnées.",
+    "new_title": "REPRÉSAILLES"
+  },
+  {
+    "scenario_id": "029",
+    "ord": 5,
+    "cycle": 2,
+    "title": "SECONDE VICTIME",
+    "original_text": "Une victime non déclarée est reliée à l’exécutant.",
+    "new_text": "Une autre victime est reliée à l’exécutant. Elle n’avait pas été déclarée.",
+    "new_title": "SECONDE VICTIME"
+  },
+  {
+    "scenario_id": "029",
+    "ord": 6,
+    "cycle": 3,
+    "title": "CHAÎNE DE DÉCISION",
+    "original_text": "Les derniers éléments distinguent l’ordre initial, l’escalade et l’exécution matérielle.",
+    "new_text": "Les preuves séparent l’ordre d’intimider, la montée de violence et l’exécution.",
+    "new_title": "CHAÎNE DE DÉCISION"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 1,
+    "cycle": 1,
+    "title": "P01 — MAIN COURANTE",
+    "original_text": "03:07 appel; 03:18 patrouilles; 03:32 renforts aux issues; 03:55 unités spécialisées; 04:19 tir isolé entendu; 04:25 reddition de trois assaillants.",
+    "new_text": "03 h 07 : appel. 03 h 18 : patrouilles. 03 h 32 : renforts. 03 h 55 : unités spéciales. 04 h 19 : tir. 04 h 25 : reddition.",
+    "new_title": "P01 — MAIN COURANTE"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 2,
+    "cycle": 1,
+    "title": "P02 — BILAN MÉDICO-LÉGAL",
+    "original_text": "Vingt gardes et les occupants de la résidence ont été tués. Deux commandos meurent face aux gardes, quatre face aux forces spéciales, un septième hors combat.",
+    "new_text": "Vingt gardes et les occupants sont tués. Deux assaillants meurent face aux gardes, quatre face aux unités spéciales, un septième est hors combat.",
+    "new_title": "P02 — BILAN MÉDICO-LÉGAL"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 3,
+    "cycle": 1,
+    "title": "P03 — MESSAGE 03:17",
+    "original_text": "Un terminal transmet « Le dossier n'est plus au coffre. Vérifiez l'annexe. » Ce message n'atteste pas que REG-118 ait déjà été découvert.",
+    "new_text": "À 03 h 17, un message dit : « Le dossier n’est plus au coffre. Vérifiez l’annexe. » Il ne prouve pas que REG-118 a été trouvé.",
+    "new_title": "P03 — MESSAGE 03:17"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 4,
+    "cycle": 1,
+    "title": "P20 — INDEX REG-118",
+    "original_text": "Un inventaire antérieur à l'attaque référence F-09, J-04, O-06, AC-17 et C-42. Il ne contient pas la liste détruite.",
+    "new_text": "Un inventaire ancien cite F-09, J-04, O-06, AC-17 et C-42. Il ne contient pas la liste REG-118 détruite.",
+    "new_title": "P20 — INDEX REG-118"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 5,
+    "cycle": 1,
+    "title": "P10 — ARCHIVE C-42",
+    "original_text": "Un document administratif antérieur à l'assaut relie F-09, J-04 et AC-17 par l'intermédiaire Rafael Córdova.",
+    "new_text": "Avant l’assaut, une archive C-42 relie F-09, J-04 et AC-17 à Rafael Córdova.",
+    "new_title": "P10 — ARCHIVE C-42"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 6,
+    "cycle": 1,
+    "title": "P04 — SCELLÉ I-14",
+    "original_text": "Une chemise vide AC-17 est photographiée à 05:14 au seuil du cabinet C-2, puis mise sous scellé G-14 à 05:18.",
+    "new_text": "La chemise vide AC-17 est photographiée à 05 h 14, puis placée sous scellé G-14 à 05 h 18.",
+    "new_title": "P04 — SCELLÉ I-14"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 7,
+    "cycle": 2,
+    "title": "P05/P06 — COPIE CONTESTÉE",
+    "original_text": "La copie de travail I-14 contient une métadonnée contradictoire avec la chaîne de conservation. Une discordance prouve une altération, pas automatiquement son auteur.",
+    "new_text": "La copie I-14 ne correspond pas au registre des scellés. Elle a été modifiée, mais on ignore par qui.",
+    "new_title": "P05/P06 — COPIE CONTESTÉE"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 8,
+    "cycle": 2,
+    "title": "P11 — FINANCEMENT F-09",
+    "original_text": "Des factures de campagne sans prestations suffisamment justifiées sont associées au bureau de Camila Serrano. Le bénéfice de la campagne Valdés ne prouve pas sa connaissance personnelle.",
+    "new_text": "Des factures mal justifiées sont liées au bureau de Camila Serrano. Rien ne prouve que Valdés le savait.",
+    "new_title": "P11 — FINANCEMENT F-09"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 9,
+    "cycle": 2,
+    "title": "P12 — PROCÉDURE J-04",
+    "original_text": "Un calendrier judiciaire a été modifié et une réquisition retirée. Des actes de Rojas et Beltrán sont documentés; la corruption personnelle reste à établir.",
+    "new_text": "Un calendrier judiciaire a changé et une réquisition a disparu. Des actes de Rojas et Beltrán sont connus, pas leur corruption.",
+    "new_title": "P12 — PROCÉDURE J-04"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 10,
+    "cycle": 2,
+    "title": "P09 — SEPTIÈME MORT",
+    "original_text": "Un tir de proximité distinct des affrontements correspond à la fenêtre de 04:19. Le tireur n'a pas été observé directement par la police.",
+    "new_text": "Vers 04 h 19, un homme est tué par un tir de près, hors des affrontements. Personne n’a vu le tireur.",
+    "new_title": "P09 — SEPTIÈME MORT"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 11,
+    "cycle": 3,
+    "title": "P13 — OPÉRATION AC-17",
+    "original_text": "Des autorisations portuaires atypiques et une réaffectation policière relient Ibarra et Varela; la preuve d'un paiement personnel n'est pas acquise.",
+    "new_text": "Des documents du port et un changement d’affectation policière relient Ibarra et Varela. Aucun paiement personnel n’est prouvé.",
+    "new_title": "P13 — OPÉRATION AC-17"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 12,
+    "cycle": 3,
+    "title": "P17 — LIENS DE CAMPAGNE",
+    "original_text": "Des pièces extérieures au registre permettent de rapprocher Córdova, Serrano et le réseau F-09 sans reconstituer artificiellement le document brûlé.",
+    "new_text": "Des documents extérieurs relient Córdova, Serrano et F-09. Ils ne recréent pas le registre brûlé.",
+    "new_title": "P17 — LIENS DE CAMPAGNE"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 13,
+    "cycle": 3,
+    "title": "P18 — CODES CROISÉS",
+    "original_text": "Les références O-06 et AC-17 se recoupent avec des archives indépendantes. Les codes ne valent preuve que rapprochés des actes et personnes.",
+    "new_text": "Les codes O-06 et AC-17 apparaissent aussi dans d’autres archives. Les codes seuls ne prouvent pas qui a agi.",
+    "new_title": "P18 — CODES CROISÉS"
+  },
+  {
+    "scenario_id": "030",
+    "ord": 14,
+    "cycle": 3,
+    "title": "P21 — GARANTIE DE SILENCE",
+    "original_text": "Une note extérieure antérieure à l'assaut décrit REG-118 comme une garantie de silence dans une négociation du gouverneur. Elle ne reproduit aucune ligne du registre.",
+    "new_text": "Une note antérieure à l’assaut présente REG-118 comme une garantie de silence dans une négociation du gouverneur.",
+    "new_title": "P21 — GARANTIE DE SILENCE"
+  },
+  {
+    "scenario_id": "031",
+    "ord": 1,
+    "cycle": 1,
+    "title": "RESPONSABILITÉS À ÉTABLIR",
+    "original_text": "Les pièces réunies sur la mort des six agents ne suffisent pas encore à répartir les responsabilités entre les trois chefs arrêtés.",
+    "new_text": "Six agents américains ont été tués dans une embuscade. On ignore encore lequel des trois chefs a ordonné l’attaque.",
+    "new_title": "ORDRE DE L’EMBUSCADE"
+  },
+  {
+    "scenario_id": "032",
+    "ord": 1,
+    "cycle": 1,
+    "title": "LISTE SIGNÉE",
+    "original_text": "Une liste d’arrestations porte la signature du chef administratif.",
+    "new_text": "Une liste d’arrestations porte la signature du chef administratif.",
+    "new_title": "LISTE SIGNÉE"
+  },
+  {
+    "scenario_id": "032",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DÉTENTION PROLONGÉE",
+    "original_text": "Des registres montrent que le responsable de la sécurité a validé des prolongations de détention sans ordre écrit.",
+    "new_text": "Le responsable de la sécurité a prolongé des détentions sans ordre écrit.",
+    "new_title": "DÉTENTION PROLONGÉE"
+  },
+  {
+    "scenario_id": "032",
+    "ord": 3,
+    "cycle": 1,
+    "title": "NOTE DU PALAIS",
+    "original_text": "Une note du conseiller du palais désigne un opposant comme cible prioritaire.",
+    "new_text": "Une note du conseiller du palais désigne un opposant comme cible prioritaire.",
+    "new_title": "NOTE DU PALAIS"
+  },
+  {
+    "scenario_id": "032",
+    "ord": 4,
+    "cycle": 2,
+    "title": "ORDRE GÉNÉRAL",
+    "original_text": "Aucun document ne prescrit explicitement les mauvais traitements.",
+    "new_text": "Aucun document ne donne explicitement l’ordre de maltraiter les détenus.",
+    "new_title": "ORDRE GÉNÉRAL"
+  },
+  {
+    "scenario_id": "032",
+    "ord": 5,
+    "cycle": 2,
+    "title": "CORRECTION MANUSCRITE",
+    "original_text": "Le chef administratif a modifié une liste après avoir été averti d’une détention abusive.",
+    "new_text": "Le chef administratif a changé une liste après avoir appris qu’une détention était abusive.",
+    "new_title": "CORRECTION MANUSCRITE"
+  },
+  {
+    "scenario_id": "032",
+    "ord": 6,
+    "cycle": 3,
+    "title": "TROIS ÉTAPES",
+    "original_text": "Les documents séparent trois étapes : la désignation d’un opposant, l’ordre administratif et son arrestation.",
+    "new_text": "Les archives séparent trois faits : un opposant désigné, un ordre administratif, puis une arrestation.",
+    "new_title": "TROIS ÉTAPES"
+  },
+  {
+    "scenario_id": "033",
+    "ord": 1,
+    "cycle": 1,
+    "title": "FINANCEMENT",
+    "original_text": "Des fonds privés soutiennent une structure de sécurité après révélation d’abus.",
+    "new_text": "Un groupe de sécurité a reçu des fonds privés après des révélations sur des abus.",
+    "new_title": "FINANCEMENT"
+  },
+  {
+    "scenario_id": "033",
+    "ord": 2,
+    "cycle": 1,
+    "title": "NOMINATION",
+    "original_text": "Le membre de la famille occupant le poste ministériel a maintenu une nomination contestée.",
+    "new_text": "Le parent de la famille qui est ministre a maintenu une nomination contestée.",
+    "new_title": "NOMINATION"
+  },
+  {
+    "scenario_id": "033",
+    "ord": 3,
+    "cycle": 1,
+    "title": "AGENDA PRIVÉ",
+    "original_text": "Des rendez-vous montrent que le conseiller familial, sans fonction officielle majeure, était consulté avant plusieurs décisions.",
+    "new_text": "Le conseiller familial était consulté avant plusieurs décisions, malgré sa fonction officielle limitée.",
+    "new_title": "AGENDA PRIVÉ"
+  },
+  {
+    "scenario_id": "033",
+    "ord": 4,
+    "cycle": 2,
+    "title": "LIEN DE SANG",
+    "original_text": "Un proche non impliqué est accusé uniquement en raison de sa parenté.",
+    "new_text": "Un proche est accusé seulement à cause de son lien avec la famille.",
+    "new_title": "LIEN DE SANG"
+  },
+  {
+    "scenario_id": "033",
+    "ord": 5,
+    "cycle": 2,
+    "title": "PROTECTION",
+    "original_text": "Le ministre bloque une enquête administrative sur un chef de service.",
+    "new_text": "Le ministre a bloqué une enquête sur un chef de service.",
+    "new_title": "PROTECTION"
+  },
+  {
+    "scenario_id": "033",
+    "ord": 6,
+    "cycle": 3,
+    "title": "POUVOIR RÉEL",
+    "original_text": "Plusieurs décisions sensibles ont suivi des réunions avec le conseiller familial, malgré son titre officiel limité.",
+    "new_text": "Plusieurs décisions sensibles ont suivi des réunions avec le conseiller familial, malgré son faible titre officiel.",
+    "new_title": "POUVOIR RÉEL"
+  },
+  {
+    "scenario_id": "034",
+    "ord": 1,
+    "cycle": 1,
+    "title": "CARNET DE SURNOMS",
+    "original_text": "Un carnet relie les trois surnoms à des fonctions variables selon les dossiers.",
+    "new_text": "Dans les dossiers, les trois surnoms ne désignent pas toujours les mêmes fonctions.",
+    "new_title": "CARNET DE SURNOMS"
+  },
+  {
+    "scenario_id": "034",
+    "ord": 2,
+    "cycle": 1,
+    "title": "TRANSFERT",
+    "original_text": "Le Notaire valide un transfert après réception d’un avertissement.",
+    "new_text": "Le Notaire a approuvé un transfert après avoir reçu un avertissement.",
+    "new_title": "TRANSFERT"
+  },
+  {
+    "scenario_id": "034",
+    "ord": 3,
+    "cycle": 1,
+    "title": "INFORMATION BLOQUÉE",
+    "original_text": "La Tour reçoit une alerte crédible mais ne la transmet pas avant une opération.",
+    "new_text": "La Tour a reçu une alerte crédible, mais ne l’a pas transmise avant une opération.",
+    "new_title": "INFORMATION BLOQUÉE"
+  },
+  {
+    "scenario_id": "034",
+    "ord": 4,
+    "cycle": 2,
+    "title": "FAUSSE HIÉRARCHIE",
+    "original_text": "Un document interne utilise un surnom prestigieux pour un acteur sans pouvoir décisionnel.",
+    "new_text": "Un document donne un surnom important à quelqu’un qui n’avait pas le pouvoir de décider.",
+    "new_title": "FAUSSE HIÉRARCHIE"
+  },
+  {
+    "scenario_id": "034",
+    "ord": 5,
+    "cycle": 2,
+    "title": "ACCÈS AU SOMMET",
+    "original_text": "L’Héritier apparaît dans plusieurs réunions précédant des décisions majeures.",
+    "new_text": "L’Héritier apparaît dans plusieurs réunions avant des décisions importantes.",
+    "new_title": "ACCÈS AU SOMMET"
+  },
+  {
+    "scenario_id": "034",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RECOMMANDATION",
+    "original_text": "Une note relie directement l’Héritier à la recommandation d’une opération criminelle.",
+    "new_text": "Une note indique que l’Héritier a recommandé une opération criminelle.",
+    "new_title": "RECOMMANDATION"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 1,
+    "cycle": 1,
+    "title": "REGISTRE IMPOSSIBLE",
+    "original_text": "Deux entrées administratives attribuées à M-17 ont été créées après les événements qu’elles sont censées enregistrer.",
+    "new_text": "Deux lignes du dossier M-17 ont été écrites après les événements qu’elles sont censées décrire.",
+    "new_title": "REGISTRE IMPOSSIBLE"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 2,
+    "cycle": 1,
+    "title": "RENOUVELLEMENT EXCEPTIONNEL",
+    "original_text": "L’identité a été renouvelée plusieurs fois sans contrôle biométrique complet, sur dérogation interne.",
+    "new_text": "L’identité M-17 a été renouvelée plusieurs fois sans contrôle biométrique complet.",
+    "new_title": "RENOUVELLEMENT EXCEPTIONNEL"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 3,
+    "cycle": 2,
+    "title": "ALERTE RETIRÉE",
+    "original_text": "Un brouillon d’alerte interne existe, puis disparaît du circuit officiel le lendemain.",
+    "new_text": "Une alerte interne a été rédigée, puis retirée du dossier officiel le lendemain.",
+    "new_title": "ALERTE RETIRÉE"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DERNIER DÉPLACEMENT",
+    "original_text": "Un véhicule lié au relais logistique de CERBÈRES transporte M-17 quelques heures avant sa mort.",
+    "new_text": "Un véhicule lié au relais logistique de CERBÈRES transporte M-17 quelques heures avant sa mort.",
+    "new_title": "DERNIER DÉPLACEMENT"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 5,
+    "cycle": 2,
+    "title": "CELLULE NACRE",
+    "original_text": "Le nom de code NACRE apparaît dans trois dossiers liés à la même identité fantôme.",
+    "new_text": "Le nom NACRE figure dans trois dossiers liés à M-17.",
+    "new_title": "CELLULE NACRE"
+  },
+  {
+    "scenario_id": "035",
+    "ord": 6,
+    "cycle": 3,
+    "title": "COUPURE DE LIEN",
+    "original_text": "Un message interne ordonne de couper tout contact avec M-17 avant que sa mort ne soit connue publiquement.",
+    "new_text": "Un ordre interne demande de ne plus contacter M-17 avant même l’annonce de sa mort.",
+    "new_title": "COUPURE DE LIEN"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 1,
+    "cycle": 1,
+    "title": "SOURCE NON AUTHENTIFIÉE",
+    "original_text": "La première attribution étrangère repose sur un canal qui n’a jamais été authentifié.",
+    "new_text": "La première accusation visant l’étranger repose sur une source qui n’a pas été vérifiée.",
+    "new_title": "SOURCE NON AUTHENTIFIÉE"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 2,
+    "cycle": 1,
+    "title": "COULOIR VIDE",
+    "original_text": "Un couloir logistique secondaire reste sans surveillance pendant onze minutes après 04:17.",
+    "new_text": "Un couloir de service est resté sans surveillance pendant onze minutes après 04 h 17.",
+    "new_title": "COULOIR VIDE"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 3,
+    "cycle": 2,
+    "title": "VÉHICULE EXTÉRIEUR",
+    "original_text": "Une caméra éloignée montre un véhicule quitter le périmètre pendant la diversion.",
+    "new_text": "Une caméra montre un véhicule quitter le site pendant la diversion.",
+    "new_title": "VÉHICULE EXTÉRIEUR"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 4,
+    "cycle": 2,
+    "title": "CONTENEUR SCELLÉ",
+    "original_text": "Le manifeste officiel ne mentionne aucun conteneur correspondant à celui vu sur la caméra.",
+    "new_text": "Aucun document de transport officiel ne mentionne le conteneur vu sur la caméra.",
+    "new_title": "CONTENEUR SCELLÉ"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 5,
+    "cycle": 2,
+    "title": "FAUX DRAPEAU",
+    "original_text": "Plusieurs éléments de communication ont été préparés avant que l’identité des auteurs puisse être établie.",
+    "new_text": "Des messages étaient prêts avant même que les auteurs de l’attaque soient identifiés.",
+    "new_title": "MESSAGES PRÉPARÉS TROP TÔT"
+  },
+  {
+    "scenario_id": "036",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RELAIS CERBÈRES",
+    "original_text": "L’intermédiaire CERBÈRES présent sur le site est relié à une identité déjà utilisée dans le dossier M-17.",
+    "new_text": "Un intermédiaire de CERBÈRES est lié à une identité déjà apparue dans le dossier M-17.",
+    "new_title": "RELAIS CERBÈRES"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 1,
+    "cycle": 1,
+    "title": "PRÉ-ENTRETIEN",
+    "original_text": "La source a vu plusieurs photographies avant le début de l’enregistrement officiel.",
+    "new_text": "La source avait déjà vu plusieurs photos avant son entretien officiel.",
+    "new_title": "PRÉ-ENTRETIEN"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 2,
+    "cycle": 1,
+    "title": "TRANSCRIPTION NETTOYÉE",
+    "original_text": "Une comparaison de fichiers montre qu’une contradiction a disparu de la version finale.",
+    "new_text": "Une contradiction présente dans la première transcription a disparu de la version finale.",
+    "new_title": "TRANSCRIPTION NETTOYÉE"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 3,
+    "cycle": 2,
+    "title": "ORPHÉE ANTÉRIEUR",
+    "original_text": "Une note datée d’avant l’arrestation contient déjà le mot ORPHÉE.",
+    "new_text": "Une note mentionne ORPHÉE avant même l’arrestation de la source.",
+    "new_title": "ORPHÉE ANTÉRIEUR"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 4,
+    "cycle": 2,
+    "title": "NOM IMPOSSIBLE",
+    "original_text": "L’un des noms fournis par la source ne correspond à aucune personne vérifiable.",
+    "new_text": "Un des noms cités par la source ne correspond à personne de vérifiable.",
+    "new_title": "NOM IMPOSSIBLE"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 5,
+    "cycle": 2,
+    "title": "DÉTAIL INDÉPENDANT",
+    "original_text": "Un détail livré pendant l’entretien est confirmé par une source que l’équipe d’interrogation ne possédait pas.",
+    "new_text": "Une autre source confirme un détail que les enquêteurs ignoraient.",
+    "new_title": "DÉTAIL INDÉPENDANT"
+  },
+  {
+    "scenario_id": "037",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RELAIS SUPÉRIEUR",
+    "original_text": "Le recoupement final confirme que la source connaissait bien un relais supérieur de CERBÈRES, sans valider tout son récit.",
+    "new_text": "La source connaissait bien un responsable de CERBÈRES, mais cela ne valide pas tout son récit.",
+    "new_title": "RELAIS SUPÉRIEUR"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ORDRE DE DISSOLUTION",
+    "original_text": "Un ordre officiel exigeait la fermeture d’ORPHÉE plusieurs années plus tôt.",
+    "new_text": "Un ordre officiel exigeait la fermeture d’ORPHÉE depuis plusieurs années.",
+    "new_title": "ORDRE DE DISSOLUTION"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DÉROGATION HORS INVENTAIRE",
+    "original_text": "Une dérogation signée maintient certains moyens sans les faire apparaître dans l’inventaire central.",
+    "new_text": "Une autorisation a permis de garder des ressources hors du registre officiel.",
+    "new_title": "DÉROGATION HORS INVENTAIRE"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 3,
+    "cycle": 2,
+    "title": "NŒUDS RÉACTIVÉS",
+    "original_text": "Plusieurs relais déjà identifiés recommencent à communiquer au même moment pendant la crise de 04:17.",
+    "new_text": "Pendant la crise de 04 h 17, plusieurs contacts du réseau se remettent à communiquer.",
+    "new_title": "NŒUDS RÉACTIVÉS"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 4,
+    "cycle": 2,
+    "title": "LISTE DÉTRUITE",
+    "original_text": "L’opérateur chargé des liaisons de CERBÈRES détruit une liste de contacts après la mort de M-17.",
+    "new_text": "L’opérateur de CERBÈRES a détruit une liste de contacts après la mort de M-17.",
+    "new_title": "LISTE DÉTRUITE"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 5,
+    "cycle": 2,
+    "title": "OBJECTIF ORPHÉE",
+    "original_text": "ORPHÉE est décrit dans une note ancienne comme la protection d’un actif stratégique déplacé hors inventaire.",
+    "new_text": "Une vieille note affirme qu’ORPHÉE protégeait une ressource stratégique absente des inventaires.",
+    "new_title": "OBJECTIF ORPHÉE"
+  },
+  {
+    "scenario_id": "038",
+    "ord": 6,
+    "cycle": 3,
+    "title": "CONTINUITÉ VOLONTAIRE",
+    "original_text": "La coordination a choisi de maintenir le réseau après sa fermeture officielle, avec couverture institutionnelle partielle.",
+    "new_text": "Des responsables ont maintenu ORPHÉE après sa fermeture, avec l’aide de certains services officiels.",
+    "new_title": "CONTINUITÉ VOLONTAIRE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 1,
+    "cycle": 1,
+    "title": "CHAÎNE DE VALIDATION",
+    "original_text": "Plusieurs décisions sur ORPHÉE exigeaient la validation conjointe de personnes appartenant à CERBÈRES et à l’appareil d’État.",
+    "new_text": "Des décisions sur ORPHÉE devaient être approuvées à la fois par CERBÈRES et des responsables de l’État.",
+    "new_title": "CHAÎNE DE VALIDATION"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 2,
+    "cycle": 1,
+    "title": "TRANSFERT IRRÉGULIER",
+    "original_text": "Le contrôle du site change sans document officiel pendant la crise.",
+    "new_text": "Pendant la crise, le contrôle du site a été transféré sans document officiel.",
+    "new_title": "TRANSFERT IRRÉGULIER"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 3,
+    "cycle": 2,
+    "title": "TENTATIVE BLOQUÉE",
+    "original_text": "Une demande officielle de reprise d’ORPHÉE a été bloquée par le relais politique lié à CERBÈRES.",
+    "new_text": "Le relais politique de CERBÈRES a bloqué une demande officielle de reprise d’ORPHÉE.",
+    "new_title": "TENTATIVE BLOQUÉE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 4,
+    "cycle": 2,
+    "title": "OPTION DE CRISE",
+    "original_text": "Le coordinateur d’ORPHÉE a préparé une solution politique de dernier recours, sans ordre légal confirmé.",
+    "new_text": "Le coordinateur d’ORPHÉE a préparé une solution politique d’urgence sans autorisation légale connue.",
+    "new_title": "OPTION DE CRISE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 5,
+    "cycle": 2,
+    "title": "GARDE DU SITE",
+    "original_text": "Aucune pièce ne prouve que le responsable de la sécurité du site connaissait l’objectif complet d’ORPHÉE au moment du transfert.",
+    "new_text": "Rien ne prouve que le chef de la sécurité connaissait tout l’objectif d’ORPHÉE lors du transfert.",
+    "new_title": "GARDE DU SITE"
+  },
+  {
+    "scenario_id": "039",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RÉSEAU TOUJOURS ACTIF",
+    "original_text": "Les archives montrent que des responsables liés à ORPHÉE continuent de coordonner des actions après sa fermeture officielle.",
+    "new_text": "Des responsables ont continué à coordonner des actions autour d’ORPHÉE après sa fermeture.",
+    "new_title": "RÉSEAU TOUJOURS ACTIF"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 1,
+    "cycle": 1,
+    "title": "RENDEZ-VOUS SECRET",
+    "original_text": "L’Oyabun a rencontré le Wakagashira Arakida une semaine avant sa mort sans en informer son propre clan.",
+    "new_text": "L’Oyabun a rencontré le Wakagashira Arakida en secret, une semaine avant sa mort.",
+    "new_title": "RENDEZ-VOUS SECRET"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DOSSIER PARTIEL",
+    "original_text": "Le Wakagashira Kurokawa possède une copie incomplète d’un dossier préparé par l’Oyabun.",
+    "new_text": "Le Wakagashira Kurokawa détient une copie incomplète d’un dossier préparé par l’Oyabun.",
+    "new_title": "DOSSIER PARTIEL"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 3,
+    "cycle": 2,
+    "title": "VÉHICULE OFFICIEUX",
+    "original_text": "Une photographie montre un véhicule utilisé par un service de police près d’un rendez-vous Kurokawa antérieur.",
+    "new_text": "Une photo montre une voiture utilisée par la police près d’un ancien rendez-vous Kurokawa.",
+    "new_title": "VÉHICULE OFFICIEUX"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DETTE ANCIENNE",
+    "original_text": "Le Kobun Kurokawa a bénéficié plusieurs années plus tôt d’une intervention extérieure jamais expliquée au clan.",
+    "new_text": "Le Kobun Kurokawa avait reçu une aide extérieure dans une ancienne affaire. Le clan ne savait pas de qui.",
+    "new_title": "DETTE ANCIENNE"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 5,
+    "cycle": 2,
+    "title": "PRÉSENCE PROCHE",
+    "original_text": "Des données de déplacement placent le Kobun Kurokawa près du lieu du meurtre avant l’alerte officielle.",
+    "new_text": "Le Kobun Kurokawa se trouvait près du lieu du meurtre avant l’alerte officielle.",
+    "new_title": "PRÉSENCE PROCHE"
+  },
+  {
+    "scenario_id": "040",
+    "ord": 6,
+    "cycle": 3,
+    "title": "RUPTURE PRÉPARÉE",
+    "original_text": "Le dossier de l’Oyabun montre qu’il préparait la fin d’une relation ancienne avec un relais institutionnel.",
+    "new_text": "L’Oyabun voulait rompre une ancienne relation secrète avec un contact officiel.",
+    "new_title": "RUPTURE PRÉPARÉE"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 1,
+    "cycle": 1,
+    "title": "AFFAIRE CLASSÉE",
+    "original_text": "Une ancienne procédure visant le Kobun Kurokawa s’est terminée brutalement après une intervention inexpliquée.",
+    "new_text": "Une enquête visant le Kobun Kurokawa s’est arrêtée après une intervention inexpliquée.",
+    "new_title": "AFFAIRE CLASSÉE"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 2,
+    "cycle": 1,
+    "title": "RAPPEL DE FAVEUR",
+    "original_text": "Un message reçu avant le meurtre utilise une formule connue entre le Kobun et son ancien protecteur.",
+    "new_text": "Avant le meurtre, le Kobun Kurokawa reçoit un message avec une formule connue de son ancien protecteur.",
+    "new_title": "RAPPEL DE FAVEUR"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 3,
+    "cycle": 2,
+    "title": "RELAIS IDENTIFIÉ",
+    "original_text": "Le véhicule officieux est relié à un relais précis de la police, sans prouver à lui seul un ordre de meurtre.",
+    "new_text": "Une voiture utilisée par la police est reliée à un contact précis. Aucun ordre de meurtre n’est prouvé.",
+    "new_title": "RELAIS IDENTIFIÉ"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 4,
+    "cycle": 2,
+    "title": "DETTE COMMERCIALE",
+    "original_text": "Les deux Wakagashira ont eux-mêmes maintenu une obligation financière discrète entre clans rivaux.",
+    "new_text": "Les deux Wakagashira avaient gardé une dette d’argent secrète entre leurs clans.",
+    "new_title": "DETTE COMMERCIALE"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 5,
+    "cycle": 2,
+    "title": "NOTE DE L’OYABUN",
+    "original_text": "L’Oyabun considérait la dette du Kobun comme un risque pour l’indépendance du clan.",
+    "new_text": "L’Oyabun pensait que la dette du Kobun mettait l’indépendance de son clan en danger.",
+    "new_title": "NOTE DE L’OYABUN"
+  },
+  {
+    "scenario_id": "041",
+    "ord": 6,
+    "cycle": 3,
+    "title": "GIRI",
+    "original_text": "Un message rappelant une ancienne faveur a été reçu peu avant le meurtre de l’Oyabun. Un relais institutionnel est associé à cet échange.",
+    "new_text": "Le Kobun Kurokawa reçoit un rappel d’une ancienne faveur peu avant le meurtre. Un contact policier y est lié.",
+    "new_title": "GIRI"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 1,
+    "cycle": 1,
+    "title": "INFORMATION RÉSERVÉE",
+    "original_text": "L’horaire donné aux clans provient d’un dossier de police non public.",
+    "new_text": "Les clans ont reçu un horaire provenant d’un dossier de police non public.",
+    "new_title": "INFORMATION RÉSERVÉE"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 2,
+    "cycle": 1,
+    "title": "ÉCHANGE OFFICIEUX",
+    "original_text": "Le Wakagashira Kurokawa a accepté une action en échange d’une information sur le meurtre.",
+    "new_text": "Le Wakagashira Kurokawa a promis d’agir en échange d’une information sur le meurtre.",
+    "new_title": "ÉCHANGE OFFICIEUX"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 3,
+    "cycle": 2,
+    "title": "COPIE PARTIELLE",
+    "original_text": "Le Wakagashira Arakida a fait circuler une partie des documents vers un contact politique.",
+    "new_text": "Le Wakagashira Arakida a envoyé une partie des documents à un contact politique.",
+    "new_title": "COPIE PARTIELLE"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 4,
+    "cycle": 2,
+    "title": "AVERTISSEMENT",
+    "original_text": "Le Kobun Kurokawa a prévenu un relais policier que son clan commençait à comprendre la chaîne.",
+    "new_text": "Le Kobun Kurokawa a prévenu un policier que son clan commençait à comprendre l’affaire.",
+    "new_title": "AVERTISSEMENT"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 5,
+    "cycle": 2,
+    "title": "ENREGISTREMENT",
+    "original_text": "Une conversation montre que le relais demande des résultats sans apparaître dans la procédure.",
+    "new_text": "Un enregistrement montre qu’un policier demande des résultats sans passer par la procédure officielle.",
+    "new_title": "ENREGISTREMENT"
+  },
+  {
+    "scenario_id": "042",
+    "ord": 6,
+    "cycle": 3,
+    "title": "DEMANDES HORS PROCÉDURE",
+    "original_text": "Des demandes adressées aux clans proviennent d’un contact policier, mais aucune procédure officielle ne les autorise.",
+    "new_text": "Un policier a demandé des actions aux clans sans passer par la procédure officielle.",
+    "new_title": "DEMANDES HORS PROCÉDURE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 1,
+    "cycle": 1,
+    "title": "ASSURANCE DE COUVERTURE",
+    "original_text": "Le Kobun a reçu l’assurance qu’une première piste orienterait l’enquête vers Arakida.",
+    "new_text": "Le Kobun Kurokawa a reçu la promesse que l’enquête viserait d’abord Arakida.",
+    "new_title": "ASSURANCE DE COUVERTURE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 2,
+    "cycle": 1,
+    "title": "RIPOSTE SUSPENDUE",
+    "original_text": "Le Wakagashira Arakida avait préparé une riposte après le meurtre, puis l’a stoppée avant exécution.",
+    "new_text": "Le Wakagashira Arakida avait préparé une riposte après le meurtre, puis l’a arrêtée.",
+    "new_title": "RIPOSTE SUSPENDUE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 3,
+    "cycle": 2,
+    "title": "COPIE EXTERNE",
+    "original_text": "Le Kobun Arakida a placé une copie de son enregistrement hors du contrôle des clans et de la police.",
+    "new_text": "Le Kobun Arakida a mis une copie de son enregistrement hors de portée des clans et de la police.",
+    "new_title": "COPIE EXTERNE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 4,
+    "cycle": 2,
+    "title": "CHRONOLOGIE DU RELAIS",
+    "original_text": "Le relais policier contacte le Kobun avant le meurtre et reçoit une confirmation après.",
+    "new_text": "Un policier a contacté le Kobun Kurokawa avant le meurtre et a reçu une confirmation après.",
+    "new_title": "CHRONOLOGIE DU RELAIS"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 5,
+    "cycle": 2,
+    "title": "COOPÉRATION PRÉPARÉE",
+    "original_text": "Des éléments montrent que la cellule de coopération police-clans était prête avant l’annonce publique du meurtre.",
+    "new_text": "La police avait préparé sa coopération avec les clans avant l’annonce officielle de la mort.",
+    "new_title": "COOPÉRATION PRÉPARÉE"
+  },
+  {
+    "scenario_id": "043",
+    "ord": 6,
+    "cycle": 3,
+    "title": "UNE CHRONOLOGIE TROUBLANTE",
+    "original_text": "Les horaires relient un rappel de faveur, un contact policier et une version préparée de l’enquête. Les rôles exacts restent contestés.",
+    "new_text": "Des contacts policiers ont eu lieu avant le meurtre. Une version des faits était prête très vite après.",
+    "new_title": "CONTACTS AVANT LE MEURTRE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 1,
+    "cycle": 1,
+    "title": "VOLONTÉ DE RUPTURE",
+    "original_text": "Le dossier complet confirme que l’Oyabun préparait la fin de la relation clandestine avec le relais policier.",
+    "new_text": "L’Oyabun voulait mettre fin à ses contacts secrets avec un policier.",
+    "new_title": "VOLONTÉ DE RUPTURE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 2,
+    "cycle": 1,
+    "title": "DERNIER MESSAGE",
+    "original_text": "Le Kobun Kurokawa a conservé un message du relais reçu avant le meurtre qui rappelle explicitement l’ancienne faveur.",
+    "new_text": "Avant le meurtre, le Kobun Kurokawa reçoit un message lui rappelant une ancienne faveur d’un policier.",
+    "new_title": "DERNIER MESSAGE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 3,
+    "cycle": 2,
+    "title": "VERSION PUBLIQUE",
+    "original_text": "Le Wakagashira Kurokawa a préparé une version qui isole le Kobun et minimise le rôle policier.",
+    "new_text": "Le Wakagashira Kurokawa a préparé un récit qui accuse le Kobun et minimise le rôle de la police.",
+    "new_title": "VERSION PUBLIQUE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 4,
+    "cycle": 2,
+    "title": "COPIE HORS CONTRÔLE",
+    "original_text": "La copie extérieure de l’enregistrement ne peut plus être garantie comme récupérable ou supprimable.",
+    "new_text": "Une copie de l’enregistrement a échappé aux clans et à la police. On ignore si elle peut être récupérée.",
+    "new_title": "COPIE HORS CONTRÔLE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 5,
+    "cycle": 2,
+    "title": "PRÉPARATION POLICIÈRE",
+    "original_text": "La cellule de coopération était opérationnelle avant que la mort ne soit annoncée au public.",
+    "new_text": "La police avait préparé sa coopération avec les clans avant l’annonce de la mort de l’Oyabun.",
+    "new_title": "PRÉPARATION POLICIÈRE"
+  },
+  {
+    "scenario_id": "044",
+    "ord": 6,
+    "cycle": 3,
+    "title": "TROIS TRACES À RECOUPER",
+    "original_text": "Avant le meurtre, un message rappelle une dette ancienne. Après, une version incriminant Arakida est préparée. Des contacts policiers précèdent l’annonce publique.",
+    "new_text": "Avant le meurtre, un policier contacte le Kobun Kurokawa. Après, une version accusant Arakida est préparée.",
+    "new_title": "APPEL AVANT LE MEURTRE"
+  }
+]
