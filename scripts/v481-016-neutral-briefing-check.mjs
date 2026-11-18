@@ -11,7 +11,9 @@ assert(!scenario.includes('avant le geste fatal'),'016 intro contradicts variant
 const publicStart=app.indexOf('const PUBLIC_LOBBY_SUMMARIES = {');
 const publicEnd=app.indexOf('\n};',publicStart);
 assert(publicStart>=0&&publicEnd>publicStart,'Public canonical briefing block missing');
-const intro=app.slice(publicStart,publicEnd).match(/'016':'([^']*)',\s*'017':/);
-assert(intro&&/L’enregistrement s’arrête avant le décès|Le film ne montre pas les circonstances de son décès/.test(intro[1]),'016 cinematic briefing unsupported');
-assert(!/avant le meurtre|geste fatal/i.test(intro[1]),'016 briefing leaks a homicide theory');
+const introStart=app.indexOf("'016':",publicStart),introEnd=app.indexOf("'017':",introStart);
+assert(introStart>publicStart&&introEnd>introStart&&introEnd<publicEnd,'016 cinematic briefing key missing');
+const intro=app.slice(introStart,introEnd);
+assert(/L’enregistrement s’arrête avant le décès|Le film ne montre pas les circonstances de son décès/.test(intro),'016 cinematic briefing unsupported');
+assert(!/avant le meurtre|geste fatal/i.test(intro),'016 briefing leaks a homicide theory');
 console.log('016 canonical introduction remains neutral across three endings.');
