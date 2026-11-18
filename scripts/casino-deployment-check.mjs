@@ -89,9 +89,9 @@ if(!omertaScriptTag){
   }
   assert.equal(remoteStatus,200,'The published Omertà chunk is inaccessible');
   assert.equal(digest(remote),desiredDigest,'The live Omertà chunk does not match the built release');
-  assert(remote.includes('Chaque vendredi, des commerçants du quartier remettent leur contribution'),
+  assert(remote.includes('Brooklyn, 2006. Chaque vendredi, des commerçants paient les hommes du clan'),
     'Certified Omertà 021 introduction missing from deployed chunk');
-  assert(remote.includes('Vittorio Santoro dirige une famille dont l’autorité repose sur des règles'),
+  assert(remote.includes('Jersey City, 2006. Un entrepreneur qui refusait de payer a été grièvement blessé'),
     'Certified Omertà 025 introduction missing from deployed chunk');
   console.log('Deployed Omertà chunk verified:',chunk.file,'SHA-256',digest(remote).slice(0,16));
 }
