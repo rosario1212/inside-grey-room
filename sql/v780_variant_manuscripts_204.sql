@@ -218,7 +218,7 @@ WITH edits (scenario_id,variant_id,field,ord,old_title,old_text,new_title,new_te
   CASE WHEN k.key ~ '_runtime_trames$' AND jsonb_typeof(k.payload)='array' THEN k.payload ELSE '[]'::jsonb END
  ) WITH ORDINALITY t(item,ord)
  LEFT JOIN edits ed ON ed.scenario_id=m.scenario_id AND ed.variant_id=m.variant_id AND
- ed.field=k.key AND ed.ord=t.ord AND ed.old_title=t.item->>'title' AND ed.old_text=t.item->>'text'
+ ed.field=k.key AND ed.ord::integer=t.ord::integer AND ed.old_title=t.item->>'title' AND ed.old_text=t.item->>'text'
  WHERE m.scenario_id BETWEEN '001' AND '020' AND k.key~'_runtime_trames$'
  GROUP BY m.scenario_id,m.variant_id,k.key
 ), revised_manuscripts AS (
