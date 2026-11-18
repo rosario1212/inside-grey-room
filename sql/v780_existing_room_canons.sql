@@ -207,7 +207,7 @@ WITH edits (scenario_id,variant_id,field,ord,old_title,old_text,new_title,new_te
 ('020', 'C', 'v600_runtime_trames', '5', 'LES VERSIONS DU RAPPORT', 'Une copie indépendante du programme de régie, croisée avec les traces du foyer, établit qu''un effet scénique autorisé tardivement a provoqué accidentellement l''incendie. L''activiste n''a pas participé à son activation.', 'LES VERSIONS DU RAPPORT', 'Une copie du programme indique qu’un effet de scène a été autorisé tard. L’expertise le relie à l’incendie.'),
 ('020', 'C', 'v600_runtime_trames', '6', 'DEUX CHRONOLOGIES À RECROISER', 'Le journal de réception, l''avis technique urgent et les communications d''ordre montrent que la coordination a différé l''annonce générale pour maintenir le passage d''une délégation VIP. Ce choix suit la compréhension du danger.', 'ALARME RETARDÉE POUR LES VIP', 'Des messages montrent que l’alarme a été repoussée pendant le passage d’une délégation VIP.')
 ), revised_fields AS (
- SELECT m.scenario_id,m.variant_id,k.key,
+ SELECT m.room_code,m.scenario_id,m.variant_id,k.key,
   jsonb_agg(CASE WHEN ed.scenario_id IS NOT NULL
    THEN jsonb_set(jsonb_set(t.item,'{text}',to_jsonb(ed.new_text),true),'{title}',to_jsonb(ed.new_title),true)
    ELSE t.item END ORDER BY t.ord) updated_array,
@@ -220,17 +220,17 @@ WITH edits (scenario_id,variant_id,field,ord,old_title,old_text,new_title,new_te
  LEFT JOIN edits ed ON ed.scenario_id=m.scenario_id AND ed.variant_id=m.variant_id AND
  ed.field=k.key AND ed.ord=t.ord AND ed.old_title=t.item->>'title' AND ed.old_text=t.item->>'text'
  WHERE m.scenario_id BETWEEN '001' AND '020' AND k.key~'_runtime_trames$'
- GROUP BY m.scenario_id,m.variant_id,k.key
+ GROUP BY m.room_code,m.scenario_id,m.variant_id,k.key
 ), revised_manuscripts AS (
- SELECT scenario_id,variant_id,jsonb_object_agg(key,updated_array) new_fields,sum(matched) changed_count
- FROM revised_fields GROUP BY scenario_id,variant_id
+ SELECT room_code,scenario_id,variant_id,jsonb_object_agg(key,updated_array) new_fields,sum(matched) changed_count
+ FROM revised_fields GROUP BY room_code,scenario_id,variant_id
 ), ready AS (
- SELECT m.scenario_id,m.variant_id,b.changed_count,(m.manuscript||b.new_fields) new_manuscript
+ SELECT m.room_code,m.scenario_id,m.variant_id,b.changed_count,(m.manuscript||b.new_fields) new_manuscript
  FROM igr_private.igr_v99_room_canons m JOIN revised_manuscripts b
- ON b.scenario_id=m.scenario_id AND b.variant_id=m.variant_id
+ ON b.room_code=m.room_code AND b.scenario_id=m.scenario_id AND b.variant_id=m.variant_id
  WHERE b.changed_count>0
 )
 UPDATE igr_private.igr_v99_room_canons m SET manuscript=r.new_manuscript,
  manuscript_md5=md5(r.new_manuscript::text)
-FROM ready r WHERE m.scenario_id=r.scenario_id AND m.variant_id=r.variant_id
-RETURNING m.scenario_id,m.variant_id,r.changed_count;
+FROM ready r WHERE m.room_code=r.room_code AND m.scenario_id=r.scenario_id AND m.variant_id=r.variant_id
+RETURNING m.room_code,m.scenario_id,m.variant_id,r.changed_count;
