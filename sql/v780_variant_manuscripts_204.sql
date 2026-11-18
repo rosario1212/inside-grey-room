@@ -231,6 +231,6 @@ WITH edits (scenario_id,variant_id,field,ord,old_title,old_text,new_title,new_te
  WHERE b.changed_count>0
 )
 UPDATE igr_private.igr_v99_variant_manuscripts m SET manuscript=r.new_manuscript,
- content_md5=md5(r.new_manuscript::text),updated_at=now()
+ updated_at=now()
 FROM ready r WHERE m.scenario_id=r.scenario_id AND m.variant_id=r.variant_id
 RETURNING m.scenario_id,m.variant_id,r.changed_count;
