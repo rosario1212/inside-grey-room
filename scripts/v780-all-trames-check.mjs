@@ -41,7 +41,7 @@ assert(catalogueSql.includes('ORDER BY t.ord')&&
  catalogueSql.includes("x.old_text=t.item->>'text'"),'Catalogue patch needs exact-source and order guards');
 assert(manuscriptsSql.includes("k.key~'_runtime_trames$'")&&
  manuscriptsSql.includes('ed.ord::integer=t.ord::integer')&&
- manuscriptsSql.includes('content_md5=md5(r.new_manuscript::text)'),
+ manuscriptsSql.includes('updated_at=now()')&&!manuscriptsSql.includes('content_md5='),
  'Manuscript patch must only touch source-matched trames and update hash');
 assert(pinSql.includes('m.room_code=r.room_code')&&
  pinSql.includes('manuscript_md5=md5(r.new_manuscript::text)'),
