@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'screen-polish-v73.css'
+      - 'styles-v11.css'
+      - 'private-card-readability-v773.css'
+      - 'dlc-suite-v12-37.js'
       - 'catalogue-navigation-v731.css'
       - 'scripts/catalogue-visual-v733-check.mjs'
       - 'narrative-dossier-v87.js'

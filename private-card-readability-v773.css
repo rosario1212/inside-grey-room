@@ -198,3 +198,16 @@ body #app .app .game-v11 > .phase-strip .phase-timer-box .phase-host-actions > b
     gap:2px!important;
   }
 }
+
+
+/* v812: catalogue regime footer previously retained 8px of padding despite
+ * the 320px compact margin override. Remove that invisible spacer, not the
+ * badge or the text, to keep the approved 242px poster height unchanged. */
+@media(max-width:359px){
+  body #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact > .tag-row{
+    padding:0!important;
+    margin:3px 0 0!important;
+  }
+}

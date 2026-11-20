@@ -211,14 +211,29 @@ try{
       {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 032',title:'LES ARCHIVES DU PALAIS',description:'Après la chute du régime, des responsables ont disparu. La Grey Room reconstitue les registres et les ordres.',players:'6–8 JOUEURS'},
       {klass:'regime-scenario',label:'LE RÉGIME · DOSSIER 034',title:'LES NOMS QU’ILS PORTAIENT',description:'Le président déchu et son gendre, chef de la sécurité, tentent d’échapper à la justice. Faux noms, refuges et derniers fidèles brouillent leur trace. Une arrestation peut intervenir très tôt, mais le verdict exige des preuves.',players:'6–9 JOUEURS'}
     ];
+    // The catalogue renders hand-written DLC pre-click hooks, not the full
+    // post-click synopsis. Test the REAL user-facing text across all families
+    // while retaining overflow, badge, font-size and no-truncation assertions.
+    const suiteSource=await read('dlc-suite-v12-37.js');
+    const teaserMarker='  const DLC_CARD_TEASERS=Object.freeze(';
+    const teaserAt=suiteSource.indexOf(teaserMarker);
+    assert(teaserAt>=0,'Published DLC pre-click teaser map missing');
+    const teaserFrom=teaserAt+teaserMarker.length;
+    const publicTeasers=JSON.parse(suiteSource.slice(teaserFrom,suiteSource.indexOf(');',teaserFrom))).fr;
+    assert(publicTeasers['032'].length>=60,'032 public teaser unexpectedly empty or too short');
     const codeStart=app.indexOf('function scenarioCardTeaser(raw,maxWords=30)');
     const codeEnd=app.indexOf('const ADVANCED_SCENARIO_IDS=',codeStart);
     const preview=vm.runInNewContext(app.slice(codeStart,codeEnd)+'; scenarioCardTeaser');
-    const cards=samples.map(sc=>'<article id="scenario-'+(sc.label.match(/\d{3}/)?.[0]||'000')+'" class="scenario scenario--art scenario--compact '+sc.klass+'">'+
+    const cards=samples.map(sc=>{
+      const id=sc.label.match(/\d{3}/)?.[0]||'000';
+      const description=sc.klass ? publicTeasers[id] : sc.description;
+      assert(description,'Published teaser missing for '+id);
+      return '<article id="scenario-'+id+'" class="scenario scenario--art scenario--compact '+sc.klass+'">'+
       '<div class="scenario-thumb compact"><img class="igr-poster-full" alt="Affiche du dossier" src=""></div>'+
       '<div class="scenario-body compact"><div class="scenario-id">'+sc.label+'</div><h3>'+sc.title+
-      '</h3><p class="igr-card-excerpt">'+preview(sc.description,30)+'</p><div class="tag-row">'+
-      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>');
+      '</h3><p class="igr-card-excerpt">'+preview(description,30)+'</p><div class="tag-row">'+
+      '<span class="tag">'+sc.players+'</span><span class="tag">DOSSIER</span></div></div></article>';
+    });
     const families=[
       ['scenario-panel-v10-13',''],
       ['omerta-dlc-section','omerta-list'],
