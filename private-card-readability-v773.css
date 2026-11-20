@@ -98,3 +98,32 @@
     padding:7px 4px!important;
   }
 }
+
+
+/* v804 visual QA and real mobile accessibility corrections.
+ * Preserve the approved editorial artwork; do not add new vignettes. */
+#app .game-v11 .phase-host-actions .phase-exit-btn{
+  box-sizing:border-box!important;
+  min-width:64px!important;
+  min-height:44px!important;
+  flex:0 0 auto!important;
+  touch-action:manipulation;
+}
+@media(max-width:359px){
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact:is(.omerta-scenario,.terror-scenario,.cartel-scenario,.regime-scenario){
+    --igr-card-copy:.75rem!important;
+    --igr-card-line:1.23!important;
+  }
+}
+/* On short portrait phones, keep the cinematic 852:1846 poster intact.
+ * Narrow black margins are preferable to cutting the doorway edges. */
+@media(max-width:700px) and (orientation:portrait) and (min-aspect-ratio:57/100){
+  #introGate.intro-gate-v18 .intro-poster-frame{
+    width:min(100vw,56.28svh)!important;
+    max-width:100vw!important;
+    left:50%!important;
+    right:auto!important;
+    transform:translateX(-50%)!important;
+  }
+}
