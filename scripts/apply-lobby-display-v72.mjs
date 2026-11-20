@@ -29,18 +29,6 @@ await copyFile(path.resolve(narrativeRuntime),path.join(target,narrativeRuntime)
 for(const asset of assets)await stat(path.join(target,asset));
 // The final client uses stable v87 URLs; fingerprint real mobile source bytes
 // to force installed PWAs to replace their service worker/cache on a UI fix.
-const regimeUiFingerprint=createHash('sha256')
- .update(await readFile(path.join(target,'app-v11.js')))
- .update(await readFile(path.join(target,'role-tree-polish-v12-29.js')))
- .update(await readFile(path.join(target,'lobby-ui-fix-v13.js')))
- .update(await readFile(path.join(target,'lobby-ui-fix-v13.css')))
- .update(await readFile(path.join(target,'dlc-suite-v12-37.js')))
- .update(await readFile(path.join(target,'mobile-ui-v28.css')))
- .update(await readFile(path.join(target,maitreLayout)))
- .update(await readFile(path.join(target,heritageUnified)))
- .update(await readFile(path.join(target,heritageJourney)))
- .update(await readFile(path.join(target,heritageJourneyStyle)))
- .digest('hex').slice(0,12);
 for(const url of posterUrls)await stat(path.join(target,url.split('?')[0].slice(1)));
 for(const page of ['index.html','en.html']){
   const file=path.join(target,page);
@@ -70,6 +58,20 @@ for(const page of ['index.html','en.html']){
 const appFile=path.join(target,'app-v11.js');
 const app=await readFile(appFile,'utf8');
 await writeFile(appFile,app.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,'/service-worker.js?v='+VERSION),'utf8');
+// Hash the FINAL built client bytes, after the service-worker URL rewrite,
+// so PWA cache and regression checks calculate the same fingerprint.
+const regimeUiFingerprint=createHash('sha256')
+ .update(await readFile(path.join(target,'app-v11.js')))
+ .update(await readFile(path.join(target,'role-tree-polish-v12-29.js')))
+ .update(await readFile(path.join(target,'lobby-ui-fix-v13.js')))
+ .update(await readFile(path.join(target,'lobby-ui-fix-v13.css')))
+ .update(await readFile(path.join(target,'dlc-suite-v12-37.js')))
+ .update(await readFile(path.join(target,'mobile-ui-v28.css')))
+ .update(await readFile(path.join(target,maitreLayout)))
+ .update(await readFile(path.join(target,heritageUnified)))
+ .update(await readFile(path.join(target,heritageJourney)))
+ .update(await readFile(path.join(target,heritageJourneyStyle)))
+ .digest('hex').slice(0,12);
 const swFile=path.join(target,'service-worker.js');
 try{
   let sw=await readFile(swFile,'utf8');
