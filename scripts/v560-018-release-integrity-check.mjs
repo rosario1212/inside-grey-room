@@ -15,7 +15,7 @@ const names=[
  '.github/workflows/cloudflare-production-deploy.yml'
 ];
 const [app,html,sw,core,actions,hooks,sync,inspector,check,deploy]=await Promise.all(names.map(get));
-const cache='v810-roster-role-stability-20261120-cards-spy-v786-20261120';
+const cache='v811-spy-status-v787-20261121';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+cache),'HTML cache version mismatch');
 assertPwaRevision(html,sw);
