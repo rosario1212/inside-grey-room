@@ -23,7 +23,7 @@ assert(db.includes("'016'"),'016 backend path absent');
 assert(expert.includes("r.scenario_id in (''003'',''009'',''016'')"),'016 forensic cycle guard missing');
 assert(expert.includes("THEN CONTINUE"),'future forensic catalog data must not appear');
 assert(!app.includes("variant_id==='B'"),'canon variant must not be exposed to frontend');
-const cache='santoro-display-audit-20261108';
+const cache='cards-spy-v786-20261120';
 assert(html.includes('app-v11.js?v='+cache),'016 source client cache missing');
 assertPwaRevision(html,sw);
 const omertaScript=html.match(/omerta-money-intel-v1\.js\?v=[^"']+/)?.[0];
