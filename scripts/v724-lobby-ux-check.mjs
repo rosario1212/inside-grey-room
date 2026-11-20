@@ -100,4 +100,42 @@ assert.deepEqual(calls,['manual:juge','random']);
 releaseRandom();await second;
 assert(!active.has('igr-role-selecting'));
 assert(mobile.includes('.role-choice-zone.igr-role-selecting'));
+// v811: role selection and a random draw are lobby updates, not navigation.
+const repaintHook=section(lobby,'  try{\n    const previous=renderLobby;','  // Only new/removed lobby mounts');
+let enhanced=0,observedHeight='';
+const viewport={
+ scrollY:575,innerHeight:810,
+ scrollTo(arg,y){this.scrollY=typeof arg==='object'?arg.top:y}
+};
+const lobbyNode={dataset:{igrScenarioId:'001'}};
+const appRoot={
+ style:{minHeight:''},
+ getBoundingClientRect(){return {height:1400}},
+ querySelector(selector){return selector==='.lobby-v11'?lobbyNode:null}
+};
+const scrollTest={
+ window:viewport,
+ document:{getElementById(id){return id==='app'?appRoot:null}},
+ STATE:{view:'lobby',sync:{room:{scenario_id:'001'}}},
+ renderLobby(){observedHeight=appRoot.style.minHeight;viewport.scrollY=0;return 'updated'},
+ enhanceLobby(){enhanced++},
+ console
+};
+vm.runInNewContext(repaintHook,scrollTest);
+assert.equal(scrollTest.renderLobby(),'updated');
+assert.equal(viewport.scrollY,575,'A role pick must preserve the exact Y even when the DOM resets to top');
+assert.equal(observedHeight,'1400px','The old document height is held during the re-render');
+assert.equal(appRoot.style.minHeight,'','The temporary height must be cleaned up');
+assert.equal(enhanced,1);
+viewport.scrollY=635;
+scrollTest.renderLobby();
+assert.equal(viewport.scrollY,635,'A random-role draw must not jump upwards');
+scrollTest.STATE.view='game';
+viewport.scrollY=720;
+scrollTest.renderLobby();
+assert.equal(viewport.scrollY,0,'Actual screen navigation must not inherit the lobby position');
+assert(!repaintHook.includes('scrollY+delta'),'No competing scroll anchoring in role updates');
+assert(app.includes('if(Number.isFinite(draft.scroll)&&Math.abs(window.scrollY-draft.scroll)>1)'),
+ 'Draft recovery must skip redundant scroll commands');
+
 console.log('PASS v724: dossier-specific role cards, stable Omerta controls, serialized role RPCs.');
