@@ -50,7 +50,7 @@ try{
    const sample=await page.evaluate(()=>{
     window.__sampling=false;
     const tops=window.__samples.map(x=>x[0]),scrolls=window.__samples.map(x=>x[1]);
-    return {top:Math.max(...tops)-Math.min(...tops),scroll:Math.max(...scrolls)-Math.min(...scrolls),role:document.querySelector('.role-choice-card.selected')?.dataset.roleId,frames:tops.length};
+    return {top:Math.max(...tops)-Math.min(...tops),scroll:Math.max(...scrolls)-Math.min(...scrolls),role:document.querySelector('.role-choice-zone .role-choice-card.selected[data-role-id]')?.dataset.roleId,frames:tops.length};
    });
    assert(after&&Math.abs(after.y-before.y)<=5,id+'/'+width+'/'+choice+' card jumped '+(after?.y-before.y)+'px');
    assert(sample.top<=5&&sample.scroll<=5,id+'/'+width+'/'+choice+' motion: '+JSON.stringify(sample));
