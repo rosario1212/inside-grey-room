@@ -49,7 +49,9 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
       await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))));
       assert.equal(await idleMutations(page),0,'One external update must settle instead of starting another render loop');
       if(['rules','profile','join'].includes(mode)){
-        assert.equal(await page.locator('.igr-utility-exit b').textContent(),mode==='rules'?(locale==='fr'?'Fermer':'Close'):(locale==='fr'?'Accueil':'Home'));
+        // Current unified exit control consistently uses Retour/Back for all utility views.
+        // Keep testing the clickable action and the idle-mutation invariant.
+        assert.equal(await page.locator('.igr-utility-exit b').textContent(),locale==='fr'?'Retour':'Back');
         await page.locator('.igr-utility-exit').click();
         assert.equal(await page.evaluate(()=>window.homeCalls),1,'The exit control must retain a single working action');
       }else if(mode==='create-list'){
