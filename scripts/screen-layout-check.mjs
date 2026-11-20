@@ -330,7 +330,9 @@ try{
           width+'px '+name+': DLC teaser must not be silently truncated');
         else assert(m.clamp==='5',width+'px '+name+': classic synopsis should retain five-line limit');
         assert(m.titleClamp==='2',width+'px '+name+': dossier title may occupy at most two lines');
-        const expectedFit=samples[i].klass==='omerta-scenario'?'cover':'contain';
+        // Approved native full-bleed artwork: Omertà and Régime both use cover.
+        // Other collections retain their own safe contained poster styling.
+        const expectedFit=['omerta-scenario','regime-scenario'].includes(samples[i].klass)?'cover':'contain';
         assert(m.fit===expectedFit,width+'px '+name+': safe full-art fitting must match family');
         assert(m.artFloat==='none'&&m.cardDisplay==='grid'&&m.bodyLeft>=m.artRight-1,
           width+'px '+name+': approved layout needs two independent columns, not text wrapping under poster');
