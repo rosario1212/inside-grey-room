@@ -86,6 +86,10 @@ try{
     assert(shell.includes(chapter.poster),'Every restored MAÎTRE poster must be precached');
   }
   const uiFingerprint=createHash('sha256')
+   .update(await read('app-v11.js'))
+   .update(await read('role-tree-polish-v12-29.js'))
+   .update(await read('lobby-ui-fix-v13.js'))
+   .update(await read('lobby-ui-fix-v13.css'))
    .update(await read('dlc-suite-v12-37.js'))
    .update(await read('mobile-ui-v28.css'))
    .update(await read('heritage-maitre-layout-v758.css'))
