@@ -1,0 +1,35 @@
+name: iPhone Lobby Role Tap QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/role-lobby-iphone-tap-check.mjs'
+      - '.github/workflows/iphone-role-tap-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  iphone-role-taps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install JS and browser QA dependencies
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Simulate iPhone role taps with 1, 4 and 5 players
+        run: node scripts/role-lobby-iphone-tap-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iphone-role-tap-layout
+          path: layout-check-results/
+          if-no-files-found: ignore
