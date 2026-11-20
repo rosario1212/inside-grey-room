@@ -58,7 +58,6 @@ on:
       - 'casino/**'
       - 'casino-client-v105.*'
       - 'heritage-casino-v91.*'
-      - 'cloudflare-worker.mjs'
       - '.github/workflows/cloudflare-build-check.yml'
       - '.github/workflows/cloudflare-production-deploy.yml'
   push:
@@ -74,8 +73,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'

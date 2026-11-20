@@ -46,6 +46,13 @@ Le backend de production repose sur Supabase. Les migrations du dépôt constitu
 
 ## Build et déploiement
 
+**Un seul Worker est publié en production : `inside-grey-room-last`.** Le déploiement continu se fait par `.github/workflows/cloudflare-production-deploy.yml`, avec tests, compilation, publication et vérification du commit. Pour relancer manuellement le déploiement, utiliser son `workflow_dispatch`.
+
+Le workflow `.github/workflows/cloudflare-turn-maintenance.yml` ne publie plus de version : il sert uniquement à contrôler ou configurer les identifiants TURN lors d'une maintenance manuelle. Le fichier `vercel.json` reste un **blocage de sécurité minimal** : ses anciens projets liés à GitHub doivent ignorer les builds, jamais servir le jeu. Ne le supprimer qu'après déconnexion vérifiée des anciennes intégrations.
+
+Voir [la procédure de nettoyage et les intégrations externes encore à retirer](docs/CLOUDFLARE_ONLY_MAINTENANCE.md).
+
+
 Prérequis : Node.js 22+.
 
 - `npm run build` : construit le bundle web dans `dist` et exécute les garde-fous de régression ;
