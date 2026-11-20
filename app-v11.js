@@ -103,6 +103,9 @@ const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
 function scenarioDifficultyTag(sc){const id=String(sc?.id||sc||'');return ADVANCED_SCENARIO_IDS.has(id)?`<span class="tag advanced-tag">${window.IGR_LOCALE==='en'?'ADVANCED':'AVANCÉ'}</span>`:''}
 
 function rolesBlock(sc){
+ if(sc?.id==='001'){
+   return '<div class="roles-availability"><div class="roles-row"><span>4 joueurs</span><p>Enquêteur · 3 Suspects <strong>ou</strong> Enquêteur · Analyste · 2 Suspects</p></div><div class="roles-row optional"><span>5 joueurs</span><p>Enquêteur · Analyste · 3 Suspects</p></div></div>';
+ }
  if(sc?.id==='029'){
    const en=window.IGR_LOCALE==='en';
    return '<div class="roles-availability"><div class="roles-row"><span>'+(en?'Required':'Obligatoires')+'</span><p>'+(en?'Investigator · Analyst · 4 witnesses':'Enquêteur · Analyste · 4 témoins')+'</p></div>'+
@@ -132,6 +135,10 @@ function expandRoleLabel(label){
  return [ROLE_LABEL_TO_ID[x]||ROLE_LABEL_TO_ID[x.toLowerCase()]||x.toLowerCase()];
 }
 function lobbyRoleSlots(sc,count){
+ // v800: certified dossier 001 allows two EXCLUSIVE four-player compositions.
+ // The room state is authoritative. Never infer Team mode from a role click.
+ if(sc?.id==='001'&&count===4&&STATE?.sync?.room?.state?.four_player_mode==='team')
+   return ['enqueteur','analyste','suspect','suspect'];
  // 029: a room starts with one member, but all SIX mandatory seats must be
  // selectable immediately. The optional roles do not include a lawyer.
  // Restrict this to the actual four-witness server roster: legacy rooms differ.
@@ -1221,6 +1228,14 @@ function renderLobby(prefetched=null){
  const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count);
  const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player},roleMissing=d.players.filter(p=>!p.preferred_role).length;
  const choices=roleChoiceSummary(sc,count,d.players),canStart=!!STATE.hostToken&&count>=min;
+ const fourMode=(sc.id==='001'&&count===4)?(d.room.state?.four_player_mode==='team'?'team':'classic'):null;
+ const fourModePanel=fourMode?('<div class="igr-four-mode" role="group" aria-label="Composition à quatre joueurs">'+
+ '<div class="section-title"><h2>Composition à 4 joueurs</h2><span>Deux façons de jouer</span></div>'+
+ '<p class="role-choice-help">Choisissez la composition avant les rôles. Le changement libère les rôles réservés.</p>'+
+ '<div class="role-choice-grid">'+
+ '<button type="button" class="role-choice-card '+(fourMode==='classic'?'selected':'')+'" aria-pressed="'+(fourMode==='classic')+'" '+(STATE.hostToken?'onclick="chooseFourPlayerMode(\'classic\')"':'disabled')+'><span><b>Enquête classique</b><small>1 Enquêteur + 3 Suspects</small></span><em>'+(fourMode==='classic'?'CHOISI':'CHOISIR')+'</em></button>'+
+ '<button type="button" class="role-choice-card '+(fourMode==='team'?'selected':'')+'" aria-pressed="'+(fourMode==='team')+'" '+(STATE.hostToken?'onclick="chooseFourPlayerMode(\'team\')"':'disabled')+'><span><b>Enquête en équipe</b><small>1 Enquêteur + 1 Analyste + 2 Suspects</small></span><em>'+(fourMode==='team'?'CHOISI':'CHOISIR')+'</em></button>'+
+ '</div>'+(STATE.hostToken?'':'<p class="role-choice-help">L’hôte choisit la composition.</p>')+'</div>'):'';
  const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:roleMissing?`Lancer · ${roleMissing} rôle${roleMissing>1?'s':''} attribué${roleMissing>1?'s':''} au hasard`:'Lancer le dossier';
  const omertaLobby=['021','022','023','024','025'].includes(String(sc.id));
  const randomRoleButton=`<button type="button" class="role-choice-card random-role-card" onclick="chooseRandomLobbyRole()"><span><b>Choix aléatoire</b><small>Tirage uniforme parmi les rôles publics encore disponibles. Chaque type de rôle a exactement une chance dans le tirage. ${omertaLobby?'Dans Omertà, les identités des personnages restent privées.':'L’Espion reste secret.'}</small></span><em>AU HASARD</em></button>`;
@@ -1237,7 +1252,7 @@ function renderLobby(prefetched=null){
  const focusedRoleId=focusedRole?.dataset.roleId||null;
  const oldRoleAnchor=focusedRole||oldLobby?.querySelector('.role-choice-zone');
  const oldRoleTop=oldRoleAnchor?.getBoundingClientRect().top;
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div>\u0024{fourModePanel}<div class="player-list">\u0024{d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(typeof document!=='undefined'&&typeof document.querySelectorAll==='function')for(const el of document.querySelectorAll('.role-choice-zone .igr-role-more'))if(openedRoleDetails.includes(el.dataset.roleId))el.open=true;
  if(oldLobby){
   const newLobby=document.querySelector('#app .lobby-v11');
@@ -1273,6 +1288,33 @@ async function kickLobbyPlayer(playerId){
   console.error('kick lobby player',e);
   toast('Exclusion impossible. Vérifie que la partie n’a pas commencé.');
  }finally{LOBBY_KICK_BUSY=false}
+}
+let IGR_V800_MODE_PENDING=false;
+async function chooseFourPlayerMode(mode){
+ if(IGR_V800_MODE_PENDING||!STATE.hostToken||STATE.sync?.room?.status!=='lobby')return;
+ const d=STATE.sync;
+ if(d.room.scenario_id!=='001'||d.players.length!==4||!['classic','team'].includes(mode))return;
+ if((d.room.state?.four_player_mode||'classic')===mode)return;
+ if(d.players.some(p=>p.preferred_role)){
+   const confirmed=await appConfirm({
+     title:'Changer la composition ?',
+     text:'Les rôles déjà réservés seront libérés pour que chaque joueur puisse choisir une place compatible.',
+     confirmLabel:'Changer la composition'
+   });
+   if(!confirmed)return;
+ }
+ IGR_V800_MODE_PENDING=true;
+ try{
+   const out=await rpc('igr_v800_set_four_player_mode',{
+     p_code:STATE.room,p_host_token:STATE.hostToken,p_mode:mode
+   });
+   if(!out?.ok)throw new Error('Mode not confirmed');
+   await syncNow(true);
+   toast(mode==='team'?'Mode Enquête en équipe sélectionné.':'Mode Enquête classique sélectionné.');
+ }catch(error){
+   console.error('four-player mode',error);
+   toast('Impossible de changer la composition. Vérifie le nombre de joueurs et réessaie.');
+ }finally{IGR_V800_MODE_PENDING=false}
 }
 let LOBBY_ROLE_SELECTING=false;
 async function chooseLobbyRole(role){
