@@ -226,18 +226,28 @@
     const previous=renderLobby;
     if(typeof previous==='function'){
       renderLobby=function(){
-        // Enhancement before the next paint: late insertion of the Back/Settings
-        // row used to push the roles downward after every server refresh.
+        // Keep exactly one scroll correction after the DOM and navigation
+        // actions are fully rendered. The previous multi-frame corrections
+        // fought one another on mobile and caused visible role-card jumps.
         const oldZone=document.querySelector('.role-choice-zone');
-        const oldTop=oldZone?.getBoundingClientRect().top;
+        const pending=oldZone?.querySelector('.igr-role-pending');
+        const focused=document.activeElement?.closest?.('.role-choice-card[data-role-id]');
+        const oldAnchor=pending||((focused&&oldZone?.contains(focused))?focused:null)||oldZone;
+        const roleId=oldAnchor?.dataset?.roleId||null;
+        const top=oldAnchor?.getBoundingClientRect().top;
+        const scrollY=window.scrollY;
         const out=previous.apply(this,arguments);
         enhanceLobby();
         const newZone=document.querySelector('.role-choice-zone');
-        if(oldZone&&newZone&&Number.isFinite(oldTop)){
-          const delta=newZone.getBoundingClientRect().top-oldTop;
-          if(Math.abs(delta)>.5){
-            try{window.scrollTo({top:Math.max(0,window.scrollY+delta),left:0,behavior:'instant'})}
-            catch(_){window.scrollTo(0,Math.max(0,window.scrollY+delta))}
+        const newAnchor=roleId
+          ?Array.from(newZone?.querySelectorAll('.role-choice-card[data-role-id]')||[]).find(el=>el.dataset.roleId===roleId)||newZone
+          :newZone;
+        if(oldZone&&newAnchor&&Number.isFinite(top)){
+          const delta=newAnchor.getBoundingClientRect().top-top;
+          if(Number.isFinite(delta)&&Math.abs(delta)>1){
+            const target=Math.max(0,scrollY+delta);
+            try{window.scrollTo({top:target,left:0,behavior:'instant'})}
+            catch(_){window.scrollTo(0,target)}
           }
         }
         return out;

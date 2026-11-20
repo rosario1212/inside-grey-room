@@ -6,7 +6,6 @@
   const DRAW_MIN_MS=260;
   const RESULT_HOLD_MS=620;
   let randomBusy=false;
-  let lobbyPolishQueued=false;
 
   const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
   const currentScenarioId=()=>String(STATE?.sync?.room?.scenario_id||STATE?.scenarioId||STATE?.selectedScenario||'');
@@ -35,22 +34,6 @@
 
   function roleLabel(id){
     try{return typeof publicRoleLabel==='function'?publicRoleLabel(id):(typeof roleInfo==='function'?roleInfo(id)?.label:id)}catch(_){return id}
-  }
-
-  function captureRoleAnchor(){
-    const zone=document.querySelector('.role-choice-zone');
-    if(!zone||!zone.isConnected)return null;
-    const r=zone.getBoundingClientRect();
-    return {top:r.top};
-  }
-  function restoreRoleAnchor(anchor){
-    if(!anchor)return;
-    const restore=()=>{
-      const zone=document.querySelector('.role-choice-zone');if(!zone)return;
-      const delta=zone.getBoundingClientRect().top-anchor.top;
-      if(Number.isFinite(delta)&&Math.abs(delta)>.75)window.scrollBy({top:delta,left:0,behavior:'auto'});
-    };
-    requestAnimationFrame(()=>{restore();requestAnimationFrame(restore)});
   }
 
   function lockRandomGeometry(btn){
@@ -115,9 +98,8 @@
     return choices.filter(x=>x&&x.id&&((Number(x.taken)||0)<(Number(x.cap)||0)||me.preferred_role===x.id)).map(x=>x.id);
   }
 
-  async function freshSync(anchor=captureRoleAnchor()){
+  async function freshSync(){
     try{if(typeof syncNow==='function')await syncNow(true)}catch(e){console.warn('random role sync',e)}
-    restoreRoleAnchor(anchor);
     return STATE?.sync||null;
   }
 
@@ -169,8 +151,7 @@
       const elapsed=performance.now()-started;
       if(elapsed<DRAW_MIN_MS)await wait(DRAW_MIN_MS-elapsed);
       roller.stop();
-      const anchor=captureRoleAnchor();
-      await freshSync(anchor);
+      await freshSync();
       syncRandomVisual();
       roller.result(String(roleLabel(picked)||picked).toUpperCase());
       toast?.(`${tr('Rôle tiré','Role drawn')} : ${roleLabel(picked)}`);
@@ -183,55 +164,6 @@
       requestAnimationFrame(syncRandomVisual);
     }
   };
-
-  function nodeKey(el,index){
-    if(!el)return String(index);
-    const data=el.dataset||{};
-    if(data.role||data.roleId||data.playerId)return String(data.role||data.roleId||data.playerId);
-    const onclick=el.getAttribute?.('onclick')||'';
-    const match=onclick.match(/(?:chooseRole|selectRole)\(['"]([^'"]+)/i);if(match)return match[1];
-    const strong=el.querySelector?.('b,strong,h3,h4')?.textContent?.trim();
-    return strong||`${el.className}:${index}`;
-  }
-  function nodeSignature(el){
-    const state=el.querySelector?.('em,.chip,.lobby-role-pending')?.textContent?.trim()||'';
-    return `${el.className}|${state}|${(el.textContent||'').trim().slice(0,120)}`;
-  }
-  function snapshot(selector){
-    const out=new Map();
-    [...document.querySelectorAll(selector)].forEach((el,index)=>{
-      const r=el.getBoundingClientRect();
-      out.set(nodeKey(el,index),{rect:{left:r.left,top:r.top},sig:nodeSignature(el)});
-    });
-    return out;
-  }
-  function pulse(el,cls){
-    if(!el)return;
-    el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);
-    setTimeout(()=>el.classList.remove(cls),430);
-  }
-  function animateFrom(before,selector,pulseClass){
-    [...document.querySelectorAll(selector)].forEach((el,index)=>{
-      const old=before.get(nodeKey(el,index));
-      if(!old){pulse(el,pulseClass);return}
-      const r=el.getBoundingClientRect(),dx=old.rect.left-r.left,dy=old.rect.top-r.top;
-      if((Math.abs(dx)>1||Math.abs(dy)>1)&&typeof el.animate==='function'){
-        el.animate([{transform:`translate3d(${dx}px,${dy}px,0)`},{transform:'translate3d(0,0,0)'}],{duration:190,easing:'cubic-bezier(.2,.8,.2,1)'});
-      }
-      if(old.sig!==nodeSignature(el))pulse(el,pulseClass);
-    });
-  }
-  function polishLobbyAfterRender(beforeCards,beforePlayers,anchor){
-    if(lobbyPolishQueued)return;
-    lobbyPolishQueued=true;
-    requestAnimationFrame(()=>{
-      lobbyPolishQueued=false;
-      restoreRoleAnchor(anchor);
-      animateFrom(beforeCards,'.role-choice-zone .role-choice-card','igr-role-updated');
-      animateFrom(beforePlayers,'.lobby-player-live','igr-player-updated');
-      syncRandomVisual();
-    });
-  }
 
   function ownNarrativeIdentity(){
     const d=STATE?.sync,p=d?.player,ps=p?.private_state||{};
@@ -296,11 +228,8 @@
     const previousRenderLobby=window.renderLobby;
     if(typeof previousRenderLobby==='function'){
       window.renderLobby=function(){
-        const beforeCards=snapshot('.role-choice-zone .role-choice-card');
-        const beforePlayers=snapshot('.lobby-player-live');
-        const anchor=captureRoleAnchor();
         const out=previousRenderLobby.apply(this,arguments);
-        polishLobbyAfterRender(beforeCards,beforePlayers,anchor);
+        syncRandomVisual();
         return out;
       };
     }

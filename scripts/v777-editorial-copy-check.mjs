@@ -31,12 +31,12 @@ assert(locale.includes('galerie d’une ancienne verrerie'),
  'Dossier 005 must locate the victim in the correct gallery');
 assert(locale.includes('réserve des archives'),
  'Dossier 010 must locate the victim in the archive reserve');
-for(const url of ['app-v11.js?v=santoro-display-audit-20261108-v781-dlc-clarity-20261118','language-v12.js?v=v777-editorial-consistency-20261117']){
+for(const url of ['app-v11.js?v=v810-roster-role-stability-20261120','language-v12.js?v=v777-editorial-consistency-20261117']){
  assert(index.includes(url),'Index version missing: '+url);
  assert(sw.includes(url),'PWA version missing: '+url);
 }
-assert(sw.includes("igr-v781-dlc-clarity-20261118"),'Old PWA cache remained');
-assert(finalizer.includes("const clientVersion='santoro-display-audit-20261108-v781-dlc-clarity-20261118'"),'Finalizer restores an obsolete app version');
+assert(sw.includes("igr-v810-roster-role-stability-20261120"),'Old PWA cache remained');
+assert(finalizer.includes("const clientVersion='v810-roster-role-stability-20261120'"),'Finalizer restores an obsolete app version');
 assert(j.includes("player.public_role!=='enqueteur'"),'Suspect/private roles must remain untouched');
 assert(j.includes('igr773-situation-copy'),'Investigator opening still uses bullets');
 console.log('PASS v777: base facts, legacy French copy, mobile/PWA cache and private-card isolation.');

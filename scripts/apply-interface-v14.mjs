@@ -51,7 +51,7 @@ for(const page of ['index.html','en.html']){
   else html=html.replace(/local-mode-theme-v25\.css\?v=[^"']+/g,'local-mode-theme-v25.css?v=v25-role-fluidity');
 
   html=html.replace(/role-tree-polish-v12-29\.css\?v=[^"']+/g,'role-tree-polish-v12-29.css?v=v27-role-choice-nav');
-  html=html.replace(/role-tree-polish-v12-29\.js\?v=[^"']+/g,'role-tree-polish-v12-29.js?v=v25-role-fluidity');
+  html=html.replace(/role-tree-polish-v12-29\.js\?v=[^"']+/g,'role-tree-polish-v12-29.js?v=v810-static-role-selection-20261120');
   html=html.replace(/dlc-profile-ui-v12-44\.css\?v=[^"']+/g,'dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   html=html.replace(/dlc-profile-ui-v12-44\.js\?v=[^"']+/g,'dlc-profile-ui-v12-44.js?v=v20-settings-nav');
   html=html.replace(/dlc-suite-v12-40\.css\?v=[^"']+/g,'dlc-suite-v12-40.css?v=v20-settings-nav');
@@ -113,7 +113,7 @@ try{
     sw=sw.replace(/\/local-mode-theme-v25\.css\?v=[^']+/g,'/local-mode-theme-v25.css?v=v25-role-fluidity');
   }
   sw=sw.replace(/\/role-tree-polish-v12-29\.css\?v=[^']+/g,'/role-tree-polish-v12-29.css?v=v27-role-choice-nav');
-  sw=sw.replace(/\/role-tree-polish-v12-29\.js\?v=[^']+/g,'/role-tree-polish-v12-29.js?v=v25-role-fluidity');
+  sw=sw.replace(/\/role-tree-polish-v12-29\.js\?v=[^']+/g,'/role-tree-polish-v12-29.js?v=v810-static-role-selection-20261120');
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.css\?v=[^']+/g,'/dlc-profile-ui-v12-44.css?v=v20-settings-nav');
   sw=sw.replace(/\/dlc-profile-ui-v12-44\.js\?v=[^']+/g,'/dlc-profile-ui-v12-44.js?v=v20-settings-nav');
   sw=sw.replace(/\/dlc-suite-v12-40\.css\?v=[^']+/g,'/dlc-suite-v12-40.css?v=v20-settings-nav');
