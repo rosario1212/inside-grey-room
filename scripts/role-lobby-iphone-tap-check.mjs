@@ -28,7 +28,7 @@ try{
   assert.equal(await page.locator('.igr-role-preview').count(),1,'Preview '+id+' 1 player');
   await page.evaluate(id=>window.__qaSet(id,4,'classic'),id);
   assert.equal(await page.locator('.igr-role-preview').count(),1,'Preview '+id+' classic');
-  assert.equal(await page.locator('.igr-roster-variant').count(),2,'Composition cards '+id);
+  assert.equal(await page.locator('.igr-four-mode .role-choice-card').count(),2,'Two lobby composition choices '+id);
   await page.locator('.igr-four-mode .role-choice-card').filter({hasText:'Enquête en équipe'}).click();
   assert.equal(await page.locator('.igr-role-preview').count(),0,'Preview in team '+id);
   assert.equal(await page.locator('.role-choice-card[data-role-id="analyste"]').count(),1,'Analyste missing '+id);
