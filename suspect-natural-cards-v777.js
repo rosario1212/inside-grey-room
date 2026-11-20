@@ -20,6 +20,7 @@
   'CE QUE TU SAIS':'known','TES REPERES':'known',
   'CE QUE TU SAIS — TA VARIANTE':'known','CE QUE TU SAIS — DOSSIER 030':'known',
   'CE QUE TU CACHES':'hidden','CE QUE TU GARDES POUR TOI':'hidden',
+  'TON SECRET SUR CETTE AFFAIRE':'hidden',
   'SECRET DE TA VARIANTE':'hidden','TON SECRET — DOSSIER 030':'hidden',
   'CE QUE TU CACHES — TA VARIANTE':'hidden','CE QUE TU CACHES — DOSSIER 030':'hidden',
   'TES RELATIONS':'relations','TES CLIENTS':'relations',
@@ -38,6 +39,40 @@
    seen.add(content);result.appendChild(child.cloneNode(true));
   }
   return result.children.length>1?result:null;
+ }
+ function rankGlossary(state,player){
+  const sid=String(state?.sync?.room?.scenario_id||'');
+  const ps=player?.private_state||{};
+  const identity=norm(ps.identity||ps.variant_card?.identity||ps.place||'');
+  const code=String(ps.omerta_preferred_role||ps.rank_code||'').toLowerCase();
+  let explanation='';
+  if(['021','022','023','024','025'].includes(sid)){
+   const roles={
+    caporegime:'Caporegime : chef d’une équipe du clan, sous l’autorité du Don.',
+    consigliere:'Consigliere : conseiller du chef, sans commandement automatique des hommes.',
+    associato:'Associato : associé du clan, sans pouvoir de commandement automatique.',
+    uomo_onore:'Soldato : homme du clan chargé d’exécuter des missions confiées.',
+    contabile:'Contabile : responsable des comptes et paiements du clan.',
+    don:'Don : chef de la famille mafieuse. Famiglia signifie ici le clan.'
+   };
+   explanation=roles[code]||(/CAPOREGIME/.test(identity)?roles.caporegime:
+     /CONSIGLIERE/.test(identity)?roles.consigliere:
+     /SOLDATO/.test(identity)?roles.uomo_onore:
+     /ASSOCIATO/.test(identity)?roles.associato:
+     /\bDON\b/.test(identity)?roles.don:'');
+  }else if(['040','041','042','043','044'].includes(sid)){
+   if(identity.includes('WAKAGASHIRA'))
+    explanation='Wakagashira : bras droit du chef du clan. Oyabun : chef du clan.';
+   else if(identity.includes('KOBUN'))
+    explanation='Kobun : membre du clan sous les ordres d’un supérieur. Oyabun : chef du clan.';
+  }
+  if(!explanation)return null;
+  const alreadyClear=String(ps.story||'').trim();
+  if(alreadyClear.length>=90 && /clan|famille mafieuse|bras droit/i.test(alreadyClear))return null;
+  const div=document.createElement('div');div.className='private-block igr-v786-rank-clarity';
+  const heading=document.createElement('h4');heading.textContent='TON RANG EN CLAIR';
+  const text=document.createElement('p');text.textContent=explanation;
+  div.append(heading,text);return div;
  }
  function storyFallback(player){
   const p=player.private_state||{};
@@ -69,7 +104,10 @@
    }
    if(child.matches('.private-block')){
     const key=map[norm(child.querySelector('h4')?.textContent)]||'';
-    if(key==='guidance')continue;
+    if(key==='guidance'){
+     if(String(state?.sync?.room?.scenario_id||'')==='030' && norm(child.querySelector('h4')?.textContent)==='POUR ECHANGER')special.push(child);
+     continue;
+    }
     if(key){sections[key].push(child);continue;}
     special.push(child);continue; // Preserve exceptional secrets or missions.
    }
@@ -82,6 +120,8 @@
   if(identity&&(!identityText||!storyText.includes(identityText)))opening.push(identity);
   const ordered=[...opening];
   if(story)ordered.push(story);
+  const rankNote=rankGlossary(state,player);
+  if(rankNote)ordered.push(rankNote);
   for(const key of ['events','known','hidden','relations']){
    const block=groupSections(sections[key],key);
    if(block)ordered.push(block);
