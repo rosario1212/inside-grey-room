@@ -799,3 +799,26 @@ body::-webkit-scrollbar,
 .igr-four-mode .role-choice-card small{overflow-wrap:anywhere}
 .igr-four-mode .role-choice-card[disabled]{opacity:.8;cursor:default}
 @media(max-width:600px){.igr-four-mode{padding:12px}.igr-four-mode .role-choice-grid{grid-template-columns:1fr}.igr-four-mode .role-choice-card{min-height:70px}}
+
+
+/* v804: first-party accessibility guard in the canonical stylesheet.
+   The top-level read-only layout fixture uses the actual game DOM, so the
+   global button must keep at least a 44px physical hit target even if theme
+   CSS elsewhere reduces a phase's inner spacing. */
+#app .game-v11 .phase-timer-box .phase-host-actions > button.phase-exit-btn {
+  box-sizing:border-box!important;
+  min-width:80px!important;
+  min-height:48px!important;
+  height:auto!important;
+  max-height:none!important;
+  padding:11px 13px!important;
+  flex-shrink:0!important;
+}
+@media(max-width:359px) {
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario
+    > .scenario-body.compact > p.igr-card-excerpt{
+    font-size:12.5px!important;
+    line-height:1.25!important;
+  }
+}

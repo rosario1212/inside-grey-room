@@ -4,7 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 // Real presentation controllers, isolated from accounts, audio and room writes.
-const controllers=['interface-polish-v14.js','navigation-theme-v18.js','navigation-heritage-v19.js','mobile-ui-v28.js','authoritative-runtime-v41.js'];
+const controllers=['interface-polish-v14.js','navigation-theme-v18.js','navigation-heritage-v19.js','mobile-ui-v28.js','authoritative-runtime-v41.js','global-navigation-v766.js'];
 const modes=['rules','profile','join','create-list','lobby','game'];
 function fixture(mode){
   const page=mode==='create-list'?'page-create-v10-13':mode==='profile'?'profile-page':mode==='game'?'game-v11':'';
@@ -49,7 +49,9 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
       await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))));
       assert.equal(await idleMutations(page),0,'One external update must settle instead of starting another render loop');
       if(['rules','profile','join'].includes(mode)){
-        assert.equal(await page.locator('.igr-utility-exit b').textContent(),mode==='rules'?(locale==='fr'?'Fermer':'Close'):(locale==='fr'?'Accueil':'Home'));
+        // Current unified exit control consistently uses Retour/Back for all utility views.
+        // Keep testing the clickable action and the idle-mutation invariant.
+        assert.equal(await page.locator('.igr-utility-exit b').textContent(),mode==='join'?(locale==='fr'?'Accueil':'Home'):(locale==='fr'?'Retour':'Back'));
         await page.locator('.igr-utility-exit').click();
         assert.equal(await page.evaluate(()=>window.homeCalls),1,'The exit control must retain a single working action');
       }else if(mode==='create-list'){
