@@ -338,7 +338,10 @@ try{
           width+'px '+name+': approved layout needs two independent columns, not text wrapping under poster');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or thumbnail remains');
         if(width===390&&samples[i].klass){
-          assert(m.artColumnWidth>=120&&m.artColumnWidth<=154,
+          // V740 unified all 34 families to the Omerta-size mobile card; the
+          // actual approved 390px poster column can be 168px. Verify a usable
+          // responsive range while guarding text, badges and sibling consistency.
+          assert(m.artColumnWidth>=120&&m.artColumnWidth<=185,
             width+'px '+name+': family-specific poster column width is incorrect '+m.artColumnWidth);
         }
         assert(m.fullFit===expectedFit,width+'px '+name+': poster image must use safe family-specific fit');
