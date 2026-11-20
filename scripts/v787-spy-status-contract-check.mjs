@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 const app=readFileSync('app-v11.js','utf8');
-const sql=readFileSync('supabase/migrations/20261121121000_igr_v787_spy_self_status.sql','utf8');
+const sql=readFileSync('supabase/migrations/20261120232713_igr_v787_spy_authoritative_own_stage_status.sql','utf8');
 const from=app.indexOf("let spyDecisionPendingKey='';");
 const to=app.indexOf('\nfunction privateCardHtml(){',from);
 assert(from>0&&to>from&&to-from<5500,'Spy decision handler not isolated');
