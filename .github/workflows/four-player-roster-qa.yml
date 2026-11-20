@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - 'app-v11.js'
+      - 'role-tree-polish-v12-29.js'
+      - 'lobby-ui-fix-v13.js'
+      - 'lobby-ui-fix-v13.css'
+      - 'index.html'
       - 'play-modes-v13-8.js'
       - 'styles-v11.css'
       - 'play-modes-v13-8.css'
@@ -15,6 +19,10 @@ on:
     branches: [main]
     paths:
       - 'app-v11.js'
+      - 'role-tree-polish-v12-29.js'
+      - 'lobby-ui-fix-v13.js'
+      - 'lobby-ui-fix-v13.css'
+      - 'index.html'
       - 'play-modes-v13-8.js'
       - 'styles-v11.css'
       - 'play-modes-v13-8.css'
@@ -39,5 +47,7 @@ jobs:
         run: |
           node --check app-v11.js
           node --check play-modes-v13-8.js
+          node --check role-tree-polish-v12-29.js
+          node --check lobby-ui-fix-v13.js
       - name: Check canonical role combinations
         run: node scripts/four-player-contract-qa.mjs

@@ -12,6 +12,7 @@ const files={
   nav:await read('navigation-heritage-v19.js'),
   navCss:await read('navigation-heritage-v19.css'),
   role:await read('role-tree-polish-v12-29.js'),
+  lobbyUi:await read('lobby-ui-fix-v13.js'),
   roleCss:await read('role-tree-polish-v12-29.css'),
   localModeCss:await read('local-mode-theme-v25.css'),
   cell:await read('cell-controls-stability-v23.js'),
@@ -70,17 +71,18 @@ ok(files.cell.includes('requestAnimationFrame(syncGameUiState)'),'Launch complet
 ok(files.cell.includes("document.getElementById('igrUniversalDock')?.remove()"),'Live cells must purge stale dock shells');
 ok(!files.cell.includes("gate.style.pointerEvents='none'"),'Gameplay repair must not permanently disable the reusable intro gate');
 
-// Role selection: random draw must stay fluid, and the v27 layout restores the
-// explicit TON CHOIX summary + Retirer while keeping one stable helper sentence.
+// Role selection: a fixed random-draw geometry and ONE post-render scroll
+// anchor replace the former FLIP animations and repeated rAF corrections.
 ok(files.role.includes("const DRAW_MIN_MS=260"),'Random role draw timing guard missing');
-ok(files.role.includes('restoreRoleAnchor(anchor)'),'Random role selection must preserve the role-zone viewport anchor');
-ok(files.role.includes("animateFrom(beforeCards,'.role-choice-zone .role-choice-card'"),'Role card live-update animation missing');
-ok(files.role.includes("animateFrom(beforePlayers,'.lobby-player-live'"),'Other-player live-update animation missing');
+ok(!files.role.includes('restoreRoleAnchor('),'Multi-frame viewport correction reappeared');
+ok(!files.role.includes('animateFrom('),'Role-card FLIP animation reappeared');
+ok(files.lobbyUi.includes("const pending=oldZone?.querySelector('.igr-role-pending')"),'Clicked role must anchor the viewport once');
+ok(files.lobbyUi.includes('const scrollY=window.scrollY'),'Single scroll anchor baseline missing');
 ok(!files.role.includes('renderLobby(STATE.sync)'),'Random role draw must not force a duplicate full lobby render');
 ok(!files.role.includes('Math.random()'),'Random role draw must not fall back to Math.random');
 ok(files.roleCss.includes('--igr-random-lock-w'),'Random draw geometry lock missing');
 ok(files.roleCss.includes('.igr-random-role-cta.is-rolling'),'Random draw stable rolling state missing');
-ok(files.roleCss.includes('.igr-role-updated'),'Role update transition missing');
+ok(files.roleCss.includes('.role-choice-zone{overflow-anchor:none}'),'Role zone must disable automatic scroll anchoring');
 ok(files.roleCss.includes('.role-choice-zone .igr-choice-status{display:flex!important}'),'TON CHOIX must remain visible after role selection');
 ok(!files.roleCss.includes(':has(.role-choice-card.selected) .igr-choice-status'),'Selected role must not hide TON CHOIX');
 ok(files.navTheme.includes('Choisis un rôle. Pour changer, touche simplement un autre rôle avant le lancement.'),'Stable French role helper copy missing');
@@ -108,7 +110,7 @@ ok(files.apply.includes("navigation-theme-v18.js?v=v734-collection-shortcut-2026
 ok(files.apply.includes("navigation-heritage-v19.js?v=v738-dock-idle-expand-20261116"),'Built HTML must load the current navigation behavior');
 ok(files.apply.includes("navigation-heritage-v19.css?v=v30-scroll-expand-20261116"),'Built HTML must load the current navigation CSS');
 ok(files.apply.includes("role-tree-polish-v12-29.css?v=v27-role-choice-nav"),'Built HTML must load the restored TON CHOIX CSS');
-ok(files.apply.includes("role-tree-polish-v12-29.js?v=v25-role-fluidity"),'Built HTML must retain the v25 role-selection runtime');
+ok(files.apply.includes("role-tree-polish-v12-29.js?v=v810-static-role-selection-20261120"),'Built HTML must retain the v25 role-selection runtime');
 ok(files.apply.includes("local-mode-theme-v25.css?v=v25-role-fluidity"),'Built HTML must load the v25 play-mode theme asset');
 ok(files.apply.includes("cell-controls-stability-v23.js?v=v24-gameplay-stability"),'Built HTML must retain the v24 cell stability asset');
 
@@ -124,7 +126,7 @@ try{
   ok(distIndex.includes('navigation-heritage-v19.js?v=v738-dock-idle-expand-20261116'),'dist/index.html has stale navigation behavior');
   ok(distIndex.includes('navigation-heritage-v19.css?v=v30-scroll-expand-20261116'),'dist/index.html has stale navigation CSS');
   ok(distIndex.includes('cell-controls-stability-v23.js?v=v24-gameplay-stability'),'dist/index.html has stale cell stability asset');
-  ok(distIndex.includes('role-tree-polish-v12-29.js?v=v25-role-fluidity'),'dist/index.html has stale role-selection runtime');
+  ok(distIndex.includes('role-tree-polish-v12-29.js?v=v810-static-role-selection-20261120'),'dist/index.html has stale role-selection runtime');
   ok(distIndex.includes('role-tree-polish-v12-29.css?v=v27-role-choice-nav'),'dist/index.html has stale role-selection CSS');
   ok(distIndex.includes('local-mode-theme-v25.css?v=v25-role-fluidity'),'dist/index.html is missing the play-mode theme CSS');
   ok(!distIndex.includes('if(!nativeShell&&!mobile&&window.MutationObserver){'),'dist/index.html still leaves gameplay MutationObserver running on mobile');

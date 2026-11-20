@@ -298,3 +298,35 @@
  #app .lobby-v11[data-igr-lobby-theme] .igr-role-option,
  #app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary::after{transition:none!important}
 }
+
+/* v810 — distinct, readable four-player rosters, without an inline “ou”. */
+.roles-availability.igr-roster-choices{gap:12px!important}
+.roles-availability.igr-roster-choices .roles-row{min-width:0}
+.roles-availability.igr-roster-choices .igr-roster-variants{display:grid;gap:7px;min-width:0}
+.roles-availability.igr-roster-choices .igr-roster-variant{
+ min-width:0;display:grid;gap:3px;padding:9px 11px;
+ border:1px solid rgba(178,191,203,.16);border-radius:10px;
+ background:rgba(159,179,198,.035)
+}
+.roles-availability.igr-roster-choices .igr-roster-variant b{
+ color:#dce3e9;font:700 9px 'IBM Plex Mono',monospace;
+ letter-spacing:.085em;line-height:1.3
+}
+.roles-availability.igr-roster-choices .igr-roster-variant p{
+ color:#c5cdd4;font-size:11px;line-height:1.4;margin:0
+}
+/* Show the Analyst from the first seat, but never offer an invalid RPC choice.
+   Availability changes only after the room's host selects Team-4. */
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-option.igr-role-preview{
+ border-style:dashed!important;opacity:.8;background:rgba(145,164,180,.045)!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-preview .role-choice-card{
+ cursor:default!important;pointer-events:none!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-preview .role-choice-card em{
+ color:#b6c1c9!important;background:rgba(157,171,184,.075)!important
+}
+#app .lobby-v11[data-igr-lobby-theme] .igr-role-preview-hint{
+ margin:0!important;padding:0 13px 12px!important;
+ font-size:11px;line-height:1.42;color:#a7b1b9
+}

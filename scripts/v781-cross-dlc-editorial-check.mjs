@@ -13,7 +13,7 @@ const index=read('index.html');
 const sw=read('service-worker.js');
 const finalizer=read('scripts/finalize-cartel030-release.mjs');
 const version='v781-dlc-clarity-20261118';
-const clientVersion='cards-spy-v786-20261120';
+const clientVersion='v810-roster-role-stability-20261120-cards-spy-v786-20261120';
 assert(app.includes('Un patient est mort pendant le programme hospitalier ÉLIGIBLES'),
   '015: patient death, never an invented doctor death');
 const baseSummary=app.slice(app.indexOf('const PUBLIC_LOBBY_SUMMARIES'),app.indexOf('const CANONICAL_BRIEFINGS'));
@@ -60,7 +60,7 @@ for(const name of ['app-v11.js','omerta-v12.js','dlc-suite-v12-37.js','dlc-copy-
 for(const name of ['heritage-maitre-data-v34.js','heritage-play-v13-7.js']){
  assert(sw.includes(name+'?v='+version),'Missing premium asset revision '+name);
 }
-assert(sw.includes("igr-"+clientVersion),'PWA cache revision is not aligned');
+assert(sw.includes("igr-"+clientVersion),'Old source PWA cache version');
 assert(finalizer.includes("const clientVersion='"+clientVersion+"'"),
  'Production builder must not roll back the canonical app version');
 console.log('PASS v781: 20 base briefs, 14 DLC contexts, 15 Heritage chapter introductions, preview and cache coherence.');
