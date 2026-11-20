@@ -1,0 +1,43 @@
+{
+  "release": "editorial-014-2026-11-20",
+  "scenario": "014",
+  "title": "Sous secret",
+  "status": "Production Supabase manuscripts updated; GitHub metadata publication pending merge",
+  "variants": [
+    "A",
+    "B",
+    "C"
+  ],
+  "private_cards_rewritten": 9,
+  "relationships_refined": 18,
+  "trames_refined": 9,
+  "investigations_refined": 60,
+  "source_crosschecks": {
+    "missing": 0,
+    "premature": 0
+  },
+  "checks": {
+    "md5_valid": 3,
+    "eligible_variants": 3,
+    "complete_pack_valid": 3,
+    "full_simulation": {
+      "ok": true,
+      "variants": 3,
+      "cycles": 9,
+      "choices_per_cycle": 1,
+      "options_per_cycle": 5,
+      "private_cards_checked": 9,
+      "no_persisted_qa_rooms": true
+    }
+  },
+  "truth_distinctions": {
+    "A": "intentional sale",
+    "B": "unverified emergency recipient",
+    "C": "misused legitimate mandate"
+  },
+  "privacy": "No private manuscript, evidence answer key, or spoiler stored in this release manifest",
+  "human_playtest_verified": false,
+  "iphone_visual_review_verified": false,
+  "frontend_code_modified": false,
+  "deployment_note": "Production Worker inside-grey-room-last, controlled by GitHub Actions Cloudflare Production Deploy. Red legacy Workers Builds: inside-grey-room check is not the canonical production Worker; independently confirm deployment of the merged main commit."
+}
