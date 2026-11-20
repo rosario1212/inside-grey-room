@@ -27,7 +27,7 @@
     "029": "Un homme est exécuté. Sa langue coupée est envoyée à la Grey Room.",
     "030": "Le gouverneur et sa famille sont tués. Un registre serait détruit.",
     "031": "Six agents sont abattus. Trois chefs du commando sont arrêtés.",
-    "032": "Deux chefs fuient. Les preuves refont surface.",
+    "032": "Deux chefs fuient. Les listes et les dossiers refont surface.",
     "033": "La dynastie s’écroule. Le fils du président et son cousin fuient.",
     "034": "Le président est traqué. Son gendre se cache derrière un faux nom."
   },
@@ -43,7 +43,7 @@
     "029": "A man is executed. His severed tongue is sent to the Grey Room.",
     "030": "A governor and his family are killed. A ledger may be destroyed.",
     "031": "Six agents are shot dead. Three commando leaders are arrested.",
-    "032": "Two leaders flee. Evidence resurfaces.",
+    "032": "Two leaders flee. Old prison lists and files come to light.",
     "033": "The dynasty collapses. The president's son and his cousin flee.",
     "034": "The president is hunted. His son-in-law hides behind a false name."
   }
