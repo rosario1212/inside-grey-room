@@ -12,7 +12,7 @@ const finalizer=readFileSync('scripts/finalize-cartel030-release.mjs','utf8');
 const cases=[
   {id:'003',min:4,role:'Expert',key:'expert'},
   {id:'008',min:5,role:'Juge',key:'juge'},
-  {id:'009',min:5,role:'Expert',key:'expert'},
+  {id:'009',min:4,role:'Expert',key:'expert'},
   {id:'011',min:5,role:'Procureur',key:'procureur'}
 ];
 for(const {id,min,role,key} of cases){
@@ -27,6 +27,9 @@ for(const id of ['007','010','012']){
  assert.match(app,new RegExp("'"+id+"':\\{required:\\['Enquêteur','Analyste','3 suspects'\\],optional:\\[\\]"),'Neighbor scenario must remain unchanged '+id);
 }
 assert(db.includes("public.igr_v4_min_players('003')<>4"),'4-player 003 compatibility guard missing');
+const qualified=readFileSync('supabase/migrations/20261121000100_igr_v808_team4_009_qualified_release.sql','utf8');
+assert(qualified.includes("when p_scenario='009' then 4")&&qualified.includes('igr_v331_009_release_status'),
+ '009 four-player mode requires separately qualified protected release status');
 assert(db.includes("Five-player roster changed in %"),'Old roster assertion missing');
 assert(db.includes("igr_v220_003_build_pack"),'003 pinned pack must keep expert_actions');
 assert(db.includes("'{expert_actions}'"),'Expert has no actual choices');
