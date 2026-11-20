@@ -30,6 +30,10 @@ for(const asset of assets)await stat(path.join(target,asset));
 // The final client uses stable v87 URLs; fingerprint real mobile source bytes
 // to force installed PWAs to replace their service worker/cache on a UI fix.
 const regimeUiFingerprint=createHash('sha256')
+ .update(await readFile(path.join(target,'app-v11.js')))
+ .update(await readFile(path.join(target,'role-tree-polish-v12-29.js')))
+ .update(await readFile(path.join(target,'lobby-ui-fix-v13.js')))
+ .update(await readFile(path.join(target,'lobby-ui-fix-v13.css')))
  .update(await readFile(path.join(target,'dlc-suite-v12-37.js')))
  .update(await readFile(path.join(target,'mobile-ui-v28.css')))
  .update(await readFile(path.join(target,maitreLayout)))
