@@ -67,8 +67,11 @@
     explanation='Kobun : membre du clan sous les ordres d’un supérieur. Oyabun : chef du clan.';
   }
   if(!explanation)return null;
-  const alreadyClear=String(ps.story||'').trim();
-  if(alreadyClear.length>=90 && /clan|famille mafieuse|bras droit/i.test(alreadyClear))return null;
+  const alreadyClear=norm([ps.story,ps.variant_card?.story].filter(Boolean).join(' '));
+  const term=norm(explanation.split(' : ')[0]);
+  const where=alreadyClear.indexOf(term);
+  // Do not suppress a definition merely because the story mentions the clan.
+  if(where>=0 && /CHEF|CONSEILLER|ASSOCIE|MEMBRE|RESPONSABLE|BRAS DROIT|HOMME/.test(alreadyClear.slice(where,where+130)))return null;
   const div=document.createElement('div');div.className='private-block igr-v786-rank-clarity';
   const heading=document.createElement('h4');heading.textContent='TON RANG EN CLAIR';
   const text=document.createElement('p');text.textContent=explanation;
@@ -102,10 +105,15 @@
     child.querySelector('.igr-private-hint')?.remove();
     opening.push(child);continue;
    }
+   if(child.matches('.igr-spy-private-mission')){
+    // Keep the private mission and its action buttons together, after the card.
+    special.push(child);continue;
+   }
    if(child.matches('.private-block')){
     const key=map[norm(child.querySelector('h4')?.textContent)]||'';
     if(key==='guidance'){
-     if(String(state?.sync?.room?.scenario_id||'')==='030' && norm(child.querySelector('h4')?.textContent)==='POUR ECHANGER')special.push(child);
+     // Defence and conversation prompts help the player respond; do not drop them.
+     if(norm(child.textContent) && !special.some(x=>norm(x.textContent)===norm(child.textContent)))special.push(child);
      continue;
     }
     if(key){sections[key].push(child);continue;}
