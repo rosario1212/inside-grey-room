@@ -627,7 +627,8 @@ try{
       const top=page.locator('.phase-exit-btn');
       assert(await top.isVisible(),'Top exit must remain visible on phone and desktop');
       const buttonBox=await top.boundingBox();
-      const topGeometry=await top.evaluate(el=>{const cs=getComputedStyle(el);const r=el.getBoundingClientRect();return {minHeight:cs.minHeight,height:cs.height,width:cs.width,transform:cs.transform,display:cs.display,boxSizing:cs.boxSizing,parentTransform:getComputedStyle(el.parentElement).transform,rectHeight:r.height,rectWidth:r.width}});
+      const topGeometry=await top.evaluate(el=>{const cs=getComputedStyle(el);const r=el.getBoundingClientRect();return {minHeight:cs.minHeight,height:cs.height,width:cs.width,transform:cs.transform,display:cs.display,boxSizing:cs.boxSizing,parentTransform:getComputedStyle(el.parentElement).transform,rectHeight:r.height,rectWidth:r.width,
+          matchingRules:[...document.styleSheets].flatMap(sheet=>{try{return [...sheet.cssRules].flatMap(rule=>{const out=[];if(rule.cssRules)for(const sub of rule.cssRules){if(sub.selectorText&&sub.selectorText.includes('phase-exit')&&el.matches(sub.selectorText))out.push({selector:sub.selectorText,height:sub.style?.minHeight})}if(rule.selectorText&&rule.selectorText.includes('phase-exit')&&el.matches(rule.selectorText))out.push({selector:rule.selectorText,height:rule.style?.minHeight});return out})}catch{return []}}).slice(-15)}});
       assert(buttonBox&&buttonBox.width>=44&&buttonBox.height>=40,
         'Top exit touch target must be usable: '+JSON.stringify({buttonBox,topGeometry}));
       await top.click();
