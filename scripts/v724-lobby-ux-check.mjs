@@ -17,6 +17,27 @@ const mobile=read('mobile-ui-v28.css');
 const roleCss=read('lobby-ui-fix-v13.css');
 const omertaRoleCopy=read('omerta-v12-39.js');
 const omertaRoleSetup=read('omerta-v12.js');
+
+const cleanLobby=read('gameplay-clean-v12.js');
+// Single-action lobby: legacy bottom controls must never be created on sync.
+assert(!cleanLobby.includes('Retirer mon choix'),'Remove the duplicate bottom clear-choice link');
+assert(!cleanLobby.includes('role-choice-quiet'),'Remove legacy bottom role controls');
+assert(polish.includes('<span>TON CHOIX</span>'),'Preserve the main choice card');
+assert(polish.includes("onclick=\\\"chooseLobbyRole('')\\\""),'Preserve the choice-card Retirer action');
+let removedLegacyControls=0;
+const legacyControls=[{remove(){removedLegacyControls++}},{remove(){removedLegacyControls++}}];
+const lobbyStub={
+ querySelector(selector){return selector==='.role-choice-help'?{textContent:''}:null},
+ querySelectorAll(selector){return selector==='.role-choice-tools-clean'?legacyControls:[]}
+};
+const startClean=cleanLobby.indexOf('  function decorateLobbyRole(){');
+const endClean=cleanLobby.indexOf('  /* ---------- remove the old shared discussion-focus experiment ---------- */',startClean);
+assert(startClean>=0&&endClean>startClean);
+vm.runInNewContext(cleanLobby.slice(startClean,endClean)+'\\ndecorateLobbyRole();',{
+ document:{querySelector:()=>lobbyStub}
+});
+assert.equal(removedLegacyControls,2,'All obsolete footer copies must be removed even after a rerender');
+
 const rolePreviewCss=roleCss.split('#app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card small{')[1]?.split('}')[0]||'';
 assert(rolePreviewCss.includes('line-clamp:unset!important'), 'role preview must not clamp');
 assert(rolePreviewCss.includes('overflow:visible!important'), 'role preview text must never be clipped');
