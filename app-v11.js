@@ -163,7 +163,7 @@ journaliste:{label:'Journaliste',short:'Enquête et publie des révélations.',w
 inspecteur:{label:'Inspecteur de terrain',short:'Explore les lieux et relève les indices.',win:'Choisis les bonnes pistes et aide à établir les faits matériels essentiels.',body:'Tu peux explorer jusqu’à 3 lieux par cycle ; les résultats matériels alimentent l’enquête sans désigner automatiquement un coupable.'},
 expert:{label:'Expert / Médecin légiste',short:'Analyse les preuves et éclaire l’enquête.',win:'Interprète correctement les éléments techniques essentiels.',body:'Une analyse complémentaire par cycle. Tu établis des faits techniques, jamais un coupable.'},
 temoin:{label:'Témoin',short:'Témoigne sur ce que tu sais.',win:'Reste cohérent avec ta vérité et ton éventuel objectif secondaire.',body:'Tu peux être entendu pendant la fenêtre témoins. Tu peux devenir personne d’intérêt puis suspect.'},
-espion:{label:'Espion',short:'Protège ta couverture et accomplis ta mission.',win:'Réussis les deux décisions confidentielles de ta mission aux cycles indiqués.',body:'Ton rôle public reste une couverture. Tu fais un choix confidentiel au cycle 1 ou 2, puis un autre au cycle 3. Le verdict ne détermine pas cette victoire.'},
+espion:{label:'Espion',short:'Protège ta couverture et accomplis ta mission.',win:'Choisis les deux bonnes options de ta mission : une au cycle 1 ou 2, puis une au cycle 3.',body:'Ton rôle public reste une couverture. Tu fais un choix confidentiel au cycle 1 ou 2, puis un autre au cycle 3. Le verdict ne détermine pas cette victoire.'},
 bras_droit:{label:'Bras droit',short:'Coordonne les hommes et protège ton camp.',win:'Défends tes intérêts sans exposer le Don.',body:'Tu soutiens le commandement, échanges des informations et défends ta position au sein du cartel.'},
 don:{label:'Don',short:'Commande tes hommes et préserve ton autorité.',win:'Préserve ton autorité et la loyauté de tes hommes.',body:'Tu diriges tes hommes et dois distinguer les initiatives personnelles des ordres que tu as réellement donnés.'},
 informateur:{label:'Informateur',short:'Négocie tes informations sans te compromettre.',win:'Transmets les bonnes informations sans être démasqué.',body:'Tu connais des faits utiles et choisis quand les partager. Une révélation prématurée peut te mettre en danger.'}
@@ -1565,33 +1565,40 @@ function igrV772DefenceBody(raw){
  return '<ul class="igr-v772-defence-list">'+parts.map(x=>'<li>'+h(x)+'</li>').join('')+'</ul>';
 }
 
+let spyDecisionPendingKey='';
 async function sendSpyDecision(choice){
+ let pendingKey='';
  try{
   const d=STATE.sync,cycle=d?.room?.cycle,me=d?.player?.id||STATE.playerId;
   if(!me||![1,2,3].includes(cycle)){toast('Mission indisponible.');return;}
-  const key='igr_spy_v631_'+STATE.room+'_'+me+'_'+(d?.room?.state?.match_no||1)+'_'+cycle;
-  if(STORAGE.getItem(key)==='1'){toast('Ton choix pour ce cycle est déjà scellé.');return;}
+  const stage=cycle===3?'final':'early';
+  pendingKey='igr_spy_v631_'+STATE.room+'_'+me+'_'+(d?.room?.state?.match_no||1)+'_'+stage;
+  if(spyDecisionPendingKey===pendingKey)return;
+  if(STORAGE.getItem(pendingKey)==='1'){toast('Ton choix pour cette étape est déjà scellé.');return;}
+  spyDecisionPendingKey=pendingKey;
   const response=await rpc('igr_v631_spy_decide',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});
-  if(response?.ok){STORAGE.setItem(key,'1');toast('Décision confidentielle scellée.');await syncNow(true)}
-  else toast('Décision indisponible pour ce cycle.');
+  if(response?.ok){STORAGE.setItem(pendingKey,'1');toast('Décision confidentielle scellée.');await syncNow(true)}
+  else toast('Décision indisponible pour cette étape.');
  }catch(e){console.error(e);toast('Décision refusée ou déjà scellée par le serveur.');}
+ finally{if(spyDecisionPendingKey===pendingKey)spyDecisionPendingKey='';}
 }
 function privateCardHtml(){
  const d=STATE.sync,p=d?.player,ps=p?.private_state||{},pub=p?.public_role||STATE.role,secret=p?.secret_role;
  const spyPhase=d?.room?.phase||'';
  const canSpyDecide=secret==='espion'&&d?.room?.status==='playing'&&d.room.cycle>=1&&d.room.cycle<=3
   &&!['briefing','role_reading','closed','locking','reveal','final_debrief'].includes(spyPhase)&&!spyPhase.startsWith('final_');
- const spySealKey='igr_spy_v631_'+STATE.room+'_'+p?.id+'_'+(d?.room?.state?.match_no||1)+'_'+d?.room?.cycle;
+ const spySealStage=d?.room?.cycle===3?'final':'early';
+ const spySealKey='igr_spy_v631_'+STATE.room+'_'+p?.id+'_'+(d?.room?.state?.match_no||1)+'_'+spySealStage;
  const spySealed=typeof STORAGE!=='undefined'&&STORAGE.getItem(spySealKey)==='1';
  const spyChoices=d?.room?.cycle===3
   ?[{id:'protect',label:'Protéger la source'},{id:'verify',label:'Vérifier l’archive'}]
   :[{id:'source',label:'Contacter la source'},{id:'archive',label:'Sécuriser les archives'}];
  const spyChoiceUi=canSpyDecide
-  ?(spySealed?'<p class="choice-helper">Ta décision confidentielle est scellée pour ce cycle.</p>'
-  :'<div class="action-section"><div class="choice-helper">Sélectionne une seule piste. Le serveur verrouille immédiatement ton choix sans informer les autres joueurs.</div>'
+  ?(spySealed?'<p class="choice-helper">'+(spySealStage==='early'?'Ton premier choix est scellé pour les cycles 1 et 2.':'Ton choix du cycle 3 est scellé.')+'</p>'
+  :'<div class="action-section"><div class="choice-helper">'+(spySealStage==='early'?'Un seul choix entre les cycles 1 et 2. Il est définitif.':'Second et dernier choix, au cycle 3. Il est définitif.')+' Le serveur garde ta décision secrète.</div>'
      +spyChoices.map(c=>`<button type="button" class="btn secondary block" onclick="sendSpyDecision('${c.id}')">${h(c.label)}</button>`).join('')+'</div>')
   :'';
- const secretInfo=secret==='espion'?(valueBlock('MISSION SECRÈTE',ps.secret_mission||'Ta couverture publique reste inchangée.','secret-alert')+spyChoiceUi):'';
+ const secretInfo=secret==='espion'?'<div class="igr-spy-private-mission">'+valueBlock('MISSION SECRÈTE',ps.secret_mission||'Ta couverture publique reste inchangée.','secret-alert')+spyChoiceUi+'</div>':'';
  const santoroStandalone=['021','022','023','024','025'].includes(String(d?.room?.scenario_id||''))
    &&d?.room?.state?.omerta_standalone===true;
  const santoroMyCard=santoroStandalone&&pub==='suspect'
