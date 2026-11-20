@@ -139,16 +139,10 @@
         el.setAttribute('aria-label','Rôle actuellement sélectionné. Choisis un autre rôle pour changer.');
         el.title='Rôle actuellement sélectionné';
       });
-      const grid=zone.querySelector('.role-choice-grid');
-      if(!grid)return;
-      let tools=zone.querySelector('.role-choice-tools-clean');
-      if(!tools){tools=document.createElement('div');tools.className='role-choice-tools-clean';grid.after(tools)}
-      const current=myPreferredRole();
-      const toolsKey=`${window.IGR_LOCALE||'fr'}|${current||'none'}`;
-      if(tools.dataset.igrRoleTools!==toolsKey){
-        tools.dataset.igrRoleTools=toolsKey;
-        tools.innerHTML=`<button type="button" class="role-choice-quiet" onclick="chooseRandomLobbyRole()">${current?'Changer au hasard':'Choisir au hasard'}</button>${current?'<button type="button" class="role-choice-quiet muted" onclick="igrClearLobbyRole()">Retirer mon choix</button>':''}`;
-      }
+      // One role-selection footer only: "RÔLE AU HASARD" and
+      // "TON CHOIX > Retirer" already provide these actions.
+      // Remove any obsolete footer left by older live-lobby decorators.
+      zone.querySelectorAll('.role-choice-tools-clean').forEach(node=>node.remove());
     }catch(_){}
   }
 
@@ -222,13 +216,10 @@
   const style=document.createElement('style');style.id='igr-clean-live-style';style.textContent=`
     .investigation-sheet,.investigation-focus-controls,.investigation-focus-current,.investigation-focus-readonly{display:none!important}
     .role-choice-zone .section-title>span{display:none!important}
-    .role-choice-tools-clean{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.055)}
-    .role-choice-quiet{appearance:none;border:0;background:transparent;color:#aeb8bf;padding:7px 5px;font-size:10px;cursor:pointer;touch-action:manipulation;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(174,184,191,.28)}
-    .role-choice-quiet.muted{color:#6f7b84}.role-choice-quiet:active{opacity:.65}.role-choice-card.selected em{font-weight:800}
+    .role-choice-card.selected em{font-weight:800}
     .igr-audio-wake-clean{pointer-events:auto!important;touch-action:manipulation!important;z-index:1600!important;cursor:pointer!important}
     .igr-evidence-notice{position:fixed;z-index:1200;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);width:min(90vw,430px);border:1px solid rgba(215,225,232,.22);border-radius:12px;background:rgba(7,10,12,.96);box-shadow:0 14px 36px rgba(0,0,0,.35);padding:10px 12px;color:#eef2f4;text-align:left;display:grid;gap:3px;touch-action:manipulation}.igr-evidence-notice[hidden]{display:none}.igr-evidence-notice small{font:800 8px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8c9aa4}.igr-evidence-notice b{font-size:11px}.igr-evidence-notice span{font-size:9px;line-height:1.4;color:#9aa5ad}
     .party-status-clean{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.018)}.party-status-clean b{font-size:12px}.party-status-clean span{font-size:9px;color:#7d8991}.party-history,.party-rules{margin-top:10px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.012)}.party-history>summary,.party-rules>summary{cursor:pointer;padding:12px 13px;font-size:11px;font-weight:700;list-style:none}.party-history>summary::-webkit-details-marker,.party-rules>summary::-webkit-details-marker{display:none}.party-log{padding:0 11px 11px;display:grid;gap:7px}.party-log-row{display:grid;grid-template-columns:1fr auto;gap:3px 10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.05)}.party-log-row b{font-size:10px}.party-log-row span{grid-column:1/-1;color:#7e8991;font-size:9px;line-height:1.4}.party-log-row small{grid-row:1;grid-column:2;color:#5d6870;font-size:8px}.party-rules .rule-list{padding:0 11px 11px}.evidence-only-feed .event{margin-bottom:8px}
-    @media(max-width:620px){.role-choice-tools-clean{justify-content:flex-start}}
   `;document.head.appendChild(style);
 
   decorateLobbyRole();removeInvestigationFocus();scanEvidenceNotifications();
