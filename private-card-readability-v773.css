@@ -127,3 +127,28 @@
     transform:translateX(-50%)!important;
   }
 }
+
+
+/* 320px accessibility: preserve legible dossier headings in the Regime list. */
+@media(max-width:359px){
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario
+    > .scenario-body.compact{
+    --igr-card-heading:1rem!important;
+  }
+  #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario
+    > .scenario-body.compact h3{
+    line-height:1.06!important;
+    letter-spacing:-.025em;
+  }
+}
+@media(max-width:600px){
+  /* Some phone phase layouts shrink the entire header visually.
+   * A 52px CSS target retains a >=44px physical tap area after scaling. */
+  #app .game-v11 .phase-host-actions .phase-exit-btn{
+    min-height:52px!important;
+    min-width:72px!important;
+    padding:11px 13px!important;
+  }
+}
