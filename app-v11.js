@@ -1078,8 +1078,7 @@ function restoreDrafts(draft){
  if(draft.scope!==draftScope())return;
  for(const f of draft.fields){const el=byId(f.id);if(el){if(el.tagName!=='SELECT'||[...el.options].some(option=>option.value===f.value))el.value=f.value;el.checked=f.checked}}
  const el=byId(draft.focus);if(el){el.focus({preventScroll:true});try{el.setSelectionRange(draft.start,draft.end)}catch{}}
- // An unchanged viewport must not receive a second programmatic scroll.
- // In particular, role picks and random draws are not page navigation.
+ // Role updates preserve the mobile viewport, avoiding a redundant scroll.
  if(Number.isFinite(draft.scroll)&&Math.abs(window.scrollY-draft.scroll)>1){
   try{window.scrollTo({top:draft.scroll,left:0,behavior:'instant'})}
   catch(_){window.scrollTo(0,draft.scroll)}
@@ -1135,6 +1134,18 @@ async function performSync(force=false){
    }
   }else d=await rpc('igr_v4_sync',params);
   if(STATE.room!==room||STATE.token!==token)return null;
+  // The server, not local browser storage, knows which private spy stages are sealed.
+  // Fetch only the current player's boolean status; never expose chosen answers.
+  if(d?.player?.secret_role==='espion'&&d?.room?.status==='playing'){
+   try{
+    const ownStatus=await rpc('igr_v787_spy_status',params);
+    if(STATE.room!==room||STATE.token!==token)return null;
+    d.player.spy_stage_status=ownStatus?.ok===true?ownStatus:null;
+   }catch(error){
+    console.warn('spy stage status unavailable',error);
+    d.player.spy_stage_status=null; // Fail closed; a stale browser cannot authorize an action.
+   }
+  }
   STATE.syncFailures=0;
   STATE.lastSyncFailure=null;
   connectionStatus(false);
@@ -1621,18 +1632,41 @@ let spyDecisionPendingKey='';
 async function sendSpyDecision(choice){
  let pendingKey='';
  try{
-  const d=STATE.sync,cycle=d?.room?.cycle,me=d?.player?.id||STATE.playerId;
-  if(!me||![1,2,3].includes(cycle)){toast('Mission indisponible.');return;}
-  const stage=cycle===3?'final':'early';
-  pendingKey='igr_spy_v631_'+STATE.room+'_'+me+'_'+(d?.room?.state?.match_no||1)+'_'+stage;
-  if(spyDecisionPendingKey===pendingKey)return;
-  if(STORAGE.getItem(pendingKey)==='1'){toast('Ton choix pour cette étape est déjà scellé.');return;}
+  const d=STATE.sync,cycle=d?.room?.cycle,me=d?.player?.id;
+  const phase=d?.room?.phase||'';
+  if(d?.player?.secret_role!=='espion'||d?.room?.status!=='playing'||
+     ![1,2,3].includes(cycle)||['briefing','role_reading','closed','locking','reveal','final_debrief'].includes(phase)||
+     phase.startsWith('final_')){
+   toast('Mission indisponible à cette phase.');return;
+  }
+  const stage=cycle===3?'final':'early',status=d?.player?.spy_stage_status;
+  if(status?.ok!==true){toast('État de mission non vérifié. Réessaie après la synchronisation.');return;}
+  if(stage==='final'&&!status.early_sealed){
+   toast('La première étape manque : aucune décision finale possible.');return;
+  }
+  if(status[stage+'_sealed']===true){toast('Cette étape est déjà scellée.');return;}
+  if(!(stage==='final'?['protect','verify']:['source','archive']).includes(choice)){
+   toast('Choix invalide pour ce cycle.');return;
+  }
+  pendingKey='igr_spy_v787_'+STATE.room+'_'+me+'_'+status.match_no+'_'+stage;
+  if(spyDecisionPendingKey)return; // Prevent two competing submissions while a request is pending.
   spyDecisionPendingKey=pendingKey;
-  const response=await rpc('igr_v631_spy_decide',{p_code:STATE.room,p_player_token:STATE.token,p_choice:choice});
-  if(response?.ok){STORAGE.setItem(pendingKey,'1');toast('Décision confidentielle scellée.');await syncNow(true)}
-  else toast('Décision indisponible pour cette étape.');
- }catch(e){console.error(e);toast('Décision refusée ou déjà scellée par le serveur.');}
- finally{if(spyDecisionPendingKey===pendingKey)spyDecisionPendingKey='';}
+  const room=STATE.room,token=STATE.token;
+  const response=await rpc('igr_v631_spy_decide',{p_code:room,p_player_token:token,p_choice:choice});
+  if(response?.ok){
+   if(STATE.room===room&&STATE.token===token&&STATE.sync?.player?.id===me&&
+      STATE.sync.player.spy_stage_status?.ok===true)
+    STATE.sync.player.spy_stage_status[stage+'_sealed']=true;
+   toast('Décision confidentielle scellée.');
+   await syncNow(true);
+  }else toast('Décision indisponible pour cette étape.');
+ }catch(e){
+  console.error(e);
+  if(/already sealed|déjà scellé/i.test(String(e?.message||''))){
+   toast('Ce choix a déjà été scellé sur le serveur.');
+   await syncNow(true);
+  }else toast('Décision non confirmée. Vérifie la connexion et réessaie.');
+ }finally{if(spyDecisionPendingKey===pendingKey)spyDecisionPendingKey='';}
 }
 function privateCardHtml(){
  const d=STATE.sync,p=d?.player,ps=p?.private_state||{},pub=p?.public_role||STATE.role,secret=p?.secret_role;
@@ -1640,13 +1674,16 @@ function privateCardHtml(){
  const canSpyDecide=secret==='espion'&&d?.room?.status==='playing'&&d.room.cycle>=1&&d.room.cycle<=3
   &&!['briefing','role_reading','closed','locking','reveal','final_debrief'].includes(spyPhase)&&!spyPhase.startsWith('final_');
  const spySealStage=d?.room?.cycle===3?'final':'early';
- const spySealKey='igr_spy_v631_'+STATE.room+'_'+p?.id+'_'+(d?.room?.state?.match_no||1)+'_'+spySealStage;
- const spySealed=typeof STORAGE!=='undefined'&&STORAGE.getItem(spySealKey)==='1';
+ const spyStatus=p?.spy_stage_status?.ok===true?p.spy_stage_status:null;
+ const spySealed=spyStatus?.[spySealStage+'_sealed']===true;
+ const spyEarlyMissed=spySealStage==='final'&&spyStatus?.early_sealed===false;
  const spyChoices=d?.room?.cycle===3
   ?[{id:'protect',label:'Protéger la source'},{id:'verify',label:'Vérifier l’archive'}]
   :[{id:'source',label:'Contacter la source'},{id:'archive',label:'Sécuriser les archives'}];
  const spyChoiceUi=canSpyDecide
-  ?(spySealed?'<p class="choice-helper">'+(spySealStage==='early'?'Ton premier choix est scellé pour les cycles 1 et 2.':'Ton choix du cycle 3 est scellé.')+'</p>'
+  ?(!spyStatus?'<p class="choice-helper" role="status">Vérification de ta mission indisponible. Les choix réapparaîtront après synchronisation.</p>'
+  :spyEarlyMissed?'<p class="choice-helper" role="status">Première étape manquée aux cycles 1 et 2. Aucun choix final possible. Poursuis ton rôle public.</p>'
+  :spySealed?'<p class="choice-helper" role="status">'+(spySealStage==='early'?'Premier choix scellé, même après reconnexion.':'Choix final scellé, même après reconnexion.')+'</p>'
   :'<div class="action-section"><div class="choice-helper">'+(spySealStage==='early'?'Un seul choix entre les cycles 1 et 2. Il est définitif.':'Second et dernier choix, au cycle 3. Il est définitif.')+' Le serveur garde ta décision secrète.</div>'
      +spyChoices.map(c=>`<button type="button" class="btn secondary block" onclick="sendSpyDecision('${c.id}')">${h(c.label)}</button>`).join('')+'</div>')
   :'';

@@ -11,8 +11,8 @@ const build=read('.github/workflows/cloudflare-build-check.yml'),deploy=read('.g
 execFileSync(process.execPath,['--check','app-v11.js']);
 assert(app.includes('igr_v631_spy_decide')&&!app.includes('sendSpySignal'),'UI still uses unvalidated old action');
 assert(app.includes("sendSpyDecision('")&&app.includes("spyChoiceUi"),'Two-stage clandestine decision UI missing');
-assert(app.includes("const stage=cycle===3?'final':'early'")&&app.includes("const spySealStage=d?.room?.cycle===3?'final':'early'"),'Cycles 1 and 2 must share one irreversible early-stage seal');
-assert(app.includes("(d?.room?.state?.match_no||1)+'_'+stage")&&app.includes("(d?.room?.state?.match_no||1)+'_'+spySealStage"),'Spy stage keys must isolate rematches');
+assert(app.includes("const stage=cycle===3?'final':'early'")&&app.includes("const spySealStage=d?.room?.cycle===3?'final':'early'"),'Cycles 1 and 2 share one irrevocable server stage');
+assert(app.includes("await rpc('igr_v787_spy_status',params)")&&app.includes("status[stage+'_sealed']===true"),'Server-authoritative per-player stage status missing');
 assert(app.includes('spyDecisionPendingKey'),'Double clicks can submit competing spy decisions');
 assert(app.includes('igr-spy-private-mission')&&cards.includes("child.matches('.igr-spy-private-mission')"),'Spy mission and action UI must remain together on suspect cards');
 assert(cards.includes("if(key==='guidance')")&&cards.includes('special.push(child)'),'Defence and conversation prompts must be preserved');
@@ -34,6 +34,7 @@ assert(sql.includes("achievements:=achievements||jsonb_build_array(old_achieveme
 assert(sql.includes("r.phase LIKE 'final_%'"),'Final audience still permits spy signal');
 assert(sql.includes("route_:=CASE WHEN random()<0.5")&&sql.includes("VALUES(NEW.code,actor.id,match_num"),'Per-match secret contact route not pinned');
 assert(rematch.includes('DELETE FROM igr_private.igr_v630_spy_signals WHERE room_code=NEW.code;') && rematch.includes('DELETE FROM igr_private.igr_v630_spy_assignments WHERE room_code=NEW.code;'),'A rematch must reset earlier confidential choices before assigning a new mission');
-assert(html.includes('cards-spy-v786-20261120')&&sw.includes('cards-spy-v786-20261120'),'PWA version mismatch');
+assert(html.includes('v812-spy-lobby-viewport-20261121')&&sw.includes('v812-spy-lobby-viewport-20261121'),'PWA version mismatch');
 assert(build.includes('node scripts/v631-spy-audit-regression-check.mjs')&&deploy.includes('node scripts/v631-spy-audit-regression-check.mjs'),'Release gates missing');
+execFileSync(process.execPath,['scripts/v787-spy-status-contract-check.mjs']);
 console.log('PASS v631: audited spy victory, absence/Cartel precedence, irreversible choices, secured phases and PWA');
