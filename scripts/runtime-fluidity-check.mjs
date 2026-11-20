@@ -77,6 +77,49 @@ export async function runFluidityChecks({page,css,app,read,check,report}){
     });
   }
 
+  // v811: actual browser repaint after manual or random role choice must NOT
+  // scroll the viewport. This uses the production lobby wrapper, offline.
+  await check('mobile-lobby-role-viewport-v811',async()=>{
+    await page.setViewportSize({width:390,height:844});
+    await page.setContent(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>html,body{margin:0}main{padding:16px}.player-list{height:1050px}
+    .role-choice-card{display:block;width:100%;min-height:65px;margin:10px 0}
+    .lobby-v11{padding-bottom:600px}</style></head><body><div id="app"></div></body></html>`);
+    const rows=Array.from({length:9},(_,i)=>'<div class="lobby-player-live">Joueur '+(i+1)+'</div>').join('');
+    const html=role=>`<main class="page"><div class="page-head"><button>Quitter</button><h1>Dossier 001</h1></div>
+      <section class="lobby-v11" data-igr-scenario-id="001">
+      <div class="player-list">${rows}</div><div class="role-choice-zone">
+      <div class="role-choice-grid">
+        <button type="button" class="role-choice-card random-role-card" onclick="chooseRandomLobbyRole()">Tirer au hasard</button>
+        <button type="button" class="role-choice-card ${role==='enqueteur'?'igr-role-pending':''}" data-role-id="enqueteur" onclick="chooseLobbyRole('enqueteur')">Enquêteur</button>
+        <button type="button" class="role-choice-card ${role==='analyste'?'igr-role-pending':''}" data-role-id="analyste" onclick="chooseLobbyRole('analyste')">Analyste</button>
+      </div></div></section></main>`;
+    const views={none:html(''),enqueteur:html('enqueteur'),analyste:html('analyste')};
+    await page.addScriptTag({content:`
+      var STATE={view:'lobby',room:'QA',token:'token',sync:{room:{scenario_id:'001'}}};
+      var IGR_STARTUP_STABILITY={},IGR_HERITAGE={};
+      var roleViews=${JSON.stringify(views)};
+      window.selectedRole='none';window.beforeRoleClick=0;
+      function lobbyThemeForScenario(){return 'base'}
+      function renderLobby(){document.getElementById('app').innerHTML=roleViews[window.selectedRole];return true}
+      function chooseLobbyRole(role){window.beforeRoleClick=scrollY;window.selectedRole=role;renderLobby()}
+      function chooseRandomLobbyRole(){window.beforeRoleClick=scrollY;window.selectedRole='analyste';renderLobby()}
+      renderLobby();
+    `});
+    await page.addScriptTag({content:await read('lobby-ui-fix-v13.js')});
+    await page.waitForTimeout(80);
+    await page.locator('[data-role-id="enqueteur"]').scrollIntoViewIfNeeded();
+    await page.locator('[data-role-id="enqueteur"]').click();
+    let result=await page.evaluate(()=>({before:beforeRoleClick,after:scrollY}));
+    assert(result.before>200&&Math.abs(result.after-result.before)<=1,
+      'Manual role choice moved the viewport: '+JSON.stringify(result));
+    await page.locator('.random-role-card').scrollIntoViewIfNeeded();
+    await page.locator('.random-role-card').click();
+    result=await page.evaluate(()=>({before:beforeRoleClick,after:scrollY}));
+    assert(result.before>200&&Math.abs(result.after-result.before)<=1,
+      'Random role draw moved the viewport: '+JSON.stringify(result));
+  });
+
   const draftStart=app.indexOf('function draftScope(){'),draftEnd=app.indexOf('function connectionStatus(',draftStart);
   const tabStart=app.indexOf('function setTab('),tabEnd=app.indexOf('function ',tabStart+10);
   assert(draftStart>=0&&draftEnd>draftStart&&tabStart>=0&&tabEnd>tabStart,'Canonical draft and tab handlers must exist');
