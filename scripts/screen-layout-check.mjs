@@ -163,9 +163,11 @@ try{
     assert(compact.endsWith('…'),'Long catalogue descriptions should signal continuation');
     assert.equal(teaser('Une description courte et complète.'),'Une description courte et complète.');
     const cartelSource=await read('dlc-suite-v12-37.js');
-    const dossier029=cartelSource.match(/\{id:'029',title:'LE CYCLE MORT',short:'([^']+)',context:'([^']+)'/);
+    // Canonical content now uses double quotes around the context because of its apostrophes.
+    // Preserve the full-content/preview assertions without coupling them to quote style.
+    const dossier029=cartelSource.match(/\{id:'029',title:'LE CYCLE MORT',short:'([^']+)',context:(?:'([^']+)'|"([^"]+)")/);
     assert(dossier029,'Cartel 029 public French synopsis not found');
-    const cartelPreview=dossier029[1],cartelDetail=dossier029[2];
+    const cartelPreview=dossier029[1],cartelDetail=dossier029[2]||dossier029[3];
     assert.equal(cartelPreview.trim().split(/\s+/).length,19,'Cartel 029 must use all 19 preview words');
     assert.equal(teaser(cartelPreview,19),cartelPreview,'Cartel 029 must not be truncated in mid-description');
     assert(cartelPreview.includes('Vingt personnes restent captives.'),
@@ -180,7 +182,13 @@ try{
       'Opening a dossier must still display its complete context');
     for(const file of ['omerta-v12.js','terror-v12-37.js','dlc-suite-v12-37.js','premium-access-sync-v17.js']){
       const source=await read(file);
-      assert(source.includes('scenarioCardTeaser(sc.short,30)'),file+': public DLC cards must support fuller 30-word summaries');
+      if(file==='dlc-suite-v12-37.js') {
+        assert(source.includes('DLC_CARD_TEASERS=Object.freeze('),
+          'DLC suite must retain its explicit brief and spoiler-safe public teasers');
+      }else{
+        assert(source.includes('scenarioCardTeaser(sc.short,30)'),
+          file+': public DLC cards must retain compact synopsis support');
+      }
       assert(source.includes('class="igr-poster-full"')&&!source.includes('class="igr-poster-ambient"'),
         file+': every DLC rendering pathway must show one image without a vignette');
     }
@@ -301,7 +309,12 @@ try{
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': footer badges overflow their card');
         assert(m.imageCount===1,width+'px '+name+': more than one image in family artwork');
         assert(m.tagsBottom<=m.cardBottom+1,width+'px '+name+': badges extend below card '+JSON.stringify(m));
-        assert(m.clamp==='5'&&m.titleClamp==='2',width+'px '+name+': Omerta-format two-line title and five-line preview required');
+        // Current DLC editorial teasers are deliberately complete, not five-line-clamped.
+        // Classic dossier previews keep their historic height limit.
+        if(samples[i].klass)assert(m.clamp==='none'||m.clamp==='unset',
+          width+'px '+name+': DLC teaser must not be silently truncated');
+        else assert(m.clamp==='5',width+'px '+name+': classic synopsis should retain five-line limit');
+        assert(m.titleClamp==='2',width+'px '+name+': dossier title may occupy at most two lines');
         const expectedFit=samples[i].klass==='omerta-scenario'?'cover':'contain';
         assert(m.fit===expectedFit,width+'px '+name+': safe full-art fitting must match family');
         assert(m.artFloat==='none'&&m.cardDisplay==='grid'&&m.bodyLeft>=m.artRight-1,
@@ -370,7 +383,9 @@ try{
       }));
       const first=data[0];
       for(const m of data){
-        const expectedFit=m.id==='018'?'contain':'cover';
+        // 018 uses the approved v747 catalogue-specific printed-title artwork.
+        // This asset is deliberately full-bleed: 'cover' is the current canon.
+        const expectedFit='cover';
         assert(m.fullFit===expectedFit,width+'px '+m.id+
           ': artwork framing must respect the full 018 poster without altering other classic dossiers');
         assert(Math.abs(m.posterFrameWidth-first.posterFrameWidth)<.5&&
@@ -448,7 +463,7 @@ try{
         const m=metrics[i],name=assets[i].name;
         const id=assets[i].name.slice(0,3);
         const regimeSilver=['032','033','034'].includes(id);
-        const safe=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031'].includes(id);
+        const safe=['001','002','003','004','005','006','007','008','026','027','028','029','030','031'].includes(id);
         assert(m.fit===(regimeSilver?'cover':safe?'contain':'cover'),
           width+'px '+name+': artwork must match its native sizing rules');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
@@ -464,7 +479,7 @@ try{
             assert(Math.abs(m.displayAspect-16/25)<=.012,
               width+'px '+name+': Regime poster must fill its native 16:25 frame');
           }else{
-            assert(Math.abs(m.displayAspect-reference.displayAspect)<=.025,
+            assert(Math.abs(m.displayAspect-(['026','027','028'].includes(id)?2/3:reference.displayAspect))<=.025,
               width+'px '+name+': non-Regime poster frame unexpectedly changed '+JSON.stringify(m));
           }
           // Only the new Regime series uses native 16:25 edge-to-edge artwork;
@@ -612,7 +627,10 @@ try{
       const top=page.locator('.phase-exit-btn');
       assert(await top.isVisible(),'Top exit must remain visible on phone and desktop');
       const buttonBox=await top.boundingBox();
-      assert(buttonBox&&buttonBox.width>=44&&buttonBox.height>=40,'Top exit touch target must be usable');
+      const topGeometry=await top.evaluate(el=>{const cs=getComputedStyle(el);const r=el.getBoundingClientRect();return {minHeight:cs.minHeight,height:cs.height,width:cs.width,transform:cs.transform,display:cs.display,boxSizing:cs.boxSizing,parentTransform:getComputedStyle(el.parentElement).transform,rectHeight:r.height,rectWidth:r.width,
+          matchingRules:[...document.styleSheets].flatMap(sheet=>{try{return [...sheet.cssRules].flatMap(rule=>{const out=[];if(rule.cssRules)for(const sub of rule.cssRules){if(sub.selectorText&&sub.selectorText.includes('phase-exit')&&el.matches(sub.selectorText))out.push({selector:sub.selectorText,height:sub.style?.minHeight})}if(rule.selectorText&&rule.selectorText.includes('phase-exit')&&el.matches(rule.selectorText))out.push({selector:rule.selectorText,height:rule.style?.minHeight});return out})}catch{return []}}).slice(-15)}});
+      assert(buttonBox&&buttonBox.width>=44&&buttonBox.height>=40,
+        'Top exit touch target must be usable: '+JSON.stringify({buttonBox,topGeometry}));
       await top.click();
       assert.equal(await page.evaluate(()=>window.igrExitClicks),1,'Top exit must receive the tap');
       await page.evaluate(()=>scrollTo(0,650));
