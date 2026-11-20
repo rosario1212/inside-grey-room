@@ -1,6 +1,8 @@
 # INSIDE GREY ROOM — NOUVELLE PHILOSOPHIE GAMEPLAY
 ## Spécification de référence — scénarios 001–020
 
+> **Amendement des compositions à quatre joueurs (20 novembre 2026).** Pour chaque dossier certifié compatible, deux choix officiels : **Enquêteur + 3 Suspects** OU **Enquêteur + Analyste + 2 Suspects**. Aucun des deux n'est une version amoindrie. Le troisième personnage, s'il n'est pas joué, reste dans la fiction ; il ne doit ni livrer une réponse gratuite ni provoquer une contradiction. Les variantes A/B/C, quotas communs et verdicts sont certifiés dossier par dossier. **Consulter [FOUR_PLAYER_COMPOSITIONS_GUIDELINE.md](FOUR_PLAYER_COMPOSITIONS_GUIDELINE.md)** avant toute évolution de capacité, de cartes ou de règles. Cet amendement ne vaut pas activation technique globale et ne modifie pas les exceptions des DLC.
+
 > Ce document décrit la philosophie de gameplay à intégrer sans réécrire inutilement le cœur existant du jeu.
 > La vérité canonique de chaque scénario doit rester intacte sauf nécessité explicite.
 > L’objectif est d’augmenter l’immersion, la tension sociale, la clarté des rôles et la variété des scènes sans transformer Inside Grey Room en jeu sur téléphone.
