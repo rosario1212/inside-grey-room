@@ -123,7 +123,7 @@ for(const expected of ['igr_v800_set_four_player_mode','igr_v800_role_for_seat',
 const v805=readFileSync('supabase/migrations/20261120234500_igr_v805_team4_004.sql','utf8');
 assert(v805.includes("p_scenario IN ('001','004')")&&v805.includes('igr_v805_team4_allowed'),
  'Server must keep an exact whitelist for 001 and 004');
-const v806=readFileSync('supabase/migrations/20261120235500_igr_v806_team4_009.sql','utf8');
+const v806=readFileSync('supabase/migrations/20261121000100_igr_v808_team4_009_qualified_release.sql','utf8');
 assert(v806.includes("p_scenario IN ('001','004','009')")&&v806.includes("when p_scenario='009' then 4"),
  '009 release requires an explicit whitelist and authoritative four-player minimum');
 assert(['007','008','010','011','012','013','014','015','016']
