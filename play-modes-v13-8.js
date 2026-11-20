@@ -163,10 +163,10 @@ function genericCard(role,context){
 }
 const IGR_001_ARCHIVED_WITNESS='Le client du même étage ne participe pas à cette séance. Sa première déclaration consignée : « J’étais à cet étage. J’ai entendu de l’agitation près de la chambre 222, mais je ne peux pas établir qui se trouvait dans la pièce ni l’origine de la blessure. » Cette déclaration est contestable, et non une preuve.';
 const IGR_004_ARCHIVED_WITNESS='Un troisième proche de Sofia, qui habite à proximité, a été entendu séparément et ne participe pas à la Grey Room. Sa déclaration initiale : « Je connaissais Sofia et nos relations étaient tendues. Mes déplacements ne démontrent pas, à eux seuls, quelles informations j’ai reçues cette nuit-là. » Ses échanges et horaires doivent être vérifiés : ce récit ne disculpe ni n’accuse personne.';
-const IGR_009_ARCHIVED_WITNESS='Un membre de l’équipe ORPHÉE a remis une première déclaration et ne participe pas aux interrogatoires de la Grey Room. « Je travaillais au protocole. Ce que chacun savait au sujet du retrait du consentement et de l’ordre de poursuite doit être vérifié dans les dossiers. » Ce récit reste contestable et ne prouve ni décision autorisée ni innocence.';
-function igrLocalNonplayerTitle(id){return id==='001'?'DÉCLARATION CONSIGNÉE · CHAMBRE 222':id==='004'?'DÉCLARATION CONSIGNÉE · SOFIA':'DÉCLARATION CONSIGNÉE · ORPHÉE'}
+const IGR_009_ARCHIVED_WITNESS='Un membre de l’équipe du Sujet 17 a remis une première déclaration et ne participe pas aux interrogatoires de la Grey Room. « Je travaillais au protocole. Ce que chacun savait au sujet du retrait du consentement et de l’ordre de poursuite doit être vérifié dans les dossiers. » Ce récit reste contestable et ne prouve ni décision autorisée ni innocence.';
+function igrLocalNonplayerTitle(id){return id==='001'?'DÉCLARATION CONSIGNÉE · CHAMBRE 222':id==='004'?'DÉCLARATION CONSIGNÉE · SOFIA':'DÉCLARATION CONSIGNÉE · du Sujet 17'}
 function igrLocalNonplayerText(id){return id==='001'?IGR_001_ARCHIVED_WITNESS:id==='004'?IGR_004_ARCHIVED_WITNESS:IGR_009_ARCHIVED_WITNESS}
-function igrLocalNonplayerLabel(id){return id==='001'?'Le client de l’hôtel (non joueur)':id==='004'?'Le proche de Sofia (non joueur)':'Le membre de l’équipe ORPHÉE (non joueur)'}
+function igrLocalNonplayerLabel(id){return id==='001'?'Le client de l’hôtel (non joueur)':id==='004'?'Le proche de Sofia (non joueur)':'Le membre de l’équipe du Sujet 17 (non joueur)'}
 function buildLocalPlayers(id,pack,names,mode='classic'){
   const sc=scenarioObj(id),count=names.length;
   let slots=[];
