@@ -19,7 +19,7 @@ const SCENARIOS = [
 {id:'006',title:'LES CENDRES DU CHALET',short:'Cinq ans après la mort de Noé lors d’une randonnée, une vidéo cachée rouvre l’enquête sur ses trois amis.',context:'Cinq ans après une chute mortelle en montagne, les trois survivants sont confrontés à une ancienne vidéo. Une photo, un défi et leurs récits divergents cachent les dernières secondes de Noé.',mood:'Neige, silence, mémoire sale.',min:4,max:5,sound:'embers',mechanics:['Réouverture','Secret collectif','Mémoire reconstruite']},
 {id:'007',title:'LE TESTAMENT GRIS',short:'Un héritage divise une famille. Puis un décès inattendu transforme chaque intérêt en mobile possible.',context:"Une succession oppose plusieurs proches autour d’un testament, d’une dette et d’un document de filiation. Un décès survient pendant ce conflit familial.",mood:'Famille fermée, patrimoine empoisonné.',min:5,max:5,sound:'estate',mechanics:['Héritage','Renversement avant C3','Secrets croisés']},
 {id:'008',title:'SOUS SERMENT',short:'Ils ont juré de dire vrai. Leurs déclarations sont incompatibles. Quelqu’un ment — mais mentir ne suffit pas à dire qui est responsable.',context:"Trois témoins ont prêté serment dans l’affaire du dossier D-14, placé sous scellés. Leurs horaires ne concordent pas et une opération de conservation est contestée.",mood:'Procédure froide, vérité sous pression.',min:5,max:6,sound:'court',mechanics:['Témoignages incompatibles','Preuve procédurale','Responsabilité distincte du mensonge']},
-{id:'009',title:'LE SUJET 17',short:'Le Sujet 17 retire son consentement. L’expérience continue. Après l’incident, le médecin perd une partie de sa mémoire récente. Qui avait décidé de poursuivre ?',context:'Le Sujet 17 a retiré son consentement au programme ORPHÉE. La séance s’est pourtant poursuivie. Le médecin chute ensuite et présente un trouble réel de mémoire récente. Les archives permettent de distinguer décisions antérieures, responsabilités et incertitudes cliniques.',mood:'Clinique, tendu, institutionnel.',min:5,max:6,sound:'clinical',mechanics:['Amnésie authentique','Consentement retiré','Preuves neuropsychologiques']},
+{id:'009',title:'LE SUJET 17',short:'Le Sujet 17 retire son consentement. L’expérience continue. Après l’incident, le médecin perd une partie de sa mémoire récente. Qui avait décidé de poursuivre ?',context:'Le Sujet 17 a retiré son consentement au programme ORPHÉE. La séance s’est pourtant poursuivie. Le médecin chute ensuite et présente un trouble réel de mémoire récente. Les archives permettent de distinguer décisions antérieures, responsabilités et incertitudes cliniques.',mood:'Clinique, tendu, institutionnel.',min:4,max:6,sound:'clinical',mechanics:['Amnésie authentique','Consentement retiré','Preuves neuropsychologiques']},
 {id:'010',title:'LE BRUIT DES MURS',short:'Nora Weiss est retrouvée morte dans une réserve des archives. Quelqu’un a ouvert puis refermé sa porte alors qu’elle était vivante.',context:'Nora Weiss a été retrouvée morte dans une réserve des archives. À 13 h 54, quelqu’un a ouvert puis refermé la porte alors qu’elle était encore vivante.',mood:'Étouffant, domestique, cruel.',min:5,max:5,sound:'walls',mechanics:['Porte 13:54','Identité à reconstruire','Abandon volontaire']},
 {id:'011',title:'36 HEURES',short:'Pendant trente-six heures, des villages ont brûlé, des civils ont été tués et des familles ont disparu. Trois officiers se renvoient la faute.',context:"Une opération militaire a duré trente-six heures. Des villages ont été détruits, des civils tués et des familles ont disparu. Les ordres donnés et les rapports rédigés ensuite sont contestés.",mood:'Administratif, lourd, moralement insoutenable.',min:5,max:6,sound:'war',mechanics:['Responsabilité graduée','Chaîne de commandement','Pas de coupable unique']},
 {id:'012',title:'FIDÈLES',short:'Sacha voulait quitter la communauté. Il est battu, retenu et isolé pendant près de vingt heures avant de réussir à s’échapper.',context:'Sacha Morel tente de quitter une communauté fermée. Il est battu, retenu et isolé avant de s’échapper. Le dossier doit déterminer qui a voulu l’empêcher de partir, qui a exécuté les actes et qui a choisi de ne pas intervenir.',mood:'Emprise, foi de façade, peur réelle.',min:5,max:5,sound:'cult',mechanics:['Ordre ambigu','Exécution matérielle','Non-intervention']},
@@ -103,8 +103,8 @@ const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
 function scenarioDifficultyTag(sc){const id=String(sc?.id||sc||'');return ADVANCED_SCENARIO_IDS.has(id)?`<span class="tag advanced-tag">${window.IGR_LOCALE==='en'?'ADVANCED':'AVANCÉ'}</span>`:''}
 
 function rolesBlock(sc){
- if(['001','004'].includes(sc?.id)){
-   return '<div class="roles-availability"><div class="roles-row"><span>4 joueurs</span><p>Enquêteur · 3 Suspects <strong>ou</strong> Enquêteur · Analyste · 2 Suspects</p></div><div class="roles-row optional"><span>5 joueurs</span><p>Enquêteur · Analyste · 3 Suspects</p></div></div>';
+ if(['001','004','009'].includes(sc?.id)){
+   return '<div class="roles-availability"><div class="roles-row"><span>4 joueurs</span><p>Enquêteur · 3 Suspects <strong>ou</strong> Enquêteur · Analyste · 2 Suspects</p></div><div class="roles-row optional"><span>5 joueurs</span><p>Enquêteur · Analyste · 3 Suspects</p></div>'+(sc.id==='009'?'<div class="roles-row optional"><span>6 joueurs</span><p>Enquêteur · Analyste · 3 Suspects · Expert</p></div>':'')+'</div>';
  }
  if(sc?.id==='029'){
    const en=window.IGR_LOCALE==='en';
@@ -137,8 +137,10 @@ function expandRoleLabel(label){
 function lobbyRoleSlots(sc,count){
  // v800: certified dossier 001 allows two EXCLUSIVE four-player compositions.
  // The room state is authoritative. Never infer Team mode from a role click.
- if(['001','004'].includes(sc?.id)&&count===4&&STATE?.sync?.room?.state?.four_player_mode==='team')
-   return ['enqueteur','analyste','suspect','suspect'];
+ if(['001','004','009'].includes(sc?.id)&&count===4)
+   return STATE?.sync?.room?.state?.four_player_mode==='team'
+     ?['enqueteur','analyste','suspect','suspect']
+     :['enqueteur','suspect','suspect','suspect'];
  // 029: a room starts with one member, but all SIX mandatory seats must be
  // selectable immediately. The optional roles do not include a lawyer.
  // Restrict this to the actual four-witness server roster: legacy rooms differ.
@@ -1228,7 +1230,7 @@ function renderLobby(prefetched=null){
  const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count);
  const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player},roleMissing=d.players.filter(p=>!p.preferred_role).length;
  const choices=roleChoiceSummary(sc,count,d.players),canStart=!!STATE.hostToken&&count>=min;
- const fourMode=(['001','004'].includes(sc.id)&&count===4)?(d.room.state?.four_player_mode==='team'?'team':'classic'):null;
+ const fourMode=(['001','004','009'].includes(sc.id)&&count===4)?(d.room.state?.four_player_mode==='team'?'team':'classic'):null;
  const fourModePanel=fourMode?('<div class="igr-four-mode" role="group" aria-label="Composition à quatre joueurs">'+
  '<div class="section-title"><h2>Composition à 4 joueurs</h2><span>Deux façons de jouer</span></div>'+
  '<p class="role-choice-help">Choisissez la composition avant les rôles. Le changement libère les rôles réservés.</p>'+
@@ -1293,7 +1295,7 @@ let IGR_V800_MODE_PENDING=false;
 async function chooseFourPlayerMode(mode){
  if(IGR_V800_MODE_PENDING||!STATE.hostToken||STATE.sync?.room?.status!=='lobby')return;
  const d=STATE.sync;
- if(!['001','004'].includes(d.room.scenario_id)||d.players.length!==4||!['classic','team'].includes(mode))return;
+ if(!['001','004','009'].includes(d.room.scenario_id)||d.players.length!==4||!['classic','team'].includes(mode))return;
  if((d.room.state?.four_player_mode||'classic')===mode)return;
  if(d.players.some(p=>p.preferred_role)){
    const confirmed=await appConfirm({
