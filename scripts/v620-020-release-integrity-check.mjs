@@ -13,7 +13,7 @@ const inspector=read('supabase/migrations/20261026001034_igr_v620_020_inspector_
 const expert=read('supabase/migrations/20261026001032_igr_v620_020_expert_analyze.sql');
 const build=read('.github/workflows/cloudflare-build-check.yml');
 const deploy=read('.github/workflows/cloudflare-production-deploy.yml');
-const v='v810-roster-role-stability-20261120-cards-spy-v786-20261120';
+const v='v811-spy-status-v787-20261121';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+v),'020 HTML cache stale');
 assertPwaRevision(html,sw);
