@@ -1,4 +1,4 @@
-const CACHE='igr-v813-single-role-choice-20261121';
+const CACHE='igr-v812-spy-lobby-viewport-20261121';
 const SHELL=[
   '/suspect-natural-cards-v777.js?v=v811-spy-status-v787-20261121',
   '/judicial-card-v773.js?v=v776-20261117',
