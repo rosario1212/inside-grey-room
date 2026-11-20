@@ -163,9 +163,11 @@ try{
     assert(compact.endsWith('…'),'Long catalogue descriptions should signal continuation');
     assert.equal(teaser('Une description courte et complète.'),'Une description courte et complète.');
     const cartelSource=await read('dlc-suite-v12-37.js');
-    const dossier029=cartelSource.match(/\{id:'029',title:'LE CYCLE MORT',short:'([^']+)',context:'([^']+)'/);
+    // Canonical content now uses double quotes around the context because of its apostrophes.
+    // Preserve the full-content/preview assertions without coupling them to quote style.
+    const dossier029=cartelSource.match(/\{id:'029',title:'LE CYCLE MORT',short:'([^']+)',context:(?:'([^']+)'|"([^"]+)")/);
     assert(dossier029,'Cartel 029 public French synopsis not found');
-    const cartelPreview=dossier029[1],cartelDetail=dossier029[2];
+    const cartelPreview=dossier029[1],cartelDetail=dossier029[2]||dossier029[3];
     assert.equal(cartelPreview.trim().split(/\s+/).length,19,'Cartel 029 must use all 19 preview words');
     assert.equal(teaser(cartelPreview,19),cartelPreview,'Cartel 029 must not be truncated in mid-description');
     assert(cartelPreview.includes('Vingt personnes restent captives.'),
@@ -370,7 +372,9 @@ try{
       }));
       const first=data[0];
       for(const m of data){
-        const expectedFit=m.id==='018'?'contain':'cover';
+        // 018 uses the approved v747 catalogue-specific printed-title artwork.
+        // This asset is deliberately full-bleed: 'cover' is the current canon.
+        const expectedFit='cover';
         assert(m.fullFit===expectedFit,width+'px '+m.id+
           ': artwork framing must respect the full 018 poster without altering other classic dossiers');
         assert(Math.abs(m.posterFrameWidth-first.posterFrameWidth)<.5&&
@@ -448,7 +452,7 @@ try{
         const m=metrics[i],name=assets[i].name;
         const id=assets[i].name.slice(0,3);
         const regimeSilver=['032','033','034'].includes(id);
-        const safe=['001','002','003','004','005','006','007','008','018','026','027','028','029','030','031'].includes(id);
+        const safe=['001','002','003','004','005','006','007','008','026','027','028','029','030','031'].includes(id);
         assert(m.fit===(regimeSilver?'cover':safe?'contain':'cover'),
           width+'px '+name+': artwork must match its native sizing rules');
         assert(m.imageCount===1,width+'px '+name+': duplicate image or mini poster remains');
