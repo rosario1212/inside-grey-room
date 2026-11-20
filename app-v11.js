@@ -1078,7 +1078,11 @@ function restoreDrafts(draft){
  if(draft.scope!==draftScope())return;
  for(const f of draft.fields){const el=byId(f.id);if(el){if(el.tagName!=='SELECT'||[...el.options].some(option=>option.value===f.value))el.value=f.value;el.checked=f.checked}}
  const el=byId(draft.focus);if(el){el.focus({preventScroll:true});try{el.setSelectionRange(draft.start,draft.end)}catch{}}
- window.scrollTo(0,draft.scroll);
+ // Role updates preserve the mobile viewport, avoiding a redundant scroll.
+ if(Number.isFinite(draft.scroll)&&Math.abs(window.scrollY-draft.scroll)>1){
+  try{window.scrollTo({top:draft.scroll,left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,draft.scroll)}
+ }
  for(const panel of draft.panels||[]){const el=byId('app').querySelectorAll(panel.selector)[panel.index];if(el){el.scrollLeft=panel.left;el.scrollTop=panel.top}}
 }
 function connectionStatus(failed){

@@ -34,7 +34,7 @@ assert(sql.includes("achievements:=achievements||jsonb_build_array(old_achieveme
 assert(sql.includes("r.phase LIKE 'final_%'"),'Final audience still permits spy signal');
 assert(sql.includes("route_:=CASE WHEN random()<0.5")&&sql.includes("VALUES(NEW.code,actor.id,match_num"),'Per-match secret contact route not pinned');
 assert(rematch.includes('DELETE FROM igr_private.igr_v630_spy_signals WHERE room_code=NEW.code;') && rematch.includes('DELETE FROM igr_private.igr_v630_spy_assignments WHERE room_code=NEW.code;'),'A rematch must reset earlier confidential choices before assigning a new mission');
-assert(html.includes('v811-spy-status-v787-20261121')&&sw.includes('v811-spy-status-v787-20261121'),'PWA version mismatch');
+assert(html.includes('v812-spy-lobby-viewport-20261121')&&sw.includes('v812-spy-lobby-viewport-20261121'),'PWA version mismatch');
 assert(build.includes('node scripts/v631-spy-audit-regression-check.mjs')&&deploy.includes('node scripts/v631-spy-audit-regression-check.mjs'),'Release gates missing');
 execFileSync(process.execPath,['scripts/v787-spy-status-contract-check.mjs']);
 console.log('PASS v631: audited spy victory, absence/Cartel precedence, irreversible choices, secured phases and PWA');

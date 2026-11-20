@@ -226,31 +226,35 @@
     const previous=renderLobby;
     if(typeof previous==='function'){
       renderLobby=function(){
-        // Keep exactly one scroll correction after the DOM and navigation
-        // actions are fully rendered. The previous multi-frame corrections
-        // fought one another on mobile and caused visible role-card jumps.
-        const oldZone=document.querySelector('.role-choice-zone');
-        const pending=oldZone?.querySelector('.igr-role-pending');
-        const focused=document.activeElement?.closest?.('.role-choice-card[data-role-id]');
-        const oldAnchor=pending||((focused&&oldZone?.contains(focused))?focused:null)||oldZone;
-        const roleId=oldAnchor?.dataset?.roleId||null;
-        const top=oldAnchor?.getBoundingClientRect().top;
-        const scrollY=window.scrollY;
-        const out=previous.apply(this,arguments);
-        enhanceLobby();
-        const newZone=document.querySelector('.role-choice-zone');
-        const newAnchor=roleId
-          ?Array.from(newZone?.querySelectorAll('.role-choice-card[data-role-id]')||[]).find(el=>el.dataset.roleId===roleId)||newZone
-          :newZone;
-        if(oldZone&&newAnchor&&Number.isFinite(top)){
-          const delta=newAnchor.getBoundingClientRect().top-top;
-          if(Number.isFinite(delta)&&Math.abs(delta)>1){
-            const target=Math.max(0,scrollY+delta);
-            try{window.scrollTo({top:target,left:0,behavior:'instant'})}
-            catch(_){window.scrollTo(0,target)}
-          }
+        // Changing a role (including a random draw) is an in-place lobby
+        // update, never a navigation event. Preserve the exact viewport Y.
+        const root=document.getElementById('app');
+        const oldLobby=root?.querySelector('.lobby-v11');
+        const sameLobby=!!(root&&oldLobby&&STATE?.view==='lobby'&&
+          oldLobby.dataset.igrScenarioId===String(STATE?.sync?.room?.scenario_id||''));
+        const scrollY=sameLobby?window.scrollY:0;
+        const previousMinHeight=sameLobby?root.style.minHeight:'';
+        if(sameLobby){
+          // The full lobby DOM is replaced on sync. Keep sufficient height
+          // during the replacement so mobile Safari cannot clamp scrollY to 0.
+          const height=Math.max(root.getBoundingClientRect().height,window.innerHeight+scrollY);
+          root.style.minHeight=Math.ceil(height)+'px';
         }
-        return out;
+        try{
+          const out=previous.apply(this,arguments);
+          enhanceLobby();
+          if(sameLobby&&root.querySelector('.lobby-v11')){
+            // Old code anchored to the pending role/zone, then restoreDrafts()
+            // scrolled to a different Y. Those competing corrections jumped.
+            if(Math.abs(window.scrollY-scrollY)>1){
+              try{window.scrollTo({top:scrollY,left:0,behavior:'instant'})}
+              catch(_){window.scrollTo(0,scrollY)}
+            }
+          }
+          return out;
+        }finally{
+          if(sameLobby)root.style.minHeight=previousMinHeight;
+        }
       };
     }
   }catch(err){console.warn('lobby back/settings hook',err)}

@@ -31,7 +31,7 @@ assert(standard.includes("document.querySelector('#app .lobby-v11')")&&standard.
 assert(!standard.includes('window.scrollY+shift'),'Duplicate core lobby scroll correction reappeared');
 assert(standard.includes('previousListY!==null'),'Catalogue may not jump on passive refresh');
 assert(standard.includes('previousProfileY!==null'),'Profile may not jump after selecting a badge');
-assert(lobby.includes('enhanceLobby();')&&lobby.includes('scrollY+delta'),'Back/Settings must render before the one stable role-position correction');
+assert(lobby.includes('enhanceLobby();')&&lobby.includes('const sameLobby=')&&lobby.includes('scrollY=sameLobby?window.scrollY:0')&&!lobby.includes('scrollY+delta'),'Back/Settings must render without scrolling the viewport after a role update');
 assert(globalNav.includes('new MutationObserver('),'Missing shared navigation routing observer');
 assert(globalNav.includes("const restoringScenarios=next==='scenarios:list'"),'Return to previously read catalogue must keep its position');
 assert(!globalNav.includes('history.back()'),'Back cannot abandon active multiplayer via browser history');

@@ -71,13 +71,14 @@ ok(files.cell.includes('requestAnimationFrame(syncGameUiState)'),'Launch complet
 ok(files.cell.includes("document.getElementById('igrUniversalDock')?.remove()"),'Live cells must purge stale dock shells');
 ok(!files.cell.includes("gate.style.pointerEvents='none'"),'Gameplay repair must not permanently disable the reusable intro gate');
 
-// Role selection: a fixed random-draw geometry and ONE post-render scroll
-// anchor replace the former FLIP animations and repeated rAF corrections.
+// Role selection: fixed random-draw geometry and an unchanged viewport Y
+// replace conflicting role-card anchors, FLIP animations and rAF corrections.
 ok(files.role.includes("const DRAW_MIN_MS=260"),'Random role draw timing guard missing');
 ok(!files.role.includes('restoreRoleAnchor('),'Multi-frame viewport correction reappeared');
 ok(!files.role.includes('animateFrom('),'Role-card FLIP animation reappeared');
-ok(files.lobbyUi.includes("const pending=oldZone?.querySelector('.igr-role-pending')"),'Clicked role must anchor the viewport once');
-ok(files.lobbyUi.includes('const scrollY=window.scrollY'),'Single scroll anchor baseline missing');
+ok(files.lobbyUi.includes('const sameLobby='),'Same-lobby render detection missing');
+ok(files.lobbyUi.includes('const scrollY=sameLobby?window.scrollY:0'),'Stable viewport baseline missing');
+ok(!files.lobbyUi.includes('scrollY+delta'),'Competing role-card scroll anchor reappeared');
 ok(!files.role.includes('renderLobby(STATE.sync)'),'Random role draw must not force a duplicate full lobby render');
 ok(!files.role.includes('Math.random()'),'Random role draw must not fall back to Math.random');
 ok(files.roleCss.includes('--igr-random-lock-w'),'Random draw geometry lock missing');
