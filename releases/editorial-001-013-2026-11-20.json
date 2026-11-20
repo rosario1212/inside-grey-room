@@ -1,0 +1,43 @@
+{
+  "release": "editorial-001-013-2026-11-20",
+  "product": "Inside Grey Room",
+  "backend": "Supabase",
+  "frontend_host": "Cloudflare Workers",
+  "source_branch": "main",
+  "scope": {
+    "scenarios": [
+      "001",
+      "002",
+      "003",
+      "004",
+      "005",
+      "006",
+      "007",
+      "008",
+      "009",
+      "010",
+      "011",
+      "012",
+      "013"
+    ],
+    "variants": 39,
+    "private_cards": 120
+  },
+  "editorial_changes": [
+    "clarify private objectives without disclosing scoring levels",
+    "replace S1/S2/S3 markers in player-facing compiled text",
+    "simplify scenario context, character roles, investigations and trames",
+    "include story introductions in compiled scenario 007 and 008"
+  ],
+  "verification": {
+    "manuscript_checksums_valid": 39,
+    "approved_variants": 39,
+    "randomized_start_smokes_001_006_passed": 108,
+    "full_game_and_privacy_smokes": "passed"
+  },
+  "content_source": "Production Supabase manuscripts and server runtime. Earlier in-progress room snapshots may remain pinned to a prior version.",
+  "frontend_code_modified": false,
+  "human_playtest_verified": false,
+  "ios_visual_review_verified": false,
+  "release_note": "A non-code release-tracking commit; GitHub's configured Cloudflare production workflow handles any redeploy on merging into main. Merge and deployment statuses must be confirmed separately. No secrets or canonical mystery answers included."
+}
