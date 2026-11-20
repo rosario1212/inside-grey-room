@@ -4,6 +4,7 @@ import {execFileSync} from 'node:child_process';
 const read=f=>readFileSync(f,'utf8');
 const app=read('app-v11.js');
 const sql=read('supabase/migrations/20261026124500_igr_v631_spy_audit_fixes.sql');
+const rematch=read('supabase/migrations/20261120225248_igr_v786_spy_rematch_clear_sealed_choices.sql');
 const html=read('index.html'),sw=read('service-worker.js');
 const cards=read('suspect-natural-cards-v777.js');
 const build=read('.github/workflows/cloudflare-build-check.yml'),deploy=read('.github/workflows/cloudflare-production-deploy.yml');
@@ -32,6 +33,7 @@ assert(sql.includes("old_achievement <> to_jsonb('espion_ombre'::text)"),'Obsole
 assert(sql.includes("achievements:=achievements||jsonb_build_array(old_achievement)"),'Unrelated achievements are not preserved');
 assert(sql.includes("r.phase LIKE 'final_%'"),'Final audience still permits spy signal');
 assert(sql.includes("route_:=CASE WHEN random()<0.5")&&sql.includes("VALUES(NEW.code,actor.id,match_num"),'Per-match secret contact route not pinned');
+assert(rematch.includes('DELETE FROM igr_private.igr_v630_spy_signals WHERE room_code=NEW.code;') && rematch.includes('DELETE FROM igr_private.igr_v630_spy_assignments WHERE room_code=NEW.code;'),'A rematch must reset earlier confidential choices before assigning a new mission');
 assert(html.includes('cards-spy-v786-20261120')&&sw.includes('cards-spy-v786-20261120'),'PWA version mismatch');
 assert(build.includes('node scripts/v631-spy-audit-regression-check.mjs')&&deploy.includes('node scripts/v631-spy-audit-regression-check.mjs'),'Release gates missing');
 console.log('PASS v631: audited spy victory, absence/Cartel precedence, irreversible choices, secured phases and PWA');
