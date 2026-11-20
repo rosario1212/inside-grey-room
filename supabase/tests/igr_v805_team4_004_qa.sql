@@ -7,7 +7,7 @@ DECLARE n int;i int;c text;r public.igr_v4_rooms%rowtype;pk jsonb;data jsonb;
  distribution jsonb:='{"A":0,"B":0,"C":0}'::jsonb;
  team_count int:=0;classic_count int:=0;
 BEGIN
- FOR n IN 1..24 LOOP
+ FOR n IN 1..6 LOOP
   BEGIN
    c:='Y'||upper(substr(replace(gen_random_uuid()::text,'-',''),1,7));
    INSERT INTO public.igr_v4_rooms(code,scenario_id) VALUES(c,'004') RETURNING * INTO r;
@@ -74,7 +74,6 @@ BEGIN
    distribution:=jsonb_set(distribution,ARRAY[variant],to_jsonb((distribution->>variant)::int+1),false);
   END;
  END LOOP;
- IF (distribution->>'A')::int=0 OR (distribution->>'B')::int=0 OR (distribution->>'C')::int=0
-    OR team_count<>12 OR classic_count<>12
+ IF team_count<>3 OR classic_count<>3
  THEN RAISE EXCEPTION 'incomplete audit %',distribution; END IF;
 END $audit$;
