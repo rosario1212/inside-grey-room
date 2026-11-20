@@ -138,4 +138,39 @@ assert(!repaintHook.includes('scrollY+delta'),'No competing scroll anchoring in 
 assert(app.includes('if(Number.isFinite(draft.scroll)&&Math.abs(window.scrollY-draft.scroll)>1)'),
  'Draft recovery must skip redundant scroll commands');
 
+// Regression: server-driven updates to a visible role lobby must never send
+// iOS Safari to the top. Test the actual renderer wrapper with a DOM stub.
+const viewportRender=section(lobby,'      renderLobby=function(){','\n      };')+'\n      };';
+function checkLobbyViewport({sameScenario=true,simulatedScroll=900}={}){
+ let scrollY=900;
+ const scrollCalls=[];
+ let mounted={dataset:{igrScenarioId:'001'}};
+ const root={style:{minHeight:''},getBoundingClientRect:()=>({height:2200}),querySelector:sel=>sel==='.lobby-v11'?mounted:null};
+ const windowStub={
+  get scrollY(){return scrollY},
+  innerHeight:800,
+  scrollTo(arg,y){scrollCalls.push(arg);scrollY=typeof arg==='object'?arg.top:y}
+ };
+ const scope={
+  document:{getElementById:id=>id==='app'?root:null},
+  window:windowStub,
+  STATE:{view:'lobby',sync:{room:{scenario_id:sameScenario?'001':'002'}}},
+  renderLobby(){scrollY=simulatedScroll;mounted={dataset:{igrScenarioId:'001'}};return 7},
+  enhanceLobby(){}
+ };
+ vm.runInNewContext('const previous=renderLobby;'+viewportRender,scope);
+ assert.equal(scope.renderLobby(),7);
+ assert.equal(root.style.minHeight,'','Temporary height guard must be removed');
+ return {scrollY,scrollCalls};
+}
+const unchanged=checkLobbyViewport();
+assert.equal(unchanged.scrollY,900);
+assert.equal(unchanged.scrollCalls.length,0,'A role selection must not trigger a scroll call');
+const recovered=checkLobbyViewport({simulatedScroll:0});
+assert.equal(recovered.scrollY,900,'Viewport must recover from a full lobby DOM replacement');
+assert.equal(recovered.scrollCalls.length,1,'At most one immediate correction is allowed');
+const otherPage=checkLobbyViewport({sameScenario:false,simulatedScroll:0});
+assert.equal(otherPage.scrollY,0,'A new scenario is a navigation, not a preserved lobby');
+assert.equal(otherPage.scrollCalls.length,0);
+
 console.log('PASS v724: dossier-specific role cards, stable Omerta controls, serialized role RPCs.');
