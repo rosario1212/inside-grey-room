@@ -129,8 +129,8 @@ assert(v806.includes("p_scenario IN ('001','004','009')")&&v806.includes("when p
 assert(['007','008','010','011','012','013','014','015','016']
  .every(id=>scById[id].min>=5),'Uncertified scenarios must remain five-player');
 
-// v810: the preview is informational, never an additional selectable seat.
-// Lobby refreshes must not compete with post-frame viewport restoration.
+// v811: the preview is informational, never an additional selectable seat.
+// Role picks and random draws retain a fixed viewport instead of card anchoring.
 const polish=readFileSync('role-tree-polish-v12-29.js','utf8');
 const lobbyUi=readFileSync('lobby-ui-fix-v13.js','utf8');
 const lobbyCss=readFileSync('lobby-ui-fix-v13.css','utf8');
@@ -143,10 +143,12 @@ assert(!source.includes('<strong>ou</strong>'),'Old inline roster conjunction re
 assert(!source.includes('const oldRoleTop='),'Duplicate core scroll anchor reappeared');
 assert(!polish.includes('restoreRoleAnchor('),'Multi-frame scroll restoration reappeared');
 assert(!polish.includes('animateFrom('),'Role-card FLIP motion reappeared');
-assert(lobbyUi.includes("const pending=oldZone?.querySelector('.igr-role-pending')"),'Clicked role must stay anchored');
+assert(lobbyUi.includes('const sameLobby='),'Role updates must detect the same mounted lobby');
+assert(lobbyUi.includes('const scrollY=sameLobby?window.scrollY:0'),'Role updates must preserve the actual viewport position');
+assert(!lobbyUi.includes('scrollY+delta'),'A changing card must never shift the viewport');
 assert(lobbyCss.includes('.igr-role-preview'),'Analyst preview styling missing');
-assert(html.includes('v810-one-scroll-anchor'),'Stale lobby cache reference');
-console.log('PASS: stationary role cards, single viewport anchor, locked Analyst preview and distinct roster alternatives');
+assert(html.includes('v811-lobby-fixed-viewport-20261121'),'Stale lobby cache reference');
+console.log('PASS: stationary role cards, exact viewport retention, locked Analyst preview and distinct roster alternatives');
 
 console.log('PASS: classic, 001/004/009 Team-4 online room slot allocation');
 console.log('PASS: five-player, 002 and all other scenario safety exceptions');
