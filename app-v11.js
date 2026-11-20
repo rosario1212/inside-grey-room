@@ -103,7 +103,7 @@ const ADVANCED_SCENARIO_IDS=new Set(['019','020','027','030','034']);
 function scenarioDifficultyTag(sc){const id=String(sc?.id||sc||'');return ADVANCED_SCENARIO_IDS.has(id)?`<span class="tag advanced-tag">${window.IGR_LOCALE==='en'?'ADVANCED':'AVANCÉ'}</span>`:''}
 
 function rolesBlock(sc){
- if(sc?.id==='001'){
+ if(['001','004'].includes(sc?.id)){
    return '<div class="roles-availability"><div class="roles-row"><span>4 joueurs</span><p>Enquêteur · 3 Suspects <strong>ou</strong> Enquêteur · Analyste · 2 Suspects</p></div><div class="roles-row optional"><span>5 joueurs</span><p>Enquêteur · Analyste · 3 Suspects</p></div></div>';
  }
  if(sc?.id==='029'){
@@ -137,7 +137,7 @@ function expandRoleLabel(label){
 function lobbyRoleSlots(sc,count){
  // v800: certified dossier 001 allows two EXCLUSIVE four-player compositions.
  // The room state is authoritative. Never infer Team mode from a role click.
- if(sc?.id==='001'&&count===4&&STATE?.sync?.room?.state?.four_player_mode==='team')
+ if(['001','004'].includes(sc?.id)&&count===4&&STATE?.sync?.room?.state?.four_player_mode==='team')
    return ['enqueteur','analyste','suspect','suspect'];
  // 029: a room starts with one member, but all SIX mandatory seats must be
  // selectable immediately. The optional roles do not include a lawyer.
@@ -1228,7 +1228,7 @@ function renderLobby(prefetched=null){
  const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count);
  const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player},roleMissing=d.players.filter(p=>!p.preferred_role).length;
  const choices=roleChoiceSummary(sc,count,d.players),canStart=!!STATE.hostToken&&count>=min;
- const fourMode=(sc.id==='001'&&count===4)?(d.room.state?.four_player_mode==='team'?'team':'classic'):null;
+ const fourMode=(['001','004'].includes(sc.id)&&count===4)?(d.room.state?.four_player_mode==='team'?'team':'classic'):null;
  const fourModePanel=fourMode?('<div class="igr-four-mode" role="group" aria-label="Composition à quatre joueurs">'+
  '<div class="section-title"><h2>Composition à 4 joueurs</h2><span>Deux façons de jouer</span></div>'+
  '<p class="role-choice-help">Choisissez la composition avant les rôles. Le changement libère les rôles réservés.</p>'+
@@ -1293,7 +1293,7 @@ let IGR_V800_MODE_PENDING=false;
 async function chooseFourPlayerMode(mode){
  if(IGR_V800_MODE_PENDING||!STATE.hostToken||STATE.sync?.room?.status!=='lobby')return;
  const d=STATE.sync;
- if(d.room.scenario_id!=='001'||d.players.length!==4||!['classic','team'].includes(mode))return;
+ if(!['001','004'].includes(d.room.scenario_id)||d.players.length!==4||!['classic','team'].includes(mode))return;
  if((d.room.state?.four_player_mode||'classic')===mode)return;
  if(d.players.some(p=>p.preferred_role)){
    const confirmed=await appConfirm({
