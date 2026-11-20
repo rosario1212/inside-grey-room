@@ -43,8 +43,8 @@ BEGIN
     THEN RAISE EXCEPTION 'classic 4 roster wrong';END IF;
    END IF;
 
-   SELECT variant_id INTO variant FROM igr_private.igr_v99_room_canons WHERE room_code=c;
-   IF variant NOT IN ('A','B','C') THEN RAISE EXCEPTION 'variant not pinned';END IF;
+   SELECT variant_id INTO variant FROM igr_private.igr_v331_009_room_snapshots WHERE room_code=c;
+   IF variant IS NULL OR variant NOT IN ('A','B','C') THEN RAISE EXCEPTION 'variant not pinned';END IF;
 
    PERFORM public.igr_v4_start_cycle(c,1);
    IF n%2=0 THEN
