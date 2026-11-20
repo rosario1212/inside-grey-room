@@ -627,8 +627,9 @@ try{
       const top=page.locator('.phase-exit-btn');
       assert(await top.isVisible(),'Top exit must remain visible on phone and desktop');
       const buttonBox=await top.boundingBox();
+      const topGeometry=await top.evaluate(el=>{const cs=getComputedStyle(el);const r=el.getBoundingClientRect();return {minHeight:cs.minHeight,height:cs.height,width:cs.width,transform:cs.transform,display:cs.display,boxSizing:cs.boxSizing,parentTransform:getComputedStyle(el.parentElement).transform,rectHeight:r.height,rectWidth:r.width}});
       assert(buttonBox&&buttonBox.width>=44&&buttonBox.height>=40,
-        'Top exit touch target must be usable: '+JSON.stringify(buttonBox));
+        'Top exit touch target must be usable: '+JSON.stringify({buttonBox,topGeometry}));
       await top.click();
       assert.equal(await page.evaluate(()=>window.igrExitClicks),1,'Top exit must receive the tap');
       await page.evaluate(()=>scrollTo(0,650));
