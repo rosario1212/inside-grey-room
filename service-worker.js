@@ -1,4 +1,4 @@
-const CACHE='igr-v812-spy-lobby-viewport-20261121';
+const CACHE='igr-v813-single-role-choice-20261121';
 const SHELL=[
   '/suspect-natural-cards-v777.js?v=v811-spy-status-v787-20261121',
   '/judicial-card-v773.js?v=v776-20261117',
@@ -28,7 +28,7 @@ const SHELL=[
   '/app-v11.js?v=v812-spy-lobby-viewport-20261121','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
   '/turn-v12-4.js?v=security-v701-room-authorized-20261115','/profile-dossier-v12.js?v=v12.22-mobile-ui','/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
   '/notifications-v12.js?v=v12.22-mobile-ui','/native-lifecycle-v12.js?v=v12.22-mobile-ui','/runtime-optimization-v12.js?v=v12.22-mobile-ui','/gameplay-simple-v12.js?v=v12.22-mobile-ui',
-  '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v12.22-mobile-ui',
+  '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v813-single-role-choice-20261121',
   '/scenario-flow-v13.js?v=v13.2-final','/gameplay-flow-v13.js?v=v13.2-final','/dlc-experience-v13.js?v=v13.2-final','/scenario-replay-contracts-v13.json?v=v13.2-final','/lobby-ui-fix-v13.js?v=v812-spy-lobby-viewport-20261121',
   '/startup-stability-v13-3.js?v=v13.8-dual-play','/heritage-v13-5.js?v=v13.8-dual-play','/heritage-premium-v13-6.js?v=v13.8-dual-play','/heritage-play-v13-7.js?v=v781-dlc-clarity-20261118','/play-modes-v13-8.js?v=v13.8-dual-play',
   '/heritage-maitre-data-v34.js?v=v781-dlc-clarity-20261118','/heritage-maitre-assets-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-v34.js?v=v768-private-roles-20261117','/heritage-maitre-online-v34-4.js?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-mobile-v34-5.js?v=v34.9-maitre-theme-posters',
