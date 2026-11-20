@@ -129,6 +129,25 @@ assert(v806.includes("p_scenario IN ('001','004','009')")&&v806.includes("when p
 assert(['007','008','010','011','012','013','014','015','016']
  .every(id=>scById[id].min>=5),'Uncertified scenarios must remain five-player');
 
+// v810: the preview is informational, never an additional selectable seat.
+// Lobby refreshes must not compete with post-frame viewport restoration.
+const polish=readFileSync('role-tree-polish-v12-29.js','utf8');
+const lobbyUi=readFileSync('lobby-ui-fix-v13.js','utf8');
+const lobbyCss=readFileSync('lobby-ui-fix-v13.css','utf8');
+const html=readFileSync('index.html','utf8');
+assert(source.includes('const analystPreview='),'Analyst preview missing before Team-4 activation');
+assert(source.includes("!choices.some(x=>x.id==='analyste')"),'Preview must disappear when Analyst is selectable');
+assert(source.includes('aria-disabled="true"'),'Preview must never call choose_role');
+assert(source.includes('igr-roster-variant'),'Two explicit four-player roster cards missing');
+assert(!source.includes('<strong>ou</strong>'),'Old inline roster conjunction reappeared');
+assert(!source.includes('const oldRoleTop='),'Duplicate core scroll anchor reappeared');
+assert(!polish.includes('restoreRoleAnchor('),'Multi-frame scroll restoration reappeared');
+assert(!polish.includes('animateFrom('),'Role-card FLIP motion reappeared');
+assert(lobbyUi.includes("const pending=oldZone?.querySelector('.igr-role-pending')"),'Clicked role must stay anchored');
+assert(lobbyCss.includes('.igr-role-preview'),'Analyst preview styling missing');
+assert(html.includes('v810-one-scroll-anchor'),'Stale lobby cache reference');
+console.log('PASS: stationary role cards, single viewport anchor, locked Analyst preview and distinct roster alternatives');
+
 console.log('PASS: classic, 001/004/009 Team-4 online room slot allocation');
 console.log('PASS: five-player, 002 and all other scenario safety exceptions');
 console.log('PASS: local choice and neutral nonplayer witnesses for 001/004/009');
