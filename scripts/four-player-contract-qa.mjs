@@ -73,11 +73,15 @@ assert(guideline.includes('Enquêteur + 1 Analyste + 2 Suspects'),'Missing Team-
 assert(patch.includes("'intent',CASE WHEN"),'Verdict smoke patch missing intent axis');
 assert(rolesMigration.includes('v699 roster capacity sync'),'Missing capacity reconciliation baseline');
 
-// Safety check: the code has no verified Team-4 launch API yet. This negative
-// test prevents someone from accidentally lowering 007-016 to four players
-// without shipping backend mode persistence, NPC testimony and verdict QA.
-const team4ProductReady=false;
-assert(!team4ProductReady,'Team-4 must not be enabled until each dossier is certified');
+// Real negative readiness check: while there is no server-certified
+// Team-4 implementation, a four-person lobby must expose *no Analyst*,
+// and all former five-person cases must retain their five-person minimum.
+// These assertions deliberately fail when the product is partly changed.
+assert(traditional4.every(id=>!slotRoster(id,4).includes('analyste')),
+  'Team-4 must not be surfaced through role labels alone');
+assert(['007','008','009','010','011','012','013','014','015','016']
+  .every(id=>scById[id].min>=5),
+  'Scenario minima changed without certified Team-4 narrative/SQL/runtime');
 
 console.log('PASS: classic A four-player rosters, five-player and 002 exceptions');
 console.log('PASS: uncertified 007–016 cannot advertise four-player minimum');
