@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'app-v11.js'
+      - 'play-modes-v13-8.js'
+      - 'styles-v11.css'
+      - 'play-modes-v13-8.css'
       - 'FOUR_PLAYER_COMPOSITIONS_GUIDELINE.md'
       - 'supabase/migrations/**'
       - 'scripts/four-player-contract-qa.mjs'
@@ -12,6 +15,9 @@ on:
     branches: [main]
     paths:
       - 'app-v11.js'
+      - 'play-modes-v13-8.js'
+      - 'styles-v11.css'
+      - 'play-modes-v13-8.css'
       - 'FOUR_PLAYER_COMPOSITIONS_GUIDELINE.md'
       - 'supabase/migrations/**'
       - 'scripts/four-player-contract-qa.mjs'
@@ -29,5 +35,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate gameplay JavaScript syntax
+        run: |
+          node --check app-v11.js
+          node --check play-modes-v13-8.js
       - name: Check canonical role combinations
         run: node scripts/four-player-contract-qa.mjs
