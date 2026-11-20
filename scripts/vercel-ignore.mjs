@@ -1,5 +1,5 @@
-// Vercel's Ignored Build Step: exit 0 = skip deployment, exit 1 = continue.
-// Hosting is now the private Cloudflare Worker, for every branch and project.
-// Cancel legacy automatic builds before they can publish a parallel preview.
-console.log('Skipping legacy hosting build: private Cloudflare deployment only.');
+// Keep this tiny fail-closed guard while any historical Vercel Git integration can still reach the repository.
+// Vercel Ignored Build Step: exit 0 = skip the deployment; exit 1 = deploy.
+// Only the Cloudflare Worker inside-grey-room-last publishes Inside Grey Room.
+console.log('Legacy Vercel deployment disabled: production is Cloudflare inside-grey-room-last.');
 process.exit(0);
