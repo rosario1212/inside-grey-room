@@ -94,9 +94,11 @@ assert.deepEqual(actualLobbyRoster('001',4,'classic'),
  ['enqueteur','suspect','suspect','suspect'].sort());
 assert.deepEqual(actualLobbyRoster('001',4,'team'),
  ['enqueteur','analyste','suspect','suspect'].sort());
+assert.deepEqual(actualLobbyRoster('004',4,'team'),
+ ['enqueteur','analyste','suspect','suspect'].sort());
 assert.deepEqual(actualLobbyRoster('001',5,'team'),
  ['enqueteur','analyste','suspect','suspect','suspect'].sort());
-for(const id of traditional4.filter(id=>id!=='001')){
+for(const id of traditional4.filter(id=>!['001','004'].includes(id))){
  assert.deepEqual(actualLobbyRoster(id,4,'team'),
   ['enqueteur','suspect','suspect','suspect'].sort(),
   'Uncertified Team-4 must be blocked: '+id);
@@ -104,8 +106,8 @@ for(const id of traditional4.filter(id=>id!=='001')){
 assert(source.includes('chooseFourPlayerMode('),'Host lobby choice missing');
 assert(source.includes('igr_v800_set_four_player_mode'),'Room-persisted mode RPC missing');
 const local=readFileSync('play-modes-v13-8.js','utf8');
-assert(local.includes("id==='001'&&count===4&&mode==='team'"),'Local mode roster absent');
-assert(local.includes('IGR_001_ARCHIVED_WITNESS'),'Local witness statement missing');
+assert(local.includes("['001','004'].includes(id)&&count===4&&mode==='team'"),'Local mode roster absent');
+assert(local.includes('IGR_001_ARCHIVED_WITNESS')&&local.includes('IGR_004_ARCHIVED_WITNESS'),'Local witness statements missing');
 const migration=readFileSync('supabase/migrations/20261120230000_igr_v800_team4_001.sql','utf8');
 for(const expected of ['igr_v800_set_four_player_mode','igr_v800_role_for_seat',
 'igr_v800_role_capacity','igr_v800_team4_enabled',
@@ -113,11 +115,14 @@ for(const expected of ['igr_v800_set_four_player_mode','igr_v800_role_for_seat',
 "r.scenario_id<>'001'","'nonplayer',true"]){
  assert(migration.includes(expected),'Missing Team-4 database guard: '+expected);
 }
+const v805=readFileSync('supabase/migrations/20261120234500_igr_v805_team4_004.sql','utf8');
+assert(v805.includes("p_scenario IN ('001','004')")&&v805.includes('igr_v805_team4_allowed'),
+ 'Server must keep an exact whitelist for 001 and 004');
 assert(['007','008','009','010','011','012','013','014','015','016']
  .every(id=>scById[id].min>=5),'Uncertified scenarios must remain five-player');
 
-console.log('PASS: classic and 001 Team-4 online room slot allocation');
+console.log('PASS: classic, 001 and 004 Team-4 online room slot allocation');
 console.log('PASS: five-player, 002 and all other scenario safety exceptions');
-console.log('PASS: local choice and narrated nonplayer witness');
+console.log('PASS: local choice and neutral nonplayer witness for 001 and 004');
 console.log('PASS: guarded 001-only SQL migration and 001 smoke verdict audit');
 console.log('BLOCKED BY DESIGN: other scenarios do NOT yet claim Team-4 readiness');
