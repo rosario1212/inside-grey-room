@@ -175,3 +175,26 @@ body #app .app .game-v11 > .phase-strip .phase-timer-box .phase-host-actions > b
     line-height:1.19!important;
   }
 }
+
+
+/* 320px Regime card vertical economy: preserve readable text without letting
+ * public badges escape the card boundary. */
+@media(max-width:359px){
+  body #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact{
+    padding:6px 6px!important;
+    row-gap:2px!important;
+  }
+  body #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact h3{
+    margin:1px 0 2px!important;
+  }
+  body #app .page-create-v10-13 .scenario-list-v10-13
+    > article.scenario.scenario--art.scenario--compact.regime-scenario:is(#scenario-032,#scenario-033,#scenario-034)
+    > .scenario-body.compact > .tag-row{
+    margin:3px 0 0!important;
+    gap:2px!important;
+  }
+}
