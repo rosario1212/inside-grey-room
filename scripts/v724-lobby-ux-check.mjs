@@ -23,7 +23,7 @@ const cleanLobby=read('gameplay-clean-v12.js');
 assert(!cleanLobby.includes('Retirer mon choix'),'Remove the duplicate bottom clear-choice link');
 assert(!cleanLobby.includes('role-choice-quiet'),'Remove legacy bottom role controls');
 assert(polish.includes('<span>TON CHOIX</span>'),'Preserve the main choice card');
-assert(polish.includes("onclick=\\\"chooseLobbyRole('')\\\""),'Preserve the choice-card Retirer action');
+assert(polish.includes("onclick=\"chooseLobbyRole('')\""),'Preserve the choice-card Retirer action');
 let removedLegacyControls=0;
 const legacyControls=[{remove(){removedLegacyControls++}},{remove(){removedLegacyControls++}}];
 const lobbyStub={
@@ -33,7 +33,7 @@ const lobbyStub={
 const startClean=cleanLobby.indexOf('  function decorateLobbyRole(){');
 const endClean=cleanLobby.indexOf('  /* ---------- remove the old shared discussion-focus experiment ---------- */',startClean);
 assert(startClean>=0&&endClean>startClean);
-vm.runInNewContext(cleanLobby.slice(startClean,endClean)+'\\ndecorateLobbyRole();',{
+vm.runInNewContext(cleanLobby.slice(startClean,endClean)+'\ndecorateLobbyRole();',{
  document:{querySelector:()=>lobbyStub}
 });
 assert.equal(removedLegacyControls,2,'All obsolete footer copies must be removed even after a rerender');
