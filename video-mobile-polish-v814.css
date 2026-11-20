@@ -1,0 +1,68 @@
+/* v814 — mobile polish from 21 Nov screen recording. Visual-only changes. */
+@media (max-width:600px){
+  #app .lobby-v11[data-igr-lobby-theme] .role-choice-grid{gap:8px!important}
+  #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card:not(.random-role-card){
+    min-height:88px!important;padding:11px 12px 7px!important;
+    gap:7px!important;align-content:start!important
+  }
+  #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card>span{gap:4px!important}
+  #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card>span>b{
+    font-size:16px!important;line-height:1.22!important
+  }
+  #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card small{
+    font-size:12px!important;line-height:1.34!important
+  }
+  #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card em{
+    min-height:32px!important;padding:5px 7px!important
+  }
+  #app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary{
+    min-height:44px!important;padding:9px 2px!important
+  }
+  #app .lobby-v11[data-igr-lobby-theme] .role-choice-zone .role-choice-help{
+    margin:8px 0 10px!important
+  }
+  .terror-v681-city-lobby{box-sizing:border-box;width:100%;min-width:0;padding:15px!important}
+  .terror-v681-city-head b{font-size:16px!important;line-height:1.3}
+  .terror-v681-city-entry{min-width:0}
+  .terror-v681-input-row{
+    display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:stretch;gap:8px;min-width:0
+  }
+  .terror-v681-input-row input{
+    box-sizing:border-box;min-width:0!important;width:100%;font-size:16px!important
+  }
+  .terror-v681-input-row .btn{
+    min-width:0;min-height:44px;padding-inline:11px!important;
+    white-space:nowrap;font-size:12px!important
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-tree-box{
+    box-sizing:border-box;max-width:calc(100vw - 20px);
+    max-height:calc(100dvh - 30px);padding:14px!important;overflow-y:auto
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-scroll{
+    display:block;max-width:100%;max-height:min(47dvh,520px);
+    overflow-x:auto!important;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    touch-action:pan-x pan-y;scrollbar-width:thin;
+    scrollbar-color:rgba(190,84,88,.6) transparent
+  }
+  .omerta-tree-responsive .omerta-org-scroll::-webkit-scrollbar{height:5px}
+  .omerta-tree-responsive .omerta-org-scroll::-webkit-scrollbar-thumb{
+    background:rgba(190,84,88,.6);border-radius:5px
+  }
+}
+.omerta-tree-swipe-hint{
+  margin:6px 0 2px!important;color:#d7a5a8!important;
+  font-size:11px!important;font-weight:650;line-height:1.45!important;text-align:center
+}
+.omerta-tree-responsive .omerta-org-scroll:focus-visible{
+  outline:2px solid #d7a5a8!important;outline-offset:2px
+}
+html:has(#terrorV681CityName:focus){scroll-padding-top:90px}
+#terrorV681CityName{scroll-margin-top:90px;scroll-margin-bottom:30px}
+@media(max-width:360px){
+  .terror-v681-input-row{grid-template-columns:minmax(0,1fr)!important}
+  .terror-v681-input-row .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  #app .lobby-v11[data-igr-lobby-theme] .igr-role-option{transition:none!important}
+}
