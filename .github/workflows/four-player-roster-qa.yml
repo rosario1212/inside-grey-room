@@ -1,0 +1,33 @@
+name: Four-player roster QA
+
+on:
+  pull_request:
+    paths:
+      - 'app-v11.js'
+      - 'FOUR_PLAYER_COMPOSITIONS_GUIDELINE.md'
+      - 'supabase/migrations/**'
+      - 'scripts/four-player-contract-qa.mjs'
+      - '.github/workflows/four-player-roster-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'app-v11.js'
+      - 'FOUR_PLAYER_COMPOSITIONS_GUIDELINE.md'
+      - 'supabase/migrations/**'
+      - 'scripts/four-player-contract-qa.mjs'
+      - '.github/workflows/four-player-roster-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  static-roster-contract:
+    name: Classic four-player compatibility and Team-4 safety
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check canonical role combinations
+        run: node scripts/four-player-contract-qa.mjs
