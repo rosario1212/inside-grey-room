@@ -13,7 +13,7 @@ const [app,html,sw,db1,db2,db3,db4,workflow,prod]=await Promise.all([
   '.github/workflows/cloudflare-build-check.yml','.github/workflows/cloudflare-production-deploy.yml'
 ].map(load));
 
-const cache='santoro-display-audit-20261108';
+const cache='v810-roster-role-stability-20261120';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+cache),'Source HTML has stale game cache');
 assertPwaRevision(html,sw);
