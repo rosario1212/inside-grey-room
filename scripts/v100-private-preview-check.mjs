@@ -18,11 +18,21 @@ for(const forbidden of [
   /\bupdate\s+igr_private\.igr_v99_variant_manuscripts/i,
   /\bupdate\s+public\.igr_v4_rooms/i
 ]) assert(!forbidden.test(sql),'Preview must not alter live gameplay or client permissions');
-const workflows=['.github/workflows/cloudflare-build-check.yml',
-                 '.github/workflows/deploy-cloudflare-production.yml'];
-for(const name of workflows){
+const guardedWorkflows=['.github/workflows/cloudflare-build-check.yml',
+                        '.github/workflows/cloudflare-production-deploy.yml'];
+for(const name of guardedWorkflows){
   const content=await readFile(name,'utf8');
   assert.match(content,/v99-private-release-check\.mjs/i,
       name+' must keep the existing no-spoilers production guard');
 }
+const production=await readFile('.github/workflows/cloudflare-production-deploy.yml','utf8');
+assert.match(production,/deploy --config wrangler\.jsonc/,
+    'Production must deploy with the canonical Wrangler configuration');
+assert.match(production,/inside-grey-room-last/,
+    'Production Worker identity must be checked explicitly');
+const turn=await readFile('.github/workflows/cloudflare-turn-maintenance.yml','utf8');
+assert.match(turn,/CF_TURN_KEY_ID/);
+assert.match(turn,/CF_TURN_KEY_TOKEN/);
+assert.doesNotMatch(turn,/wrangler(?:@[^\s]+)?\s+deploy/,
+    'Manual TURN maintenance must not redeploy the Worker');
 console.log('v100: private-only preview, explicit approval and fail-closed release policy OK');
