@@ -342,3 +342,11 @@
 @media(prefers-reduced-motion:reduce){
  .hnet .hnet-role-card{transition:none}
 }
+
+
+/* v800 — Compact composition switch for 001 in the one-phone local setup. */
+.local-mode-choice{display:grid;gap:8px;padding:13px 14px;border:1px solid rgba(230,237,242,.16);border-radius:16px;background:rgba(11,17,22,.68)}
+.local-mode-choice[hidden]{display:none!important}
+.local-mode-choice label{color:#e1e7ed;font-size:13px}
+.local-mode-choice select{min-width:0;width:100%;min-height:44px;border-radius:10px;padding:9px 12px;border:1px solid rgba(226,234,240,.25);background:#131a20;color:#edf2f5}
+.local-mode-choice small{font-size:11px;color:#aebac3;line-height:1.45}

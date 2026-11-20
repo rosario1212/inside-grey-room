@@ -2,13 +2,12 @@
  * Inside Grey Room — Four-player contract and regression QA.
  *
  * This is a fail-closed check. It asserts that the existing verified
- * 1 Investigator + 3 Suspects configuration is intact, that five-player
- * rosters retain their Analyst, and that the unimplemented Team-4 composition
- * is NOT falsely presented as live. No database secrets are required.
+ * 1 Investigator + 3 Suspects configuration is intact, and tests the
+ * explicitly opted-in Team-4 composition in case 001. Other dossiers remain
+ * fail-closed until their own A/B/C variant adaptations are certified.
  *
- * Once narrative/B-mode is actually implemented and certified, replace the
- * negative assertions with real A/B end-to-end checks in BOTH online and
- * local modes before changing this gate to green.
+ * These are static and simulated rules checks; human multiplayer playtests
+ * and database end-to-end QA remain separate deployment prerequisites.
  */
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -73,17 +72,52 @@ assert(guideline.includes('Enquêteur + 1 Analyste + 2 Suspects'),'Missing Team-
 assert(patch.includes("'intent',CASE WHEN"),'Verdict smoke patch missing intent axis');
 assert(rolesMigration.includes('v699 roster capacity sync'),'Missing capacity reconciliation baseline');
 
-// Real negative readiness check: while there is no server-certified
-// Team-4 implementation, a four-person lobby must expose *no Analyst*,
-// and all former five-person cases must retain their five-person minimum.
-// These assertions deliberately fail when the product is partly changed.
-assert(traditional4.every(id=>!slotRoster(id,4).includes('analyste')),
-  'Team-4 must not be surfaced through role labels alone');
+// Evaluate the ACTUAL lobby role-slot function under both room states.
+// No dependency on DOM or browser globals for the target case.
+const start=source.indexOf('function expandRoleLabel(');
+const end=source.indexOf('function roleCapacityMap(',start);
+assert(start>=0&&end>start,'Lobby roster functions missing');
+const rosterFns=source.slice(start,end);
+function actualLobbyRoster(id,count,mode){
+ const sandbox={
+  SCENARIO_ROLES:roleMap,
+  ROLE_LABEL_TO_ID:{'Enquêteur':'enqueteur','Analyste':'analyste','Suspect':'suspect',
+    'suspect':'suspect','suspects':'suspect','Juge':'juge','Expert':'expert',
+    'Procureur':'procureur','Journaliste':'journaliste','Avocat':'maitre',
+    'Maître':'maitre','Témoin':'temoin'},
+  STATE:{sync:{room:{state:{four_player_mode:mode},min_players:4,max_players:5}}}
+ };
+ const actual=vm.runInNewContext(rosterFns+'\n lobbyRoleSlots({id:'+JSON.stringify(id)+'},'+count+')',sandbox);
+ return JSON.parse(JSON.stringify(actual)).sort();
+}
+assert.deepEqual(actualLobbyRoster('001',4,'classic'),
+ ['enqueteur','suspect','suspect','suspect'].sort());
+assert.deepEqual(actualLobbyRoster('001',4,'team'),
+ ['enqueteur','analyste','suspect','suspect'].sort());
+assert.deepEqual(actualLobbyRoster('001',5,'team'),
+ ['enqueteur','analyste','suspect','suspect','suspect'].sort());
+for(const id of traditional4.filter(id=>id!=='001')){
+ assert.deepEqual(actualLobbyRoster(id,4,'team'),
+  ['enqueteur','suspect','suspect','suspect'].sort(),
+  'Uncertified Team-4 must be blocked: '+id);
+}
+assert(source.includes('chooseFourPlayerMode('),'Host lobby choice missing');
+assert(source.includes('igr_v800_set_four_player_mode'),'Room-persisted mode RPC missing');
+const local=readFileSync('play-modes-v13-8.js','utf8');
+assert(local.includes("id==='001'&&count===4&&mode==='team'"),'Local mode roster absent');
+assert(local.includes('IGR_001_ARCHIVED_WITNESS'),'Local witness statement missing');
+const migration=readFileSync('supabase/migrations/20261120230000_igr_v800_team4_001.sql','utf8');
+for(const expected of ['igr_v800_set_four_player_mode','igr_v800_role_for_seat',
+'igr_v800_role_capacity','igr_v800_team4_enabled',
+'igr_v4_start_game','igr_v4_build_private_card','igr_v4_leave_room',
+"r.scenario_id<>'001'","'nonplayer',true"]){
+ assert(migration.includes(expected),'Missing Team-4 database guard: '+expected);
+}
 assert(['007','008','009','010','011','012','013','014','015','016']
-  .every(id=>scById[id].min>=5),
-  'Scenario minima changed without certified Team-4 narrative/SQL/runtime');
+ .every(id=>scById[id].min>=5),'Uncertified scenarios must remain five-player');
 
-console.log('PASS: classic A four-player rosters, five-player and 002 exceptions');
-console.log('PASS: uncertified 007–016 cannot advertise four-player minimum');
-console.log('PASS: 001 smoke regression migration and canonical A/B design guidelines');
-console.log('BLOCKED BY DESIGN: Team-4 (Analyst + 2 Suspects) is NOT yet implemented/certified');
+console.log('PASS: classic and 001 Team-4 online room slot allocation');
+console.log('PASS: five-player, 002 and all other scenario safety exceptions');
+console.log('PASS: local choice and narrated nonplayer witness');
+console.log('PASS: guarded 001-only SQL migration and 001 smoke verdict audit');
+console.log('BLOCKED BY DESIGN: other scenarios do NOT yet claim Team-4 readiness');
