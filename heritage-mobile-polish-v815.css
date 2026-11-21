@@ -1,0 +1,109 @@
+/* Heritage v815 — recording-based mobile audit.
+   Shared readability only. The four campaigns keep their own palettes;
+   scenario access, role assignment and server-authoritative gameplay do not change. */
+
+/* Keep the art in front of the card's own background on iOS Safari.
+   Previously negative stacking levels could leave unusually black poster panels. */
+#app .hplay-hub .hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi){
+  isolation:isolate;
+}
+#app .hplay-hub .hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi)>img{
+  z-index:0!important;opacity:.96;
+  object-fit:cover!important;object-position:50% 36%!important;
+}
+#app .hplay-hub .hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi)>.hplay-campaign-shade{
+  z-index:1!important;pointer-events:none;
+  background:linear-gradient(180deg,rgba(1,4,7,.08) 0%,rgba(1,4,7,.20) 36%,rgba(1,4,7,.76) 76%,rgba(1,4,7,.96) 100%)!important;
+}
+#app .hplay-hub .hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi)>.hplay-campaign-body{
+  z-index:2!important;
+}
+
+/* All Heritage stages should remain legible and reachable on small screens. */
+#app :is(.hplay,.hnet,.casino-live) .hj-progress ol{align-items:stretch}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li{
+  min-width:0;min-height:54px;align-content:center;justify-content:center;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li b{
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
+  overflow-wrap:anywhere;font-size:8px!important;line-height:1.28!important;
+  letter-spacing:0!important;text-align:center;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress li span{
+  width:28px;min-width:28px;height:28px;
+  font-size:11px;flex:none;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress .hj-step-link{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;min-width:0;min-height:52px;padding:3px 1px;gap:5px;
+  border:1px solid transparent;border-radius:10px;background:transparent;
+  color:inherit;cursor:pointer;touch-action:manipulation;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress .hj-step-link:focus-visible{
+  outline:2px solid var(--hp-accent,#e6e5df)!important;outline-offset:-2px;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress .hj-step-link:active{
+  background:rgba(155,175,186,.10);
+}
+#app .hj-activity-note{
+  margin:4px 0 12px!important;
+  color:var(--hu-muted,#b2bdc5);
+  font-size:11px!important;line-height:1.5!important;
+  letter-spacing:0!important;
+}
+#app .casino-live .hj-activity-note{color:#cbbb9f!important}
+#app .maitre-page .hj-activity-note{color:#5e534a!important}
+
+@media(max-width:600px){
+  #app .hplay-hub .hplay-hub-grid{
+    gap:12px!important;
+  }
+  #app .hplay-hub .hplay-hub-grid>.hplay-campaign-card:not(.casino-entry){
+    min-height:298px!important;border-radius:17px!important;
+  }
+  #app .hplay-hub .hplay-campaign-card:not(.casino-entry) .hplay-campaign-body{
+    padding:18px!important;gap:7px!important;
+  }
+  #app .hplay-hub .hplay-campaign-card:not(.casino-entry) .hplay-campaign-body>strong{
+    font-size:clamp(31px,9vw,40px)!important;line-height:1!important;
+  }
+  #app .hplay-hub .hplay-campaign-card:not(.casino-entry) .hplay-campaign-body>small{
+    font-size:12px!important;line-height:1.46!important;
+  }
+  #app :is(.hplay,.hnet,.casino-live) .hj-progress{
+    margin-bottom:17px!important;padding:8px 0 12px!important;
+  }
+  #app :is(.hplay,.hnet,.casino-live) .hj-progress ol{gap:3px!important}
+  #app :is(.hplay,.hnet,.casino-live) .hj-progress-label{
+    gap:8px!important;margin-bottom:8px!important;
+    font-size:9px!important;
+  }
+  #app .casino-live .casino-role-choice-card{
+    min-height:86px!important;
+    padding:11px 12px!important;
+    gap:6px!important;
+  }
+  #app .casino-live .casino-role-choice-card .casino-role-activity{
+    font-size:14px!important;line-height:1.2!important;
+  }
+  #app .casino-live .casino-optional-roles>summary{
+    min-height:48px!important;display:flex;align-items:center;
+  }
+  #app .casino-live .casino-role-choice-zone{
+    padding:14px!important;
+  }
+  #app .hnet .hnet-role-card{
+    min-height:80px!important;
+  }
+}
+@media(max-width:365px){
+  #app :is(.hplay,.hnet,.casino-live) .hj-progress li b{font-size:7px!important}
+  #app .hplay-hub .hplay-hub-grid>.hplay-campaign-card:not(.casino-entry){min-height:285px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #app :is(.hplay,.hnet,.casino-live) .hj-step-link,
+  #app .hplay-hub .hplay-campaign-card,
+  #app .casino-live .casino-role-choice-card{
+    transition:none!important;animation:none!important
+  }
+}
