@@ -33,7 +33,7 @@ assert(!/igr-role-(?:option|more)[^\\n]*display:none/.test(css),'Role controls m
 assert(!terror.includes('Nomme la capitale avant de lancer cette partie.'),
  'Do not show validation error before first submission');
 assert(terror.includes('if(citySaving)return'),'Protect against double-save');
-assert(terror.includes("e.key==='Enter'"),'Keyboard submission must be supported');
+assert(terror.includes("e.key!=='Enter'")&&terror.includes("window.terrorV681SetCity();"),'Keyboard submission must be supported');
 assert(terror.includes("p_city:city"),'Keep the original server-side city contract');
 // Run the actual extracted city markup function with a minimal DOM.
 // The first render must show a single invitation, one input and one save action.
