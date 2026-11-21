@@ -24,6 +24,7 @@ for(const style of [
  '.terror-v681-input-row',
  'grid-template-columns:minmax(0,1fr)!important',
  '.avatar.avatar-profile.avatar-fallback',
+ '.profile-page:has(#profilePreview .avatar-fallback) .profile-photo-actions>button',
  'prefers-reduced-motion:reduce'
 ])assert(css.includes(style),'Missing mobile refinement: '+style);
 assert(!css.includes('display:none!important'),'Do not conceal important controls');
