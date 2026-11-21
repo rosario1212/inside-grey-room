@@ -97,10 +97,8 @@ export async function runMaitrePosterChecks({page,css,read,check,report,target})
         assert(image.left>=-.5&&image.right<=width+.5,'Keep artwork inside the viewport');
         assert(!image.filter.includes('blur('),'Never blur the poster with CSS');
         if(!chapter){
-           if(width<=760){
-             assert.equal(image.fit,'contain','Show the entire MAÎTRE hub poster without cropping on phone');
-             assert.equal(image.position,'50% 50%','Keep the complete poster centred in its thumbnail');
-           }else assert.equal(image.position,'50% 0%','Keep the large desktop campaign cover aligned at the top');
+           assert.equal(image.fit,'cover','The paid MAÎTRE campaign uses immersive full-bleed cover art');
+           assert.equal(image.position,'50% 33%','Keep the upper third of the MAÎTRE artwork in cinematic frame');
          }
         else{
           assert(Math.abs(image.width/image.height-941/1672)<.002,'Preserve the complete dossier poster proportions');
