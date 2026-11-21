@@ -12,15 +12,16 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
  ];
  const screen=markup=>'<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style></head><body><div id="app">'+markup+'</div></body></html>';
 
- // v822: three illustrated covers share a compact left-poster / right-copy layout.
- // CASINO is excluded, preserving its existing independent card geometry.
+
+ // v823: the three paid campaigns use a full, uncropped premium poster stage
+ // with the editorial copy BELOW the artwork. Casino stays outside this test.
  const hubCards=[
   ['cendres','CONTRE-ESPIONNAGE / SERVICE NATIONAL','CENDRES',"Identifiez une compromission interne avant qu'elle ne déforme toute la chaîne de renseignement."],
   ['kuroi','JAPON / DETTES / POLICE','KUROI','Une alliance contre nature. Des dettes qui survivront à chaque dossier.'],
   ['maitre','DROIT PÉNAL / DÉFENSE','MAÎTRE',"Construisez une défense. Laissez des traces. Assumez ce qu'elles deviendront."]
  ];
  for(const width of [320,393,430,600]){
-  await check('heritage-v822-three-covers-'+width,async()=>{
+  await check('heritage-v823-premium-gallery-'+width,async()=>{
    await page.setViewportSize({width,height:852});
    const cards=hubCards.map(([id,eyebrow,title,description])=>
     '<button type="button" class="hplay-campaign-card hplay-theme-'+id+(id==='maitre'?' maitre-hub-card':'')+'"><img alt="" src="'+poster+'"><span class="hplay-campaign-shade"></span>'+
@@ -31,20 +32,23 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     const bounds=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom}};
     const img=card.querySelector('img'),body=card.querySelector('.hplay-campaign-body'),footer=card.querySelector('.hplay-campaign-foot');
     return {display:getComputedStyle(card).display,card:bounds(card),image:bounds(img),fit:getComputedStyle(img).objectFit,
-     body:bounds(body),footer:bounds(footer),overflow:body.scrollWidth>body.clientWidth+1};
+     matte:getComputedStyle(card,'::before').backgroundImage,body:bounds(body),footer:bounds(footer),
+     overflow:body.scrollWidth>body.clientWidth+1};
    }));
    assert.equal(measured.length,3);
    for(const [i,m] of measured.entries()){
-    assert.equal(m.display,'flex','Shared campaign geometry: '+hubCards[i][0]);
-    assert.equal(m.fit,'contain','Uncropped poster: '+hubCards[i][0]);
-    assert(m.card.h>=155&&m.card.h<=330,'No tall empty card: '+hubCards[i][0]+' '+width+' '+m.card.h);
+    assert.equal(m.display,'grid','Premium poster gallery: '+hubCards[i][0]);
+    assert.equal(m.fit,'contain','Entire paid campaign poster visible: '+hubCards[i][0]);
+    assert(m.matte.includes('.webp'),'Atmospheric artwork behind poster: '+hubCards[i][0]);
+    assert(m.card.h>=360&&m.card.h<=650,'Premium cover without excessive dead space: '+hubCards[i][0]+' '+width+' '+m.card.h);
+    assert(m.image.w>=125&&m.image.h>=240,'Full-sized framed poster: '+hubCards[i][0]);
     assert(m.image.y>=m.card.y-1&&m.image.bottom<=m.card.bottom+1,'Poster inside card: '+hubCards[i][0]);
-    assert(m.body.x>=m.image.right+5,'Copy beside poster: '+hubCards[i][0]);
+    assert(m.body.y>=m.image.bottom+7,'Description BELOW artwork, never overlaid: '+hubCards[i][0]);
     assert(m.footer.bottom<=m.card.bottom+1,'Footer inside card: '+hubCards[i][0]);
-    assert(m.body.right<=m.card.right+1&&!m.overflow,'No overlapping copy: '+hubCards[i][0]);
+    assert(m.body.right<=m.card.right+1&&!m.overflow,'No clipped editorial copy: '+hubCards[i][0]);
    }
    const heights=measured.map(m=>m.card.h);
-   assert(Math.max(...heights)-Math.min(...heights)<45,'Three campaign cards must have comparable heights');
+   assert(Math.max(...heights)-Math.min(...heights)<65,'Three premium campaigns use a coherent layout');
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No horizontal overflow');
   });
  }
