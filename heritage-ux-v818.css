@@ -1,0 +1,181 @@
+/* Inside Grey Room v818: Héritage has one interaction hierarchy, four visual worlds.
+   Preserve posters, chapter status, role descriptions and secure online behaviour. */
+
+/* The hub lists campaigns, not the stages of joining a room. */
+#app main.hplay-hub > .hj-progress{display:none!important}
+#app .hplay-hub .hplay-hub-intro{margin-bottom:14px}
+
+/* Direct route to each campaign, above the cinematic poster cards. */
+#app .hplay-hub .hu-quick-nav{
+ --hu-edge:rgba(224,234,242,.15);
+ margin:13px 0 17px;padding:14px;
+ border:1px solid var(--hu-edge);border-radius:16px;
+ background:linear-gradient(155deg,rgba(25,32,39,.97),rgba(12,17,22,.95));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+#app .hplay-hub .hu-quick-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ margin:0 0 10px;font-family:'IBM Plex Mono',monospace;
+}
+#app .hplay-hub .hu-quick-heading>strong{
+ color:#e8edf1;font-size:10px;line-height:1.3;letter-spacing:.10em;
+}
+#app .hplay-hub .hu-quick-heading>span{
+ color:#aebac5;font-size:10px;line-height:1.3;
+}
+#app .hplay-hub .hu-quick-list{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;
+}
+#app .hplay-hub .hu-quick-button{
+ --hu-accent:#c6d0da;
+ appearance:none;display:flex;align-items:center;gap:10px;
+ min-width:0;min-height:66px;padding:10px 12px;
+ border:1px solid rgba(224,234,242,.15);border-left:3px solid var(--hu-accent);
+ border-radius:11px;background:rgba(235,242,247,.035);color:#edf1f4;
+ text-align:left;cursor:pointer;touch-action:manipulation;
+ transition:border-color .15s ease,background-color .15s ease;
+}
+#app .hplay-hub .hu-quick-button[data-hu-campaign="kuroi"]{--hu-accent:#9aaec5}
+#app .hplay-hub .hu-quick-button[data-hu-campaign="maitre"]{--hu-accent:#b5a58e}
+#app .hplay-hub .hu-quick-button[data-hu-campaign="casino"]{--hu-accent:#dfaa77}
+#app .hplay-hub .hu-quick-button .hu-quick-number{
+ flex:0 0 auto;color:var(--hu-accent);
+ font:700 12px/1 'IBM Plex Mono',monospace;
+}
+#app .hplay-hub .hu-quick-copy{
+ min-width:0;display:flex;flex-direction:column;gap:4px;
+}
+#app .hplay-hub .hu-quick-copy>b{
+ color:#f0f3f5;font:750 14px/1.2 system-ui,sans-serif;
+ letter-spacing:.015em;overflow-wrap:anywhere;
+}
+#app .hplay-hub .hu-quick-copy>small{
+ color:#aeb8c1;font:500 10px/1.3 system-ui,sans-serif;
+ overflow-wrap:anywhere;
+}
+#app .hplay-hub .hu-quick-button:disabled{opacity:.52;cursor:default}
+#app .hplay-hub .hu-quick-button:focus-visible{
+ outline:2px solid #f2f5f6;outline-offset:3px;
+}
+@media(hover:hover){
+ #app .hplay-hub .hu-quick-button:not(:disabled):hover{
+  border-color:var(--hu-accent);background:rgba(236,242,248,.085);
+ }
+}
+
+/* The navigator is for preparing a game, not campaign chapter completion. */
+#app :is(.hplay,.hnet,.casino-live) .hj-progress{
+ margin-bottom:12px!important;padding:7px 0 10px!important;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress-label{
+ margin-bottom:8px!important;
+}
+#app :is(.hplay,.hnet,.casino-live) .hj-progress-label>span{
+ font-size:9px;letter-spacing:.06em;
+}
+
+/* Chapter browser: poster remains recognisable, but all five chapters scan fast. */
+@media(max-width:650px){
+ #app .hplay.hplay-campaign .hplay-campaign-hero{
+  height:148px!important;margin-bottom:12px!important;
+ }
+ #app .hplay.hplay-campaign .hplay-cases{gap:7px!important}
+ #app .hplay.hplay-campaign .hplay-case{
+  min-height:86px!important;padding:9px 10px!important;
+  grid-template-columns:54px minmax(0,1fr) 16px!important;
+  gap:10px!important;border-radius:11px!important;
+ }
+ #app .hplay.hplay-campaign .hplay-case-poster{
+  width:54px!important;height:74px!important;
+ }
+ #app .hplay.hplay-campaign .hplay-case-copy>strong{
+  font-size:14px!important;line-height:1.25!important;
+ }
+ #app .hplay.hplay-campaign .hplay-case-copy>small{
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden;font-size:11px!important;line-height:1.36!important;
+ }
+ #app .hplay.hplay-campaign .hplay-case-copy>b{
+  margin-top:3px!important;font-size:8px!important;
+ }
+ #app .hplay-hub .hu-quick-nav{padding:12px;margin:10px 0 15px}
+ #app .hplay-hub .hu-quick-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #app .hplay-hub .hu-quick-button{min-height:60px;padding:10px}
+ #app .hplay-hub .hu-quick-copy>b{font-size:13px}
+ #app .hplay-hub .hplay-hub-grid>.hplay-campaign-card:not(.casino-entry){
+  min-height:265px!important;border-radius:16px!important;
+ }
+ #app .hplay-hub .hplay-campaign-card:not(.casino-entry) .hplay-campaign-body>strong{
+  font-size:clamp(29px,8vw,37px)!important;
+ }
+ #app .hplay-hub .hplay-hub-grid>.casino-entry{
+  min-height:245px!important;
+  grid-template-columns:minmax(96px,36%) minmax(0,1fr)!important;
+  gap:13px!important;padding:13px!important;border-radius:16px!important;
+ }
+ #app .hplay-hub .casino-entry .casino-poster{max-width:150px!important}
+ #app .hplay-hub .casino-entry .hplay-campaign-body{gap:6px!important}
+ #app .hplay-hub .casino-entry .hplay-campaign-body>strong{
+  font-size:clamp(26px,7vw,34px)!important;
+ }
+ #app .hplay-hub .casino-entry .hplay-campaign-body>small{
+  font-size:11.5px!important;line-height:1.44!important;
+ }
+ /* Casino folder cards: preview here, full story inside the opened folder. */
+ #app .casino-page[data-casino-page="campaign"] .casino-chapters{gap:9px}
+ #app .casino-page[data-casino-page="campaign"] .casino-dossier{
+  grid-template-columns:74px minmax(0,1fr)!important;
+  gap:11px!important;padding:10px!important;border-radius:11px!important;
+ }
+ #app .casino-page[data-casino-page="campaign"] .casino-dossier-content{
+  gap:5px!important;
+ }
+ #app .casino-page[data-casino-page="campaign"] .casino-dossier-content strong{
+  font-size:18px!important;line-height:1.15!important;
+ }
+ #app .casino-page[data-casino-page="campaign"] .casino-dossier-content>span{
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden;font-size:12px!important;line-height:1.4!important;
+ }
+ #app .casino-page[data-casino-page="campaign"] .casino-pillars{
+  gap:8px!important;margin-top:14px!important;
+ }
+ #app .casino-page[data-casino-page="campaign"] .casino-pillars>div{
+  padding:12px!important;
+ }
+ /* Keep both online lobby roles readable; reduce duplicate selection containers. */
+ #app .hnet .hnet-role-minimal .hnet-selected-role{
+  padding:9px 11px!important;gap:3px 9px!important;
+ }
+ #app .hnet .hnet-role-minimal .hnet-selected-role>small{
+  font-size:11px!important;line-height:1.35!important;
+ }
+ #app .hnet .hnet-role-minimal .hnet-role-grid{gap:7px!important}
+ #app .casino-live .casino-role-choice-zone>.casino-selected-role{
+  margin:3px 0 9px!important;padding:9px 11px!important;
+ }
+ #app .casino-live .casino-selected-role>small{
+  font-size:11px!important;line-height:1.35!important;
+ }
+ #app .casino-live .casino-role-choice-zone{
+  padding:12px!important;
+ }
+ /* The route stays tappable (44 px) even with a more discreet progress display. */
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li{
+  min-height:46px!important;
+ }
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li span{
+  width:24px!important;min-width:24px!important;height:24px!important;
+ }
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress .hj-step-link{
+  min-height:44px!important;
+ }
+}
+@media(max-width:375px){
+ #app .hplay-hub .hu-quick-copy>b{font-size:12px}
+ #app .hplay-hub .hu-quick-number{font-size:11px}
+ #app .hplay-hub .hu-quick-heading>span{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ #app .hplay-hub .hu-quick-button{transition:none!important}
+}

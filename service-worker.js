@@ -1,5 +1,7 @@
-const CACHE='igr-v817-video-ui-refinements-20261121';
+const CACHE='igr-v818-heritage-ux-20261121';
 const SHELL=[
+  '/heritage-ux-v818.css?v=20261121-v818-1',
+  '/heritage-ux-v818.js?v=20261121-v818-1',
   '/video-ui-refinements-v817.css?v=20261121-v817-1',
   '/terror-live-v681.js?v=20261121-v817-city-1',
   '/interface-consistency-v816.css?v=20261121-v816-1',
