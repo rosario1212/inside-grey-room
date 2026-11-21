@@ -16,9 +16,9 @@ const url=name+'?v=20261121-v815-1';
 
 assert.equal(index.split(url).length-1,1,'Heritage visual layer must load once');
 assert(sw.includes('/'+url),'Heritage visual layer must be cached for PWA');
-assert(sw.includes("const CACHE='igr-v821-heritage-video-20261121'"),
+assert(sw.includes("const CACHE='igr-v822-three-covers-20261121'"),
  'Heritage PWA source cache must be refreshed');
-assert(finalizer.includes("const pwaVersion='v821-heritage-video-20261121'"),
+assert(finalizer.includes("const pwaVersion='v822-three-covers-20261121'"),
  'Production release finalizer must preserve the Heritage cache');
 for(const [label,source] of [['web',web],['mobile',mobile]])
  assert(source.includes("'"+name+"'"),label+' builder missing Heritage CSS');
