@@ -23,22 +23,31 @@
     const section=document.createElement('section');
     section.className='terror-v681-city-lobby';section.id='terrorV681CityLobby';
     section.innerHTML='<div class="terror-v681-city-head"><span>TERREUR · LOCALISATION DU DOSSIER</span><b>Quel nom portera la dernière capitale libre ?</b></div>'+
-      '<p>Le nom choisi désigne la capitale de la République fictive d’Almizia. Le FDR a déjà pris les autres grandes villes. Cette dernière capitale résiste avec douze secteurs de jeu. Aucune géolocalisation.</p>'+
+      '<p>Choisis le nom de cette capitale fictive. Elle résiste au FDR, et ses douze secteurs seront suivis pendant la partie. Aucune géolocalisation.</p>'+
       (city?'<div class="terror-v681-current-city">CAPITALE D’ALMIZIA · <strong>'+esc(city)+'</strong></div>':
-       '<div class="terror-v681-warning">Nomme la capitale avant de lancer cette partie.</div>')+
-      (canSet?'<div class="terror-v681-city-entry"><label for="terrorV681CityName">Nom de la ville (2 à 36 caractères)</label>'+
-       '<div class="terror-v681-input-row"><input id="terrorV681CityName" maxlength="36" autocomplete="off" placeholder="Ex. : Bagdad, Genève, Paris" value="'+esc(city)+'"><button type="button" class="btn primary" onclick="terrorV681SetCity()">Valider la ville</button></div></div>':
+       '')+
+      (canSet?'<div class="terror-v681-city-entry"><label for="terrorV681CityName">Nom de la capitale (2 à 36 caractères)</label>'+
+       '<div class="terror-v681-input-row"><input id="terrorV681CityName" type="text" name="igr_almizia_capital" maxlength="36" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Ex. : Almera" value="'+esc(city)+'"><button type="button" class="btn primary" onclick="terrorV681SetCity()">Enregistrer</button></div></div>':
        '<p class="terror-v681-muted">L’hôte valide la ville retenue par les joueurs. Elle devient commune à toute la partie.</p>');
     target.insertAdjacentElement('beforebegin',section);
   }
+  let citySaving=false;
   window.terrorV681SetCity=async()=>{
+    if(citySaving)return;
     const city=String(document.getElementById('terrorV681CityName')?.value||'').trim();
-    if(city.length<2||city.length>36){toast('Entre un nom de ville de 2 à 36 caractères.');return;}
+    if(city.length<2||city.length>36){toast('Entre un nom de capitale de 2 à 36 caractères.');return;}
+    citySaving=true;
     try{
       await rpc('igr_v681_terror_set_city',{p_code:STATE.room,p_host_token:STATE.hostToken,p_city:city});
-      await syncNow(true);toast('Capitale enregistrée pour tous les joueurs.');
-    }catch(e){console.error('terror city',e);toast('Impossible de valider ce nom de ville.');}
+      await syncNow(true);toast('Nom de la capitale enregistré pour tous les joueurs.');
+    }catch(e){console.error('terror city',e);toast('Impossible d’enregistrer la capitale.');}
+    finally{citySaving=false;}
   };
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&e.target?.id==='terrorV681CityName'){
+      e.preventDefault();window.terrorV681SetCity();
+    }
+  },true);
 
   function mood(id){return {
     '026':['LA VILLE TOMBE','Les sources institutionnelles disparaissent, mais les actes passés restent à prouver.'],
