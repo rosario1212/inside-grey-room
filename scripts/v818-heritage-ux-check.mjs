@@ -12,13 +12,13 @@ const finalizer=read('scripts/finalize-cartel030-release.mjs');
 new vm.Script(code);
 const cssAsset='heritage-ux-v818.css?v=20261121-v820-1';
 const jsAsset='heritage-ux-v818.js?v=20261121-v820-1';
-const hubAsset='heritage-hub-v820.css?v=20261121-v823-1';
+const hubAsset='heritage-hub-v820.css?v=20261121-v824-1';
 for(const asset of [cssAsset,jsAsset,hubAsset]){
  assert.equal(index.split(asset).length-1,1,'Asset loaded once: '+asset);
  assert(sw.includes('/'+asset),'Offline shell must include '+asset);
 }
-assert(sw.includes("const CACHE='igr-v823-premium-posters-20261121'"));
-assert(finalizer.includes("const pwaVersion='v823-premium-posters-20261121'"));
+assert(sw.includes("const CACHE='igr-v824-visual-hierarchy-20261121'"));
+assert(finalizer.includes("const pwaVersion='v824-visual-hierarchy-20261121'"));
 for(const builder of [web,mobile]){
  for(const file of ['heritage-ux-v818.css','heritage-ux-v818.js','heritage-hub-v820.css'])
   assert(builder.includes("'"+file+"'"),'Builder missing '+file);
@@ -68,7 +68,11 @@ assert(!stableCasino.includes('oldAnchorTop'),'Casino must not compensate for re
 assert(hubCss.includes('grid-template-columns:minmax(0,1fr)!important'),'Casino roles must stack on mobile');
 assert(hubCss.includes('clip-path:none!important'),'Casino description must remain readable');
 assert(hubCss.includes('object-fit:contain!important'),'Campaign art must not crop');
-assert(hubCss.includes('v823 PREMIUM HERITAGE'),'Latest premium format explicitly scopes to first three campaigns');
+assert(hubCss.includes('v824 PREMIUM HERITAGE'),'Latest premium format explicitly scopes to first three campaigns');
+assert(hubCss.includes('object-position:center top!important'),'Cendres and Kuroi headings must remain in frame');
+assert(hubCss.includes('clip:rect(0,0,0,0)!important'),'Printed headings must not be duplicated');
+assert(hubCss.includes('opacity:.76!important'),'Locked chapters must be readable');
+assert(!hubCss.slice(hubCss.indexOf('/* v824')).includes('casino-entry'),'Preserve Casino styling');
 assert(hubCss.includes('hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)'),'Single responsive contract must cover three campaign cards');
 assert(hubCss.includes('object-fit:cover!important'),'Cinematic artwork fills the three campaign cards');
-console.log('PASS v823: single poster navigation, responsive card geometry, no gameplay click interception, mobile and PWA bundles.');
+console.log('PASS v824: single poster navigation, responsive card geometry, no gameplay click interception, mobile and PWA bundles.');
