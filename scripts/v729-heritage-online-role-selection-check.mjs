@@ -262,3 +262,59 @@ console.log('PASS v760: Cendres and Kuroi reserve immediately, retry collisions,
 console.log('PASS v733: synthetic Cendres/Kuroi/Maître host launch and Casino preparation paths.');
 
 console.log('PASS v729: CENDRES/KUROI/MAÎTRE role reservations, Casino cards, 5-7 seats, private role boundaries, mobile UI and SQL contracts');
+
+
+// v827: run the actual in-place patch against retained DOM nodes.
+// Repeated role changes must not replace a focused button or its lobby.
+const patchSource=maitre.slice(maitre.indexOf('function patchMaitreLobby(current,next){'),maitre.indexOf('function clear(){'));
+const makeNode=(text='',attrs={})=>{
+ const values=new Map(Object.entries(attrs)),classes=new Set();
+ return {textContent:text,disabled:false,dataset:{},children:new Map(),
+  classList:{toggle:(name,on)=>on?classes.add(name):classes.delete(name),contains:name=>classes.has(name)},
+  querySelector(sel){return this.children.get(sel)||null},
+  setAttribute:(k,v)=>values.set(k,String(v)),getAttribute:k=>values.get(k)??null,
+  removeAttribute:k=>values.delete(k),hasAttribute:k=>values.has(k),
+  toggleAttribute:(k,on)=>on?values.set(k,''):values.delete(k)
+ };
+};
+const makeLobby=(picked,otherTaken=false)=>{
+ const lobby=makeNode(),grid=makeNode(),summary=makeNode(),reset=makeNode();
+ const cards=['avocat','client','juge'].map(id=>{
+  const mine=id===picked,taken=otherTaken&&id==='juge';
+  const b=makeNode('',{'aria-pressed':String(mine)});b.dataset.role=id;b.disabled=taken;
+  b.classList.toggle('is-picked',mine);b.classList.toggle('is-taken',taken);
+  b.children.set('.hnet-role-top em',makeNode(mine?'✓ CHOISI':taken?'PRIS':'CHOISIR'));
+  return b;
+ });
+ grid.querySelectorAll=()=>cards;grid.replaceChildren=()=>{throw Error('Unchanged role pool was replaced')};
+ for(const tag of ['span','b','small','em'])summary.children.set(':scope > '+tag,makeNode(tag==='b'?(picked||'Au hasard au lancement'):tag==='em'?'ACTIVITÉ · ★★★★☆':tag));
+ if(!picked)summary.children.get(':scope > em').setAttribute('data-mnet-empty','');
+ reset.disabled=!picked;if(!picked)reset.setAttribute('data-mnet-empty','');
+ lobby.children.set('.hnet-role-grid',grid);lobby.children.set('.hnet-selected-role',summary);lobby.children.set('.mnet-role-reset',reset);
+ const code=makeNode('HTEST');lobby.children.set('.hnet-code > strong',code);
+ return {lobby,cards,summary,reset};
+};
+const initial=makeLobby(null), root={
+ querySelector:()=>initial.lobby,
+ set innerHTML(_){throw Error('Role update must not reconstruct the app')}
+};
+let next=makeLobby('client');
+const update=runInNewContext(patchSource+';put',{
+ $:()=>root,window:{scrollY:421,scrollTo(){throw Error('Role update must not scroll')}},
+ document:{createElement:()=>({content:{querySelector:()=>next.lobby}})}
+});
+for(const picked of ['client','avocat',null,'juge',null]){
+ next=makeLobby(picked,picked==='client');
+ update('synthetic markup',true);
+ for(const b of initial.cards){
+  assert.equal(b.getAttribute('aria-pressed'),String(b.dataset.role===picked));
+  assert.equal(b.classList.contains('is-picked'),b.dataset.role===picked);
+ }
+ assert.equal(initial.summary.querySelector(':scope > b').textContent,picked||'Au hasard au lancement');
+ assert.equal(initial.reset.disabled,!picked);
+ assert.equal(initial.summary.querySelector(':scope > em').hasAttribute('data-mnet-empty'),!picked);
+}
+assert(maitre.includes('data-mnet-empty')&&maitre.includes('min-height:130px!important'));
+assert(read('scripts/apply-maitre-v34.mjs').includes('v827-maitre-inplace-20261121'));
+assert(read('service-worker.js').includes('/heritage-maitre-online-v34-4.js?v=v827-maitre-inplace-20261121'));
+console.log('PASS v827: actual Maître render path retains the lobby and every role button across selection, random result, reset and poll.');
