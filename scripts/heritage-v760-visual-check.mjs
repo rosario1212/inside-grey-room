@@ -12,7 +12,8 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
  ];
  const screen=markup=>'<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style></head><body><div id="app">'+markup+'</div></body></html>';
 
- // v823: paid campaigns recover full-bleed cinematic posters, not thumbnails.
+ // v824: campaign cover typography appears exactly once. Cendres and Kuroi
+ // use the titles printed on the art; Maître retains its editorial heading.
  // The three share one geometry and keep distinct campaign colors; Casino is excluded.
  const hubCards=[
   ['cendres','CONTRE-ESPIONNAGE / SERVICE NATIONAL','CENDRES',"Identifiez une compromission interne avant qu'elle ne déforme toute la chaîne de renseignement."],
@@ -20,7 +21,7 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
   ['maitre','DROIT PÉNAL / DÉFENSE','MAÎTRE',"Construisez une défense. Laissez des traces. Assumez ce qu'elles deviendront."]
  ];
  for(const width of [320,393,430,600]){
-  await check('heritage-v823-premium-covers-'+width,async()=>{
+  await check('heritage-v824-premium-covers-'+width,async()=>{
    await page.setViewportSize({width,height:852});
    const cards=hubCards.map(([id,eyebrow,title,description])=>
     '<button type="button" class="hplay-campaign-card hplay-theme-'+id+(id==='maitre'?' maitre-hub-card':'')+'"><img alt="" src="'+poster+'"><span class="hplay-campaign-shade"></span>'+
@@ -34,6 +35,7 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     return {
      display:getComputedStyle(card).display,card:rect(card),image:rect(img),
      imageFit:getComputedStyle(img).objectFit,imagePosition:getComputedStyle(img).position,
+     artAlignment:getComputedStyle(img).objectPosition,titlePosition:getComputedStyle(title).position,
      shade:getComputedStyle(shade).backgroundImage,shadeDisplay:getComputedStyle(shade).display,
      body:rect(body),title:rect(title),footer:rect(footer),
      titleFont:parseFloat(getComputedStyle(title).fontSize),
@@ -48,10 +50,16 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     assert.equal(m.imagePosition,'absolute','Poster must be background layer '+hubCards[i][0]);
     assert.equal(m.shadeDisplay,'block','Gradient overlay must be visible '+hubCards[i][0]);
     assert(m.shade.includes('linear-gradient'),'Premium gradient preserves white-text contrast');
-    assert(m.card.h>=360&&m.card.h<=490,'Paid campaign poster must be immersive, not a thumbnail '+hubCards[i][0]+' '+width);
+    assert(m.card.h>=390&&m.card.h<=490,'Paid campaign poster must be immersive, not a thumbnail '+hubCards[i][0]+' '+width);
     assert(Math.abs(m.image.w-m.card.w)<=2.5&&Math.abs(m.image.h-m.card.h)<=2.5,'Art must fill the entire premium card '+hubCards[i][0]);
-    assert(m.titleFont>=35,'Campaign title should be large and readable');
-    assert(m.title.y>m.card.y+70,'Title cannot obscure the centre of the poster artwork');
+    if(i<2){
+     assert.equal(m.artAlignment,'50% 0%','Embedded campaign poster title must not be cropped '+hubCards[i][0]);
+     assert.equal(m.titlePosition,'absolute','Do not repeat the printed poster title '+hubCards[i][0]);
+     assert(m.title.w<=1.5&&m.title.h<=1.5,'Duplicate campaign heading should be visually hidden '+hubCards[i][0]);
+    }else{
+     assert(m.titleFont>=35,'Maître must still be identifiable on the first dossier artwork');
+     assert(m.title.y>m.card.y+70,'Maître label should not obscure the cover face');
+    }
     assert(m.footer.bottom<=m.card.bottom+1,'Bottom navigation remains inside poster '+hubCards[i][0]);
     assert(m.body.right<=m.card.right+1&&!m.overflow,'No text clipping '+hubCards[i][0]);
    }
@@ -60,6 +68,36 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No sideways scrolling on iPhone');
   });
  }
+
+ // The 18:06 recording also showed cropped chapter banners and near-invisible
+ // locked chapters. Verify both from real responsive browser styles.
+ for(const campaign of ['cendres','kuroi']){
+  for(const width of [320,393,430]){
+   await check('heritage-v824-chapter-progress-'+campaign+'-'+width,async()=>{
+    await page.setViewportSize({width,height:852});
+    await page.setContent(screen('<main class="page hplay hplay-campaign hplay-theme-'+campaign+'">'+
+     '<section class="hplay-campaign-hero"><img src="'+poster+'" alt="Affiche de campagne">'+
+     '<div><span>0/5 DOSSIERS</span><strong>DOSSIER 035 ACTIF</strong></div></section>'+
+     '<button class="hplay-case" type="button" disabled><span class="hplay-case-poster"><img src="'+poster+'" alt=""></span>'+
+     '<span class="hplay-case-copy"><em>036</em><strong>04:17</strong><small>Un faux drapeau transforme l’enquête en crise.</small><b>VERROUILLÉ</b></span></button></main>'));
+    const m=await page.evaluate(()=>{
+     const q=s=>document.querySelector(s),b=q('.hplay-campaign-hero'),img=q('.hplay-campaign-hero>img'),
+      status=q('.hplay-campaign-hero>div'),locked=q('.hplay-case');
+     const rect=e=>{const x=e.getBoundingClientRect();return {x:x.x,y:x.y,right:x.right,bottom:x.bottom,w:x.width,h:x.height}};
+     return {banner:rect(b),art:rect(img),status:rect(status),fit:getComputedStyle(img).objectFit,
+      disabled:getComputedStyle(locked).opacity,artFilter:getComputedStyle(locked.querySelector('img')).filter,
+      scroll:document.documentElement.scrollWidth,viewport:innerWidth};
+    });
+    assert.equal(m.fit,'contain','Chapter hero must show the COMPLETE portrait cover');
+    assert(m.art.w>=62&&m.art.w<=72&&m.art.h>=110&&m.art.h<=123,'Portrait must be a legible compact element');
+    assert(m.status.x>m.art.right&&m.status.right<=m.banner.right+1,'Status alongside art, never on top of it');
+    assert(m.banner.h>=138&&m.banner.h<=175,'Avoid oversized campaign hero');
+    assert(Number(m.disabled)>=.7,'Locked chapter descriptions must remain readable');
+    assert(m.scroll<=m.viewport+1,'No sideways chapter scrolling');
+   });
+  }
+ }
+
  for(const [campaign,theme] of steps){
   for(const [width,height] of [[320,700],[393,852],[1180,850]]){
    await check('heritage-v760-'+campaign+'-mode-'+width,async()=>{
