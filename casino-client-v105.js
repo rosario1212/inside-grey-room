@@ -219,8 +219,6 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  const lobbyScroll=lobbyRoot?window.scrollY:null;
  const focusedRole=document.activeElement?.closest?.('.casino-role-choice-card[data-role-id]');
  const previousRole=focusedRole?.dataset.roleId||null;
- const oldAnchor=focusedRole||lobbyRoot;
- const oldAnchorTop=oldAnchor?.getBoundingClientRect().top;
  const focus=document.activeElement,focused=focus?.name?{name:focus.name,form:focus.closest('form')?.dataset.casinoForm,start:focus.selectionStart,end:focus.selectionEnd}:null;
  const tabs=state&&state.status!=='lobby'?[['card','Ma fiche'],['table','Jeux'],['registry','Registre'],['network','Réseaux'],...(state.camp==='bureau'?[['bureau','Enquête']]:[]),['justice',state.camp==='casino'?'Prison / contacts':'Auditions']]:[];
  const body=!state?welcome():state.status==='lobby'?lobby():state.status==='finished'?finale():`<div class="casino-tabs" role="tablist">${tabs.map(([id,label])=>`<button type="button" role="tab" aria-selected="${tab===id}" data-casino-tab="${id}">${label}</button>`).join('')}</div>${({card,table,registry,network,bureau,justice}[tab]||card)()}`;
@@ -240,10 +238,12 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
  if(rosterWasOpen)root.querySelector('.casino-roster-disclosure')?.setAttribute('open','');
  if(lobbyScroll!==null){
   const nextRole=previousRole&&Array.from(root.querySelectorAll('.casino-role-choice-card[data-role-id]')).find(b=>b.dataset.roleId===previousRole);
-  const nextAnchor=nextRole||root.querySelector('.casino-role-choice-zone');
-  const delta=nextAnchor&&Number.isFinite(oldAnchorTop)?nextAnchor.getBoundingClientRect().top-oldAnchorTop:0;
-  try{window.scrollTo({top:Math.max(0,window.scrollY+delta),left:0,behavior:'instant'})}
-  catch(_){window.scrollTo(0,Math.max(0,window.scrollY+delta))}
+  // During a tap, the v816 guard owns scroll. Otherwise retain the absolute
+  // pre-render viewport; never add a geometry delta from a resized card.
+  if(!window.IGR_ROLE_VIEWPORT_V816?.isActive?.()){
+   try{window.scrollTo({top:lobbyScroll,left:0,behavior:'instant'})}
+   catch(_){window.scrollTo(0,lobbyScroll)}
+  }
   if(nextRole&&!nextRole.disabled)nextRole.focus({preventScroll:true});
  }
  for(const d of drafts){const el=Array.from(root.querySelectorAll('[data-casino-draft]')).find(e=>e.name===d.name&&e.closest('form')?.dataset.casinoForm===d.form);if(el)el.value=d.value}
