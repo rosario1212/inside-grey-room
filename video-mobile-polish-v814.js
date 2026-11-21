@@ -81,12 +81,13 @@
   'use strict';
   const root=document.getElementById('app');
   if(!root)return;
-  const seen=new WeakSet();
+  const seen=new WeakSet(), pending=new Set();
   const warm=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{
     for(const entry of entries){
       if(!entry.isIntersecting)continue;
       entry.target.loading='eager';
       warm.unobserve(entry.target);
+      pending.delete(entry.target);
     }
   },{rootMargin:'600px 0px'}):null;
   let previousScreen='', previousToast='', queued=false;
@@ -101,9 +102,11 @@
     previousScreen=screen;
     previousToast=toast?.classList.contains('show')?toast.textContent:'';
     if(warm){
+      for(const img of pending){if(!img.isConnected){warm.unobserve(img);pending.delete(img)}}
       root.querySelectorAll('.page-create-v10-13 .scenario-thumb img.igr-poster-full').forEach(img=>{
         if(seen.has(img))return;
         seen.add(img);
+        pending.add(img);
         warm.observe(img);
       });
     }
