@@ -12,9 +12,9 @@ assert.equal(index.split(asset).length-1,1,'v819 layer only once');
 assert(index.indexOf('heritage-ux-v818.css?v=')<index.indexOf(asset),
   'v819 has to load after prior mobile layout and v818 fixes');
 assert(sw.includes('/'+asset),'v819 offline asset missing');
-assert(sw.includes("const CACHE='igr-v820-heritage-hub-20261121'"),
+assert(sw.includes("const CACHE='igr-v821-heritage-video-20261121'"),
   'PWA must refresh after layout fix');
-assert(finalizer.includes("const pwaVersion='v820-heritage-hub-20261121'"),
+assert(finalizer.includes("const pwaVersion='v821-heritage-video-20261121'"),
   'Production finalize should retain v819 cache');
 for(const builder of [web,mobile])assert(builder.includes("'heritage-recording-fixes-v819.css'"));
 const required=[
@@ -36,7 +36,7 @@ for(const [label,fragment] of required)assert(css.includes(fragment),'Missing '+
 assert(casino.includes('roleShort(id)'),'Original Casino role summaries must not be removed from markup');
 assert(!old.includes("hu-quick-list"),'Do not restore the redundant four-button campaign menu');
 const hidden=read('heritage-unified-v760.css');
-assert(hidden.includes('clip-path:inset(50%)'),'Regression must override legacy visually-hidden Casino small text');
+assert(!hidden.includes('clip-path:inset(50%)'),'Casino descriptions should never be hidden in one-pixel overlays');
 assert(css.includes('clip-path:none!important'),'Restored text must override old clipping');
 assert(css.includes('max-width:100%!important'),'Hero must not overflow mobile layout');
 assert(!css.includes('pointer-events:none!important'),'Do not block role selection or other handlers');

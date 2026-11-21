@@ -12,13 +12,13 @@ const finalizer=read('scripts/finalize-cartel030-release.mjs');
 new vm.Script(code);
 const cssAsset='heritage-ux-v818.css?v=20261121-v820-1';
 const jsAsset='heritage-ux-v818.js?v=20261121-v820-1';
-const hubAsset='heritage-hub-v820.css?v=20261121-v820-1';
+const hubAsset='heritage-hub-v820.css?v=20261121-v821-1';
 for(const asset of [cssAsset,jsAsset,hubAsset]){
  assert.equal(index.split(asset).length-1,1,'Asset loaded once: '+asset);
  assert(sw.includes('/'+asset),'Offline shell must include '+asset);
 }
-assert(sw.includes("const CACHE='igr-v820-heritage-hub-20261121'"));
-assert(finalizer.includes("const pwaVersion='v820-heritage-hub-20261121'"));
+assert(sw.includes("const CACHE='igr-v821-heritage-video-20261121'"));
+assert(finalizer.includes("const pwaVersion='v821-heritage-video-20261121'"));
 for(const builder of [web,mobile]){
  for(const file of ['heritage-ux-v818.css','heritage-ux-v818.js','heritage-hub-v820.css'])
   assert(builder.includes("'"+file+"'"),'Builder missing '+file);
@@ -61,4 +61,11 @@ handlers.DOMContentLoaded();
 assert.equal(removed,1,'Only remove an obsolete duplicate nav if present');
 assert.equal(handlers.click,undefined,'Do not add intercepting campaign click handlers');
 assert.equal(window.IGR_HERITAGE_UI_V818.version,'820');
-console.log('PASS v820: single poster navigation, responsive card geometry, no gameplay click interception, mobile and PWA bundles.');
+const stableMaitre=read('heritage-maitre-online-v34-4.js');
+const stableCasino=read('casino-client-v105.js');
+assert(!stableMaitre.includes('window.scrollY+delta'),'Maître must not add a role scroll delta');
+assert(!stableCasino.includes('oldAnchorTop'),'Casino must not compensate for resized role cards');
+assert(hubCss.includes('grid-template-columns:minmax(0,1fr)!important'),'Casino roles must stack on mobile');
+assert(hubCss.includes('clip-path:none!important'),'Casino description must remain readable');
+assert(hubCss.includes('object-fit:contain!important'),'Campaign art must not crop');
+console.log('PASS v821: single poster navigation, responsive card geometry, no gameplay click interception, mobile and PWA bundles.');

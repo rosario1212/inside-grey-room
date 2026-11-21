@@ -1,6 +1,6 @@
-const CACHE='igr-v820-heritage-hub-20261121';
+const CACHE='igr-v821-heritage-video-20261121';
 const SHELL=[
-  '/heritage-hub-v820.css?v=20261121-v820-1',
+  '/heritage-hub-v820.css?v=20261121-v821-1',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
   '/heritage-ux-v818.css?v=20261121-v820-1',
   '/heritage-ux-v818.js?v=20261121-v820-1',
@@ -42,7 +42,7 @@ const SHELL=[
   '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v813-single-role-choice-20261121',
   '/scenario-flow-v13.js?v=v13.2-final','/gameplay-flow-v13.js?v=v13.2-final','/dlc-experience-v13.js?v=v13.2-final','/scenario-replay-contracts-v13.json?v=v13.2-final','/lobby-ui-fix-v13.js?v=v812-spy-lobby-viewport-20261121',
   '/startup-stability-v13-3.js?v=v13.8-dual-play','/heritage-v13-5.js?v=v13.8-dual-play','/heritage-premium-v13-6.js?v=v13.8-dual-play','/heritage-play-v13-7.js?v=v781-dlc-clarity-20261118','/play-modes-v13-8.js?v=v13.8-dual-play',
-  '/heritage-maitre-data-v34.js?v=v781-dlc-clarity-20261118','/heritage-maitre-assets-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-v34.js?v=v768-private-roles-20261117','/heritage-maitre-online-v34-4.js?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-mobile-v34-5.js?v=v34.9-maitre-theme-posters',
+  '/heritage-maitre-data-v34.js?v=v781-dlc-clarity-20261118','/heritage-maitre-assets-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-v34.js?v=v768-private-roles-20261117','/heritage-maitre-online-v34-4.js?v=v821-role-stable-20261121','/heritage-maitre-polish-v34.js?v=v34.9-maitre-theme-posters','/heritage-maitre-mobile-v34-5.js?v=v34.9-maitre-theme-posters',
   '/language-v12.js?v=v777-editorial-consistency-20261117','/i18n-en-v12.js?v=v12.22-mobile-ui',
   '/rules-v12.js?v=20261018-grey-room-protocol','/locale-settings-v12.js?v=v12.22-mobile-ui','/ui-polish-v12.js?v=v12.22-mobile-ui','/locale-runtime-v12-23.js?v=v12.23-locale-home',
   '/omerta-v12.js?v=v781-dlc-clarity-20261118','/omerta-polish-v12.js?v=santoro-visual-fix-20261108-v724-role-ux-20261116','/omerta-hotfix-v12.js?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.js?v=v810-static-role-selection-20261120','/omerta-v12-30.js?v=omerta-021-rain-v758-20261117',
