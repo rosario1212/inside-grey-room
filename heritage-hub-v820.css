@@ -1027,3 +1027,28 @@ body:has(#app main.hplay-hub) .igr-beta-footer a{
   }
   .omerta-tree-modal.omerta-tree-responsive .omerta-tree-swipe-hint{display:none!important}
 }
+
+
+/* MAÎTRE lobby: warm, readable note on charcoal; readable support link on paper.
+   The adjacent title/code fallback covers older lobby markup without touching role cards. */
+#app main.maitre-page.hnet .hnet-lobby > :is(.hplay-conditional,.hnet-decision-note,.hnet-host-note),
+#app main.maitre-page.hnet .hnet-lobby > .hnet-title + :not(.hnet-code):has(+ .hnet-code){
+  color:#ede1d5!important;
+  border-color:#c28a79!important;
+}
+#app main.maitre-page.hnet .hnet-lobby > :is(.hplay-conditional,.hnet-decision-note,.hnet-host-note) :is(b,strong,em,summary),
+#app main.maitre-page.hnet .hnet-lobby > .hnet-title + :not(.hnet-code):has(+ .hnet-code) :is(b,strong,em,summary){
+  color:#e4b49f!important;opacity:1!important;
+}
+#app main.maitre-page.hnet .hnet-lobby > :is(.hplay-conditional,.hnet-decision-note,.hnet-host-note) :is(p,span,small),
+#app main.maitre-page.hnet .hnet-lobby > .hnet-title + :not(.hnet-code):has(+ .hnet-code) :is(p,span,small){
+  color:#ede1d5!important;opacity:1!important;
+}
+body:has(#app main.maitre-page.hnet .hnet-lobby) .igr-beta-footer{
+  background:#e9e1d4!important;color:#6d302b!important;opacity:1!important;
+}
+body:has(#app main.maitre-page.hnet .hnet-lobby) .igr-beta-footer a,
+body:has(#app main.maitre-page.hnet .hnet-lobby) .igr-beta-footer a:is(:visited,:hover,:focus-visible,:active){
+  color:#6d302b!important;opacity:1!important;
+  text-decoration-color:currentColor!important;
+}
