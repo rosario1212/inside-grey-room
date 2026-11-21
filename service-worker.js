@@ -1,8 +1,9 @@
-const CACHE='igr-v819-heritage-recording-20261121';
+const CACHE='igr-v820-heritage-hub-20261121';
 const SHELL=[
+  '/heritage-hub-v820.css?v=20261121-v820-1',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
-  '/heritage-ux-v818.css?v=20261121-v818-1',
-  '/heritage-ux-v818.js?v=20261121-v818-1',
+  '/heritage-ux-v818.css?v=20261121-v820-1',
+  '/heritage-ux-v818.js?v=20261121-v820-1',
   '/video-ui-refinements-v817.css?v=20261121-v817-1',
   '/terror-live-v681.js?v=20261121-v817-city-1',
   '/interface-consistency-v816.css?v=20261121-v816-1',
