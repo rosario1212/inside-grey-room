@@ -8,7 +8,7 @@ const read=name=>readFile(path.join(target,name),'utf8');
 const [html,app,release]=await Promise.all(['index.html','app-v11.js','cartel030-release.json'].map(read));
 const meta=JSON.parse(release);
 const clientVersion='v812-spy-lobby-viewport-20261121';
-const pwaVersion='v815-heritage-mobile-polish-20261121';
+const pwaVersion='v816-role-viewport-stability-20261121';
 assert.equal(meta.scenario,'030');
 assert.match(meta.commit,/^[a-f0-9]{40}$/);
 assert.equal((html.match(new RegExp(`app-v11\\.js\\?v=${clientVersion}`,'g'))||[]).length,1);
