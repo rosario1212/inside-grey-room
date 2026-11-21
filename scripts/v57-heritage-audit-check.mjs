@@ -3,6 +3,14 @@ import path from 'node:path';
 const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist'),fail=[];
 const ok=(v,m)=>{if(!v)fail.push(m)},read=p=>readFile(path.join(root,p),'utf8');
 const css=await read('heritage-audit-v57.css');
+const audit=await read('heritage-audit-v55.js');
+ok(audit.includes("title.insertAdjacentHTML('beforeend','<div class=\"h55-maitre-lobby-note\""),'Actual note must be inside the lobby title');
+const noteSelector='#app .maitre-page.hnet .hnet-lobby .hnet-title .h55-maitre-lobby-note';
+for(const [tag,color] of [['b','#e4b49f'],['span','#ede1d5']]){
+  const rule=css.split(noteSelector+'>'+tag+'{')[1]?.split('}')[0]||'';
+  ok(rule.includes('color:'+color+'!important')&&rule.includes('-webkit-text-fill-color:'+color+'!important'),'Missing exact high-contrast note style for '+tag);
+}
+ok(!css.includes('.h55-maitre-lobby-note span {color:#6d2723!important}'),'Legacy dark red text still overrides the note');
 const play=await read('heritage-play-v13-7.js');
 const legacy=await read('heritage-v13-5.js');
 const modes=await read('play-modes-v13-8.js');
@@ -31,10 +39,10 @@ ok(modes.includes("title:'RESPONSABLE DES HABILITATIONS'"),'online CENDRES resul
 try{
   await stat(path.join(target,'index.html'));
   const html=await readFile(path.join(target,'index.html'),'utf8'),sw=await readFile(path.join(target,'service-worker.js'),'utf8');
-  ok(html.includes('heritage-audit-v57.css?v=v57-heritage-audit-v58'),'dist missing v57 Heritage CSS');
+  ok(html.includes('heritage-audit-v57.css?v=v828-maitre-exact-contrast-20261121'),'dist missing v57 Heritage CSS');
   for(const asset of ['heritage-v13-5.js','heritage-play-v13-7.js','play-modes-v13-8.js'])ok(html.includes(asset+'?v=v57-heritage-audit-v58'),'dist did not cache-bust '+asset);
   ok(sw.includes("const CACHE='igr-v57-heritage-audit-v58';"),'service worker cache not bumped to v57');
-  ok(sw.includes('/heritage-audit-v57.css?v=v57-heritage-audit-v58'),'service worker missing v57 CSS');
+  ok(sw.includes('/heritage-audit-v57.css?v=v828-maitre-exact-contrast-20261121'),'service worker missing v57 CSS');
   for(const asset of ['heritage-v13-5.js','heritage-play-v13-7.js','play-modes-v13-8.js'])ok(sw.includes('/'+asset+'?v=v57-heritage-audit-v58'),'service worker did not cache-bust '+asset);
 }catch{}
 if(fail.length){console.error('\nHÉRITAGE v57 audit check FAILED:\n- '+fail.join('\n- '));process.exit(1)}
