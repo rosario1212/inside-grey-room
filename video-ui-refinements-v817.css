@@ -1,0 +1,102 @@
+/* Inside Grey Room v817 — changes grounded in iPhone recording 21 Nov.
+   Purely visual. Full role descriptions and game logic remain untouched. */
+
+/* Base + DLC: role cards were needlessly tall on iPhone. Keep the whole
+   public summary readable, and leave the full role disclosure accessible. */
+@media(max-width:600px){
+ #app .lobby-v11[data-igr-lobby-theme] .role-choice-grid{
+   gap:8px!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option{
+   border-radius:13px!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card:not(.random-role-card){
+   min-height:88px!important;
+   padding:11px 12px 5px!important;
+   gap:7px!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card>span{
+   gap:4px!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card>span>b{
+   font-size:17px!important;
+   line-height:1.25!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option>.role-choice-card small{
+   font-size:12.5px!important;
+   line-height:1.4!important;
+   white-space:normal!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option .igr50-activity{
+   margin-top:0!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-more{
+   padding:0 12px!important;
+ }
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-more>summary{
+   box-sizing:border-box;
+   min-height:44px!important;
+   padding:9px 2px!important;
+   font-size:12px!important;
+ }
+}
+
+/* TERREUR: no squeezed input beside a button when the iOS keyboard opens. */
+#app .terror-v681-city-lobby .terror-v681-city-head b{
+ line-height:1.3;
+ overflow-wrap:break-word;
+}
+#app .terror-v681-city-lobby .terror-v681-city-entry label{
+ font-size:13px;
+ line-height:1.45;
+}
+#app .terror-v681-city-lobby .terror-v681-input-row input{
+ font-size:16px;
+ box-sizing:border-box;
+}
+@media(max-width:600px){
+ #app .terror-v681-city-lobby{
+   padding:16px!important;
+ }
+ #app .terror-v681-city-lobby .terror-v681-input-row{
+   display:grid!important;
+   grid-template-columns:minmax(0,1fr)!important;
+   gap:9px!important;
+ }
+ #app .terror-v681-city-lobby .terror-v681-input-row input{
+   min-width:0!important;
+   width:100%!important;
+   min-height:48px!important;
+ }
+ #app .terror-v681-city-lobby .terror-v681-input-row .btn{
+   width:100%!important;
+   min-height:46px!important;
+   justify-content:center;
+ }
+}
+
+/* Profile: give the existing initials a visible, finished empty-photo state. */
+#app .profile-page #profilePreview .avatar.avatar-profile.avatar-fallback{
+ display:inline-grid!important;
+ place-items:center!important;
+ width:104px!important;
+ height:104px!important;
+ color:#e8eef2!important;
+ font-size:30px!important;
+ font-weight:750!important;
+ line-height:1!important;
+ text-shadow:0 1px 12px rgba(225,235,240,.13);
+ background:radial-gradient(circle at 32% 24%,#27333e,#121a21 76%)!important;
+ border:1px solid rgba(196,210,223,.43)!important;
+}
+/* Preserve normal keyboard/accessibility focus, including when user reduces motion. */
+#app .terror-v681-city-lobby .terror-v681-input-row input:focus-visible,
+#app .terror-v681-city-lobby .terror-v681-input-row button:focus-visible{
+ outline:2px solid #ddb4a0;
+ outline-offset:2px;
+}
+@media(prefers-reduced-motion:reduce){
+ #app .lobby-v11[data-igr-lobby-theme] .igr-role-option{
+   transition:none!important;
+ }
+}
