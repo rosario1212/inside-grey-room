@@ -129,15 +129,18 @@ assert(v806.includes("p_scenario IN ('001','004','009')")&&v806.includes("when p
 assert(['007','008','010','011','012','013','014','015','016']
  .every(id=>scById[id].min>=5),'Uncertified scenarios must remain five-player');
 
-// v811: the preview is informational, never an additional selectable seat.
+// Analyst can be reserved while the certified four-player lobby fills.
 // Role picks and random draws retain a fixed viewport instead of card anchoring.
 const polish=readFileSync('role-tree-polish-v12-29.js','utf8');
 const lobbyUi=readFileSync('lobby-ui-fix-v13.js','utf8');
 const lobbyCss=readFileSync('lobby-ui-fix-v13.css','utf8');
 const html=readFileSync('index.html','utf8');
-assert(source.includes('const analystPreview='),'Analyst preview missing before Team-4 activation');
-assert(source.includes("!choices.some(x=>x.id==='analyste')"),'Preview must disappear when Analyst is selectable');
-assert(source.includes('aria-disabled="true"'),'Preview must never call choose_role');
+assert(source.includes('otherSuspects<=2?1:0'),'Analyst must not displace a third reserved suspect');
+assert(!source.includes('const analystPreview='),'Locked Analyst preview returned');
+for(const id of ['001','004','009'])for(const count of [1,2,3,4]){
+ assert.deepEqual(actualLobbyRoster(id,count,'team'),['enqueteur','analyste','suspect','suspect'].sort());
+ assert.deepEqual(actualLobbyRoster(id,count,'classic'),['enqueteur','suspect','suspect','suspect'].sort());
+}
 assert(source.includes('igr-roster-variant'),'Two explicit four-player roster cards missing');
 assert(!source.includes('<strong>ou</strong>'),'Old inline roster conjunction reappeared');
 assert(!source.includes('const oldRoleTop='),'Duplicate core scroll anchor reappeared');
@@ -148,7 +151,7 @@ assert(lobbyUi.includes('const scrollY=sameLobby?window.scrollY:0'),'Role update
 assert(!lobbyUi.includes('scrollY+delta'),'A changing card must never shift the viewport');
 assert(lobbyCss.includes('.igr-role-preview'),'Analyst preview styling missing');
 assert(html.includes('v812-spy-lobby-viewport-20261121'),'Stale lobby cache reference');
-console.log('PASS: stationary role cards, exact viewport retention, locked Analyst preview and distinct roster alternatives');
+console.log('PASS: stationary role cards, exact viewport retention, early Analyst selection and distinct roster alternatives');
 
 console.log('PASS: classic, 001/004/009 Team-4 online room slot allocation');
 console.log('PASS: five-player, 002 and all other scenario safety exceptions');
