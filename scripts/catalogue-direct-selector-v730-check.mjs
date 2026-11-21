@@ -127,8 +127,10 @@ for(const [family,lo,hi] of [
  ['omerta',21,25],['terror',26,28],['cartel',29,31],['regime',32,34]
 ]){tap(family);verify(family,ids(lo,hi))}
 tap('base');verify('base',ids(1,20));
-assert.equal(scrollCount,5,'Collection switches should return to start of list');
-tap('base');assert.equal(scrollCount,5,'Tapping current choice should not jump');
+assert.equal(scrollCount,0,'Collection switches must never move the viewport');
+tap('base');assert.equal(scrollCount,0,'Tapping current choice should not jump');
+window.scrollY=0;
+for(const [family,lo,hi] of [['omerta',21,25],['terror',26,28],['cartel',29,31],['regime',32,34],['base',1,20]]){tap(family);verify(family,ids(lo,hi));assert.equal(scrollCount,0,'Collection switch at top must not scroll: '+family);assert.equal(window.scrollY,0);}
 store.set('igr_scenario_filter_v1237','all');
 assert.equal(api.readFilter(),'base','Legacy ALL must not show 34 dossiers');
 store.set('igr_scenario_filter_v1237','dlc');
