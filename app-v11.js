@@ -143,8 +143,8 @@ function expandRoleLabel(label){
 }
 function lobbyRoleSlots(sc,count){
  // v800: certified dossier 001 allows two EXCLUSIVE four-player compositions.
- // The room state is authoritative. Never infer Team mode from a role click.
- if(['001','004','009'].includes(sc?.id)&&count===4)
+ // Authoritative composition applies even while the four-player lobby fills.
+ if(['001','004','009'].includes(sc?.id)&&count<=4)
    return STATE?.sync?.room?.state?.four_player_mode==='team'
      ?['enqueteur','analyste','suspect','suspect']
      :['enqueteur','suspect','suspect','suspect'];
@@ -164,7 +164,13 @@ function lobbyRoleSlots(sc,count){
 function roleCapacityMap(sc,count){return lobbyRoleSlots(sc,count).reduce((a,r)=>(a[r]=(a[r]||0)+1,a),{})}
 function roleChoiceSummary(sc,count,players){
  const caps=roleCapacityMap(sc,count),taken={};(players||[]).forEach(p=>{if(p.preferred_role)taken[p.preferred_role]=(taken[p.preferred_role]||0)+1});
- return Object.entries(caps).map(([id,cap])=>({id,cap,taken:taken[id]||0,info:roleInfo(id)}));
+ // Selecting Analyst may opt into Team-4, provided no other suspect is displaced.
+ if(['001','004','009'].includes(sc?.id)&&count<=4&&!caps.analyste){
+  const me=(players||[]).find(p=>p.id===STATE?.sync?.player?.id);
+  const otherSuspects=(taken.suspect||0)-(me?.preferred_role==='suspect'?1:0);
+  caps.analyste=otherSuspects<=2?1:0;
+ }
+ return Object.entries(caps).map(([id,cap])=>({id,cap,taken:taken[id]||0,info:roleInfo(id)})).sort((a,b)=>['001','004','009'].includes(sc?.id)&&count<=4?['enqueteur','analyste','suspect'].indexOf(a.id)-['enqueteur','analyste','suspect'].indexOf(b.id):0);
 }
 
 const ROLE_INFO = {
@@ -1253,10 +1259,10 @@ function renderLobby(prefetched=null){
  const sc=scenario(d.room.scenario_id),count=d.players.length,min=d.room.min_players,max=d.room.max_players,remaining=Math.max(0,min-count);
  const me={...(d.players||[]).find(p=>p.id===d.player?.id),...d.player},roleMissing=d.players.filter(p=>!p.preferred_role).length;
  const choices=roleChoiceSummary(sc,count,d.players),canStart=!!STATE.hostToken&&count>=min;
- const fourMode=(['001','004','009'].includes(sc.id)&&count===4)?(d.room.state?.four_player_mode==='team'?'team':'classic'):null;
+ const fourMode=(['001','004','009'].includes(sc.id)&&count<=4)?(d.room.state?.four_player_mode==='team'?'team':'classic'):null;
  const fourModePanel=fourMode?('<div class="igr-four-mode" role="group" aria-label="Composition à quatre joueurs">'+
  '<div class="section-title"><h2>Composition à 4 joueurs</h2><span>Deux façons de jouer</span></div>'+
- '<p class="role-choice-help">Choisissez la composition avant les rôles. Le changement libère les rôles réservés.</p>'+
+ '<p class="role-choice-help">L’Analyste peut être choisi dès maintenant si deux places de suspect suffisent. Changer la composition manuellement libère les rôles réservés.</p>'+
  '<div class="role-choice-grid">'+
  '<button type="button" class="role-choice-card '+(fourMode==='classic'?'selected':'')+'" aria-pressed="'+(fourMode==='classic')+'" '+(STATE.hostToken?'onclick="chooseFourPlayerMode(\'classic\')"':'disabled')+'><span><b>Enquête classique</b><small>1 Enquêteur + 3 Suspects</small></span><em>'+(fourMode==='classic'?'CHOISI':'CHOISIR')+'</em></button>'+
  '<button type="button" class="role-choice-card '+(fourMode==='team'?'selected':'')+'" aria-pressed="'+(fourMode==='team')+'" '+(STATE.hostToken?'onclick="chooseFourPlayerMode(\'team\')"':'disabled')+'><span><b>Enquête en équipe</b><small>1 Enquêteur + 1 Analyste + 2 Suspects</small></span><em>'+(fourMode==='team'?'CHOISI':'CHOISIR')+'</em></button>'+
@@ -1264,9 +1270,7 @@ function renderLobby(prefetched=null){
  const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:roleMissing?`Lancer · ${roleMissing} rôle${roleMissing>1?'s':''} attribué${roleMissing>1?'s':''} au hasard`:'Lancer le dossier';
  const omertaLobby=['021','022','023','024','025'].includes(String(sc.id));
  const randomRoleButton=`<button type="button" class="role-choice-card random-role-card" onclick="chooseRandomLobbyRole()"><span><b>Choix aléatoire</b><small>Tirage uniforme parmi les rôles publics encore disponibles. Chaque type de rôle a exactement une chance dans le tirage. ${omertaLobby?'Dans Omertà, les identités des personnages restent privées.':'L’Espion reste secret.'}</small></span><em>AU HASARD</em></button>`;
- const analystPreview=(['001','004','009'].includes(sc.id)&&count<=4&&!choices.some(x=>x.id==='analyste'))
-  ?`<div class="igr-role-option igr-role-preview" aria-label="Analyste, rôle disponible avec une composition en équipe à quatre joueurs"><div class="role-choice-card" aria-disabled="true"><span><b>Analyste</b><small>Repère les contradictions et profile les suspects.</small></span><em>À 4 JOUEURS</em></div><p class="igr-role-preview-hint">${count<4?'À quatre joueurs, l’hôte pourra activer ce rôle.':'Pour jouer Analyste, l’hôte doit choisir « Enquête en équipe ».'}</p></div>`:'';
- const roleButtons=randomRoleButton+choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<div class="igr-role-option"><button type="button" class="role-choice-card ${mine?'selected':''} ${full?'full':''}" data-role-id="${h(x.id)}" aria-pressed="${mine}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.short||x.info.body)}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button><details class="igr-role-more" data-role-id="${h(x.id)}"><summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p></details></div>`+(x.id==='enqueteur'?analystPreview:'')}).join('');
+ const roleButtons=randomRoleButton+choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<div class="igr-role-option"><button type="button" class="role-choice-card ${mine?'selected':''} ${full?'full':''}" data-role-id="${h(x.id)}" aria-pressed="${mine}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.short||x.info.body)}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button><details class="igr-role-more" data-role-id="${h(x.id)}"><summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p></details></div>`}).join('');
  const reservations=d.room.state?.victory_reservations||[];
  const myReservation=reservations.find(x=>String(x.player_id)===String(me.id));
  const victoryRoleNotice=myReservation
@@ -1314,7 +1318,7 @@ let IGR_V800_MODE_PENDING=false;
 async function chooseFourPlayerMode(mode){
  if(IGR_V800_MODE_PENDING||!STATE.hostToken||STATE.sync?.room?.status!=='lobby')return;
  const d=STATE.sync;
- if(!['001','004','009'].includes(d.room.scenario_id)||d.players.length!==4||!['classic','team'].includes(mode))return;
+ if(!['001','004','009'].includes(d.room.scenario_id)||d.players.length>4||!['classic','team'].includes(mode))return;
  if((d.room.state?.four_player_mode||'classic')===mode)return;
  if(d.players.some(p=>p.preferred_role)){
    const confirmed=await appConfirm({
