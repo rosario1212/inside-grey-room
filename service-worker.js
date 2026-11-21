@@ -1,6 +1,6 @@
-const CACHE='igr-v824-visual-hierarchy-20261121';
+const CACHE='igr-v825-compact-dossier-20261121';
 const SHELL=[
-  '/heritage-hub-v820.css?v=20261121-v824-1',
+  '/heritage-hub-v820.css?v=20261121-v825-1',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
   '/heritage-ux-v818.css?v=20261121-v820-1',
   '/heritage-ux-v818.js?v=20261121-v820-1',
