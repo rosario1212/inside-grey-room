@@ -14,8 +14,8 @@ for(const asset of [cssAsset,jsAsset]){
  assert.equal(index.split(asset).length-1,1,'Héritage asset loaded exactly once: '+asset);
  assert(sw.includes('/'+asset),'PWA shell must cache '+asset);
 }
-assert(sw.includes("const CACHE='igr-v818-heritage-ux-20261121'"));
-assert(finalizer.includes("const pwaVersion='v818-heritage-ux-20261121'"));
+assert(sw.includes("const CACHE='igr-v819-heritage-recording-20261121'"));
+assert(finalizer.includes("const pwaVersion='v819-heritage-recording-20261121'"));
 for(const builder of [web,mobile]){
  assert(builder.includes("'heritage-ux-v818.css'"));
  assert(builder.includes("'heritage-ux-v818.js'"));
