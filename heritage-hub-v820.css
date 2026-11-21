@@ -1,0 +1,105 @@
+/* v820 — Héritage hub, reviewed against the 21 Nov iPhone recording.
+   Campaign posters remain the only navigation; no game or save logic changes. */
+#app main.hplay-hub .hu-quick-nav{display:none!important}
+#app main.hplay-hub .hplay-hub-intro{margin-bottom:17px!important}
+@media(max-width:650px){
+ #app main.hplay-hub .hplay-hub-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:none!important;
+  grid-auto-rows:max-content!important;
+  align-items:start!important;
+  justify-items:stretch!important;
+  gap:13px!important;
+ }
+ #app main.hplay-hub .hplay-hub-grid>.hplay-campaign-card:not(.casino-entry){
+  box-sizing:border-box!important;
+  display:block!important;
+  width:100%!important;
+  min-height:330px!important;
+  height:330px!important;
+  max-height:330px!important;
+  margin:0!important;
+  align-self:start!important;
+  overflow:hidden!important;
+  border-radius:18px!important;
+ }
+ #app main.hplay-hub .hplay-hub-grid>.maitre-hub-card{
+  min-height:330px!important;height:330px!important;max-height:330px!important;
+ }
+ #app main.hplay-hub .hplay-hub-grid>.hplay-campaign-card:not(.casino-entry) .hplay-campaign-body{
+  top:auto!important;
+  bottom:0!important;
+  max-width:100%!important;
+ }
+ #app main.hplay-hub .hplay-hub-grid>.casino-entry{
+  box-sizing:border-box!important;
+  position:relative!important;
+  display:grid!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  grid-template-columns:minmax(0,32%) minmax(0,1fr)!important;
+  grid-template-rows:max-content!important;
+  align-items:center!important;
+  justify-items:stretch!important;
+  align-content:start!important;
+  gap:13px!important;
+  width:100%!important;
+  min-height:0!important;
+  height:max-content!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:14px!important;
+  align-self:start!important;
+  border-radius:18px!important;
+  aspect-ratio:auto!important;
+ }
+ #app main.hplay-hub .casino-entry .casino-poster{
+  display:block!important;
+  width:100%!important;
+  max-width:140px!important;
+  height:auto!important;
+  margin:0!important;
+  align-self:center!important;
+  justify-self:center!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-body{
+  position:static!important;
+  display:grid!important;
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  padding:0!important;
+  margin:0!important;
+  gap:7px!important;
+  align-content:center!important;
+  justify-items:start!important;
+  text-align:left!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-body>strong{
+  font-size:clamp(26px,7vw,34px)!important;
+  line-height:1.03!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-body>small{
+  font-size:12px!important;
+  line-height:1.46!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-foot{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:space-between!important;
+  gap:7px!important;
+  padding-top:10px!important;
+  margin-top:4px!important;
+ }
+}
+@media(max-width:365px){
+ #app main.hplay-hub .hplay-hub-grid>.hplay-campaign-card:not(.casino-entry){
+  min-height:306px!important;height:306px!important;max-height:306px!important;
+ }
+ #app main.hplay-hub .hplay-hub-grid>.maitre-hub-card{
+  min-height:306px!important;height:306px!important;max-height:306px!important;
+ }
+ #app main.hplay-hub .hplay-hub-grid>.casino-entry{padding:11px!important;gap:10px!important}
+ #app main.hplay-hub .casino-entry .hplay-campaign-body>strong{font-size:25px!important}
+}
