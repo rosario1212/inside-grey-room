@@ -98,6 +98,28 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
   }
  }
 
+
+ // v825: measure the report link against the end of the actual shell.
+ for(const width of [320,393,430]){
+  await check('heritage-v825-footer-adjacency-'+width,async()=>{
+   await page.setViewportSize({width,height:852});
+   const fixture='<div class="app"><main class="page hplay hplay-hub"><section class="hplay-hub-grid">'+
+    '<button class="hplay-campaign-card hplay-theme-cendres"><img src="'+poster+'"><span class="hplay-campaign-shade"></span><span class="hplay-campaign-body"><strong>CENDRES</strong></span></button>'+
+    '<button class="hplay-campaign-card casino-entry"><span class="casino-poster"><img src="'+poster+'"></span><span class="hplay-campaign-body"><strong>CASINO</strong></span></button>'+
+    '</section></main></div>';
+   await page.setContent(screen(fixture).replace('</body>','<footer class="igr-beta-footer" style="display:flex;justify-content:center;padding:20px"><a href="support.html">Signaler un problème</a></footer></body>'));
+   const d=await page.evaluate(()=>{
+    const c=document.querySelector('.casino-entry').getBoundingClientRect();
+    const f=document.querySelector('.igr-beta-footer').getBoundingClientRect();
+    const a=document.querySelector('.igr-beta-footer a').getBoundingClientRect();
+    return {gap:f.top-c.bottom,linkGap:a.top-c.bottom,height:a.height,scroll:document.documentElement.scrollWidth,viewport:innerWidth};
+   });
+   assert(d.gap>=-1&&d.gap<=12,'No blank region between the final campaign and report footer: '+JSON.stringify(d));
+   assert(d.linkGap<=16&&d.height>=44,'Report action sits directly under campaign with accessible tap area');
+   assert(d.scroll<=d.viewport+1,'Footer layout has no sideways scroll');
+  });
+ }
+
  for(const [campaign,theme] of steps){
   for(const [width,height] of [[320,700],[393,852],[1180,850]]){
    await check('heritage-v760-'+campaign+'-mode-'+width,async()=>{
@@ -105,7 +127,7 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     await page.setContent(screen('<main class="page hplay hplay-dossier '+theme+'">'+
      '<header class="hplay-top"><button class="hplay-back">← RETOUR</button><div class="hplay-mode">DOSSIER 01</div></header>'+
      '<div class="hplay-dossier-grid"><div class="hplay-poster"><img alt="Affiche de test" src="'+poster+'"></div>'+
-     '<section class="hplay-dossier-copy"><h1>Dossier</h1><div class="hplay-launch-box"><b>MODE DE JEU</b><p>En ligne ou en local.</p>'+
+     '<section class="hplay-dossier-copy"><span class="hplay-eyebrow">HÉRITAGE · DOSSIER 01</span><h1>PERSONNE N’EXISTE</h1><div class="hplay-launch-box"><b>MODE DE JEU</b><p>En ligne ou en local.</p>'+
      '<div class="heritage-dual-row"><button class="btn primary heritage-online-btn">MULTIJOUEUR EN LIGNE</button>'+
      '<button class="btn ghost heritage-local-btn">LOCAL · 1 TÉLÉPHONE</button></div></div></section></div></main>'));
     await page.addScriptTag({content:journey});
@@ -118,6 +140,8 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
      return {
       scroll:document.documentElement.scrollWidth,viewport:innerWidth,
       online:rect(online),local:rect(local),poster:rect(poster),
+      title:rect(pick('.hplay-dossier-copy h1')),grid:rect(pick('.hplay-dossier-grid')),chooser:rect(pick('.hplay-launch-box')),
+      copyDisplay:getComputedStyle(pick('.hplay-dossier-copy')).display,
       icon:rect(onlineIcon),iconColor:getComputedStyle(onlineIcon).color,
       iconStroke:getComputedStyle(onlineIcon).stroke,
       localIconColor:getComputedStyle(localIcon).color,
@@ -146,6 +170,14 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     assert(!data.copyOverflow,'Mode labels must not be clipped');
     assert(Math.abs(data.poster.w/data.poster.h-941/1672)<.012,'Dossier poster must keep native proportions');
     if(width<=393)assert(data.online.bottom<=data.local.y+1,'Touch modes should stack without overlap on iPhone');
+    if(width<=393){
+     assert.equal(data.copyDisplay,'contents','Dossier title and poster share an integrated header');
+     assert(data.title.x>=data.poster.right+4,'Title beside original portrait, not separated below');
+     assert(data.title.y<data.poster.bottom&&data.title.bottom>data.poster.y,'Title and poster belong to one header');
+     assert(data.poster.h<245,'No oversized poster-only scroll');
+     assert(data.chooser.y>=data.poster.bottom&&data.chooser.y-data.poster.bottom<38,'Play modes immediately beneath header');
+     assert(data.chooser.w>=data.grid.w-2,'Play mode buttons use full available width');
+    }
    });
   }
  }
