@@ -7,8 +7,8 @@ const version='v173-cartel031-negotiation';
 // CARTEL release metadata stays v173; the public app/SW gets its own
 // cache revision so new scenario roles reach installed PWAs.
 const clientVersion='v812-spy-lobby-viewport-20261121';
-// Keep the installed web-app cache in sync with the v816 role-selection viewport contract.
-const pwaVersion='v816-role-viewport-stability-20261121';
+// Keep the installed web-app cache in sync with the v817 video-based mobile UI improvements.
+const pwaVersion='v817-video-ui-refinements-20261121';
 await copyFile(path.resolve('cartel031-v171.js'),path.join(target,'cartel031-v171.js'));
 const nativeBundle=(await readFile(path.join(target,'index.html'),'utf8')).includes('native-store-boundary-v14.js');
 // Run after all historical patchers: none may restore an older app URL or cache.

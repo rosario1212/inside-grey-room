@@ -97,6 +97,7 @@ jobs:
           node scripts/v781-cross-dlc-editorial-check.mjs
           node scripts/v815-heritage-mobile-check.mjs
           node scripts/v816-role-viewport-check.mjs
+          node scripts/v817-video-ui-check.mjs
           node --check runtime-optimization-v12.js
           node --check service-worker.js
           node scripts/ui-regression-check.mjs

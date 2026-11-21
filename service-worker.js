@@ -1,5 +1,7 @@
-const CACHE='igr-v816-role-viewport-stability-20261121';
+const CACHE='igr-v817-video-ui-refinements-20261121';
 const SHELL=[
+  '/video-ui-refinements-v817.css?v=20261121-v817-1',
+  '/terror-live-v681.js?v=20261121-v817-city-1',
   '/interface-consistency-v816.css?v=20261121-v816-1',
   '/role-viewport-stability-v816.js?v=20261121-v816-1',
   '/heritage-mobile-polish-v815.css?v=20261121-v815-1',
