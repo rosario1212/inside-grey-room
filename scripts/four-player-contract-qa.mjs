@@ -108,8 +108,8 @@ for(const id of traditional4.filter(id=>!['001','004'].includes(id))){
   ['enqueteur','suspect','suspect','suspect'].sort(),
   'Uncertified Team-4 must be blocked: '+id);
 }
-assert(source.includes('chooseFourPlayerMode('),'Host lobby choice missing');
-assert(source.includes('igr_v800_set_four_player_mode'),'Room-persisted mode RPC missing');
+assert(!source.includes('fourModePanel')&&!source.includes('Composition à 4 joueurs'),'Redundant manual composition panel returned');
+assert(source.includes('igr_v4_choose_role'),'Authoritative role-choice RPC missing');
 const local=readFileSync('play-modes-v13-8.js','utf8');
 assert(local.includes("['001','004','009'].includes(id)&&count===4&&mode==='team'"),'Local mode roster absent');
 assert(local.includes('IGR_001_ARCHIVED_WITNESS')&&local.includes('IGR_004_ARCHIVED_WITNESS')&&local.includes('IGR_009_ARCHIVED_WITNESS'),'Local witness statements missing');
@@ -137,6 +137,7 @@ const lobbyCss=readFileSync('lobby-ui-fix-v13.css','utf8');
 const html=readFileSync('index.html','utf8');
 assert(source.includes('otherSuspects<=2?1:0'),'Analyst must not displace a third reserved suspect');
 assert(!source.includes('const analystPreview='),'Locked Analyst preview returned');
+assert(source.includes("if(me?.preferred_role==='analyste')caps.suspect=3"),'Analyst must be able to switch back to the third suspect seat');
 for(const id of ['001','004','009'])for(const count of [1,2,3,4]){
  assert.deepEqual(actualLobbyRoster(id,count,'team'),['enqueteur','analyste','suspect','suspect'].sort());
  assert.deepEqual(actualLobbyRoster(id,count,'classic'),['enqueteur','suspect','suspect','suspect'].sort());
@@ -151,7 +152,7 @@ assert(lobbyUi.includes('const scrollY=sameLobby?window.scrollY:0'),'Role update
 assert(!lobbyUi.includes('scrollY+delta'),'A changing card must never shift the viewport');
 assert(lobbyCss.includes('.igr-role-preview'),'Analyst preview styling missing');
 assert(html.includes('v812-spy-lobby-viewport-20261121'),'Stale lobby cache reference');
-console.log('PASS: stationary role cards, exact viewport retention, early Analyst selection and distinct roster alternatives');
+console.log('PASS: stationary role cards, exact viewport retention, early Analyst selection, automatic composition and no manual lobby panel');
 
 console.log('PASS: classic, 001/004/009 Team-4 online room slot allocation');
 console.log('PASS: five-player, 002 and all other scenario safety exceptions');
