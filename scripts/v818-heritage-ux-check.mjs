@@ -12,13 +12,13 @@ const finalizer=read('scripts/finalize-cartel030-release.mjs');
 new vm.Script(code);
 const cssAsset='heritage-ux-v818.css?v=20261121-v820-1';
 const jsAsset='heritage-ux-v818.js?v=20261121-v820-1';
-const hubAsset='heritage-hub-v820.css?v=20261121-v825-1';
+const hubAsset='heritage-hub-v820.css?v=20261121-v826-1';
 for(const asset of [cssAsset,jsAsset,hubAsset]){
  assert.equal(index.split(asset).length-1,1,'Asset loaded once: '+asset);
  assert(sw.includes('/'+asset),'Offline shell must include '+asset);
 }
-assert(sw.includes("const CACHE='igr-v825-compact-dossier-20261121'"));
-assert(finalizer.includes("const pwaVersion='v825-compact-dossier-20261121'"));
+assert(sw.includes("const CACHE='igr-v826-mobile-finish-20261121'"));
+assert(finalizer.includes("const pwaVersion='v826-mobile-finish-20261121'"));
 for(const builder of [web,mobile]){
  for(const file of ['heritage-ux-v818.css','heritage-ux-v818.js','heritage-hub-v820.css'])
   assert(builder.includes("'"+file+"'"),'Builder missing '+file);
