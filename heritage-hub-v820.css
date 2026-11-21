@@ -414,3 +414,15 @@
 @media(prefers-reduced-motion:reduce){
  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card{transition:none!important}
 }
+
+/* v821.1: retire the v820 fixed 306/330px height contract. The original
+   :not(.casino-entry) selector had higher specificity than the new card grid. */
+@media(max-width:760px){
+ #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:not(.casino-entry),
+ #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card.maitre-hub-card{
+  display:grid!important;
+  min-height:180px!important;
+  height:auto!important;
+  max-height:none!important;
+ }
+}
