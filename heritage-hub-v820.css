@@ -427,160 +427,202 @@
  }
 }
 
-
-/* v822 — THREE CAMPAIGNS ONLY.
-   Cendres, Kuroi and Maître share one responsive poster/summary layout.
-   The Casino card is deliberately excluded and remains byte-for-byte styled
-   as in v821. Fixes the tall black, empty panels from the Nov 21 recording. */
+/* v823 PREMIUM HERITAGE — restore the cinematic, full-bleed campaign covers.
+   CENDRES / KUROI / MAÎTRE only. Casino retains all v821/v822 styling.
+   One intentional final layout owner overrides conflicting legacy mobile tiles. */
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card){
+  --igr-poster-accent:#c5d7e2;
+  box-sizing:border-box!important;
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:0!important;
+  height:clamp(440px,46vw,560px)!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  padding:0!important;
+  align-self:start!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  border-radius:21px!important;
+  border:1px solid color-mix(in srgb,var(--igr-poster-accent) 38%,#34373c)!important;
+  background:#090c10!important;
+  color:#fff9f0!important;
+  box-shadow:0 16px 34px rgba(0,0,0,.22),inset 0 0 0 1px rgba(255,255,255,.03)!important;
+  text-align:left!important;
+  transform:none!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card.hplay-theme-cendres{
+  --igr-poster-accent:#b8d6e9;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card.hplay-theme-kuroi{
+  --igr-poster-accent:#e6d1aa;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card.maitre-hub-card{
+  --igr-poster-accent:#e8c2a9;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>img{
+  box-sizing:border-box!important;
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  flex:none!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  object-fit:cover!important;
+  object-position:center 33%!important;
+  opacity:1!important;
+  filter:saturate(.94) contrast(1.03)!important;
+  box-shadow:none!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-shade{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  background:linear-gradient(180deg,
+    rgba(6,8,12,.04) 0%,
+    rgba(6,8,12,.06) 30%,
+    rgba(6,8,12,.32) 46%,
+    rgba(5,8,13,.84) 68%,
+    rgba(5,8,13,.97) 87%,
+    #080c11 100%)!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-body{
+  box-sizing:border-box!important;
+  position:absolute!important;
+  inset:auto 0 0!important;
+  z-index:2!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  align-content:end!important;
+  justify-items:start!important;
+  gap:9px!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:clamp(22px,4.4vw,31px)!important;
+  text-align:left!important;
+  background:transparent!important;
+  overflow:visible!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-body>em{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  min-width:0!important;
+  color:var(--igr-poster-accent)!important;
+  font:700 10px/1.4 'IBM Plex Mono',monospace!important;
+  letter-spacing:.10em!important;
+  font-style:normal!important;
+  text-shadow:0 1px 10px rgba(0,0,0,.65)!important;
+  white-space:normal!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-body>strong{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  min-width:0!important;
+  max-width:100%!important;
+  color:#fff9f2!important;
+  font-size:clamp(39px,6vw,55px)!important;
+  line-height:1.02!important;
+  font-weight:850!important;
+  letter-spacing:-.045em!important;
+  overflow-wrap:break-word!important;
+  white-space:normal!important;
+  text-shadow:0 2px 18px rgba(0,0,0,.7)!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-body>small{
+  display:block!important;
+  box-sizing:border-box!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:48ch!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  color:#e5e9ec!important;
+  font-size:13px!important;
+  line-height:1.55!important;
+  font-weight:430!important;
+  letter-spacing:0!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:break-word!important;
+  text-shadow:0 2px 12px rgba(0,0,0,.6)!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot{
+  box-sizing:border-box!important;
+  display:flex!important;
+  width:100%!important;
+  min-width:0!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:8px 12px!important;
+  flex-wrap:wrap!important;
+  margin:8px 0 0!important;
+  padding:14px 0 0!important;
+  border-top:1px solid rgba(242,244,246,.24)!important;
+}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot :is(b,i){
+  min-width:0!important;
+  color:var(--igr-poster-accent)!important;
+  font:800 10px/1.5 'IBM Plex Mono',monospace!important;
+  font-style:normal!important;
+  letter-spacing:.025em!important;
+  white-space:normal!important;
+}
 @media(max-width:760px){
   #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card){
-    box-sizing:border-box!important;
-    position:relative!important;
-    display:flex!important;
-    flex-direction:row!important;
-    flex-wrap:nowrap!important;
-    align-items:center!important;
-    align-content:normal!important;
-    justify-content:flex-start!important;
-    justify-items:normal!important;
-    gap:clamp(10px,3vw,15px)!important;
-    width:100%!important;
-    min-width:0!important;
-    max-width:100%!important;
-    min-height:0!important;
-    height:auto!important;
-    max-height:none!important;
-    aspect-ratio:auto!important;
-    margin:0!important;
-    padding:clamp(10px,3vw,14px)!important;
-    border:1px solid var(--igr-campaign-edge,#7e858c)!important;
-    border-radius:15px!important;
-    background:#141619!important;
-    color:#f4ede4!important;
-    overflow:hidden!important;
-    box-shadow:none!important;
-    text-align:left!important;
-    transform:none!important;
-    isolation:isolate!important;
-  }
-  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>img{
-    box-sizing:border-box!important;
-    position:static!important;
-    inset:auto!important;
-    display:block!important;
-    flex:0 0 clamp(102px,29vw,145px)!important;
-    width:clamp(102px,29vw,145px)!important;
-    min-width:0!important;
-    max-width:145px!important;
-    height:auto!important;
-    min-height:0!important;
-    max-height:230px!important;
-    aspect-ratio:9/16!important;
-    object-fit:contain!important;
-    object-position:50% 50%!important;
-    align-self:center!important;
-    margin:0!important;
-    padding:0!important;
-    border:1px solid rgba(238,231,218,.2)!important;
-    border-radius:9px!important;
-    background:#080a0c!important;
-    opacity:1!important;
-    filter:none!important;
-    box-shadow:none!important;
-    z-index:1!important;
-  }
-  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-shade{
-    display:none!important;
-    background:none!important;
-    pointer-events:none!important;
+    height:clamp(365px,97vw,485px)!important;
+    border-radius:19px!important;
   }
   #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-body{
-    box-sizing:border-box!important;
-    position:static!important;
-    inset:auto!important;
-    display:grid!important;
-    flex:1 1 0!important;
-    grid-template-columns:minmax(0,1fr)!important;
-    grid-template-rows:auto!important;
-    align-self:center!important;
-    align-content:center!important;
-    justify-items:stretch!important;
-    gap:clamp(5px,1.6vw,8px)!important;
-    width:auto!important;
-    min-width:0!important;
-    max-width:none!important;
-    min-height:0!important;
-    height:auto!important;
-    max-height:none!important;
-    margin:0!important;
-    padding:0!important;
-    text-align:left!important;
-    z-index:1!important;
-  }
-  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-body>em{
-    display:block!important;
-    min-width:0!important;
-    margin:0!important;
-    padding:0!important;
-    font-size:9px!important;
-    line-height:1.45!important;
-    letter-spacing:.035em!important;
-    white-space:normal!important;
-    overflow-wrap:break-word!important;
-    color:#d7bda2!important;
+    padding:clamp(20px,5vw,26px)!important;
+    gap:8px!important;
   }
   #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-body>strong{
-    display:block!important;
-    min-width:0!important;
-    margin:0!important;
-    font-size:clamp(23px,6.6vw,30px)!important;
-    line-height:1.08!important;
-    letter-spacing:-.04em!important;
-    white-space:normal!important;
-    overflow-wrap:break-word!important;
-    text-wrap:balance!important;
-    color:#fff1e5!important;
+    font-size:clamp(37px,10.5vw,49px)!important;
   }
   #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-body>small{
-    display:block!important;
-    min-width:0!important;
-    max-width:100%!important;
-    font-size:clamp(11px,3vw,12px)!important;
-    line-height:1.48!important;
-    white-space:normal!important;
-    overflow:visible!important;
-    overflow-wrap:break-word!important;
-    text-overflow:clip!important;
-    color:#d8d4d1!important;
+    font-size:12px!important;
+    line-height:1.5!important;
   }
   #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot{
-    box-sizing:border-box!important;
-    display:flex!important;
-    min-width:0!important;
-    width:100%!important;
-    justify-content:space-between!important;
-    align-items:center!important;
-    flex-wrap:wrap!important;
-    gap:5px 9px!important;
-    padding-top:8px!important;
-    margin-top:3px!important;
-    border-top:1px solid rgba(231,228,216,.14)!important;
-  }
-  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot :is(b,i){
-    font-size:9px!important;
-    font-style:normal!important;
-    letter-spacing:.01em!important;
-    line-height:1.45!important;
-    white-space:normal!important;
-    color:#ddd1c1!important;
+    padding-top:11px!important;
   }
 }
-@media(max-width:345px){
-  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>img{
-    flex-basis:94px!important;
-    width:94px!important;
-  }
+@media(max-width:355px){
   #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-body>strong{
-    font-size:22px!important;
+    font-size:36px!important;
+  }
+  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-body{
+    padding:18px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card){
+    transition:none!important;
   }
 }
