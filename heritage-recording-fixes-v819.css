@@ -1,0 +1,228 @@
+/* Inside Grey Room v819 — corrections confirmed by iPhone screen recording
+   ScreenRecording_11-21-2026 12-15-50_1.mp4.
+   Presentation only: no campaign state, role, route or gameplay changes. */
+
+/* 1. Campaign shortcuts and poster cards must not inherit equal-height grid
+   rows: CASINO was visibly ~700px tall with half of its card left empty. */
+@media(max-width:650px){
+ #app main.hplay-hub .hplay-hub-grid{
+  grid-auto-rows:auto!important;
+  align-items:start!important;
+ }
+ #app main.hplay-hub .hplay-hub-grid>.casino-entry{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  align-self:start!important;
+  grid-template-columns:minmax(104px,30%) minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  align-content:center!important;
+  align-items:center!important;
+  justify-items:stretch!important;
+  gap:12px!important;
+  padding:13px!important;
+ }
+ #app main.hplay-hub .casino-entry .casino-poster{
+  display:block!important;
+  width:min(100%,126px)!important;
+  max-width:126px!important;
+  height:auto!important;
+  align-self:center!important;
+  justify-self:center!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-body{
+  display:grid!important;
+  position:static!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:auto!important;
+  min-width:0!important;
+  padding:0!important;
+  margin:0!important;
+  gap:7px!important;
+  align-content:center!important;
+  justify-items:start!important;
+  text-align:left!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-body>em{
+  font-size:9px!important;
+  letter-spacing:.08em!important;
+  overflow-wrap:anywhere;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-body>strong{
+  font-size:clamp(25px,7vw,34px)!important;
+  line-height:1.05!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-body>small{
+  max-width:100%!important;
+  font-size:12px!important;
+  line-height:1.45!important;
+ }
+ #app main.hplay-hub .casino-entry .hplay-campaign-foot{
+  width:100%!important;
+  min-width:0!important;
+  margin-top:3px!important;
+  padding-top:10px!important;
+  gap:5px!important;
+  justify-content:space-between!important;
+  flex-wrap:wrap!important;
+  text-align:left!important;
+ }
+}
+
+/* 2. KUROI (and matching CENDRES chapter page): the chapter hero was squeezed
+   to a narrow strip next to a huge black field after opening the campaign. */
+@media(max-width:800px){
+ #app main.hplay.hplay-campaign:is(.hplay-theme-kuroi,.hplay-theme-cendres)>.hplay-campaign-hero{
+  position:relative!important;
+  display:block!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:160px!important;
+  min-height:160px!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+ }
+ #app main.hplay.hplay-campaign:is(.hplay-theme-kuroi,.hplay-theme-cendres)>.hplay-campaign-hero>img{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  min-height:100%!important;
+  object-fit:cover!important;
+  object-position:center 35%!important;
+ }
+ #app main.hplay.hplay-campaign:is(.hplay-theme-kuroi,.hplay-theme-cendres)>.hplay-campaign-hero>div{
+  z-index:3!important;
+ }
+}
+
+/* 3. Stepper labels were hidden, leaving five unexplained numeric circles
+   even though the game has a very specific five-step preparation path. */
+@media(max-width:650px){
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress ol{
+  align-items:stretch!important;
+  gap:4px!important;
+ }
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  min-height:60px!important;
+  gap:5px!important;
+ }
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li b{
+  display:block!important;
+  min-width:0!important;
+  max-width:100%!important;
+  text-align:center!important;
+  font-size:8px!important;
+  line-height:1.2!important;
+  letter-spacing:0!important;
+  overflow-wrap:anywhere!important;
+  white-space:normal!important;
+ }
+ #app :is(.hplay,.hnet,.casino-live) .hj-progress li>button.hj-step-link{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:5px!important;
+  width:100%!important;
+  min-height:60px!important;
+  padding:4px 2px!important;
+ }
+}
+
+/* 4. Casino role explanations existed in the markup but were visually hidden.
+   Restore concise two-line descriptions so the player can decide knowingly. */
+#app .casino-live .casino-role-choice-card>small{
+ position:static!important;
+ box-sizing:border-box!important;
+ display:-webkit-box!important;
+ width:auto!important;
+ min-width:0!important;
+ height:auto!important;
+ max-height:none!important;
+ padding:0!important;
+ border:0!important;
+ clip-path:none!important;
+ -webkit-clip-path:none!important;
+ -webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2!important;
+ line-clamp:2!important;
+ white-space:normal!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+ color:#cbbab0!important;
+ font-size:11px!important;
+ line-height:1.38!important;
+}
+@media(max-width:650px){
+ #app .casino-live .casino-role-choice-card{
+  min-height:112px!important;
+  align-content:start!important;
+ }
+ #app .casino-live .casino-role-choice-card .casino-role-activity{
+  margin-top:1px!important;
+ }
+}
+
+/* 5. The scenario previews in CASINO should not end with unexplained
+   truncation marks. Their summaries are public and safe to show in full. */
+#app .casino-page[data-casino-page="campaign"] .casino-dossier-content>span{
+ display:block!important;
+ -webkit-line-clamp:unset!important;
+ line-clamp:unset!important;
+ overflow:visible!important;
+ white-space:normal!important;
+ text-overflow:clip!important;
+}
+@media(max-width:650px){
+ #app .casino-page[data-casino-page="campaign"] .casino-dossier-content>span{
+  font-size:12px!important;
+  line-height:1.42!important;
+ }
+}
+
+/* 6. The expandable group’s "+" was glued to "facultatives".
+   Preserve the disclosure control and give it a separate touch-visible icon. */
+#app .casino-live .casino-optional-roles>summary{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:12px!important;
+ min-height:48px!important;
+}
+#app .casino-live .casino-optional-roles>summary::after{
+ float:none!important;
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 27px!important;
+ width:27px!important;
+ height:27px!important;
+ margin-left:auto!important;
+ border:1px solid rgba(211,177,141,.30);
+ border-radius:7px;
+ color:#e3c295;
+ font-size:16px;
+ line-height:1;
+}
+@media(prefers-reduced-motion:reduce){
+ #app main.hplay-hub .hplay-hub-grid>.casino-entry,
+ #app .casino-live .casino-role-choice-card{
+  transition:none!important;
+  animation:none!important;
+ }
+}
