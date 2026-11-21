@@ -27,7 +27,9 @@ for(const style of [
  '.profile-page:has(#profilePreview .avatar-fallback) .profile-photo-actions>button',
  'prefers-reduced-motion:reduce'
 ])assert(css.includes(style),'Missing mobile refinement: '+style);
-assert(!css.includes('display:none!important'),'Do not conceal important controls');
+assert(css.includes('.profile-page:has(#profilePreview .avatar-fallback) .profile-photo-actions>button'),
+ 'Only the inapplicable remove-photo action may be hidden when no image exists');
+assert(!/igr-role-(?:option|more)[^\\n]*display:none/.test(css),'Role controls must stay visible');
 assert(!terror.includes('Nomme la capitale avant de lancer cette partie.'),
  'Do not show validation error before first submission');
 assert(terror.includes('if(citySaving)return'),'Protect against double-save');
