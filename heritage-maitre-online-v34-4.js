@@ -8,20 +8,30 @@ const sess=()=>{const s=read(H);return s?.campaign==='maitre'?s:null},role=id=>R
 const rpcx=(n,a)=>typeof rpc==='function'?rpc(n,a):Promise.reject(new Error('rpc unavailable')),toastx=m=>{try{toast?.(m)}catch{console.log(m)}};
 function put(x,preserveLobby=false){
  const a=$('#app');if(!a)return;
- const lobby=preserveLobby?a.querySelector('.hnet-lobby'):null;
- const oldScroll=window.scrollY;
+ const previousLobby=preserveLobby?a.querySelector('.hnet-lobby'):null;
+ const previousY=Math.max(0,window.scrollY);
  const focused=document.activeElement?.closest?.('.hnet-role-card[data-role]');
  const roleId=focused?.dataset.role||null;
- const before=focused||lobby?.querySelector('.hnet-role-zone')||lobby?.querySelector('.hnet-title');
- const beforeTop=before?.getBoundingClientRect().top;
  a.innerHTML=typeof shell==='function'?shell(x,false):x;
- const nextLobby=a.querySelector('.hnet-lobby');
- const selected=roleId&&Array.from(nextLobby?.querySelectorAll('.hnet-role-card[data-role]')||[]).find(b=>b.dataset.role===roleId);
- const after=selected||nextLobby?.querySelector('.hnet-role-zone')||nextLobby?.querySelector('.hnet-title');
- const delta=lobby&&after&&Number.isFinite(beforeTop)?after.getBoundingClientRect().top-beforeTop:0;
- try{window.scrollTo({top:lobby&&nextLobby?Math.max(0,window.scrollY+delta):0,left:0,behavior:'instant'})}
- catch(_){window.scrollTo(0,lobby&&nextLobby?Math.max(0,window.scrollY+delta):0)}
- if(selected&&!selected.disabled)selected.focus({preventScroll:true});
+ const nextLobby=preserveLobby?a.querySelector('.hnet-lobby'):null;
+ if(previousLobby&&nextLobby){
+  // A single scroll owner: v816 handles pointer-driven role selections.
+  // The old card-geometry delta fought that guard and jumped on iPhone.
+  if(!window.IGR_ROLE_VIEWPORT_V816?.isActive?.()){
+   try{window.scrollTo({top:previousY,left:0,behavior:'instant'})}
+   catch(_){window.scrollTo(0,previousY)}
+   requestAnimationFrame(()=>{
+    if(!nextLobby.isConnected||window.IGR_ROLE_VIEWPORT_V816?.isActive?.())return;
+    try{window.scrollTo({top:previousY,left:0,behavior:'instant'})}
+    catch(_){window.scrollTo(0,previousY)}
+   });
+  }
+  const selected=roleId&&Array.from(nextLobby.querySelectorAll('.hnet-role-card[data-role]')).find(b=>b.dataset.role===roleId);
+  if(selected&&!selected.disabled)selected.focus({preventScroll:true});
+ }else{
+  try{window.scrollTo({top:0,left:0,behavior:'instant'})}
+  catch(_){window.scrollTo(0,0)}
+ }
 }
 function clear(){try{st().removeItem(H);st().removeItem(G)}catch{};last=''}
 function code(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',a=new Uint32Array(4);try{crypto.getRandomValues(a)}catch{for(let i=0;i<4;i++)a[i]=Math.random()*2**32}return'H'+[...a].map(x=>c[x%c.length]).join('')}
