@@ -35,8 +35,8 @@ for(const url of ['app-v11.js?v=v812-spy-lobby-viewport-20261121','language-v12.
  assert(index.includes(url),'Index version missing: '+url);
  assert(sw.includes(url),'PWA version missing: '+url);
 }
-assert(sw.includes("const CACHE='igr-v814-video-mobile-polish-20261121'"),'Mobile video polish PWA cache not updated');
-for(const asset of ['video-mobile-polish-v814.css?v=20261121-v814-1','video-mobile-polish-v814.js?v=20261121-v814-1']){
+assert(sw.includes("const CACHE='igr-v815-heritage-mobile-polish-20261121'"),'Mobile video polish PWA cache not updated');
+for(const asset of ['video-mobile-polish-v814.css?v=20261121-v814-1','video-mobile-polish-v814.js?v=20261121-v814-1','heritage-mobile-polish-v815.css?v=20261121-v815-1']){
  assert(index.includes(asset),'New UI runtime not included in index: '+asset);
  assert(sw.includes('/'+asset),'New UI runtime missing from PWA cache: '+asset);
 }
