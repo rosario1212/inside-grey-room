@@ -171,12 +171,13 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     assert(Math.abs(data.poster.w/data.poster.h-941/1672)<.012,'Dossier poster must keep native proportions');
     if(width<=393)assert(data.online.bottom<=data.local.y+1,'Touch modes should stack without overlap on iPhone');
     if(width<=393){
-     assert.equal(data.copyDisplay,'contents','Dossier title and poster share an integrated header');
-     assert(data.title.x>=data.poster.right+4,'Title beside original portrait, not separated below');
-     assert(data.title.y<data.poster.bottom&&data.title.bottom>data.poster.y,'Title and poster belong to one header');
-     assert(data.poster.h<245,'No oversized poster-only scroll');
-     assert(data.chooser.y>=data.poster.bottom&&data.chooser.y-data.poster.bottom<38,'Play modes immediately beneath header');
-     assert(data.chooser.w>=data.grid.w-2,'Play mode buttons use full available width');
+     assert.equal(data.copyDisplay,'block','Dossier copy follows the full-width artwork');
+     assert(Math.abs(data.poster.w-data.grid.w)<=2,'Poster occupies the entire reading column');
+     assert(Math.abs(data.poster.x-data.grid.x)<=1,'Poster left edge aligned with content');
+     assert(Math.abs(data.poster.right-data.grid.right)<=1,'No lateral blank bands');
+     assert(data.title.y>=data.poster.bottom&&data.title.y-data.poster.bottom<65,'Title follows the complete poster');
+     assert(data.chooser.y>=data.title.bottom&&data.chooser.y-data.title.bottom<38,'Play modes follow the dossier title');
+     assert(data.chooser.w>=data.grid.w-2,'Mode buttons use full available width');
     }
    });
   }
