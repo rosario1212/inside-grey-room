@@ -305,9 +305,7 @@
         if(readFilter()===next)return;
         storeFilter(next);
         applyFilters(root);
-        // A deliberate DLC switch begins at the start of its list.
-        const targetTop=root.getBoundingClientRect().top+window.scrollY;
-        window.scrollTo({top:Math.max(0,targetTop),behavior:'auto'});
+        // Collection selection changes visible cards only; keep the viewport stationary.
       });
     }
   }
