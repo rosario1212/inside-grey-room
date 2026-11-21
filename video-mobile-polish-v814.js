@@ -73,3 +73,59 @@
     };
   }
 })();
+
+
+/* v826 — prefetch nearby catalogue covers without eagerly loading the entire
+   collection; clear stale notifications only when the screen actually changes. */
+(()=>{
+  'use strict';
+  const root=document.getElementById('app');
+  if(!root)return;
+  const seen=new WeakSet(), pending=new Set();
+  const warm=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{
+    for(const entry of entries){
+      if(!entry.isIntersecting)continue;
+      entry.target.loading='eager';
+      warm.unobserve(entry.target);
+      pending.delete(entry.target);
+    }
+  },{rootMargin:'600px 0px'}):null;
+  let previousScreen='', previousToast='', queued=false;
+  function refresh(){
+    queued=false;
+    const main=root.querySelector('main');
+    const screen=main?main.className+'|'+(main.querySelector('h1')?.textContent||''):'';
+    const toast=document.getElementById('toast');
+    if(previousScreen&&screen&&previousScreen!==screen&&toast?.classList.contains('show')&&toast.textContent===previousToast){
+      toast.classList.remove('show');
+    }
+    previousScreen=screen;
+    previousToast=toast?.classList.contains('show')?toast.textContent:'';
+    if(warm){
+      for(const img of pending){if(!img.isConnected){warm.unobserve(img);pending.delete(img)}}
+      root.querySelectorAll('.page-create-v10-13 .scenario-thumb img.igr-poster-full').forEach(img=>{
+        if(seen.has(img))return;
+        seen.add(img);
+        pending.add(img);
+        warm.observe(img);
+      });
+    }
+    const modal=document.querySelector('.omerta-tree-modal');
+    const tree=modal?.querySelector('.omerta-org-scroll');
+    if(tree){
+      const portrait=matchMedia('(max-width:760px) and (orientation:portrait)').matches;
+      const english=window.IGR_LOCALE==='en';
+      const label=portrait?(english?'Family hierarchy, in rank order.':'Hiérarchie de la Famiglia, par rang.'):
+        (english?'Family tree. Scroll horizontally to see every role.':'Arbre de la Famiglia. Glisse horizontalement pour voir tous les rôles.');
+      if(tree.getAttribute('aria-label')!==label)tree.setAttribute('aria-label',label);
+      if(portrait)tree.scrollLeft=0;
+    }
+  }
+  function schedule(){if(!queued){queued=true;requestAnimationFrame(refresh)}}
+  new MutationObserver(schedule).observe(root,{childList:true,subtree:true});
+  new MutationObserver(schedule).observe(document.body,{childList:true});
+  const toast=document.getElementById('toast');
+  if(toast)new MutationObserver(schedule).observe(toast,{attributes:true,attributeFilter:['class'],childList:true,characterData:true,subtree:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  schedule();
+})();
