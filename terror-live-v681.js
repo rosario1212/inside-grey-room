@@ -30,6 +30,11 @@
        '<div class="terror-v681-input-row"><input id="terrorV681CityName" type="text" name="igr_almizia_capital" maxlength="36" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Ex. : Almera" value="'+esc(city)+'"><button type="button" class="btn primary" onclick="terrorV681SetCity()">Enregistrer</button></div></div>':
        '<p class="terror-v681-muted">L’hôte valide la ville retenue par les joueurs. Elle devient commune à toute la partie.</p>');
     target.insertAdjacentElement('beforebegin',section);
+    // Local to this input: tests and inactive pages never receive city events.
+    section.querySelector?.('#terrorV681CityName')?.addEventListener('keydown',e=>{
+      if(e.key!=='Enter')return;
+      e.preventDefault();window.terrorV681SetCity();
+    });
   }
   let citySaving=false;
   window.terrorV681SetCity=async()=>{
@@ -43,11 +48,7 @@
     }catch(e){console.error('terror city',e);toast('Impossible d’enregistrer la capitale.');}
     finally{citySaving=false;}
   };
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Enter'&&e.target?.id==='terrorV681CityName'){
-      e.preventDefault();window.terrorV681SetCity();
-    }
-  },true);
+
 
   function mood(id){return {
     '026':['LA VILLE TOMBE','Les sources institutionnelles disparaissent, mais les actes passés restent à prouver.'],
