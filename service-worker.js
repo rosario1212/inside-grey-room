@@ -1,5 +1,7 @@
-const CACHE='igr-v812-spy-lobby-viewport-20261121';
+const CACHE='igr-v814-video-mobile-polish-20261121';
 const SHELL=[
+  '/video-mobile-polish-v814.css?v=20261121-v814-1',
+  '/video-mobile-polish-v814.js?v=20261121-v814-1',
   '/suspect-natural-cards-v777.js?v=v811-spy-status-v787-20261121',
   '/judicial-card-v773.js?v=v776-20261117',
   '/judicial-card-v773.css?v=v776-20261117',

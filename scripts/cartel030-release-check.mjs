@@ -8,6 +8,7 @@ const read=name=>readFile(path.join(target,name),'utf8');
 const [html,app,release]=await Promise.all(['index.html','app-v11.js','cartel030-release.json'].map(read));
 const meta=JSON.parse(release);
 const clientVersion='v812-spy-lobby-viewport-20261121';
+const pwaVersion='v814-video-mobile-polish-20261121';
 assert.equal(meta.scenario,'030');
 assert.match(meta.commit,/^[a-f0-9]{40}$/);
 assert.equal((html.match(new RegExp(`app-v11\\.js\\?v=${clientVersion}`,'g'))||[]).length,1);
@@ -15,7 +16,7 @@ if(meta.bundle==='native')assert(html.includes('native-store-boundary-v14.js'));
 else{
   assert.equal(meta.bundle,'web');
   const sw=await read('service-worker.js');
-  assert(sw.includes(`const CACHE='igr-${clientVersion}';`));
+  assert(sw.includes(`const CACHE='igr-${pwaVersion}';`));
   assert(sw.includes(`/app-v11.js?v=${clientVersion}`));
 }
 assert(app.includes(`/service-worker.js?v=${clientVersion}`));

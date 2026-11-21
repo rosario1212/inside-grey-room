@@ -7,6 +7,8 @@ const version='v173-cartel031-negotiation';
 // CARTEL release metadata stays v173; the public app/SW gets its own
 // cache revision so new scenario roles reach installed PWAs.
 const clientVersion='v812-spy-lobby-viewport-20261121';
+// Keep the installed web-app cache in sync with the added v814 mobile assets.
+const pwaVersion='v814-video-mobile-polish-20261121';
 await copyFile(path.resolve('cartel031-v171.js'),path.join(target,'cartel031-v171.js'));
 const nativeBundle=(await readFile(path.join(target,'index.html'),'utf8')).includes('native-store-boundary-v14.js');
 // Run after all historical patchers: none may restore an older app URL or cache.
@@ -27,7 +29,7 @@ for(const name of ['index.html','en.html',...(!nativeBundle?['service-worker.js'
   }
   if(name==='service-worker.js'){
     if(!text.includes('/cartel031-v171.js?v='+version))text=text.replace('const SHELL=[',`const SHELL=[\n  '/cartel031-v171.js?v=${version}',`);
-    text=text.replace(/const CACHE='[^']+';/,`const CACHE='igr-${clientVersion}';`);
+    text=text.replace(/const CACHE='[^']+';/,`const CACHE='igr-${pwaVersion}';`);
     if(!text.includes(`/app-v11.js?v=${clientVersion}`)){
       text=text.replace('const SHELL=[',`const SHELL=[\n  '/app-v11.js?v=${clientVersion}',`);
     }

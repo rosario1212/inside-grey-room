@@ -60,7 +60,7 @@ for(const name of ['app-v11.js','omerta-v12.js','dlc-suite-v12-37.js','dlc-copy-
 for(const name of ['heritage-maitre-data-v34.js','heritage-play-v13-7.js']){
  assert(sw.includes(name+'?v='+version),'Missing premium asset revision '+name);
 }
-assert(sw.includes("igr-"+clientVersion),'Old source PWA cache version');
+assert(sw.includes("igr-v814-video-mobile-polish-20261121"),'New mobile PWA cache revision missing');
 assert(finalizer.includes("const clientVersion='"+clientVersion+"'"),
  'Production builder must not roll back the canonical app version');
 console.log('PASS v781: 20 base briefs, 14 DLC contexts, 15 Heritage chapter introductions, preview and cache coherence.');

@@ -12,6 +12,7 @@ const runtimeFiles=[
  'live-game-v772.css','cast-names-v772.js','idle-choice-v772.js',
  'judicial-card-v773.js','judicial-card-v773.css',
  'suspect-natural-cards-v777.js',
+ 'video-mobile-polish-v814.css','video-mobile-polish-v814.js',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
 async function exists(file){try{await stat(file);return true}catch{return false}}

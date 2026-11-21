@@ -35,7 +35,11 @@ for(const url of ['app-v11.js?v=v812-spy-lobby-viewport-20261121','language-v12.
  assert(index.includes(url),'Index version missing: '+url);
  assert(sw.includes(url),'PWA version missing: '+url);
 }
-assert(sw.includes("igr-v812-spy-lobby-viewport-20261121"),'Old PWA cache remained');
+assert(sw.includes("const CACHE='igr-v814-video-mobile-polish-20261121'"),'Mobile video polish PWA cache not updated');
+for(const asset of ['video-mobile-polish-v814.css?v=20261121-v814-1','video-mobile-polish-v814.js?v=20261121-v814-1']){
+ assert(index.includes(asset),'New UI runtime not included in index: '+asset);
+ assert(sw.includes('/'+asset),'New UI runtime missing from PWA cache: '+asset);
+}
 assert(sw.includes('/suspect-natural-cards-v777.js?v=v811-spy-status-v787-20261121'),'Suspect readability script missing from offline cache');
 assert(finalizer.includes("const clientVersion='v812-spy-lobby-viewport-20261121'"),'Finalizer restores an obsolete app version');
 assert(j.includes("player.public_role!=='enqueteur'"),'Suspect/private roles must remain untouched');

@@ -1,0 +1,75 @@
+/* v814 — Protect the Terror city draft during live lobby updates, and
+   explain how to move the wide Omerta family tree on a phone. */
+(()=>{
+  'use strict';
+  const drafts=new Map();
+  const cityId='terrorV681CityName';
+  const cityField=()=>document.getElementById(cityId);
+  const roomKey=()=>{
+    try{
+      const id=String(STATE?.sync?.room?.scenario_id||STATE?.scenarioId||'');
+      const code=String(STATE?.sync?.room?.code||STATE?.room||'');
+      return ['026','027','028'].includes(id)?code:'';
+    }catch(_){return ''}
+  };
+  const savedCity=()=>{
+    try{return String(STATE?.sync?.room?.state?.terror_v681?.city||'')}
+    catch(_){return ''}
+  };
+  function remember(input){
+    const key=roomKey();
+    if(key&&input)drafts.set(key,String(input.value));
+    if(drafts.size>15)drafts.delete(drafts.keys().next().value);
+  }
+  document.addEventListener('input',event=>{
+    if(event.target?.id===cityId)remember(event.target);
+  },true);
+
+  const originalRender=window.renderLobby;
+  if(typeof originalRender==='function'){
+    window.renderLobby=function(...args){
+      const previous=cityField(),focused=!!previous&&document.activeElement===previous;
+      const start=focused?previous.selectionStart:null;
+      const end=focused?previous.selectionEnd:null;
+      if(previous)remember(previous);
+      const result=originalRender.apply(this,args);
+      const current=cityField(),key=roomKey();
+      if(current&&key){
+        if(savedCity()&&!focused)drafts.delete(key);
+        else if(drafts.has(key))current.value=drafts.get(key);
+        if(focused){
+          try{
+            current.focus({preventScroll:true});
+            if(start!==null&&end!==null)current.setSelectionRange(start,end);
+          }catch(_){}
+        }
+      }
+      return result;
+    };
+  }
+
+  const originalTree=window.igrOmertaOpenFamilyTree;
+  if(typeof originalTree==='function'){
+    window.igrOmertaOpenFamilyTree=function(...args){
+      const result=originalTree.apply(this,args);
+      const modal=document.querySelector('.omerta-tree-modal');
+      const scroll=modal?.querySelector('.omerta-org-scroll');
+      if(scroll){
+        const english=window.IGR_LOCALE==='en';
+        scroll.tabIndex=0;
+        scroll.setAttribute('aria-label',english?
+          'Family tree. Scroll horizontally to see every role.':
+          'Arbre de la Famiglia. Glisse horizontalement pour voir tous les rôles.');
+        if(!modal.querySelector('.omerta-tree-swipe-hint')){
+          const hint=document.createElement('p');
+          hint.className='omerta-tree-swipe-hint';
+          hint.textContent=english?
+            'Swipe sideways to explore the entire hierarchy.':
+            'Glisse vers la gauche ou la droite pour explorer toute la hiérarchie.';
+          scroll.before(hint);
+        }
+      }
+      return result;
+    };
+  }
+})();
