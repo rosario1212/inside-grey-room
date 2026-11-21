@@ -1,6 +1,6 @@
-const CACHE='igr-v822-three-covers-20261121';
+const CACHE='igr-v823-premium-gallery-20261121';
 const SHELL=[
-  '/heritage-hub-v820.css?v=20261121-v822-1',
+  '/heritage-hub-v820.css?v=20261121-v823-1',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
   '/heritage-ux-v818.css?v=20261121-v820-1',
   '/heritage-ux-v818.js?v=20261121-v820-1',
