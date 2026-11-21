@@ -67,10 +67,23 @@ function enrichHeritageLobby(main){
  });
  const picked=$('.hnet-role-card[aria-pressed="true"]',lobby);
  if(picked)picked.setAttribute('data-hj-picked','true');
+ // Tooltips are invisible to most touch users: show one concise activity key.
+ if(grid&&!$('.hj-activity-note',lobby)){
+  const note=document.createElement('p');
+  note.className='hj-activity-note';
+  note.textContent='★ Étoiles : activité estimée du rôle, pas sa puissance.';
+  grid.insertAdjacentElement('beforebegin',note);
+ }
 }
 function enrichCasinoLobby(casino){
  const roleZone=$('.casino-role-choice-zone',casino);
  const choice=roleZone&&$('.casino-selected-role',roleZone),groups=roleZone&&$('.casino-role-choice-group',roleZone);
+ // Make the activity stars meaningful on mobile without adding a second card.
+ const intro=roleZone&&$(':scope > p',roleZone);
+ if(intro&&!intro.classList.contains('hj-activity-note')){
+  intro.classList.add('hj-activity-note');
+  intro.textContent='Choisis une place libre. ★ Étoiles : activité estimée du rôle, pas sa puissance.';
+ }
  // Casino keeps its role summary in the render template, not in a deferred move.
  const panel=$('.casino-lobby-top',casino);if(!panel)return;
  const match=panel.textContent.match(/([0-9]+)\s*\/\s*12\s*joueurs/i);
