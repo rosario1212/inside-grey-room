@@ -1,6 +1,6 @@
-const CACHE='igr-v825-compact-dossier-20261121';
+const CACHE='igr-v826-mobile-finish-20261121';
 const SHELL=[
-  '/heritage-hub-v820.css?v=20261121-v825-1',
+  '/heritage-hub-v820.css?v=20261121-v826-1',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
   '/heritage-ux-v818.css?v=20261121-v820-1',
   '/heritage-ux-v818.js?v=20261121-v820-1',
@@ -10,7 +10,7 @@ const SHELL=[
   '/role-viewport-stability-v816.js?v=20261121-v816-1',
   '/heritage-mobile-polish-v815.css?v=20261121-v815-1',
   '/video-mobile-polish-v814.css?v=20261121-v814-1',
-  '/video-mobile-polish-v814.js?v=20261121-v814-1',
+  '/video-mobile-polish-v814.js?v=20261121-v826-1',
   '/suspect-natural-cards-v777.js?v=v811-spy-status-v787-20261121',
   '/judicial-card-v773.js?v=v776-20261117',
   '/judicial-card-v773.css?v=v776-20261117',
