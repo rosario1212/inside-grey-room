@@ -89,6 +89,12 @@
  background:radial-gradient(circle at 32% 24%,#27333e,#121a21 76%)!important;
  border:1px solid rgba(196,210,223,.43)!important;
 }
+
+/* A remove-photo action is irrelevant until an avatar actually exists. */
+#app .profile-page:has(#profilePreview .avatar-fallback) .profile-photo-actions>button{
+ display:none!important;
+}
+
 /* Preserve normal keyboard/accessibility focus, including when user reduces motion. */
 #app .terror-v681-city-lobby .terror-v681-input-row input:focus-visible,
 #app .terror-v681-city-lobby .terror-v681-input-row button:focus-visible{
