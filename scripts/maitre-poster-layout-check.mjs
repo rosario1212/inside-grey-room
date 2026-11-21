@@ -89,14 +89,19 @@ export async function runMaitrePosterChecks({page,css,read,check,report,target})
         assert.equal(await page.locator(selector).getAttribute('src'),expected);
         const image=await page.locator(selector).evaluate(img=>{
           const r=img.getBoundingClientRect(),s=getComputedStyle(img);
-          return {naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,width:r.width,height:r.height,left:r.left,right:r.right,filter:s.filter,position:s.objectPosition};
+          return {naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,width:r.width,height:r.height,left:r.left,right:r.right,filter:s.filter,position:s.objectPosition,fit:s.objectFit};
         });
         assert.equal(image.naturalWidth,941,'Decode the restored source rather than a 320px thumbnail');
         assert.equal(image.naturalHeight,1672);
         assert(image.naturalWidth/image.width>=(width<=760?2:1),'Retain Retina quality on phones without upscaling on desktop');
         assert(image.left>=-.5&&image.right<=width+.5,'Keep artwork inside the viewport');
         assert(!image.filter.includes('blur('),'Never blur the poster with CSS');
-        if(!chapter)assert.equal(image.position,'50% 0%','Keep the title visible at the top of the campaign card');
+        if(!chapter){
+           if(width<=760){
+             assert.equal(image.fit,'contain','Show the entire MAÎTRE hub poster without cropping on phone');
+             assert.equal(image.position,'50% 50%','Keep the complete poster centred in its thumbnail');
+           }else assert.equal(image.position,'50% 0%','Keep the large desktop campaign cover aligned at the top');
+         }
         else{
           assert(Math.abs(image.width/image.height-941/1672)<.002,'Preserve the complete dossier poster proportions');
           const contrast=await page.locator('.hplay-launch-box>p').evaluate(p=>{
