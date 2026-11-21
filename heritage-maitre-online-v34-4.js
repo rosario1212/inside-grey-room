@@ -6,28 +6,77 @@ const $=(s,r=document)=>r.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']
 const st=()=>{try{return typeof STORAGE!=='undefined'?STORAGE:localStorage}catch{return localStorage}},read=k=>{try{return JSON.parse(st().getItem(k)||'null')}catch{return null}},write=(k,v)=>st().setItem(k,JSON.stringify(v));
 const sess=()=>{const s=read(H);return s?.campaign==='maitre'?s:null},role=id=>ROLES.find(r=>r.id===id)||{name:String(id||'RÔLE').toUpperCase(),public:''},pc=n=>PACK.chapters[Number(n)];
 const rpcx=(n,a)=>typeof rpc==='function'?rpc(n,a):Promise.reject(new Error('rpc unavailable')),toastx=m=>{try{toast?.(m)}catch{console.log(m)}};
+// A role choice changes public state, not the room or its screen. Keep the
+// live cards, focus, disclosure and scroll container mounted during polling.
+function patchMaitreLobby(current,next){
+ const oldGrid=current.querySelector('.hnet-role-grid'),newGrid=next.querySelector('.hnet-role-grid');
+ if(!oldGrid||!newGrid)return false;
+ const oldCards=Array.from(oldGrid.querySelectorAll('.hnet-role-card[data-role]'));
+ const newCards=Array.from(newGrid.querySelectorAll('.hnet-role-card[data-role]'));
+ // With the same role pool, preserve each actual button and its decorations.
+ // A real roster-size change can add/remove roles; only reconcile that grid.
+ const oldById=new Map(oldCards.map(card=>[card.dataset.role,card]));
+ for(const card of newCards){
+  const previous=oldById.get(card.dataset.role);
+  if(!previous)continue;
+  previous.classList.toggle('is-picked',card.classList.contains('is-picked'));
+  previous.classList.toggle('is-taken',card.classList.contains('is-taken'));
+  previous.disabled=card.disabled;
+  previous.setAttribute('aria-pressed',card.getAttribute('aria-pressed'));
+  if(card.getAttribute('aria-pressed')==='true')previous.setAttribute('data-hj-picked','true');
+  else previous.removeAttribute('data-hj-picked');
+  const status=previous.querySelector('.hnet-role-top em'),value=card.querySelector('.hnet-role-top em');
+  if(status&&value&&status.textContent!==value.textContent)status.textContent=value.textContent;
+ }
+ const samePool=oldCards.length===newCards.length&&oldCards.every((card,i)=>card.dataset.role===newCards[i].dataset.role);
+ if(!samePool)oldGrid.replaceChildren(...newCards.map(card=>oldById.get(card.dataset.role)||card));
+ // Keep stable summary rows including the invisible activity placeholder.
+ const oldSummary=current.querySelector('.hnet-selected-role'),newSummary=next.querySelector('.hnet-selected-role');
+ if(!oldSummary||!newSummary)return false;
+ for(const tag of ['span','b','small','em']){
+  const before=oldSummary.querySelector(':scope > '+tag),after=newSummary.querySelector(':scope > '+tag);
+  if(before&&after){
+   if(before.textContent!==after.textContent)before.textContent=after.textContent;
+   before.toggleAttribute('data-mnet-empty',after.hasAttribute('data-mnet-empty'));
+   if(after.hasAttribute('aria-hidden'))before.setAttribute('aria-hidden','true');else before.removeAttribute('aria-hidden');
+  }
+ }
+ const reset=current.querySelector('.mnet-role-reset'),nextReset=next.querySelector('.mnet-role-reset');
+ if(reset&&nextReset){reset.disabled=nextReset.disabled;reset.toggleAttribute('data-mnet-empty',nextReset.hasAttribute('data-mnet-empty'))}
+ for(const selector of ['.hnet-title p','.hnet-roster-disclosure summary span','.hnet-launch-hint','.hnet-start','.hnet-wait']){
+  const before=current.querySelector(selector),after=next.querySelector(selector);
+  if(before&&after){
+   if(before.textContent!==after.textContent)before.textContent=after.textContent;
+   if('disabled' in before)before.disabled=after.disabled;
+  }else if(before!==after)return false;
+ }
+ const oldRoster=current.querySelector('.hnet-players'),newRoster=next.querySelector('.hnet-players');
+ if(oldRoster&&newRoster&&oldRoster.innerHTML!==newRoster.innerHTML)oldRoster.innerHTML=newRoster.innerHTML;
+ const oldWarning=current.querySelector('.hnet-role-warning'),newWarning=next.querySelector('.hnet-role-warning');
+ if(oldWarning&&newWarning){if(oldWarning.textContent!==newWarning.textContent)oldWarning.textContent=newWarning.textContent}
+ else if(oldWarning)oldWarning.remove();
+ else if(newWarning)current.querySelector('.hnet-role-zone').appendChild(newWarning);
+ return true;
+}
 function put(x,preserveLobby=false){
  const a=$('#app');if(!a)return;
- const previousLobby=preserveLobby?a.querySelector('.hnet-lobby'):null;
+ const previousLobby=preserveLobby?a.querySelector('main.maitre-page.hnet .hnet-lobby'):null;
  const previousY=Math.max(0,window.scrollY);
- const focused=document.activeElement?.closest?.('.hnet-role-card[data-role]');
- const roleId=focused?.dataset.role||null;
+ if(previousLobby){
+  const template=document.createElement('template');
+  template.innerHTML=x;
+  const next=template.content.querySelector('main.maitre-page.hnet .hnet-lobby');
+  const codeOf=el=>el?.querySelector('.hnet-code > strong')?.textContent;
+  if(next&&codeOf(previousLobby)&&codeOf(previousLobby)===codeOf(next)&&patchMaitreLobby(previousLobby,next))return;
+ }
+ // Actual navigation (or a genuinely different room) still uses the shell.
  a.innerHTML=typeof shell==='function'?shell(x,false):x;
  const nextLobby=preserveLobby?a.querySelector('.hnet-lobby'):null;
- if(previousLobby&&nextLobby){
-  // A single scroll owner: v816 handles pointer-driven role selections.
-  // The old card-geometry delta fought that guard and jumped on iPhone.
+ if(previousLobby&&nextLobby&&previousLobby.querySelector('.hnet-code > strong')?.textContent===nextLobby.querySelector('.hnet-code > strong')?.textContent){
   if(!window.IGR_ROLE_VIEWPORT_V816?.isActive?.()){
    try{window.scrollTo({top:previousY,left:0,behavior:'instant'})}
    catch(_){window.scrollTo(0,previousY)}
-   requestAnimationFrame(()=>{
-    if(!nextLobby.isConnected||window.IGR_ROLE_VIEWPORT_V816?.isActive?.())return;
-    try{window.scrollTo({top:previousY,left:0,behavior:'instant'})}
-    catch(_){window.scrollTo(0,previousY)}
-   });
   }
-  const selected=roleId&&Array.from(nextLobby.querySelectorAll('.hnet-role-card[data-role]')).find(b=>b.dataset.role===roleId);
-  if(selected&&!selected.disabled)selected.focus({preventScroll:true});
  }else{
   try{window.scrollTo({top:0,left:0,behavior:'instant'})}
   catch(_){window.scrollTo(0,0)}
@@ -56,7 +105,7 @@ function lobby(d){
   const rating=Math.max(1,Math.min(5,Number(r.activity)||2));
   return `<button type="button" class="hnet-role-card ${mine?'is-picked':''} ${locked?'is-taken':''}" data-mnet="role" data-role="${esc(id)}" aria-pressed="${mine}" aria-label="${esc(r.name+' — '+(r.short||r.public))}" ${locked?'disabled':''}>
     <span class="hnet-role-top"><b>${esc(r.name)}</b><em>${mine?'✓ CHOISI':locked?'PRIS':'CHOISIR'}</em></span>
-    <span class="hnet-stars" aria-label="Activité estimée">${'★'.repeat(rating)+'☆'.repeat(5-rating)}</span>
+    <small class="hj-role-description">${esc(r.short||r.public)}</small><span class="hnet-stars" aria-label="Activité estimée">${'★'.repeat(rating)+'☆'.repeat(5-rating)}</span>
   </button>`;
  }).join('');
  const rosterOpen=!!$('.hnet-lobby .hnet-roster-disclosure[open]');
@@ -69,9 +118,10 @@ function lobby(d){
   <div class="hnet-code"><span>INVITATION</span><strong>${esc(d.room.code)}</strong><small>À partager</small><button type="button" class="hnet-code-copy" data-mnet="copy-code" data-code="${esc(d.room.code)}">COPIER</button></div>
   <section class="hnet-role-zone" aria-label="Choix des rôles">
    <div class="hnet-role-head"><div><h2>Ton rôle</h2></div></div>
-   <div class="hnet-selected-role" role="status" aria-live="polite"><span>${chosen?'TON CHOIX':'SANS CHOIX'}</span><b>${esc(chosen?.name||'Au hasard au lancement')}</b><small>${esc(chosen?.short||chosen?.public||'Un rôle sera attribué au lancement.')}</small>${chosen?`<em title="Activité estimée">ACTIVITÉ · ${selectedStars}</em>`:''}</div>
-   <div class="hnet-role-grid">${cards}</div>
-   <div class="mnet-role-actions"><button type="button" class="hnet-role-random mnet-random-action" data-mnet="role" data-role="" data-random="1" aria-label="Tirer maintenant un rôle disponible au hasard"><span aria-hidden="true">⚄</span><b>Tirer un rôle</b></button>${picked?'<button type="button" class="mnet-role-reset" data-mnet="role" data-role="" aria-label="Annuler mon choix et recevoir un rôle au lancement">Annuler</button>':''}</div>
+   <div class="hnet-selected-role" role="status" aria-live="polite"><span>${chosen?'TON CHOIX':'SANS CHOIX'}</span><b>${esc(chosen?.name||'Au hasard au lancement')}</b><small>${esc(chosen?.short||chosen?.public||'Un rôle sera attribué au lancement.')}</small><em title="Activité estimée" ${chosen?'':'data-mnet-empty aria-hidden="true"'}>ACTIVITÉ · ${chosen?selectedStars:'☆☆☆☆☆'}</em></div>
+   <p class="hj-activity-note">★ Étoiles : activité estimée du rôle, pas sa puissance.</p>
+    <div class="hnet-role-grid">${cards}</div>
+   <div class="mnet-role-actions"><button type="button" class="hnet-role-random mnet-random-action" data-mnet="role" data-role="" data-random="1" aria-label="Tirer maintenant un rôle disponible au hasard"><span aria-hidden="true">⚄</span><b>Tirer un rôle</b></button><button type="button" class="mnet-role-reset" data-mnet="role" data-role="" aria-label="Annuler mon choix et recevoir un rôle au lancement" ${picked?'':'disabled data-mnet-empty'}>Annuler</button></div>
    ${invalid.length?`<p class="hnet-role-warning" role="alert">Choix à revoir : ${invalid.map(p=>esc(p.pseudo)).join(', ')}.</p>`:''}
   </section>
   <details class="hnet-roster-disclosure" ${rosterOpen?'open':''}><summary>Joueurs <span>${c}/7</span></summary><div class="hnet-players">${roster}</div></details>
@@ -219,6 +269,6 @@ async function click(n){const a=n.dataset.mnet,ch=Number(n.dataset.ch||sess()?.c
   return;
  }if(a==='start'){try{await rpcx('igr_heritage_online_start',{p_code:s.code,p_host_token:s.hostToken})}
  catch(e){const msg=String(e?.message||'');toastx(/selected_role_not_available/i.test(msg)?'Un rôle n’est plus disponible, ajustez les choix.':'Impossible de lancer : vérifiez les rôles et le nombre de joueurs.');await sync(true).catch(()=>{});return}}if(a==='ready')await rpcx('igr_heritage_online_ready',{p_code:s.code,p_player_token:s.token});if(a==='strategy')await rpcx('igr_heritage_online_maitre_strategy',{p_code:s.code,p_player_token:s.token,p_angle:$('#mAngle')?.value||'',p_demonstration:$('#mDemo')?.value||''});if(a==='advance'){const angleBox=$('#mAngle');if(angleBox){const angle=angleBox.value.trim(),demo=$('#mDemo')?.value||'';if(!angle)return toastx('Formule un ANGLE avant de passer au Cycle III.');await rpcx('igr_heritage_online_maitre_strategy',{p_code:s.code,p_player_token:s.token,p_angle:angle,p_demonstration:demo})}await rpcx('igr_heritage_online_advance_v71',{p_code:s.code,p_host_token:s.hostToken});}if(a==='decide')await rpcx('igr_heritage_online_vote_maitre',{p_code:s.code,p_player_token:s.token,p_option_id:n.dataset.id});if(a==='finish')return finishOnline();await sync(true)}
-function boot(){document.addEventListener('click',e=>{const n=e.target.closest?.('[data-mnet]');if(!n)return;e.preventDefault();e.stopImmediatePropagation();click(n).catch(x=>{console.error(x);toastx('Action impossible.')})},true);new MutationObserver(()=>queueMicrotask(()=>{inject();if(sess()&&!suspended&&!$('.mnet')&&!$('.hnet.hplay-theme-maitre'))sync(true)})).observe(document.documentElement,{childList:true,subtree:true});setInterval(()=>{if(!document.hidden&&sess())sync(false)},650);inject();if(sess())sync(true);window.IGR_HERITAGE_MAITRE_ONLINE=Object.freeze({version:'79.0',create:n=>createView(Math.max(1,Math.min(5,Number(n)||1))),resume:()=>{suspended=false;return sync(true)},roleCard:(chapter,roleId,variantKey,carry)=>{const r=role(roleId),sec=secret(Number(chapter),roleId,variantKey,carry);return Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''})}})}
+function boot(){const stableStyle=document.createElement('style');stableStyle.id='igr-maitre-stable-role-layout';stableStyle.textContent="\n#app main.maitre-page.hnet .hnet-selected-role{min-height:130px!important;align-content:start!important}\n#app main.maitre-page.hnet .hnet-selected-role>em[data-mnet-empty],\n#app main.maitre-page.hnet .mnet-role-reset[data-mnet-empty]{visibility:hidden!important;pointer-events:none!important}\n#app main.maitre-page.hnet .hnet-selected-role>small{min-height:3em!important}\n#app main.maitre-page.hnet .hnet-role-card .hnet-role-top{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:4px!important}\n#app main.maitre-page.hnet .hnet-role-card .hnet-role-top em{min-height:1.4em;white-space:nowrap!important}\n#app main.maitre-page.hnet .hnet-role-card{transition-property:border-color,background-color,opacity,box-shadow!important}\n";if(!document.getElementById(stableStyle.id))document.head.appendChild(stableStyle);document.addEventListener('click',e=>{const n=e.target.closest?.('[data-mnet]');if(!n)return;e.preventDefault();e.stopImmediatePropagation();click(n).catch(x=>{console.error(x);toastx('Action impossible.')})},true);new MutationObserver(()=>queueMicrotask(()=>{inject();if(sess()&&!suspended&&!$('.mnet')&&!$('.hnet.hplay-theme-maitre'))sync(true)})).observe(document.documentElement,{childList:true,subtree:true});setInterval(()=>{if(!document.hidden&&sess())sync(false)},650);inject();if(sess())sync(true);window.IGR_HERITAGE_MAITRE_ONLINE=Object.freeze({version:'79.0',create:n=>createView(Math.max(1,Math.min(5,Number(n)||1))),resume:()=>{suspended=false;return sync(true)},roleCard:(chapter,roleId,variantKey,carry)=>{const r=role(roleId),sec=secret(Number(chapter),roleId,variantKey,carry);return Object.freeze({name:r.name,public:r.public||'',secret:sec[0]||'',objective:sec[1]||''})}})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
