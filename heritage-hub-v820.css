@@ -940,3 +940,90 @@ body:has(#app main.hplay-hub) .igr-beta-footer a{
     font-size:21px!important;
   }
 }
+
+
+/* v826 — mobile finish, scoped to catalogue/lobbies and the public tree.
+   Deliberately does not target intro, door, live game, posters or campaign cards. */
+@media(max-width:760px){
+  body:has(#app :is(.page-create-v10-13,.lobby-v11,main.hnet .hnet-lobby,main.casino-live .casino-role-choice-zone)) #app:not([style*="min-height"]),
+  #app .app:has(:is(.page-create-v10-13,.lobby-v11,main.hnet .hnet-lobby,main.casino-live .casino-role-choice-zone)){
+    min-height:0!important;height:auto!important;
+  }
+  #app main:has(>.lobby-v11),
+  #app main.hnet:has(.hnet-lobby),
+  #app main.casino-live:has(.casino-role-choice-zone){
+    min-height:0!important;height:auto!important;margin-bottom:0!important;padding-bottom:12px!important;
+  }
+  body:has(#app :is(.lobby-v11,main.hnet .hnet-lobby,main.casino-live .casino-role-choice-zone)) .igr-beta-footer{
+    position:static!important;min-height:0!important;height:auto!important;
+    margin:0!important;padding:6px 14px calc(8px + env(safe-area-inset-bottom,0px))!important;
+  }
+  body:has(#app :is(.lobby-v11,main.hnet .hnet-lobby,main.casino-live .casino-role-choice-zone)) .igr-beta-footer a{
+    min-height:44px!important;
+  }
+  #app .lobby-v11 .role-choice-card,
+  #app main.hnet .hnet-role-card{
+    transition-property:border-color,background-color,box-shadow,opacity!important;
+    overflow-anchor:none;
+  }
+  #app .lobby-v11 .role-choice-card>em{
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+}
+/* In portrait, render the original nested public hierarchy as a readable
+   vertical tree. No names, ranks, statuses, or parent relationships are altered.
+   Landscape retains the original horizontal organization chart. */
+@media(max-width:760px) and (orientation:portrait){
+  .omerta-tree-modal.omerta-tree-responsive .omerta-tree-box{
+    box-sizing:border-box!important;width:min(100%,680px)!important;
+    max-width:100%!important;max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
+    height:auto!important;overflow:auto!important;overscroll-behavior:contain;
+    padding:16px!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-scroll{
+    box-sizing:border-box!important;width:100%!important;
+    margin:8px 0 12px!important;padding:0!important;
+    max-height:none!important;height:auto!important;
+    overflow:visible!important;touch-action:pan-y!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-tree,
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-root{
+    display:block!important;box-sizing:border-box!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    padding:0!important;margin:0!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-tree ul{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:8px!important;min-width:0!important;max-width:100%!important;
+    margin:8px 0 0!important;padding:0 0 0 12px!important;
+    border-left:1px solid rgba(182,72,77,.56);
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-tree>ul{
+    margin:0!important;padding:0!important;border:0!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-tree li{
+    min-width:0!important;width:auto!important;max-width:100%!important;
+    padding:0!important;margin:0!important;text-align:left!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-tree li::before,
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-tree li::after,
+  .omerta-tree-modal.omerta-tree-responsive .omerta-org-tree ul::before{
+    content:none!important;display:none!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-family-node{
+    min-height:0!important;width:100%!important;box-sizing:border-box!important;
+    padding:9px 11px!important;gap:3px!important;align-items:flex-start;
+    border-radius:9px!important;text-align:left!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-family-node b{
+    font-size:13px!important;line-height:1.35!important;overflow-wrap:anywhere;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-family-node small,
+  .omerta-tree-modal.omerta-tree-responsive .omerta-family-node em{
+    font-size:9px!important;line-height:1.35!important;margin:0!important;white-space:normal!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-family-node.status-structure small{
+    color:#c1a6a8!important;
+  }
+  .omerta-tree-modal.omerta-tree-responsive .omerta-tree-swipe-hint{display:none!important}
+}
