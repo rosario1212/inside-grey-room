@@ -191,6 +191,34 @@ const assertDeployedAsset=async (name,marker)=>{
   assert(content.includes(marker),'Deployed asset has not propagated: '+name+' ('+cacheVersion+')');
 };
 await assertDeployedAsset('service-worker.js',"const CACHE='igr-"+cacheVersion+"';");
+
+ // Verify the stylesheet actually LOADED by the live homepage, not just the
+ // standalone source or deployment status. CSS may be in an immutable bundle.
+ const maitreStyle='heritage-audit-v57.css?v=v828-maitre-exact-contrast-20261121';
+ let maitreLoaded=maitreStyle;
+ if(!publishedHtml.includes('href="'+maitreStyle+'"')){
+   const report=JSON.parse(await readFile('dist/igr-v702-optimization-report.json','utf8'));
+   const matching=report.bundles.filter(item=>item.kind==='css'&&item.sourceUrls.some(url=>url===maitreStyle)&&publishedHtml.includes('href="'+item.file+'"'));
+   assert.equal(matching.length,1,'Corrected Maître stylesheet must be loaded by the production homepage');
+   maitreLoaded=matching[0].file;
+ }
+ assert(html.includes('href="'+maitreLoaded+'"'),'Live homepage does not load the corrected Maître stylesheet');
+ const maitreCssLocal=await readFile('dist/'+maitreLoaded.split('?')[0],'utf8');
+ const maitreDigest=body=>createHash('sha256').update(body).digest('hex');
+ const exactNote='#app .maitre-page.hnet .hnet-lobby .hnet-title .h55-maitre-lobby-note';
+ for(const marker of [exactNote+'>b{',exactNote+'>span{','-webkit-text-fill-color:#e4b49f!important','-webkit-text-fill-color:#ede1d5!important']){
+   assert(maitreCssLocal.includes(marker),'Missing exact Maître contrast rule in built CSS: '+marker);
+ }
+ let maitreRemote='';
+ for(let attempt=0;attempt<(expected?15:1);attempt++){
+   const response=await get('/'+maitreLoaded+(maitreLoaded.includes('?')?'&':'?')+'contrast_verify='+encodeURIComponent(expected)+'&probe='+attempt);
+   if(response.status===200)maitreRemote=await response.text();
+   if(maitreDigest(maitreRemote)===maitreDigest(maitreCssLocal))break;
+   if(attempt<14)await new Promise(resolve=>setTimeout(resolve,2200));
+ }
+ assert.equal(maitreDigest(maitreRemote),maitreDigest(maitreCssLocal),'Live Maître CSS differs from built stylesheet');
+ console.log('Live Maître contrast stylesheet verified:',maitreLoaded);
+
 await assertDeployedAsset(clientAsset,'investigation_006_adaptive');
 await assertDeployedAsset(clientAsset,'igr_v650_case_quiz_get');
 await assertDeployedAsset(clientAsset,'igr_v650_case_quiz_submit');
