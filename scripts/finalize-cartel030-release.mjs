@@ -6,9 +6,9 @@ const target=path.resolve(process.argv[2]||'dist');
 const version='v173-cartel031-negotiation';
 // CARTEL release metadata stays v173; the public app/SW gets its own
 // cache revision so new scenario roles reach installed PWAs.
-const clientVersion='v829-complete-gameplay-audit-20261122';
+const clientVersion='v831-mobile-ux-20261122';
 // Keep the installed web-app cache in sync with the v820 Heritage hub and mobile UI improvements.
-const pwaVersion='v830-final-ballot-guard-20261122';
+const pwaVersion='v831-mobile-ux-20261122';
 await copyFile(path.resolve('cartel031-v171.js'),path.join(target,'cartel031-v171.js'));
 const nativeBundle=(await readFile(path.join(target,'index.html'),'utf8')).includes('native-store-boundary-v14.js');
 // Run after all historical patchers: none may restore an older app URL or cache.
