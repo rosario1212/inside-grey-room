@@ -17,8 +17,8 @@ for(const asset of [cssAsset,jsAsset,hubAsset]){
  assert.equal(index.split(asset).length-1,1,'Asset loaded once: '+asset);
  assert(sw.includes('/'+asset),'Offline shell must include '+asset);
 }
-assert(sw.includes("const CACHE='igr-v827-game-tabs-and-investigator-controls-20261122'"));
-assert(finalizer.includes("const pwaVersion='v827-game-tabs-and-investigator-controls-20261122'"));
+assert(sw.includes("const CACHE='igr-v828-audit-final-mobile-20261122'"));
+assert(finalizer.includes("const pwaVersion='v828-audit-final-mobile-20261122'"));
 for(const builder of [web,mobile]){
  for(const file of ['heritage-ux-v818.css','heritage-ux-v818.js','heritage-hub-v820.css'])
   assert(builder.includes("'"+file+"'"),'Builder missing '+file);

@@ -1,0 +1,104 @@
+/* Inside Grey Room v828 — gameplay audit readability & mobile safe areas.
+   Preserve v827 stable horizontal tabs and the intentional white-door intro. */
+#app .game-v11 .tabs.tabs-v11 {
+  flex-wrap: nowrap;
+  min-height: 46px;
+  overscroll-behavior-y: none;
+}
+#app .game-v11 .tabs.tabs-v11 .tab {
+  min-height: 44px;
+  font-size: 11px;
+  letter-spacing: .065em;
+  padding: 10px 13px;
+}
+#app .game-v11 .tabs.tabs-v11 .tab.active {
+  border-color: rgba(255,255,255,.85);
+  box-shadow: inset 0 -2px 0 rgba(25,31,39,.65);
+}
+#app .game-v11 .phase-strip small,
+#app .game-v11 .role-chip,
+#app .private-card-v11 .private-block h4,
+#app .private-card-v11 .role-summary b,
+#app .igr52-page small {
+  font-size: max(10px, .7rem);
+  letter-spacing: .06em;
+  color: #b2bec9;
+}
+#app .game-v11 .phase-strip strong {
+  font-size: clamp(12px, 3.2vw, 14px);
+  line-height: 1.4;
+}
+#app .game-v11 .choice-helper,
+#app .game-v11 .locked-state,
+#app .private-card-v11 .private-foot {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #b4bec8;
+}
+#app .game-v11 button,
+#app .game-v11 select,
+#app .game-v11 textarea {
+  touch-action: manipulation;
+}
+#app .game-v11 .choice-row,
+#app .game-v11 .igr52-actions button,
+#app .game-v11 .igr52-map button {
+  min-height: 44px;
+}
+#app .game-v11 .game-panel-v11,
+#app .game-v11 .phase-strip {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+#app .igr828-reconstruction > .final-form {
+  display:grid;
+  gap:14px;
+}
+#app .igr828-reconstruction .field {
+  min-width:0;
+}
+#app .igr828-chronology-note {
+  color:#b9c9d2;
+  font-size:12px;
+  line-height:1.5;
+  margin:8px 0 12px;
+}
+#app .igr828-lexicon {
+  margin-top:12px;
+  padding:12px 14px;
+  border-top:1px solid rgba(255,255,255,.14);
+  font-size:12px;
+  line-height:1.6;
+  color:#b8c0c9;
+}
+#app .igr828-lexicon b {color:#ecf0f2}
+#app .igr828-private-hint {font-size:12px;color:#b4bec8;line-height:1.55}
+#app .igr828-roster-note {font-size:12px;color:#abb6c0;line-height:1.5;margin:9px 0}
+body .role-notice {
+  top:auto;
+  bottom:max(124px,calc(env(safe-area-inset-bottom,0px) + 104px));
+  width:min(calc(100vw - 30px),430px);
+  max-height:min(34dvh,240px);
+  overflow:hidden;
+  z-index:129;
+}
+body .role-notice small {font-size:10px}
+body .role-notice span {font-size:12px}
+body .toast {
+  bottom:max(72px,calc(env(safe-area-inset-bottom,0px) + 62px));
+  width:min(calc(100vw - 30px),390px);
+  max-width:100%;
+  box-sizing:border-box;
+  text-align:center;
+  z-index:130;
+}
+body:not(:has(.live-session-controls)) .role-notice {
+  bottom:max(85px,calc(env(safe-area-inset-bottom,0px) + 64px));
+}
+@media(max-width:600px) {
+ #app .game-v11 .game-panel-v11 {padding:14px 13px}
+ #app .game-v11 .phase-strip {gap:8px}
+ #app .igr52-map, #app .igr52-card {max-width:100%;min-width:0}
+ #app .igr52-level {grid-template-columns:minmax(0,1fr);gap:7px}
+ #app .private-card-v11 .private-block {padding:14px}
+}

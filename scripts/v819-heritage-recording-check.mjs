@@ -12,9 +12,9 @@ assert.equal(index.split(asset).length-1,1,'v819 layer only once');
 assert(index.indexOf('heritage-ux-v818.css?v=')<index.indexOf(asset),
   'v819 has to load after prior mobile layout and v818 fixes');
 assert(sw.includes('/'+asset),'v819 offline asset missing');
-assert(sw.includes("const CACHE='igr-v827-game-tabs-and-investigator-controls-20261122'"),
+assert(sw.includes("const CACHE='igr-v828-audit-final-mobile-20261122'"),
   'PWA must refresh after layout fix');
-assert(finalizer.includes("const pwaVersion='v827-game-tabs-and-investigator-controls-20261122'"),
+assert(finalizer.includes("const pwaVersion='v828-audit-final-mobile-20261122'"),
   'Production finalize should retain v819 cache');
 for(const builder of [web,mobile])assert(builder.includes("'heritage-recording-fixes-v819.css'"));
 const required=[

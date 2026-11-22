@@ -15,11 +15,11 @@ if(rt.includes('DONNER MON VERDICT'))throw new Error('premature Judge verdict at
 if(rt.includes('igr52pre')||rt.includes('igr52Lawyer')||rt.includes('final_lawyer_opinions'))throw new Error('duplicate final-stage UI remains');
 if(rt.includes("return String(out||'')+finalRules()")||rt.includes("panel.insertAdjacentHTML('beforeend',finalRules())"))throw new Error('Duplicate final hearing still appended to rules');
 req(rt,'finalRules');
-req(html,'final-audience-v52.js?v=v775-no-duplicate-final-rules-20261117');
+req(html,'final-audience-v52.js?v=v828-final-audit-no-judge-20261122');
 const swPath=path.join(target,'service-worker.js');
 if(await exists(swPath)){
   const sw=await readFile(swPath,'utf8');
-  req(sw,'igr-v775-no-duplicate-final-rules-20261117');
-  req(sw,'/final-audience-v52.js?v=v775-no-duplicate-final-rules-20261117');
+  req(sw,'igr-v828-final-audit-no-judge-20261122');
+  req(sw,'/final-audience-v52.js?v=v828-final-audit-no-judge-20261122');
 }
 console.log('v52 final audience checks OK');

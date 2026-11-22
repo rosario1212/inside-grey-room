@@ -50,7 +50,7 @@ assert.equal((out.match(/<textarea id="igr700-(?:one|two)-[^\"]+" rows="2"/g)||[
 assert(out.includes('Suspect A')&&out.includes('Suspect B'),'suspect panels not independent');
 assert(out.includes('Quelle peur pourrait guider ses choix ?'),'short forensic second question missing');
 assert(out.includes('0 / 10 mots minimum'),'live ten-word counter missing');
-assert(out.includes('Obligatoire'),'Analyst task must be labeled mandatory');
+assert(out.includes('Facultatif')&&!out.includes('Obligatoire'),'Analyst profiles must be optional and never block the verdict');
 const profiling=sandbox.window.IGR_ANALYST_PROFILING_V700;
 assert.equal(profiling.wordCount('Un deux trois quatre cinq six sept huit neuf'),9,'nine words expected');
 assert.equal(profiling.wordCount('Un deux trois quatre cinq six sept huit neuf dix'),10,'ten words expected');
@@ -82,11 +82,11 @@ await sandbox.window.IGR_ANALYST_PROFILING_V700.refresh(true);
 out=sandbox.renderGameTab();
 assert(out.includes('Sa stratégie reste prudente.'),'completed profile not public');
 assert(out.includes('Que cherche-t-il à protéger ?'),'the saved question must appear on reveal');
-assert(out.includes('Profil non complété.'),'unfilled required profiles must be recorded as missing');
+assert(out.includes('Profil non complété.'),'unfilled optional profiles must remain visible as missing');
 assert(!out.includes('<textarea'),'postgame archive must be read-only');
 for(const path of ['index.html','en.html']){
  const html=read(path);
- assert(html.includes('analyst-profiling-v700.js?v=v701-progressive-psychology'),path+' missing client script');
+ assert(html.includes('analyst-profiling-v700.js?v=v828-optional-profiles-20261122'),path+' missing client script');
  assert(html.includes('analyst-profiling-v700.css?v=v701-progressive-psychology'),path+' missing styling');
 }
 for(const path of ['scripts/build-web.mjs','scripts/build-mobile.mjs']){
@@ -97,10 +97,10 @@ if(dest){
  for(const file of ['analyst-profiling-v700.js','analyst-profiling-v700.css','index.html','en.html'])
   assert(existsSync(dest+'/'+file),'built asset not found '+dest+'/'+file);
  const html=read(dest+'/index.html');
- assert(html.includes('analyst-profiling-v700.js?v=v701-progressive-psychology'),
+ assert(html.includes('analyst-profiling-v700.js?v=v828-optional-profiles-20261122'),
   'published entrypoint missing profiling option');
  const sw=dest+'/service-worker.js';
- if(existsSync(sw))assert(read(sw).includes('/analyst-profiling-v700.js?v=v701-progressive-psychology'),
+ if(existsSync(sw))assert(read(sw).includes('/analyst-profiling-v700.js?v=v828-optional-profiles-20261122'),
   'PWA worker not precaching the new profiling option');
 }
 console.log('PASS v701: 10-word Analyst portraits, short cycle/event-aware questions, no other suspects affected, all-player reveal, bilingual bundles.');

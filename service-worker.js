@@ -1,4 +1,4 @@
-const CACHE='igr-v827-game-tabs-and-investigator-controls-20261122';
+const CACHE='igr-v828-audit-final-mobile-20261122';
 const SHELL=[
   '/heritage-hub-v820.css?v=20261122-campaign-intro',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
@@ -10,6 +10,8 @@ const SHELL=[
   '/role-viewport-stability-v816.js?v=20261121-v816-1',
   '/game-tab-stability-v827.css?v=20261122-v827-1',
   '/game-tab-stability-host-v827.js?v=20261122-v827-1',
+  '/audit-gameplay-v828.css?v=20261122-audit-v828',
+  '/audit-gameplay-v828.js?v=20261122-audit-v828',
   '/heritage-mobile-polish-v815.css?v=20261121-v815-1',
   '/video-mobile-polish-v814.css?v=20261121-v814-1',
   '/video-mobile-polish-v814.js?v=20261121-v826-1',
@@ -27,7 +29,7 @@ const SHELL=[
   '/intro-poster-v18.css?v=v20-original-door-embedded-20261116',
   '/regime-live-v13.js?v=regime-v16-rosters-20261115',
   '/analyst-profiling-v700.css?v=v701-progressive-psychology',
-  '/analyst-profiling-v700.js?v=v701-progressive-psychology',
+  '/analyst-profiling-v700.js?v=v828-optional-profiles-20261122',
   '/terror-crisis-v696.css?v=terror-carbon-v697-20261115',
   '/terror-lobby-unified-v1.css?v=terror-lobby-modes-v2-20261116',
   '/', '/index.html', '/en.html',

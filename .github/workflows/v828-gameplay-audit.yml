@@ -1,0 +1,26 @@
+name: v828 Gameplay Audit
+on:
+  pull_request:
+    paths:
+      - 'final-audience-v52.js'
+      - 'analyst-profiling-v700.js'
+      - 'audit-gameplay-v828.js'
+      - 'audit-gameplay-v828.css'
+      - 'index.html'
+      - 'en.html'
+      - 'service-worker.js'
+      - 'scripts/**'
+      - 'supabase/migrations/20261122150000_v828_no_judge_defenses_direct.sql'
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check final-audience-v52.js
+      - run: node --check analyst-profiling-v700.js
+      - run: node --check audit-gameplay-v828.js
+      - run: node scripts/v828-gameplay-audit-check.mjs
