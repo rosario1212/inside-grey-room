@@ -147,9 +147,9 @@ function tabHtml(){
  return '<section class="igr700-panel"><header class="igr700-head"><small>'+
   tr('OUTIL DE L’ANALYSTE · CYCLE ','ANALYST DESK · CYCLE ')+cycle+'/3</small>'+
   '<h2>'+tr('Profilage psychologique','Psychological profiling')+'</h2>'+
-  '<p>'+tr('Obligatoire : deux réponses de 10 mots minimum par suspect, à chaque cycle. Questions adaptées aux faits visibles. Aucun diagnostic. Aucune incidence sur la victoire, le score ou le verdict.',
-  'Required: two answers of at least 10 words per suspect, each cycle. Questions adapt to visible events. No diagnosis. No impact on victory, score or verdict.')+'</p>'+
-  '<div class="igr700-progress">'+done+' / '+suspects.length+' '+tr('profils obligatoires enregistrés','required profiles saved')+'</div></header>'+
+  '<p>'+tr('Facultatif : deux réponses d’au moins 10 mots par suspect et par cycle, tant que la saisie est ouverte. Les profils restent privés, sans diagnostic et sans effet sur le score, le verdict ou la victoire.',
+  'Optional: two answers of at least 10 words per suspect and cycle while entries are open. Profiles stay private and never affect scoring, verdict or victory.')+'</p>'+
+  '<div class="igr700-progress">'+done+' / '+suspects.length+' '+tr('profils facultatifs enregistrés','optional profiles saved')+'</div></header>'+
  suspects.map(s=>{
   const sid=String(s.id),old=record(sid,cycle),pair=questionsFor(s,cycle),draft=drafts.get(draftKey(sid))||{one:'',two:''};
   const history=records(sid).filter(x=>Number(x.cycle)<cycle).map(x=>
@@ -166,11 +166,11 @@ function tabHtml(){
      '<textarea id="igr700-two-'+safe(sid)+'" rows="2" maxlength="180" data-igr700-suspect="'+safe(sid)+'" data-igr700-field="two" placeholder="'+tr('Au moins 10 mots…','At least 10 words…')+'">'+safe(draft.two)+'</textarea><small class="igr701-counter">'+wordCount(draft.two)+' / 10 '+tr('mots minimum','words minimum')+'</small></label>'+
      '<button type="button" class="igr700-submit" data-igr700-save="'+safe(sid)+'">'+
        tr('Enregistrer ce profil','Save this profile')+'</button></div>':
-    '<p class="igr700-muted">'+tr('Les réponses ne sont plus modifiables pendant cette phase.','Answers cannot be edited during this phase.')+'</p>')+
+    '<p class="igr700-muted">'+tr('La saisie est fermée pour cette phase. Les profils manquants ne bloquent ni la suite ni le verdict.','Entries are closed for this phase. Missing profiles never block progression or the final verdict.')+'</p>')+
     history+'</article>';
  }).join('')+
- '<p class="igr700-footer">'+tr('Les réponses restent privées pendant la partie. Tous les joueurs pourront les consulter après la révélation finale. Les profils n’ont aucune incidence sur la victoire, le score ou le verdict.',
- 'Answers remain private during play. All players can read them after the final reveal. Profiles do not affect victory, score or verdict.')+'</p></section>';
+ '<p class="igr700-footer">'+tr('Les profils restent privés pendant la partie et deviennent consultables après la révélation. Ils ne sont ni des preuves ni des votes : une phase passée sans profil ne bloque jamais le jeu.',
+ 'Profiles remain private during play and become readable after the reveal. They are neither evidence nor votes; skipped profiles never block the game.')+'</p></section>';
 }
 function updatePanels(){
  if(S()?.view!=='game')return;
@@ -253,8 +253,8 @@ document.addEventListener('click',async e=>{
   await refresh(true);
  }catch(err){
   console.warn('v700 profile rejected',err);
-  window.toast?.(tr('Enregistrement refusé : phase close, profil déjà enregistré ou connexion indisponible.',
-   'Save rejected: phase closed, duplicate profile or connection unavailable.'));
+  window.toast?.(tr('Profil non enregistré : phase close, profil déjà transmis ou connexion indisponible. Cela ne bloque pas le verdict.',
+   'Profile not saved: this phase is closed, the profile already exists, or the connection is unavailable. The verdict is not blocked.'));
   if(btn.isConnected)btn.disabled=false;
  }
 });
