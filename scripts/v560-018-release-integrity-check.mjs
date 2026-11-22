@@ -15,7 +15,7 @@ const names=[
  '.github/workflows/cloudflare-production-deploy.yml'
 ];
 const [app,html,sw,core,actions,hooks,sync,inspector,check,deploy]=await Promise.all(names.map(get));
-const cache='v829-complete-gameplay-audit-20261122';
+const cache='v831-mobile-ux-20261122';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+cache),'HTML cache version mismatch');
 assertPwaRevision(html,sw);
