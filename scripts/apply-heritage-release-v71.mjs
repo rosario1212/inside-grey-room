@@ -1,7 +1,7 @@
 import {copyFile,readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v71-heritage-release',LOBBY_VERSION='v829-lobby-back',CACHE='igr-v71-heritage-release',pages=['index.html','en.html'];
+const VERSION='v71-heritage-release',LOBBY_VERSION='v830-room-choice',CACHE='igr-v71-heritage-release',pages=['index.html','en.html'];
 const bump=['heritage-play-v13-7.js','play-modes-v13-8.js','heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.js','heritage-maitre-polish-v34.js','heritage-maitre-online-v34-4.js','heritage-audit-v55.js','heritage-context-v71.js'];
 const exists=async p=>{try{await stat(p);return true}catch{return false}};
 const escapeRe=s=>String(s).replace(/[.*+?^$()|[\]\\]/g,'\\$&');

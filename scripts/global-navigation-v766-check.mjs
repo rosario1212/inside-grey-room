@@ -193,3 +193,14 @@ console.log('PASS global navigation v766: base dossiers, all DLC lobby route, 4 
   assert(!handler.includes('igr_heritage_online_leave')&&!handler.includes('clearHSession()')&&!handler.includes('clear()'),'Back navigation must retain the current token and role');
  }
 }
+
+// The existing-cell flow must provide real recovery actions, not only a toast.
+{
+ const src=read('play-modes-v13-8.js'),maitre=read('heritage-maitre-online-v34-4.js');
+ const recovery=src.slice(src.indexOf('function showExistingHeritageRoom('),src.indexOf('function backHeritageLobby('));
+ for(const marker of ['hnetResumeExisting','hnetReleaseExisting','window.confirm','resume_required','out?.ok!==true','hnetRoomChoiceStatus'])assert(recovery.includes(marker),'Missing existing room recovery: '+marker);
+ assert(src.includes('if(hSession())return renderHeritageOnlineCreate(campaign,chapter,practice)'));
+ assert(maitre.includes('if(read(H))return createView(n)'));
+ assert(maitre.includes('pauseRoomChoice'));
+ assert(!src.includes('Reprends-la ou quitte-la avant de créer une autre salle.'));
+}
