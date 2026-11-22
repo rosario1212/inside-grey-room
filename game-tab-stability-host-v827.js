@@ -1,11 +1,12 @@
-/* v827: stable in-game tabs + host-only early stopping of interviews/confrontations */
+/* v827: stable in-game tabs + investigator-only stopping of interviews/confrontations */
 (()=>{
 'use strict';
 if(window.IGR_GAME_TABS_HOST_V827)return;
 const root=()=>document.getElementById('app');
+const S=()=>{try{return typeof STATE!=='undefined'?STATE:window.STATE;}catch(_){return window.STATE;}};
 const game=()=>root()?.querySelector('main.game-v11');
-const room=()=>window.STATE?.sync?.room;
-const host=()=>!!(window.STATE?.hostToken&&room()?.status==='playing');
+const room=()=>S()?.sync?.room;
+const investigator=()=>room()?.status==='playing' && (S()?.sync?.player?.public_role||S()?.role)==='enqueteur';
 const en=()=>window.IGR_LOCALE==='en';
 let lock=null,finishing=false;
 function release(){
@@ -29,12 +30,12 @@ const legacySetTab=window.setTab;
 if(typeof legacySetTab==='function')window.setTab=function(tab){
  if(!game()||typeof window.renderGame!=='function'||typeof window.saveSession!=='function')
    return legacySetTab.apply(this,arguments);
- if(window.STATE?.tab===tab)return;
+ if(S()?.tab===tab)return;
  const y=Math.max(0,scrollY),navBefore=game()?.querySelector('.tabs-v11');
  const x=navBefore?.scrollLeft||0;
  retain(y);
  // No forced jump to the page top and no focus-triggered scrolling.
- window.STATE.tab=tab;
+ S().tab=tab;
  window.saveSession();
  window.renderGame();
  const nav=game()?.querySelector('.tabs-v11');
@@ -50,48 +51,50 @@ if(typeof legacySetTab==='function')window.setTab=function(tab){
  restore(y);
  requestAnimationFrame(()=>{restore(y);requestAnimationFrame(()=>restore(y));});
 };
-document.addEventListener('touchmove',release,{passive:true});
-document.addEventListener('wheel',release,{passive:true});
-document.addEventListener('keydown',e=>{
- if(['PageUp','PageDown','Home','End','ArrowUp','ArrowDown',' '].includes(e.key))release();
-},true);
+// Preserve enough height while the game remains active; ordinary scrolling
+// stays fully enabled and never triggers a delayed scroll clamp.
 if(root())new MutationObserver(()=>{if(lock&&!game())release();})
  .observe(root(),{subtree:false,childList:true});
 const legacyPanel=window.renderInvestigationTab;
 if(typeof legacyPanel==='function'){
- const oldEnd=/<button\b(?=[^>]*onclick=["']endInterrogation\(\)["'])[^>]*>[\s\S]*?<\/button>/gi;
  window.renderInvestigationTab=function(){
-   const out=String(legacyPanel.apply(this,arguments)||'').replace(oldEnd,'');
-   const phase=room()?.phase;
-   if(!host()||!['interrogation','event_confrontation'].includes(phase))return out;
-   const confront=phase==='event_confrontation';
-   const label=confront?(en()?'End confrontation':'Terminer la confrontation'):(en()?'End interrogation':'Terminer l’interrogatoire');
-   return out+'<section class="action-section igr827-host-controls"><button type="button" class="btn danger block" onclick="igr827HostFinish(\''+phase+'\')">'+label+'</button></section>';
+   const out=String(legacyPanel.apply(this,arguments)||'');
+   if(!investigator()||room()?.phase!=='event_confrontation')return out;
+   const label=en()?'End confrontation':'Terminer la confrontation';
+   return out+'<section class="action-section igr827-investigator-controls"><button type="button" class="btn danger block" onclick="igr827InvestigatorEndConfrontation()">'+label+'</button></section>';
  };
 }
-window.endInterrogation=function(){return window.igr827HostFinish('interrogation');};
-window.igr827HostFinish=async function(expectedPhase){
- if(finishing||!host()||room()?.phase!==expectedPhase)return;
- const confront=expectedPhase==='event_confrontation';
- const title=confront?(en()?'End this confrontation?':'Terminer cette confrontation ?'):(en()?'End this interrogation?':'Terminer cet interrogatoire ?');
- const detail=en()?'This phase will end for everybody and will count toward the cycle limit.':'Cette phase prendra fin pour tous et restera comptabilisée dans le cycle.';
+// The investigator already has the canonical, server-authorized
+// endInterrogation() control. No host token is required or exposed.
+window.igr827InvestigatorEndConfrontation=async function(){
+ if(finishing||!investigator()||room()?.phase!=='event_confrontation')return;
+ const title=en()?'End this confrontation?':'Terminer cette confrontation ?';
+ const detail=en()?'This confrontation will end for everybody, and will count toward the cycle limit.':
+   'La confrontation prendra fin pour tous et restera comptabilisée dans le cycle.';
  const accepted=typeof window.appConfirm==='function'
    ? await window.appConfirm({title,text:detail,confirmLabel:en()?'End now':'Terminer maintenant'})
    : window.confirm(title+'\n'+detail);
- if(!accepted||!host()||room()?.phase!==expectedPhase)return;
+ if(!accepted||!investigator()||room()?.phase!=='event_confrontation')return;
  finishing=true;
  try{
-   await window.rpc('igr_v4_advance_phase',{p_code:window.STATE.room,p_host_token:window.STATE.hostToken});
+   await window.rpc('igr_v827_end_confrontation',{p_code:S().room,p_player_token:S().token});
    await window.syncNow(true);
  }catch(error){
-   console.error('[IGR v827] host end',error);
-   if(typeof window.toast==='function')window.toast(error?.message||(en()?'Unable to end this phase.':'Impossible de terminer cette phase.'));
+   console.error('[IGR v827] investigator confrontation end',error);
+   if(typeof window.toast==='function')window.toast(error?.message||(en()?'Unable to end this confrontation.':'Impossible de terminer cette confrontation.'));
  }finally{finishing=false;}
+};
+// Host remains sole owner of "Étape suivante", but must not use
+// this shortcut to replace an investigator's live conversation controls.
+const originalCanAdvance=window.phaseCanAdvance;
+if(typeof originalCanAdvance==='function')window.phaseCanAdvance=function(){
+ if(['interrogation','event_confrontation'].includes(room()?.phase))return false;
+ return originalCanAdvance.apply(this,arguments);
 };
 const legacyInstruction=window.phaseInstruction;
 if(typeof legacyInstruction==='function')window.phaseInstruction=function(){
  const text=legacyInstruction.apply(this,arguments);
- return typeof text==='string'?text.replace('Aucun arrêt anticipé.',"L'hôte peut y mettre fin plus tôt."):text;
+ return typeof text==='string'?text.replace('Aucun arrêt anticipé.',"L'Enquêteur peut arrêter cet interrogatoire avant la fin."):text;
 };
-window.IGR_GAME_TABS_HOST_V827=Object.freeze({version:'827.0',hostOnly:true});
+window.IGR_GAME_TABS_HOST_V827=Object.freeze({version:'827.1',investigatorEnds:true,hostSkips:true});
 })();
