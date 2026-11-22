@@ -410,6 +410,7 @@ function setupIntro(){
  setIntroHint('TOUCHEZ POUR OUVRIR LA PORTE');
 }
 function showIntroGate(message='TOUCHEZ POUR OUVRIR LA PORTE'){
+ document.documentElement.classList.remove('igr831-resume-room');
  const gate=byId('introGate'),btn=byId('introEnterBtn');
  if(!gate)return;
  // Kill any stale scheduler before the next user gesture. This is important on iOS
@@ -2217,8 +2218,8 @@ function renderInterrogationSelect(){
  const d=STATE.sync,heard=d.room.state?.heard||[];const remaining=d.suspects.filter(s=>!heard.includes(s.id));
  return `<div class="action-section"><h3>Suspects restant à entendre</h3><p class="choice-helper">L’ordre affiché est tiré au sort à chaque cycle. Il ne reflète ni la culpabilité ni le degré réel de responsabilité.</p>${remaining.length?remaining.map(s=>`<button class="choice-row" onclick="startInterrogation('${s.id}')"><span>${h(s.pseudo)}</span><b>Interroger · 6 min</b></button>`).join(''):`<p>Tous les suspects ont été entendus. Le débrief va s’ouvrir automatiquement.</p>`}</div>`;
 }
-async function startInterrogation(id){try{await rpc('igr_v4_start_interrogation',{p_code:STATE.room,p_player_token:STATE.token,p_target:id});await syncNow(true)}catch(e){console.error(e);toast('Interrogatoire impossible.') }}
-async function endInterrogation(){try{await rpc('igr_v4_end_interrogation',{p_code:STATE.room,p_player_token:STATE.token});await syncNow(true)}catch(e){console.error(e);toast('Impossible de terminer cet interrogatoire.')}}
+async function startInterrogation(id){try{await rpc('igr_v4_start_interrogation',{p_code:STATE.room,p_player_token:STATE.token,p_target:id});await syncNow(true)}catch(e){console.error(e);toast('Impossible de lancer cet interrogatoire : le suspect est peut-être déjà entendu ou la phase a changé. Vérifie la liste actualisée.') }}
+async function endInterrogation(){try{await rpc('igr_v4_end_interrogation',{p_code:STATE.room,p_player_token:STATE.token});await syncNow(true)}catch(e){console.error(e);toast('Fin non confirmée. Seul l’Enquêteur peut terminer un interrogatoire en cours. Réessaie après synchronisation.')}}
 function myAction(type,cycle=STATE.sync?.room?.cycle){return (STATE.sync?.my_actions||[]).find(a=>a.action_type===type&&(cycle==null||a.cycle===cycle))}
 function renderDebriefForm(){
  if(myAction('debrief'))return`<div class="locked-state">Tes réponses sont envoyées. Le MJ attend l’autre rôle d’enquête éventuel.</div>`;
@@ -3305,16 +3306,28 @@ async function restore(){
 }
 function renderCurrent(){if(STATE.view==='home')renderHome();else if(STATE.view==='create-list')renderCreateList();else if(STATE.view==='create-confirm')renderCreateConfirm();else if(STATE.view==='join')renderJoin();else if(STATE.view==='rules')renderRules();else if(STATE.view==='profile')renderProfile();else if(STATE.view==='lobby')renderLobby();else if(STATE.view==='briefing')renderBriefing();else if(STATE.view==='role')renderRole();else if(STATE.view==='game')renderGame()}
 setupKeyboardGuard();
-// The identity screen is local and must never wait for Supabase.
+// Keep the door cinematic for a new visitor, not for an already joined player.
+// The inline head bootstrap also hides the gate before the first paint on iOS.
+const IGR831_RESUMING_SAVED_ROOM=(()=>{
+ try{
+  const saved=JSON.parse(STORAGE.getItem(sessionKey())||'null');
+  return !!(saved?.room&&saved?.token&&['lobby','briefing','role','game'].includes(saved?.view));
+ }catch{return false}
+})();
 setupIntro();
-showIntroGate('TOUCHEZ POUR OUVRIR LA PORTE');
-// Restore the real destination in parallel behind the cinematic.
+if(IGR831_RESUMING_SAVED_ROOM){
+ hideIntroImmediately();
+ byId('app').innerHTML='<main class="igr831-resuming" role="status" aria-live="polite">Reconnexion à la cellule…</main>';
+}else showIntroGate('TOUCHEZ POUR OUVRIR LA PORTE');
+// The server remains authoritative: a saved credential is not proof of an active room.
 restore().then(ok=>{
+ if(IGR831_RESUMING_SAVED_ROOM)hideIntroImmediately();
  if(ok)routeFromServer();else renderHome();
  BOOT.ready=true;
  if(INTRO.waitingForBoot)completeIntroEntry();
 }).catch(err=>{
  console.error(err);
+ if(IGR831_RESUMING_SAVED_ROOM)hideIntroImmediately();
  renderHome();BOOT.ready=true;
  if(INTRO.waitingForBoot)completeIntroEntry();
 });
