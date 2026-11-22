@@ -66,16 +66,29 @@ function publicPresence(p){
  return '';
 }
 function status(p){
- const phase=String(room().phase||''),id=String(p.id??'');
- const focus=targets(),isTarget=focus.includes(id);
+ const phase=String(room().phase||''),id=String(p.id??''),r=String(p.public_role||'');
+ const isTarget=targets().includes(id);
  if(phase==='interrogation'&&isTarget)return ['interview',tr('Interrogé maintenant','Being interviewed')];
  if(phase==='event_confrontation'&&isTarget)return ['confrontation',tr('Convoqué maintenant','Summoned now')];
- if(phase==='event_assembly'&&ids(room().state?.event_participants).includes(id))return ['involved',tr('À l’assemblée','At assembly')];
- if(phase==='event_assembly'&&Array.isArray(room().state?.event_participants)&&!participantSet().has(id))return ['neutral',tr('Hors assemblée','Outside assembly')];
- if(phase==='interrogation'&&p.public_role==='enqueteur')return ['involved',tr('Conduit l’entretien','Conducting interview')];
- if(phase==='event_confrontation'&&p.public_role==='enqueteur')return ['involved',tr('Dirige la confrontation','Leading confrontation')];
+ if(phase==='event_assembly'&&ids(room().state?.event_participants).includes(id))
+  return ['involved',tr('À l’assemblée','At assembly')];
+ if(phase==='event_assembly'&&Array.isArray(room().state?.event_participants)&&!participantSet().has(id))
+  return ['neutral',tr('Hors assemblée','Outside assembly')];
+ if(phase==='interrogation'&&r==='enqueteur')return ['involved',tr('Conduit l’entretien','Conducting interview')];
+ if(phase==='interrogation'&&r==='analyste')return ['involved',tr('Observe l’entretien','Observing interview')];
+ if(phase==='event_confrontation'&&r==='enqueteur')return ['involved',tr('Dirige la confrontation','Leading confrontation')];
  if(ids(room().state?.heard).includes(id))return ['heard',tr('Déjà entendu ce cycle','Heard this cycle')];
- return ['neutral',tr('En attente de convocation','Awaiting summons')];
+ if(phase==='interrogation_select'&&r==='enqueteur')
+  return ['involved',tr('Choisit le prochain suspect','Choosing next suspect')];
+ if(phase==='event_select'&&r==='enqueteur')
+  return ['involved',tr('Choisit l’événement','Choosing an event')];
+ if(['initial_debrief','cycle_debrief'].includes(phase)&&['enqueteur','analyste'].includes(r))
+  return ['involved',tr('En débrief','In debrief')];
+ if(phase==='locking'&&['enqueteur','analyste','procureur','juge','journaliste'].includes(r))
+  return ['involved',tr('Décision à valider','Decision to confirm')];
+ if(phase==='interrogation_select'&&r==='suspect')
+  return ['neutral',tr('En attente de convocation','Awaiting summons')];
+ return ['neutral',tr('Participe à la partie','In the game')];
 }
 function phaseName(){
  try{return typeof phaseLabel==='function'?String(phaseLabel(room().phase)):String(room().phase||'').replaceAll('_',' ')}
