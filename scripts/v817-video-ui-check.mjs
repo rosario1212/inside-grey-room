@@ -14,8 +14,8 @@ assert.equal(index.split(cssAsset).length-1,1,'CSS loaded once');
 assert.equal(index.split(jsAsset).length-1,1,'city code busts iPhone cache');
 assert(sw.includes('/'+cssAsset),'CSS in offline app shell');
 assert(sw.includes('/'+jsAsset),'updated Terror code in offline app shell');
-assert(sw.includes("const CACHE='igr-v828-audit-final-mobile-20261122'"));
-assert(finalizer.includes("const pwaVersion='v828-audit-final-mobile-20261122'"));
+assert(sw.includes("const CACHE='igr-v829-complete-gameplay-audit-20261122'"));
+assert(finalizer.includes("const pwaVersion='v829-complete-gameplay-audit-20261122'"));
 for(const builder of [web,mobile])assert(builder.includes("'video-ui-refinements-v817.css'"));
 for(const style of [
  '.igr-role-option>.role-choice-card:not(.random-role-card)',
