@@ -1,0 +1,24 @@
+name: v829 Complete Gameplay Audit
+on:
+  pull_request:
+    paths:
+      - 'app-v11.js'
+      - 'final-audience-v52.js'
+      - 'gameplay-integrity-v829.js'
+      - 'gameplay-integrity-v829.css'
+      - 'index.html'
+      - 'service-worker.js'
+      - 'scripts/**'
+      - 'supabase/migrations/20261122153500_v829_presence_verified_recovery.sql'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/v829-complete-gameplay-audit-check.mjs
+      - run: node scripts/v828-gameplay-audit-check.mjs
+      - run: node scripts/v827-tabs-and-role-qa.mjs
