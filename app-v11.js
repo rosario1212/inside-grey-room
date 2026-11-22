@@ -1233,6 +1233,9 @@ function routeFromServer(){
  if(d.room.status==='lobby'){
   if(STATE.view!=='lobby')STATE.view='lobby';renderLobby(d);return;
  }
+ // The server launched the game. Never leave a lobby or iOS door overlay up.
+ hideIntroImmediately();
+ if(STATE.launchWatcher){clearInterval(STATE.launchWatcher);STATE.launchWatcher=null}
  if(d.room.status==='finished'||d.room.phase==='reveal'){
   STATE.view='game';if(STATE.tab!=='profiling')STATE.tab='investigation';renderGame();return;
  }
@@ -1240,20 +1243,58 @@ function routeFromServer(){
  if(d.room.phase==='role_reading'&&!d.player.ready){cancelBriefingVoice();STATE.view='role';renderRole();return;}
  STATE.view='game';if(!['card','investigation','channel','video','timeline','rules','profiling'].includes(STATE.tab))STATE.tab='investigation';renderGame();
 }
-function stopRoomWatcher(){if(STATE.watcher){clearInterval(STATE.watcher);STATE.watcher=null}}
+function stopRoomWatcher(){
+ if(STATE.watcher){clearInterval(STATE.watcher);STATE.watcher=null}
+ if(STATE.launchWatcher){clearInterval(STATE.launchWatcher);STATE.launchWatcher=null}
+}
+// A token-authorized launch signal keeps each participant aligned with the
+// same server transition, without requiring a separate tap or refresh.
+async function probeLobbyLaunch(){
+ const room=STATE.room,token=STATE.token;
+ if(!room||!token||STATE.sync?.room?.status!=='lobby'
+    ||document.visibilityState==='hidden'||navigator.onLine===false)return;
+ if(STATE.launchProbePromise&&STATE.launchProbeRoom===room&&STATE.launchProbeToken===token)
+  return STATE.launchProbePromise;
+ STATE.launchProbeRoom=room;STATE.launchProbeToken=token;
+ const task=(async()=>{
+  try{
+   const signal=await rpc('igr_v833_launch_probe',{p_code:room,p_player_token:token});
+   if(STATE.room!==room||STATE.token!==token||STATE.sync?.room?.status!=='lobby')return;
+   if(signal?.status==='playing'||signal?.status==='finished'){
+    // Retrieve this player's private state from the authoritative server.
+    hideIntroImmediately();
+    const fresh=await syncNow(true,true);
+    if(fresh?.room?.status!=='lobby'&&STATE.launchWatcher){
+     clearInterval(STATE.launchWatcher);STATE.launchWatcher=null;
+    }
+   }
+  }catch(error){
+   // Full-room polling remains an independent fallback.
+   if(!STATE.launchProbeWarned){
+    console.warn('Launch signal unavailable; fallback room sync active',error);
+    STATE.launchProbeWarned=true;
+   }
+  }
+ })();
+ STATE.launchProbePromise=task;
+ try{return await task}finally{if(STATE.launchProbePromise===task)STATE.launchProbePromise=null}
+}
 function startRoomWatcher(){
  stopRoomWatcher();
- const period=STATE.view==='lobby'?700:1100;
+ const period=STATE.view==='lobby'?950:1100;
  STATE.watcher=setInterval(()=>{
-   // Hidden tabs must not compete with the foreground session's rate limit.
-   if(document.visibilityState==='hidden'||navigator.onLine===false)return;
-   const retries=Math.min(4,Math.max(0,Number(STATE.syncFailures||0)));
-   const minGap=retries?Math.min(20000,period*2**retries):period;
-   const now=Date.now();
-   if(now-Number(STATE._lastWatcherAttempt||0)<minGap)return;
-   STATE._lastWatcherAttempt=now;
-   void syncNow(false);
+  if(document.visibilityState==='hidden'||navigator.onLine===false)return;
+  const retries=Math.min(4,Math.max(0,Number(STATE.syncFailures||0)));
+  const minGap=retries?Math.min(20000,period*2**retries):period;
+  const now=Date.now();
+  if(now-Number(STATE._lastWatcherAttempt||0)<minGap)return;
+  STATE._lastWatcherAttempt=now;
+  void syncNow(false);
  },period);
+ if(STATE.view==='lobby'){
+  STATE.launchWatcher=setInterval(()=>{void probeLobbyLaunch()},450);
+  void probeLobbyLaunch();
+ }
 }
 function lobbyData(){return syncNow(true)}
 function myState(){return syncNow(true)}
@@ -1294,7 +1335,7 @@ function renderLobby(prefetched=null){
  const oldLobby=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .lobby-v11'):null;
  const focusedRole=oldLobby?document.activeElement?.closest?.('.role-choice-card[data-role-id]'):null;
  const focusedRoleId=focusedRole?.dataset.roleId||null;
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} inscrit${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} inscrit${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse" role="status">En attente de l’hôte… Le briefing se lancera automatiquement sur ton téléphone.</div>`}</section></main>`);
  if(typeof document!=='undefined'&&typeof document.querySelectorAll==='function')for(const el of document.querySelectorAll('.role-choice-zone .igr-role-more'))if(openedRoleDetails.includes(el.dataset.roleId))el.open=true;
  if(oldLobby){
   const newLobby=document.querySelector('#app .lobby-v11');
@@ -1419,7 +1460,7 @@ async function startGame(){
  cancelBriefingVoice();stopAmbient();
  try{
   const result=await rpc('igr_v4_start_game',{p_code:STATE.room,p_host_token:STATE.hostToken});
-  const fresh=await syncNow(true);startRoomWatcher();
+  const fresh=await syncNow(true,true);startRoomWatcher();
   if(!fresh)pendingRoomSyncPanel();
   if(autoCount||result?.auto_assigned_roles)toast(`${result?.auto_assigned_roles??autoCount} rôle${(result?.auto_assigned_roles??autoCount)>1?'s':''} attribué${(result?.auto_assigned_roles??autoCount)>1?'s':''} au hasard.`);
  }catch(e){
@@ -3449,7 +3490,9 @@ async function resumeSession(){const ok=await restore();if(ok){hideIntroImmediat
 window.addEventListener('online',()=>{if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))syncNow(true)});
 window.addEventListener('offline',()=>{if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))connectionStatus(true)});
 window.addEventListener('pagehide',()=>{stopLocalCapture();cancelBriefingVoice()});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))syncNow(true)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))void syncNow(true,true)});
+window.addEventListener('pageshow',()=>{if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view))void syncNow(true,true)});
+window.addEventListener('focus',()=>{if(STATE.room&&STATE.view==='lobby')void syncNow(true,true)});
 
 
 /* v11-30-scenario-text-rewrite — PWA cache bootstrap */
