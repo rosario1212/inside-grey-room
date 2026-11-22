@@ -1,0 +1,35 @@
+/* v834: roster badge stays in the name column, never underneath buttons. */
+#app .lobby-v11 .player-line.lobby-player-live{isolation:isolate;min-width:0;overflow:hidden}
+#app .lobby-v11 .igr831-player-main{min-width:0;overflow:hidden}
+#app .lobby-v11 .igr831-player-main .igr829-presence-pill{
+ box-sizing:border-box!important;position:static!important;float:none!important;
+ width:max-content!important;min-width:0!important;
+ max-width:calc(100% - 52px)!important;margin:0 0 0 52px!important;
+ padding:4px 8px!important;align-self:start!important;justify-self:start!important;
+ text-align:left!important;white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#app .lobby-v11 .igr831-player-actions{position:relative;z-index:1;min-width:0!important;align-self:center}
+#app .lobby-v11 .igr831-player-actions button{position:relative;max-width:100%!important}
+#app .igr834-workspace{display:grid;gap:12px;min-width:0;max-width:100%}
+#app .igr834-heading{display:grid;gap:6px;padding:2px 1px 7px}
+#app .igr834-heading small{font:700 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8f9daa}
+#app .igr834-heading h2{font-size:clamp(20px,4.8vw,25px);line-height:1.22;margin:0;color:#eff2f4}
+#app .igr834-heading p{font-size:12px;line-height:1.5;color:#acb8c2;margin:0}
+#app .igr834-empty{padding:14px;border:1px solid rgba(205,221,230,.13);border-radius:13px;color:#b3c0c8;font-size:13px;line-height:1.5}
+#app .igr834-cycle .igr634-priority{order:0}
+#app .igr834-cycle .igr634-interviews{order:1}
+#app .igr834-cycle #igr634-actions{order:2}
+#app .igr834-enquiry #igr634-evidence{order:0}
+#app .igr834-enquiry #igr634-notebook{order:1}
+#app .igr834-enquiry #igr634-personal{order:2}
+#app .game-v11 .tabs-v11 .tab[data-view="cycle"]{border-color:rgba(194,214,219,.44);color:#dbe8eb}
+#app .game-v11 .tabs-v11 .tab[data-view="cycle"].active{background:rgba(156,183,189,.20);border-color:rgba(222,236,240,.72);color:#fff}
+@media(max-width:420px){
+ #app .lobby-v11 .igr831-player-main .igr829-presence-pill{margin-left:0!important;max-width:100%!important}
+ #app .lobby-v11 .igr831-player-actions{width:clamp(76px,22vw,94px)!important}
+ #app .igr834-heading h2{font-size:20px}
+}
+@media(max-width:350px){
+ #app .lobby-v11 .player-line.lobby-player-live{gap:6px!important;padding:9px!important}
+ #app .lobby-v11 .igr831-player-actions{width:76px!important}
+}
