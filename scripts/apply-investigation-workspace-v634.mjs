@@ -97,3 +97,37 @@ currentApp=currentApp.replace(/\/service-worker\.js\?v=[A-Za-z0-9._-]+/g,
  '/service-worker.js?v=santoro-display-audit-20261108');
 await writeFile(appSourceFile,currentApp,'utf8');
 console.log('Santoro PWA freshness seal applied: '+path.basename(target));
+
+
+// v834 — last-pass Cycle / Enquête split. Reuses the role-authorized
+// investigation renderer; leaves the server as the sole gameplay authority.
+const cycleRevision='v834-cycle-workspace-20261122';
+const cycleAssets=['cycle-workspace-v834.css','cycle-workspace-v834.js'];
+for(const asset of cycleAssets){
+ const source=path.join(root,asset);
+ await stat(source);
+ if(asset.endsWith('.js')){
+  const result=spawnSync(process.execPath,['--check',source],{encoding:'utf8'});
+  if(result.status!==0)throw new Error('v834 Cycle syntax: '+result.stderr);
+ }
+ await copyFile(source,path.join(target,asset));
+}
+for(const page of ['index.html','en.html']){
+ const file=path.join(target,page);let html=await readFile(file,'utf8');
+ html=html.replace(/\s*<link[^>]+href=["']cycle-workspace-v834\.css[^"']*["'][^>]*>/gi,'');
+ html=html.replace(/\s*<script[^>]+src=["']cycle-workspace-v834\.js[^"']*["'][^>]*><\/script>/gi,'');
+ html=html.replace('</head>','  <link rel="stylesheet" href="cycle-workspace-v834.css?v='+cycleRevision+'">\n</head>');
+ html=html.replace('</body>','  <script src="cycle-workspace-v834.js?v='+cycleRevision+'"></script>\n</body>');
+ await writeFile(file,html,'utf8');
+}
+try{
+ const file=path.join(target,'service-worker.js');let sw=await readFile(file,'utf8');
+ for(const asset of cycleAssets){
+  sw=sw.split('\n').filter(line=>!line.includes('/'+asset+'?v=')).join('\n');
+  const url='/'+asset+'?v='+cycleRevision;
+  sw=sw.replace('const SHELL=[',"const SHELL=[\n  '"+url+"',");
+ }
+ sw=sw.replace(/const CACHE='[^']*';/,"const CACHE='igr-"+cycleRevision+"';");
+ await writeFile(file,sw,'utf8');
+}catch(error){if(error?.code!=='ENOENT')throw error}
+console.log('v834 Cycle/Enquête split and mobile roster overlap correction installed.');
