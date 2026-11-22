@@ -12,7 +12,7 @@ const runtimeFiles=[
  'live-game-v772.css','cast-names-v772.js','idle-choice-v772.js',
  'judicial-card-v773.js','judicial-card-v773.css',
  'suspect-natural-cards-v777.js',
- 'video-mobile-polish-v814.css','video-mobile-polish-v814.js','heritage-mobile-polish-v815.css','interface-consistency-v816.css','role-viewport-stability-v816.js','game-tab-stability-host-v827.js','audit-gameplay-v828.js','audit-gameplay-v828.css','gameplay-integrity-v829.css','gameplay-integrity-v829.js','video-ui-refinements-v817.css','heritage-ux-v818.css','heritage-ux-v818.js','heritage-recording-fixes-v819.css','heritage-hub-v820.css','game-tab-stability-v827.css',
+ 'video-mobile-polish-v814.css','video-mobile-polish-v814.js','heritage-mobile-polish-v815.css','interface-consistency-v816.css','role-viewport-stability-v816.js','game-tab-stability-host-v827.js','audit-gameplay-v828.js','audit-gameplay-v828.css','gameplay-integrity-v829.css','gameplay-integrity-v829.js','lobby-mobile-polish-v831.css','lobby-mobile-polish-v831.js','video-ui-refinements-v817.css','heritage-ux-v818.css','heritage-ux-v818.js','heritage-recording-fixes-v819.css','heritage-hub-v820.css','game-tab-stability-v827.css',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
 async function exists(file){try{await stat(file);return true}catch{return false}}
