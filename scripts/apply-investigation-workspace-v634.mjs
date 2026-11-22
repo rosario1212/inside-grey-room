@@ -132,3 +132,41 @@ try{
  await writeFile(file,sw,'utf8');
 }catch(error){if(error?.code!=='ENOENT')throw error}
 console.log('v834 Cycle/Enquête split and mobile roster overlap correction installed.');
+
+
+// v835 — live-player focus, public party roster and action clarity.
+// Install after the v834 tab split; keep underlying phases and RPC handlers unchanged.
+const playerFocusRevision='v835-player-focus-20261122';
+const playerFocusAssets=['live-player-focus-v835.css','live-player-focus-v835.js'];
+for(const asset of playerFocusAssets){
+ const src=path.join(root,asset);
+ await stat(src);
+ if(asset.endsWith('.js')){
+  const check=spawnSync(process.execPath,['--check',src],{encoding:'utf8'});
+  if(check.status!==0)throw new Error('v835 player focus syntax failed: '+check.stderr);
+ }
+ await copyFile(src,path.join(target,asset));
+}
+for(const page of ['index.html','en.html']){
+ const file=path.join(target,page);let html=await readFile(file,'utf8');
+ html=html.replace(/\s*<link[^>]+href=["']live-player-focus-v835\.css[^"']*["'][^>]*>/gi,'');
+ html=html.replace(/\s*<script[^>]+src=["']live-player-focus-v835\.js[^"']*["'][^>]*><\/script>/gi,'');
+ html=html.replace('</head>','  <link rel="stylesheet" href="live-player-focus-v835.css?v='+playerFocusRevision+'">\n</head>');
+ html=html.replace('</body>','  <script src="live-player-focus-v835.js?v='+playerFocusRevision+'"></script>\n</body>');
+ await writeFile(file,html,'utf8');
+}
+try{
+ const file=path.join(target,'service-worker.js');let sw=await readFile(file,'utf8');
+ for(const asset of playerFocusAssets){
+  sw=sw.split('\n').filter(line=>!line.includes('/'+asset+'?v=')).join('\n');
+  sw=sw.replace('const SHELL=[',"const SHELL=[\n  '/"+asset+"?v="+playerFocusRevision+"',");
+ }
+ // Existing v634 build gates assert the historical cache key; versioned v835
+ // resources in the SW manifest still trigger service-worker script updates.
+ await writeFile(file,sw,'utf8');
+}catch(error){if(error?.code!=='ENOENT')throw error}
+const playerFocusQA=spawnSync(process.execPath,
+ ['scripts/v835-live-player-focus-check.mjs',target],{encoding:'utf8'});
+if(playerFocusQA.status!==0)throw new Error('v835 player focus regression: '+playerFocusQA.stderr);
+console.log(playerFocusQA.stdout.trim());
+console.log('v835 public live player focus installed: '+path.basename(target));
