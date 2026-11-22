@@ -1,0 +1,31 @@
+name: v831 Mobile UX and Resume Audit
+on:
+  pull_request:
+    paths:
+      - 'app-v11.js'
+      - 'index.html'
+      - 'service-worker.js'
+      - 'lobby-mobile-polish-v831.*'
+      - 'scripts/v831-mobile-ux-regression.mjs'
+      - 'scripts/build-web.mjs'
+      - 'scripts/build-mobile.mjs'
+      - '.github/workflows/v831-mobile-ux-audit.yml'
+  workflow_dispatch:
+jobs:
+  mobile-ux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify roster, session resume and mobile delivery
+        run: node scripts/v831-mobile-ux-regression.mjs
+      - name: Preserve latest role permissions and verdict safeguards
+        run: |
+          node scripts/v827-tabs-and-role-qa.mjs
+          node scripts/v828-gameplay-audit-check.mjs
+          node scripts/v829-complete-audit-check.mjs
+          node scripts/v830-final-vote-check.mjs
+      - name: Preserve four-player composition choices
+        run: node scripts/four-player-contract-qa.mjs
