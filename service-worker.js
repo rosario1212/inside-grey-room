@@ -1,4 +1,4 @@
-const CACHE='igr-v829-complete-gameplay-audit-20261122';
+const CACHE='igr-v830-final-ballot-guard-20261122';
 const SHELL=[
   '/heritage-hub-v820.css?v=20261122-campaign-intro',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
@@ -9,7 +9,7 @@ const SHELL=[
   '/interface-consistency-v816.css?v=20261121-v816-1',
   '/role-viewport-stability-v816.js?v=20261121-v816-1',
   '/game-tab-stability-v827.css?v=20261122-v827-1',
-  '/game-tab-stability-host-v827.js?v=20261122-v827-1',
+  '/game-tab-stability-host-v827.js?v=20261122-v830-ballot-guard',
   '/audit-gameplay-v828.css?v=20261122-audit-v828',
   '/audit-gameplay-v828.js?v=20261122-audit-v828',
   '/gameplay-integrity-v829.css?v=20261122-audit-v829',
