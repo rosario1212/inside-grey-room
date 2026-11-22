@@ -4,13 +4,13 @@ import path from 'node:path';
 const root=process.cwd();
 const out=path.resolve(root,process.argv[2]||'dist');
 const runtime=['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-judicial-v34.css','heritage-maitre-polish-v34.css','heritage-maitre-v34.js','heritage-maitre-online-v34-4.js','heritage-maitre-polish-v34.js','heritage-maitre-mobile-v34-5.js'];
-const posters=['heritage-maitre-01-le-client-final.webp','heritage-maitre-01-le-client-hd-v77.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp','heritage-maitre-02-le-deal-hd-v79.webp','heritage-maitre-03-deux-choix-hd-v79.webp','heritage-maitre-04-le-proces-hd-v79.webp','heritage-maitre-05-l-honneur-hd-v79.webp'];
+const posters=['heritage-maitre-campaign-intro.webp','heritage-maitre-01-le-client-final.webp','heritage-maitre-01-le-client-hd-v77.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp','heritage-maitre-02-le-deal-hd-v79.webp','heritage-maitre-03-deux-choix-hd-v79.webp','heritage-maitre-04-le-proces-hd-v79.webp','heritage-maitre-05-l-honneur-hd-v79.webp'];
 async function exists(file){try{await stat(file);return true}catch{return false}}
 if(!(await exists(out)))throw new Error(`MAÎTRE target does not exist: ${out}`);
 for(const name of runtime){const src=path.join(root,name);if(!(await exists(src)))throw new Error(`Missing MAÎTRE runtime: ${name}`);await cp(src,path.join(out,name));}
 const assetDir=path.join(out,'assets');await mkdir(assetDir,{recursive:true});
 for(const name of posters){const src=path.join(root,'assets',name);if(!(await exists(src)))throw new Error(`Missing MAÎTRE final poster: ${name}`);await cp(src,path.join(assetDir,name));}
-const v='v34.9-maitre-theme-posters';
+const v='v34.10-maitre-campaign-intro';
 const css=`  <link rel="stylesheet" href="heritage-maitre-v34.css?v=${v}">`,judicialCss=`  <link rel="stylesheet" href="heritage-maitre-judicial-v34.css?v=${v}">`,polishCss=`  <link rel="stylesheet" href="heritage-maitre-polish-v34.css?v=${v}">`;
 const dataTag=`  <script src="heritage-maitre-data-v34.js?v=${v}"></script>`,assetsTag=`  <script src="heritage-maitre-assets-v34.js?v=${v}"></script>`,js=`  <script src="heritage-maitre-v34.js?v=${v}"></script>`,online=`  <script src="heritage-maitre-online-v34-4.js?v=v827-maitre-inplace-20261121"></script>`,polish=`  <script src="heritage-maitre-polish-v34.js?v=${v}"></script>`,mobile=`  <script src="heritage-maitre-mobile-v34-5.js?v=${v}"></script>`;
 for(const page of ['index.html','en.html']){const file=path.join(out,page);let html=await readFile(file,'utf8');
