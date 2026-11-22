@@ -11,6 +11,6 @@ const paths={
   5:'/assets/heritage-maitre-05-l-honneur-hd-v79.webp?v=v79-audit-fixes'
 };
 const chapters=Object.freeze(data.META.chapters.map(ch=>Object.freeze({...ch,poster:paths[ch.n]||ch.poster})));
-const META=Object.freeze({...data.META,cover:paths[1],chapters});
+const META=Object.freeze({...data.META,cover:'/assets/heritage-maitre-campaign-intro.webp?v=20261122-maitre-intro',chapters});
 window.IGR_HERITAGE_MAITRE_DATA=Object.freeze({...data,META});
 })();

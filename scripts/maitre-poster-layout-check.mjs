@@ -31,7 +31,12 @@ export async function runMaitrePosterChecks({page,css,read,check,report,target})
     assert(bytes.length<350000,'Each restored poster must remain a lightweight mobile asset');
     files.set(file,bytes);
   }
-  assert.equal(META.cover,META.chapters[0].poster,'Hub and dossier must share their artwork');
+  assert.notEqual(META.cover,META.chapters[0].poster,'Campaign artwork must be distinct from the first dossier');
+  const coverFile=META.cover.split('?')[0];
+  assert.equal(coverFile,'/assets/heritage-maitre-campaign-intro.webp');
+  const coverBytes=await readFile(path.join(target,coverFile.slice(1)));
+  assert(coverBytes.length<350000,'Campaign cover must remain lightweight');
+  files.set(coverFile,coverBytes);
   let requests=[];
   const imageRoute=async route=>{
     const url=new URL(route.request().url());requests.push(url.pathname);
@@ -85,20 +90,20 @@ export async function runMaitrePosterChecks({page,css,read,check,report,target})
         });
         assert.deepEqual(await page.evaluate(()=>window.posterChanges),[],'Recovery controllers must never replace the canonical HD image after a render');
         assert(!requests.some(url=>url.includes('-final.webp')),'No thumbnail request may replace the restored poster');
-        const expected=META.chapters[Math.max(0,chapter-1)].poster;
+        const expected=chapter?META.chapters[chapter-1].poster:META.cover;
         assert.equal(await page.locator(selector).getAttribute('src'),expected);
         const image=await page.locator(selector).evaluate(img=>{
           const r=img.getBoundingClientRect(),s=getComputedStyle(img);
           return {naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,width:r.width,height:r.height,left:r.left,right:r.right,filter:s.filter,position:s.objectPosition,fit:s.objectFit};
         });
-        assert.equal(image.naturalWidth,941,'Decode the restored source rather than a 320px thumbnail');
-        assert.equal(image.naturalHeight,1672);
+        assert.equal(image.naturalWidth,chapter?941:1086,'Decode the full-resolution artwork');
+        assert.equal(image.naturalHeight,chapter?1672:1231);
         assert(image.naturalWidth/image.width>=(width<=760?2:1),'Retain Retina quality on phones without upscaling on desktop');
         assert(image.left>=-.5&&image.right<=width+.5,'Keep artwork inside the viewport');
         assert(!image.filter.includes('blur('),'Never blur the poster with CSS');
         if(!chapter){
-           assert.equal(image.fit,'cover','The paid MAÎTRE campaign uses immersive full-bleed cover art');
-           assert.equal(image.position,'50% 33%','Keep the upper third of the MAÎTRE artwork in cinematic frame');
+           assert.equal(image.fit,'contain','Show the full campaign artwork without cropping');
+           assert.equal(image.position,'50% 50%','Center the campaign artwork');
          }
         else{
           assert(Math.abs(image.width/image.height-941/1672)<.002,'Preserve the complete dossier poster proportions');
