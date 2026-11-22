@@ -1,3 +1,4 @@
+// Roster layout hotfix: refresh the installed worker and re-cache the new stylesheet.
 const CACHE='igr-v831-mobile-ux-20261122';
 const SHELL=[
   '/heritage-hub-v820.css?v=20261122-campaign-intro',
@@ -14,7 +15,7 @@ const SHELL=[
   '/audit-gameplay-v828.js?v=20261122-audit-v828',
   '/gameplay-integrity-v829.css?v=20261122-audit-v829',
   '/gameplay-integrity-v829.js?v=20261122-audit-v829',
-  '/lobby-mobile-polish-v831.css?v=v831-mobile-ux-20261122',
+  '/lobby-mobile-polish-v831.css?v=v831-mobile-ux-20261122-rosterfix1',
   '/lobby-mobile-polish-v831.js?v=v831-mobile-ux-20261122',
   '/heritage-mobile-polish-v815.css?v=20261121-v815-1',
   '/video-mobile-polish-v814.css?v=20261121-v814-1',

@@ -33,7 +33,7 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     const img=card.querySelector('img'),shade=card.querySelector('.hplay-campaign-shade');
     const body=card.querySelector('.hplay-campaign-body'),title=body.querySelector('strong'),footer=body.querySelector('.hplay-campaign-foot');
     return {
-     display:getComputedStyle(card).display,card:rect(card),image:rect(img),
+     display:getComputedStyle(card).display,flexDirection:getComputedStyle(card).flexDirection,card:rect(card),image:rect(img),
      imageFit:getComputedStyle(img).objectFit,imagePosition:getComputedStyle(img).position,
      artAlignment:getComputedStyle(img).objectPosition,titlePosition:getComputedStyle(title).position,
      shade:getComputedStyle(shade).backgroundImage,shadeDisplay:getComputedStyle(shade).display,
@@ -45,26 +45,46 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
    }));
    assert.equal(measured.length,3);
    for(const [i,m] of measured.entries()){
-    assert.equal(m.display,'block','Cinematic cover presentation '+hubCards[i][0]);
-    assert.equal(m.imageFit,'cover','Full-bleed poster '+hubCards[i][0]);
-    assert.equal(m.imagePosition,'absolute','Poster must be background layer '+hubCards[i][0]);
-    assert.equal(m.shadeDisplay,'block','Gradient overlay must be visible '+hubCards[i][0]);
-    assert(m.shade.includes('linear-gradient'),'Premium gradient preserves white-text contrast');
-    assert(m.card.h>=390&&m.card.h<=490,'Paid campaign poster must be immersive, not a thumbnail '+hubCards[i][0]+' '+width);
-    assert(Math.abs(m.image.w-m.card.w)<=2.5&&Math.abs(m.image.h-m.card.h)<=2.5,'Art must fill the entire premium card '+hubCards[i][0]);
-    if(i<2){
-     assert.equal(m.artAlignment,'50% 0%','Embedded campaign poster title must not be cropped '+hubCards[i][0]);
-     assert.equal(m.titlePosition,'absolute','Do not repeat the printed poster title '+hubCards[i][0]);
-     assert(m.title.w<=1.5&&m.title.h<=1.5,'Duplicate campaign heading should be visually hidden '+hubCards[i][0]);
+    const name=hubCards[i][0];
+    assert(['block','flex'].includes(m.display),'Cinematic campaign card layout '+name);
+    if(m.display==='flex'){
+     // v832: new campaign-intro art is an *uncropped* portrait above the footer.
+     // This is a different intentional composition from the legacy dark overlay.
+     assert.equal(m.flexDirection,'column','Intro artwork must stack vertically '+name);
+     assert.equal(m.imageFit,'contain','Full campaign-intro artwork must remain visible '+name);
+     assert.equal(m.imagePosition,'static','Campaign-intro art belongs in normal flow '+name);
+     assert.equal(m.shadeDisplay,'none','No gradient may obscure the new printed poster '+name);
+     assert(Math.abs(m.image.w-m.card.w)<=2.5,'Uncropped poster must occupy all card width '+name);
+     assert(m.image.h>=m.image.w*1.04&&m.image.h<=m.image.w*1.35,
+      'Campaign-intro art must retain its authored portrait proportions '+name);
+     assert(m.image.y>=m.card.y-1&&m.image.bottom<=m.card.bottom+1,
+      'Campaign-intro art stays inside the card '+name);
+     assert(m.body.y>=m.image.bottom-2,'Campaign navigation must follow the art '+name);
+     assert(m.card.h>=m.image.h+30,'Campaign card needs a legible action below the art '+name);
     }else{
-     assert(m.titleFont>=35,'Maître must still be identifiable on the first dossier artwork');
-     assert(m.title.y>m.card.y+70,'Maître label should not obscure the cover face');
+     // Older cinematic overlay layout remains a supported fallback.
+     assert.equal(m.imageFit,'cover','Full-bleed legacy poster '+name);
+     assert.equal(m.imagePosition,'absolute','Legacy poster must be a background layer '+name);
+     assert.equal(m.shadeDisplay,'block','Legacy gradient must preserve contrast '+name);
+     assert(m.shade.includes('linear-gradient'),'Premium gradient contrast '+name);
+     assert(m.card.h>=390&&m.card.h<=490,'Legacy cinematic card height '+name+' '+width);
+     assert(Math.abs(m.image.w-m.card.w)<=2.5&&Math.abs(m.image.h-m.card.h)<=2.5,
+      'Legacy poster must fill the card '+name);
     }
-    assert(m.footer.bottom<=m.card.bottom+1,'Bottom navigation remains inside poster '+hubCards[i][0]);
-    assert(m.body.right<=m.card.right+1&&!m.overflow,'No text clipping '+hubCards[i][0]);
+    if(i<2){
+     assert.equal(m.titlePosition,'absolute','Do not repeat the title printed on the artwork '+name);
+     assert(m.title.w<=1.5&&m.title.h<=1.5,'Repeated campaign heading must remain hidden '+name);
+    }else{
+     assert(m.titleFont>=35,'Maître must remain identifiable on its campaign introduction');
+     assert(m.title.y>m.card.y+70,'Maître heading must not cover the portrait face');
+    }
+    assert(m.footer.bottom<=m.card.bottom+1,'Bottom navigation must stay inside the campaign card '+name);
+    assert(m.body.right<=m.card.right+1&&!m.overflow,'No campaign text clipping '+name);
    }
    assert.equal(new Set(measured.map(m=>m.accent)).size,3,'Each premium campaign keeps a separate art direction accent');
-   assert(Math.max(...measured.map(m=>m.card.h))-Math.min(...measured.map(m=>m.card.h))<2,'The three campaigns share one cover height');
+   // Artwork width and portrait height stay aligned even when editorial footers differ.
+   assert(Math.max(...measured.map(m=>m.image.h))-Math.min(...measured.map(m=>m.image.h))<2,
+    'The three campaign introductions use a uniform poster format');
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No sideways scrolling on iPhone');
   });
  }

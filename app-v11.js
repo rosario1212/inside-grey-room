@@ -165,13 +165,11 @@ function roleCapacityMap(sc,count){return lobbyRoleSlots(sc,count).reduce((a,r)=
 function roleChoiceSummary(sc,count,players){
  const caps=roleCapacityMap(sc,count),taken={};(players||[]).forEach(p=>{if(p.preferred_role)taken[p.preferred_role]=(taken[p.preferred_role]||0)+1});
  // Selecting Analyst may opt into Team-4, provided no other suspect is displaced.
- if(['001','004','009'].includes(sc?.id)&&count<=4){
+ // Always show the actual roster capacity; switching modes is not a third team seat.
+ if(['001','004','009'].includes(sc?.id)&&count<=4&&!caps.analyste){
   const me=(players||[]).find(p=>String(p.id)===String(STATE?.sync?.player?.id));
-  if(me?.preferred_role==='analyste')caps.suspect=3;
-  if(!caps.analyste){
   const otherSuspects=(taken.suspect||0)-(me?.preferred_role==='suspect'?1:0);
   caps.analyste=otherSuspects<=2?1:0;
-  }
  }
  return Object.entries(caps).map(([id,cap])=>({id,cap,taken:taken[id]||0,info:roleInfo(id)})).sort((a,b)=>['001','004','009'].includes(sc?.id)&&count<=4?['enqueteur','analyste','suspect'].indexOf(a.id)-['enqueteur','analyste','suspect'].indexOf(b.id):0);
 }
@@ -1275,7 +1273,17 @@ function renderLobby(prefetched=null){
  const launchLabel=count<min?`Encore ${remaining} joueur${remaining>1?'s':''}`:roleMissing?`Lancer · ${roleMissing} rôle${roleMissing>1?'s':''} attribué${roleMissing>1?'s':''} au hasard`:'Lancer le dossier';
  const omertaLobby=['021','022','023','024','025'].includes(String(sc.id));
  const randomRoleButton=`<button type="button" class="role-choice-card random-role-card" onclick="chooseRandomLobbyRole()"><span><b>Choix aléatoire</b><small>Tirage uniforme parmi les rôles publics encore disponibles. Chaque type de rôle a exactement une chance dans le tirage. ${omertaLobby?'Dans Omertà, les identités des personnages restent privées.':'L’Espion reste secret.'}</small></span><em>AU HASARD</em></button>`;
- const roleButtons=randomRoleButton+choices.map(x=>{const mine=me.preferred_role===x.id,full=x.taken>=x.cap&&!mine;return `<div class="igr-role-option"><button type="button" class="role-choice-card ${mine?'selected':''} ${full?'full':''}" data-role-id="${h(x.id)}" aria-pressed="${mine}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.short||x.info.body)}</small></span><em>${mine?'TON RÔLE':full?'COMPLET':`${x.taken}/${x.cap}`}</em></button><details class="igr-role-more" data-role-id="${h(x.id)}"><summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p></details></div>`}).join('');
+ const roleButtons=randomRoleButton+choices.map(x=>{
+  const mine=me.preferred_role===x.id;
+  // An Analyst may become the third Suspect by atomically returning to classic.
+  // The current team always has a strict two-Suspect capacity.
+  const switchToClassic=['001','004','009'].includes(sc.id)&&count<=4
+    &&d.room.state?.four_player_mode==='team'&&me.preferred_role==='analyste'
+    &&x.id==='suspect'&&x.taken===2&&x.cap===2;
+  const full=x.taken>=x.cap&&!mine&&!switchToClassic;
+  const stateLabel=mine?'TON RÔLE':full?'COMPLET':switchToClassic?'PASSER EN CLASSIQUE':`${x.taken}/${x.cap}`;
+  return `<div class="igr-role-option"><button type="button" class="role-choice-card ${mine?'selected':''} ${full?'full':''}" data-role-id="${h(x.id)}" aria-pressed="${mine}" ${full?'disabled':''} onclick="chooseLobbyRole('${x.id}')"><span><b>${h(x.info.label)}</b><small>${h(x.info.short||x.info.body)}</small></span><em>${stateLabel}</em></button><details class="igr-role-more" data-role-id="${h(x.id)}"><summary>Lire la fiche complète</summary><p>${h(x.info.body)}</p></details></div>`;
+ }).join('');
  const reservations=d.room.state?.victory_reservations||[];
  const myReservation=reservations.find(x=>String(x.player_id)===String(me.id));
  const victoryRoleNotice=myReservation
@@ -1904,7 +1912,7 @@ async function togglePhaseTimer(pause){
 }
 function phaseCanAdvance(){
  const room=STATE.sync?.room;
- return !!(STATE.hostToken&&room&&room.status==='playing'&&room.phase&&room.phase!=='reveal');
+ return !!(STATE.hostToken&&room&&room.status==='playing'&&room.phase&&room.phase!=='reveal'&&room.phase!=='provisional_lock');
 }
 function hostPhaseControls(){
  if(!phaseCanAdvance())return'';
