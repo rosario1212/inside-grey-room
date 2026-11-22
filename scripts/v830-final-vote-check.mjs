@@ -32,6 +32,6 @@ assert.equal(enabled('event_confrontation',false),false,'Host must not end confr
 assert.equal(enabled('cycle_debrief',false),true,'Ordinary host phase controls remain');
 assert(index.includes('game-tab-stability-host-v827.js?v=20261122-v830-ballot-guard'));
 assert(sw.includes('/game-tab-stability-host-v827.js?v=20261122-v830-ballot-guard'));
-assert(sw.includes("const CACHE='igr-v831-mobile-ux-20261122'"));
-assert(finalizer.includes("const pwaVersion='v831-mobile-ux-20261122'"));
+assert(sw.includes("const CACHE='igr-v833-four-device-launch-20261122'"));
+assert(finalizer.includes("const pwaVersion='v833-four-device-launch-20261122'"));
 console.log('PASS v830: no host vote bypass, individual 001 final lock retained, other roles and stages unchanged.');
