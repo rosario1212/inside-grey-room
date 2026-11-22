@@ -263,3 +263,33 @@ assert(apiUrl&&apiKey);
 const invalidState=await fetch(apiUrl+'/rest/v1/rpc/igr_v171_031_state',{method:'POST',headers:{apikey:apiKey,'Content-Type':'application/json'},body:JSON.stringify({p_code:'ZD999',p_player_token:'00000000-0000-0000-0000-000000000000'}),signal:AbortSignal.timeout(15000)});
 assert.equal(invalidState.status,400);assert.equal((await invalidState.json()).message,'unauthorized');
 console.log('Deployed CARTEL 031 private state RPC verified: invalid player token rejected.');
+
+// The three dedicated Heritage covers must be actual image bytes, never HTML fallback.
+for(const campaign of ['cendres','kuroi','maitre']){
+ const name='heritage-'+campaign+'-campaign-intro.webp';
+ const local=await readFile('dist/assets/'+name);
+ const source=await readFile('assets/'+name);
+ const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+ assert.equal(hash(local),hash(source),'Build changed campaign artwork: '+campaign);
+ assert.equal(local.subarray(0,4).toString(),'RIFF');assert.equal(local.subarray(8,12).toString(),'WEBP');
+ let verified=false;
+ for(let attempt=0;attempt<12;attempt++){
+  const response=await get('/assets/'+name+'?v=20261122-maitre-intro-v2&production_verify='+expected+'&probe='+attempt);
+  const bytes=Buffer.from(await response.arrayBuffer());
+  if(response.ok&&hash(bytes)===hash(source)&&/image\\/webp/i.test(response.headers.get('content-type')||'')){verified=true;break;}
+  if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
+ }
+ assert(verified,'Published campaign cover missing or incorrect: '+campaign);
+ console.log('Verified live Heritage cover:',campaign,hash(source));
+}
+const maitreSource=await readFile('dist/heritage-maitre-v34.js','utf8');
+assert.equal(maitreSource.split('/assets/heritage-maitre-campaign-intro.webp?v=20261122-maitre-intro-v2').length-1,2,'Maître must use the approved cover in both campaign views');
+const maitreOptimization=JSON.parse(await readFile('dist/igr-v702-optimization-report.json','utf8'));
+const maitreChunk=maitreOptimization.bundles.find(item=>item.kind==='js'&&item.sourceUrls.some(url=>url.split('?')[0]==='heritage-maitre-v34.js'));
+if(maitreChunk){
+ assert(html.includes('<script src="'+maitreChunk.file+'"></script>'),'Live page must load the corrected Maître renderer');
+ const chunkLocal=await readFile('dist/'+maitreChunk.file);
+ assert(chunkLocal.toString().includes('/assets/heritage-maitre-campaign-intro.webp?v=20261122-maitre-intro-v2'),'Bundled Maître renderer lost its new cover');
+ const res=await get('/'+maitreChunk.file+'?verify='+expected);
+ assert(res.ok);assert.equal(createHash('sha256').update(Buffer.from(await res.arrayBuffer())).digest('hex'),createHash('sha256').update(chunkLocal).digest('hex'),'Live Maître bundle differs from the build');
+}
