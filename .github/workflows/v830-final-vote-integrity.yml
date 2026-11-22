@@ -1,0 +1,25 @@
+name: v830 Final Vote Integrity
+on:
+  pull_request:
+    paths:
+      - 'game-tab-stability-host-v827.js'
+      - 'service-worker.js'
+      - 'index.html'
+      - 'scripts/v830-final-vote-check.mjs'
+      - 'supabase/migrations/20261122162000_v830_final_votes_required.sql'
+      - '.github/workflows/v830-final-vote-integrity.yml'
+  workflow_dispatch:
+jobs:
+  verdict:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate protected final vote
+        run: node scripts/v830-final-vote-check.mjs
+      - name: Preserve existing verdict payloads
+        run: node scripts/v829-complete-audit-check.mjs
+      - name: Preserve v827 role permissions
+        run: node scripts/v827-tabs-and-role-qa.mjs
