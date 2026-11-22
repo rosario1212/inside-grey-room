@@ -29,6 +29,7 @@ jobs:
           node scripts/v827-tabs-and-role-qa.mjs
           node scripts/v828-gameplay-audit-check.mjs
           node scripts/v829-complete-audit-check.mjs
+          node scripts/v829-complete-gameplay-audit-check.mjs
           node scripts/v830-final-vote-check.mjs
       - name: Preserve four-player composition choices
         run: node scripts/four-player-contract-qa.mjs

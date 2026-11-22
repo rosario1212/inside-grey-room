@@ -83,6 +83,30 @@ controls.children.forEach(btn=>btn.onclick());assert.equal(used,2,'Original butt
 window.IGR_MOBILE_POLISH_V831.patch();
 assert.equal(line.children.length,2,'Repeated rendering must not duplicate action areas');
 assert.equal(controls.children.length,2,'Repeated rendering must not duplicate actions');
+// A role switch may change composition, but never inflate the displayed team roster.
+const summaryStart=app.indexOf('function roleChoiceSummary(');
+const summaryEnd=app.indexOf('const ROLE_INFO',summaryStart);
+assert(summaryStart>=0&&summaryEnd>summaryStart);
+const summary=app.slice(summaryStart,summaryEnd);
+const preview=new Function('roleCapacityMap','STATE','roleInfo','sc','count','players',
+ summary+'return roleChoiceSummary(sc,count,players);');
+const teamPlayers=[
+ {id:'investigator',preferred_role:'enqueteur'},
+ {id:'analyst',preferred_role:'analyste'},
+ {id:'suspect1',preferred_role:'suspect'},
+ {id:'suspect2',preferred_role:'suspect'}
+];
+for(const dossier of ['001','004','009']){
+ const rows=preview(()=>({enqueteur:1,analyste:1,suspect:2}),
+  {sync:{player:{id:'analyst'}}},id=>({label:id}),{id:dossier},4,teamPlayers);
+ assert.equal(rows.find(x=>x.id==='suspect')?.cap,2,
+  'Team-4 must display exactly two Suspect seats: '+dossier);
+ assert.equal(rows.find(x=>x.id==='suspect')?.taken,2);
+}
+assert(app.includes('PASSER EN CLASSIQUE'),'Analyst must retain a clear switch to classic');
+assert(app.includes("x.taken===2&&x.cap===2"),'Switch must not invent a third team seat');
+assert(css.includes('.player-line.lobby-player-live:has(> .igr831-player-actions:not(:empty))'),
+ 'Only player cards with host actions may reserve a second column');
 for(const marker of ['min-height:44px!important','igr831-player-actions','igr634-workspace','igr829-presence-pill','role-notice']){
  assert(css.includes(marker),'Missing mobile style '+marker);
 }

@@ -15,11 +15,15 @@
 #app .lobby-v11 .player-list{display:grid;gap:8px;margin:13px 0 18px}
 #app .lobby-v11 .player-line.lobby-player-live{
  box-sizing:border-box;display:grid!important;
- grid-template-columns:minmax(0,1fr) minmax(78px,auto)!important;
+ /* Player cards without host actions must have no empty control column. */
+ grid-template-columns:minmax(0,1fr)!important;
  align-items:center!important;justify-content:initial!important;
  padding:11px 12px!important;gap:10px!important;
  min-height:96px;border:1px solid rgba(208,220,230,.13)!important;
  border-radius:15px!important;background:linear-gradient(135deg,rgba(26,33,39,.67),rgba(12,17,22,.67))!important;
+}
+#app .lobby-v11 .player-line.lobby-player-live:has(> .igr831-player-actions:not(:empty)){
+ grid-template-columns:minmax(0,1fr) minmax(78px,auto)!important;
 }
 #app .lobby-v11 .igr831-player-main{display:grid;align-content:center;gap:7px;min-width:0}
 #app .lobby-v11 .igr831-player-main>.player-ident{

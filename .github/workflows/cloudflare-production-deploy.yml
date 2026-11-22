@@ -51,6 +51,14 @@ jobs:
           node scripts/v701-turn-relay-security-check.mjs
           node scripts/v697-lobby-sync-check.mjs
           npm run build
+          # Recent role, presence, final-vote and mobile regressions are mandatory release gates.
+          node scripts/four-player-contract-qa.mjs
+          node scripts/v827-tabs-and-role-qa.mjs
+          node scripts/v828-gameplay-audit-check.mjs
+          node scripts/v829-complete-audit-check.mjs
+          node scripts/v829-complete-gameplay-audit-check.mjs
+          node scripts/v830-final-vote-check.mjs
+          node scripts/v831-mobile-ux-regression.mjs
           node scripts/v773-investigator-judicial-card-check.mjs
           node scripts/global-navigation-v766-check.mjs dist
           node scripts/intro-door-v20-check.mjs dist

@@ -137,7 +137,9 @@ const lobbyCss=readFileSync('lobby-ui-fix-v13.css','utf8');
 const html=readFileSync('index.html','utf8');
 assert(source.includes('otherSuspects<=2?1:0'),'Analyst must not displace a third reserved suspect');
 assert(!source.includes('const analystPreview='),'Locked Analyst preview returned');
-assert(source.includes("if(me?.preferred_role==='analyste')caps.suspect=3"),'Analyst must be able to switch back to the third suspect seat');
+assert(!source.includes('caps.suspect=3'),'Team-4 display must never advertise a third Suspect');
+assert(source.includes('PASSER EN CLASSIQUE')&&source.includes("x.taken===2&&x.cap===2"),
+ 'Analyst must be able to switch to the classic composition without mislabeling Team-4');
 for(const id of ['001','004','009'])for(const count of [1,2,3,4]){
  assert.deepEqual(actualLobbyRoster(id,count,'team'),['enqueteur','analyste','suspect','suspect'].sort());
  assert.deepEqual(actualLobbyRoster(id,count,'classic'),['enqueteur','suspect','suspect','suspect'].sort());
