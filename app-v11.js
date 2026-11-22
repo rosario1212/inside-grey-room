@@ -3364,6 +3364,14 @@ document.addEventListener('visibilitychange',()=>{
  }
  if(document.visibilityState==='visible'&&RUNNING_STANDALONE&&APP_WAS_HIDDEN){
    APP_WAS_HIDDEN=false;
+   // A return from Safari/app suspension must never replay the door while
+   // a lobby, briefing, private role or gameplay session is already active.
+   if(STATE.room&&['lobby','briefing','role','game'].includes(STATE.view)){
+     hideIntroImmediately();
+     void syncNow(true).catch(()=>{});
+     setTimeout(handleVisibleApp,100);
+     return;
+   }
    showIntroGate('TOUCHEZ POUR ENTRER');
    return;
  }
