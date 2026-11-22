@@ -23,4 +23,5 @@ jobs:
         run: |
           node scripts/v828-gameplay-audit-check.mjs
           node scripts/v829-complete-audit-check.mjs
+          node scripts/v829-complete-gameplay-audit-check.mjs
           node scripts/v827-tabs-and-role-qa.mjs
