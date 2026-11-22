@@ -1,0 +1,81 @@
+/* v829 — audited quiz hierarchy, verified presence, mobile clarity */
+#app .igr829-quiz {
+  display: grid;
+  gap: 16px;
+}
+#app .igr829-quiz-group {
+  display: grid;
+  gap: 11px;
+  padding: 15px;
+  border: 1px solid rgba(237,242,247,.15);
+  background: rgba(255,255,255,.022);
+  border-radius: 16px;
+  min-width: 0;
+}
+#app .igr829-quiz-group h3 {
+  margin: 0;
+  color: #eef3f7;
+  font-size: clamp(15px,3.9vw,17px);
+  font-weight: 750;
+  line-height: 1.35;
+}
+#app .igr829-quiz-group .field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+#app .igr829-quiz-group .field label {
+  font-size: 13px;
+  color: #d7e1e9;
+  line-height: 1.48;
+}
+#app .igr829-quiz-group .field select {
+  min-height: 44px;
+  max-width: 100%;
+  font-size: 14px;
+}
+#app .igr829-presence-status {
+  margin: 5px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #b9cbd4;
+  grid-column: 1 / -1;
+}
+#app .lobby-v11 .player-line.lobby-player-live {
+  flex-wrap: wrap;
+  row-gap: 5px;
+}
+#app .igr829-presence-pill {
+  margin: 0 0 0 auto;
+  font: 650 10px/1.3 system-ui,sans-serif;
+  letter-spacing: .025em;
+  color: #b7c7d2;
+}
+#app .igr829-presence-pill[data-presence="recent"] {color: #a8d7c0}
+#app .igr829-presence-pill[data-presence="stale"] {color: #d7b9a4}
+#app .igr829-presence-pill[data-presence="unknown"] {color: #a8b2bc}
+#app .igr829-recovery-note {
+  margin: 12px 0 0;
+  padding: 11px 13px;
+  border-left: 2px solid rgba(220,228,236,.42);
+  color: #cbd5dc;
+  background: rgba(255,255,255,.035);
+  font-size: 12px;
+  line-height: 1.55;
+}
+#app .igr52-card button[data-igr59-recovery-at]:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+#app .igr634-group .igr634-summary-copy small {
+  color: #adbcc9;
+  font-size: 10px;
+}
+#app .igr634-group .igr634-summary-copy strong {
+  font-size: 14px;
+  line-height: 1.35;
+}
+@media(max-width:480px){
+ #app .igr829-quiz-group{padding:13px 12px}
+ #app .lobby-v11 .player-line.lobby-player-live .igr829-presence-pill{width:100%;text-align:right}
+}
