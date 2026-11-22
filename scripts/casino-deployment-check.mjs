@@ -276,7 +276,7 @@ for(const campaign of ['cendres','kuroi','maitre']){
  for(let attempt=0;attempt<12;attempt++){
   const response=await get('/assets/'+name+'?v=20261122-maitre-intro-v2&production_verify='+expected+'&probe='+attempt);
   const bytes=Buffer.from(await response.arrayBuffer());
-  if(response.ok&&hash(bytes)===hash(source)&&/image\\/webp/i.test(response.headers.get('content-type')||'')){verified=true;break;}
+  if(response.ok&&hash(bytes)===hash(source)&&(response.headers.get('content-type')||'').toLowerCase().includes('image/webp')){verified=true;break;}
   if(attempt<11)await new Promise(resolve=>setTimeout(resolve,2200));
  }
  assert(verified,'Published campaign cover missing or incorrect: '+campaign);
