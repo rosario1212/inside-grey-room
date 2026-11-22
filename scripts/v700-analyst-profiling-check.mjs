@@ -50,7 +50,7 @@ assert.equal((out.match(/<textarea id="igr700-(?:one|two)-[^\"]+" rows="2"/g)||[
 assert(out.includes('Suspect A')&&out.includes('Suspect B'),'suspect panels not independent');
 assert(out.includes('Quelle peur pourrait guider ses choix ?'),'short forensic second question missing');
 assert(out.includes('0 / 10 mots minimum'),'live ten-word counter missing');
-assert(out.includes('Obligatoire'),'Analyst task must be labeled mandatory');
+assert(out.includes('Facultatif')&&!out.includes('Obligatoire'),'Analyst profiles must be optional and never block the verdict');
 const profiling=sandbox.window.IGR_ANALYST_PROFILING_V700;
 assert.equal(profiling.wordCount('Un deux trois quatre cinq six sept huit neuf'),9,'nine words expected');
 assert.equal(profiling.wordCount('Un deux trois quatre cinq six sept huit neuf dix'),10,'ten words expected');
@@ -82,7 +82,7 @@ await sandbox.window.IGR_ANALYST_PROFILING_V700.refresh(true);
 out=sandbox.renderGameTab();
 assert(out.includes('Sa stratégie reste prudente.'),'completed profile not public');
 assert(out.includes('Que cherche-t-il à protéger ?'),'the saved question must appear on reveal');
-assert(out.includes('Profil non complété.'),'unfilled required profiles must be recorded as missing');
+assert(out.includes('Profil non complété.'),'unfilled optional profiles must remain visible as missing');
 assert(!out.includes('<textarea'),'postgame archive must be read-only');
 for(const path of ['index.html','en.html']){
  const html=read(path);
