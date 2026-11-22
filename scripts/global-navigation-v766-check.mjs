@@ -170,3 +170,26 @@ assert(loader.includes("v30-v776-single-contextual-exit"),'Mobile cache must ref
 assert(web.includes('global-navigation-v766.js?v=v776-single-contextual-exit')&&mobile.includes('global-navigation-v766.js?v=v776-single-contextual-exit'),'Both builds must refresh navigation JavaScript');
 
 console.log('PASS global navigation v766: base dossiers, all DLC lobby route, 4 Héritage campaigns, Casino, local screens, stable catalogue/profile and both bundles.');
+
+// Lobby step 5: earlier stages must use the room-preserving native controller.
+{
+ const fragment=journey.slice(journey.indexOf('function lobbyBackHandler('),journey.indexOf('function makeProgressClickable('));
+ const clickHandler=journey.slice(journey.indexOf('function handleProgressClick('),journey.indexOf('/* Join is a sub-screen'));
+ assert(fragment.includes('from===4')&&clickHandler.includes('lobbyBackHandler(main)?.(to)'));
+ for(const campaign of ['cendres','kuroi','maitre']){
+  let calls=[];const main={querySelector:selector=>selector==='.hnet-lobby'?{}:null};
+  const ctx={window:{IGR_PLAY_MODES:{backHeritageLobby:step=>calls.push(step)},IGR_HERITAGE_MAITRE_ONLINE:{backLobby:step=>calls.push(step)}},$: (selector,root)=>root?.querySelector(selector),journeyCampaign:()=>campaign,stage:()=>4};
+  runInNewContext(fragment+clickHandler+';globalThis.canBack=canNavigateBack;globalThis.onBack=handleProgressClick;',ctx);
+  for(let to=0;to<4;to++){
+   assert.equal(ctx.canBack(main,4,to),true);
+   const button={dataset:{hjStep:String(to)},closest:()=>main};
+   ctx.onBack({target:{closest:()=>button},preventDefault(){},stopImmediatePropagation(){}});
+  }
+  assert.deepEqual(calls,[0,1,2,3]);assert.equal(ctx.canBack(main,4,4),false);
+ }
+ for(const [filename,marker,endMarker] of [['play-modes-v13-8.js','function backHeritageLobby(to){','function resumeHeritageOnline(){'],['heritage-maitre-online-v34-4.js','function backLobby(to){','function resumeLobby(){']]){
+  const content=read(filename),handler=content.slice(content.indexOf(marker),content.indexOf(endMarker,content.indexOf(marker)));
+  assert(handler.includes('REVENIR AU LOBBY')&&handler.includes('s.code'));
+  assert(!handler.includes('igr_heritage_online_leave')&&!handler.includes('clearHSession()')&&!handler.includes('clear()'),'Back navigation must retain the current token and role');
+ }
+}
