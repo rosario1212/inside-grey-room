@@ -53,7 +53,7 @@ must('heritage-maitre-data-v34.js',["id:'maitre'","title:'LE CLIENT'","title:'LE
 must('heritage-maitre-v34.js',['igr_heritage_maitre_live_v1','completeChapter','CE QUI EST DÉSORMAIS VRAI','CARTE DES LIENS','window.IGR_HERITAGE_MAITRE']);
 must('heritage-maitre-v34.css',['.hplay-theme-maitre','.maitre-angle-box','.maitre-result-grid']);
 must('heritage-maitre-assets-v34.js',['v34.9','heritage-maitre-01-le-client-hd-v77.webp','heritage-maitre-02-le-deal-hd-v79.webp','heritage-maitre-03-deux-choix-hd-v79.webp','heritage-maitre-04-le-proces-hd-v79.webp','heritage-maitre-05-l-honneur-hd-v79.webp']);
-must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','heritage-maitre-online-v34-4.js','heritage-maitre-01-le-client-final.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp','v34.9-maitre-theme-posters']);
+must('scripts/apply-maitre-v34.mjs',['heritage-maitre-data-v34.js','heritage-maitre-assets-v34.js','heritage-maitre-v34.css','heritage-maitre-v34.js','heritage-maitre-online-v34-4.js','heritage-maitre-01-le-client-final.webp','heritage-maitre-02-le-deal-final.webp','heritage-maitre-03-deux-choix-final.webp','heritage-maitre-04-le-proces-final.webp','heritage-maitre-05-l-honneur-final.webp','v34.10-maitre-campaign-intro']);
 mustNot('scripts/apply-maitre-v34.mjs',['renderPoster']);
 must('package.json',['scripts/apply-maitre-v34.mjs dist','scripts/apply-maitre-v34.mjs www']);
 console.log('v37 gameplay recovery + v36.1 runtime hygiene + v35.2 duration modes + v34.9 MAÎTRE + v13.8 Dual Play + DLC regression markers OK');

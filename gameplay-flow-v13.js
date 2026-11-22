@@ -48,7 +48,7 @@ window.phaseInstruction=phaseInstruction=function(r,ph,target){
   return r==='enqueteur'?`<p><b>CONVOQUER.</b> Il reste ${left} fenêtre${left>1?'s':''} d’interrogatoire dans ce cycle. Tu choisis qui entre. L’Analyste gère le rythme s’il est présent.</p>`:`<p>L’Enquêteur choisit la prochaine convocation. La Salle d’attente reste libre pendant ce temps.</p>`;
  }
  if(ph==='interrogation'){
-  if(r==='enqueteur')return `<p>Conduis l’interrogatoire. <b>06:00 signifie 06:00.</b> Aucun arrêt anticipé.</p>`;
+  if(r==='enqueteur')return `<p>Conduis l’interrogatoire. Le chronomètre fixe la durée maximale, mais tu peux terminer l’échange plus tôt.</p>`;
   if(r==='analyste')return `<p>Gère le temps. Observe les contradictions. L’Enquêteur reste concentré sur la personne en face.</p>`;
   if(target?.id===window.STATE?.playerId)return `<p>Tu es dans la Grey Room. Sauve ta peau. Tu peux mentir, minimiser ou accuser. Tu n’inventes aucune preuve.</p>`;
   if(r==='expert')return `<p>Si tu as été admis comme observateur, reste silencieux. Tu n’interviens que lorsqu’une expertise t’est formellement demandée.</p>`;
@@ -56,7 +56,7 @@ window.phaseInstruction=phaseInstruction=function(r,ph,target){
  }
  if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(r)?`<p>Réponds au questionnaire du cycle. Les réponses restent individuelles et sans correction immédiate.</p>`:`<p>Le noyau d’enquête dispose de 02:00. Continue ton jeu humain si ton espace le permet.</p>`;
  if(ph==='event_select')return r==='enqueteur'?`<p>Choisis le prochain événement. Le scénario et les rôles présents limitent les options. ${eventSlotsText()?`Progression : ${eventSlotsText()}.`:''}</p>`:`<p>L’Enquêteur compose la suite du cycle. Reste dans ton espace de jeu jusqu’à une convocation éventuelle.</p>`;
- if(ph==='event_confrontation')return isEventTarget()?`<p><b>CONFRONTATION.</b> Tu es convoqué dans la Grey Room. Trois minutes. Aucun écran ne remplace l’échange.</p>`:`<p>Une confrontation est en cours dans la Grey Room.</p>`;
+ if(ph==='event_confrontation')return r==='enqueteur'?`<p><b>CONFRONTATION.</b> Dirige l’échange entre les personnes convoquées. Tu peux y mettre fin avant l’expiration du chronomètre.</p>`:isEventTarget()?`<p><b>CONFRONTATION.</b> Tu es convoqué dans la Grey Room. L’Enquêteur peut terminer l’échange avant la fin du chronomètre.</p>`:`<p>Une confrontation est en cours dans la Grey Room.</p>`;
  if(ph==='event_assembly')return isParticipant()?`<p><b>ASSEMBLÉE.</b> Tu es admis. Expose uniquement ce qui sert la décision collective.</p>`:`<p>Une Assemblée est en cours. Tu n’y es pas admis.</p>`;
  if(ph==='event_negociation')return isParticipant()?`<p><b>NÉGOCIATION.</b> Avocat et Procureur parlent. L’application ne négocie pas à leur place.</p>`:`<p>Une négociation se déroule hors de toi.</p>`;
  if(ph==='event_requete')return isParticipant()?`<p><b>REQUÊTE.</b> L’Avocat saisit le Juge. Le Juge tranche à partir des faits et de ses instructions privées.</p>`:`<p>Une requête est examinée.</p>`;
@@ -101,7 +101,7 @@ function renderConfrontationPicker(o){
  const first=pairs[0];
  const opts=(STATE.sync?.suspects||[]).filter(p=>pairs.some(q=>q.some(x=>x.id===p.id))).map(p=>`<option value="${esc(p.id)}">${esc(p.pseudo)}</option>`).join('');
  const other=(STATE.sync?.suspects||[]).filter(p=>p.id!==first[0].id&&!confrUsed(first[0].id,p.id)).map(p=>`<option value="${esc(p.id)}">${esc(p.pseudo)}</option>`).join('');
- return `<div class="v13-target-picker"><b>${esc(o.label||'CONFRONTATION')}</b><p class="choice-helper">Deux joueurs différents, une seule confrontation par duo et par cycle · 4 minutes. Maximum 3 confrontations par cycle.</p><label for="v13ConfrontA">Première personne</label><select id="v13ConfrontA" onchange="igr13UpdateConfrontationTargets()">${opts}</select><label for="v13ConfrontB">Seconde personne</label><select id="v13ConfrontB">${other}</select><button class="btn primary" onclick="igr13StartConfrontation()">Confronter ces deux personnes · 4 min</button></div>`;
+ return `<div class="v13-target-picker"><b>${esc(o.label||'CONFRONTATION')}</b><p class="choice-helper">Deux joueurs différents, une seule confrontation par duo et par cycle. Le chronomètre indique la durée maximale. Maximum 3 confrontations par cycle.</p><label for="v13ConfrontA">Première personne</label><select id="v13ConfrontA" onchange="igr13UpdateConfrontationTargets()">${opts}</select><label for="v13ConfrontB">Seconde personne</label><select id="v13ConfrontB">${other}</select><button class="btn primary" onclick="igr13StartConfrontation()">Démarrer la confrontation</button></div>`;
 }
 window.igr13UpdateConfrontationTargets=function(){
  const a=byId('v13ConfrontA')?.value,b=byId('v13ConfrontB');

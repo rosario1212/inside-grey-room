@@ -58,7 +58,10 @@ function routeChanged(){
  if(!old)return;
  // A deliberate return to the selected scenario retains that list position.
  const restoringScenarios=next==='scenarios:list'&&(old.startsWith('scenarios:dossier:')||old==='base:lobby'||old.startsWith('local:'));
- if(!restoringScenarios)noSmoothTop();
+ // Switching between tabs inside a live game is not page navigation.
+ // Forcing scrollTo(0) here made every tap jump vertically on iPhone.
+ const switchingGameTab=old.startsWith('base:game:')&&next.startsWith('base:game:');
+ if(!restoringScenarios&&!switchingGameTab)noSmoothTop();
  if(old!=='join'&&next==='join')returnRoute=old;
  if(old==='join'&&next!=='join')returnRoute='';
  if(next.startsWith('page:')&&(

@@ -15,8 +15,8 @@ assert.equal(index.split('role-viewport-stability-v816.js?v=20261121-v816-1').le
 assert.equal(index.split('interface-consistency-v816.css?v=20261121-v816-1').length-1,1);
 assert(sw.includes('/role-viewport-stability-v816.js?v=20261121-v816-1'));
 assert(sw.includes('/interface-consistency-v816.css?v=20261121-v816-1'));
-assert(sw.includes("const CACHE='igr-v826-mobile-finish-20261121'"));
-assert(finalizer.includes("const pwaVersion='v826-mobile-finish-20261121'"));
+assert(sw.includes("const CACHE='igr-v827-game-tabs-and-investigator-controls-20261122'"));
+assert(finalizer.includes("const pwaVersion='v827-game-tabs-and-investigator-controls-20261122'"));
 for(const source of [web,mobile]){
  assert(source.includes("'role-viewport-stability-v816.js'"));
  assert(source.includes("'interface-consistency-v816.css'"));

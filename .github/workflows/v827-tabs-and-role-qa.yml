@@ -1,0 +1,27 @@
+name: v827 game-tab and role authorization QA
+on:
+  pull_request:
+    paths:
+      - 'game-tab-stability-v827.css'
+      - 'game-tab-stability-host-v827.js'
+      - 'global-navigation-v766.js'
+      - 'index.html'
+      - 'scripts/build-web.mjs'
+      - 'scripts/v827-tabs-and-role-qa.mjs'
+      - 'supabase/migrations/20261122135000_v827_investigator_confrontation_and_skip_guard.sql'
+      - 'service-worker.js'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript syntax
+        run: |
+          node --check game-tab-stability-host-v827.js
+          node --check global-navigation-v766.js
+      - name: Run gameplay tab and role regression checks
+        run: node scripts/v827-tabs-and-role-qa.mjs
