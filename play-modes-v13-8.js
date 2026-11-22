@@ -240,10 +240,10 @@ function handleLocalSubmit(e){if(e.target.id!=='localVerdictForm')return;e.preve
 /* ------------------------------------------------------------------
    HÉRITAGE · LOCAL + ONLINE
 ------------------------------------------------------------------ */
-let hWatcher=null,hLastSig='',hLastStage='',hVotePending=false,hFinishPending=false,hRolePending=false;
+let hWatcher=null,hLastSig='',hLastStage='',hVotePending=false,hFinishPending=false,hRolePending=false,hBrowsingLobby=false,hBrowseEpoch=0;
 function hSession(){return readJSON(HNET_KEY)}
 function saveHSession(v){writeJSON(HNET_KEY,v)}
-function clearHSession(){del(HNET_KEY);hLastSig='';hLastStage='';if(hWatcher){clearInterval(hWatcher);hWatcher=null}}
+function clearHSession(){hBrowsingLobby=false;hBrowseEpoch++;del(HNET_KEY);hLastSig='';hLastStage='';if(hWatcher){clearInterval(hWatcher);hWatcher=null}}
 function heritageMeta(campaign){return window.IGR_HERITAGE?.campaigns?.[campaign]}
 function heritageCarry(campaign){
   try{const s=window.IGR_HERITAGE?.get?.(campaign);if(!s)return[];if(campaign==='cendres'){return [`Crise : ${s.cendres?.crisis?.label||'SOUS CONTRÔLE'}`,`${s.cendres?.network?.nodes?.length||0} identités`,`${s.cendres?.network?.links?.length||0} connexions`]}return [`${(s.kuroi?.debts||[]).filter(d=>d.status==='due').length} dettes ouvertes`,`${s.kuroi?.chronicle?.length||0} faits dans la Chronique`]}catch{return[]}
@@ -265,20 +265,23 @@ function enhanceHeritageChapter(){
 }
 function openMaitreOnline(chapter){const api=window.IGR_HERITAGE_MAITRE_ONLINE;if(typeof api?.create==='function')return api.create(chapter);toastX('Le multijoueur Maître se charge. Réessaie dans un instant.')}
 function renderHeritageOnlineCreate(campaign,chapter,practice=false){if(campaign==='maitre')return openMaitreOnline(chapter);const m=heritageMeta(campaign),ch=m?.chapters?.[chapter-1];shellPut(`<main class="page hnet hplay-theme-${campaign}${campaign==='maitre'?' maitre-page':''}"><header class="hnet-head"><button class="btn ghost small" id="hnetBack">← ${esc(ch?.title||'Héritage')}</button><span>HÉRITAGE · EN LIGNE</span></header><section class="hnet-create"><span>${esc(m?.title||campaign)} · DOSSIER 0${chapter}</span><h1>Créer une cellule</h1><p>Chaque joueur sur son téléphone.</p><label><span>TON PSEUDO</span><input id="hnetPseudo" maxlength="22" autocomplete="nickname" value="${esc(pseudoDefault())}" placeholder="Pseudo"></label><button class="btn primary block" id="hnetCreateBtn">CRÉER LA CELLULE</button></section></main>`);$('#hnetBack')?.addEventListener('click',()=>window.IGR_HERITAGE_PLAY?.openChapter?.(campaign,chapter));$('#hnetCreateBtn')?.addEventListener('click',()=>createHeritageOnline(campaign,chapter,practice))}
-async function createHeritageOnline(campaign,chapter,practice){if(campaign==='maitre')return openMaitreOnline(chapter);const pseudo=$('#hnetPseudo')?.value.trim();if(!pseudo)return toastX('Entre ton pseudo.');const ident=profileIdentity();if(!ident?.id||!ident?.token)return toastX('Ton profil est requis pour ouvrir HÉRITAGE.');let out=null,code=null;for(let i=0;i<5;i++){code=newHCode();try{out=await rpc('igr_heritage_online_create',{p_code:code,p_campaign_id:campaign,p_chapter:chapter,p_pseudo:pseudo,p_profile_id:ident.id,p_profile_token:ident.token});break}catch(e){if(i===4||!/duplicate|23505/i.test(`${e.code||''} ${e.message||''}`)){console.error(e);return toastX(/access/i.test(e.message||'')?'Accès HÉRITAGE requis.':'Création impossible.')}}}storage().setItem('igr_v9_last_pseudo',pseudo);saveHSession({code:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,campaign,chapter,practice:!!practice});await window.IGR_HERITAGE_CONTEXT_V71?.publish?.();startHWatcher(true)}
+async function createHeritageOnline(campaign,chapter,practice){if(campaign==='maitre')return openMaitreOnline(chapter);if(hSession())return toastX('Une cellule est déjà ouverte. Reprends-la ou quitte-la avant de créer une autre salle.');const pseudo=$('#hnetPseudo')?.value.trim();if(!pseudo)return toastX('Entre ton pseudo.');const ident=profileIdentity();if(!ident?.id||!ident?.token)return toastX('Ton profil est requis pour ouvrir HÉRITAGE.');let out=null,code=null;for(let i=0;i<5;i++){code=newHCode();try{out=await rpc('igr_heritage_online_create',{p_code:code,p_campaign_id:campaign,p_chapter:chapter,p_pseudo:pseudo,p_profile_id:ident.id,p_profile_token:ident.token});break}catch(e){if(i===4||!/duplicate|23505/i.test(`${e.code||''} ${e.message||''}`)){console.error(e);return toastX(/access/i.test(e.message||'')?'Accès HÉRITAGE requis.':'Création impossible.')}}}storage().setItem('igr_v9_last_pseudo',pseudo);saveHSession({code:out.room_code||code,token:out.player_token,hostToken:out.host_token,playerId:out.player_id,campaign,chapter,practice:!!practice});await window.IGR_HERITAGE_CONTEXT_V71?.publish?.();startHWatcher(true)}
 async function dualJoinRoom(){const pseudo=($('#joinPseudo')?.value||'').trim(),code=($('#joinCode')?.value||'').trim().toUpperCase();if(!pseudo||code.length!==5)return toastX('Pseudo et code requis.');if(code.startsWith('H')){try{const out=await rpc('igr_heritage_online_join',{p_code:code,p_pseudo:pseudo});storage().setItem('igr_v9_last_pseudo',pseudo);saveHSession({code:out.room_code||code,token:out.player_token,hostToken:null,playerId:out.player_id,campaign:out.campaign_id,chapter:out.chapter,practice:false});startHWatcher(true);return}catch(e){if(!/heritage[_ ]room[_ ]not[_ ]found/i.test(e.message||'')){console.error(e);return toastX(/full/i.test(e.message||'')?'Cellule HÉRITAGE complète.':/started/i.test(e.message||'')?'Cette campagne a déjà commencé.':'Impossible de rejoindre cette cellule HÉRITAGE.')}}}return baseJoinRoom?.()}
-function startHWatcher(immediate=false){if(hSession()?.campaign==='maitre'){window.IGR_HERITAGE_MAITRE_ONLINE?.resume?.();return}if(hWatcher)clearInterval(hWatcher);hWatcher=setInterval(()=>syncHeritageOnline(false),850);if(immediate)syncHeritageOnline(true)}
+function startHWatcher(immediate=false){hBrowsingLobby=false;hBrowseEpoch++;if(hSession()?.campaign==='maitre'){window.IGR_HERITAGE_MAITRE_ONLINE?.resume?.();return}if(hWatcher)clearInterval(hWatcher);hWatcher=setInterval(()=>syncHeritageOnline(false),850);if(immediate)syncHeritageOnline(true)}
 async function syncHeritageOnline(force=false){
-  const s=hSession();if(!s||s.campaign==='maitre')return;
+  const s=hSession();if(!s||s.campaign==='maitre'||hBrowsingLobby)return;
+  const epoch=hBrowseEpoch;
   if(document.hidden&&!force)return;
   try{
     const d=await rpc('igr_heritage_online_sync',{p_code:s.code,p_player_token:s.token});
+    if(hBrowsingLobby||epoch!==hBrowseEpoch||hSession()?.token!==s.token)return;
     hLastStage=d.room?.stage||'';
     if(['cendres','kuroi'].includes(d.room?.campaign_id)&&d.room?.stage==='decision'){
       // Both campaigns have private, player-token validated majority ballots.
       const statusRpc=d.room.campaign_id==='cendres'?'igr_heritage_online_cendres_ballot_status':'igr_heritage_online_kuroi_ballot_status';
       d.room.ballot_status=await rpc(statusRpc,{p_code:s.code,p_player_token:s.token});
     }
+    if(hBrowsingLobby||epoch!==hBrowseEpoch||hSession()?.token!==s.token)return;
     document.dispatchEvent(new CustomEvent('igr-heritage-sync',{detail:d}));
     const ballot=d.room?.ballot_status;
     const sig=JSON.stringify([d.room?.status,d.room?.stage,d.room?.phase_index,d.room?.decision_id,
@@ -505,6 +508,20 @@ function renderHFinished(d){
   shellPut(`<main class="page hnet hplay-theme-${d.room.campaign_id}"><section class="hnet-finished"><span>PARTIE TERMINÉE</span><h1>Le dossier est clos.</h1><p>Le résultat collectif a été confirmé par le serveur.</p><button class="btn primary" id="hnetHome">RETOUR À L’ACCUEIL</button></section></main>`);
   $('#hnetHome')?.addEventListener('click',()=>renderHome());
 }
+function backHeritageLobby(to){
+ const s=hSession();if(!s||s.campaign==='maitre'||hLastStage!=='lobby'||!$('.hnet-lobby')||![0,1,2,3].includes(to))return false;
+ hBrowsingLobby=true;hBrowseEpoch++;if(hWatcher){clearInterval(hWatcher);hWatcher=null}
+ if(to===0)window.IGR_HERITAGE_PLAY?.open?.();
+ else if(to===1)window.IGR_HERITAGE_PLAY?.openCampaign?.(s.campaign);
+ else if(to===2)window.IGR_HERITAGE_PLAY?.openChapter?.(s.campaign,s.chapter);
+ else{
+  const m=heritageMeta(s.campaign),ch=m?.chapters?.[s.chapter-1];
+  shellPut(`<main class="page hnet hplay-theme-${esc(s.campaign)}"><header class="hnet-head"><button class="btn ghost small" id="hnetBack">← Retour</button><span>HÉRITAGE · EN LIGNE</span></header><section class="hnet-create"><span>${esc(m?.title||s.campaign)} · DOSSIER 0${s.chapter}</span><h1>Préparation</h1><p>Ta cellule reste ouverte et ton rôle est conservé. Code : <strong>${esc(s.code)}</strong></p><button class="btn primary block" id="hnetResumeLobby">REVENIR AU LOBBY</button></section></main>`);
+  $('#hnetBack')?.addEventListener('click',()=>window.IGR_HERITAGE_PLAY?.openChapter?.(s.campaign,s.chapter));
+  $('#hnetResumeLobby')?.addEventListener('click',resumeHeritageOnline);
+ }
+ return true;
+}
 function resumeHeritageOnline(){if(!hSession())return toastX('Aucune cellule HÉRITAGE à reprendre.');startHWatcher(true)}
 
 function interceptHeritageOnline(e){const s=hSession();if(!s)return;const hp=e.target.closest?.('[data-hp-action],[data-hp-option]');if(!hp)return;const a=hp.dataset.hpAction;if(a==='hide-next'){e.preventDefault();e.stopImmediatePropagation();readyHeritageOnline();return}if(a==='phase-next'||a==='decision'){e.preventDefault();e.stopImmediatePropagation();advanceHeritageOnline();return}if(a==='phase-prev'){e.preventDefault();e.stopImmediatePropagation();return}if(hp.dataset.hpOption){e.preventDefault();e.stopImmediatePropagation();decideHeritageOnline(hp.dataset.hpOption);return}if(a==='abort'||a==='session-menu'){e.preventDefault();e.stopImmediatePropagation();leaveHeritageOnline();return}if(a==='finish'){e.preventDefault();e.stopImmediatePropagation();if(!s.hostToken){clearHSession();del(HERITAGE_LIVE_KEY);renderHome();return}void finishHeritageOnlineHost();return}}
@@ -526,7 +543,7 @@ function boot(){
   const obs=new MutationObserver(()=>{queueMicrotask(()=>{enhanceStandardConfirm();enhanceHeritageChapter();patchOnlineRoleScreen()})});obs.observe(document.documentElement,{childList:true,subtree:true});
   enhanceStandardConfirm();enhanceHeritageChapter();
   window.addEventListener('pageshow',()=>{installWrappers();setTimeout(()=>{enhanceStandardConfirm();enhanceHeritageChapter()},0)},{passive:true});
-  window.IGR_PLAY_MODES=Object.freeze({version:BUILD,openLocal:renderStandardLocalSetup,resumeHeritageOnline});
+  window.IGR_PLAY_MODES=Object.freeze({version:BUILD,openLocal:renderStandardLocalSetup,resumeHeritageOnline,backHeritageLobby});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();

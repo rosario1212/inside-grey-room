@@ -158,10 +158,12 @@ function journeyCampaign(main){
  return '';
 }
 function journeyBack(main){
- return $('.hplay-back[data-hp-action="chapter"],.hplay-back[data-maitre-action="chapter"],#hnetBack',main);
+ return $('.hplay-back[data-hp-action="chapter"],.hplay-back[data-maitre-action="chapter"],#hnetBack,[data-mnet="back"]',main);
 }
+function lobbyBackHandler(main){return journeyCampaign(main)==='maitre'?window.IGR_HERITAGE_MAITRE_ONLINE?.backLobby:window.IGR_PLAY_MODES?.backHeritageLobby;}
 function canNavigateBack(main,from,to){
- if(!main||to>=from||$('.hnet-lobby',main))return false;
+ if(!main||to>=from)return false;
+ if($('.hnet-lobby',main))return from===4&&to>=0&&to<4&&typeof lobbyBackHandler(main)==='function';
  if(to===0)return typeof window.IGR_HERITAGE_PLAY?.open==='function';
  const id=journeyCampaign(main);
  if(to===1)return id==='maitre'
@@ -200,6 +202,7 @@ function handleProgressClick(event){
  event.preventDefault();event.stopImmediatePropagation();
  const main=button.closest('main.hplay,main.hnet'),from=main&&stage(main),to=Number(button.dataset.hjStep);
  if(!canNavigateBack(main,from,to))return;
+ if(from===4){lobbyBackHandler(main)?.(to);return}
  if(to===0){window.IGR_HERITAGE_PLAY.open();return}
  if(to===1){
   const id=journeyCampaign(main);
