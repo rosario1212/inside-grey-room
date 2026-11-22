@@ -1,6 +1,6 @@
 const CACHE='igr-v827-game-tabs-and-investigator-controls-20261122';
 const SHELL=[
-  '/heritage-hub-v820.css?v=20261121-v826-1',
+  '/heritage-hub-v820.css?v=20261122-campaign-intro',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
   '/heritage-ux-v818.css?v=20261121-v820-1',
   '/heritage-ux-v818.js?v=20261121-v820-1',
