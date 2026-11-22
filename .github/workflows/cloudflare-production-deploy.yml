@@ -59,6 +59,7 @@ jobs:
           node scripts/v829-complete-gameplay-audit-check.mjs
           node scripts/v830-final-vote-check.mjs
           node scripts/v831-mobile-ux-regression.mjs
+          node scripts/v832-provisional-guard-check.mjs
           node scripts/v773-investigator-judicial-card-check.mjs
           node scripts/global-navigation-v766-check.mjs dist
           node scripts/intro-door-v20-check.mjs dist

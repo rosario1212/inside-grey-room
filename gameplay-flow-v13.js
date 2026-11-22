@@ -173,7 +173,7 @@ window.privateCardHtml=privateCardHtml=function(){
 };
 
 window.phaseTimerControl=phaseTimerControl=function(){if(core())return'';return base.phaseTimerControl?base.phaseTimerControl():''};
-window.phaseCanAdvance=phaseCanAdvance=function(){if(!core())return base.phaseCanAdvance?base.phaseCanAdvance():false;const ph=room()?.phase;return !!(STATE.hostToken&&['provisional_lock','locking'].includes(ph))};
+window.phaseCanAdvance=phaseCanAdvance=function(){if(!core())return base.phaseCanAdvance?base.phaseCanAdvance():false;const ph=room()?.phase;return !!(STATE.hostToken&&ph==='locking')};
 
 console.info(`[IGR ${V}] flow overlay actif pour 001–020`);
 })();

@@ -1912,7 +1912,7 @@ async function togglePhaseTimer(pause){
 }
 function phaseCanAdvance(){
  const room=STATE.sync?.room;
- return !!(STATE.hostToken&&room&&room.status==='playing'&&room.phase&&room.phase!=='reveal');
+ return !!(STATE.hostToken&&room&&room.status==='playing'&&room.phase&&room.phase!=='reveal'&&room.phase!=='provisional_lock');
 }
 function hostPhaseControls(){
  if(!phaseCanAdvance())return'';

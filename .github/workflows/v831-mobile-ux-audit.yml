@@ -31,5 +31,6 @@ jobs:
           node scripts/v829-complete-audit-check.mjs
           node scripts/v829-complete-gameplay-audit-check.mjs
           node scripts/v830-final-vote-check.mjs
+          node scripts/v832-provisional-guard-check.mjs
       - name: Preserve four-player composition choices
         run: node scripts/four-player-contract-qa.mjs
