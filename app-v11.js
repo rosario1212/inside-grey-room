@@ -2239,7 +2239,7 @@ function renderDebriefForm(){
        .catch(err=>{
          console.warn('Questionnaire factuel non disponible',err);
          if(STATE._caseQuizLoadKey!==quizKey)return;
-         STATE._caseQuizData={enabled:false};
+         STATE._caseQuizData={enabled:false,error:true};
          if(STATE.view==='game')renderCurrent();
        });
    }
@@ -2260,9 +2260,17 @@ function renderDebriefForm(){
        <div class="field"><label for="qAxis">Axe à approfondir</label><select id="qAxis"><option value="chronologie">Chronologie</option><option value="acces">Accès / déplacements</option><option value="mobile">Mobile / relations</option><option value="materiel">Matériel / technique</option><option value="responsabilite">Responsabilités</option></select></div>
        </section><button class="btn primary block" onclick="submitCaseQuiz()">Sceller les 4 réponses et les 3 repères</button></div>`;
    }
+   if(STATE._caseQuizData?.error)return `<div class="locked-state igr829-quiz-error" role="status">
+     <p>Le questionnaire factuel n’a pas pu être chargé. Aucune réponse n’est perdue ni remplacée par un questionnaire simplifié.</p>
+     <button type="button" class="btn primary" onclick="retryCaseQuiz()">Réessayer le chargement</button></div>`;
    if(STATE._caseQuizData===null)return `<div class="locked-state">Chargement des questions du dossier…</div>`;
  }
  return `<div class="qcm-v11"><div class="field"><label for="qConvergence">1 · Le groupe converge-t-il déjà fortement ?</label><select id="qConvergence"><option value="0">Non</option><option value="1">Un peu</option><option value="2">Oui, très fortement</option></select></div><div class="field"><label for="qConfusion">2 · Le groupe est-il perdu ?</label><select id="qConfusion"><option value="0">Non</option><option value="1">Un peu</option><option value="2">Oui, fortement</option></select></div><div class="field"><label for="qAxis">3 · Quel axe manque le plus ?</label><select id="qAxis"><option value="chronologie">Chronologie</option><option value="acces">Accès / déplacements</option><option value="mobile">Mobile / relations</option><option value="materiel">Matériel / technique</option><option value="responsabilite">Degré de responsabilité</option></select></div><button class="btn primary block" onclick="submitDebrief()">Envoyer au MJ automatique</button></div>`;
+}
+function retryCaseQuiz(){
+ STATE._caseQuizLoadKey=null;
+ STATE._caseQuizData=null;
+ if(STATE.view==='game')renderCurrent();
 }
 async function submitCaseQuiz(){
  const answers={};
