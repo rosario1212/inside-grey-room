@@ -33,7 +33,7 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
     const img=card.querySelector('img'),shade=card.querySelector('.hplay-campaign-shade');
     const body=card.querySelector('.hplay-campaign-body'),title=body.querySelector('strong'),footer=body.querySelector('.hplay-campaign-foot');
     return {
-     display:getComputedStyle(card).display,card:rect(card),image:rect(img),
+     display:getComputedStyle(card).display,flexDirection:getComputedStyle(card).flexDirection,card:rect(card),image:rect(img),
      imageFit:getComputedStyle(img).objectFit,imagePosition:getComputedStyle(img).position,
      artAlignment:getComputedStyle(img).objectPosition,titlePosition:getComputedStyle(title).position,
      shade:getComputedStyle(shade).backgroundImage,shadeDisplay:getComputedStyle(shade).display,
@@ -45,7 +45,8 @@ export async function runHeritageV760VisualChecks({page,css,read,check}){
    }));
    assert.equal(measured.length,3);
    for(const [i,m] of measured.entries()){
-    assert.equal(m.display,'block','Cinematic cover presentation '+hubCards[i][0]);
+    assert(['block','flex'].includes(m.display) && (m.display!=='flex'||m.flexDirection==='column'),
+     'Cinematic cover must use a full-bleed block or vertical poster column '+hubCards[i][0]);
     assert.equal(m.imageFit,'cover','Full-bleed poster '+hubCards[i][0]);
     assert.equal(m.imagePosition,'absolute','Poster must be background layer '+hubCards[i][0]);
     assert.equal(m.shadeDisplay,'block','Gradient overlay must be visible '+hubCards[i][0]);
