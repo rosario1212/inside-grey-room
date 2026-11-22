@@ -1,0 +1,138 @@
+/* v835 — one clear live action, one honest public player roster. */
+#app .game-v11 .game-ident-text{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+#app .game-v11 .igr835-party-jump{
+ border:1px solid rgba(196,214,226,.23);border-radius:999px;
+ background:rgba(210,225,236,.055);padding:7px 11px;
+ color:#d9e3e9;font-size:11px;font-weight:650;line-height:1.2;
+ cursor:pointer;min-height:35px;touch-action:manipulation;
+}
+#app .game-v11 .igr835-party-jump:focus-visible,
+#app .game-v11 .igr835-overview-btn:focus-visible{outline:2px solid #e8eff5;outline-offset:3px}
+#app .game-v11 .igr835-spotlight{
+ position:relative;display:grid;gap:9px;
+ border:1px solid rgba(226,238,244,.48);border-left:4px solid #dbe5ec;
+ border-radius:16px;background:linear-gradient(125deg,rgba(40,53,65,.90),rgba(16,25,34,.96));
+ padding:16px 17px;margin:12px 0 10px;
+ color:#f1f5f7;box-shadow:0 5px 28px rgba(0,0,0,.18);
+ min-width:0;
+}
+#app .game-v11 .igr835-spotlight[data-action-type="confrontation"]{
+ border-left-color:#e8d2b3;border-color:rgba(224,204,170,.46);
+ background:linear-gradient(125deg,rgba(51,44,39,.91),rgba(20,26,33,.98));
+}
+#app .igr835-eyebrow{
+ display:inline-flex;align-items:center;gap:8px;
+ font:750 10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.12em;
+ color:#d7e3ea;text-transform:uppercase;
+}
+#app .igr835-pulse{display:inline-block;width:7px;height:7px;flex:0 0 7px;border-radius:999px;background:#e8f2f6;box-shadow:0 0 0 4px rgba(221,237,245,.11)}
+#app .igr835-focused-title{font-size:11px;font-weight:700;letter-spacing:.10em;color:#bdced9;line-height:1.3}
+#app .igr835-focus-names{
+ display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+ font-weight:800;font-size:clamp(25px,6.5vw,38px);line-height:1.12;letter-spacing:-.03em;
+ overflow-wrap:anywhere;min-width:0;
+}
+#app .igr835-focus-names strong{font-weight:800;max-width:100%;overflow-wrap:anywhere}
+#app .igr835-plus{font:600 20px/1 'IBM Plex Mono',monospace;color:#a4b7c5}
+#app .igr835-spotlight p{font-size:13px;line-height:1.5;color:#dce6ec;margin:0}
+#app .igr835-overview-btn{
+ display:inline-flex;align-items:center;justify-content:center;justify-self:start;
+ min-height:38px;padding:8px 12px;border:1px solid rgba(222,236,244,.28);
+ border-radius:10px;background:rgba(255,255,255,.08);
+ font-size:11px;font-weight:750;color:#f2f5f7;cursor:pointer;
+}
+#app .game-panel-v11 .igr835-mini{
+ position:sticky;top:calc(env(safe-area-inset-top,0px) + 9px);
+ z-index:3;border:1px solid rgba(207,225,236,.31);
+ border-radius:10px;padding:9px 11px;margin:0 0 12px;
+ background:rgba(22,34,43,.96);box-shadow:0 7px 16px rgba(0,0,0,.25);
+ color:#f0f4f6;font-size:12px;font-weight:750;line-height:1.4;
+ overflow-wrap:anywhere;
+}
+#app .igr835-cycle-progress{
+ display:flex;align-items:center;min-height:37px;
+ padding:9px 12px;border:1px solid rgba(199,215,225,.17);
+ border-radius:10px;background:rgba(220,235,240,.04);
+ color:#ccd8df;font-size:12px;font-weight:700;line-height:1.4;
+}
+#app .igr834-cycle .igr634-interviews.igr835-idle-interviews{display:none!important}
+#app .igr834-cycle .igr634-interviews{order:0}
+#app .igr834-cycle .igr634-priority{order:1}
+#app .igr834-cycle #igr634-actions{order:2}
+#app .igr834-cycle .igr634-interviews .phase-explain{
+ border:1px solid rgba(214,230,240,.17);
+ background:rgba(200,222,236,.035);
+}
+#app .igr835-party-overview{display:grid;gap:14px;min-width:0}
+#app .igr835-party-overview>header{
+ display:grid;gap:9px;border:1px solid rgba(218,233,241,.22);
+ background:linear-gradient(150deg,#17212b,#0c1118);
+ padding:17px;border-radius:16px;min-width:0;
+}
+#app .igr835-party-overview>header>small{
+ font:750 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#adbdc9;
+}
+#app .igr835-party-overview>header h2{
+ font-size:clamp(21px,4.8vw,28px);line-height:1.15;margin:0;color:#f0f4f7;
+ overflow-wrap:anywhere;
+}
+#app .igr835-party-overview>header p{font-size:12px;line-height:1.5;color:#b8c7d2;margin:0}
+#app .igr835-party-overview>header p strong{color:#e6f0f5;font-family:'IBM Plex Mono',monospace;letter-spacing:.08em}
+#app .igr835-tags{display:flex;gap:6px;flex-wrap:wrap}
+#app .igr835-meta-tag{
+ display:inline-flex;align-items:center;min-height:29px;padding:5px 9px;
+ border:1px solid rgba(200,216,227,.16);border-radius:8px;
+ background:rgba(225,235,245,.035);font-size:11px;font-weight:650;color:#d4e1e9;
+}
+#app .igr835-current-summary{
+ border:1px solid rgba(223,234,242,.38);border-left:3px solid #dfe8ed;
+ background:#1b2731;border-radius:11px;padding:12px 13px;
+ font:700 12px/1.5 'IBM Plex Mono',monospace;color:#f0f5f7;
+ overflow-wrap:anywhere;
+}
+#app .igr835-roster-heading{font-size:19px;font-weight:750;letter-spacing:-.02em;margin:1px 0 0;color:#edf2f5}
+#app .igr835-roster{display:grid;gap:8px}
+#app .igr835-player{
+ display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;
+ align-items:center;min-width:0;padding:11px 12px;
+ border:1px solid rgba(210,228,238,.14);
+ border-radius:13px;background:rgba(19,26,33,.72);
+}
+#app .igr835-player-current{border-color:rgba(232,243,247,.56);background:linear-gradient(125deg,rgba(41,57,67,.92),rgba(17,26,35,.94))}
+#app .igr835-avatar{
+ display:grid;place-items:center;width:42px;height:42px;
+ border-radius:50%;border:1px solid rgba(207,221,230,.25);
+ background:#17212a;color:#e7eef3;font-size:14px;font-weight:750;flex-shrink:0;
+}
+#app .igr835-player-copy{display:grid;gap:4px;min-width:0;overflow-wrap:anywhere}
+#app .igr835-player-copy strong{font-size:14px;line-height:1.2;color:#f1f5f7}
+#app .igr835-player-copy>span{font-size:11px;line-height:1.3;color:#b0c0cb}
+#app .igr835-you{font-size:10px;color:#a9c7d5}
+#app .igr835-presence{color:#a9d5be!important}
+#app .igr835-player-state{
+ display:inline-flex;align-items:center;justify-content:center;max-width:115px;
+ padding:6px 8px;border-radius:8px;border:1px solid rgba(211,226,234,.14);
+ color:#adbdc7;background:rgba(255,255,255,.035);
+ font-size:10px;font-weight:700;text-align:center;line-height:1.3;
+}
+#app .igr835-player-state:is([data-kind="interview"],[data-kind="confrontation"]){
+ border-color:rgba(228,241,246,.58);background:rgba(223,235,243,.13);color:#f3f7fa;
+}
+#app .igr835-player-state[data-kind="involved"]{border-color:rgba(193,215,229,.32);color:#dbe6ec}
+#app .igr835-roster-help{font-size:11px;line-height:1.55;color:#a5b1bc;margin:0}
+#app .igr835-secondary-note{opacity:.82}
+#app .igr835-secondary-note p{font-size:12px;line-height:1.5}
+#app .game-v11 .phase-exit-btn{opacity:.78}
+@media(max-width:420px){
+ #app .game-v11 .igr835-spotlight{padding:13px 14px;gap:8px;margin:10px 0}
+ #app .igr835-focus-names{font-size:clamp(23px,6vw,31px)}
+ #app .igr835-party-overview>header{padding:14px}
+ #app .igr835-player{grid-template-columns:36px minmax(0,1fr);gap:9px}
+ #app .igr835-avatar{width:36px;height:36px;font-size:12px}
+ #app .igr835-player-state{grid-column:2;justify-self:start;max-width:none;font-size:10px}
+ #app .igr835-player-copy strong{font-size:13px}
+ #app .igr835-party-overview{gap:11px}
+ #app .game-v11 .igr835-party-jump{min-height:32px;padding:6px 9px;font-size:10px}
+ #app .game-v11 .tabs-v11 .tab{font-size:11px;white-space:normal;line-height:1.25}
+}
+@media(prefers-reduced-motion:reduce){#app .igr835-pulse{animation:none!important}}
