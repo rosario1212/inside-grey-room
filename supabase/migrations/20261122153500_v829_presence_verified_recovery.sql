@@ -183,7 +183,7 @@ raw:=jsonb_set(raw,'{scenario,investigation_006_used}',to_jsonb(EXISTS(SELECT 1 
  raw:=jsonb_set(raw,'{scenario,investigation_006_adaptive}','true'::jsonb,true);
 if exists(select 1 from igr_private.igr_v99_room_canons c where c.room_code=room.code and c.scenario_id='006' and coalesce((c.manuscript->'v284_detailed_questionnaire'->>'enabled')::boolean,false)) then raw:=jsonb_set(raw,'{scenario,investigation_006_detailed}','true'::jsonb,true);end if;
  return raw;
-end $function$
+end $function$;
 
 
 CREATE OR REPLACE FUNCTION public.igr_omerta_standalone_safe_sync(p_code text, p_player_token uuid)
@@ -279,7 +279,7 @@ begin
  raw:=jsonb_set(raw,'{my_actions}','[]'::jsonb,true);
  return raw;
 end;
-$function$
+$function$;
 
 
 -- Host recovery is only possible after an actual inactivity grace period.
