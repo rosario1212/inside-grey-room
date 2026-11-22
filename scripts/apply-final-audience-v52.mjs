@@ -2,7 +2,7 @@ import { copyFile, readFile, stat, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 const root=process.cwd(),target=path.resolve(root,process.argv[2]||'dist');
-const VERSION='v828-final-audit-no-judge-20261122',CACHE='igr-v828-final-audit-no-judge-20261122',runtimeName='final-audience-v52.js';
+const VERSION='v829-verified-absence-final-20261122',CACHE='igr-v829-verified-absence-final-20261122',runtimeName='final-audience-v52.js';
 const source=path.join(root,runtimeName),dest=path.join(target,runtimeName),appTarget=path.join(target,'app-v11.js'),swTarget=path.join(target,'service-worker.js'),pages=['index.html','en.html'];
 const exists=async f=>{try{await stat(f);return true}catch{return false}};
 const required=(text,from,to,label)=>{const next=text.replace(from,to);if(next===text)throw new Error(`v52 patch target missing: ${label}`);return next};

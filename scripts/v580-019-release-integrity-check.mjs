@@ -10,7 +10,7 @@ const hooks=read('supabase/migrations/20261025235520_igr_v580_019_gameplay_hooks
 const sync=read('supabase/migrations/20261025235530_igr_v580_019_private_sync.sql');
 const check=read('.github/workflows/cloudflare-build-check.yml');
 const deploy=read('.github/workflows/cloudflare-production-deploy.yml');
-const v='v812-spy-lobby-viewport-20261121';
+const v='v829-complete-gameplay-audit-20261122';
 execFileSync(process.execPath,['--check','app-v11.js'],{stdio:'pipe'});
 assert(html.includes('app-v11.js?v='+v),'HTML app revision mismatch');
 assertPwaRevision(html,sw);

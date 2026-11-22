@@ -41,7 +41,7 @@ for(const f of ['audit-gameplay-v828.css','audit-gameplay-v828.js']){
  assert(mobile.includes("'"+f+"'"),'native build missing '+f);
 }
 assert(index.includes('analyst-profiling-v700.js?v=v828-optional-profiles-20261122'));
-assert(sw.includes("const CACHE='igr-v828-audit-final-mobile-20261122'"));
+assert(sw.includes("const CACHE='igr-v829-complete-gameplay-audit-20261122'"));
 assert(css.includes('safe-area-inset-bottom'));
 assert(css.includes('min-height: 44px'));
 const a=final.indexOf('function reassessment(){'),b=final.indexOf('function renderFinal(){',a);

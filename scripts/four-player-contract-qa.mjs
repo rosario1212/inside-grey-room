@@ -151,7 +151,7 @@ assert(lobbyUi.includes('const sameLobby='),'Role updates must detect the same m
 assert(lobbyUi.includes('const scrollY=sameLobby?window.scrollY:0'),'Role updates must preserve the actual viewport position');
 assert(!lobbyUi.includes('scrollY+delta'),'A changing card must never shift the viewport');
 assert(lobbyCss.includes('.igr-role-preview'),'Analyst preview styling missing');
-assert(html.includes('v812-spy-lobby-viewport-20261121'),'Stale lobby cache reference');
+assert(html.includes('v829-complete-gameplay-audit-20261122'),'Current mobile app revision missing');
 console.log('PASS: stationary role cards, exact viewport retention, early Analyst selection, automatic composition and no manual lobby panel');
 
 console.log('PASS: classic, 001/004/009 Team-4 online room slot allocation');
