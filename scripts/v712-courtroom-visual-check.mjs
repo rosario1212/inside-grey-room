@@ -22,8 +22,8 @@ const env=(source,who,step,locale='fr',withJudge=true)=>{
  const players=roomPlayers.filter(p=>withJudge||p.public_role!=='juge');
  const player=players.find(p=>p.id===who)||players[0];
  const STATE={tab:'final52',room:'C712',token:'sample-token',sync:{
-  room:{code:'C712',scenario_id:'014',status:'playing',phase:withJudge?'final_suspect_defenses':'final_audience',
-   state:{v52_stage:withJudge?'courtroom':'audience',v708_court_step:step,v708_checks:['charges'],
+  room:{code:'C712',scenario_id:'014',status:'playing',phase:'final_suspect_defenses',
+   state:{v52_stage:withJudge?'courtroom':'defenses',v708_court_step:step,v708_checks:['charges'],
     v708_heard:[],v708_last_word:[],v59_absent:[],v52_queue:[],duration_mode:'short'}},
   players,player}};
  const window={STATE,IGR_LOCALE:locale,renderGameTab(){return'fallback'},renderRules(){return''},
@@ -43,7 +43,7 @@ for(const [id,step] of [['j','seating'],['j','debate'],['j','conclusions'],['s1'
  if(id==='s1')assert(h.includes('igr712-participant-controls'),'defendant controls missing');
 }
 const noJudge=env(court,'e','opening','fr',false).window.renderGameTab();
-assert(noJudge.includes('Audience')&&!noJudge.includes('igr712-hero'),'no-Judge legacy finale changed');
+assert(noJudge.includes('Défenses')&&!noJudge.includes('igr712-hero')&&!noJudge.includes('Audience des rôles'),'no-Judge must start with the suspect defences');
 for(const locale of ['fr','en']){
  const h=env(rules,'j','seating',locale).window.IGR_SELF_GUIDED_RULES_V51.rulebookHtml(false);
  assert(h.includes('igr712-rule-lanes')&&h.includes('igr712-majority-strip'),'visual rule comparison missing');
