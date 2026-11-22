@@ -1,4 +1,4 @@
-const CACHE='igr-v828-audit-final-mobile-20261122';
+const CACHE='igr-v829-complete-gameplay-audit-20261122';
 const SHELL=[
   '/heritage-hub-v820.css?v=20261122-campaign-intro',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
@@ -12,6 +12,8 @@ const SHELL=[
   '/game-tab-stability-host-v827.js?v=20261122-v827-1',
   '/audit-gameplay-v828.css?v=20261122-audit-v828',
   '/audit-gameplay-v828.js?v=20261122-audit-v828',
+  '/gameplay-integrity-v829.css?v=20261122-audit-v829',
+  '/gameplay-integrity-v829.js?v=20261122-audit-v829',
   '/heritage-mobile-polish-v815.css?v=20261121-v815-1',
   '/video-mobile-polish-v814.css?v=20261121-v814-1',
   '/video-mobile-polish-v814.js?v=20261121-v826-1',
@@ -40,7 +42,7 @@ const SHELL=[
   '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
   '/omerta-v12-40.css?v=v12.41-uniform-dlc','/omerta-money-intel-v1.css?v=om021-1','/omerta-santoro-verdict-v28.css?v=santoro-verdict-v28','/omerta-023-spy-v1.css?v=omerta-023-spy-v1','/terror-v12-40.css?v=terror-fdr-context-20261116','/dlc-suite-v12-40.css?v=catalog-picker-v729-20261116','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
-  '/app-v11.js?v=v812-spy-lobby-viewport-20261121','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
+  '/app-v11.js?v=v829-complete-gameplay-audit-20261122','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
   '/turn-v12-4.js?v=security-v701-room-authorized-20261115','/profile-dossier-v12.js?v=v12.22-mobile-ui','/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
   '/notifications-v12.js?v=v12.22-mobile-ui','/native-lifecycle-v12.js?v=v12.22-mobile-ui','/runtime-optimization-v12.js?v=v12.22-mobile-ui','/gameplay-simple-v12.js?v=v12.22-mobile-ui',
   '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v813-single-role-choice-20261121',
