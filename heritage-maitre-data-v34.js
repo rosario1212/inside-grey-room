@@ -3,7 +3,7 @@
 'use strict';
 const META=Object.freeze({
   id:'maitre',title:'MAÎTRE',subtitle:'Droit pénal · Réputation · Dossier vivant',
-  cover:'assets/heritage-maitre-01-le-client.webp?v=v34-maitre',
+  cover:'/assets/heritage-maitre-campaign-intro.webp?v=20261122-maitre-intro-v2',
   promise:'Construisez une défense. Laissez des traces. Assumez ce qu’elles deviendront.',
   heritage:'Héritage de la défense',mechanic:'LES TRACES · L’ANGLE · LA DÉMONSTRATION',
   chapters:Object.freeze([

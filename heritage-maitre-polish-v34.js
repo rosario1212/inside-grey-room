@@ -6,6 +6,8 @@ function absolutePoster(src=''){
   return window.IGR_HERITAGE_MAITRE_DATA?.META?.chapters?.find(ch=>ch.n===number)?.poster||src;
 }
 function repairPosters(root=document){
+  const campaignCover='/assets/heritage-maitre-campaign-intro.webp?v=20261122-maitre-intro-v2';
+  root.querySelectorAll('.maitre-hub-card>img,.maitre-page.hplay-campaign .hplay-campaign-hero>img').forEach(img=>{if(img.getAttribute('src')!==campaignCover)img.setAttribute('src',campaignCover);});
   root.querySelectorAll('img').forEach(img=>{
     const src=img.getAttribute('src')||'';
     if(!src.includes('heritage-maitre-'))return;
