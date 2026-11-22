@@ -1052,3 +1052,11 @@ body:has(#app main.maitre-page.hnet .hnet-lobby) .igr-beta-footer a:is(:visited,
   color:#6d302b!important;opacity:1!important;
   text-decoration-color:currentColor!important;
 }
+
+/* Dedicated campaign introduction artwork */
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card){display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;gap:0!important;overflow:hidden!important;border-radius:19px!important;}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>img{position:static!important;inset:auto!important;display:block!important;flex:none!important;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:1056/1197!important;object-fit:contain!important;object-position:center!important;filter:none!important;border-radius:0!important;}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-shade{display:none!important;}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-body{position:static!important;inset:auto!important;display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;padding:0!important;margin:0!important;background:#090c10!important;}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot{display:flex!important;margin:0!important;padding:14px 18px!important;border-top:1px solid rgba(242,244,246,.18)!important;}
+#app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot :is(b,i){font-size:11px!important;}
