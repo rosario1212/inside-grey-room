@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+const read=p=>readFileSync(p,'utf8');
+const app=read('app-v11.js'),final=read('final-audience-v52.js'),presence=read('gameplay-integrity-v829.js'),css=read('gameplay-integrity-v829.css'),sql=read('supabase/migrations/20261122153500_v829_presence_verified_recovery.sql'),index=read('index.html'),sw=read('service-worker.js'),web=read('scripts/build-web.mjs'),native=read('scripts/build-mobile.mjs'),host=read('game-tab-stability-host-v827.js');
+for(const f of ['app-v11.js','final-audience-v52.js','gameplay-integrity-v829.js'])execFileSync(process.execPath,['--check',f]);
+assert(app.includes('inscrit${count>1'), 'Lobby registration label');
+assert(!app.includes('présent${count>1'),'Do not claim enrollment means active');
+assert(app.includes("document.visibilityState==='hidden'||navigator.onLine===false"),'No hidden-tab polling');
+assert(app.includes('hideIntroImmediately();')&&app.includes('APP_WAS_HIDDEN=false'),'No door replay on active-room resume');
+assert(app.includes('1 · Vérifier les faits · 4 questions')&&app.includes('2 · Ton appréciation · 3 repères'),'Separate factual/reflection sections');
+assert(app.includes('if(STATE._caseQuizData?.error)return'),'Quiz network errors must not silently downgrade to generic');
+assert(app.includes('retryCaseQuiz()'),'Quiz retry button');
+assert(app.includes('Sceller les 4 réponses et les 3 repères'),'Clear quiz submission');
+assert(app.includes('Seul l’Enquêteur peut terminer cet échange'),'Host may not skip interrogations');
+assert(!app.includes("toast('Impossible de passer cette étape.')"),'Generic host error removed');
+assert(presence.includes('igr_v829_presence_status'),'Server presence RPC');
+assert(presence.includes("if(!inRoom()||document.visibilityState==='hidden'||navigator.onLine===false)"),'No hidden heartbeat');
+assert(presence.includes("room_code===String(S()?.room||'')"),'Room mismatch rejected');
+assert(presence.includes("if(!fresh())"),'Stale snapshot is unknown');
+assert(final.includes('peer?.eligible_to_recover||peer?.active!==false'),'Guard against false recovery');
+assert(final.includes('Le serveur ne confirme pas encore'),'Explain invalid recovery');
+for(const part of ['create table if not exists igr_private.igr_v829_player_presence','enable row level security','revoke all on igr_private.igr_v829_player_presence','igr_private.igr_v829_touch','public.igr_v829_presence_status','grant execute on function public.igr_v829_presence_status(text,uuid) to anon,authenticated',"last_seen_at>=now()-interval '135 seconds'",'player still active recently'])assert(sql.includes(part),'Missing database rule '+part);
+assert(host.includes('igr_v827_end_confrontation')&&host.includes('igr_v4_end_interrogation'),'Investigator controls');
+for(const asset of ['gameplay-integrity-v829.js','gameplay-integrity-v829.css']){assert(index.includes(asset+'?v=20261122-audit-v829'),'HTML missing '+asset);assert(sw.includes('/'+asset+'?v=20261122-audit-v829'),'PWA missing '+asset);assert(web.includes("'"+asset+"'"),'Web bundle missing '+asset);assert(native.includes("'"+asset+"'"),'Native bundle missing '+asset);}
+assert(sw.includes("const CACHE='igr-v829-complete-gameplay-audit-20261122'"));
+assert(css.includes('.igr829-quiz-group')&&css.includes('.igr829-presence-pill'));
+console.log('PASS v829: presence / no false absence / 4+3 quiz / door resume / PWA packaging');
