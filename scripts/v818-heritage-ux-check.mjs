@@ -12,7 +12,7 @@ const finalizer=read('scripts/finalize-cartel030-release.mjs');
 new vm.Script(code);
 const cssAsset='heritage-ux-v818.css?v=20261121-v820-1';
 const jsAsset='heritage-ux-v818.js?v=20261121-v820-1';
-const hubAsset='heritage-hub-v820.css?v=20261121-v826-1';
+const hubAsset='heritage-hub-v820.css?v=20261122-campaign-intro';
 for(const asset of [cssAsset,jsAsset,hubAsset]){
  assert.equal(index.split(asset).length-1,1,'Asset loaded once: '+asset);
  assert(sw.includes('/'+asset),'Offline shell must include '+asset);
