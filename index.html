@@ -13,6 +13,16 @@
   <meta name="apple-mobile-web-app-title" content="Inside Grey Room">
   <meta name="description" content="Inside Grey Room : enquêtes psychologiques multijoueurs, rôles secrets et vérités à reconstruire.">
   <title>Inside Grey Room</title>
+  <script>
+   // Hide the door before first paint when a previously joined room is being restored.
+   (()=>{try{
+    const saved=JSON.parse(localStorage.getItem('igr_v11_session')||'null');
+    if(saved?.room&&saved?.token&&['lobby','briefing','role','game'].includes(saved.view)){
+      document.documentElement.classList.add('igr831-resume-room');
+    }
+   }catch(_){}})();
+  </script>
+  <style>html.igr831-resume-room #introGate{display:none!important}</style>
   <link rel="manifest" href="manifest.webmanifest?v=v14-pwa-icon">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v14.png?v=v14-pwa-icon">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-v14.png?v=v14-pwa-icon">
@@ -66,6 +76,7 @@
   <link rel="stylesheet" href="game-tab-stability-v827.css?v=20261122-v827-1">
   <link rel="stylesheet" href="audit-gameplay-v828.css?v=20261122-audit-v828">
   <link rel="stylesheet" href="gameplay-integrity-v829.css?v=20261122-audit-v829">
+  <link rel="stylesheet" href="lobby-mobile-polish-v831.css?v=v831-mobile-ux-20261122">
 </head>
 <body>
   <div class="bg-noise"></div><div class="bg-vignette"></div>
@@ -90,7 +101,7 @@
   <div id="app"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
   <noscript>Active JavaScript pour jouer à Inside Grey Room.</noscript>
   <script>(()=>{try{const k='igr_v11_session',p=Storage.prototype,g=p.getItem,s=p.setItem,r=p.removeItem,native=location.protocol==='file:'||location.hostname==='insidegreyroom.local'||/[?&]native=(android|ios)\b/.test(location.search),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(native||standalone)return;const scoped=x=>x===k||String(x).startsWith('igr_v11_notes_');p.getItem=function(x){if(this===localStorage&&scoped(x))return g.call(sessionStorage,x);return g.call(this,x)};p.setItem=function(x,v){if(this===localStorage&&scoped(x))return s.call(sessionStorage,x,v);return s.call(this,x,v)};p.removeItem=function(x){if(this===localStorage&&scoped(x))return r.call(sessionStorage,x);return r.call(this,x)}}catch(_){}})();</script>
-  <script src="app-v11.js?v=v829-complete-gameplay-audit-20261122"></script>
+  <script src="app-v11.js?v=v831-mobile-ux-20261122"></script>
   <script src="qa-fixes-v12.js?v=v12.22-mobile-ui"></script>
   <script src="investigation-sheet-v12.js?v=v12.22-mobile-ui"></script>
   <script src="video-v12-3.js?v=v12.22-mobile-ui"></script>
@@ -156,5 +167,6 @@
   <script src="audit-gameplay-v828.js?v=20261122-audit-v828"></script>
   <script src="gameplay-integrity-v829.js?v=20261122-audit-v829"></script>
   <script src="heritage-ux-v818.js?v=20261121-v820-1"></script>
+  <script src="lobby-mobile-polish-v831.js?v=v831-mobile-ux-20261122"></script>
 </body>
 </html>
