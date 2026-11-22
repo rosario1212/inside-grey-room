@@ -26,7 +26,7 @@ for(const file of ['gameplay-integrity-v829.js','gameplay-integrity-v829.css']){
  assert(read('scripts/build-web.mjs').includes("'"+file+"'"),'web build missing '+file);
  assert(read('scripts/build-mobile.mjs').includes("'"+file+"'"),'native build missing '+file);
 }
-assert(sw.includes("igr-v829-complete-gameplay-audit-20261122"));
+assert(sw.includes("igr-v830-final-ballot-guard-20261122"));
 const a=app.indexOf('async function lockFinal(){'),b=app.indexOf('function responsibilityLabel(',a);
 assert(a>0&&b>a,'source final payload');
 const body=app.slice(a,b);
