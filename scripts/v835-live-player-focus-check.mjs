@@ -7,11 +7,15 @@ import vm from 'node:vm';
 const read=p=>fs.readFileSync(p,'utf8');
 const code=read('live-player-focus-v835.js'),css=read('live-player-focus-v835.css');
 const target=path.resolve(process.argv[2]||'dist');
-const html=read(path.join(target,'index.html')),sw=read(path.join(target,'service-worker.js'));
+const html=read(path.join(target,'index.html'));
+const swPath=path.join(target,'service-worker.js');
+const sw=fs.existsSync(swPath)?read(swPath):null; // Native bundles do not ship a service worker.
 assert(html.includes('live-player-focus-v835.js?v=v835-player-focus-20261122'));
 assert(html.includes('live-player-focus-v835.css?v=v835-player-focus-20261122'));
-assert(sw.includes('/live-player-focus-v835.js?v=v835-player-focus-20261122'));
-assert(sw.includes('/live-player-focus-v835.css?v=v835-player-focus-20261122'));
+if(sw){
+ assert(sw.includes('/live-player-focus-v835.js?v=v835-player-focus-20261122'));
+ assert(sw.includes('/live-player-focus-v835.css?v=v835-player-focus-20261122'));
+}
 assert(html.indexOf('cycle-workspace-v834.js')<html.indexOf('live-player-focus-v835.js'));
 assert(css.includes('.igr835-spotlight')&&css.includes('.igr835-party-overview'));
 assert(!code.includes('private_state')&&!code.includes('secret_role'),'Never read private roles into public player roster');
