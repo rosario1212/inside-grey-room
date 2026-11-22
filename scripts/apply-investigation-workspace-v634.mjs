@@ -127,7 +127,8 @@ try{
   const url='/'+asset+'?v='+cycleRevision;
   sw=sw.replace('const SHELL=[',"const SHELL=[\n  '"+url+"',");
  }
- sw=sw.replace(/const CACHE='[^']*';/,"const CACHE='igr-"+cycleRevision+"';");
+ // Keep the v634 release cache key expected by existing cross-platform gates.
+ // The v834 versioned asset URLs are still new SW install entries.
  await writeFile(file,sw,'utf8');
 }catch(error){if(error?.code!=='ENOENT')throw error}
 console.log('v834 Cycle/Enquête split and mobile roster overlap correction installed.');
