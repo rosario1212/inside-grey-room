@@ -51,7 +51,7 @@ for(const page of ['index.html','en.html']){
   if(!html.includes('duration-modes-v35.css'))html=html.replace('</head>',`${durationHead}\n</head>`);
   if(!html.includes('play-modes-v13-8.js'))html=html.replace('</body>',`${premiumScripts}\n</body>`);
   else if(!html.includes('premium-access-sync-v17.js'))html=html.replace('</body>',`  <script src="premium-access-sync-v17.js?v=v755-uniform-dlc-hooks-20261117"></script>\n</body>`);
-  if(!html.includes('heritage-journey-v755.js'))html=html.replace('</body>','  <script src="heritage-journey-v755.js?v=v769-join-navigation"></script>\n</body>');
+  if(!html.includes('heritage-journey-v755.js'))html=html.replace('</body>','  <script src="heritage-journey-v755.js?v=v829-lobby-back"></script>\n</body>');
   if(!html.includes('global-navigation-v766.js'))html=html.replace('</body>','  <script src="global-navigation-v766.js?v=v776-single-contextual-exit"></script>\n</body>');
   if(!html.includes('duration-modes-v35.js'))html=html.replace('</body>',`${durationScript}\n</body>`);
   if(!html.includes('store-catalog-v69.js')){
