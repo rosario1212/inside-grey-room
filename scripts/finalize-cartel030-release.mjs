@@ -8,7 +8,7 @@ const version='v173-cartel031-negotiation';
 // cache revision so new scenario roles reach installed PWAs.
 const clientVersion='v812-spy-lobby-viewport-20261121';
 // Keep the installed web-app cache in sync with the v820 Heritage hub and mobile UI improvements.
-const pwaVersion='v826-mobile-finish-20261121';
+const pwaVersion='v827-game-tabs-and-investigator-controls-20261122';
 await copyFile(path.resolve('cartel031-v171.js'),path.join(target,'cartel031-v171.js'));
 const nativeBundle=(await readFile(path.join(target,'index.html'),'utf8')).includes('native-store-boundary-v14.js');
 // Run after all historical patchers: none may restore an older app URL or cache.
