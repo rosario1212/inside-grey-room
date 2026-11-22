@@ -322,5 +322,4 @@ begin
   elsif r.phase='final_suspect_defenses' and r.state->>'v52_stage'='courtroom' then st:='{}'::jsonb;
   else perform public.igr_v52_advance(r.code,'host_confirmed_absence');st:='{}'::jsonb;end if;
  return jsonb_build_object('ok',true)||st;
-end$function$
-
+end$function$;
