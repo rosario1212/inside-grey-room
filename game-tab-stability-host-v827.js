@@ -99,6 +99,11 @@ window.igr827InvestigatorEndConfrontation=async function(){
 const originalCanAdvance=window.phaseCanAdvance;
 if(typeof originalCanAdvance==='function')window.phaseCanAdvance=function(){
  if(['interrogation','event_confrontation'].includes(room()?.phase))return false;
+ // v830: final ballots are individual decisions. The host has no
+ // shortcut to reveal a reconstruction before the required votes exist.
+ if(room()?.phase==='locking'&&
+   (room()?.state?.v52_final_reassessment===true||
+    room()?.state?.v52_final_reassessment==='true'))return false;
  return originalCanAdvance.apply(this,arguments);
 };
 const legacyInstruction=window.phaseInstruction;
