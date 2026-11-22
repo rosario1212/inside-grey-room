@@ -23,6 +23,6 @@ assert(final.includes('Le serveur ne confirme pas encore'),'Explain invalid reco
 for(const part of ['create table if not exists igr_private.igr_v829_player_presence','enable row level security','revoke all on igr_private.igr_v829_player_presence','igr_private.igr_v829_touch','public.igr_v829_presence_status','grant execute on function public.igr_v829_presence_status(text,uuid) to anon,authenticated',"last_seen_at>=now()-interval '135 seconds'",'player still active recently'])assert(sql.includes(part),'Missing database rule '+part);
 assert(host.includes('igr_v827_end_confrontation')&&host.includes("==='enqueteur'")&&app.includes("rpc('igr_v4_end_interrogation'"),'Investigator controls');
 for(const asset of ['gameplay-integrity-v829.js','gameplay-integrity-v829.css']){assert(index.includes(asset+'?v=20261122-audit-v829'),'HTML missing '+asset);assert(sw.includes('/'+asset+'?v=20261122-audit-v829'),'PWA missing '+asset);assert(web.includes("'"+asset+"'"),'Web bundle missing '+asset);assert(native.includes("'"+asset+"'"),'Native bundle missing '+asset);}
-assert(sw.includes("const CACHE='igr-v830-final-ballot-guard-20261122'"));
+assert(sw.includes("const CACHE='igr-v831-mobile-ux-20261122'"));
 assert(css.includes('.igr829-quiz-group')&&css.includes('.igr829-presence-pill'));
 console.log('PASS v829: presence / no false absence / 4+3 quiz / door resume / PWA packaging');
