@@ -35,7 +35,7 @@ for(const url of ['app-v11.js?v=v812-spy-lobby-viewport-20261121','language-v12.
  assert(index.includes(url),'Index version missing: '+url);
  assert(sw.includes(url),'PWA version missing: '+url);
 }
-assert(sw.includes("const CACHE='igr-v826-mobile-finish-20261121'"),'Mobile video polish PWA cache not updated');
+assert(sw.includes("const CACHE='igr-v827-game-tabs-and-investigator-controls-20261122'"),'Stable gameplay tabs PWA cache not updated');
 for(const asset of ['video-mobile-polish-v814.css?v=20261121-v814-1','video-mobile-polish-v814.js?v=20261121-v826-1','heritage-mobile-polish-v815.css?v=20261121-v815-1','interface-consistency-v816.css?v=20261121-v816-1','role-viewport-stability-v816.js?v=20261121-v816-1','video-ui-refinements-v817.css?v=20261121-v817-1','heritage-ux-v818.css?v=20261121-v820-1','heritage-ux-v818.js?v=20261121-v820-1','heritage-recording-fixes-v819.css?v=20261121-v819-1','heritage-hub-v820.css?v=20261121-v826-1']){
  assert(index.includes(asset),'New UI runtime not included in index: '+asset);
  assert(sw.includes('/'+asset),'New UI runtime missing from PWA cache: '+asset);
