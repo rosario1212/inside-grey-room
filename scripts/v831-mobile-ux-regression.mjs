@@ -8,7 +8,7 @@ const app=read('app-v11.js'),markup=read('index.html'),sw=read('service-worker.j
 const css=read('lobby-mobile-polish-v831.css'),ui=read('lobby-mobile-polish-v831.js');
 const web=read('scripts/build-web.mjs'),mobile=read('scripts/build-mobile.mjs');
 const finalizer=read('scripts/finalize-cartel030-release.mjs');
-const revision='v831-mobile-ux-20261122';
+const revision='v833-four-device-launch-20261122';
 
 for(const file of ['app-v11.js','lobby-mobile-polish-v831.js'])
  execFileSync(process.execPath,['--check',file],{stdio:'pipe'});
@@ -111,8 +111,9 @@ for(const marker of ['min-height:44px!important','igr831-player-actions','igr634
  assert(css.includes(marker),'Missing mobile style '+marker);
 }
 for(const asset of ['lobby-mobile-polish-v831.js','lobby-mobile-polish-v831.css']){
- assert(markup.includes(asset+'?v='+revision),'HTML missing fresh asset '+asset);
- assert(sw.includes('/'+asset+'?v='+revision),'PWA missing fresh asset '+asset);
+ const assetRevision='v831-mobile-ux-20261122';
+ assert(markup.includes(asset+'?v='+assetRevision),'HTML missing unchanged mobile asset '+asset);
+ assert(sw.includes('/'+asset+'?v='+assetRevision),'PWA missing unchanged mobile asset '+asset);
  assert(web.includes("'"+asset+"'"),'Web build missing '+asset);
  assert(mobile.includes("'"+asset+"'"),'Native build missing '+asset);
 }
