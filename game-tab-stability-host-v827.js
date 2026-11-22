@@ -9,6 +9,14 @@ const room=()=>S()?.sync?.room;
 const investigator=()=>room()?.status==='playing' && (S()?.sync?.player?.public_role||S()?.role)==='enqueteur';
 const en=()=>window.IGR_LOCALE==='en';
 let lock=null,finishing=false;
+let tapY=null,tapAt=0;
+// iOS Safari can scroll an element into view on pointer down, before click.
+document.addEventListener('pointerdown',event=>{
+ if(event.target?.closest?.('main.game-v11 .tabs-v11 .tab')){
+   tapY=Math.max(0,window.scrollY);
+   tapAt=performance.now();
+ }
+},true);
 function release(){
  if(lock?.el?.isConnected)lock.el.style.minHeight=lock.old;
  lock=null;
@@ -31,7 +39,9 @@ if(typeof legacySetTab==='function')window.setTab=function(tab){
  if(!game()||typeof window.renderGame!=='function'||typeof window.saveSession!=='function')
    return legacySetTab.apply(this,arguments);
  if(S()?.tab===tab)return;
- const y=Math.max(0,scrollY),navBefore=game()?.querySelector('.tabs-v11');
+ const y=tapY!==null && performance.now()-tapAt<1400 ? tapY : Math.max(0,scrollY);
+ tapY=null;
+ const navBefore=game()?.querySelector('.tabs-v11');
  const x=navBefore?.scrollLeft||0;
  retain(y);
  // No forced jump to the page top and no focus-triggered scrolling.
