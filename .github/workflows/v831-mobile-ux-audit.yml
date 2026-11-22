@@ -19,6 +19,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: List obsolete web/app version assertions
+        run: |
+          git grep -l -E 'v829-complete-gameplay-audit-20261122|v830-final-ballot-guard-20261122' -- 'scripts/*.mjs' || true
       - name: Verify roster, session resume and mobile delivery
         run: node scripts/v831-mobile-ux-regression.mjs
       - name: Preserve latest role permissions and verdict safeguards
