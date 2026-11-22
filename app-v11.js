@@ -1245,7 +1245,16 @@ function stopRoomWatcher(){if(STATE.watcher){clearInterval(STATE.watcher);STATE.
 function startRoomWatcher(){
  stopRoomWatcher();
  const period=STATE.view==='lobby'?700:1100;
- STATE.watcher=setInterval(()=>syncNow(false),period);
+ STATE.watcher=setInterval(()=>{
+   // Hidden tabs must not compete with the foreground session's rate limit.
+   if(document.visibilityState==='hidden'||navigator.onLine===false)return;
+   const retries=Math.min(4,Math.max(0,Number(STATE.syncFailures||0)));
+   const minGap=retries?Math.min(20000,period*2**retries):period;
+   const now=Date.now();
+   if(now-Number(STATE._lastWatcherAttempt||0)<minGap)return;
+   STATE._lastWatcherAttempt=now;
+   void syncNow(false);
+ },period);
 }
 function lobbyData(){return syncNow(true)}
 function myState(){return syncNow(true)}
@@ -1276,7 +1285,7 @@ function renderLobby(prefetched=null){
  const oldLobby=typeof document!=='undefined'&&typeof document.querySelector==='function'?document.querySelector('#app .lobby-v11'):null;
  const focusedRole=oldLobby?document.activeElement?.closest?.('.role-choice-card[data-role-id]'):null;
  const focusedRoleId=focusedRole?.dataset.roleId||null;
- byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} présent${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
+ byId('app').innerHTML=shell(`<main class="page"><div class="page-head lobby-head"><div><div class="kicker">Cellule ${h(d.room.code)}</div><h1>${h(sc.title)}</h1><div class="lobby-case-preview"><span>APERÇU PUBLIC · SANS SPOILER</span><p class="lobby-scenario-summary">${h(publicScenarioSummary(sc.id))}</p></div></div><button class="btn ghost small" onclick="leaveRoom()">Quitter</button></div><section class="panel lobby-v11" data-igr-scenario-id="${h(sc.id)}" data-igr-lobby-theme="${lobbyThemeForScenario(sc.id)}"><div class="lobby-code"><span>CODE</span><strong>${h(d.room.code)}</strong></div><div class="lobby-status"><strong>${count} inscrit${count>1?'s':''}</strong><span>Minimum ${min} · Maximum ${max}</span></div><div class="player-list">${d.players.map((p,i)=>`<div class="player-line lobby-player-live"><span class="player-ident">${avatarHtml(p.id,p.pseudo,'avatar-small')}<span class="lobby-player-name"><b>${i+1}. ${h(p.pseudo)}</b>${p.preferred_role?`<span class="lobby-role-picked">${h(publicRoleLabel(p.preferred_role))}</span>`:'<span class="lobby-role-pending">Attribué au lancement</span>'}</span></span>${STATE.hostToken&&!p.is_host?`<button type="button" class="btn ghost small" aria-label="Exclure ${h(p.pseudo)} du lobby" onclick="kickLobbyPlayer('${h(p.id)}')">Exclure</button>`:''}</div>`).join('')}</div><div class="role-choice-zone">${victoryRoleNotice}<div class="section-title"><h2>Choisis ton rôle</h2><span>Premier choix réservé</span></div><p class="role-choice-help">Choisis un rôle si tu as une préférence. Au lancement, chaque joueur sans choix reçoit automatiquement un rôle public disponible au hasard. ${omertaLobby?'Les personnages Santoro sont attribués par le serveur sans révéler la variante.':'Les identités secrètes et l’Espion restent cachés et attribués par le serveur.'}</p><div class="role-choice-grid">${roleButtons}</div></div>${STATE.hostToken?`<button class="btn primary block" ${canStart?'':'disabled'} onclick="startGame()">${launchLabel}</button>`:`<div class="waiting-pulse">En attente de l’hôte…</div>`}</section></main>`);
  if(typeof document!=='undefined'&&typeof document.querySelectorAll==='function')for(const el of document.querySelectorAll('.role-choice-zone .igr-role-more'))if(openedRoleDetails.includes(el.dataset.roleId))el.open=true;
  if(oldLobby){
   const newLobby=document.querySelector('#app .lobby-v11');
@@ -1928,7 +1937,18 @@ async function advancePhaseNow(ev){
   const after=STATE.sync?.room?.phase;
   if(before===after&&after!=='reveal')toast('Transition en cours…');
   else if(out?.phase||after)toast(`Étape suivante : ${phaseLabel(out?.phase||after)}.`);
- }catch(e){console.error(e);toast('Impossible de passer cette étape.')}
+ }catch(e){
+   console.error(e);
+   const code=String(e?.message||'').toLowerCase(),current=STATE.sync?.room?.phase||'';
+   toast(/(network|fetch|timeout|connection)/.test(code)
+      ?'Connexion instable : aucune étape n’a été passée. Reconnecte-toi puis réessaie.'
+      :['interrogation','event_confrontation'].includes(current)
+       ?'Seul l’Enquêteur peut terminer cet échange ; l’hôte ne peut pas le passer.'
+       :['interrogation_select','event_select'].includes(current)
+        ?'Le choix requis doit être effectué avant de poursuivre.'
+        :'Cette étape ne peut pas encore être passée. Vérifie la phase et les actions attendues.');
+   void syncNow(true).catch(()=>{});
+  }
  finally{ADVANCE_BUSY=false}
 }
 async function confirmLeaveGame(ev){
@@ -2180,7 +2200,7 @@ function phaseInstruction(role,ph,target){
   if(meIsTarget(target))return`<p><b>Tu es interrogé.</b> Réponds selon ta carte. Tu peux mentir si ton rôle le permet, mais jamais inventer une preuve officielle.</p>`;
   return`<p>Tu n’es pas interrogé actuellement. Prépare ta défense et échange oralement avec les autres joueurs disponibles.</p>`;
  }
- if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(role)?`<p>Réponds aux trois questions courtes. Le serveur choisira ensuite seul une trame canonique adaptée.</p>`:`<p>Le débrief est privé à l’enquête. Aucune action de ta part n’est requise.</p>`;
+ if(ph==='cycle_debrief')return ['enqueteur','analyste'].includes(role)?`<p>${['010','012','013','014','015','016','017'].includes(String(STATE.sync?.room?.scenario_id||''))&&Number(STATE.sync?.room?.cycle||0)<3?'Réponds aux quatre questions factuelles puis aux trois repères personnels du débrief.':'Réponds aux trois repères du débrief. Le MJ choisit ensuite une trame canonique.'}</p>`:`<p>Le débrief est privé à l’enquête. Aucune action de ta part n’est requise.</p>`;
  if(activeAnnex)return roleActive?`<p>Fenêtre active pour ${h(phaseLabel(ph).toLowerCase())}. Respecte le temps commun affiché.</p>`:`<p>Cette fenêtre ne concerne pas directement ton rôle. Prépare la suite sans accéder aux informations réservées.</p>`;
  if(ph==='trame'){if(!canInvestigationChannel(role))return`<p>Le MJ transmet un nouvel élément canonique au camp d’enquête. Prépare la suite sans consulter son contenu.</p>`;const e=latestEvent('trame');return`<p>Le MJ vient de transmettre automatiquement une trame canonique au camp d’enquête.</p>${e?`<div class="trame-focus"><b>${h(e.payload?.title||'TRAME')}</b><span>${h(e.payload?.text||'')}</span></div>`:''}`}
  if(ph==='closed')return`<p><b>Plus aucune trame, expertise, Breaking News ou action de terrain.</b> L’enquête est définitivement close.</p>`;
@@ -2228,11 +2248,17 @@ function renderDebriefForm(){
        const opts=Array.isArray(question.options)?question.options:[];
        return `<div class="field"><label for="igr650Answer_${i+1}">${i+1} · ${h(question.title||'Question factuelle')}</label><select id="igr650Answer_${i+1}"><option value="">Choisir une réponse…</option>${opts.map((option,j)=>`<option value="${'abc'[j]}">${h(option)}</option>`).join('')}<option value="u">Je ne sais pas</option></select></div>`;
      }).join('');
-     return `<div class="qcm-v11"><p class="choice-helper">Réponds individuellement à partir des pièces disponibles. Les réponses sont scellées : aucune correction n'est affichée avant la révélation. Les zones d'incertitude peuvent orienter les investigations suivantes.</p>${quizFields}
+     return `<div class="qcm-v11 igr829-quiz">
+       <section class="igr829-quiz-group" aria-label="Vérifications factuelles">
+       <h3>1 · Vérifier les faits · 4 questions</h3>
+       <p class="choice-helper">Réponds à partir des pièces disponibles. « Je ne sais pas » est possible. Ces réponses sont individuelles et ne sont révélées qu’à la fin.</p>${quizFields}</section>
+       <section class="igr829-quiz-group" aria-label="Appréciation du dossier">
+       <h3>2 · Ton appréciation · 3 repères</h3>
+       <p class="choice-helper">Ces trois choix orientent la prochaine trame du MJ : ce ne sont pas des questions factuelles.</p>
        <div class="field"><label for="qConvergence">Convergence actuelle du groupe</label><select id="qConvergence"><option value="0">Non</option><option value="1">Partielle</option><option value="2">Forte</option></select></div>
        <div class="field"><label for="qConfusion">Niveau de difficulté ressenti</label><select id="qConfusion"><option value="0">Faible</option><option value="1">Modéré</option><option value="2">Important</option></select></div>
        <div class="field"><label for="qAxis">Axe à approfondir</label><select id="qAxis"><option value="chronologie">Chronologie</option><option value="acces">Accès / déplacements</option><option value="mobile">Mobile / relations</option><option value="materiel">Matériel / technique</option><option value="responsabilite">Responsabilités</option></select></div>
-       <button class="btn primary block" onclick="submitCaseQuiz()">Sceller mes réponses</button></div>`;
+       </section><button class="btn primary block" onclick="submitCaseQuiz()">Sceller les 4 réponses et les 3 repères</button></div>`;
    }
    if(STATE._caseQuizData===null)return `<div class="locked-state">Chargement des questions du dossier…</div>`;
  }
