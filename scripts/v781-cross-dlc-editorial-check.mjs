@@ -13,7 +13,7 @@ const index=read('index.html');
 const sw=read('service-worker.js');
 const finalizer=read('scripts/finalize-cartel030-release.mjs');
 const version='v781-dlc-clarity-20261118';
-const clientVersion='v812-spy-lobby-viewport-20261121';
+const clientVersion='v829-complete-gameplay-audit-20261122';
 assert(app.includes('Un patient est mort pendant le programme hospitalier ÉLIGIBLES'),
   '015: patient death, never an invented doctor death');
 const baseSummary=app.slice(app.indexOf('const PUBLIC_LOBBY_SUMMARIES'),app.indexOf('const CANONICAL_BRIEFINGS'));
