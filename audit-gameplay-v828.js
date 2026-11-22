@@ -32,10 +32,17 @@ function updateRoleCards(){
   const title=card.querySelector('.igr82-relations > h4');
   if(title)title.textContent=tr('PERSONNES QUE TU CONNAIS','PEOPLE YOU KNOW');
   if(String(room()?.scenario_id)==='001'){
-    const text=card.textContent||'';
-    const visitor=/L[’']exécutant|le visiteur encapuchonné/i.test(text);
+    const identity=card.querySelector('.igr-private-identity > span');
+    const currentIdentity=identity?.textContent||'';
+    const visitor=/exécutant|visiteur encapuchonné/i.test(currentIdentity);
+    if(identity){
+      // Only neutralize the private role heading, never the facts or secrets.
+      if(/exécutant/i.test(currentIdentity))identity.textContent=tr('Le visiteur recruté','The hired visitor');
+      else if(/ancien ami/i.test(currentIdentity))identity.textContent=tr('L’ancien ami de Maël','Maël’s former friend');
+      else if(/client de l’hôtel/i.test(currentIdentity))identity.textContent=tr('Le client de l’hôtel','The hotel guest');
+    }
     if(visitor){
-      const chronology=[...card.querySelectorAll('h4')].find(e=>/CHRONOLOGIE|TIMELINE/i.test(e.textContent));
+      const chronology=[...card.querySelectorAll('h4')].find(e=>/CE QUE TU AS FAIT|CHRONOLOGIE|TIMELINE/i.test(e.textContent));
       if(chronology&&!chronology.parentNode.querySelector('.igr828-chronology-note')){
         const note=document.createElement('p');
         note.className='igr828-chronology-note';
