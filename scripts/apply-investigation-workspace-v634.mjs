@@ -170,3 +170,39 @@ const playerFocusQA=spawnSync(process.execPath,
 if(playerFocusQA.status!==0)throw new Error('v835 player focus regression: '+playerFocusQA.stderr);
 console.log(playerFocusQA.stdout.trim());
 console.log('v835 public live player focus installed: '+path.basename(target));
+
+// v836 — premium on-phone hierarchy. Keep v835 role and roster protections;
+// only presentation/labels change. Bundled after all gameplay renderers.
+const screenRevision='v836-premium-20261123';
+const screenAssets=['live-screen-ux-v836.css','live-screen-ux-v836.js'];
+for(const asset of screenAssets){
+ const src=path.join(root,asset);await stat(src);
+ if(asset.endsWith('.js')){
+  const check=spawnSync(process.execPath,['--check',src],{encoding:'utf8'});
+  if(check.status!==0)throw new Error('v836 screen syntax failed: '+check.stderr);
+ }
+ await copyFile(src,path.join(target,asset));
+}
+for(const page of ['index.html','en.html']){
+ const file=path.join(target,page);let html=await readFile(file,'utf8');
+ for(const asset of screenAssets){
+  const escaped=asset.replaceAll('.','\\.');
+  const re=asset.endsWith('.css')
+   ?new RegExp('\\s*<link[^>]+href=["\\x27]'+escaped+'[^"\\x27]*["\\x27][^>]*>','gi')
+   :new RegExp('\\s*<script[^>]+src=["\\x27]'+escaped+'[^"\\x27]*["\\x27][^>]*><\\/script>','gi');
+  html=html.replace(re,'');
+ }
+ html=html.replace('</head>','  <link rel="stylesheet" href="live-screen-ux-v836.css?v='+screenRevision+'">\n</head>');
+ html=html.replace('</body>','  <script src="live-screen-ux-v836.js?v='+screenRevision+'"></script>\n</body>');
+ await writeFile(file,html,'utf8');
+}
+try{
+ const file=path.join(target,'service-worker.js');let sw=await readFile(file,'utf8');
+ for(const asset of screenAssets){
+  sw=sw.split('\n').filter(line=>!line.includes('/'+asset+'?v=')).join('\n');
+  sw=sw.replace('const SHELL=[',"const SHELL=[\n  '/"+asset+"?v="+screenRevision+"',");
+ }
+ await writeFile(file,sw,'utf8');
+}catch(error){if(error?.code!=='ENOENT')throw error}
+console.log('v836 premium mobile game screen installed: '+path.basename(target));
+
