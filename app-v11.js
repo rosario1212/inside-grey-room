@@ -1340,7 +1340,9 @@ function renderLobby(prefetched=null){
  if(oldLobby){
   const newLobby=document.querySelector('#app .lobby-v11');
   const newFocused=focusedRoleId&&[...(newLobby?.querySelectorAll('.role-choice-card[data-role-id]')||[])].find(el=>el.dataset.roleId===focusedRoleId);
-  if(newFocused&&!newFocused.disabled)newFocused.focus({preventScroll:true});
+  // Touch focus on a fresh, remounted role card causes iOS to scroll the page.
+  // Keyboard navigation still restores focus when no pointer-stability hold exists.
+  if(newFocused&&!newFocused.disabled&&!window.IGR_CLASSIC_ROLE_STABILITY_V837?.isActive?.())newFocused.focus({preventScroll:true});
  }
  if(SOUND.enabled)ensureAmbient('menu');
 }
