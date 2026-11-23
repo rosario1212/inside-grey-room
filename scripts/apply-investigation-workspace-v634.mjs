@@ -170,3 +170,63 @@ const playerFocusQA=spawnSync(process.execPath,
 if(playerFocusQA.status!==0)throw new Error('v835 player focus regression: '+playerFocusQA.stderr);
 console.log(playerFocusQA.stdout.trim());
 console.log('v835 public live player focus installed: '+path.basename(target));
+
+// v836 — premium on-phone hierarchy. Keep v835 role and roster protections;
+// only presentation/labels change. Bundled after all gameplay renderers.
+const screenRevision='v836-premium-20261123';
+const screenAssets=['live-screen-ux-v836.css','live-screen-ux-v836.js'];
+for(const asset of screenAssets){
+ const src=path.join(root,asset);await stat(src);
+ if(asset.endsWith('.js')){
+  const check=spawnSync(process.execPath,['--check',src],{encoding:'utf8'});
+  if(check.status!==0)throw new Error('v836 screen syntax failed: '+check.stderr);
+ }
+ await copyFile(src,path.join(target,asset));
+}
+for(const page of ['index.html','en.html']){
+ const file=path.join(target,page);let html=await readFile(file,'utf8');
+ for(const asset of screenAssets){
+  const escaped=asset.replaceAll('.','\\.');
+  const re=asset.endsWith('.css')
+   ?new RegExp('\\s*<link[^>]+href=["\\x27]'+escaped+'[^"\\x27]*["\\x27][^>]*>','gi')
+   :new RegExp('\\s*<script[^>]+src=["\\x27]'+escaped+'[^"\\x27]*["\\x27][^>]*><\\/script>','gi');
+  html=html.replace(re,'');
+ }
+ html=html.replace('</head>','  <link rel="stylesheet" href="live-screen-ux-v836.css?v='+screenRevision+'">\n</head>');
+ html=html.replace('</body>','  <script src="live-screen-ux-v836.js?v='+screenRevision+'"></script>\n</body>');
+ await writeFile(file,html,'utf8');
+}
+try{
+ const file=path.join(target,'service-worker.js');let sw=await readFile(file,'utf8');
+ for(const asset of screenAssets){
+  sw=sw.split('\n').filter(line=>!line.includes('/'+asset+'?v=')).join('\n');
+  sw=sw.replace('const SHELL=[',"const SHELL=[\n  '/"+asset+"?v="+screenRevision+"',");
+ }
+ await writeFile(file,sw,'utf8');
+}catch(error){if(error?.code!=='ENOENT')throw error}
+console.log('v836 premium mobile game screen installed: '+path.basename(target));
+
+// v837 — dedicated regular-dossier role selection viewport stability on iOS.
+// Applied after all lobby renderers; no RPC, timer or role logic modification.
+const roleStabilityVersion='v837-classic-role-scroll-20261123';
+const roleStabilityAsset='lobby-role-stability-v837.js';
+const roleSource=path.join(root,roleStabilityAsset);
+await stat(roleSource);
+const roleSyntax=spawnSync(process.execPath,['--check',roleSource],{encoding:'utf8'});
+if(roleSyntax.status!==0)throw new Error('v837 role stability JS invalid: '+roleSyntax.stderr);
+await copyFile(roleSource,path.join(target,roleStabilityAsset));
+for(const page of ['index.html','en.html']){
+ const file=path.join(target,page);let html=await readFile(file,'utf8');
+ html=html.replace(/\s*<script[^>]+src=["']lobby-role-stability-v837\.js[^"']*["'][^>]*><\/script>/gi,'');
+ html=html.replace('</body>','  <script src="'+roleStabilityAsset+'?v='+roleStabilityVersion+'"></script>\n</body>');
+ await writeFile(file,html,'utf8');
+}
+try{
+ const file=path.join(target,'service-worker.js');let sw=await readFile(file,'utf8');
+ sw=sw.split('\n').filter(line=>!line.includes('/'+roleStabilityAsset+'?v=')).join('\n');
+ sw=sw.replace('const SHELL=[',"const SHELL=[\n  '/"+roleStabilityAsset+"?v="+roleStabilityVersion+"',");
+ await writeFile(file,sw,'utf8');
+}catch(error){if(error?.code!=='ENOENT')throw error}
+console.log('v837 classic role stability bundled: '+path.basename(target));
+
+
