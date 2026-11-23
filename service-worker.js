@@ -1,6 +1,13 @@
 // Roster layout hotfix: refresh the installed worker and re-cache the new stylesheet.
 const CACHE='igr-v833-four-device-launch-20261122';
 const SHELL=[
+  '/cycle-workspace-v834.css?v=20261123-v838',
+  '/live-player-focus-v835.css?v=20261123-v838',
+  '/live-screen-ux-v836.css?v=20261123-v838',
+  '/intuitive-live-v838.css?v=20261123-v838',
+  '/cycle-workspace-v834.js?v=20261123-v838',
+  '/live-player-focus-v835.js?v=20261123-v838',
+  '/intuitive-live-v838.js?v=20261123-v838',
   '/heritage-hub-v820.css?v=20261122-campaign-intro',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
   '/heritage-ux-v818.css?v=20261121-v820-1',
