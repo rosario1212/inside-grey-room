@@ -1,0 +1,116 @@
+/* v838: a clear, compact mobile hierarchy; calm dark surfaces, one accent. */
+@media(max-width:700px){
+ #app main.game-v11{--igr838-accent:#d8c5a1;--igr838-border:#354551}
+ #app main.game-v11 > .game-head-v11{margin-bottom:7px!important}
+ #app main.game-v11 > .phase-strip{margin-bottom:9px!important}
+ #app main.game-v11 > #igr835Spotlight{order:2;margin:0 0 9px!important;padding:15px 16px!important}
+ #app main.game-v11 > #igr835Spotlight .igr835-focus-names{font-size:clamp(26px,7vw,35px)!important}
+ #app main.game-v11 > #igr835Spotlight p{font-size:12px!important}
+ #app main.game-v11 > #igr838Now{order:2}
+ #app main.game-v11 > .tabs-v11.igr838-nav{
+  order:3;position:sticky!important;top:calc(env(safe-area-inset-top,0px) + 5px);
+  z-index:35!important;display:grid!important;
+  grid-template-columns:repeat(var(--igr838-count,5),minmax(0,1fr))!important;
+  width:100%!important;gap:4px!important;overflow:visible!important;
+  padding:5px!important;margin:0 0 12px!important;
+  border:1px solid var(--igr838-border)!important;
+  border-radius:15px!important;background:rgba(13,20,27,.98)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.34)!important;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);isolation:isolate;
+ }
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-main-tab,
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-more-btn{
+  appearance:none;display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:initial!important;width:100%!important;min-width:0!important;
+  min-height:49px!important;padding:8px 3px!important;
+  border:1px solid transparent!important;border-radius:10px!important;
+  background:transparent!important;color:#c2ced7!important;
+  font:700 clamp(10px,2.8vw,12px)/1.18 system-ui,sans-serif!important;
+  text-transform:none!important;letter-spacing:0!important;
+  white-space:normal!important;text-align:center!important;touch-action:manipulation;
+ }
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-main-tab.active,
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-more-btn.active{
+  color:#f4f6f7!important;background:#2c3b46!important;
+  border-color:rgba(216,197,161,.68)!important;
+  box-shadow:inset 0 -3px 0 var(--igr838-accent)!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-more-panel[hidden]{display:none!important}
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-more-panel{
+  position:absolute;top:calc(100% + 7px);right:0;z-index:42;
+  display:grid;gap:6px;width:min(100%,320px);
+  max-height:min(65dvh,460px);overflow-y:auto;
+  padding:8px;border:1px solid #4a5862;border-radius:14px;
+  background:#18222c;box-shadow:0 18px 42px rgba(0,0,0,.58);
+ }
+ #app main.game-v11 > .tabs-v11.igr838-nav .igr838-extra-tab{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  width:100%!important;min-height:46px!important;padding:11px 14px!important;
+  border:1px solid #34424d!important;border-radius:9px!important;
+  background:#202b35!important;color:#e3eaf0!important;
+  font:700 13px/1.3 system-ui,sans-serif!important;text-align:left!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr838-nav .igr838-extra-tab.active{
+  border-color:var(--igr838-accent)!important;background:#34404a!important;
+ }
+ #app main.game-v11 > .game-panel-v11{min-height:0!important}
+ #app main.game-v11 > #igr836RoleHelp{order:9!important;margin:14px 0 0!important}
+ #app main.game-v11 .igr835-party-jump{
+  display:inline-flex!important;min-height:32px;padding:6px 10px;font-size:11px;
+ }
+ #app main.game-v11 .igr834-heading{padding:2px 1px 8px!important}
+ #app main.game-v11 .igr834-heading h2{font-size:20px!important}
+ #app main.game-v11 .igr834-workspace{gap:9px!important}
+ #app main.game-v11 .igr634-group,
+ #app main.game-v11 .igr634-priority,
+ #app main.game-v11 .igr634-interviews{box-shadow:none!important}
+ #app main.game-v11 .igr838-now{
+  display:grid;gap:6px;padding:15px 16px;margin:0 0 9px;
+  border:1px solid rgba(216,197,161,.30);
+  border-left:3px solid var(--igr838-accent);
+  border-radius:15px;background:#1b2832;
+ }
+ #app main.game-v11 .igr838-now small{
+  font:750 10px/1.3 'IBM Plex Mono',monospace;
+  letter-spacing:.10em;color:var(--igr838-accent);
+ }
+ #app main.game-v11 .igr838-now h2{font:800 20px/1.23 system-ui,sans-serif;margin:0;color:#f2f5f7}
+ #app main.game-v11 .igr838-now p{font-size:12px;line-height:1.52;margin:0;color:#bac6ce}
+ #app main.game-v11 .igr838-cta,
+ #app main.game-v11 .igr838-spotlight-cta{
+  appearance:none;display:flex;align-items:center;justify-content:center;
+  width:100%;min-height:45px;margin:7px 0 0;
+  padding:10px 15px;border:1px solid rgba(220,231,238,.48);
+  border-radius:10px;background:#e7ebed;color:#16202a;
+  font:800 13px/1.25 system-ui,sans-serif;cursor:pointer;
+ }
+ #app main.game-v11 .igr838-shortcuts{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 0 12px;
+ }
+ #app main.game-v11 .igr838-shortcut{
+  appearance:none;display:flex;align-items:center;justify-content:center;
+  min-height:43px;padding:9px 7px;border:1px solid #52606b;
+  border-radius:10px;background:#27343e;color:#eff3f5;cursor:pointer;
+  font:700 11px/1.3 system-ui,sans-serif;text-align:center;
+ }
+ #app main.game-v11 .igr838-shortcut-muted{
+  background:#18222b;border-color:#364550;color:#cbd7df;
+ }
+ #app main.game-v11 .igr838-main-tab:focus-visible,
+ #app main.game-v11 .igr838-more-btn:focus-visible,
+ #app main.game-v11 .igr838-extra-tab:focus-visible,
+ #app main.game-v11 .igr838-cta:focus-visible,
+ #app main.game-v11 .igr838-shortcut:focus-visible{
+  outline:2px solid var(--igr838-accent)!important;outline-offset:2px!important;
+ }
+}
+@media(max-width:350px){
+ #app main.game-v11 > .tabs-v11.igr838-nav{gap:3px!important;padding:4px!important}
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-main-tab,
+ #app main.game-v11 > .tabs-v11.igr838-nav > .igr838-more-btn{
+  font-size:9px!important;padding:7px 2px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #app main.game-v11 .igr838-main-tab{transition:none!important}
+}
