@@ -1241,7 +1241,7 @@ function routeFromServer(){
  }
  if(d.room.phase==='briefing'){STATE.view='briefing';renderBriefing();return;}
  if(d.room.phase==='role_reading'&&!d.player.ready){cancelBriefingVoice();STATE.view='role';renderRole();return;}
- STATE.view='game';if(!['card','investigation','channel','video','timeline','rules','profiling'].includes(STATE.tab))STATE.tab='investigation';renderGame();
+ STATE.view='game';if(!['card','cycle','investigation','channel','video','timeline','rules','profiling'].includes(STATE.tab))STATE.tab='cycle';renderGame();
 }
 function stopRoomWatcher(){
  if(STATE.watcher){clearInterval(STATE.watcher);STATE.watcher=null}
@@ -1853,7 +1853,7 @@ function renderRole(){
  if(SOUND.enabled)ensureAmbient(currentScenario().sound);
 }
 async function ackRole(){
- try{await rpc('igr_v4_ack_role',{p_code:STATE.room,p_player_token:STATE.token});STATE.view='game';STATE.tab='investigation';await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de valider la carte.')}
+ try{await rpc('igr_v4_ack_role',{p_code:STATE.room,p_player_token:STATE.token});STATE.view='game';STATE.tab='cycle';await syncNow(true);startRoomWatcher()}catch(e){console.error(e);toast('Impossible de valider la carte.')}
 }
 function setTab(t){
  const previous=document.querySelector('#app .tabs-v11');
