@@ -16,6 +16,7 @@ const SHELL=[
   '/terror-live-v681.js?v=20261121-v817-city-1',
   '/interface-consistency-v816.css?v=20261121-v816-1',
   '/role-viewport-stability-v816.js?v=20261121-v816-1',
+  '/lobby-role-stability-v837.js?v=v839-role-tap-stability-20261123',
   '/game-tab-stability-v827.css?v=20261122-v827-1',
   '/game-tab-stability-host-v827.js?v=20261122-v830-ballot-guard',
   '/audit-gameplay-v828.css?v=20261122-audit-v828',
