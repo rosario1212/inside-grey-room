@@ -1,0 +1,157 @@
+/* v836 — restrained premium live-game interface. Mobile screen structure only.
+   Do not alter hidden-card contents, live controls, service-worker logic or phase actions. */
+@media(max-width:700px){
+ #app main.game-v11{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:0!important;min-width:0!important;
+ }
+ #app main.game-v11 > *{order:4}
+ #app main.game-v11 > .game-head-v11{order:0;margin-bottom:10px!important}
+ #app main.game-v11 > .phase-strip{order:1;margin-bottom:10px!important}
+ #app main.game-v11 > #igr835Spotlight{order:2}
+ #app main.game-v11 > .tabs-v11{order:3}
+ #app main.game-v11 > .igr106-action-panel{order:5}
+ #app main.game-v11 > #igr836RoleHelp{order:6}
+ #app main.game-v11 > .game-panel-v11{order:7}
+ #app main.game-v11 > .live-session-controls{order:8}
+ /* Public starting premise is already preserved in the shared case file. */
+ #app main.game-v11 > .igr106-public-teaser{display:none!important}
+ /* The phase instruction duplicates the interview spotlight; when no spotlight
+    exists, retain the instruction normally. Never hide phase action controls. */
+ #app main.game-v11:has(> #igr835Spotlight) > #igr51Now{display:none!important}
+ #app main.game-v11 .igr835-party-jump{display:none!important}
+ #app main.game-v11 .igr835-mini{display:none!important}
+
+ #app main.game-v11 > #igr835Spotlight{
+  position:relative;
+  padding:18px 18px 20px!important;margin:0 0 12px!important;
+  gap:10px!important;overflow:hidden;
+  border-radius:19px!important;
+  border:1px solid rgba(200,222,234,.38)!important;
+  border-left:3px solid rgba(217,234,241,.88)!important;
+  background:linear-gradient(142deg,#273743 0%,#1b2934 44%,#101a23 100%)!important;
+  box-shadow:0 17px 38px rgba(0,0,0,.18),inset 0 1px 0 rgba(250,255,255,.045)!important;
+ }
+ #app main.game-v11 > #igr835Spotlight:before{
+  content:'';position:absolute;inset:0 0 auto 0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(221,238,248,.26),transparent);pointer-events:none;
+ }
+ #app main.game-v11 > #igr835Spotlight .igr835-eyebrow{
+  font-size:10px!important;letter-spacing:.13em!important;color:#c1d2dc!important;
+ }
+ #app main.game-v11 > #igr835Spotlight .igr835-focused-title{
+  font-size:11px!important;letter-spacing:.105em!important;color:#9eb2c0!important;
+ }
+ #app main.game-v11 > #igr835Spotlight .igr835-focus-names{
+  font-size:clamp(31px,8.5vw,43px)!important;line-height:1.08!important;
+  letter-spacing:-.045em!important;color:#f7fafc!important;
+  margin:0 0 2px!important;
+ }
+ #app main.game-v11 > #igr835Spotlight p{
+  color:#c5d4dd!important;font-size:13px!important;line-height:1.55!important;
+  max-width:49ch;margin:0!important;
+ }
+ /* Players & party is already one tap away in the secondary navigation. */
+ #app main.game-v11 > #igr835Spotlight .igr835-overview-btn{display:none!important}
+ #app main.game-v11 > #igr835Spotlight[data-action-type="confrontation"]{
+  border-color:rgba(211,198,178,.48)!important;border-left-color:#ddc8a8!important;
+  background:linear-gradient(142deg,#39332f 0%,#25292b 52%,#111b22 100%)!important;
+ }
+
+ /* Three primary destinations followed by a quieter secondary row. */
+ #app main.game-v11 > .tabs-v11.igr836-nav{
+  display:flex!important;flex-flow:row wrap!important;align-items:stretch!important;
+  gap:7px!important;overflow:visible!important;mask-image:none!important;
+  width:100%!important;min-width:0!important;padding:0!important;margin:0 0 13px!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab{
+  box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+  width:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  text-align:center!important;box-shadow:none!important;
+  touch-action:manipulation!important;white-space:normal!important;
+  overflow-wrap:normal!important;letter-spacing:.01em!important;
+  transition:background-color .14s ease,border-color .14s ease!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab.igr836-primary{
+  order:0;flex:1 1 calc(33.333% - 7px)!important;
+  min-height:52px!important;padding:9px 6px!important;
+  border-radius:13px!important;
+  background:#192631!important;border:1px solid rgba(188,211,225,.27)!important;
+  color:#deebf1!important;font:750 14px/1.25 system-ui,sans-serif!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab.igr836-secondary{
+  order:1;flex:1 1 calc(25% - 7px)!important;
+  min-height:43px!important;padding:8px 5px!important;
+  border-radius:11px!important;
+  background:#121a22!important;border:1px solid rgba(174,195,209,.16)!important;
+  color:#aebbca!important;font:650 11px/1.25 system-ui,sans-serif!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab.active{
+  background:#30414e!important;border-color:rgba(215,235,245,.86)!important;
+  color:#fff!important;box-shadow:inset 0 2px 0 rgba(226,242,248,.87)!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab.igr836-secondary.active{
+  background:#222f39!important;box-shadow:inset 0 2px 0 rgba(183,209,221,.64)!important;
+ }
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab:focus-visible{
+  outline:2px solid #f0f8fb!important;outline-offset:2px!important;
+ }
+
+ /* Keep useful guidance accessible, without occupying half a phone screen. */
+ #app main.game-v11 > #igr836RoleHelp{
+  display:block;min-width:0;margin:0 0 12px!important;
+  border:1px solid rgba(187,206,218,.18);
+  border-radius:12px;background:rgba(16,25,33,.8);
+  overflow:hidden;
+ }
+ #app main.game-v11 > #igr836RoleHelp > summary{
+  position:relative;display:flex;align-items:center;
+  min-height:44px;padding:11px 38px 11px 14px;
+  color:#aebec9;font:700 12px/1.4 system-ui,sans-serif;
+  cursor:pointer;list-style:none;
+ }
+ #app main.game-v11 > #igr836RoleHelp > summary::-webkit-details-marker{display:none}
+ #app main.game-v11 > #igr836RoleHelp > summary:after{
+  content:'';position:absolute;right:18px;top:18px;
+  width:8px;height:8px;border-right:1.5px solid #b7c8d2;border-bottom:1.5px solid #b7c8d2;
+  transform:rotate(45deg);transition:transform .16s ease;
+ }
+ #app main.game-v11 > #igr836RoleHelp[open] > summary:after{transform:rotate(225deg);top:22px}
+ #app main.game-v11 > #igr836RoleHelp > #igr694RoleTip{
+  margin:0!important;border:0!important;border-top:1px solid rgba(180,201,213,.13)!important;
+  border-radius:0!important;background:transparent!important;padding:12px 14px 14px!important;
+ }
+ #app main.game-v11 > #igr836RoleHelp > #igr694RoleTip small{display:none!important}
+ #app main.game-v11 > #igr836RoleHelp > #igr694RoleTip p{
+  margin:0!important;font-size:13px!important;line-height:1.55!important;color:#c6d2db!important;
+ }
+ /* Content, not decoration, should occupy the rest of the viewport. */
+ #app main.game-v11 > .game-panel-v11{
+  padding:0!important;margin:0!important;background:transparent!important;
+  border:0!important;box-shadow:none!important;overflow:visible!important;
+ }
+ #app main.game-v11 .igr834-heading{padding:5px 1px 9px!important;gap:4px!important}
+ #app main.game-v11 .igr834-heading small{display:none!important}
+ #app main.game-v11 .igr834-heading h2{font-size:20px!important;letter-spacing:-.025em!important}
+ #app main.game-v11 .igr834-heading p{font-size:12px!important;color:#aebcc6!important}
+ #app main.game-v11 .igr834-workspace{gap:10px!important}
+ #app main.game-v11 .igr634-priority,
+ #app main.game-v11 .igr634-interviews{
+  border-radius:15px!important;box-shadow:none!important;
+ }
+ #app main.game-v11 > .igr106-action-panel{
+  margin:0 0 12px!important;border-radius:13px!important;
+ }
+ #app main.game-v11 > .phase-strip .phase-clock{
+  font-variant-numeric:tabular-nums;letter-spacing:.035em;
+ }
+}
+@media(max-width:350px){
+ #app main.game-v11 > .tabs-v11.igr836-nav{gap:5px!important}
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab.igr836-primary{font-size:12px!important}
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab.igr836-secondary{font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #app main.game-v11 > .tabs-v11.igr836-nav .tab,
+ #app main.game-v11 > #igr836RoleHelp > summary:after{transition:none!important}
+}
