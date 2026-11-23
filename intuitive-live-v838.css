@@ -7,13 +7,8 @@
  #app main.game-v11 > #igr835Spotlight .igr835-focus-names{font-size:clamp(26px,7vw,35px)!important}
  #app main.game-v11 > #igr835Spotlight p{font-size:12px!important}
  #app main.game-v11 > #igr838Now{order:2}
- /* Phase guidance must precede navigation even without the v838 script. */
+ /* Keep instructions above navigation; preserve any authorized controls. */
  #app main.game-v11 > #igr51Now{order:2!important;margin:0 0 9px!important}
- #app main.game-v11:has(> #igr838Now) > #igr51Now{display:none!important}
- /* Existing phase instructions remain above the sticky tab bar. */
- #app main.game-v11 > #igr51Now{order:2!important}
- /* The contextual card substitutes for plain guidance only when there are
-    no interactive buttons inside the original phase instruction. */
  #app main.game-v11:has(> #igr838Now) > #igr51Now:not(:has(button,input,select,textarea)){display:none!important}
  #app main.game-v11 > .tabs-v11.igr838-nav{
   order:3;position:sticky!important;top:calc(env(safe-area-inset-top,0px) + 5px);
