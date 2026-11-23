@@ -85,7 +85,7 @@ function onRoleTouch(event){
 function onRoleClick(event){
  const button=buttonOf(event.target);
  if(!button)return;
- begin(event.target);
+ if(event.detail>0)begin(event.target);
  // A touch-triggered focus restoration on a newly rendered role button can
  // trigger WebKit's native scroll-to-focus despite focus({preventScroll:true}).
  // Keyboard clicks (detail=0) retain their accessible focus.
@@ -118,7 +118,7 @@ function init(){
  document.addEventListener('touchmove',cancel,{capture:true,passive:true});
  document.addEventListener('wheel',cancel,{capture:true,passive:true});
  document.addEventListener('keydown',event=>{
-  if(['PageUp','PageDown','Home','End','ArrowUp','ArrowDown',' '].includes(event.key))cancel();
+  if(['PageUp','PageDown','Home','End','ArrowUp','ArrowDown',' ','Enter'].includes(event.key))cancel();
  },true);
  window.addEventListener('pagehide',cancel,{passive:true});
  observer=new MutationObserver(changes=>{
