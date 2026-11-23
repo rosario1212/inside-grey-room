@@ -206,3 +206,27 @@ try{
 }catch(error){if(error?.code!=='ENOENT')throw error}
 console.log('v836 premium mobile game screen installed: '+path.basename(target));
 
+// v837 — dedicated regular-dossier role selection viewport stability on iOS.
+// Applied after all lobby renderers; no RPC, timer or role logic modification.
+const roleStabilityVersion='v837-classic-role-scroll-20261123';
+const roleStabilityAsset='lobby-role-stability-v837.js';
+const roleSource=path.join(root,roleStabilityAsset);
+await stat(roleSource);
+const roleSyntax=spawnSync(process.execPath,['--check',roleSource],{encoding:'utf8'});
+if(roleSyntax.status!==0)throw new Error('v837 role stability JS invalid: '+roleSyntax.stderr);
+await copyFile(roleSource,path.join(target,roleStabilityAsset));
+for(const page of ['index.html','en.html']){
+ const file=path.join(target,page);let html=await readFile(file,'utf8');
+ html=html.replace(/\s*<script[^>]+src=["']lobby-role-stability-v837\.js[^"']*["'][^>]*><\/script>/gi,'');
+ html=html.replace('</body>','  <script src="'+roleStabilityAsset+'?v='+roleStabilityVersion+'"></script>\n</body>');
+ await writeFile(file,html,'utf8');
+}
+try{
+ const file=path.join(target,'service-worker.js');let sw=await readFile(file,'utf8');
+ sw=sw.split('\n').filter(line=>!line.includes('/'+roleStabilityAsset+'?v=')).join('\n');
+ sw=sw.replace('const SHELL=[',"const SHELL=[\n  '/"+roleStabilityAsset+"?v="+roleStabilityVersion+"',");
+ await writeFile(file,sw,'utf8');
+}catch(error){if(error?.code!=='ENOENT')throw error}
+console.log('v837 classic role stability bundled: '+path.basename(target));
+
+
