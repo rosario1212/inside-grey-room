@@ -1,6 +1,13 @@
 // Roster layout hotfix: refresh the installed worker and re-cache the new stylesheet.
-const CACHE='igr-v833-four-device-launch-20261122';
+const CACHE='igr-v838-intuitive-game-ui-20261123';
 const SHELL=[
+  '/cycle-workspace-v834.css?v=20261123-v838',
+  '/live-player-focus-v835.css?v=20261123-v838',
+  '/live-screen-ux-v836.css?v=20261123-v838',
+  '/intuitive-live-v838.css?v=20261123-v838',
+  '/cycle-workspace-v834.js?v=20261123-v838',
+  '/live-player-focus-v835.js?v=20261123-v838',
+  '/intuitive-live-v838.js?v=20261123-v838',
   '/heritage-hub-v820.css?v=20261122-campaign-intro',
   '/heritage-recording-fixes-v819.css?v=20261121-v819-1',
   '/heritage-ux-v818.css?v=20261121-v820-1',
@@ -45,7 +52,7 @@ const SHELL=[
   '/heritage-maitre-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-judicial-v34.css?v=v34.9-maitre-theme-posters','/heritage-maitre-polish-v34.css?v=v34.9-maitre-theme-posters',
   '/omerta-v12.css?v=v12.24-omerta','/omerta-polish-v12.css?v=santoro-visual-fix-20261108','/role-tree-polish-v12-29.css?v=v12.29-role-tree','/omerta-v12-30.css?v=v12.32-omerta-final',
   '/omerta-v12-40.css?v=v12.41-uniform-dlc','/omerta-money-intel-v1.css?v=om021-1','/omerta-santoro-verdict-v28.css?v=santoro-verdict-v28','/omerta-023-spy-v1.css?v=omerta-023-spy-v1','/terror-v12-40.css?v=terror-fdr-context-20261116','/dlc-suite-v12-40.css?v=catalog-picker-v729-20261116','/live-cell-v12-44.css?v=v12.44-live-cell','/dlc-profile-ui-v12-44.css?v=v12.44-ui','/dlc-invites-v12-45.css?v=v12.45-dlc-invites','/dlc-copy-v12-46.css?v=v12.46-copy',
-  '/app-v11.js?v=v833-four-device-launch-20261122','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
+  '/app-v11.js?v=v838-cycle-navigation-20261123','/qa-fixes-v12.js?v=v12.22-mobile-ui','/investigation-sheet-v12.js?v=v12.22-mobile-ui','/video-v12-3.js?v=v12.22-mobile-ui',
   '/turn-v12-4.js?v=security-v701-room-authorized-20261115','/profile-dossier-v12.js?v=v12.22-mobile-ui','/playstore-ready-v12.js?v=v12.22-mobile-ui','/social-v12.js?v=v12.22-mobile-ui',
   '/notifications-v12.js?v=v12.22-mobile-ui','/native-lifecycle-v12.js?v=v12.22-mobile-ui','/runtime-optimization-v12.js?v=v12.22-mobile-ui','/gameplay-simple-v12.js?v=v12.22-mobile-ui',
   '/apple-ui-stability-v12.js?v=v12.22-mobile-ui','/gameplay-clean-v12.js?v=v813-single-role-choice-20261121',
