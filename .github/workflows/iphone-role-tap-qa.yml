@@ -27,7 +27,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Simulate iPhone role taps with 1, 4 and 5 players
         run: node scripts/role-lobby-iphone-tap-check.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: iphone-role-tap-layout
