@@ -20,7 +20,7 @@
  const state=()=>{try{return typeof STATE!=='undefined'?STATE:window.STATE}catch(_){return window.STATE}};
  function navPatch(main){
   const nav=main.querySelector(':scope > .tabs-v11');
-  if(!nav)return;
+  if(!nav||nav.classList.contains('igr838-ready'))return;
   nav.classList.add('igr836-nav');
   nav.setAttribute('aria-label',tr('Navigation de la partie','Game navigation'));
   for(const button of nav.querySelectorAll(':scope > .tab[data-view]')){

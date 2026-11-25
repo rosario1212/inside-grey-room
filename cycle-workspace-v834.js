@@ -16,10 +16,10 @@ function isAction(node){
 function header(cycle){
  const node=document.createElement('header');node.className='igr834-heading';
  const small=document.createElement('small');small.textContent=tr('ESPACE DE JEU','GAME WORKSPACE');
- const title=document.createElement('h2');title.textContent=cycle?tr('Cycle · Actions','Cycle · Actions'):tr('Enquête · Dossier et notes','Investigation · Evidence and notes');
+ const title=document.createElement('h2');title.textContent=cycle?tr('Actions du cycle','Cycle actions'):tr('Preuves et notes','Evidence and notes');
  const desc=document.createElement('p');desc.textContent=cycle?
   tr('Interrogatoires, confrontations, vérifications, décisions et nouvelles trames.','Interviews, confrontations, investigations, decisions and new story events.'):
-  tr('Consulte les preuves et les notes. Les décisions se prennent dans Cycle.','Review evidence and notes. Make decisions in Cycle.');
+  tr('Consulte les preuves et les notes. Les décisions se prennent dans Actions.','Review evidence and notes. Make decisions in Actions.');
  node.append(small,title,desc);return node;
 }
 function partition(html,tab){
