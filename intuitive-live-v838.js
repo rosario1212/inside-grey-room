@@ -13,7 +13,20 @@ const names={cycle:['Actions','Actions'],investigation:['Preuves','Evidence'],
  timeline:['Dossier commun','Shared case file'],video:['Flux vidéo','Video feed'],
  rules:['Joueurs & partie','Players & party'],profiling:['Profilage','Profiling']};
 const name=id=>(names[id]||[id,id])[en()?1:0];
-const go=id=>{if(typeof window.setTab==='function')window.setTab(id)};
+const go=id=>{
+ if(typeof window.setTab!=='function')return;
+ if(state()?.tab!==id)window.setTab(id);
+ if(id!=='cycle')return;
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  const panel=app()?.querySelector('.game-panel-v11');
+  const phase=state()?.sync?.room?.phase;
+  const selectors={interrogation_select:'button[onclick*="startInterrogation"]',cycle_debrief:'.qcm-v11 select'};
+  const control=panel?.querySelector(selectors[phase]||'.action-section button,.igr827-investigator-controls button')||panel;
+  if(!control)return;
+  for(let parent=control.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+  control.focus({preventScroll:true});control.scrollIntoView({block:'center',behavior:'instant'});
+ }));
+};
 const make=(label,klass,id)=>{
  const b=document.createElement('button');b.type='button';b.textContent=label;
  b.className=klass;b.addEventListener('click',()=>go(id));return b;
@@ -84,7 +97,7 @@ function roleHelp(main){
  }
  if(tip.parentElement!==details)details.appendChild(tip);
  const text=tr('Conseil de rôle','Role guidance');
- if(details.firstElementChild?.textContent!==text)details.firstElementChild.textContent=text;
+ if(!details.firstElementChild?.textContent)details.firstElementChild.textContent=text;
 }
 function role(){const s=state();return String(s?.sync?.player?.public_role||s?.role||'')}
 function focus(){
@@ -109,7 +122,7 @@ function status(){
  case 'cycle_debrief':
   return {act:lead,title:lead?tr('Répondre au débrief du cycle','Complete the cycle debrief'):tr('Débrief du camp Enquête','Investigation team debrief')};
  case 'trame':
-  return {act:true,title:tr('Nouvel élément de l’enquête','New development in the case')};
+  return {act:false,title:tr('Nouvel élément de l’enquête','New development in the case')};
  default:return null;
  }
 }
