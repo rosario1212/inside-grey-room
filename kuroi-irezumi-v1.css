@@ -178,3 +178,107 @@
   outline:2px solid #f3d6a0!important;
   outline-offset:3px;
 }
+
+/* Online preparation and lobby only. Do not skin private cards or live play.
+   Keep geometry, role availability, focus and launch handlers unchanged. */
+#app main.hnet.hplay-theme-kuroi:has(>.hnet-lobby,>.hnet-create #hnetResumeLobby) {
+  --hu-ink:#f4e7d0;
+  --hu-muted:#cbb9a3;
+  --hu-focus:#e5bd79;
+  --hu-edge:#8f704a88;
+  --hu-tint:#30201b;
+  --hp-accent:#e5bd79;
+  --hp-accent-soft:#38201a;
+  --hj-border:#8f704a66;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby,
+#app main.hnet.hplay-theme-kuroi>.hnet-create:has(#hnetResumeLobby) {
+  background:linear-gradient(155deg,#211311 0%,#15100e 37%,#100d0c 100%)!important;
+  border-color:#876847aa!important;
+  box-shadow:inset 0 1px #e3b66a13,0 12px 30px #0004!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-title,
+#app main.hnet.hplay-theme-kuroi>.hnet-create:has(#hnetResumeLobby)>span {
+  color:#d9b981!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-title>h1,
+#app main.hnet.hplay-theme-kuroi>.hnet-create:has(#hnetResumeLobby)>h1 {
+  color:#fff0d7!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-title>span,
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-code>span {
+  color:#d6b57c!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby :is(.hnet-title>p,.hnet-launch-hint,.hnet-activity-note,.hnet-code>small),
+#app main.hnet.hplay-theme-kuroi>.hnet-create:has(#hnetResumeLobby)>p {
+  color:#cdbdab!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-code {
+  background:linear-gradient(120deg,#201411,#120e0d)!important;
+  border-color:#b38b526e!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-code>strong,
+#app main.hnet.hplay-theme-kuroi>.hnet-create:has(#hnetResumeLobby)>p>strong {
+  color:#f6d8a1!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-code-copy,
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-role-minimal .hnet-random-action {
+  background:linear-gradient(140deg,#38221c,#211713)!important;
+  color:#f2dfbf!important;
+  border-color:#bc945d80!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-role-minimal {
+  background:linear-gradient(155deg,#201411,#15100e)!important;
+  border-color:#96714d88!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-role-minimal .hnet-selected-role {
+  background:linear-gradient(125deg,#37221c,#251914)!important;
+  border-color:#bd925d88!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-role-minimal .hnet-role-card {
+  background:linear-gradient(145deg,#2c201b,#201714)!important;
+  border-color:#96714d88!important;
+  color:#f4e7d0!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-role-minimal .hnet-role-card.is-picked {
+  background:linear-gradient(135deg,#592a22,#301b17)!important;
+  border-color:#e5bd79!important;
+  box-shadow:inset 3px 0 #e5bd79!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-role-minimal .hnet-role-card:is(.is-taken,:disabled) {
+  opacity:.58!important;
+  background:#1a1412!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby :is(.hnet-roster-disclosure,.hnet-wait,.hnet-players>div) {
+  background:#17110f!important;
+  border-color:#87684766!important;
+  color:#e3d0b4!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-roster-disclosure>summary,
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby .hnet-players small {
+  color:#d7c1a1!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-start:not(:disabled),
+#app main.hnet.hplay-theme-kuroi>.hnet-create>#hnetResumeLobby {
+  background:linear-gradient(115deg,#f0d6a2,#c8a16b)!important;
+  border-color:#e3c18b!important;
+  color:#21150f!important;
+}
+#app main.hnet.hplay-theme-kuroi>.hnet-lobby>.hnet-start:disabled {
+  background:#2b211c!important;
+  border-color:#84694b66!important;
+  color:#ab9984!important;
+  opacity:.8!important;
+}
+#app main.hnet.hplay-theme-kuroi:has(>.hnet-lobby,>.hnet-create #hnetResumeLobby)>.hnet-head>span {
+  color:#d2b58b!important;
+}
+#app main.hnet.hplay-theme-kuroi:has(>.hnet-lobby,>.hnet-create #hnetResumeLobby)>.hnet-head>.btn {
+  background:#211613!important;
+  color:#f1dec0!important;
+  border-color:#95734e88!important;
+}
+#app main.hnet.hplay-theme-kuroi:has(>.hnet-lobby,>.hnet-create #hnetResumeLobby) :is(button,summary):focus-visible {
+  outline:2px solid #e5bd79!important;
+  outline-offset:3px;
+}

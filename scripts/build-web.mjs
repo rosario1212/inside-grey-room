@@ -61,7 +61,7 @@ for(const page of ['index.html','en.html']){
   }
   html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
   html=html.replace('</body>',`${authoritativeScript}\n</body>`);
-  if(!html.includes('kuroi-irezumi-v1.css'))html=html.replace('</head>','  <link rel="stylesheet" href="kuroi-irezumi-v1.css?v=20261126-3">\n</head>');
+  if(!html.includes('kuroi-irezumi-v1.css'))html=html.replace('</head>','  <link rel="stylesheet" href="kuroi-irezumi-v1.css?v=20261126-4">\n</head>');
   // Override all injected CSS on both language pages; never alter judicial cards.
   html=html.replace(/\s*<link[^>]+href=["']private-card-readability-v773\.css[^"']*["'][^>]*>/gi,'');
   html=html.replace('</head>','  <link rel="stylesheet" href="private-card-readability-v773.css?v=private-readability-v773-20261117">\n</head>');
