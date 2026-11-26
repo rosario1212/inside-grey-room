@@ -12,7 +12,7 @@ const runtimeFiles=[
  'live-game-v772.css','cast-names-v772.js','idle-choice-v772.js',
  'judicial-card-v773.js','judicial-card-v773.css',
  'suspect-natural-cards-v777.js',
- 'video-mobile-polish-v814.css','video-mobile-polish-v814.js','heritage-mobile-polish-v815.css','interface-consistency-v816.css','role-viewport-stability-v816.js','lobby-role-stability-v837.js','game-tab-stability-host-v827.js','audit-gameplay-v828.js','audit-gameplay-v828.css','gameplay-integrity-v829.css','gameplay-integrity-v829.js','lobby-mobile-polish-v831.css','lobby-mobile-polish-v831.js','video-ui-refinements-v817.css','heritage-ux-v818.css','heritage-ux-v818.js','heritage-recording-fixes-v819.css','heritage-hub-v820.css','kuroi-irezumi-v1.css','game-tab-stability-v827.css',
+ 'video-mobile-polish-v814.css','video-mobile-polish-v814.js','heritage-mobile-polish-v815.css','interface-consistency-v816.css','role-viewport-stability-v816.js','lobby-role-stability-v837.js','game-tab-stability-host-v827.js','audit-gameplay-v828.js','audit-gameplay-v828.css','gameplay-integrity-v829.css','gameplay-integrity-v829.js','lobby-mobile-polish-v831.css','lobby-mobile-polish-v831.js','video-ui-refinements-v817.css','heritage-ux-v818.css','heritage-ux-v818.js','heritage-recording-fixes-v819.css','heritage-hub-v820.css','kuroi-irezumi-v1.css','cendres-classified-v1.css','game-tab-stability-v827.css',
  'cycle-workspace-v834.css','live-player-focus-v835.css','live-screen-ux-v836.css','intuitive-live-v838.css','cycle-workspace-v834.js','live-player-focus-v835.js','intuitive-live-v838.js',
  'manifest.webmanifest','privacy.html','terms.html','delete-account.html','support.html'
 ];
@@ -62,6 +62,7 @@ for(const page of ['index.html','en.html']){
   html=html.replace(/\s*<script[^>]+src=["']authoritative-runtime-v40\.js[^"']*["'][^>]*><\/script>\s*/gi,'\n');
   html=html.replace('</body>',`${authoritativeScript}\n</body>`);
   if(!html.includes('kuroi-irezumi-v1.css'))html=html.replace('</head>','  <link rel="stylesheet" href="kuroi-irezumi-v1.css?v=20261126-4">\n</head>');
+  if(!html.includes('cendres-classified-v1.css'))html=html.replace('</head>','  <link rel="stylesheet" href="cendres-classified-v1.css?v=20261126-1">\n</head>');
   // Override all injected CSS on both language pages; never alter judicial cards.
   html=html.replace(/\s*<link[^>]+href=["']private-card-readability-v773\.css[^"']*["'][^>]*>/gi,'');
   html=html.replace('</head>','  <link rel="stylesheet" href="private-card-readability-v773.css?v=private-readability-v773-20261117">\n</head>');
