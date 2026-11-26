@@ -1,6 +1,8 @@
 // Roster layout hotfix: refresh the installed worker and re-cache the new stylesheet.
-const CACHE='igr-v833-four-device-launch-20261122';
+const CACHE='igr-v839-kuroi-irezumi-20261126';
 const SHELL=[
+  '/kuroi-irezumi-v1.css?v=20261126-1',
+  '/assets/kuroi-dossier-irezumi.webp?v=20261126-1',
   '/cycle-workspace-v834.css?v=20261123-v838',
   '/live-player-focus-v835.css?v=20261123-v838',
   '/live-screen-ux-v836.css?v=20261123-v838',

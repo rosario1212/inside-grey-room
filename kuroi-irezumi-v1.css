@@ -1,0 +1,108 @@
+/* Kuroi / Dossiers only. The artwork is decorative; all progress and
+   navigation remain in the existing campaign renderer. */
+#app main.hplay.hplay-campaign.hplay-theme-kuroi {
+  --kuroi-ink:#100e0d;
+  --kuroi-gold:#d8ba80;
+  --kuroi-irezumi:url("assets/kuroi-dossier-irezumi.webp?v=20261126-1");
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero {
+  box-sizing:border-box!important;
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:124px!important;
+  max-height:280px!important;
+  aspect-ratio:3.04;
+  padding:16px 12px!important;
+  margin:0 0 16px!important;
+  overflow:hidden!important;
+  isolation:isolate;
+  border:1px solid #aa8550!important;
+  border-radius:17px!important;
+  background:var(--kuroi-ink) var(--kuroi-irezumi) center/100% 100% no-repeat!important;
+  box-shadow:inset 0 0 0 1px #b9965020,0 8px 22px #0005!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>img {
+  display:none!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero::after {
+  content:""!important;
+  position:absolute!important;
+  display:block!important;
+  inset:0!important;
+  background:radial-gradient(ellipse at 50% 50%,#090807c9 0%,#09080785 25%,transparent 65%)!important;
+  pointer-events:none;
+  z-index:0;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>div {
+  position:relative!important;
+  inset:auto!important;
+  z-index:1!important;
+  display:grid!important;
+  justify-items:center!important;
+  align-content:center!important;
+  width:min(100%,32rem)!important;
+  min-width:0!important;
+  max-width:100%!important;
+  gap:7px!important;
+  padding:0!important;
+  margin:0!important;
+  text-align:center!important;
+  text-shadow:0 2px 6px #000,0 0 12px #000;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>div>span {
+  color:#f0d6a3!important;
+  font-size:clamp(10px,2.8vw,15px)!important;
+  letter-spacing:.13em!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>div>strong {
+  color:#fff3d9!important;
+  font-size:clamp(13px,3.6vw,24px)!important;
+  letter-spacing:.055em!important;
+  line-height:1.25!important;
+  text-align:center!important;
+  overflow-wrap:anywhere!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>div::after {
+  content:"";
+  display:block;
+  width:clamp(64px,26%,170px);
+  height:1px;
+  background:linear-gradient(90deg,transparent,#d3ab67,transparent);
+  margin-top:3px;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-cases-panel {
+  background:linear-gradient(180deg,#110e0dcc 0%,#100e0d 150px),var(--kuroi-irezumi) center top/100% auto no-repeat!important;
+  border-color:#85643c66!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case {
+  background:linear-gradient(90deg,#141110 0%,#141110f5 55%,#141110a6 80%,#14111084 100%),var(--kuroi-irezumi) right bottom/auto 100% no-repeat!important;
+  border-color:#94774b66!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case:nth-child(even) {
+  background:linear-gradient(90deg,#141110 0%,#141110f5 60%,#141110ab 100%),var(--kuroi-irezumi) left top/auto 100% no-repeat!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case.is-current {
+  border-color:#d8ba80!important;
+  box-shadow:inset 2px 0 #f2d5a2,0 0 12px #d8ba801a!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case:disabled {
+  opacity:.84!important;
+  border-color:#836b4b55!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case-copy>small {
+  color:#d1c6b6!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case-copy>b {
+  color:#e4c896!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case:disabled .hplay-case-copy>b {
+  color:#aaa399!important;
+}
+@media(max-width:360px){
+  #app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero {
+    min-height:118px!important;
+  }
+}
