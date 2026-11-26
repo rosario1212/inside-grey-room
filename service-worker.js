@@ -3,6 +3,8 @@
 const CACHE='igr-v833-four-device-launch-20261122';
 const SHELL=[
   '/kuroi-irezumi-v1.css?v=20261126-4',
+  '/cendres-classified-v1.css?v=20261126-1',
+  '/assets/cendres-classified-banner-v1.svg?v=20261126-1',
   '/assets/kuroi-dossier-irezumi-hd.webp?v=20261126-2',
   '/cycle-workspace-v834.css?v=20261123-v838',
   '/live-player-focus-v835.css?v=20261123-v838',
