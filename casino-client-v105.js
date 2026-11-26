@@ -18,6 +18,17 @@ const roleShort=id=>ROLE_SHORT[id]||'Participe aux décisions de la table.';
 const roleStars=id=>'★'.repeat(ROLE_ACTIVITY[id]||2)+'☆'.repeat(5-(ROLE_ACTIVITY[id]||2));
 const statuses={guest:'Invité',free:'Libre',interpellated:'Interpellé',detained:'Détenu',dead:'Décédé',deposed:'Déchu'};
 let credentials=null,state=null,tab='card',timer=null,busy=false,polling=null,generation=0,active=false,pending=null,problem='',syncedAt=0,joinDraft=null,advanceConfirm=false,entryMode='create',entryDrafts={create:{},join:{}};
+let connectionLost=false,clockTimer=null,noteDraft=null;
+function updatePokerClock(){
+ const clock=$('[data-casino-clock]');
+ if(clock){const value=String(Math.max(0,Math.ceil((Number(clock.dataset.casinoClock)-Date.now())/1000)));if(clock.textContent!==value)clock.textContent=value}
+}
+function viewerKey(){return state?JSON.stringify([state.roomId,state.viewer]):''}
+document.addEventListener('input',event=>{
+ if(active&&state&&event.target.matches?.('[data-casino-form="note"] textarea[name="text"]')){
+  noteDraft={viewer:viewerKey(),value:event.target.value};
+ }
+});
 const freshToken=()=>[...crypto.getRandomValues(new Uint8Array(32))].map(n=>n.toString(16).padStart(2,'0')).join('');
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY+'_pending')||localStorage.getItem(KEY)||'null');return (v?.roomId||v?.inviteCode)&&v?.sessionToken?v:null}catch{return null}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(credentials));localStorage.removeItem(KEY+'_pending')}catch{}}
@@ -43,14 +54,15 @@ function connection(){
  el.dataset.revision=state?String(state.revision):'';
  // The room-entry screen has no live connection: no misleading “Connexion…”.
  // During play, actionable errors already appear in the dedicated alert.
- el.textContent='';el.hidden=true;
+ const warning=state&&connectionLost?'Connexion interrompue · dernière situation connue. Reconnexion en cours…':'';
+ if(el.textContent!==warning)el.textContent=warning;el.hidden=!warning;
 }
 async function sync(){
  if(!credentials||!active||busy)return;if(polling)return polling;
  const epoch=generation;
- polling=(async()=>{try{const data=await request({...credentials,op:credentials.op==='create'?'create':credentials.roomId?'sync':'join',...(credentials.op==='create'?{profileId:JSON.parse(localStorage.getItem('igr_social_identity_v1')||'null')?.id,profileToken:JSON.parse(localStorage.getItem('igr_social_identity_v1')||'null')?.token}:{})});if(epoch===generation){credentials={roomId:data.roomId,sessionToken:credentials.sessionToken};save()}accept(data,epoch);if(epoch===generation){if(!pending)problem='';connection()}}
- catch(e){if(epoch===generation){problem=e.message==='session_not_authorized'?e.message:'network_uncertain';connection()}}
- finally{polling=null}})();return polling;
+ polling=(async()=>{try{const data=await request({...credentials,op:credentials.op==='create'?'create':credentials.roomId?'sync':'join',...(credentials.op==='create'?{profileId:JSON.parse(localStorage.getItem('igr_social_identity_v1')||'null')?.id,profileToken:JSON.parse(localStorage.getItem('igr_social_identity_v1')||'null')?.token}:{})});if(epoch===generation){connectionLost=false;credentials={roomId:data.roomId,sessionToken:credentials.sessionToken};save()}accept(data,epoch);if(epoch===generation){if(!pending)problem='';connection()}}
+ catch(e){if(epoch===generation){connectionLost=true;if(!state||e.message==='session_not_authorized')problem=e.message==='session_not_authorized'?e.message:'network_uncertain';connection()}}
+ finally{if(epoch===generation)polling=null}})();return polling;
 }
 async function mutate(body,retry=false){
  if(busy)return;if(pending&&!retry)return;
@@ -62,7 +74,7 @@ async function mutate(body,retry=false){
  render();
  try{
   const data=await request(full);if(epoch!==generation)return;
-  credentials={roomId:data.roomId,sessionToken:full.sessionToken};save();pending=null;accept(data,epoch);
+  connectionLost=false;credentials={roomId:data.roomId,sessionToken:full.sessionToken};save();pending=null;accept(data,epoch);
  }catch(e){if(epoch!==generation)return;
   const uncertain=['TypeError','TimeoutError','AbortError'].includes(e.name)||['Failed to fetch','network_uncertain','casino_service_unavailable','storage_unavailable'].includes(e.message);
   problem=uncertain?'network_uncertain':e.message;
@@ -138,7 +150,7 @@ function card(){const c=state.ownCard;return section(playerName(state.viewer),`<
  section('Rencontres',(state.npcEvents||[]).map(e=>`<p><b>${esc(name(e.npcId))}</b> · ${esc(e.text)}</p>`).join('')+(state.npcMoves||[]).map(m=>button(m.label,'NPC_MOVE',{moveId:m.id})).join('')+(state.npcOffers||[]).map(o=>`<article><p>${esc(o.terms)} · ${o.price} jetons virtuels</p>${button(o.label,'ACCEPT_NPC_OFFER',{offerId:o.id})}</article>`).join(''))}
 const cardLabel=c=>{const ranks=['2','3','4','5','6','7','8','9','10','V','D','R','A'],suits=['♣','♦','♥','♠'];return ranks[c%13]+suits[Math.floor(c/13)]};
 function table(){const h=state.poker,turn=h?.turn===state.viewer;return section('Poker fermé · jetons virtuels',`<p>Une donne de cinq cartes, un échange, puis un tour de mises plafonnées à 20 jetons. Une seule ouverture de mise, sans relance. Aucune valeur monétaire.</p>
- ${h?`<p>Pot : <b>${h.pot}</b> · ${h.stage==='settled'?'Main terminée':'Tour de '+esc(name(h.turn))}${h.deadline?` · ${Math.max(0,Math.ceil((h.deadline-Date.now())/1000))} s restantes`:''}</p>
+ ${h?`<p>Pot : <b>${h.pot}</b> · ${h.stage==='settled'?'Main terminée':'Tour de '+esc(name(h.turn))}${h.deadline&&h.stage!=='settled'?` · <span data-casino-clock="${Number(h.deadline)}">${Math.max(0,Math.ceil((h.deadline-Date.now())/1000))}</span> s restantes`:''}</p>
  <div class="casino-cards">${h.ownCards.map((c,i)=>`<label class="casino-playing-card">${esc(cardLabel(c))}${turn&&h.stage==='draw'?`<input type="checkbox" name="discard" value="${i}" aria-label="Échanger ${esc(cardLabel(c))}">`:''}</label>`).join('')}</div>
  ${turn&&h.stage==='draw'?`<p>Choisis jusqu’à ${h.maxDraw} cartes à échanger, ou garde ta main.</p><button class="casino-action" data-casino-action="draw">Confirmer ma main</button>`:''}
  ${turn&&h.stage==='bet'?(h.bets[state.viewer]===h.highestBet?button('Parole','POKER_ACTION',{action:'check'}):button('Suivre','POKER_ACTION',{action:'call'}))+button('Se coucher','POKER_ACTION',{action:'fold'})+(h.highestBet===0?form('bet',field('Mise (1 à 20)','amount','number','min="1" max="20" required'),'Miser'):''):''}
@@ -212,8 +224,19 @@ function victoryPanel(f){
 }
 function finale(){const f=state.finale;return section('Le dénouement',`${victoryPanel(f)}<p>${esc(({split:'Yonghe se scinde.',recognised_claim:'Une prétention rassemble soutiens et territoires.',dragon_retained:'Le Vieux Dragon se maintient.',collapse:'Aucune autorité durable ne s’impose.'})[f.political])}</p>${f.successor?`<p>Successeur reconnu : ${esc(name(f.successor))}</p>`:''}${f.personalOutcome?`<article><h3>Ton bilan personnel</h3>${f.personalOutcome.role?`<p>Fonction : ${esc(roles[f.personalOutcome.role]||f.personalOutcome.role)} · Renseignements examinés : ${f.personalOutcome.verifiedReports} · Relations documentées : ${f.personalOutcome.mappedRelations} · Auditions : ${f.personalOutcome.totalHearings} · Décisions : ${f.personalOutcome.rulings}</p>`:`<p>${f.personalOutcome.successor?'Tu es le successeur reconnu.':f.personalOutcome.claimant?'Tu as revendiqué le pouvoir sans être reconnu comme successeur.':'Tu n’as pas été reconnu comme successeur.'}</p><p>Position finale : ${esc(statuses[f.personalOutcome.status]||f.personalOutcome.status)} · Réputation ${f.personalOutcome.reputation} · Légitimité ${f.personalOutcome.legitimacy} · Influence ${f.personalOutcome.influence}</p><p>Alliés indépendants : ${f.personalOutcome.allies} · Territoires : ${f.personalOutcome.territories} · Jetons : ${f.personalOutcome.chips}${f.personalOutcome.dissident?' · Participant à une dissidence':''}</p>`}</article>`:''}${f.judicial.length?'':'<p>Aucune audience n’a été enregistrée : aucune conclusion pénale ne peut être affirmée.</p>'}${f.judicial.map(r=>`<p>${esc(name(r.subjectId))} · ${esc(({convict:'Condamné',acquit:'Acquitté',release:'Libéré',custody:'Détention provisoire'})[r.decision]||r.decision)} · ${esc(r.reasoning)}</p>`).join('')}${(f.organigram||[]).map(e=>`<p>${esc(name(e.subject))} → ${esc(e.relation)} → ${esc(name(e.target))} · ${e.corroborated?'confirmé':'non confirmé'}</p>`).join('')}`)}
 function render(){if(!active)return;const root=$('#app');if(!root)return;
- const drafts=Array.from(root.querySelectorAll('[data-casino-draft]')).map(e=>({name:e.name,form:e.closest('form')?.dataset.casinoForm,value:e.value}));
- const toggles=Array.from(root.querySelectorAll('form input[type=checkbox]')).map(e=>({name:e.name,form:e.closest('form')?.dataset.casinoForm,value:e.value,checked:e.checked}));
+ const scope=JSON.stringify([viewerKey(),state?.status,state?.chapter,state?.phase]);
+ const previous=root.querySelector('#'+ROOT);
+ const sameView=previous?.dataset.scope===scope;
+ const formKey=e=>{
+  const f=e.closest('form');
+  return JSON.stringify([f?.dataset.casinoForm,...(f?$$('input[type=hidden]',f).map(input=>[input.name,input.value]):[])]);
+ };
+ const selector='form select,form [data-casino-draft],form input[type=checkbox]';
+ const drafts=new Map();
+ const key=e=>JSON.stringify([formKey(e),e.name,e.type==='checkbox'?e.value:null]);
+ if(sameView)for(const e of $$(selector,previous))drafts.set(key(e),e.type==='checkbox'?e.checked:e.value);
+ const pokerKey=JSON.stringify([viewerKey(),state?.poker?.id,state?.poker?.stage,state?.poker?.turn,state?.poker?.ownCards]);
+ const discarded=sameView&&previous.dataset.hand===pokerKey?$$('input[name="discard"]:checked',previous).map(e=>e.value):[];
  const rosterWasOpen=!!root.querySelector('.casino-roster-disclosure[open]');
  const lobbyRoot=state?.status==='lobby'?root.querySelector('.casino-role-choice-zone'):null;
  const lobbyScroll=lobbyRoot?window.scrollY:null;
@@ -246,8 +269,20 @@ function render(){if(!active)return;const root=$('#app');if(!root)return;
   }
   if(nextRole&&!nextRole.disabled)nextRole.focus({preventScroll:true});
  }
- for(const d of drafts){const el=Array.from(root.querySelectorAll('[data-casino-draft]')).find(e=>e.name===d.name&&e.closest('form')?.dataset.casinoForm===d.form);if(el)el.value=d.value}
- for(const item of toggles){const el=Array.from(root.querySelectorAll('form input[type=checkbox]')).find(e=>e.name===item.name&&e.value===item.value&&e.closest('form')?.dataset.casinoForm===item.form);if(el)el.checked=item.checked}
+ const screen=root.querySelector('#'+ROOT);
+ screen.dataset.scope=scope;screen.dataset.hand=pokerKey;
+ for(const e of $$(selector,screen)){
+  if(!drafts.has(key(e)))continue;
+  const value=drafts.get(key(e));
+  if(e.type==='checkbox')e.checked=value;
+  else if(!e.options||Array.from(e.options).some(o=>o.value===value))e.value=value;
+ }
+ for(const e of $$('input[name="discard"]',screen))e.checked=discarded.includes(e.value);
+ if(noteDraft?.viewer===viewerKey()){
+  const field=$('[data-casino-form="note"] textarea',screen);
+  if(field)field.value=noteDraft.value;
+  if(noteDraft.value===state?.ownNote)noteDraft=null;
+ }
  if(focused){const el=$$('[data-casino-draft]',root).find(e=>e.name===focused.name&&e.closest('form')?.dataset.casinoForm===focused.form);if(el){el.focus({preventScroll:true});if(el.setSelectionRange&&typeof focused.start==='number')try{el.setSelectionRange(focused.start,focused.end)}catch{}}}
  for(const f of root.querySelectorAll('form[data-casino-form="interpellation"],form[data-casino-form="map"],form[data-casino-form="hearing"]'))setupEvidenceForm(f);
  connection();
@@ -264,7 +299,8 @@ async function open(entry,trigger=null){
  entryDrafts={create:{},join:{}};joinDraft=entry?.fresh?entry:null;
  credentials=entry?.fresh?null:load();
  problem='';pending=null;syncedAt=0;
- clearInterval(timer);
+ clearInterval(timer);clearInterval(clockTimer);connectionLost=false;
+ clockTimer=setInterval(updatePokerClock,500);
  timer=setInterval(()=>{if(!document.hidden)sync()},1200);
  if(!credentials){
   // No previous room: Create/Join is already the final destination.
@@ -294,7 +330,7 @@ async function open(entry,trigger=null){
   }
  }
 }
-function close(){active=false;generation++;clearInterval(timer);timer=null;state=null;pending=null;busy=false;polling=null;window.IGR_CASINO_HERITAGE?.open()}
+function close(){clearInterval(clockTimer);active=false;generation++;clearInterval(timer);timer=null;state=null;pending=null;busy=false;polling=null;window.IGR_CASINO_HERITAGE?.open()}
 function rootEntryDrafts(){
  for(const item of document.querySelectorAll('#'+ROOT+' .casino-entry-option [data-casino-draft]')){
   const kind=item.closest('form')?.dataset.casinoForm;
@@ -361,6 +397,7 @@ document.addEventListener('change',event=>{
  if(label)label.textContent=roleShort(select.value);
  if(activity)activity.textContent='ACTIVITÉ · '+roleStars(select.value);
 },true);
+window.addEventListener('offline',()=>{if(active&&state){connectionLost=true;connection()}});
 window.addEventListener('online',()=>{if(active)sync()});window.addEventListener('pageshow',()=>{if(active)sync()});document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden)sync()});
 window.IGR_CASINO_CLIENT=Object.freeze({version:'105.13',open,close,sync});
 })();

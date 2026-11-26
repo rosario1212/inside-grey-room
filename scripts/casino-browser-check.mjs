@@ -10,7 +10,7 @@ import {casinoService} from '../casino/service.mjs';
 import {fixtureRelease,MemoryStorage} from './casino-fixtures.mjs';
 const root=process.cwd(),resultDir=resolve('casino-qa-results');await mkdir(resultDir,{recursive:true});
 const storage=new MemoryStorage();storage.approved=['A','B','C'].map(variant=>({...fixtureRelease(),id:'fixture-'+variant,variant}));
-let now=100000;const service=casinoService(storage,{clock:()=>now}),errors=[],checks=[];
+let now=Date.now();const service=casinoService(storage,{clock:()=>now}),errors=[],checks=[];
 const server=createServer(async(req,res)=>{
  try{
   if(req.url==='/api/casino'){
@@ -112,11 +112,54 @@ try{
  assert(!(await hostPage.locator('[data-casino-action=start]').isDisabled()),'Seven validated participants must enable launch');
  assert((await hostPage.locator('.casino-launch-readiness').textContent()).includes('La table est prête'),'Host must see ready confirmation');
  await layout(hostPage,'casino-lobby-ready-iphone');
+ now=Date.now();
  await hostPage.locator('[data-casino-action=start]').click();
  await Promise.all(people.map(p=>p.page.locator('[data-casino-tab=card]').waitFor()));
  assert((await hostPage.locator('body').textContent()).includes('Fiche fictive de Ali.'));
  assert((await hostPage.locator('body').textContent()).includes('Tu as négocié avec Joueur 1.'));
  const ids=await Promise.all(people.map(async p=>({person:p,...await storageIdentity(p.page)})));
+ // A different player's readiness update must not change an unsubmitted decision.
+ const writer=people[1].page,analystPage=people[6].page;
+ const pokerState=(await storage.read(room.id)).state;
+ const dealer=people[pokerState.members.findIndex(m=>m.id===pokerState.poker.turn)].page;
+ await dealer.locator('[data-casino-tab=table]').click();
+ const discard=dealer.locator('input[name="discard"]').first();
+ await discard.check();
+ const clock=dealer.locator('[data-casino-clock]');
+ const initialSeconds=Number(await clock.textContent());
+ await dealer.waitForFunction(n=>Number(document.querySelector('[data-casino-clock]')?.textContent)<n,initialSeconds);
+ await writer.locator('[data-casino-tab=justice]').click();
+ const msg=writer.locator('[data-casino-form=message]');
+ await msg.locator('[name=to]').selectOption({index:1});
+ const recipient=await msg.locator('[name=to]').inputValue();
+ await msg.locator('[name=kind]').selectOption('allies');
+ await msg.locator('textarea').fill('Message destiné à un allié');
+ await commandFor(analystPage,'PHASE_POSITION',{position:'ready'});
+ const revision=(await storage.read(room.id)).revision;
+ await Promise.all([visibleRevision(writer,revision),visibleRevision(dealer,revision)]);
+ assert.equal(await msg.locator('[name=to]').inputValue(),recipient);
+ assert.equal(await msg.locator('[name=kind]').inputValue(),'allies');
+ assert.equal(await msg.locator('textarea').inputValue(),'Message destiné à un allié');
+ assert(await discard.isChecked());
+ await discard.uncheck();
+ await writer.locator('[data-casino-tab=registry]').click();
+ const agreement=writer.locator('[data-casino-form=agreement]');
+ await agreement.locator('[name=kind]').selectOption('territory');
+ await agreement.locator('[name=territoryId]').selectOption({index:1});
+ const territory=await agreement.locator('[name=territoryId]').inputValue();
+ await agreement.locator('[name=visibility]').selectOption('public');
+ await commandFor(people[5].page,'PHASE_POSITION',{position:'ready'});
+ await visibleRevision(writer,(await storage.read(room.id)).revision);
+ assert.equal(await agreement.locator('[name=territoryId]').inputValue(),territory);
+ assert.equal(await agreement.locator('[name=visibility]').inputValue(),'public');
+ assert.equal(await agreement.locator('[name=kind]').inputValue(),'territory');
+ await analystPage.locator('[data-casino-tab=bureau]').click();
+ const note=analystPage.locator('[data-casino-form=note] textarea');
+ await note.fill('Recoupement en cours');
+ await analystPage.locator('[data-casino-tab=card]').click();
+ await analystPage.locator('[data-casino-tab=bureau]').click();
+ assert.equal(await note.inputValue(),'Recoupement en cours');
+ checks.push('Destinataire, accord territorial, échange au poker, chronomètre et brouillon Analyste');
  for(let turn=0;turn<8;turn++){
   const current=(await storage.read(room.id)).state,h=current.poker;if(h.stage==='settled')break;
   const actor=ids[current.members.findIndex(m=>m.id===h.turn)];
@@ -146,7 +189,7 @@ try{
  await commandFor(people[1].page,'CLAIM_SUCCESSION');
  await visibleRevision(people[5].page,(await storage.read(room.id)).revision);
  assert.equal(await people[5].page.locator('[data-casino-form=note] textarea').inputValue(),'Brouillon à conserver');
- await people[2].context.setOffline(true);await commandFor(people[1].page,'PLEDGE_LOYALTY',{to:(await storage.read(room.id)).state.hostId});await people[2].context.setOffline(false);
+ await people[2].context.setOffline(true);await people[2].page.locator('[data-casino-connection]').waitFor({state:'visible'});await commandFor(people[1].page,'PLEDGE_LOYALTY',{to:(await storage.read(room.id)).state.hostId});await people[2].context.setOffline(false);
  await visibleRevision(people[2].page,(await storage.read(room.id)).revision);checks.push('Retour réseau et synchronisation des décisions sans perte du brouillon en cours');
  // Drop a response after the server commits it: the UI retries the same UUID,
  // so the important decision remains saved exactly once.
