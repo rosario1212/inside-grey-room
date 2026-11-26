@@ -38,6 +38,19 @@ function closeMore(){
  if(p)p.hidden=true;
  if(b)b.setAttribute('aria-expanded','false');
 }
+function fitMoreMenu(){
+ const menu=activeNav?.querySelector('.igr838-more-panel');
+ if(!menu||menu.hidden||!window.matchMedia('(max-width:700px)').matches)return;
+ const rect=activeNav.getBoundingClientRect();
+ const viewport=window.visualViewport;
+ const top=viewport?.offsetTop||0;
+ const above=Math.max(0,rect.top-top-12);
+ const below=Math.max(0,top+(viewport?.height||innerHeight)-rect.bottom-12);
+ const opensAbove=below<menu.scrollHeight&&above>below;
+ menu.style.top=opensAbove?'auto':'calc(100% + 6px)';
+ menu.style.bottom=opensAbove?'calc(100% + 6px)':'auto';
+ menu.style.maxHeight=(opensAbove?above:below)+'px';
+}
 function navigation(main){
  const nav=main.querySelector(':scope > .tabs-v11');if(!nav)return;
  activeNav=nav;
@@ -74,6 +87,7 @@ function navigation(main){
    toggle.addEventListener('click',event=>{
     event.stopPropagation();
     menu.hidden=!menu.hidden;
+    fitMoreMenu();
     toggle.setAttribute('aria-expanded',String(!menu.hidden));
    });
    nav.append(toggle,menu);
@@ -169,9 +183,33 @@ function roster(main){
  const text=n+' '+tr('joueurs · Voir','players · View');
  if(jump.textContent!==text)jump.textContent=text;
 }
+let draftScope='';
+const answers=new Map();
+const answerSelector='.final-form select[id],.final-form textarea[id],.qcm-v11 select[id],.qcm-v11 textarea[id]';
+function syncDraftScope(){
+ const s=state(),r=s?.sync?.room,p=s?.sync?.player;
+ const eligible=s?.view==='game'&&p?.id&&['locking','cycle_debrief'].includes(r?.phase);
+ const locked=eligible&&s.sync.my_actions?.some(a=>r.phase==='locking'?a.action_type==='final_lock':a.action_type==='debrief'&&Number(a.cycle)===Number(r.cycle));
+ const key=eligible&&!locked?JSON.stringify([s.room,p.id,r.scenario_id,r.cycle,r.phase,r.phase_started_at]):'';
+ if(key!==draftScope){answers.clear();draftScope=key}
+ return !!key;
+}
+function captureAnswer(event){
+ const field=event.target;
+ if(field.matches?.(answerSelector)&&syncDraftScope())answers.set(field.id,field.value);
+}
+function restoreAnswers(main){
+ if(!syncDraftScope()||!answers.size)return;
+ for(const field of main.querySelectorAll(answerSelector)){
+  if(!answers.has(field.id)||field.disabled)continue;
+  const value=answers.get(field.id);
+  if(field.options&&!Array.from(field.options).some(option=>option.value===value))continue;
+  if(field.value!==value)field.value=value;
+ }
+}
 function patch(){
- const main=app()?.querySelector('main.game-v11');if(!main)return;
- navigation(main);roleHelp(main);priority(main);shortcuts(main);roster(main);
+ const main=app()?.querySelector('main.game-v11');if(!main){syncDraftScope();return}
+ restoreAnswers(main);navigation(main);roleHelp(main);priority(main);shortcuts(main);roster(main);
 }
 let queued=false;
 function schedule(){
@@ -180,6 +218,11 @@ function schedule(){
 }
 function boot(){
  const root=app();if(!root)return;
+ root.addEventListener('input',captureAnswer,true);
+ root.addEventListener('change',captureAnswer,true);
+ window.addEventListener('resize',fitMoreMenu,{passive:true});
+ window.addEventListener('scroll',fitMoreMenu,{passive:true});
+ window.visualViewport?.addEventListener('resize',fitMoreMenu,{passive:true});
  new MutationObserver(changes=>{
   if(changes.some(x=>x.type==='childList'&&(x.addedNodes.length||x.removedNodes.length)))schedule();
  }).observe(root,{subtree:true,childList:true});
