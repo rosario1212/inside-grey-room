@@ -128,12 +128,15 @@ async function renderStandardLocalSetup(id){
   const sc=scenarioObj(id);if(!sc)return;
   shellPut(`<main class="page localplay local-loading"><button class="btn ghost small local-top-back" id="localBack">← Dossier</button><section class="local-loading-card"><span>MODE LOCAL</span><h1>${esc(sc.title)}</h1><p>Préparation du dossier…</p><div class="local-spinner"></div></section></main>`);
   $('#localBack')?.addEventListener('click',()=>{STATE.selectedScenario=id;STATE.view='create-confirm';renderCreateConfirm()});
+  const loadingScreen=$('.local-loading');
   let payload;
   try{payload=await getStandardPack(id)}catch(e){
+    if(!loadingScreen?.isConnected)return;
     console.error(e);
     shellPut(`<main class="page localplay"><button class="btn ghost small local-top-back" id="localBack2">← Dossier</button><section class="local-error"><span>MODE LOCAL</span><h1>Accès impossible</h1><p>${/premium|access/i.test(e.message||'')?'Ce dossier nécessite l’accès premium correspondant.':'Le dossier local n’a pas pu être chargé. Vérifie la connexion puis réessaie.'}</p></section></main>`);
     $('#localBack2')?.addEventListener('click',()=>{STATE.selectedScenario=id;STATE.view='create-confirm';renderCreateConfirm()});return;
   }
+  if(!loadingScreen?.isConnected)return;
   const min=Number(payload.min_players||sc.min||4),max=Number(payload.max_players||sc.max||min),prev=readJSON(LOCAL_KEY);
   const count=clamp(prev?.scenarioId===id?prev.players?.length||min:min,min,max);
   const prevFourMode=(prev?.scenarioId===id&&prev.mode==='team')?'team':'classic';
