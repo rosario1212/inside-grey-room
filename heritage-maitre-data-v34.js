@@ -5,6 +5,7 @@ const META=Object.freeze({
   id:'maitre',title:'MAÎTRE',subtitle:'Droit pénal · Réputation · Dossier vivant',
   cover:'/assets/heritage-maitre-campaign-intro.webp?v=20261122-maitre-intro-v2',
   promise:'Construisez une défense. Laissez des traces. Assumez ce qu’elles deviendront.',
+  definition:'Vous incarnez les différents acteurs d’une affaire pénale : défense, accusation, enquête et justice, ainsi que les personnes impliquées dans le dossier. Votre objectif dépend de votre rôle : construire une stratégie, confronter les versions et distinguer les faits établis des hypothèses. Chaque prise de position laisse des traces qui peuvent resurgir dans les dossiers suivants et façonner la réputation de l’avocat.',
   heritage:'Héritage de la défense',mechanic:'LES TRACES · L’ANGLE · LA DÉMONSTRATION',
   chapters:Object.freeze([
     Object.freeze({n:1,title:'LE CLIENT',poster:'assets/heritage-maitre-01-le-client.webp?v=v34-maitre',note:'Fraude fiscale, soupçons de stupéfiants et entourage beaucoup plus sale que le dossier ne le laisse croire.'}),
