@@ -183,6 +183,7 @@ const PACKS={
   },
   kuroi:{
     title:'KUROI',theme:'JAPON / DETTES / POLICE',min:5,max:7,
+    definition:'Vous incarnez des membres de deux clans yakuza rivaux ou de la police japonaise, avec des intérêts parfois opposés. L’assassinat d’un Oyabun impose une coopération fragile. Votre mission est d’établir la vérité tout en composant avec les loyautés, les dettes d’honneur et les intérêts de votre faction. Les décisions prises au fil des dossiers laissent des traces dans la campagne.',
     chapters:{
       1:{
         title:'L’OYABUN',

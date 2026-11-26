@@ -1,6 +1,7 @@
 /* Kuroi / Dossiers only. The artwork is decorative; all progress and
    navigation remain in the existing campaign renderer. */
-#app main.hplay.hplay-campaign.hplay-theme-kuroi {
+#app main.hplay.hplay-campaign.hplay-theme-kuroi,
+#app main.hplay.hplay-dossier.hplay-theme-kuroi {
   --kuroi-ink:#100e0d;
   --kuroi-gold:#d8ba80;
   --kuroi-irezumi:url("assets/kuroi-dossier-irezumi-hd.webp?v=20261126-2");
@@ -100,4 +101,80 @@
   #app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero {
     min-height:118px!important;
   }
+}
+
+/* Kuroi campaign context and launch skins. Only visual layers; the existing
+   dossier grid, role buttons, focus and event handlers stay intact. */
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-campaign-definition {
+  display:grid!important;
+  gap:6px!important;
+  margin:12px 0 4px!important;
+  padding:12px 14px!important;
+  border:1px solid #8d704d88!important;
+  border-left:2px solid #b3473a!important;
+  border-radius:12px!important;
+  background:linear-gradient(115deg,#211613,#100e0d 85%)!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-campaign-definition>b {
+  color:#e5c692!important;
+  font-size:10px!important;
+  letter-spacing:.11em!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-campaign-definition>span {
+  color:#d8cfc1!important;
+  font-size:clamp(12px,3.5vw,14px)!important;
+  line-height:1.6!important;
+  overflow-wrap:break-word;
+}
+#app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>div {
+  justify-self:center!important;
+  align-self:center!important;
+  width:100%!important;
+}
+#app main.hplay.hplay-dossier.hplay-theme-kuroi .hplay-dossier-grid {
+  --igr-dossier-edge:#96774b99;
+  --igr-dossier-paper:#100e0d;
+}
+#app main.hplay.hplay-dossier.hplay-theme-kuroi .hplay-dossier-copy>:is(h1,.hplay-eyebrow) {
+  text-shadow:0 2px 6px #000,0 0 12px #000!important;
+}
+#app main.hplay.hplay-dossier.hplay-theme-kuroi .hplay-dossier-copy>h1 {
+  color:#fff1db!important;
+}
+#app main.hplay.hplay-dossier.hplay-theme-kuroi .hplay-dossier-copy>.hplay-eyebrow {
+  color:#e7c794!important;
+}
+@media(max-width:760px) {
+  /* Existing pseudo-element spans only the poster/title rows, not the
+     launch controls or briefing. Fit the wide artwork without zooming. */
+  #app main.hplay.hplay-dossier.hplay-theme-kuroi .hplay-dossier-grid::before {
+    background:
+      linear-gradient(90deg,#110e0d12 0%,#110e0dd4 36%,#110e0df2 50%,#110e0d48 100%),
+      var(--kuroi-irezumi) right center/100% auto no-repeat,
+      #100e0d!important;
+    border:1px solid #9d7b50a8!important;
+    border-radius:14px!important;
+    box-shadow:inset 0 0 20px #0005;
+  }
+}
+@media(min-width:761px) {
+  #app main.hplay.hplay-dossier.hplay-theme-kuroi .hplay-dossier-copy {
+    background:linear-gradient(90deg,#100e0df2,#100e0d66),var(--kuroi-irezumi) right top/100% auto no-repeat,#100e0d!important;
+    border:1px solid #96774b77;
+    border-radius:14px;
+    padding:18px!important;
+  }
+}
+#app main.hplay.hplay-dossier.hplay-theme-kuroi .hj-dossier-entry .heritage-dual-row>.btn:is(.hj-mode-online,.hj-mode-local) {
+  background:linear-gradient(90deg,#17130ff5 0%,#17130fed 56%,#17130f70 100%),var(--kuroi-irezumi) right center/100% auto no-repeat,#17130f!important;
+  color:#f0e4d0!important;
+  border-color:#ae8e5b88!important;
+}
+#app main.hplay.hplay-dossier.hplay-theme-kuroi .hj-dossier-entry .heritage-dual-row>.btn.hj-mode-local {
+  background:linear-gradient(90deg,#17130ff5 0%,#17130ff0 58%,#17130fa8 100%),var(--kuroi-irezumi) left center/100% auto no-repeat,#17130f!important;
+  border-color:#ae8e5b55!important;
+}
+#app main.hplay.hplay-dossier.hplay-theme-kuroi .hj-dossier-entry .heritage-dual-row>.btn:focus-visible {
+  outline:2px solid #f3d6a0!important;
+  outline-offset:3px;
 }
