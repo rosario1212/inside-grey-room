@@ -3,7 +3,7 @@
 #app main.hplay.hplay-campaign.hplay-theme-kuroi {
   --kuroi-ink:#100e0d;
   --kuroi-gold:#d8ba80;
-  --kuroi-irezumi:url("assets/kuroi-dossier-irezumi.webp?v=20261126-1");
+  --kuroi-irezumi:url("assets/kuroi-dossier-irezumi-hd.webp?v=20261126-2");
 }
 #app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero {
   box-sizing:border-box!important;
@@ -21,7 +21,7 @@
   isolation:isolate;
   border:1px solid #aa8550!important;
   border-radius:17px!important;
-  background:var(--kuroi-ink) var(--kuroi-irezumi) center/100% 100% no-repeat!important;
+  background:var(--kuroi-ink) var(--kuroi-irezumi) center/cover no-repeat!important;
   box-shadow:inset 0 0 0 1px #b9965020,0 8px 22px #0005!important;
 }
 #app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>img {
@@ -66,23 +66,18 @@
   overflow-wrap:anywhere!important;
 }
 #app main.hplay.hplay-campaign.hplay-theme-kuroi>.hplay-campaign-hero>div::after {
-  content:"";
-  display:block;
-  width:clamp(64px,26%,170px);
-  height:1px;
-  background:linear-gradient(90deg,transparent,#d3ab67,transparent);
-  margin-top:3px;
+  display:none!important; /* The original artwork contains its own gold ornament. */
 }
 #app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-cases-panel {
   background:linear-gradient(180deg,#110e0dcc 0%,#100e0d 150px),var(--kuroi-irezumi) center top/100% auto no-repeat!important;
   border-color:#85643c66!important;
 }
 #app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case {
-  background:linear-gradient(90deg,#141110 0%,#141110f5 55%,#141110a6 80%,#14111084 100%),var(--kuroi-irezumi) right bottom/auto 100% no-repeat!important;
+  background:linear-gradient(90deg,#141110 0%,#141110f5 55%,#141110a6 80%,#14111084 100%),var(--kuroi-irezumi) right bottom/cover no-repeat!important;
   border-color:#94774b66!important;
 }
 #app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case:nth-child(even) {
-  background:linear-gradient(90deg,#141110 0%,#141110f5 60%,#141110ab 100%),var(--kuroi-irezumi) left top/auto 100% no-repeat!important;
+  background:linear-gradient(90deg,#141110 0%,#141110f5 60%,#141110ab 100%),var(--kuroi-irezumi) left top/cover no-repeat!important;
 }
 #app main.hplay.hplay-campaign.hplay-theme-kuroi .hplay-case.is-current {
   border-color:#d8ba80!important;

@@ -2,8 +2,8 @@
 // Kuroi artwork and stylesheet have independent versioned URLs; preserve the existing cache contract.
 const CACHE='igr-v833-four-device-launch-20261122';
 const SHELL=[
-  '/kuroi-irezumi-v1.css?v=20261126-1',
-  '/assets/kuroi-dossier-irezumi.webp?v=20261126-1',
+  '/kuroi-irezumi-v1.css?v=20261126-2',
+  '/assets/kuroi-dossier-irezumi-hd.webp?v=20261126-2',
   '/cycle-workspace-v834.css?v=20261123-v838',
   '/live-player-focus-v835.css?v=20261123-v838',
   '/live-screen-ux-v836.css?v=20261123-v838',
