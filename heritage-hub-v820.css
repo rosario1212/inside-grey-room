@@ -676,9 +676,9 @@
     padding:11px 15px!important;
     margin:0 0 16px!important;
     gap:15px!important;
-    border:1px solid rgba(181,199,210,.21)!important;
+    border:1px solid #78684f!important;
     border-radius:16px!important;
-    background:linear-gradient(115deg,#151f29,#0a1119)!important;
+    background:linear-gradient(115deg,#332c23,#211e19)!important;
     overflow:hidden!important;
   }
   #app main.hplay.hplay-campaign:is(.hplay-theme-cendres,.hplay-theme-kuroi)>.hplay-campaign-hero::after{
@@ -702,9 +702,9 @@
     object-position:center!important;
     filter:none!important;
     opacity:1!important;
-    border:1px solid rgba(241,243,246,.20)!important;
+    border:1px solid transparent!important;
     border-radius:6px!important;
-    box-shadow:0 5px 13px rgba(0,0,0,.28)!important;
+    box-shadow:none!important;
   }
   #app main.hplay.hplay-campaign:is(.hplay-theme-cendres,.hplay-theme-kuroi)>.hplay-campaign-hero>div{
     position:relative!important;
@@ -724,13 +724,13 @@
   }
   #app main.hplay.hplay-campaign:is(.hplay-theme-cendres,.hplay-theme-kuroi)>.hplay-campaign-hero>div>span{
     display:block!important;
-    color:#aabfcf!important;
+    color:#dfcda9!important;
     font-size:10px!important;
     letter-spacing:.11em!important;
     white-space:normal!important;
   }
   #app main.hplay.hplay-campaign:is(.hplay-theme-cendres,.hplay-theme-kuroi)>.hplay-campaign-hero>div>strong{
-    color:#eef5fa!important;
+    color:#fff7e8!important;
     font-size:clamp(12px,3.6vw,15px)!important;
     line-height:1.4!important;
     letter-spacing:.04em!important;
@@ -1060,3 +1060,23 @@ body:has(#app main.maitre-page.hnet .hnet-lobby) .igr-beta-footer a:is(:visited,
 #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card)>.hplay-campaign-body{position:static!important;inset:auto!important;display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;padding:0!important;margin:0!important;background:#090c10!important;}
 #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot{display:flex!important;margin:0!important;padding:14px 18px!important;border-top:1px solid rgba(242,244,246,.18)!important;}
 #app main.hplay-hub .hplay-hub-grid>button.hplay-campaign-card:is(.hplay-theme-cendres,.hplay-theme-kuroi,.maitre-hub-card) .hplay-campaign-foot :is(b,i){font-size:11px!important;}
+
+/* Cendres · sélection du dossier */
+#app main.hplay.hplay-campaign.hplay-theme-cendres{
+  --hp-panel:#24211d;--hp-panel2:#191713;--hp-muted:#d4ccbf;
+  --hp-dim:#bfb4a1;--hp-accent:#edd8ad;--hp-accent-soft:#383025;--hp-line:#615747;
+}
+#app main.hplay.hplay-campaign.hplay-theme-cendres .hplay-cases-panel{
+  background:#221f1b!important;border-color:#51493d!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-cendres .hplay-case.is-current{
+  background:#393227!important;border-color:#bfa77d!important;
+  box-shadow:inset 3px 0 #ead1a2!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-cendres .hplay-case:disabled{
+  opacity:1!important;background:#24211e!important;border-color:#494238!important;
+}
+#app main.hplay.hplay-campaign.hplay-theme-cendres .hplay-case .hplay-case-copy>strong{color:#faf2e5!important}
+#app main.hplay.hplay-campaign.hplay-theme-cendres .hplay-case .hplay-case-copy>small{color:#d8d0c4!important;font-size:13px!important;line-height:1.45!important}
+#app main.hplay.hplay-campaign.hplay-theme-cendres .hplay-case .hplay-case-copy>:is(em,b),
+#app main.hplay.hplay-campaign.hplay-theme-cendres :is(.hplay-eyebrow,.hplay-section-head>div>span){color:#dbc69f!important}
