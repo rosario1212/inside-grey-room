@@ -259,8 +259,19 @@ function renderLocalDebrief(s){
   ['confusion','Vous sentez-vous encore perdus ?',['Non','Un peu','Oui']],
   ['missing','Quelle piste manque le plus ?',['Chronologie','Accès et déplacements','Mobile et relations','Éléments matériels','Responsabilités']]
  ];
- const fields=questions.map(([key,label,options])=>`<label>${label}<select required name="${key}"><option value="">Choisir…</option>${options.map(o=>`<option>${o}</option>`).join('')}</select></label>`).join('');
+ const draft=s.debriefDraft?.cycle===s.cycle?s.debriefDraft.answers:{};
+ const fields=questions.map(([key,label,options])=>`<label>${label}<select required name="${key}"><option value="">Choisir…</option>${options.map(o=>`<option${draft?.[key]===o?' selected':''}>${o}</option>`).join('')}</select></label>`).join('');
  shellPut(`<main class="page localplay">${localHeader(s,'DÉBRIEF · CYCLE '+s.cycle)}<form class="local-panel local-verdict-list" id="localDebriefForm"><h1>Point d’enquête</h1><p>Le camp Enquête fait le point avant de poursuivre.</p>${fields}<button class="btn primary block">Valider le débrief</button></form></main>`);
+ const form=$('#localDebriefForm');
+ form.addEventListener('change',event=>{
+  const current=readLocal();
+  if(current?.startedAt!==s.startedAt||current?.scenarioId!==s.scenarioId||current?.stage!=='debrief'||current.cycle!==s.cycle)return;
+  const answers=current.debriefDraft?.cycle===s.cycle?current.debriefDraft.answers:{};
+  current.debriefDraft={cycle:s.cycle,answers:{...answers,[event.target.name]:event.target.value}};
+  saveLocal(current);
+ });
+ form.dataset.startedAt=s.startedAt;
+ form.dataset.cycle=String(s.cycle);
 }
 function renderLocalVerdict(s){const suspects=s.players.filter(p=>p.role==='suspect').sort((a,b)=>(a.slot||0)-(b.slot||0));shellPut(`<main class="page localplay local-verdict">${localHeader(s,'VERDICT')}<section class="local-cycle-head"><span>RESPONSABILITÉ FINALE</span><h1>Verrouiller la reconstruction</h1><p>Attribuez à chaque suspect un niveau de 0 à 3. Le téléphone peut rester au centre : il ne contient plus d’information privée.</p></section>${localHistory(s)}<form id="localVerdictForm" class="local-panel local-verdict-list">${suspects.map(p=>`<label><span><b>${esc(p.name)}</b><small>0 = hors de cause · 3 = responsabilité centrale</small></span><select required data-suspect-slot="${p.slot}"><option value="">Choisir un niveau…</option>${[0,1,2,3].map(v=>`<option value="${v}" ${s.verdict?.[p.slot]===v?'selected':''}>${v}</option>`).join('')}</select></label>`).join('')}<button class="btn primary block" type="submit">RÉVÉLER LA VÉRITÉ</button></form></main>`)}
 function normalizeTruthLevels(pack,suspects){const x=pack.truth?.levels;if(Array.isArray(x))return x.map(Number);if(x&&typeof x==='object')return suspects.map((_,i)=>Number(x[String(i+1)]??x[i+1]??0));return suspects.map(()=>0)}
@@ -269,7 +280,8 @@ function renderLocalResult(s){const suspects=s.players.filter(p=>p.role==='suspe
 function handleLocalClick(e){const b=e.target.closest?.('[data-local-act]');if(!b)return;const s=readLocal();if(!s)return;e.preventDefault();const a=b.dataset.localAct;if(a==='quit'){if(confirm('Quitter cette partie locale ? La progression locale sera conservée.')){STATE.selectedScenario=s.scenarioId;STATE.view='create-confirm';renderCreateConfirm()}return}if(a==='open-card'){renderLocalReveal({...s,revealOpen:true});return}if(a==='next-card'){b.closest('.local-private-card')?.replaceChildren();s.revealOpen=false;if(s.revealIndex>=s.players.length-1){s.stage='briefing'}else s.revealIndex++;saveLocal(s);renderStandardLocal();return}if(a==='start-cycles'){s.stage='cycle';s.cycle=1;s.trameOpen=false;saveLocal(s);renderStandardLocal();return}if(a==='reveal-trame'){s.revealedCycles=[...new Set([...(Array.isArray(s.revealedCycles)?s.revealedCycles:Array.from({length:Math.max(0,Number(s.cycle)-1)},(_,i)=>i+1)),Number(s.cycle)])];s.trameOpen=true;saveLocal(s);renderStandardLocal();return}if(a==='next-cycle'){s.stage='debrief';saveLocal(s);renderStandardLocal();return}if(a==='finish-local'){del(LOCAL_KEY);STATE.selectedScenario=s.scenarioId;STATE.view='create-confirm';renderCreateConfirm();return}}
 function handleLocalSubmit(e){
  if(e.target.id==='localDebriefForm'){
-  e.preventDefault();const s=readLocal();if(s?.stage!=='debrief'||!e.target.reportValidity())return;
+  e.preventDefault();const s=readLocal();if(s?.stage!=='debrief'||e.target.dataset.startedAt!==String(s.startedAt)||e.target.dataset.cycle!==String(s.cycle)||!e.target.reportValidity())return;
+  delete s.debriefDraft;
   s.debriefs=s.debriefs||{};s.debriefs[s.cycle]=Object.fromEntries(new FormData(e.target));
   if(s.cycle<3){s.cycle++;s.trameOpen=false;s.stage='cycle'}else s.stage='verdict';
   saveLocal(s);renderStandardLocal();return;
