@@ -145,7 +145,26 @@ async function renderStandardLocalSetup(id){
   build(count,prev?.scenarioId===id?(prev.players||[]).map(x=>x.name):[]);
   $('#localBack3')?.addEventListener('click',()=>{STATE.selectedScenario=id;STATE.view='create-confirm';renderCreateConfirm()});
   $$('[data-local-count]').forEach(btn=>btn.addEventListener('click',()=>{const now=Number($('#localCount').textContent),next=clamp(now+Number(btn.dataset.localCount),min,max),vals=$$('#localNames input').map(x=>x.value);if(next!==now){$('#localCount').textContent=String(next);build(next,vals);const modeNode=$('#localFourMode');if(modeNode)modeNode.hidden=next!==4;}}));
-  $('#localSetupForm')?.addEventListener('submit',e=>{e.preventDefault();const names=$$('#localNames input').map(x=>x.value.trim()).filter(Boolean);if(names.length<min)return toastX(`Il faut au moins ${min} joueurs.`);startStandardLocal(id,payload.pack,names,['001','004','009'].includes(id)&&names.length===4?($('#localFourModeSelect')?.value||'classic'):'classic')});
+  $('#localSetupForm')?.addEventListener('submit',e=>{
+    e.preventDefault();
+    const names=[],seen=new Set();
+    for(const field of $$('#localNames input')){
+      const name=field.value.trim().replace(/\s+/gu,' ');
+      const key=name.normalize('NFKC').toLocaleLowerCase('fr');
+      if(!name||seen.has(key)){
+        field.setCustomValidity(name?'Ce pseudo est déjà utilisé. Choisis un pseudo distinct.':'Indique le pseudo de ce joueur.');
+        field.reportValidity();
+        field.setCustomValidity('');
+        return;
+      }
+      seen.add(key);
+      names.push(name);
+    }
+    const existing=readLocal();
+    if(existing?.scenarioId&&existing.stage!=='finished'&&!confirm(`Remplacer la partie locale du dossier ${existing.scenarioId} par une nouvelle partie du dossier ${id} ? Sa progression sera effacée.`))return;
+    const mode=['001','004','009'].includes(id)&&names.length===4?($('#localFourModeSelect')?.value||'classic'):'classic';
+    startStandardLocal(id,payload.pack,names,mode);
+  });
 }
 
 function genericCard(role,context){
@@ -213,7 +232,7 @@ function privateBlocks(card){
 function renderStandardLocal(){
   const s=readLocal();if(!s)return renderHome?.();
   if(s.scenarioId==='031'&&s.pack?.cartel031_canon&&!['reveal','briefing'].includes(s.stage)&&window.IGR_CARTEL031)return window.IGR_CARTEL031.renderLocal(s,{save:saveLocal,shell:shellPut});
-  if(s.stage==='reveal')return renderLocalReveal(s);
+  if(s.stage==='reveal')return renderLocalReveal({...s,revealOpen:false});
   if(s.stage==='briefing')return renderLocalBriefing(s);
   if(s.stage==='cycle')return renderLocalCycle(s);
   if(s.stage==='debrief')return renderLocalDebrief(s);
@@ -244,7 +263,7 @@ function renderLocalVerdict(s){const suspects=s.players.filter(p=>p.role==='susp
 function normalizeTruthLevels(pack,suspects){const x=pack.truth?.levels;if(Array.isArray(x))return x.map(Number);if(x&&typeof x==='object')return suspects.map((_,i)=>Number(x[String(i+1)]??x[i+1]??0));return suspects.map(()=>0)}
 function renderLocalResult(s){const suspects=s.players.filter(p=>p.role==='suspect').sort((a,b)=>(a.slot||0)-(b.slot||0)),levels=normalizeTruthLevels(s.pack,suspects);let pts=0;const rows=suspects.map((p,i)=>{const pred=Number(s.verdict?.[p.slot]??0),real=Number(levels[i]??0),diff=Math.abs(pred-real);pts+=Math.max(0,3-diff);return `<div><span><b>${esc(p.name)}</b><small>estimé ${pred} · réel ${real}</small></span><strong>${diff===0?'EXACT':diff===1?'PROCHE':'ÉCART'}</strong></div>`}).join('');const max=Math.max(1,suspects.length*3),score=Math.round(100*pts/max);shellPut(`<main class="page localplay local-result">${localHeader(s,'RÉVÉLATION')}<section class="local-result-card"><span>VÉRITÉ CANONIQUE</span><h1>${score}%</h1><p>${esc(s.pack.truth?.summary||'La vérité du dossier est révélée.')}</p><div class="local-result-rows">${rows}</div>${['001','004','009'].includes(s.scenarioId)&&s.mode==='team'?'<p>Le troisième personnage reste présent dans la vérité du dossier. Ce score concerne les deux Suspects incarnés.</p>':''}<div class="local-score"><b>FORCE DE RECONSTRUCTION</b><strong>${score}/100</strong></div><button class="btn primary block" data-local-act="finish-local">TERMINER</button></section></main>`)}
 
-function handleLocalClick(e){const b=e.target.closest?.('[data-local-act]');if(!b)return;const s=readLocal();if(!s)return;e.preventDefault();const a=b.dataset.localAct;if(a==='quit'){if(confirm('Quitter cette partie locale ? La progression locale sera conservée.')){STATE.selectedScenario=s.scenarioId;STATE.view='create-confirm';renderCreateConfirm()}return}if(a==='open-card'){s.revealOpen=true;saveLocal(s);renderStandardLocal();return}if(a==='next-card'){b.closest('.local-private-card')?.replaceChildren();s.revealOpen=false;if(s.revealIndex>=s.players.length-1){s.stage='briefing'}else s.revealIndex++;saveLocal(s);renderStandardLocal();return}if(a==='start-cycles'){s.stage='cycle';s.cycle=1;s.trameOpen=false;saveLocal(s);renderStandardLocal();return}if(a==='reveal-trame'){s.revealedCycles=[...new Set([...(Array.isArray(s.revealedCycles)?s.revealedCycles:Array.from({length:Math.max(0,Number(s.cycle)-1)},(_,i)=>i+1)),Number(s.cycle)])];s.trameOpen=true;saveLocal(s);renderStandardLocal();return}if(a==='next-cycle'){s.stage='debrief';saveLocal(s);renderStandardLocal();return}if(a==='finish-local'){del(LOCAL_KEY);STATE.selectedScenario=s.scenarioId;STATE.view='create-confirm';renderCreateConfirm();return}}
+function handleLocalClick(e){const b=e.target.closest?.('[data-local-act]');if(!b)return;const s=readLocal();if(!s)return;e.preventDefault();const a=b.dataset.localAct;if(a==='quit'){if(confirm('Quitter cette partie locale ? La progression locale sera conservée.')){STATE.selectedScenario=s.scenarioId;STATE.view='create-confirm';renderCreateConfirm()}return}if(a==='open-card'){renderLocalReveal({...s,revealOpen:true});return}if(a==='next-card'){b.closest('.local-private-card')?.replaceChildren();s.revealOpen=false;if(s.revealIndex>=s.players.length-1){s.stage='briefing'}else s.revealIndex++;saveLocal(s);renderStandardLocal();return}if(a==='start-cycles'){s.stage='cycle';s.cycle=1;s.trameOpen=false;saveLocal(s);renderStandardLocal();return}if(a==='reveal-trame'){s.revealedCycles=[...new Set([...(Array.isArray(s.revealedCycles)?s.revealedCycles:Array.from({length:Math.max(0,Number(s.cycle)-1)},(_,i)=>i+1)),Number(s.cycle)])];s.trameOpen=true;saveLocal(s);renderStandardLocal();return}if(a==='next-cycle'){s.stage='debrief';saveLocal(s);renderStandardLocal();return}if(a==='finish-local'){del(LOCAL_KEY);STATE.selectedScenario=s.scenarioId;STATE.view='create-confirm';renderCreateConfirm();return}}
 function handleLocalSubmit(e){
  if(e.target.id==='localDebriefForm'){
   e.preventDefault();const s=readLocal();if(s?.stage!=='debrief'||!e.target.reportValidity())return;
