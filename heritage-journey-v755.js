@@ -282,6 +282,23 @@ function recordViewChange(root){
  if(previous&&!(next==='scenarios:list'&&(previous==='scenarios:detail'||previous==='base:lobby'||previous.startsWith('page:localplay'))))scrollWithoutAnimation(0);
  if(previous==='join'&&next!=='join')joinReturn=null;
 }
+// Public Maître context is also guaranteed after the campaign renderer runs.
+// Idempotent: preserve the existing block if present, repair stale/mixed bundles.
+function ensureMaitreCampaignDefinition(main){
+ if(!main.matches('.hplay-campaign:is(.maitre-page,.hplay-theme-maitre)'))return;
+ const title=$('.hplay-campaign-title',main);if(!title)return;
+ const copy=window.IGR_HERITAGE_MAITRE_DATA?.META?.definition||"Vous incarnez les différents acteurs d’une affaire pénale : défense, accusation, enquête et justice, ainsi que les personnes impliquées dans le dossier. Votre objectif dépend de votre rôle : construire une stratégie, confronter les versions et distinguer les faits établis des hypothèses. Chaque prise de position laisse des traces qui peuvent resurgir dans les dossiers suivants et façonner la réputation de l’avocat.";
+ let box=$('.hplay-campaign-definition',main);
+ if(!box){
+  box=document.createElement('div');box.className='hplay-campaign-definition';
+  const label=document.createElement('b');label.textContent='CADRE DE LA CAMPAGNE';
+  const body=document.createElement('span');body.textContent=copy;box.append(label,body);
+  title.append(box);
+ }else{
+  const body=$('span',box);
+  if(body&&!body.textContent.trim())body.textContent=copy;
+ }
+}
 function decorate(){
  const root=$('#app');if(!root)return;
  enhanceJoinBack(root);
@@ -289,6 +306,7 @@ function decorate(){
  if(main){
   const index=stage(main),head=$(':scope > .hplay-top,:scope > .hnet-head',main);
   if(index>=0&&head&&!$('.hj-progress',main))head.insertAdjacentHTML('afterend',markup(index,main.matches('.hplay-setup')));
+  ensureMaitreCampaignDefinition(main);
   styleModeButtons(main);
   enhanceCampaignJoin(root);
   enhanceCampaignStart(root);
