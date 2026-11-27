@@ -160,7 +160,9 @@ try{
  await analystPage.locator('[data-casino-tab=bureau]').click();
  assert.equal(await note.inputValue(),'Recoupement en cours');
  checks.push('Destinataire, accord territorial, échange au poker, chronomètre et brouillon Analyste');
- for(let turn=0;turn<8;turn++){
+ // The server decides when the collective draw/bet is fully settled. Do not
+  // assume one action per player: a turn may be retried after concurrent room updates.
+  for(let turn=0;turn<24;turn++){
   const current=(await storage.read(room.id)).state,h=current.poker;if(h.stage==='settled')break;
   const actor=ids[current.members.findIndex(m=>m.id===h.turn)];
   assert(actor,'Poker actor has an independent browser');const page=actor.person.page;
