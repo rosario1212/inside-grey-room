@@ -4,8 +4,9 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 const root=process.cwd(),dest=path.resolve(root,process.argv[2]||'dist');
 const JS='heritage-casino-v91.js',CSS='heritage-casino-v91.css',VERSION='v91.5-join-nav';
+const IMMERSIVE_VERSION='v1-mafia-20261127';
 const images=['campagne.webp','scenario-1.webp','scenario-2.webp','scenario-3.webp'];
-for(const file of [JS,CSS,'casino-client-v105.js','casino-client-v105.css']){
+for(const file of [JS,CSS,'casino-client-v105.js','casino-client-v105.css','casino-immersive-v1.js','casino-immersive-v1.css']){
   await stat(path.join(root,file));
   await copyFile(path.join(root,file),path.join(dest,file));
 }
@@ -20,8 +21,8 @@ for(const img of images){
 for(const page of ['index.html','en.html']){
   const name=path.join(dest,page);let html=await readFile(name,'utf8');
   // Replace previous cache versions when this finalizer is re-applied.
-  html=html.replace(/\s*<link\b[^>]*href="(?:heritage-casino-v91|casino-client-v105)\.css(?:\?[^"]*)?"[^>]*>/g,'')
-    .replace(/\s*<script\b[^>]*src="(?:heritage-casino-v91|casino-client-v105)\.js(?:\?[^"]*)?"[^>]*><\/script>/g,'');
+  html=html.replace(/\s*<link\b[^>]*href="(?:heritage-casino-v91|casino-client-v105|casino-immersive-v1)\.css(?:\?[^"]*)?"[^>]*>/g,'')
+    .replace(/\s*<script\b[^>]*src="(?:heritage-casino-v91|casino-client-v105|casino-immersive-v1)\.js(?:\?[^"]*)?"[^>]*><\/script>/g,'');
   if(!html.includes(`href="${CSS}?v=${VERSION}"`)){
     html=html.replace('</head>',`  <link rel="stylesheet" href="${CSS}?v=${VERSION}">\n</head>`);
   }
@@ -30,15 +31,20 @@ for(const page of ['index.html','en.html']){
   }
   if(!html.includes('casino-client-v105.js?v=105.13-live-drafts-20261126'))html=html.replace('</body>','  <script src="casino-client-v105.js?v=105.13-live-drafts-20261126"></script>\n</body>');
   if(!html.includes('casino-client-v105.css?v=105.13-v821-layout'))html=html.replace('</head>','  <link rel="stylesheet" href="casino-client-v105.css?v=105.13-v821-layout">\n</head>');
+  html=html.replace('</head>','  <link rel="stylesheet" href="casino-immersive-v1.css?v='+IMMERSIVE_VERSION+'">\n</head>');
+  html=html.replace('</body>','  <script src="casino-immersive-v1.js?v='+IMMERSIVE_VERSION+'"></script>\n</body>');
   await writeFile(name,html,'utf8');
 }
 // The Casino finalizer runs after the generic PWA assets were versioned.
-// Fold its four independent UI assets into the offline shell and revision key.
+// Fold all six Casino UI assets into the offline shell and revision key.
 const casinoAssets=[[JS,VERSION],[CSS,VERSION],
- ['casino-client-v105.js','105.13-live-drafts-20261126'],['casino-client-v105.css','105.13-v821-layout']];
+ ['casino-client-v105.js','105.13-live-drafts-20261126'],['casino-client-v105.css','105.13-v821-layout'],
+ ['casino-immersive-v1.js',IMMERSIVE_VERSION],['casino-immersive-v1.css',IMMERSIVE_VERSION]];
 const casinoFingerprint=createHash('sha256')
  .update(await readFile(path.join(dest,'casino-client-v105.js')))
  .update(await readFile(path.join(dest,'casino-client-v105.css')))
+ .update(await readFile(path.join(dest,'casino-immersive-v1.js')))
+ .update(await readFile(path.join(dest,'casino-immersive-v1.css')))
  .update(await readFile(path.join(dest,CSS)))
  .update(await readFile(path.join(dest,JS)))
  .digest('hex').slice(0,12);

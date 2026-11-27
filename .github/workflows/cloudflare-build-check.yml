@@ -221,6 +221,7 @@ jobs:
           node scripts/casino-runtime-check.mjs
           node scripts/casino-poker-exhaustive-check.mjs
           node scripts/casino-release-check.mjs dist
+          node scripts/casino-immersive-v1-check.mjs dist
           node scripts/storage-persistence-check.mjs
       - name: Validate public access before Cloudflare packaging
         run: |
